@@ -55,7 +55,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		ContainerTreatmentElement descriptionTreatmentElement = new ContainerTreatmentElement("description");
 		
 		//going through all sentences
-		for(ChunkCollector chunkCollector : chunkCollectors) {				
+		for(ChunkCollector chunkCollector : chunkCollectors) {
 			DescriptionTreatmentElement statement = new DescriptionTreatmentElement(DescriptionType.STATEMENT);
 			statement.setProperty("text", chunkCollector.getSentence());
 			statement.setProperty("source", chunkCollector.getSource());

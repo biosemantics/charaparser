@@ -57,8 +57,11 @@ public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 		return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.VERB) != null;
 	}
 	
+	/**
+	 * needs to be synchronized, otherwise not thread safe. Underlying linkedHashMap throws ConcurrentModificationException
+	 */
 	@Override
-	public POS getMostLikleyPOS(String word) {
+	public synchronized POS getMostLikleyPOS(String word) {
 		WordnetStemmer stemmer = new WordnetStemmer(dictionary);
 		
 		int maxCount = -1;

@@ -63,9 +63,9 @@ public class FNAv19Config extends RunConfig {
 					// if(file.equals("163.txt-7"))
 					// if(file.equals("544.txt-6"))
 					// if(file.equals("51.txt-13"))
-					// if(file.equals("160.txt-0"))
-					// if(file.equals("148.txt-12"))
-					result.add(file);
+					//if(file.equals("15.txt-7") || file.equals("15.txt-11") || file.equals("148.txt-12"))
+					//if(file.equals("148.txt-12"))
+						result.add(file);
 					// break; //TODO remove. only for test
 				}
 			}

@@ -118,8 +118,10 @@ public abstract class Normalizer implements INormalizer {
 	}
 	
 
+	//TODO make normalizer stateless or create one normalizer per sentence in order to remove
+	// synchronized requirement
 	@Override
-	public String normalize(String str, String tag, String modifier, String source) {	
+	public synchronized String normalize(String str, String tag, String modifier, String source) {	
 		str = dataSetSpecificNormalization(str);
 		
 		str = str.replaceAll("_", "-");

@@ -1,10 +1,13 @@
 package semanticMarkup.core.transformation.lib;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
@@ -32,6 +35,7 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	private ITerminologyLearner terminologyLearner;
 	private ITokenizer wordTokenizer;
 	private ChunkerChain chunkerChain;
+	private Map<Thread, DescriptionExtractorRun> descriptionExtractorRuns = new HashMap<Thread, DescriptionExtractorRun>();
 	
 	@Inject
 	public OldPerlTreatmentTransformer(
@@ -60,56 +64,20 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 		return treatments;
 	}
 
-
 	private void markupDescriptions(List<Treatment> treatments, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
 		for(Treatment treatment : treatments) {
-			System.out.println("Create description for treatment: " + treatment.getName());
-			createNewDescription(treatment, sentencesForOrganStateMarker.get(treatment));
+			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, terminologyLearner, normalizer, wordTokenizer, 
+					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker);
+			Thread thread = new Thread(descriptionExtractorRun);
+			descriptionExtractorRuns.put(thread, descriptionExtractorRun);
+			thread.run();
 		}
-	}
-
-	private void createNewDescription(Treatment treatment, //List<Token> sentences, 
-			LinkedHashMap<String, String> sentences) {
-		List<ChunkCollector> treatmentChunkCollectors = new ArrayList<ChunkCollector>();
-		for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
-			String sentenceString = sentenceEntry.getValue();
-			String source = sentenceEntry.getKey();
-			
-			System.out.println("Process sentence: " + sentenceString);
-			
-			String[] sentenceArray = sentenceString.split("##");
-			sentenceString = sentenceArray[2];
-			String subjectTag = sentenceArray[1];
-			String modifier = sentenceArray[0];
-			modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
-			subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
-			
-			String normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
-			System.out.println("Normalized sentence: " + normalizedSentence);
-			List<Token> sentence = wordTokenizer.tokenize(normalizedSentence);
-			
-			List<Token> posedSentence = posTagger.tag(sentence);
-			System.out.println("POSed sentence " + posedSentence);
-			
-			AbstractParseTree parseTree = parser.parse(posedSentence);
-			System.out.println("Parse tree: ");
-			parseTree.prettyPrint();
-			
-			ChunkCollector chunkCollector = chunkerChain.chunk(parseTree, subjectTag, treatment, source, sentenceString);
-			treatmentChunkCollectors.add(chunkCollector);
-			System.out.println("Sentence processing finished.\n");
+		for(Thread thread : descriptionExtractorRuns.keySet()) {
+			try {
+				thread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-		
-		System.out.println("Extract new description using " + descriptionExtractor.getDescription() + "...");
-		TreatmentElement newDescriptionElement = descriptionExtractor.extract(treatmentChunkCollectors);
-
-		List<ValueTreatmentElement> descriptions = treatment.getValueTreatmentElements("description");
-		for(ValueTreatmentElement description : descriptions) { 
-			treatment.addTreatmentElement(newDescriptionElement);
-			treatment.removeTreatmentElement(description);
-			break;
-		}
-		System.out.println(" -> JAXB: ");
-		System.out.println(treatment);
 	}
 }
