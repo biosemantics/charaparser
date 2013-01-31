@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o3" name="involucre">
-                    <character char_type="range_value" from="12" from_inclusive="false" from_unit="mm" name="atypical_size" to="13" to_unit="mm"/>
-                    <character char_type="range_value" from="9" from_unit="mm" name="size" to="12" to_unit="mm"/>
-                </structure>
-                <text>involucres 9 – 12 ( – 13 ) mm .</text>
-            </statement>

@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="receptacle">
-                    <character modifier="slightly" name="shape" value="convex"/>
-                    <character modifier="slightly" name="relief" value="pitted"/>
-                    <character name="pubescence" value="glabrous"/>
-                    <character name="architecture" value="paleate"/>
-                </structure>
-                <text>receptacles slightly convex , slightly pitted , glabrous , paleate .</text>
-            </statement>

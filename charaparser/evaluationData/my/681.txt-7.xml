@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="pistillate" id="o0" name="floret">
-                    <character char_type="range_value" from="135" name="count" to="160"/>
-                </structure>
-                <text>pistillate florets 135 – 160 .</text>
-            </statement>

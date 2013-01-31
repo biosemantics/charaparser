@@ -1,8 +1,0 @@
-            <statement>
-                <relation from="o0" id="r0" name="part_of" negation="false" to="o1"/>
-                <structure id="o0" name="tip">
-                    <character name="shape" value="acute"/>
-                </structure>
-                <structure constraint="outer" id="o1" name="phyllary"/>
-                <text>tips of outer and mid phyllaries acute .</text>
-            </statement>

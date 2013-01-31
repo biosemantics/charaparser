@@ -1,6 +1,0 @@
-            <statement>
-                <structure id="o0" name="head">
-                    <character char_type="range_value" from="1" name="count" to="10"/>
-                </structure>
-                <text>heads 1 – 10 .</text>
-            </statement>

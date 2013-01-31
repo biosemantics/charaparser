@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o2" name="ovary">
-                    <character name="manifestation" value="vestigial"/>
-                    <character char_type="range_value" from="0" from_unit="mm" name="size" to="0.3" to_unit="mm"/>
-                </structure>
-                <text>ovaries vestigial , 0 – 0 . 3 mm ;</text>
-            </statement>

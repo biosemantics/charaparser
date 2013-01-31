@@ -1,9 +1,0 @@
-            <statement>
-                <structure constraint="leaf" id="o0" name="face">
-                    <character modifier="abaxially" name="coloration" value="green"/>
-                    <character name="coloration" value="gray"/>
-                    <character char_type="range_value" from="green" name="coloration" to="gray"/>
-                    <character modifier="adaxially" name="coloration" value="gray"/>
-                </structure>
-                <text>leaf faces abaxially green to gray , adaxially gray .</text>
-            </statement>

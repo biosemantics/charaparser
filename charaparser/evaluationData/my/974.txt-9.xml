@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="receptacle">
-                    <character name="shape" value="convex"/>
-                    <character name="architecture" value="epaleate"/>
-                </structure>
-                <text>receptacles convex , epaleate .</text>
-            </statement>

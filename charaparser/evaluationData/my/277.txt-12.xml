@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="pappus">
-                    <character name="coloration" value="whitish"/>
-                    <character char_type="range_value" from="6" from_unit="mm" name="size" to="13" to_unit="mm"/>
-                </structure>
-                <text>pappi whitish , 6 – 13 mm .</text>
-            </statement>

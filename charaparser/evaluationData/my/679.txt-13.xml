@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="pistillate" id="o0" name="corolla">
-                    <character char_type="range_value" from="3.5" from_unit="mm" name="size" to="5" to_unit="mm"/>
-                </structure>
-                <text>pistillate 3 . 5 – 5 mm .</text>
-            </statement>

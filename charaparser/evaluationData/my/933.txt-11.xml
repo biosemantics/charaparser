@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="ray" id="o1" name="lamina">
-                    <character char_type="range_value" from="8" from_unit="mm" name="size" to="12" to_unit="mm"/>
-                </structure>
-                <text>ray laminae 8 – 12 mm .</text>
-            </statement>

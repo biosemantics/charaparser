@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o1" name="receptacle">
-                    <character name="shape" value="flat"/>
-                    <character name="architecture_or_relief" value="smooth"/>
-                    <character name="architecture" value="epaleate"/>
-                </structure>
-                <text>receptacles flat , smooth , epaleate .</text>
-            </statement>

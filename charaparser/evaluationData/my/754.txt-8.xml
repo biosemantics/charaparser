@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o1" name="receptacle">
-                    <character name="shape" value="depressed-spheric"/>
-                    <character name="shape" value="obovoid"/>
-                    <character name="pubescence" value="glabrous"/>
-                </structure>
-                <text>receptacles depressed_spheric or obovoid , glabrous .</text>
-            </statement>

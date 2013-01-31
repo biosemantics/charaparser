@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="receptacle">
-                    <character name="shape" value="flat"/>
-                    <character modifier="sometimes" name="relief" value="pitted"/>
-                    <character modifier="sometimes" name="pubescence_or_relief" value="scabrous"/>
-                    <character name="architecture" value="epaleate"/>
-                </structure>
-                <text>receptacles flat , sometimes pitted , sometimes scabrous , epaleate .</text>
-            </statement>

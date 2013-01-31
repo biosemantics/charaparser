@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="receptacle">
-                    <character name="shape" value="convex"/>
-                    <character name="architecture_or_relief" value="smooth"/>
-                    <character name="pubescence" value="glabrous"/>
-                    <character name="architecture" value="epaleate"/>
-                </structure>
-                <text>receptacles convex , smooth , glabrous , epaleate .</text>
-            </statement>

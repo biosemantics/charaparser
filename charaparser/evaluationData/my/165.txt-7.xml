@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="apical" id="o2" name="spine">
-                    <character char_type="range_value" from="1" from_unit="mm" name="size" to="2" to_unit="mm"/>
-                </structure>
-                <text>apical spines 1 – 2 mm ;</text>
-            </statement>

@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="ray" id="o0" name="floret">
-                    <character modifier="usually" name="count" value="0"/>
-                </structure>
-                <text>ray florets usually 0 .</text>
-            </statement>

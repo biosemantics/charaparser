@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0, o1" name="whole_organism">
-                    <character name="life_style" value="herb"/>
-                    <character name="life_style" value="subshrub"/>
-                </structure>
-                <text>herbs , subshrubs , shrubs , or trees .</text>
-            </statement>

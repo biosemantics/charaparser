@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="functionally staminate" id="o0" name="floret">
-                    <character char_type="range_value" from="3" name="count" to="6"/>
-                </structure>
-                <text>functionally staminate florets 3 – 6 ;</text>
-            </statement>

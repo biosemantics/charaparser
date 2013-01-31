@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character char_type="range_value" from="200" from_inclusive="false" from_unit="cm" name="atypical_size" to="300" to_unit="cm"/>
-                    <character char_type="range_value" from="100" from_unit="cm" name="size" to="200" to_unit="cm"/>
-                    <character name="life_style" value="shrub"/>
-                </structure>
-                <text>shrubs , 100 – 200 ( – 300 ) cm .</text>
-            </statement>

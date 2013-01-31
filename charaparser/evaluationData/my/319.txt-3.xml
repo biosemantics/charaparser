@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="leaf">
-                    <character char_type="range_value" from="20" name="count" upper_restricted="false"/>
-                    <character name="orientation" value="horizontal"/>
-                    <character name="orientation" value="erect"/>
-                    <character char_type="range_value" from="horizontal" name="orientation" to="erect"/>
-                </structure>
-                <text>leaves 20 + , horizontal to erect ;</text>
-            </statement>

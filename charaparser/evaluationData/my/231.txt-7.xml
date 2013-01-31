@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="receptacle">
-                    <character name="shape" value="flat"/>
-                    <character name="relief" value="alveolate"/>
-                    <character name="architecture_or_relief" value="smooth"/>
-                    <character name="architecture" value="epaleate"/>
-                </structure>
-                <text>receptacles flat , alveolate or smooth , epaleate .</text>
-            </statement>

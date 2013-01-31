@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="branch">
-                    <character char_type="range_value" from="0" name="count" to="many"/>
-                    <character name="orientation" value="ascending"/>
-                </structure>
-                <text>branches 0 – many , ascending .</text>
-            </statement>

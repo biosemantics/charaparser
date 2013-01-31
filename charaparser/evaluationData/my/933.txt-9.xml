@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="face">
-                    <character modifier="more or less" name="pubescence" value="woolly"/>
-                    <character name="pubescence" value="glabrescent"/>
-                </structure>
-                <text>faces ± woolly , glabrescent .</text>
-            </statement>

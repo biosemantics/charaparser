@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o1" name="corolla">
-                    <character name="coloration" value="orange"/>
-                    <character name="coloration" value="yellow-orange"/>
-                    <character char_type="range_value" from="15" from_unit="mm" name="size" to="25" to_unit="mm"/>
-                </structure>
-                <text>corollas orange or yellow_orange , 15 – 25 mm .</text>
-            </statement>

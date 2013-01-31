@@ -1,7 +1,0 @@
-            <statement>
-                <structure constraint="inner, after flowering" id="o1" name="phyllary">
-                    <character name="orientation" value="erect"/>
-                    <character modifier="more or less" name="size" value="elongating"/>
-                </structure>
-                <text>inner erect , ± elongating after flowering .</text>
-            </statement>

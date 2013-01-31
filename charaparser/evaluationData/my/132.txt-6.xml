@@ -1,9 +1,0 @@
-            <statement>
-                <structure constraint="basal" id="o0" name="leaf">
-                    <character modifier="often" name="presence" value="absent"/>
-                    <character name="architecture" value="spiny"/>
-                    <character name="architecture" value="winged-petiolate"/>
-                    <character name="architecture" value="sessile"/>
-                </structure>
-                <text>basal often absent at flowering , spiny winged_petiolate or sessile ;</text>
-            </statement>

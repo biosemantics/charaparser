@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character char_type="range_value" from="40" from_inclusive="false" from_unit="cm" name="atypical_size" to="75" to_unit="cm"/>
-                    <character char_type="range_value" from="10" from_unit="cm" name="size" to="40" to_unit="cm"/>
-                    <character name="life_style" value="plant"/>
-                </structure>
-                <text>plants 10 – 40 ( – 75 ) cm .</text>
-            </statement>

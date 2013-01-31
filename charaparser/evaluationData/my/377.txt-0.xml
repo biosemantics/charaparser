@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character char_type="range_value" from="150" from_inclusive="false" from_unit="cm" name="atypical_size" to="200" to_unit="cm"/>
-                    <character char_type="range_value" from="0" from_unit="cm" name="size" to="150" to_unit="cm"/>
-                    <character modifier="usually" name="architecture" value="rhizomatous"/>
-                    <character name="life_style" value="perennial"/>
-                </structure>
-                <text>perennials , 0 – 150 ( – 200 ) cm , usually rhizomatous or stoloni_ferous .</text>
-            </statement>

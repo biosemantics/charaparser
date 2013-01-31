@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character char_type="range_value" from="4" from_unit="cm" name="size" to="45" to_unit="cm"/>
-                    <character name="life_style" value="annual"/>
-                </structure>
-                <text>annuals , 4 – 45 cm .</text>
-            </statement>

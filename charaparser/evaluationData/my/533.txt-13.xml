@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="cypsela">
-                    <character name="shape" value="columnar"/>
-                    <character name="shape" value="obconic"/>
-                    <character char_type="range_value" from="3" from_unit="mm" name="size" to="10" to_unit="mm"/>
-                </structure>
-                <text>cypselae columnar or obconic , 3 – 10 mm ;</text>
-            </statement>

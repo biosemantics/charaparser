@@ -1,6 +1,0 @@
-            <statement>
-                <structure id="o2" name="bractlet">
-                    <character char_type="range_value" from="5" name="count" to="8" upper_restricted="false"/>
-                </structure>
-                <text>bractlets 5 – 8 + .</text>
-            </statement>

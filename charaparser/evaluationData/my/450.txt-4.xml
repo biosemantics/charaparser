@@ -1,8 +1,0 @@
-            <statement>
-                <relation from="o1" id="r0" name="in" negation="false" to="o2"/>
-                <structure id="o1" name="involucre">
-                    <character name="shape" value="conic"/>
-                </structure>
-                <structure id="o2" name="bud"/>
-                <text>involucres conic in bud .</text>
-            </statement>
