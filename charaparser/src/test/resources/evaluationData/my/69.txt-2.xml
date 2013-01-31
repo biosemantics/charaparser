@@ -1,8 +1,0 @@
-            <statement>
-                <structure constraint="above middle , thinly arachnoid-tomentose , more or less glabrate" id="o0" name="stem">
-                    <character name="count" value="single"/>
-                    <character name="orientation" value="erect"/>
-                    <character modifier="often" name="architecture_or_shape" value="branched"/>
-                </structure>
-                <text>stems single , erect , often branched above middle , thinly arachnoid_tomentose , ± glabrate ;</text>
-            </statement>

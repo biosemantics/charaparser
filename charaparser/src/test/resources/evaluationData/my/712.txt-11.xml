@@ -1,8 +1,0 @@
-            <statement>
-                <structure constraint="pistillate" id="o0" name="floret">
-                    <character char_type="range_value" from="50" name="count" to="130"/>
-                    <character constraint="than bisexual florets" constraint_id="o1" name="count" value="numerous"/>
-                </structure>
-                <structure constraint="bisexual" id="o1" name="floret"/>
-                <text>pistillate florets 50 – 130 , more numerous than bisexual florets ;</text>
-            </statement>

@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="base">
-                    <character name="size" value="expanded"/>
-                    <character name="architecture" value="3-nerved"/>
-                    <character modifier="yellowish" name="coloration" value="tan"/>
-                    <character modifier="closely" name="derivation" value="involucral"/>
-                </structure>
-                <text>bases expanded , 3 - nerved , yellowish tan , parchment_like , closely involucral .</text>
-            </statement>

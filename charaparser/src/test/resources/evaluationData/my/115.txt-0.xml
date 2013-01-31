@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character name="orientation" value="erect"/>
-                    <character char_type="range_value" from="30" from_unit="cm" modifier="usually" name="size" to="150" to_unit="cm"/>
-                    <character modifier="usually" name="size" value="taller"/>
-                    <character name="life_style" value="plant"/>
-                </structure>
-                <text>plants erect , usually 30 – 150 cm or taller .</text>
-            </statement>

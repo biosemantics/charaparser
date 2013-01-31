@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="peduncle">
-                    <character modifier="usually" name="pubescence" value="stellate-pubescent"/>
-                    <character modifier="sometimes" name="pubescence" value="piloso-hirsute"/>
-                    <character name="architecture_or_exudation_or_pubescence" value="stipitate-glandular"/>
-                    <character modifier="rarely" name="pubescence" value="glabrous"/>
-                </structure>
-                <text>peduncles usually stellate_pubescent , sometimes piloso_hirsute and / or stipitate_glandular as well , rarely glabrous .</text>
-            </statement>

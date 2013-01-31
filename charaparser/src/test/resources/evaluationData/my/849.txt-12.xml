@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o1" name="corolla">
-                    <character modifier="purplish" name="coloration" value="red"/>
-                    <character char_type="range_value" from="1.5" from_unit="mm" name="size" to="2" to_unit="mm"/>
-                    <character name="pubescence" value="hairy"/>
-                </structure>
-                <text>corollas purplish red , 1 . 5 – 2 mm , hairy .</text>
-            </statement>

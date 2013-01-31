@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="corolla">
-                    <character name="coloration" value="yellow"/>
-                    <character modifier="usually" name="architecture_or_texture" value="deliquescent"/>
-                </structure>
-                <text>corollas yellow , usually deliquescent .</text>
-            </statement>

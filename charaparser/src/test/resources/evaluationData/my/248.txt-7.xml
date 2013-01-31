@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="floret">
-                    <character char_type="range_value" from="50" from_inclusive="false" name="atypical_count" to="100" upper_restricted="false"/>
-                    <character char_type="range_value" from="30" name="count" to="50"/>
-                </structure>
-                <text>florets 30 – 50 ( – 100 + ) ;</text>
-            </statement>

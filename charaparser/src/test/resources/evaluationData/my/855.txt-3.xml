@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="basal" id="o0" name="rosette">
-                    <character modifier="not" name="duration" value="persistent"/>
-                </structure>
-                <text>basal rosettes not persistent .</text>
-            </statement>

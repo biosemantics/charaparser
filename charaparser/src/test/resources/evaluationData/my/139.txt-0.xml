@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character char_type="range_value" from="50" from_unit="cm" name="size" to="200" to_unit="cm" upper_restricted="false"/>
-                    <character name="life_style" value="biennial"/>
-                </structure>
-                <text>biennials , 50 – 200 + cm ;</text>
-            </statement>

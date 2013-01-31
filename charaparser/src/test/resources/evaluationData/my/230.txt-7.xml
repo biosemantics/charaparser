@@ -1,9 +1,0 @@
-            <statement>
-                <structure constraint="outer" id="o0" name="phyllary">
-                    <character name="shape" value="lanceolate"/>
-                </structure>
-                <structure id="o1" name="margin">
-                    <character name="architecture_or_shape" value="prickly-ciliate"/>
-                </structure>
-                <text>outer lanceolate , margins prickly_ciliate ;</text>
-            </statement>

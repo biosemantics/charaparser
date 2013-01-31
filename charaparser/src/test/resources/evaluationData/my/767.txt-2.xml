@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="leaf">
-                    <character name="insertion_or_position" value="basal"/>
-                    <character name="insertion_or_position" value="cauline"/>
-                </structure>
-                <text>leaves basal and cauline ;</text>
-            </statement>

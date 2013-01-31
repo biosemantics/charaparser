@@ -1,9 +1,0 @@
-            <statement>
-                <structure constraint="style" id="o1" name="branch">
-                    <character modifier="relatively" name="size" value="short"/>
-                </structure>
-                <structure id="o2" name="apex">
-                    <character name="shape" value="rounded"/>
-                </structure>
-                <text>style branches relatively short , apices rounded .</text>
-            </statement>

@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="involucre">
-                    <character name="shape" value="globose"/>
-                    <character char_type="range_value" from="2" from_unit="mm" name="length" to="3" to_unit="mm"/>
-                    <character char_type="range_value" from="3.5" from_inclusive="false" from_unit="mm" name="atypical_width" to="6" to_unit="mm"/>
-                    <character char_type="range_value" from="2" from_unit="mm" name="width" to="3.5" to_unit="mm"/>
-                </structure>
-                <text>involucres globose , 2 – 3 × 2 – 3 . 5 ( – 6 ) mm .</text>
-            </statement>

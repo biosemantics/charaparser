@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character char_type="range_value" from="60" from_unit="cm" name="size" to="120" to_unit="cm"/>
-                    <character name="life_style" value="plant"/>
-                </structure>
-                <text>plants 60 – 120 cm .</text>
-            </statement>

@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="involucre">
-                    <character name="shape" value="ovoid"/>
-                    <character name="shape" value="campanulate"/>
-                    <character char_type="range_value" from="ovoid" name="shape" to="campanulate"/>
-                    <character name="shape" value="hemispheric"/>
-                </structure>
-                <text>involucres ovoid to campanulate or hemispheric , 15 – l8 mm , usually about as wide as high .</text>
-            </statement>

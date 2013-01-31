@@ -1,9 +1,0 @@
-            <statement>
-                <structure constraint="innermost" id="o0" name="palea">
-                    <character name="architecture" value="pistillate"/>
-                    <character name="architecture" value="surrounding"/>
-                    <character char_type="range_value" from="14" name="count" to="25" upper_restricted="false"/>
-                </structure>
-                <structure id="o1" name="floret"/>
-                <text>innermost paleae pistillate , surrounding 14 – 25 + florets .</text>
-            </statement>

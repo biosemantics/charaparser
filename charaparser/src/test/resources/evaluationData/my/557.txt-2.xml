@@ -1,8 +1,0 @@
-            <statement>
-                <relation from="o0" id="r0" name="consist_of" negation="false" to="o1"/>
-                <structure id="o0" name="calyculus"/>
-                <structure id="o1" name="bractlet">
-                    <character name="orientation" value="appressed"/>
-                </structure>
-                <text>calyculi of appressed bractlets .</text>
-            </statement>

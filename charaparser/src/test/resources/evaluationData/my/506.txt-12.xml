@@ -1,6 +1,0 @@
-            <statement>
-                <structure id="o0" name="anther">
-                    <character char_type="range_value" from="2" from_unit="mm" name="size" to="5" to_unit="mm"/>
-                </structure>
-                <text>anthers 2 – 5 mm .</text>
-            </statement>

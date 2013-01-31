@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="corolla">
-                    <character name="coloration" value="blue"/>
-                    <character name="coloration" value="purple"/>
-                    <character char_type="range_value" from="3" from_unit="cm" name="size" to="5" to_unit="cm"/>
-                </structure>
-                <text>corollas blue or purple , 3 – 5 cm ;</text>
-            </statement>

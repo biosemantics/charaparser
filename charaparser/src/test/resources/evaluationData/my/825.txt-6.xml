@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="receptacle">
-                    <character name="shape" value="flat"/>
-                    <character modifier="slightly" name="shape" value="convex"/>
-                    <character char_type="range_value" from="flat" name="shape" to="convex"/>
-                </structure>
-                <text>receptacles flat to slightly convex ;</text>
-            </statement>

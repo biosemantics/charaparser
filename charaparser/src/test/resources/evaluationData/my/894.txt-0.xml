@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="whole_organism">
-                    <character char_type="range_value" from="200" from_inclusive="false" from_unit="cm" name="atypical_size" to="300" to_unit="cm"/>
-                    <character char_type="range_value" from="30" from_unit="cm" name="size" to="200" to_unit="cm"/>
-                    <character modifier="sweetly" name="odor" value="aromatic"/>
-                    <character name="life_style" value="annual"/>
-                </structure>
-                <text>annuals , 30 – 200 ( – 300 ) cm , sweetly aromatic .</text>
-            </statement>

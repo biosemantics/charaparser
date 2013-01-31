@@ -1,9 +1,0 @@
-            <statement>
-                <structure constraint="basal" id="o0" name="leaf">
-                    <character modifier="usually" name="presence" value="absent"/>
-                    <character name="duration" value="withered"/>
-                    <character name="architecture" value="winged"/>
-                    <character name="architecture" value="petiolate"/>
-                </structure>
-                <text>basal usually absent or withered at flowering , winged petiolate ;</text>
-            </statement>

@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="stem">
-                    <character name="orientation" value="erect"/>
-                    <character name="orientation" value="ascending"/>
-                    <character name="pubescence" value="glabrous"/>
-                    <character modifier="weakly" name="pubescence" value="scabrous-puberulent"/>
-                </structure>
-                <text>stems erect or ascending , glabrous or weakly scabrous_puberulent .</text>
-            </statement>

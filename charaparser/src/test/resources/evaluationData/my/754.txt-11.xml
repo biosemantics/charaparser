@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o2" name="wing">
-                    <character modifier="moreorless" name="orientation" value="erect"/>
-                    <character name="orientation" value="inflexed"/>
-                </structure>
-                <text>wings ± erect or inflexed .</text>
-            </statement>

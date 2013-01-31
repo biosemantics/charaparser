@@ -1,7 +1,0 @@
-            <statement>
-                <structure constraint="ray" id="o1" name="floret">
-                    <character char_type="range_value" from="13" modifier="usually" name="count" to="34" upper_restricted="false"/>
-                    <character modifier="rarely" name="count" value="0"/>
-                </structure>
-                <text>ray florets usually 13 – 34 + , rarely 0 ;</text>
-            </statement>

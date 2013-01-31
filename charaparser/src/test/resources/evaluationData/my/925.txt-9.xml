@@ -1,6 +1,0 @@
-            <statement>
-                <structure constraint="bisexual" id="o0" name="floret">
-                    <character char_type="range_value" from="9" name="count" to="10"/>
-                </structure>
-                <text>bisexual 9 – 10 ;</text>
-            </statement>

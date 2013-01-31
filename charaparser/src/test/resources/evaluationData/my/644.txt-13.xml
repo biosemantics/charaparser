@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o1" name="cypsela">
-                    <character char_type="range_value" from="1" from_unit="mm" name="size" to="2" to_unit="mm"/>
-                    <character modifier="minutely" name="pubescence_or_relief" value="papillate"/>
-                </structure>
-                <text>cypselae 1 – 2 mm , minutely papillate ;</text>
-            </statement>

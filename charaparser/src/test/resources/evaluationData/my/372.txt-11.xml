@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o2" name="involucre">
-                    <character name="shape" value="cylindric"/>
-                    <character char_type="range_value" from="12" from_unit="mm" name="length" to="15" to_unit="mm"/>
-                    <character char_type="range_value" from="4" from_unit="mm" name="width" to="5" to_unit="mm"/>
-                </structure>
-                <text>involucres cylindric , 12 – 15 × 4 – 5 mm .</text>
-            </statement>

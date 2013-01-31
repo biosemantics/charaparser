@@ -1,7 +1,0 @@
-            <statement>
-                <structure id="o1" name="pappus">
-                    <character char_type="range_value" from="19" from_inclusive="false" from_unit="mm" name="atypical_size" to="25" to_unit="mm"/>
-                    <character char_type="range_value" from="9" from_unit="mm" name="size" to="19" to_unit="mm"/>
-                </structure>
-                <text>pappi 9 – 19 ( – 25 ) mm .</text>
-            </statement>

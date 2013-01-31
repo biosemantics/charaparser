@@ -1,9 +1,0 @@
-            <statement>
-                <structure id="o0" name="cypsela">
-                    <character name="coloration" value="whitish"/>
-                    <character modifier="pale" name="coloration" value="brown"/>
-                    <character char_type="range_value" from="3" from_unit="mm" name="size" to="3.5" to_unit="mm"/>
-                    <character modifier="finely" name="pubescence" value="hairy"/>
-                </structure>
-                <text>cypselae whitish or pale brown , 3 – 3 . 5 mm , finely hairy ;</text>
-            </statement>

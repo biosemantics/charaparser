@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="pappus">
-                    <character name="coloration" value="white"/>
-                    <character char_type="range_value" from="8" from_inclusive="false" from_unit="mm" name="atypical_size" to="10" to_unit="mm" upper_restricted="false"/>
-                    <character char_type="range_value" from="6.5" from_unit="mm" name="size" to="8" to_unit="mm"/>
-                </structure>
-                <text>pappi white , 6 . 5 – 8 ( – 10 + ) mm .</text>
-            </statement>

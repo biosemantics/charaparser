@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="head">
-                    <character char_type="range_value" from="2" from_inclusive="false" name="atypical_count" to="3"/>
-                    <character char_type="range_value" from="1" name="count" to="2"/>
-                    <character char_type="range_value" from="19" from_unit="mm" name="size" to="29" to_unit="mm"/>
-                </structure>
-                <text>heads 1 – 2 ( – 3 ) , 19 – 29 mm diam . .</text>
-            </statement>

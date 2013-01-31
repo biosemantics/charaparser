@@ -1,8 +1,0 @@
-            <statement>
-                <structure id="o0" name="cypsela">
-                    <character modifier="greenish" name="coloration" value="black"/>
-                    <character char_type="range_value" from="7" from_unit="mm" name="size" to="10" to_unit="mm"/>
-                    <character name="shape" value="beaked"/>
-                </structure>
-                <text>cypselae greenish black , 7 – 10 mm , beaked ;</text>
-            </statement>
