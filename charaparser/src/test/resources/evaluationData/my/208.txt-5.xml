@@ -1,0 +1,12 @@
+            <statement>
+                <relation from="o0" id="r0" name="in" negation="false" to="o1"/>
+                <structure id="o0" name="head">
+                    <character name="architecture_or_arrangement" value="radiant"/>
+                    <character modifier="borne" name="arrangement" value="singly"/>
+                </structure>
+                <structure id="o1" name="array">
+                    <character name="architecture_or_shape" value="few-headed"/>
+                    <character name="architecture" value="corymbiform"/>
+                </structure>
+                <text>heads radiant , borne singly or in few_headed corymbiform arrays ; .</text>
+            </statement>

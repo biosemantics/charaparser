@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="732.txt-1">
+    <structure id="o39" name="pseudointerarea" constraint="ventral">
+      <character name="shape" value="elongated" />
+      <character name="shape" value="triangular" modifier="widely" />
+    </structure>
+    <structure id="o40" name="groove" constraint="pedicle" >
+      <character name="development" value="well-developed"/>
+    </structure>
+    <structure id="o41" name="line" constraint="flexure" />
+    <relation id="r1" from="o39" name="with" negation="false" to="o40"/>
+    <relation id="r2" from="o39" name="with" negation="false" to="o41"/>    
+    <text>ventral pseudointerarea elongated , widely triangular with well - developed pedicle groove 
+      and flexure lines ;</text>
+  </statement>
+</description>
+

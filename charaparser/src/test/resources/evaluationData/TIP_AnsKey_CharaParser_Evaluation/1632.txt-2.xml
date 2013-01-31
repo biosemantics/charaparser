@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s18">
+    <structure id="o45" name="line" constraint="hinge">
+      <character name="shape" value="denticulate" />
+    </structure>
+    <text>hinge line denticulate ;</text>
+  </statement>
+</description>
+

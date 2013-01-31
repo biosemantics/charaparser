@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1062.txt-2">
+    <structure id="o195" name="spine">
+      <character name="presence" value="rare"/>
+      <character name="texture" value="fine" constraint="on dorsal valve" constraintid="o196" />
+    </structure>
+    <structure id="o196" name="valve" constraint="dorsal" />
+    <structure id="o197" name="base" constraint="spine" >
+      <character name="shape" value="elongate" modifier="occasional"/>
+    </structure>
+    <relation id="r44" from="o197" name="distal to" negation="false" to="o195" />
+    <text>spines rare , fine on dorsal valve , occasional elongate spine bases distal to spines ;</text>
+  </statement>
+</description>
+

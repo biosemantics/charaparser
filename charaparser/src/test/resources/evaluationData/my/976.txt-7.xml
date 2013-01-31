@@ -1,0 +1,19 @@
+            <statement>
+                <structure id="o0" name="phyllary">
+                    <character name="duration" value="persistent"/>
+                    <character char_type="range_value" constraint="in series" constraint_id="o1" from="35" name="count" to="60" upper_restricted="false"/>
+                    <character name="fusion" value="distinct"/>
+                    <character name="shape" value="ovate"/>
+                    <character name="size" value="unequal"/>
+                </structure>
+                <structure id="o1" name="series">
+                    <character char_type="range_value" from="3" name="count" to="4" upper_restricted="false"/>
+                    <character name="shape" value="lance-ovate"/>
+                    <character name="shape" value="oblanceolate"/>
+                    <character char_type="range_value" from="lance-ovate" name="shape" to="oblanceolate"/>
+                </structure>
+                <structure id="o2" name="margin">
+                    <character name="texture" value="scarious"/>
+                </structure>
+                <text>phyllaries persistent , 35 – 60 + in 3 – 4 + series , distinct , ovate or lance_ovate to oblanceolate , unequal , margins and apices scarious .</text>
+            </statement>

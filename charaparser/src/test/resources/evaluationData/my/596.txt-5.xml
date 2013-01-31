@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="head">
+                    <character char_type="range_value" from="2" name="count" to="6"/>
+                    <character modifier="borne" name="arrangement" value="singly"/>
+                </structure>
+                <text>heads 2 – 6 , borne singly .</text>
+            </statement>

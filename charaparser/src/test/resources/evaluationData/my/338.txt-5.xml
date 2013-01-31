@@ -1,0 +1,8 @@
+            <statement>
+                <structure constraint="basal" id="o0" name="blade">
+                    <character name="shape" value="oblanceolate"/>
+                    <character name="shape" value="lyrate-pinnately"/>
+                    <character name="shape" value="lobed"/>
+                </structure>
+                <text>basal blades oblanceolate , lyrate_pinnately lobed ;</text>
+            </statement>

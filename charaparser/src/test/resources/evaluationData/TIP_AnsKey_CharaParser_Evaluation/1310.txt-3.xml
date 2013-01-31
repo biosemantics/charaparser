@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1310.txt-3">
+    <structure id="o303" name="ribbing">
+      <character name="texture" value="fine" constraint="for family" constraintid="o304" />
+    </structure>
+    <structure id="o304" name="family" />
+    <structure id="o305" name="ruga">
+      <character name="texture" value="fine" />
+    </structure>
+    <structure id="o306" name="valve" />
+    <relation id="r67" from="o305" name="covering" modifier="possibly" negation="false" to="o306" />
+    <text>ribbing fine for family , rugae fine and possibly covering valves ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="style" id="o0" name="branch">
+                    <character name="count" value="none"/>
+                </structure>
+                <text>style branches none .</text>
+            </statement>

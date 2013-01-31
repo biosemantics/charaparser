@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s6">
+    <structure id="o7" name="interior" constraint="dorsal" />
+    <structure id="o8" name="septum" constraint="median" />
+    <relation id="r2" from="o7" name="without" negation="false" to="o8" />
+    <text>dorsal interior without median septum ;</text>
+  </statement>
+</description>
+

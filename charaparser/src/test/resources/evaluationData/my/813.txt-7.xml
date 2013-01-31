@@ -1,0 +1,13 @@
+            <statement>
+                <structure id="o0" name="phyllary">
+                    <character name="coloration" value="rose-pink"/>
+                    <character name="coloration" value="purplish"/>
+                    <character char_type="range_value" from="rose-pink" name="coloration" to="purplish"/>
+                    <character modifier="moderately" name="pubescence" value="appressed-villous"/>
+                    <character name="pubescence" value="puberulous"/>
+                    <character char_type="range_value" from="appressed-villous" name="pubescence" to="puberulous"/>
+                    <character name="pubescence" value="arachnose"/>
+                    <character modifier="usually" name="pubescence" value="viscid-hairy"/>
+                </structure>
+                <text>phyllaries rose_pink to purplish , moderately appressed_villous to puberulous or arachnose , usually viscid_hairy as well .</text>
+            </statement>

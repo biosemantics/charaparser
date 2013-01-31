@@ -1,0 +1,6 @@
+            <statement>
+                <structure id="o1" name="cypsela">
+                    <character char_type="range_value" from="1.8" from_unit="mm" name="size" to="2.2" to_unit="mm"/>
+                </structure>
+                <text>cypselae 1 . 8 – 2 . 2 mm ;</text>
+            </statement>

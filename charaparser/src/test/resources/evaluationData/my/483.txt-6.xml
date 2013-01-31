@@ -1,0 +1,10 @@
+            <statement>
+                <relation from="o0" id="r0" name="consist_of" negation="false" to="o1"/>
+                <structure id="o0" name="array"/>
+                <structure id="o1" name="head">
+                    <character modifier="relatively" name="architecture" value="crowded"/>
+                    <character name="architecture" value="open"/>
+                    <character char_type="range_value" from="crowded" name="architecture" to="open"/>
+                </structure>
+                <text>arrays of heads relatively crowded to open .</text>
+            </statement>

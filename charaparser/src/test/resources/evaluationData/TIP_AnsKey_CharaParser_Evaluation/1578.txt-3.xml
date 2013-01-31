@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s4">
+    <structure id="o8" name="system" constraint="ventral mantle canal">
+      <character name="architecture" value="saccate" modifier="possibly" />
+    </structure>
+    <structure id="o9" name="media" constraint="vascula">
+      <character name="shape" value="subparallel" />
+    </structure>
+    <relation id="r3" from="o8" name="with" negation="false" to="o9" />
+    <structure id="o10" name="system" constraint="dorsal">
+      <character name="architecture" value="saccate" modifier="possibly" />
+    </structure>
+    <structure id="o11" name="media" constraint="vascula">
+      <character name="arrangement" value="divergent" />
+    </structure>
+    <relation id="r4" from="o10" name="with" negation="false" to="o11" />
+    <text>ventral mantle canal system possibly saccate with subparallel vascula media , 
+      dorsal system also possibly saccate but with divergent vascula media ;</text>
+  </statement>
+</description>
+

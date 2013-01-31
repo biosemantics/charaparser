@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s12">
+        <structure id="o15" name="floret" constraint="pistillate">
+            <character name="count" char_type="range_value" from="3" to="8"/>
+        </structure>
+        <text>pistillate 3 – 8 ;</text>
+    </statement>
+</description>

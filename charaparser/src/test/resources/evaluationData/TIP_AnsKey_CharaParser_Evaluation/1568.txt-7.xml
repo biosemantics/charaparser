@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s19">
+    <structure id="o43" name="interior" constraint="ventral" />
+    <structure id="o44" name="tooth" constraint="hinge">
+      <character name="size" value="small" />
+      <character name="shape" value="rounded" />
+    </structure>
+    <relation id="r21" from="o43" name="with" negation="false" to="o44" />
+    <structure id="o45" name="myophragm">
+      <character name="size" value="short" />
+    </structure>
+    <text>ventral interior with small rounded hinge teeth , short myophragm ;</text>
+  </statement>
+</description>
+

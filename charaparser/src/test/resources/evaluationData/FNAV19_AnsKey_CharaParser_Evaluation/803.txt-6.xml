@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s14">
+        <structure id="o23" name="lamina">
+            <character name="size" value="0.5" unit="mm"/>
+            <character name="count" value="none"/>
+        </structure>
+        <text>laminae ca . 0 . 5 mm or none .</text>
+    </statement>
+</description>

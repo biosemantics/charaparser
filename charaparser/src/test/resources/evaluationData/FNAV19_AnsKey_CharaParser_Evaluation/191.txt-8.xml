@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="receptacle">
+            <character name="shape" value="flat"/>
+            <character name="architecture" value="epaleate"/>
+            <character name="pubescence" value="long-bristly"/>
+        </structure>
+        <text>receptacles flat , epaleate , long_bristly .</text>
+    </statement>
+</description>

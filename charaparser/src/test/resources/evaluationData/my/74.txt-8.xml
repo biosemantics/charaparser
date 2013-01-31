@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o3" name="distal">
+                    <character name="insertion_or_position" value="cauline"/>
+                    <character modifier="well" name="development" value="developed"/>
+                </structure>
+                <text>distal cauline well developed .</text>
+            </statement>

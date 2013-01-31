@@ -1,0 +1,9 @@
+            <statement>
+                <structure constraint="disc" id="o0" name="floret">
+                    <character char_type="range_value" from="20" name="atypical_count" to="100" to_inclusive="false"/>
+                    <character char_type="range_value" from="100" name="count" to="250" upper_restricted="false"/>
+                    <character name="reproduction" value="bisexual"/>
+                    <character name="reproduction" value="fertile"/>
+                </structure>
+                <text>disc florets [ 20 – ] 100 – 250 + , bisexual , fertile ;</text>
+            </statement>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s15">
+        <structure id="o19" name="stem">
+            <character name="coloration" value="gray-green"/>
+            <character name="coloration" value="brown"/>
+            <character name="pubescence" value="glabrescent"/>
+        </structure>
+        <text>stems gray_green or brown , glabrescent .</text>
+    </statement>
+</description>

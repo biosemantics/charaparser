@@ -1,0 +1,13 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character char_type="range_value" from="1" name="count" to="50" upper_restricted="false"/>
+                    <character modifier="usually" name="orientation" value="erect"/>
+                    <character modifier="rarely" name="habit" value="decumbent"/>
+                    <character name="shape" value="scapiform"/>
+                    <character name="shape" value="branched"/>
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="sparingly" name="pubescence" value="villous"/>
+                    <character name="pubescence" value="glandular-villous"/>
+                </structure>
+                <text>stems 1 – 50 + , usually erect , rarely decumbent , scapiform or branched distally , glabrous or sparingly villous , glandular_villous .</text>
+            </statement>

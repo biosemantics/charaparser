@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="450.txt-4">
+        <structure id="o63" name="involucre">
+            <character name="shape" value="conic" constraint="in bud" constraintid="o64"/>
+        </structure>
+        <structure id="o64" name="bud"></structure>
+        <text>involucres conic in bud .</text>
+    </statement>
+</description>

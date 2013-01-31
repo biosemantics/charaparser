@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o0" name="cypsela">
+                    <character name="shape" value="oblong"/>
+                </structure>
+                <structure id="o1" name="face">
+                    <character modifier="more or less" name="pubescence_or_relief" value="scabrous"/>
+                </structure>
+                <text>cypselae oblong , faces ± scabrous ;</text>
+            </statement>

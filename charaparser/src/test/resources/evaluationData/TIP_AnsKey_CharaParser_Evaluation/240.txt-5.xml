@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="ridge" constraint="cardinal">
+            <character name="texture" value="weak"/>
+            <character name="presence" value="absent"/>
+        </structure>
+        <structure id="o2" name="ridge" constraint="marginal">
+            <character name="fragility" modifier="laterally" value="strong"/>
+            <character name="architecture" modifier="anteriorly" value="continued"/>
+        </structure>
+        <text>cardinal ridges weak or absent , marginal ridges strong laterally , continued anteriorly ;</text>
+    </statement>
+</description>

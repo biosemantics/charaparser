@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="669.txt-5">
+        <structure id="o337" name="head">
+            <character name="count" char_type="range_value" from="4" to="6" constraint="in arrays" constraintid="o338"/>
+        </structure>
+        <structure id="o338" name="array">
+            <character name="architecture" value="corymbiform"/>
+        </structure>
+      
+        <text>heads 4  6 in corymbiform arrays .</text>
+    </statement>
+</description>

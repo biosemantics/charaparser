@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1070.txt-2">
+    <structure id="o201" name="denticle" />
+    <structure id="o202" name="line" constraint="hinge" />
+    <relation id="r45" from="o201" name="along" negation="false" to="o202" modifier="less than half"/>
+    <text>denticles along less than half hinge line ;</text>
+  </statement>
+</description>
+

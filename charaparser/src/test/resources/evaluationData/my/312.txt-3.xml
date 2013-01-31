@@ -1,0 +1,19 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character name="shape" value="obovate"/>
+                    <character char_type="range_value" from="2.5" modifier="cm" name="size" to="8"/>
+                    <character name="size" value="wide"/>
+                </structure>
+                <structure id="o1" name="margin">
+                    <character modifier="remotely" name="shape" value="toothed"/>
+                    <character modifier="pinnately" name="shape" value="lobed"/>
+                    <character name="shape" value="toothed"/>
+                    <character modifier="pinnately" name="shape" value="lobed"/>
+                    <character name="shape" value="entire"/>
+                </structure>
+                <structure id="o2" name="face">
+                    <character name="pubescence" value="glabrous"/>
+                    <character name="pubescence" value="glandular-hispid"/>
+                </structure>
+                <text>blades obovate , 2 . 5 – 8 cm wide , margins remotely toothed , pinnately lobed , or entire , faces glabrous or glandular_hispid .</text>
+            </statement>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s17">
+        <structure id="o21" name="whole_organism">
+            <character name="life_style" value="annual"/>
+            <character name="size" char_type="range_value" from="30" from_unit="cm" to="200" to_unit="cm"/>
+            <character name="atypical_size" char_type="range_value" from="200" from_unit="cm" to="300" to_unit="cm" from_inclusive="false"/>
+            <character name="odor" value="aromatic" modifier="sweetly"/>
+        </structure>
+        <text>annuals , 30 – 200 ( – 300 ) cm , sweetly aromatic .</text>
+    </statement>
+</description>

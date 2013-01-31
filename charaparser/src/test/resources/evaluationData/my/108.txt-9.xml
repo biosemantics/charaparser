@@ -1,0 +1,12 @@
+            <statement>
+                <structure constraint="distal" id="o0" name="leaf">
+                    <character modifier="becoming" name="shape" value="bractlike"/>
+                    <character modifier="often" name="shape" value="unlobed"/>
+                    <character constraint="than proximal leaf" constraint_id="o1" modifier="less deeply" name="shape" value="divided"/>
+                    <character name="shape" value="unlobed"/>
+                    <character constraint="than proximal leaf" constraint_id="o2" modifier="less deeply" name="shape" value="divided"/>
+                </structure>
+                <structure constraint="proximal" id="o1" name="leaf"/>
+                <structure constraint="proximal" id="o2" name="leaf"/>
+                <text>distal becoming bractlike , often unlobed or less deeply divided than proximal .</text>
+            </statement>

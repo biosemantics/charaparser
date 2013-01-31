@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="leaf">
+                    <character/>
+                    <character name="coloration" value="whitish"/>
+                </structure>
+                <structure constraint="mostly basal" id="o1" name="leaf"/>
+                <text>leaves mostly basal , whitish ;</text>
+            </statement>

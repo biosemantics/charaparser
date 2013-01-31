@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="470.txt-0">
+        <structure id="o85" name="whole_organism">
+            <character name="life_style" value="annual"/>
+            <character name="size" char_type="range_value" from="4" from_unit="cm" to="45" to_unit="cm"/>
+        </structure>
+        <text>annuals , 4  45 cm .</text>
+    </statement>
+</description>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s17">
+        <structure id="o22" name="floret" constraint="ray">
+            <character name="count" char_type="range_value" from="13" to="21" upper_restricted="false"/>
+            <character name="architecture" value="pistillate"/>
+            <character name="reproduction" value="fertile"/>
+        </structure>
+        <text>ray florets 13 – 21 + , pistillate , fertile ;</text>
+    </statement>
+</description>

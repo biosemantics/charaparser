@@ -1,0 +1,12 @@
+            <statement>
+                <structure id="o0" name="petiole">
+                    <character name="count" value="0"/>
+                    <character name="count" value="10-25 mm"/>
+                    <character char_type="range_value" from="10" from_unit="mm" name="size" to="25" to_unit="mm"/>
+                </structure>
+                <structure id="o1" name="blade">
+                    <character char_type="range_value" from="4" from_unit="mm" name="length" to="23" to_unit="mm"/>
+                    <character char_type="range_value" from="1" from_unit="mm" name="width" to="8" to_unit="mm"/>
+                </structure>
+                <text>petioles 0 or 10 – 25 mm , blades 4 – 23 × 1 – 8 mm .</text>
+            </statement>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="502.txt-7">
+        <structure id="o139" name="phyllary" constraint="outer">
+            <character name="orientation" value="erect" modifier="usually"/>
+            <character name="orientation" value="spreading" modifier="sometimes;apically"/>
+            <character name="pubescence" value="glabrous" modifier="adaxially"/>
+        </structure>
+        <text>outer usually erect , sometimes spreading apically , adaxially glabrous ;</text>
+    </statement>
+</description>

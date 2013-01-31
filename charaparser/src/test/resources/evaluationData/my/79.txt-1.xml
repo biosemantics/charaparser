@@ -1,0 +1,6 @@
+            <statement>
+                <structure id="o0" name="taproot">
+                    <character name="size" value="long"/>
+                </structure>
+                <text>taproots long .</text>
+            </statement>

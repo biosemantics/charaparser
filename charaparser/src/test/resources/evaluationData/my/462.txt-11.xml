@@ -1,0 +1,10 @@
+            <statement>
+                <structure id="o1" name="receptacle">
+                    <character name="shape" value="flat"/>
+                    <character modifier="weakly" name="shape" value="convex"/>
+                    <character char_type="range_value" from="flat" name="shape" to="convex"/>
+                    <character name="architecture_or_relief" value="smooth"/>
+                    <character name="architecture" value="paleate"/>
+                </structure>
+                <text>receptacles flat to weakly convex , smooth , paleate .</text>
+            </statement>

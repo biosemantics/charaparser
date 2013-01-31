@@ -1,0 +1,25 @@
+            <statement>
+                <relation from="o2" id="r0" name="within" negation="false" to="o3"/>
+                <structure id="o2" name="cypsela">
+                    <character modifier="usually" name="habit" value="polymorphic"/>
+                    <character modifier="moreorless" name="shape" value="columnar"/>
+                    <character name="shape" value="prismatic"/>
+                    <character char_type="range_value" from="columnar" name="shape" to="prismatic"/>
+                    <character modifier="sometimes" name="shape" value="obcompressed"/>
+                    <character name="shape" value="compressed"/>
+                    <character modifier="sometimes more or less" name="shape" value="beaked"/>
+                </structure>
+                <structure id="o3" name="head">
+                    <character modifier="sometimes" name="shape" value="obcompressed"/>
+                    <character modifier="moreorless" name="shape" value="columnar"/>
+                    <character name="shape" value="prismatic"/>
+                    <character char_type="range_value" from="columnar" name="shape" to="prismatic"/>
+                    <character name="shape" value="flattened"/>
+                </structure>
+                <structure id="o4" name="body">
+                    <character modifier="usually" name="relief" value="tuberculate"/>
+                    <character name="shape" value="ridged"/>
+                    <character name="architecture" value="winged"/>
+                </structure>
+                <text>cypselae usually polymorphic within heads , ± columnar to prismatic , sometimes obcompressed , compressed , or flattened , sometimes ± beaked , bodies usually tuberculate , ridged , and / or winged ;</text>
+            </statement>

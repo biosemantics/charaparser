@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character name="coloration" value="gray-green"/>
+                    <character name="coloration" value="brown"/>
+                    <character name="pubescence" value="glabrescent"/>
+                </structure>
+                <text>stems gray_green or brown , glabrescent .</text>
+            </statement>

@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="at flowering" id="o0" name="leaf">
+                    <character name="coloration" value="green"/>
+                </structure>
+                <text>leaves green at flowering ;</text>
+            </statement>

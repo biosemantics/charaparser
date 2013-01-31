@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="coloration" value="yellow" modifier="brownish"/>
+            <character name="shape" value="fusiform"/>
+                <character name="size" char_type="range_value" from="1.5" to="2.5" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <structure id="o2" name="apex">
+            <character name="size" value="narrowed"/>
+        </structure>
+        <structure id="o3" name="rib">
+            <character name="count" value="10"/>
+        </structure>
+        <text>cypselae brownish yellow , fusiform , 1 . 5 – 2 . 5 mm , apices narrowed , ribs 10 ;</text>
+    </statement>
+</description>

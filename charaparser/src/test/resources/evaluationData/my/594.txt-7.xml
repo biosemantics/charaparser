@@ -1,0 +1,12 @@
+            <statement>
+                <structure id="o0" name="involucre">
+                    <character name="shape" value="cylindric"/>
+                    <character char_type="range_value" from="15" from_unit="mm" name="length" to="25" to_unit="mm"/>
+                    <character char_type="range_value" from="6" from_unit="mm" name="width" to="8" to_unit="mm"/>
+                </structure>
+                <structure id="o1" name="apex">
+                    <character name="size" value="narrowed"/>
+                    <character name="orientation" value="spreading"/>
+                </structure>
+                <text>involucres cylindric , 15 – 25 × 6 – 8 mm , apices narrowed or spreading .</text>
+            </statement>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="57.txt-7">
+        <structure id="o225" name="leaf" constraint="principal cauline">
+            <character name="arrangement" value="distributed" modifier="well"/>
+            <character name="size" value="reduced" modifier="gradually"/>
+ 
+        </structure>
+        <structure id="o226" name="base">
+            <character name="size" value="narrowed"/>
+            <character name="architecture" value="clasping" modifier="sometimes weakly"/>
+        </structure>
+        <text>principal cauline well distributed , gradually reduced , bases narrowed , sometimes weakly clasping ;</text>
+    </statement>
+</description>

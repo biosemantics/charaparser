@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="spine" constraint="phyllary apical">
+            <character name="size" char_type="range_value" from="1" to="2" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <text>apical spines 1 – 2 mm ;</text>
+    </statement>
+</description>

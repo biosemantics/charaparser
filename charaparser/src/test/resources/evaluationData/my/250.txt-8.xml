@@ -1,0 +1,17 @@
+            <statement>
+                <structure id="o0" name="corolla">
+                    <character modifier="usually" name="coloration" value="purplish"/>
+                    <character name="coloration" value="pink"/>
+                </structure>
+                <structure id="o1" name="tube"/>
+                <structure id="o2" name="throat">
+                    <character name="shape" value="funnelform"/>
+                </structure>
+                <structure constraint="than funnelform throats" id="o3" name="tube"/>
+                <structure id="o4" name="lobe">
+                    <character name="count" value="5"/>
+                    <character name="arrangement_or_shape" value="lance-linear"/>
+                    <character modifier="more or less" name="size" value="equal"/>
+                </structure>
+                <text>corollas usually purplish or pink , tubes longer than funnelform throats , lobes 5 , lance_linear , ± equal .</text>
+            </statement>

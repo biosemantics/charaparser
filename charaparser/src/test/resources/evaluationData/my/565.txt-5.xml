@@ -1,0 +1,8 @@
+            <statement>
+                <relation from="o1" id="r0" name="on" negation="false" to="o2"/>
+                <structure id="o1" name="head">
+                    <character modifier="borne" name="arrangement" value="singly"/>
+                </structure>
+                <structure constraint="branch" id="o2" name="tip"/>
+                <text>heads borne singly on branch tips .</text>
+            </statement>

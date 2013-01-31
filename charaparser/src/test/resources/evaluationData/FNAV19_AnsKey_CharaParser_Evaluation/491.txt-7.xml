@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="491.txt-7">
+        <structure id="o118" name="phyllary">
+            <character name="count" char_type="range_value" from="12" to="20" upper_restricted="false" constraint="in series" constraintid="o119"/>
+            <character name="shape" value="lance-oblong"/>
+            <character name="shape" value="lance-linear"/>
+            <character name="shape" char_type="range_value" from="lance-oblong" to="lance-linear"/>
+        </structure>
+        <structure id="o119" name="series">
+            <character name="count" char_type="range_value" from="2" to="3"/>
+        </structure>
+        <structure id="o120" name="margin" >
+            <character name="coloration" value="hyaline"/>
+            <character name="size" char_type="range_value" from="0.05" from_unit="mm" to="0.3" to_unit="mm"/>
+        </structure>
+        <structure id="o121" name="face">
+            <character name="pubescence" value="glabrous"/>
+            <character name="pubescence" value="stipitate-glandular"/>
+        </structure>
+        <text>phyllaries 12  20 + in 2  3 series , lance_oblong to lance_linear , hyaline margins 0 . 05  0 . 3 mm wide , 
+            faces glabrous or stipitate_glandular .</text>
+    </statement>
+</description>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="483.txt-6">
+        <structure id="o107" name="array">
+            <character name="architecture" value="crowded" modifier="relatively"/>
+            <character name="architecture" value="open"/>
+            <character name="architecture" char_type="range_value" from="crowded" to="open"/>
+        </structure>
+        <structure id="o108" name="head"></structure>
+        <relation id="r1" from="o107" name="consist_of" negation="false" to="o108"/>
+        <text>arrays of heads relatively crowded to open .</text>
+    </statement>
+</description>

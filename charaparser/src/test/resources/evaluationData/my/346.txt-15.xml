@@ -1,0 +1,20 @@
+            <statement>
+                <relation from="o0" id="r0" name="consist_of" negation="false" to="o1"/>
+                <relation from="o1" id="r0" name="in" negation="false" to="o2"/>
+                <structure id="o0" name="pappus">
+                    <character name="duration" value="persistent"/>
+                    <character name="architecture" value="barbellulate"/>
+                    <character modifier="nearly" name="architecture" value="smooth"/>
+                    <character char_type="range_value" from="barbellulate" name="architecture" to="smooth"/>
+                </structure>
+                <structure id="o1" name="bristle">
+                    <character char_type="range_value" from="80" name="count" to="120" upper_restricted="false"/>
+                    <character name="coloration" value="whitish"/>
+                    <character name="size" value="more"/>
+                    <character name="size" value="less equal"/>
+                </structure>
+                <structure id="o2" name="series">
+                    <character char_type="range_value" from="2" name="count" to="3" upper_restricted="false"/>
+                </structure>
+                <text>pappi persistent , of 80 – 120 + , whitish , ± equal , barbellulate to nearly smooth bristles in 2 – 3 + series .</text>
+            </statement>

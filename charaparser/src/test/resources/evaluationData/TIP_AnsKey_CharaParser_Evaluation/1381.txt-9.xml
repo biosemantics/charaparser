@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s10">
+    <structure id="o17" name="anderidium">
+      <character name="size" value="short" />
+      <character name="thickness" value="thin" />
+      <character name="fusion" value="isolated" constraint="on valve floor" constraintid="o18"/>
+      <character name="arrangement" value="divergent" modifier="anteriorly; at 50°" />
+    </structure>
+    <structure id="o18" name="floor" constraint="valve">
+    </structure>
+    <text>anderidia short , thin , isolated on valve floor , anteriorly divergent at 50 ° ;</text>
+  </statement>
+</description>
+

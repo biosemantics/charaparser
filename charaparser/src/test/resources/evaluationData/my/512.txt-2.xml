@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="leaf">
+                    <character modifier="mostly" name="orientation" value="erect"/>
+                    <character modifier="sometimes" name="orientation" value="prostrate"/>
+                </structure>
+                <text>leaves mostly erect , sometimes prostrate ;</text>
+            </statement>

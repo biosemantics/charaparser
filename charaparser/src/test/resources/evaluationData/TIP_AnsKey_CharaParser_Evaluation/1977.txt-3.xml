@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s12">
+    <structure id="o28" name="foramen">
+      <character name="position" value="enclosed" modifier="not" constraint="within larval shell" constraintid="o29"/>
+    </structure>
+    <structure id="o29" name="shell" constraint="larval" />
+    <text>foramen not enclosed within larval shell ;</text>
+  </statement>
+</description>
+

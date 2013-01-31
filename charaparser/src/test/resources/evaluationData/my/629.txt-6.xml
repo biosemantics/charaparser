@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o0" name="head">
+                    <character char_type="range_value" constraint="in arrays" constraint_id="o1" from="10" name="count" to="75"/>
+                </structure>
+                <structure id="o1" name="array">
+                    <character name="architecture" value="pani-culiform"/>
+                </structure>
+                <text>heads 10 – 75 in pani_culiform arrays .</text>
+            </statement>

@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="cypsela">
+                    <character name="shape" value="ridged"/>
+                    <character modifier="densely" name="texture" value="papillate-roughened"/>
+                </structure>
+                <text>cypselae ridged , densely papillate_roughened .</text>
+            </statement>

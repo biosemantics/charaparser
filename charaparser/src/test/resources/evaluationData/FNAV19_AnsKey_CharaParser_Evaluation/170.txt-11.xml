@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="filament" constraint="stamen">
+            <character name="fusion" value="connate"/>
+        </structure>
+        <structure id="o2" name="base" constraint="anther">
+            <character name="shape" value="short-tailed" modifier="sharply"/>
+        </structure>
+        <structure id="o3" name="appendage" constraint="anther">
+            <character name="shape" value="oblong"/>
+        </structure>
+        <text>stamen filaments connate , anther bases sharply short_tailed , anther appendages oblong ;</text>
+    </statement>
+</description>

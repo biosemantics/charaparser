@@ -1,0 +1,17 @@
+            <statement>
+                <structure id="o1" name="corolla">
+                    <character modifier="usually" name="coloration" value="yellow"/>
+                    <character modifier="sometimes" name="coloration" value="reddish"/>
+                </structure>
+                <structure id="o2" name="tube">
+                    <character modifier="more or less" name="shape" value="cylindric"/>
+                </structure>
+                <structure id="o3" name="throat">
+                    <character name="shape" value="campanulate"/>
+                </structure>
+                <structure id="o4" name="lobe">
+                    <character name="count" value="5"/>
+                    <character name="shape" value="deltate"/>
+                </structure>
+                <text>corollas usually yellow , sometimes reddish , tubes ± cylindric , throats campanulate , lobes 5 , deltate .</text>
+            </statement>

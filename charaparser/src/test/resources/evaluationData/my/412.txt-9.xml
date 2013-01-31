@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o5" name="involucre">
+                    <character name="shape" value="campanulate"/>
+                    <character char_type="range_value" from="10" from_unit="mm" name="size" to="12" to_unit="mm"/>
+                </structure>
+                <text>involucres campanulate , 10 – 12 mm .</text>
+            </statement>

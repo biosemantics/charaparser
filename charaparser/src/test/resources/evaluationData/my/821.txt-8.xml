@@ -1,0 +1,8 @@
+            <statement>
+                <structure constraint="ray" id="o0" name="floret">
+                    <character char_type="range_value" from="8" name="count" to="21" upper_restricted="false"/>
+                    <character name="count" value="0"/>
+                    <character name="count" value="0"/>
+                </structure>
+                <text>ray florets 8 – 21 + or 0 .</text>
+            </statement>

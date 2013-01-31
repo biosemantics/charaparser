@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="61.txt-12">
+        <structure id="o267" name="phyllary">
+            <character value="imbricate" name="aestivation_or_arrangement" />
+            <character name="shape" value="ovate" />
+            <character name="shape" value="lanceolate" />
+            <character name="shape" value="linear-lanceolate" />
+            <character name="shape" char_type="range_value" from="lanceolate" to="linear-lanceolate" />
+        </structure>
+        <structure id="o268" name="face" constraint="abaxial">
+        </structure>
+        <structure id="o269" name="ridge">
+            <character name="prominence" value="prominent"/>
+            <character name="coating_or_texture" value="glutinous"/>
+        </structure>
+        <relation id="r1" from="o268" name="with" negation="false" to="o269"/>
+        <structure id="o270" name="phyllary" constraint="outer">
+            <character name="orientation" value="appressed" constraint="tightly" />
+        </structure>
+        <structure id="o271" name="phyllary" constraint="middle">
+            <character name="orientation" value="appressed" constraint="tightly" />
+        </structure>
+        <structure id="o272" name="margin">
+            <character name="shape" value="spinulose-serrulate" />
+        </structure>
+        <structure id="o273" name="spine">
+            <character name="orientation" value="ascending" />
+            <character name="size" char_type="range_value" from="0.5" from_unit="mm" to="2" to_unit="mm" />
+        </structure>
+        <structure id="o274" name="series">
+            <character name="count" char_type="range_value" from="6" to="10" />
+        </structure>
+        <relation id="r28" from="o267" name="in" negation="false" to="o274" />
+        <text>phyllaries in 6  10 series , imbricate , ovate or lanceolate to linear_lanceolate ,
+            abaxial faces with prominent glutinous ridge , outer and middle tightly appressed ,
+            margins spinulose_serrulate , spines ascending , 0 . 5  2 mm ;</text>
+    </statement>
+</description>

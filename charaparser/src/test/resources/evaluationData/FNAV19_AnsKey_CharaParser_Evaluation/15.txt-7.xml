@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/C:/RA/annotations/xsd_file/2-20-2010meeting.xsd">
+    <statement id="s1">
+        <structure id="o1" name="receptacle">
+            <character name="shape" value="flat"/>
+            <character name="relief" value="smooth"/>
+            <character name="relief" value="alveolate"/>
+            <character name="pubescence" value="glabrous" modifier="usually"/>
+            <character name="pubescence" value="glandular-hairy" modifier="rarely"/> 
+            <character name="architecture" value="epaleate" ></character>
+        </structure>
+        <text>receptacles flat , smooth or alveolate , usually glabrous , rarely glandular_hairy , epaleate .</text>
+    </statement>
+</description>

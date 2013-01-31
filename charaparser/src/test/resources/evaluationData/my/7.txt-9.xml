@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="corolla">
+                    <character name="coloration" value="lavender-pink"/>
+                    <character name="coloration" value="white"/>
+                    <character char_type="range_value" from="10" from_unit="mm" name="size" to="17" to_unit="mm"/>
+                </structure>
+                <text>corollas lavender_pink or white , 10 – 17 mm .</text>
+            </statement>

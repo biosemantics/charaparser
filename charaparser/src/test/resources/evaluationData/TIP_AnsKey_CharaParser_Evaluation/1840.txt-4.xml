@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s3">
+    <structure id="o3" name="scar" constraint="ventral adductor">
+      <character name="position" value="positioned" modifier="anteriorly" />
+    </structure>
+    <text>ventral adductor scars positioned anteriorly ;</text>
+  </statement>
+</description>
+

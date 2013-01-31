@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o1" name="cypsela">
+                    <character name="shape" value="cylindric"/>
+                    <character modifier="minutely" name="pubescence" value="strigose"/>
+                </structure>
+                <text>cypselae cylindric , minutely strigose ;</text>
+            </statement>

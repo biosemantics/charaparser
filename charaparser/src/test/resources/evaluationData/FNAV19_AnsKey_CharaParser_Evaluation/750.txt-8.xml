@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s2">
+        <structure id="o3" name="palea" constraint="longest">
+            <character name="size" char_type="range_value" from="3.4" from_unit="mm" to="4.5" to_unit="mm"/>
+            <character name="architecture" value="winged" modifier="distally"/>
+        </structure>
+        <text>longest 3 . 4 – 4 . 5 mm , winged distally ;</text>
+    </statement>
+</description>

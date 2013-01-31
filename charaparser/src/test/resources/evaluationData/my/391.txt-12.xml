@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o1" name="corolla">
+                    <character name="coloration" value="yellow"/>
+                    <character char_type="range_value" from="6" from_unit="mm" name="size" to="10" to_unit="mm" upper_restricted="false"/>
+                </structure>
+                <text>corollas yellow , 6 – 10 + mm .</text>
+            </statement>

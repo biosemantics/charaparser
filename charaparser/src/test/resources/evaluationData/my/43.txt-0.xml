@@ -1,0 +1,11 @@
+            <statement>
+                <structure id="o0" name="whole_organism">
+                    <character char_type="range_value" from="200" from_inclusive="false" from_unit="cm" name="atypical_size" to="400" to_unit="cm"/>
+                    <character char_type="range_value" from="30" from_unit="cm" name="size" to="200" to_unit="cm"/>
+                    <character name="architecture_or_shape" value="spiny"/>
+                    <character modifier="more or less" name="pubescence" value="tomentose"/>
+                    <character modifier="sometimes" name="pubescence" value="glabrate"/>
+                    <character name="life_style" value="annual"/>
+                </structure>
+                <text>annuals or biennials , 30 – 200 ( – 400 ) cm , spiny , ± tomentose , sometimes glabrate .</text>
+            </statement>

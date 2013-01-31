@@ -1,0 +1,7 @@
+            <statement>
+                <structure constraint="disc" id="o0" name="floret">
+                    <character name="reproduction" value="bisexual"/>
+                    <character name="reproduction" value="fertile"/>
+                </structure>
+                <text>disc florets bisexual , fertile ;</text>
+            </statement>

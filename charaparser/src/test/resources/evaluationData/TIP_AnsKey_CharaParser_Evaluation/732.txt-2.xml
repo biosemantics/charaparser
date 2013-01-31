@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="732.txt-2">
+    <structure id="o36" name="pseudointerarea" constraint="dorsal" />
+    <structure id="o37" name="groove" constraint="median" >
+      <character name="size" value="narrow"/>        
+    </structure>
+    <structure id="o38" name="line" constraint="flexure" />
+    <relation id="r1" from="o36" name="with" negation="false" to="o37"/>
+    <relation id="r2" from="o36" name="with" negation="false" to="o38"/>
+    <text>dorsal pseudointerarea with narrow median groove , and flexure lines ;</text>
+  </statement>
+</description>
+

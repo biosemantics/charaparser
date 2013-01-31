@@ -1,0 +1,11 @@
+            <statement>
+                <structure constraint="cauline" id="o0" name="leaf">
+                    <character modifier="principal" name="size" value="larger"/>
+                    <character modifier="proximally" name="architecture" value="winged-petiolate"/>
+                    <character modifier="distally" name="architecture" value="sessile"/>
+                    <character modifier="well" name="arrangement" value="distributed"/>
+                    <character modifier="gradually" name="size" value="reduced"/>
+                    <character modifier="not" name="shape" value="decurrent"/>
+                </structure>
+                <text>principal larger cauline proximally winged_petiolate , distally sessile , well distributed , gradually reduced , not decurrent ;</text>
+            </statement>

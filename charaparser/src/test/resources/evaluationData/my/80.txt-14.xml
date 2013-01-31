@@ -1,0 +1,13 @@
+            <statement>
+                <relation from="o4" id="r2" name="part_of" negation="false" to="o5"/>
+                <structure id="o4" name="apex">
+                    <character modifier="often" name="course" value="flexuous"/>
+                    <character name="size" value="expanded"/>
+                    <character name="shape" value="flat"/>
+                    <character name="shape" value="scabrid-margined"/>
+                    <character modifier="sometimes" name="relief_or_shape" value="erose"/>
+                    <character name="architecture" value="spineless"/>
+                </structure>
+                <structure constraint="inner" id="o5" name="phyllary"/>
+                <text>apices of inner often flexuous , expanded and flat , scabrid_margined , sometimes erose , spineless .</text>
+            </statement>

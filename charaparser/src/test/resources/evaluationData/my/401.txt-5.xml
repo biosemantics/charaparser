@@ -1,0 +1,11 @@
+            <statement>
+                <structure id="o0" name="head">
+                    <character char_type="range_value" from="12" from_inclusive="false" name="atypical_count" to="25" upper_restricted="false"/>
+                    <character char_type="range_value" constraint="in arrays" constraint_id="o1" from="8" name="count" to="12"/>
+                </structure>
+                <structure id="o1" name="array">
+                    <character name="architecture" value="more"/>
+                    <character name="architecture" value="less paniculiform"/>
+                </structure>
+                <text>heads 8 – 12 ( – 25 + ) in ± paniculiform arrays .</text>
+            </statement>

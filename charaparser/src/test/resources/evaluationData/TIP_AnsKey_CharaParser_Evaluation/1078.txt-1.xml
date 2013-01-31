@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1078.txt-1">
+    <structure id="o1" name="spine" constraint="ventral">
+      <character name="architecture" value="ribbed" modifier="always; weak"/>
+        
+    </structure>
+    <text>always ribbed , but weak ;</text>
+  </statement>
+</description>
+

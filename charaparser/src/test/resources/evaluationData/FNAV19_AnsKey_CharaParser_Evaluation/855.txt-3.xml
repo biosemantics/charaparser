@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s19">
+        <structure id="o27" name="rosette" constraint="basal">
+            <character name="duration" value="persistent" modifier="not"/>
+        </structure>
+        <text>basal rosettes not persistent .</text>
+    </statement>
+</description>

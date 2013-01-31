@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s20">
+    <structure id="o39" name="pseudointerarea" constraint="dorsal">
+      <character name="prominence" value="raised" modifier="not" constraint="above valve floor" constraintid="o40"/>
+    </structure>
+    <structure id="o40" name="floor" constraint="valve" />
+ 
+    <text>dorsal pseudointerarea not raised above valve floor ;</text>
+  </statement>
+</description>
+

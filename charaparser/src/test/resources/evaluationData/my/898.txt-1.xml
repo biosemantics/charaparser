@@ -1,0 +1,13 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character char_type="range_value" from="1" name="count" to="20"/>
+                    <character name="orientation" value="erect"/>
+                    <character name="coloration" value="brown"/>
+                    <character name="coloration" value="gray-green"/>
+                    <character char_type="range_value" from="brown" name="coloration" to="gray-green"/>
+                    <character name="architecture" value="simple"/>
+                    <character name="pubescence" value="hairy"/>
+                    <character name="pubescence" value="glabrescent"/>
+                </structure>
+                <text>stems 1 – 20 , erect , brown to gray_green , simple , hairy or glabrescent .</text>
+            </statement>

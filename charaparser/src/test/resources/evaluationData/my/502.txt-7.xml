@@ -1,0 +1,8 @@
+            <statement>
+                <structure constraint="outer" id="o0" name="phyllary">
+                    <character modifier="usually" name="orientation" value="erect"/>
+                    <character modifier="sometimes" name="orientation" value="spreading"/>
+                    <character modifier="adaxially" name="pubescence" value="glabrous"/>
+                </structure>
+                <text>outer usually erect , sometimes spreading apically , adaxially glabrous ;</text>
+            </statement>

@@ -1,0 +1,14 @@
+            <statement>
+                <structure constraint="proximal" id="o1" name="leaf">
+                    <character name="shape" value="obovate"/>
+                    <character modifier="narrowly" name="shape" value="spatulate"/>
+                    <character char_type="range_value" from="obovate" name="shape" to="spatulate"/>
+                    <character modifier="sometimes pinnately" name="shape" value="lobed"/>
+                    <character modifier="sometimes more or less" name="texture" value="fleshy"/>
+                </structure>
+                <structure id="o2" name="margin">
+                    <character modifier="usually" name="shape" value="obtuse-lobed"/>
+                    <character modifier="sometimes" name="shape" value="entire"/>
+                </structure>
+                <text>proximal obovate to narrowly spatulate , sometimes pinnately lobed , sometimes ± fleshy , margins usually obtuse_lobed , sometimes entire ;</text>
+            </statement>

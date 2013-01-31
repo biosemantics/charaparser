@@ -1,0 +1,7 @@
+            <statement>
+                <structure constraint="cauline" id="o0" name="leaf">
+                    <character name="architecture" value="petiolate"/>
+                    <character name="architecture" value="sessile"/>
+                </structure>
+                <text>cauline leaves petiolate or sessile ;</text>
+            </statement>

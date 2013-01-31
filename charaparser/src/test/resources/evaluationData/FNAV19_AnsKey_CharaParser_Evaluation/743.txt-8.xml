@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="palea" constraint="innermost">
+              <character name="architecture" value="pistillate"/>
+        </structure>
+        <structure id="o2" name="floret">
+            <character name="count" char_type="range_value" from="14" to="25" upper_restricted="false"/>
+     
+        </structure>
+        <relation id="r1" from="o1" name="surrounding" negation="false" to="o2"/>
+        <text>innermost paleae pistillate , surrounding 14 – 25 + florets .</text>
+    </statement>
+    
+</description>

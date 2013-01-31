@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1224.txt-2">
+    <structure id="o271" name="brachiophore">
+      <character name="arrangement" value="divergent" modifier="widely" />
+    </structure>
+    <structure id="o272" name="socket" />
+    <structure id="o273" name="ridge">
+      <character name="shape" value="curving" modifier="laterally"/>
+    </structure>
+    <relation id="r60" from="o272" name="associated with" negation="false" to="o273" />
+    <text>brachiophores widely divergent , sockets associated with laterally curving ridges ;</text>
+  </statement>
+</description>
+

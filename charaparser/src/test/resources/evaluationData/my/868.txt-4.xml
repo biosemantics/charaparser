@@ -1,0 +1,13 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character modifier="narrowly" name="shape" value="elliptic"/>
+                    <character name="shape" value="lanceolate"/>
+                    <character char_type="range_value" from="elliptic" name="shape" to="lanceolate"/>
+                    <character char_type="range_value" from="1.5" from_unit="cm" name="length" to="8" to_unit="cm"/>
+                    <character char_type="range_value" from="0.2" from_unit="cm" name="width" to="1" to_unit="cm"/>
+                    <character modifier="usually" name="shape" value="entire"/>
+                    <character modifier="sometimes irregularly" name="shape" value="lobed"/>
+                    <character modifier="sparsely~to~densely" name="pubescence" value="hairy"/>
+                </structure>
+                <text>blades narrowly elliptic to lanceolate , 1 . 5 – 8 × 0 . 2 – 1 cm , usually entire , sometimes irregularly lobed , sparsely to densely hairy .</text>
+            </statement>

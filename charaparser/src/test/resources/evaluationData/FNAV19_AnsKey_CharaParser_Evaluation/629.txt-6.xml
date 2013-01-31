@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="629.txt-6">
+        <structure id="o290" name="head">
+            <character name="count" char_type="range_value" from="10" to="75" constraint="in arrays" constraintid="o291"/>
+        </structure>
+        <structure id="o291" name="array">
+            <character name="architecture" value="pani-culiform"/>
+        </structure>
+       
+        <text>heads 10  75 in pani_culiform arrays .</text>
+    </statement>
+</description>

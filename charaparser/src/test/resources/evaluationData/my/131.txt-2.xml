@@ -1,0 +1,10 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character modifier="usually" name="count" value="1"/>
+                    <character name="orientation" value="erect"/>
+                    <character name="pubescence" value="puberulent"/>
+                    <character name="pubescence" value="and-or"/>
+                    <character name="pubescence" value="tomentose"/>
+                </structure>
+                <text>stems usually 1 , erect , sub_glabrous to puberulent and / or tomentose ;</text>
+            </statement>

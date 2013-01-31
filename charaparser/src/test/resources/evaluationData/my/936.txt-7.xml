@@ -1,0 +1,11 @@
+            <statement>
+                <structure id="o0" name="involucre">
+                    <character name="shape" value="obconic"/>
+                    <character name="shape" value="hemispheric"/>
+                    <character char_type="range_value" from="obconic" name="shape" to="hemispheric"/>
+                    <character name="size" value="broader"/>
+                    <character char_type="range_value" from="13" from_inclusive="false" from_unit="mm" name="atypical_size" to="20" to_unit="mm"/>
+                    <character char_type="range_value" from="5" from_unit="mm" name="size" to="13" to_unit="mm"/>
+                </structure>
+                <text>involucres obconic to hemispheric or broader , 5 – 13 [ – 20 ] mm diam .</text>
+            </statement>

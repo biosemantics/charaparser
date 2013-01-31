@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="653.txt-6">
+        <structure id="o320" name="involucre" constraint="staminate">
+            
+            <character name="size" char_type="range_value" from="6" from_unit="mm" to="6.5" to_unit="mm"/>
+        </structure>
+        <text>staminate 6  6 . 5 mm ;</text>
+    </statement>
+</description>

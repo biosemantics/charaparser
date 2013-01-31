@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="floret" constraint="bisexual">
+              <character name="count" char_type="range_value" from="2" to="4"/>
+        </structure>
+        <text>bisexual 2 – 4 ;</text>
+    </statement>
+</description>

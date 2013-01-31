@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="shape" value="obovoid" />
+            <character name="shape" value="cylindric" />
+            <character name="shape" value="fusiform" />
+            <character name="shape" char_type="value_range" from="obovoid" to="cylindric" />
+            <character name="shape" value="compressed" modifier="sometimes slightly" />
+        </structure>
+        <structure id="o2" name="face">
+            <character name="pubescence" value="strigillose" />
+            <character value="papillate" name="pubescence_or_relief" />
+        </structure>
+        <text>cypselae obovoid to cylindric or fusiform , sometimes slightly compressed , faces strigillose and papillate ;</text>
+    </statement>
+</description>

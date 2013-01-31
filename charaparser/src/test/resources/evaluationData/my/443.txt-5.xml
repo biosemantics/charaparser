@@ -1,0 +1,16 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character name="shape" value="lanceolate"/>
+                    <character name="shape" value="linear"/>
+                    <character name="shape" value="oblanceolate"/>
+                    <character name="shape" value="oblong"/>
+                    <character name="shape" value="ovate"/>
+                </structure>
+                <structure id="o1" name="margin">
+                    <character name="shape" value="entire"/>
+                    <character name="shape" value="dentate"/>
+                    <character modifier="pinnately" name="shape" value="lobed"/>
+                    <character char_type="range_value" from="dentate" name="shape" to="lobed"/>
+                </structure>
+                <text>blades lanceolate , linear , oblanceolate , oblong , or ovate , margins entire or dentate to pinnately lobed .</text>
+            </statement>

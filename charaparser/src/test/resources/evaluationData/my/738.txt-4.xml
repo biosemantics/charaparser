@@ -1,0 +1,10 @@
+            <statement>
+                <structure constraint="longest" id="o0" name="leaf">
+                    <character/>
+                    <character name="shape" value="obtuse"/>
+                </structure>
+                <structure id="o1" name="leaf">
+                    <character name="arrangement" value="capitular"/>
+                </structure>
+                <text>longest capitular leaves mostly 0 . 8 – 1 . 5 times head heights , obtuse .</text>
+            </statement>

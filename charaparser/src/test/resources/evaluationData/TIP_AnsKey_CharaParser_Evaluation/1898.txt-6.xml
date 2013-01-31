@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s14">
+    <structure id="o26" name="pseudointerarea" constraint="dorsal">
+      <character name="shape" value="flattened" constraint="with median groove" constraintid="o27"/>
+    </structure>
+    <structure id="o27" name="groove" constraint="median">
+      <character name="depth" value="shallow" />
+      <character name="shape" value="triangular" modifier="widely" />
+    </structure>
+    <text>dorsal pseudointerarea flattened with shallow , widely triangular median groove ;</text>
+  </statement>
+</description>
+

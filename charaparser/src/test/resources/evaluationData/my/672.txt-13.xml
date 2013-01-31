@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="cypsela">
+                    <character char_type="range_value" from="1" from_unit="mm" name="size" to="1.3" to_unit="mm"/>
+                    <character modifier="usually" name="pubescence" value="glabrous"/>
+                </structure>
+                <text>cypselae 1 – 1 . 3 mm , usually glabrous ;</text>
+            </statement>

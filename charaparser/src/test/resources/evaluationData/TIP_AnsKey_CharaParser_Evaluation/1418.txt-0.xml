@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s5">
+    <structure id="o11" name="whole_organism">
+      <character name="outline" value="quadrate" />
+    </structure>
+    <text>Quadrate outline ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,20 @@
+            <statement>
+                <relation from="o0" id="r0" modifier="often, nearly" name="to" negation="false" to="o1"/>
+                <relation from="o2" id="r1" name="without" negation="false" to="o3"/>
+                <structure constraint="leaf" id="o0" name="blade">
+                    <character modifier="deeply" name="shape" value="divided"/>
+                </structure>
+                <structure constraint="midveins" id="o1" name="blade"/>
+                <structure constraint="abaxial" id="o2" name="face">
+                    <character name="pubescence" value="arachnoid"/>
+                    <character name="pubescence" value="tomentose"/>
+                    <character modifier="sometimes" name="pubescence" value="glabrate"/>
+                    <character name="pubescence" value="adaxial"/>
+                </structure>
+                <structure id="o3" name="trichome">
+                    <character name="architecture" value="septate"/>
+                    <character modifier="thinly" name="pubescence" value="arachnoid"/>
+                    <character name="pubescence" value="glabrate"/>
+                </structure>
+                <text>leaf blades deeply divided , often nearly to the midveins , abaxial faces arachnoid tomentose or sometimes glabrate , without septate trichomes , adaxial thinly arachnoid or glabrate ;</text>
+            </statement>

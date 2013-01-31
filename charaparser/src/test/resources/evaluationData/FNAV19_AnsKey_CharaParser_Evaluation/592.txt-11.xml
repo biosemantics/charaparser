@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="592.txt-11">
+        <structure id="o246" name="receptacle">
+            <character name="shape" value="flat" />
+            <character name="relief" value="pitted" modifier="sometimes" />
+            <character value="scabrous" modifier="sometimes" name="pubescence_or_relief" />
+            <character name="architecture" value="epaleate" />
+        </structure>
+        <text>receptacles flat , sometimes pitted , sometimes scabrous , epaleate .</text>
+    </statement>
+</description>

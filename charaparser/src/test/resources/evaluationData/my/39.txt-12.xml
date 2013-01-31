@@ -1,0 +1,18 @@
+            <statement>
+                <structure id="o0" name="corolla">
+                    <character name="coloration" value="white"/>
+                    <character name="coloration" value="blue"/>
+                    <character name="coloration" value="purple"/>
+                </structure>
+                <structure id="o1" name="tube">
+                    <character modifier="very" name="size" value="slender"/>
+                </structure>
+                <structure id="o2" name="throat">
+                    <character modifier="abruptly" name="size" value="expanded"/>
+                    <character name="shape" value="cylindric"/>
+                </structure>
+                <structure id="o3" name="lobe">
+                    <character name="arrangement_or_shape" value="linear"/>
+                </structure>
+                <text>corollas white , blue , or purple , tubes very slender , throats abruptly expanded , cylindric , lobes linear ;</text>
+            </statement>

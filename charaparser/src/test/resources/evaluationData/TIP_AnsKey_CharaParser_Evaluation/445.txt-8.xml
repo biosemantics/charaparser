@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="ridge" constraint="inner socket">
+            <character name="size" value="long"/>
+            <character name="size" value="narrow"/>
+        </structure>
+        <structure id="o2" name="line" constraint="hinge"></structure>
+        
+        <relation id="r1" from="o1" name="parallel to" negation="false" to="o2"/>
+        <text>long , narrow inner socket ridges parallel to hinge line ;</text>
+    </statement>
+</description>

@@ -1,0 +1,11 @@
+            <statement>
+                <relation from="o0" id="r0" modifier="often" name="with" negation="false" to="o1"/>
+                <relation from="o1" id="r1" name="near" negation="false" to="o2"/>
+                <structure id="o0" name="stem"/>
+                <structure id="o1" name="bract">
+                    <character char_type="range_value" from="1" name="count" to="2"/>
+                    <character name="architecture" value="leafy"/>
+                </structure>
+                <structure id="o2" name="base"/>
+                <text>stems often with 1 – 2 , leafy bracts near bases .</text>
+            </statement>

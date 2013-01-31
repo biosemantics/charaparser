@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="951.txt-3">
+    <structure id="o118" name="field" constraint="ventral muscle">
+      <character name="size" value="small" modifier="relatively" />
+      <character name="relief" value="well-impressed" />
+      <character name="shape" value="bilobed" />
+    </structure>
+    <structure id="o119" name="plate" constraint="dental">
+      <character name="size" value="short" />
+    </structure>
+    <relation id="r24" from="o118" name="between" negation="false" to="o119" />
+    <text>relatively small , but well - impressed bilobed ventral muscle field between short dental plates ;</text>
+  </statement>
+</description>
+

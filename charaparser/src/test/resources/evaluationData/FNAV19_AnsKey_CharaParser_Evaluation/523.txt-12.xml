@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="523.txt-12">
+        <structure id="o177" name="corolla">
+            <character name="coloration" value="yellow-orange"/>
+        </structure>
+        <structure id="o178" name="phyllary"></structure>
+        <relation id="r1" from="o177" name="surpassing" negation="false" to="o178" value="by 5+ mm"/>
+        <text>corollas yellow_orange , surpassing phyllaries by 5 + mm .</text>
+    </statement>
+</description>

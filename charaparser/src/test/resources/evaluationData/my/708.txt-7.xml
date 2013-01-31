@@ -1,0 +1,15 @@
+            <statement>
+                <relation from="o0" id="r0" modifier="usually" name="in" negation="false" to="o1"/>
+                <relation from="o1" id="r1" modifier="sometimes" name="in" negation="false" to="o2"/>
+                <structure id="o0" name="head">
+                    <character name="architecture_or_shape" value="disciform"/>
+                </structure>
+                <structure id="o1" name="cluster">
+                    <character name="architecture_or_shape" value="more"/>
+                    <character name="architecture_or_shape" value="less capitate"/>
+                </structure>
+                <structure id="o2" name="glomerule">
+                    <character name="architecture" value="spiciform"/>
+                </structure>
+                <text>heads disciform , usually in ± capitate clusters , sometimes in spiciform glomerules .</text>
+            </statement>

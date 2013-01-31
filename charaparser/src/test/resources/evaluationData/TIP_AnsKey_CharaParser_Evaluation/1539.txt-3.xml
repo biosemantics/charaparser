@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s11">
+    <structure id="o27" name="interior" constraint="ventral" />
+    <structure id="o28" name="field" constraint="muscle">
+      <character name="shape" value="subcircular" />
+    </structure>
+    <relation id="r14" from="o27" name="with" negation="false" to="o28" />
+    <structure id="o29" name="ridge">
+      <character name="shape" value="curved" />
+    </structure>
+    <relation id="r15" from="o28" name="bounded by" constraint="posteriorly" negation="false" to="o29" />
+    <text>ventral interior with subcircular muscle field posteriorly bounded by curved ridges ;</text>
+  </statement>
+</description>
+

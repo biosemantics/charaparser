@@ -1,0 +1,9 @@
+            <statement>
+                <structure constraint="basal" id="o0" name="blade">
+                    <character name="shape" value="lanceolate"/>
+                    <character char_type="range_value" from="2" name="count" to="6"/>
+                    <character char_type="range_value" from="15" from_inclusive="false" name="atypical_count" to="30"/>
+                    <character char_type="range_value" from="5" name="count" to="15"/>
+                </structure>
+                <text>basal blades lanceolate , 2 – 6 cm × 5 – 15 ( – 30 ) mm ;</text>
+            </statement>

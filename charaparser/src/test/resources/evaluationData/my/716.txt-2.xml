@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character name="orientation" value="erect"/>
+                    <character name="orientation" value="decumbent-ascending"/>
+                    <character char_type="range_value" from="erect" name="orientation" to="decumbent-ascending"/>
+                </structure>
+                <text>stems erect to decumbent_ascending , not pan_nose .</text>
+            </statement>

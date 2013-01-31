@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="leaf">
+            <character name="count" char_type="range_value" from="20" upper_restricted="false"/>
+            <character name="orientation" char_type="range_value" from="horizontal" to="erect"/>
+            <character name="orientation" value="horizontal"/>
+            <character name="orientation" value="erect"/>
+        </structure>
+        <text>leaves 20 + , horizontal to erect ;</text>
+    </statement>
+</description>

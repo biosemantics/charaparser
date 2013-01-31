@@ -1,0 +1,8 @@
+            <statement>
+                <relation from="o0" id="r0" modifier="proximally" name="studded with" negation="false" to="o1"/>
+                <structure constraint="to 1 cm thick , fleshy ," id="o0" name="branch"/>
+                <structure constraint="petiole" id="o1" name="base">
+                    <character name="duration" value="persistent"/>
+                </structure>
+                <text>branches to 1 cm thick , fleshy , studded with persistent petiole bases proximally .</text>
+            </statement>

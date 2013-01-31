@@ -1,0 +1,9 @@
+            <statement>
+                <relation from="o0" id="r0" name="in" negation="false" to="o1"/>
+                <structure id="o0" name="head"/>
+                <structure id="o1" name="array">
+                    <character name="architecture" value="racemiform"/>
+                    <character name="architecture" value="paniculiform"/>
+                </structure>
+                <text>heads in racemiform or paniculiform arrays .</text>
+            </statement>

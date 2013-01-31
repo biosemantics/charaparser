@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="coloration" value="whitish"/>
+            <character name="coloration" value="brown" modifier="pale"/>
+            <character name="size" char_type="range_value" from="3" to="3.5" from_unit="mm" to_unit="mm"/>
+            <character name="pubescence" value="hairy" modifier="finely"/>
+        </structure>
+        <text>cypselae whitish or pale brown , 3 – 3 . 5 mm , finely hairy ;</text>
+    </statement>
+</description>

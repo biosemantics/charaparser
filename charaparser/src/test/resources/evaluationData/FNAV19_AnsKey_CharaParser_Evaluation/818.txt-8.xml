@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s6">
+        <structure id="o10" name="floret" constraint="ray">
+            <character name="count" value="0" modifier="usually"/>
+        </structure>
+        <text>ray florets usually 0 .</text>
+    </statement>
+</description>

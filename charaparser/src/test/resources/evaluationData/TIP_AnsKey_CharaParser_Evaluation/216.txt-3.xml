@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="interior" constraint="ventral valve"></structure>
+        <structure id="o2" name="scar" constraint="adductor">
+            <character name="shape" char_type="range_value" from="semicircular" to="semielliptical"/>
+            <character name="shape" value="semicircular"/>
+            <character name="shape" value="semielliptical"/>
+        </structure>
+        <relation id="r1" from="o1" name="with" negation="false" to="o2"/>
+        <text>ventral valve interior with semicircular to semielliptical adductor scars ;</text>
+    </statement>
+</description>

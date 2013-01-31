@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s3">
+    <structure id="o5" name="lateralium" constraint="vascula">
+      <character name="insertion" value="marginal" />
+      <character name="course" value="arcuate"/>
+    </structure>
+    <structure id="o6" name="valve"/>
+    <relation id="r3" from="o5" name="part_of" negation="false" to="o6" />
+    <text>vascula lateralia of both valves marginal , arcuate ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="400.txt-14">
+        <structure id="o8" name="pappus">
+            </structure>
+        <structure id="o9" name="bristle">
+            <character char_type="range_value" name="count" from="50" to="60" upper_restricted="false"/>
+            <character name="coloration" value="white"/>
+            <character name="coloration" value="stramineous"/>
+            <character char_type="range_value" name="size" from="4" from_unit="mm" to="5" to_unit="mm" upper_restricted="false"/>
+        </structure>
+        <structure id="o10" name="series">
+            <character name="count" value="2" upper_restricted="false"/>
+        </structure>
+        <relation id="r1" from="o8" name="consist_of" negation="false" to="o9"/>
+        <relation id="r2" from="o9" name="in" negation="false" to="o10"/>
+        <text>pappi of 50  60 + , white or stramineous bristles in 2 + series , 4  5 + mm .</text>
+    </statement>
+</description>

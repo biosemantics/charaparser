@@ -1,0 +1,14 @@
+            <statement>
+                <structure id="o0" name="phyllary">
+                    <character char_type="range_value" from="18" name="count" to="20"/>
+                    <character modifier="narrowly" name="shape" value="lanceolate"/>
+                    <character char_type="range_value" from="10" from_unit="mm" name="size" to="12" to_unit="mm"/>
+                    <character name="size" value="subequal"/>
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="sparsely" name="pubescence" value="tomentose"/>
+                    <character modifier="coarsely" name="pubescence" value="hirsute"/>
+                    <character name="pubescence" value="tomentose"/>
+                    <character modifier="coarsely" name="pubescence" value="hirsute"/>
+                </structure>
+                <text>phyllaries 18 – 20 , narrowly lanceolate , 10 – 12 mm , subequal , glabrous , sparsely tomentose , or coarsely hirsute .</text>
+            </statement>

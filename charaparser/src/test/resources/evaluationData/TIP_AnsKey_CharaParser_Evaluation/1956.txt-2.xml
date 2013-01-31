@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s7">
+    <structure id="o16" name="cardinalium" />
+    <structure id="o17" name="myophore" >
+      <character name="shape" value="lobate"/>
+    </structure>
+    <relation id="r7" from="o16" name="with" negation="false" to="o17" />
+    <structure id="o18" name="shaft">
+      <character name="architecture" value="continuous" constraint="with median septum" constraintid="o19"/>
+    </structure>
+    <structure id="o19" name="septum" constraint="median" />
+    <structure id="o20" name="platform" constraint="notothyrial">
+      <character name="manifestation" value="rudimentary" />
+    </structure>
+    <relation id="r8" from="o19" name="extending forward from" negation="false" to="o20" />
+    <text>cardinalia with lobate myophore and shaft continuous with median septum 
+      extending forward from rudimentary notothyrial platform ;</text>
+  </statement>
+</description>
+

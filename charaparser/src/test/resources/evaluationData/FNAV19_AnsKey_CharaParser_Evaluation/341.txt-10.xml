@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="size" char_type="range_value" from="1.5" to="2.5" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <structure id="o2" name="base">
+            <character name="architecture" value="hollow"/>
+            <character name="texture" value="calloused" modifier="lightly"/>
+        </structure>
+        <text>cypselae 1 . 5 – 2 . 5 mm , bases hollow , lightly calloused ;</text>
+    </statement>
+</description>

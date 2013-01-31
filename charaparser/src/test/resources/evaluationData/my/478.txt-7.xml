@@ -1,0 +1,21 @@
+            <statement>
+                <structure id="o0" name="phyllary">
+                    <character char_type="range_value" constraint="in series" constraint_id="o1" from="9" name="count" to="13" upper_restricted="false"/>
+                    <character name="shape" value="oblong"/>
+                    <character name="shape" value="lanceolate"/>
+                    <character char_type="range_value" from="oblong" name="shape" to="lanceolate"/>
+                </structure>
+                <structure id="o1" name="series">
+                    <character char_type="range_value" from="2" name="count" to="3"/>
+                    <character name="shape" value="lance-linear"/>
+                </structure>
+                <structure id="o2" name="margin">
+                    <character name="coloration" value="hyaline"/>
+                    <character char_type="range_value" from="0.1" modifier="mm" name="size" to="0.2"/>
+                    <character name="size" value="wide"/>
+                </structure>
+                <structure id="o3" name="face">
+                    <character name="pubescence" value="glabrous"/>
+                </structure>
+                <text>phyllaries 9 – 13 + in 2 – 3 series , oblong to lanceolate or lance_linear , hyaline margins 0 . 1 – 0 . 2 mm wide , faces glabrous .</text>
+            </statement>

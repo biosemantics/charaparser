@@ -1,0 +1,19 @@
+            <statement>
+                <relation from="o0" id="r0" name="consist_of" negation="false" to="o1"/>
+                <relation from="o1" id="r0" name="in" negation="false" to="o2"/>
+                <structure id="o0" name="pappus">
+                    <character modifier="readily" name="orientation" value="falling"/>
+                    <character name="architecture" value="subplumose"/>
+                    <character name="architecture" value="barbellate"/>
+                    <character char_type="range_value" from="subplumose" name="architecture" to="barbellate"/>
+                </structure>
+                <structure id="o1" name="bristle">
+                    <character char_type="range_value" from="25" name="count" to="35" upper_restricted="false"/>
+                    <character name="fusion" value="distinct"/>
+                    <character name="fusion" value="loosely basally moreorless coherent"/>
+                </structure>
+                <structure id="o2" name="series">
+                    <character name="count" value="1"/>
+                </structure>
+                <text>pappi readily falling , of 25 – 35 + , distinct or loosely basally ± coherent , subplumose to barbellate bristles in 1 series .</text>
+            </statement>

@@ -1,0 +1,12 @@
+            <statement>
+                <relation from="o0" id="r0" name="consist_of" negation="false" to="o1"/>
+                <structure id="o0" name="calyculus"/>
+                <structure id="o1" name="bractlet">
+                    <character name="count" value="12"/>
+                    <character name="shape" value="subulate"/>
+                    <character name="pubescence" value="tomentose"/>
+                    <character name="pubescence" value="hispidulous"/>
+                    <character char_type="range_value" from="2" from_unit="mm" name="size" to="5" to_unit="mm"/>
+                </structure>
+                <text>calyculi of ± 12 , subulate , tomentose and hispidulous bractlets 2 – 5 mm .</text>
+            </statement>

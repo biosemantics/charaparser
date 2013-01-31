@@ -1,0 +1,13 @@
+            <statement>
+                <relation from="o0" id="r0" modifier="mostly" name="in" negation="false" to="o1"/>
+                <structure constraint="principal cauline" id="o0" name="leaf">
+                    <character modifier="sometimes" name="shape" value="auriculate"/>
+                </structure>
+                <structure id="o1" name="base">
+                    <character name="count" value="1/2"/>
+                    <character name="architecture" value="winged-petiolate"/>
+                    <character name="architecture" value="sessile"/>
+                    <character name="size" value="narrowed"/>
+                </structure>
+                <text>principal cauline mostly in proximal 1 / 2 , winged_petiolate or sessile , bases narrowed , sometimes auriculate ;</text>
+            </statement>

@@ -1,0 +1,12 @@
+            <statement>
+                <structure constraint="anther" id="o0" name="base">
+                    <character modifier="more or less" name="shape" value="tailed"/>
+                </structure>
+                <structure constraint="apical" id="o1" name="appendage">
+                    <character name="shape" value="ovate"/>
+                    <character name="shape" value="lance-ovate"/>
+                    <character char_type="range_value" from="ovate" name="shape" to="lance-ovate"/>
+                    <character name="shape" value="linear"/>
+                </structure>
+                <text>anther bases ± tailed , apical appendages ovate to lance_ovate or linear ;</text>
+            </statement>

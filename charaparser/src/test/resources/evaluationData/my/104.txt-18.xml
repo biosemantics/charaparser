@@ -1,0 +1,6 @@
+            <statement>
+                <structure id="o10" name="pappus">
+                    <character char_type="range_value" from="15" from_unit="mm" name="size" to="20" to_unit="mm"/>
+                </structure>
+                <text>pappi 15 – 20 mm .</text>
+            </statement>

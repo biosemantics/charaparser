@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s14">
+    <structure id="o22" name="lobe" constraint="cardinal process">
+      <character name="fragility" value="strong" />
+      <character name="direction" value="directed" modifier="posteriorly" />
+    </structure>
+    <structure id="o23" name="base" />
+    <relation id="r7" from="o22" name="joined at" constraint="usually" negation="false" to="o23" />
+    <structure id="o24" name="structure">
+      <character name="shape" value="U-shaped"/>
+    </structure>
+    <relation id="r8" from="o23" name="form" negation="false" to="o24" />
+    <text>cardinal process lobes strong , posteriorly directed , 
+      usually joined at their bases to form U - shaped structure ;</text>
+  </statement>
+</description>
+

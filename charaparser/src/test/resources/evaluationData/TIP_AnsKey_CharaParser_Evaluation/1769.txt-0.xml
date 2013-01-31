@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s7">
+    <structure id="o10" name="whole_organism">
+      <character name="size" value="medium" />
+      <character name="outline" value="transverse" />
+    </structure>
+    <structure id="o12" name="ear">
+      <character name="size" value="large" />
+    </structure>
+    <text>Medium size with transverse outline , ears large ;</text>
+  </statement>
+</description>
+

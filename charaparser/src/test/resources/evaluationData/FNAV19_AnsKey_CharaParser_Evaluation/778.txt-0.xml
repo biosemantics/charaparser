@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s5">
+        <structure id="o7" name="whole_organism">
+            <character name="life_style" value="plant"/>
+            <character name="size" char_type="range_value" from="2" from_unit="cm" to="10" to_unit="cm"/>
+            <character name="atypical_size" char_type="range_value" from="10" from_unit="cm" to="14" to_unit="cm" from_inclusive="false"/>
+        </structure>
+        <text>plants 2 – 10 ( – 14 ) cm .</text>
+    </statement>
+</description>

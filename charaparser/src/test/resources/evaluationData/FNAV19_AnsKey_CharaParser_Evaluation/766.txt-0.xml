@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    
+    <statement id="s5">
+        <structure id="o9" name="whole_organism">
+            <character name="coloration" value="greenish" modifier="mostly"/>
+            <character name="pubescence" value="arachnoid-sericeous" modifier="thinly"/>
+			<character name="life_style" value="plant"/>
+        </structure>
+        <text>plants mostly greenish , thinly arachnoid_sericeous .</text>
+    </statement>
+</description>

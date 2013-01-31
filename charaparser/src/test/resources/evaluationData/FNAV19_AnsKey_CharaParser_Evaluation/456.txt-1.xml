@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="456.txt-1">
+        <structure id="o67" name="blade" constraint="leaf">
+            <character name="length" char_type="range_value" from="120" from_unit="mm" to="400" to_unit="mm"/>
+            <character name="width" char_type="range_value" from="3" from_unit="mm" to="6" to_unit="mm"/>
+            <character name="atypical_width" char_type="range_value" from="1" from_unit="mm" to="3" to_unit="mm" to_inclusive="false"/>
+        </structure>
+        <structure id="o68" name="margin">
+            <character name="shape" value="entire"/>
+        </structure>
+        <text>leaf blades 120  400 x ( 1  ) 3  6 mm , margins entire .</text>
+    </statement>
+</description>

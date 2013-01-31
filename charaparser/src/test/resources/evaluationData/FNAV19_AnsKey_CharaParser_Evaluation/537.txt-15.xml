@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="537.txt-15">
+        <structure id="o188" name="pappus">
+        </structure>
+        <structure id="o189" name="scale">
+            <character name="count" value="5"/>
+            <character name="coloration" value="white"/>
+            <character name="coloration" value="brown" modifier="light"/>
+            <character name="shape" value="linear-lanceolate"/>
+            <character name="shape" value="aristate"/>
+            <character name="size" char_type="range_value" from="4" from_unit="mm" to="11" to_unit="mm"/>
+        </structure>
+        <structure id="o190" name="arista">
+            <character name="architecture" value="barbellate"/>
+        </structure>
+        <relation id="r1" from="o188" name="consist_of" negation="false" to="o189"/>
+        <text>pappi of 5 , white or light brown , linear_lanceolate , aristate scales 4  11 mm , aristae barbellate .</text>
+    </statement>
+</description>

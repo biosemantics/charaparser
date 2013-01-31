@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="whole_organism">
+                    <character char_type="range_value" from="6" from_unit="cm" name="size" to="65" to_unit="cm" upper_restricted="false"/>
+                    <character name="life_style" value="perennial"/>
+                </structure>
+                <text>perennials , 6 – 65 + cm .</text>
+            </statement>

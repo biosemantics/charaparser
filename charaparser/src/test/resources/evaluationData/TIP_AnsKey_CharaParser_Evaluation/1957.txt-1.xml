@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s8">
+    <structure id="o21" name="interarea">
+      <character name="orientation" value="upright" modifier="very" />
+    </structure>
+    <structure id="o22" name="pseudodeltidium">
+      <character name="size" value="small" />
+    </structure>
+    <relation id="r9" from="o21" name="with" negation="false" to="o22" />
+    <structure id="o23" name="chilidium" />
+    <text>very upright interarea with small pseudodeltidium , chilidium ;</text>
+  </statement>
+</description>
+

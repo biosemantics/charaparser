@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s3">
+        <structure id="o6" name="internode" constraint="proximal">
+            <character name="size" char_type="range_value" from="1" to="2" constraint="times leaf lengths" constraintid="o7" modifier="mostly"/>
+            <character name="atypical_size" char_type="range_value" from="2" to="3" from_inclusive="false" constraint="times leaf lengths" constraintid="o7" modifier="mostly"/>
+        </structure>
+        <structure id="o7" name="leaf"></structure>
+        <text>proximal internode lengths mostly 1 – 2 ( – 3 ) times leaf lengths .</text>
+    </statement>
+    
+</description>

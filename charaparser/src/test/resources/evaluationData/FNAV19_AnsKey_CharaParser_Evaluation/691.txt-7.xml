@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="floret" constraint="pistillate">
+            <character name="count" char_type="range_value" from="47" to="101"/>
+            <character name="atypical_count" char_type="range_value" from="101" to="156" from_inclusive="false"/>
+        </structure>
+        <text>pistillate florets 47 – 101 ( – 156 ) .</text>
+    </statement>
+</description>

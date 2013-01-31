@@ -1,0 +1,25 @@
+            <statement>
+                <relation from="o3" id="r2" name="except" negation="false" to="o4"/>
+                <relation from="o4" id="r3" name="on" negation="false" to="o5"/>
+                <structure id="o3" name="phyllary">
+                    <character char_type="range_value" from="15" name="count" to="50"/>
+                    <character modifier="minutely" name="coloration_or_relief" value="purple-dotted"/>
+                    <character modifier="sometimes" name="coloration" value="purple-lined"/>
+                    <character modifier="broadly" name="shape" value="lanceolate"/>
+                    <character name="shape" value="ovate"/>
+                    <character char_type="range_value" from="lanceolate" name="shape" to="ovate"/>
+                </structure>
+                <structure id="o4" name="margin">
+                    <character name="texture" value="membranous"/>
+                </structure>
+                <structure constraint="midribs" id="o5" name="phyllary"/>
+                <structure id="o6" name="apex">
+                    <character name="shape" value="acute"/>
+                    <character name="shape" value="acuminate"/>
+                    <character char_type="range_value" from="acute" name="shape" to="acuminate"/>
+                </structure>
+                <structure id="o7" name="face">
+                    <character modifier="usually" name="pubescence" value="glabrous"/>
+                </structure>
+                <text>phyllaries 15 – 50 , minutely purple_dotted except on membranous margins , sometimes purple_lined on midribs , broadly lanceolate to ovate , apices acute to acuminate , faces usually glabrous .</text>
+            </statement>

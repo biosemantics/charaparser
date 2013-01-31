@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character name="shape" value="obovate"/>
+                    <character modifier="finely" name="shape" value="dentate"/>
+                </structure>
+                <text>blades obovate , finely dentate ;</text>
+            </statement>

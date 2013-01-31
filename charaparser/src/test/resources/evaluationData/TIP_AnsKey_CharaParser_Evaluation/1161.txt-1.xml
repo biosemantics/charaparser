@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1161.txt-1">
+    <structure id="o245" name="interior" constraint="dorsal" />
+    <structure id="o246" name="cruralium">
+      <character name="architecture" value="complex"/>
+    </structure>
+    <structure id="o247" name="plate">
+      <character name="fusion" value="fused"/>
+      <character name="count" value="4" />
+    </structure>
+    <relation id="r52" from="o246" name="comprising" negation="false" to="o247" />
+    <text>dorsal interior with complex cruralium comprising 4 fused plates ;</text>
+  </statement>
+</description>
+

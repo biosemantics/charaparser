@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description>
+  <statement id="969.txt-5">
+    <structure id="o123" name="septum" constraint="side">
+      <character name="presence" value="absent" modifier="generally" constraint="in dorsal valve" constraintid="o124" />
+    </structure>
+    <structure id="o124" name="valve" constraint="dorsal" />
+    <text>side septa in dorsal valve generally absent ;</text>
+  </statement>
+</description>
+

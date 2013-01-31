@@ -1,0 +1,15 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character char_type="range_value" from="1" name="count" to="5"/>
+                    <character name="orientation" value="erect"/>
+                    <character name="orientation" value="ascending"/>
+                    <character char_type="range_value" from="erect" name="orientation" to="ascending"/>
+                    <character name="coloration" value="purplish"/>
+                    <character name="pubescence" value="glabrate"/>
+                    <character modifier="sparsely" name="pubescence" value="villous"/>
+                    <character char_type="range_value" from="glabrate" name="pubescence" to="villous"/>
+                    <character name="pubescence" value="villous"/>
+                    <character modifier="more or less densely" name="pubescence" value="villous"/>
+                </structure>
+                <text>stems 1 – 5 , erect to ascending , purplish , , glabrate to sparsely villous proximally , ± densely villous distally .</text>
+            </statement>

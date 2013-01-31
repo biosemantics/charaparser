@@ -1,0 +1,13 @@
+            <statement>
+                <structure id="o0" name="leaf">
+                    <character modifier="mostly" name="shape" value="subulate"/>
+                </structure>
+                <structure constraint="largest" id="o1" name="leaf">
+                    <character char_type="range_value" from="30" from_inclusive="false" from_unit="mm" name="atypical_length" to="40" to_unit="mm"/>
+                    <character char_type="range_value" from="20" from_unit="mm" name="length" to="30" to_unit="mm"/>
+                    <character char_type="range_value" from="1.5" from_inclusive="false" from_unit="mm" name="atypical_width" to="2" to_unit="mm"/>
+                    <character char_type="range_value" from="1" from_unit="mm" name="width" to="1.5" to_unit="mm"/>
+                    <character modifier="more or less" name="texture" value="stiff"/>
+                </structure>
+                <text>leaves mostly subulate , largest 20 – 30 ( – 40 ) × 1 – 1 . 5 ( – 2 ) mm , ± stiff ;</text>
+            </statement>

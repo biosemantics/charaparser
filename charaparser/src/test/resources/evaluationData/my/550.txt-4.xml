@@ -1,0 +1,10 @@
+            <statement>
+                <structure constraint="cauline" id="o0" name="leaf">
+                    <character modifier="much" name="size" value="reduced"/>
+                </structure>
+                <structure id="o1" name="margin">
+                    <character name="shape" value="entire"/>
+                    <character modifier="irregularly" name="shape" value="toothed"/>
+                </structure>
+                <text>cauline much reduced distally , margins entire or irregularly toothed .</text>
+            </statement>

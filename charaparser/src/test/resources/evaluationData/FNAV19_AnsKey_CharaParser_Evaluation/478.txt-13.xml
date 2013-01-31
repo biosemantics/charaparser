@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="478.txt-13">
+        <structure id="o104" name="pappus" constraint="persistent">
+        </structure>
+        <structure id="o105" name="tooth">
+            <character name="count" char_type="range_value" from="11" to="14"/>
+            <character name="architecture_or_course" value="irregular"/>
+            <character name="shape" value="dentate"/>
+        </structure>
+        <structure id="o106" name="bristle">
+            <character name="count" char_type="range_value" from="1" to="2"/>
+        </structure>
+        <relation id="r1" from="o104" name="consist_of" negation="false" to="o105"/>
+        <relation id="r2" from="o104" name="consist_of" negation="false" to="o106"/>
+        <text>persistent pappi of 11  14 , irregular ,  dentate teeth plus 1  2 bristles .</text>
+    </statement>
+</description>

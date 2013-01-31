@@ -1,0 +1,16 @@
+            <statement>
+                <structure id="o1" name="body">
+                    <character modifier="moreorless" name="shape" value="obovate"/>
+                    <character name="shape" value="lanceolate"/>
+                    <character char_type="range_value" from="obovate" name="shape" to="lanceolate"/>
+                    <character char_type="range_value" from="1.5" from_unit="mm" name="atypical_size" to="2.5" to_inclusive="false" to_unit="mm"/>
+                    <character char_type="range_value" from="2.5" from_unit="mm" name="size" to="3" to_unit="mm" upper_restricted="false"/>
+                    <character modifier="usually" name="architecture" value="winged"/>
+                </structure>
+                <structure id="o2" name="face">
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="more or less" name="relief" value="scabrellous"/>
+                    <character name="pubescence" value="hirtellous"/>
+                </structure>
+                <text>bodies ± obovate to lanceolate , ( 1 . 5 – ) 2 . 5 – 3 + mm , usually winged , faces glabrous or ± scabrellous to hirtellous ;</text>
+            </statement>

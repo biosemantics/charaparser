@@ -1,0 +1,14 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character char_type="range_value" from="2" name="count" to="12"/>
+                    <character char_type="range_value" from="9" from_inclusive="false" name="atypical_count" to="12"/>
+                    <character char_type="range_value" from="3" name="count" to="9"/>
+                    <character modifier="mostly" name="shape" value="lobed"/>
+                </structure>
+                <structure id="o1" name="lobe">
+                    <character char_type="range_value" from="2" name="count" to="3"/>
+                    <character modifier="abaxially" name="pubescence" value="glabrous"/>
+                    <character modifier="adaxially" name="pubescence" value="pubescent"/>
+                </structure>
+                <text>blades 2 – 12 cm × 3 – 9 ( – 12 ) mm , mostly lobed , lobes 2 – 3 pairs , abaxially glabrous , adaxially pubescent .</text>
+            </statement>

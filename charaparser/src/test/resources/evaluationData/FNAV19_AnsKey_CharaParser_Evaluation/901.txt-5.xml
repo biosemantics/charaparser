@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s5">
+        <structure id="o6" name="involucre">
+            <character name="shape" value="campanulate"/>
+            <character name="shape" value="hemispheric"/>
+            <character name="length" char_type="range_value" from="3.5" from_unit="mm" to="6" to_unit="mm"/>
+            <character name="width" char_type="range_value" from="6" from_unit="mm" to="11" to_unit="mm"/>
+        </structure>
+        <text>involucres campanulate or hemispheric , 3 . 5 – 6 × 6 – 11 mm .</text>
+    </statement>
+</description>

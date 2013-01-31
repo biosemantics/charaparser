@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="59.txt-2">
+        <structure id="o243" name="stem">
+            <character name="count" value="single"/>
+            <character name="orientation" value="erect"/>
+            <character name="pubescence" value="villous" constraint="with trichomes" constraintid="o244"/>
+            <character name="pubescence" value="glabrate"/>
+            <character name="pubescence" value="tomentose" modifier="distally; sometimes thinly"/>
+        </structure>
+        <structure id="o244" name="trichome">
+            <character name="architecture" value="septate"/>
+        </structure>
+        <text>stems single , erect , villous with septate trichomes or glabrate , distally sometimes thinly tomentose ;</text>
+    </statement>
+</description>

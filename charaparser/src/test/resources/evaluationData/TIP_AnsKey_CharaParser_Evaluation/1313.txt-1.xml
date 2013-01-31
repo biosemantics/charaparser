@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1313.txt-1">
+    <structure id="o308" name="costa"  >
+      <character name="arrangement" value="radial"/>
+      <character name="shape" value="rounded"/>
+      <character name="architecture" value="irregular"/>
+    </structure>
+    <text>radial rounded , irregular costae ;</text>
+  </statement>
+</description>
+

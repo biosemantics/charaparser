@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0, o1" name="whole_organism">
+                    <character name="life_style" value="annual"/>
+                    <character char_type="range_value" from="5" from_unit="cm" name="size" to="100" to_unit="cm" upper_restricted="false"/>
+                    <character name="life_style" value="biennial"/>
+                </structure>
+                <text>annuals , biennials , or perennials , 5 – 100 + cm ;</text>
+            </statement>

@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="peduncle">
+                    <character char_type="range_value" from="10" from_inclusive="false" from_unit="mm" name="atypical_size" to="20" to_unit="mm" upper_restricted="false"/>
+                    <character char_type="range_value" from="3" from_unit="mm" name="size" to="10" to_unit="mm"/>
+                </structure>
+                <text>peduncles 3 – 10 ( – 20 + ) mm .</text>
+            </statement>

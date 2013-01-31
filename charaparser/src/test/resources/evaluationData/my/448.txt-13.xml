@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o1" name="corolla">
+                    <character name="coloration" value="yellow"/>
+                    <character name="coloration" value="purple"/>
+                </structure>
+                <text>corollas yellow or purple .</text>
+            </statement>

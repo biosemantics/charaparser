@@ -1,0 +1,18 @@
+            <statement>
+                <structure constraint="basal" id="o0" name="leaf">
+                    <character name="architecture" value="1-nerved"/>
+                    <character modifier="narrowly" name="shape" value="spatulate"/>
+                    <character name="shape" value="spatulate"/>
+                    <character char_type="range_value" from="spatulate" name="shape" to="spatulate"/>
+                    <character name="shape" value="oblanceolate"/>
+                    <character char_type="range_value" from="8" from_unit="mm" name="length" to="35" to_unit="mm"/>
+                    <character char_type="range_value" from="2" from_unit="mm" name="width" to="15" to_unit="mm"/>
+                </structure>
+                <structure id="o1" name="tip">
+                    <character name="shape" value="mucronate"/>
+                </structure>
+                <structure id="o2" name="face">
+                    <character name="pubescence" value="gray-tomentose"/>
+                </structure>
+                <text>basal leaves 1 - nerved , narrowly spatulate to spatulate or oblanceolate , 8 – 35 × 2 – 15 mm , tips mucronate , faces gray_tomentose .</text>
+            </statement>

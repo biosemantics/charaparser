@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="566.txt-3">
+        <structure id="o220" name="blade" constraint="basal leaf">
+            <character name="shape" value="linear"/>
+            <character name="shape" value="filiform"/>
+            <character name="shape" char_type="range_value" from="linear" to="filiform"/>
+            <character name="size" char_type="range_value" from="5" from_unit="cm" to="8" to_unit="cm"/>
+        </structure>
+        <structure id="o221" name="margin">
+            <character name="shape" value="entire"/>
+            <character name="shape" value="toothed"/>
+        </structure>
+        <text>basal blades linear to filiform , 5  8 cm , margins entire or toothed ;</text>
+    </statement>
+</description>

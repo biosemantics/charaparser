@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="delthyrium">
+            <character name="size" value="small"/>
+        </structure>
+        <structure id="o2" name="pseudodeltidium">
+            <character name="shape" value="convex"/>
+        </structure>
+        <relation id="r1" from="o1" name="covered by" negation="false" to="o2" modifier="apically"/>
+        <text>delthyrium small , covered apically by convex pseudodeltidium ;</text>
+    </statement>
+</description>

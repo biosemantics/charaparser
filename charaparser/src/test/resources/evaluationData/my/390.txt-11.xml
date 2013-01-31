@@ -1,0 +1,6 @@
+            <statement>
+                <structure id="o0" name="floret">
+                    <character char_type="range_value" from="25" name="count" to="120" upper_restricted="false"/>
+                </structure>
+                <text>florets 25 – 120 + ;</text>
+            </statement>

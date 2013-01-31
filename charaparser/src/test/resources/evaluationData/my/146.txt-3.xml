@@ -1,0 +1,12 @@
+            <statement>
+                <relation from="o0" id="r0" name="with" negation="false" to="o1"/>
+                <structure id="o0" name="involucre">
+                    <character char_type="range_value" from="2" from_unit="cm" name="size" to="3" to_unit="cm"/>
+                    <character modifier="thinly~to~densely" name="pubescence" value="tomentose"/>
+                </structure>
+                <structure id="o1" name="trichome">
+                    <character name="architecture" value="septate"/>
+                    <character name="architecture" value="non-septate"/>
+                </structure>
+                <text>involucres 2 – 3 cm , thinly to densely tomentose with septate or non_septate trichomes .</text>
+            </statement>

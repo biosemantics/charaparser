@@ -1,0 +1,17 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character name="shape" value="linear"/>
+                    <character name="shape" value="obovate"/>
+                    <character char_type="range_value" from="linear" name="shape" to="obovate"/>
+                    <character name="shape" value="cuneate"/>
+                    <character modifier="often 1[-2]-pinnately" name="shape" value="lobed"/>
+                </structure>
+                <structure constraint="ultimate" id="o1" name="margin">
+                    <character name="shape" value="entire"/>
+                    <character name="shape" value="toothed"/>
+                </structure>
+                <structure id="o2" name="face">
+                    <character modifier="more or less" name="pubescence" value="tomentose"/>
+                </structure>
+                <text>blades linear to obovate or cuneate , often 1 [ – 2 ] _pinnately lobed , ultimate margins entire or toothed , faces ± tomentose .</text>
+            </statement>

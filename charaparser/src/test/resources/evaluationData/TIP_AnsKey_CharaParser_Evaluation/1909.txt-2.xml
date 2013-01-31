@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s19">
+    <structure id="o36" name="tooth" />
+    <structure id="o37" name="ridge">
+      <character name="shape" value="elongate" />
+    </structure>
+    <relation id="r16" from="o36" name="as" modifier="usually" negation="false" to="o37" />
+    <structure id="o38" name="field" constraint="ventral muscle">
+     
+      <character name="shape" value="subtriangular" />
+      <character name="differentiation" value="undifferentiated" />
+    </structure>
+    <text>teeth usually as elongate ridges , ventral muscle field subtriangular , undifferentiated ;</text>
+  </statement>
+</description>
+

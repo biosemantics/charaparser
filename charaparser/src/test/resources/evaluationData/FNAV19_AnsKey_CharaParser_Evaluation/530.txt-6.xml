@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="530.txt-6">
+        <structure id="o182" name="peduncle">
+            <character name="orientation" value="erect"/>
+            <character name="architecture" value="ebracteate"/>
+            <character name="architecture" value="leafy"/>
+        </structure>
+        <text>peduncles erect , ebracteate or leafy .</text>
+    </statement>
+</description>

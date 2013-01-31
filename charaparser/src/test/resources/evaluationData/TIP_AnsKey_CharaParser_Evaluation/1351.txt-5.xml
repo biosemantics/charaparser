@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s5">
+    <structure id="o5" name="ridge" constraint="lateral">
+      <character name="fragility" value="strong" />
+    </structure>
+    <structure id="o6" name="ridge" constraint="marginal">
+      <character name="architecture" value="complete" />
+    </structure>
+    <relation id="r1" from="o5" name="continued as" negation="false" to="o6" />
+    <text>lateral ridges strong , continued as complete marginal ridge ;</text>
+  </statement>
+</description>
+

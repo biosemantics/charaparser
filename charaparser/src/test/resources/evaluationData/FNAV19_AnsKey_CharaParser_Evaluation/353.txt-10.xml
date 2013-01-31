@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="pappus">
+            <character name="coloration" value="white"/>
+            <character name="size" char_type="range_value" from="6.5" to="8" from_unit="mm" to_unit="mm"/>
+            <character name="atypical_size" char_type="range_value" from="8" to="10" from_inclusive="false" from_unit="mm" to_unit="mm" upper_restricted="false"/>
+        </structure>
+        <text>pappi white , 6 . 5 – 8 ( – 10 + ) mm .</text>
+    </statement>
+</description>

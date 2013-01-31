@@ -1,0 +1,16 @@
+            <statement>
+                <structure id="o1" name="phyllary">
+                    <character char_type="range_value" from="12" name="count" to="21" upper_restricted="false"/>
+                </structure>
+                <structure id="o2" name="apex">
+                    <character name="shape" value="rounded"/>
+                    <character name="shape" value="acute"/>
+                    <character char_type="range_value" from="rounded" name="shape" to="acute"/>
+                </structure>
+                <structure constraint="abaxial" id="o3" name="face">
+                    <character name="pubescence" value="piloso-hirsute"/>
+                    <character name="pubescence" value="stellate-pubescent"/>
+                    <character name="architecture_or_exudation_or_pubescence" value="stipitate-glandular"/>
+                </structure>
+                <text>phyllaries 12 – 21 + , apices rounded to acute , abaxial faces piloso_hirsute , stellate_pubescent , and stipitate_glandular .</text>
+            </statement>
