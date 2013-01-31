@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="670.txt-12">
+        <structure id="o342" name="corolla" constraint="pistillate">
+            <character name="size" char_type="range_value" from="3" from_unit="mm" to="4.5" to_unit="mm"/>
+        </structure>
+        <text>pistillate 3  4 . 5 mm .</text>
+    </statement>
+</description>

@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="style" id="o0" name="tip">
+                    <character name="size" unit="mm" value="6"/>
+                </structure>
+                <text>style tips 6 mm .</text>
+            </statement>

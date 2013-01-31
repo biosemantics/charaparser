@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o1" name="head">
+                    <character char_type="range_value" constraint="in arrays" constraint_id="o2" from="3" name="count" to="7"/>
+                </structure>
+                <structure id="o2" name="array">
+                    <character name="architecture" value="corymbiform"/>
+                </structure>
+                <text>heads 3 – 7 in corymbiform arrays .</text>
+            </statement>

@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o0" name="pappus">
+                    <character name="duration" value="persistent"/>
+                </structure>
+                <structure id="o1" name="bristle">
+                    <character name="fusion" value="distinct"/>
+                </structure>
+                <text>pappi persistent , bristles distinct .</text>
+            </statement>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="512.txt-2">
+        <structure id="o155" name="leaf">
+            <character name="orientation" value="erect" modifier="mostly"/>
+            <character name="orientation" value="prostrate" modifier="sometimes"/>
+        </structure>
+        <text>leaves mostly erect , sometimes prostrate ;</text>
+    </statement>
+</description>

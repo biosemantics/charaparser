@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="calyculus">
+        </structure>
+        <structure id="o2" name="bractlet">
+            <character name="count" char_type="range_value" from="8" to="10"/>
+            <character name="coloration" char_type="range_value" from="green" to="purple"/>
+            <character name="coloration" value="green"/>
+            <character name="coloration" value="purple"/>
+            <character name="shape" char_type="range_value" from="triangular" to="subulate"/>
+            <character name="shape" value="triangular"/>
+            <character name="shape" value="subulate"/>
+            <character name="size" char_type="range_value" from="1" to="4" from_unit="mm" to_unit="mm"/>
+            <character name="pubescence" char_type="range_value" from="tomentulose" to="setose" modifier="often"/>
+            <character name="pubescence" value="tomentulose" modifier="often"/>
+            <character name="pubescence" value="setose" modifier="often"/>
+        </structure>
+        <relation id="r1" from="o1" name="consist_of" negation="false" to="o2"/>
+        <text>calyculi of 8 – 10 , green to purple , triangular to subulate bractlets 1 – 4 mm ,
+            often tomentulose to setose .</text>
+    </statement>
+</description>

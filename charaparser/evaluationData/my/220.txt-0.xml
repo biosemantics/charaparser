@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="whole_organism">
+                    <character char_type="range_value" from="20" from_unit="cm" name="size" to="50" to_unit="cm"/>
+                    <character name="pubescence_or_relief" value="scabrous"/>
+                    <character name="life_style" value="perennial"/>
+                </structure>
+                <text>perennials , 20 – 50 cm , scabrous .</text>
+            </statement>

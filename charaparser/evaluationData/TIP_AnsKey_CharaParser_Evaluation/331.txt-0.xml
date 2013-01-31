@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="whole_organism">
+            <character name="shape" value="dorsibiconvex"/>
+            <character name="orientation" value="resupinate"/>
+            <character name="architecture" value="uniplicate"/>
+            <character name="surface_sculpture" value="costellate" modifier="coarsely"/>
+        </structure>
+        <structure id="o2" name="delthyrium">
+        </structure>
+        <structure id="o3" name="deltidium">
+            <character name="shape" value="convex"/>
+            <character name="architecture" value="perforate" modifier="commonly; apically"/>
+        </structure>
+        <relation id="r1" from="o2" name="with" negation="false" to="o3"/>
+        <text>Dorsibiconvex to resupinate , uniplicate , coarsely costellate , delthyrium with convex deltidium 
+            commonly perforate apically ;</text>
+    </statement>
+</description>

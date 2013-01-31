@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="staminate" id="o0" name="involucre">
+                    <character char_type="range_value" from="6" from_unit="mm" name="size" to="6.5" to_unit="mm"/>
+                </structure>
+                <text>staminate 6 – 6 . 5 mm ;</text>
+            </statement>

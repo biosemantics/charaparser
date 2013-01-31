@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o2" name="involucre">
+                    <character name="shape" value="campanulate"/>
+                    <character name="shape" value="cylindric"/>
+                    <character char_type="range_value" from="campanulate" name="shape" to="cylindric"/>
+                    <character char_type="range_value" from="3" from_unit="mm" name="size" to="12" to_unit="mm"/>
+                </structure>
+                <text>involucres campanulate to cylindric , 3 – 12 mm diam . .</text>
+            </statement>

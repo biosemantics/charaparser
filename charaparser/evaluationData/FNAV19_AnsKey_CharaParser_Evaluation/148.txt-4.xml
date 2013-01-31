@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="blade" constraint="leaf">
+            <character name="shape" char_type="range_value" from="oblong" to="elliptic"/>
+            <character name="shape" value="oblong"/>
+            <character name="shape" value="elliptic"/>
+            <character name="shape" value="oblanceolate"/>
+            <character char_type="range_value" name="length" from="15" to="30" from_unit="cm" to_unit="cm" upper_restricted="false"/>    
+            <character char_type="range_value" name="width" from="2" to="7" from_unit="cm" to_unit="cm"/>
+            <character name="shape" value="divided" modifier="deeply; 2-3-pinnately"/>
+        </structure>
+        <structure id="o2" name="lobe">
+            <character name="shape" char_type="range_value" from="linear" to="linear-lanceolate"/>
+            <character name="shape" value="linear"></character>
+            <character name="shape" value="linear-lanceolate"></character>
+            <character name="shape" char_type="range_value" from="spinulose" to="spiny-dentate"/>
+            <character name="shape" value="spinulose"></character>
+            <character name="shape" value="spiny-dentate"></character>
+            <character name="shape" value="lobed" modifier="shallowly"></character>
+        </structure>
+        <structure id="o3" name="spine" constraint="main">
+            <character name="size" value="slender"/>
+            <character name="size" char_type="range_value" from="2" to="8" from_unit="mm" to_unit="mm"/>
+         </structure>
+        <structure id="o4" name="face" constraint="abaxial">
+            <character name="pubescence" char_type="range_value" from="glabrous" to="tomentose"/>
+            <character name="pubescence" value="glabrous"/>
+            <character name="pubescence" value="tomentose" modifier="thinly"/>
+            <character name="pubescence" value="villous" constraint="along major veins" constraintid="o5"/>
+            <character name="pubescence" value="glabrescent" modifier="soon"/>       
+        </structure>
+        <structure id="o5" name="vein" constraint="major">
+        </structure>
+        <structure id="o6" name="face" constraint="adaxial">
+            <character name="pubescence" value="glabrous"/>
+        </structure>
+         <text>blades oblong to elliptic or oblanceolate , 15 – 30 + × 2 – 7 cm , 
+            deeply 2 – 3 - pinnately divided , lobes linear to linear_lanceolate ,
+            spinulose to spiny_dentate or shallowly lobed , main spines slender , 2 – 8 mm , 
+            abaxial faces glabrous to thinly tomentose and villous along major veins , soon glabrescent ,
+            adaxial glabrous ;</text>
+    </statement>
+</description>

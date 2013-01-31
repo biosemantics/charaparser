@@ -1,0 +1,11 @@
+            <statement>
+                <relation from="o0" id="r0" name="between" negation="false" to="o2"/>
+                <structure id="o0" name="leaf">
+                    <character name="arrangement" value="capitular"/>
+                    <character/>
+                    <character name="manifestation" value="visible"/>
+                </structure>
+                <structure constraint="subtending" id="o1" name="glomerule"/>
+                <structure id="o2" name="head"/>
+                <text>capitular leaves subtending glomerules , also visible between and surpassing heads .</text>
+            </statement>

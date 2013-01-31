@@ -1,0 +1,16 @@
+            <statement>
+                <structure constraint="outer and middle" id="o4" name="phyllary">
+                    <character name="shape" value="entire"/>
+                </structure>
+                <structure id="o5" name="body">
+                    <character name="orientation" value="appressed"/>
+                    <character name="shape" value="entire"/>
+                    <character name="shape" value="acute"/>
+                </structure>
+                <structure id="o6" name="spine">
+                    <character modifier="abruptly" name="orientation" value="spreading"/>
+                    <character name="size" value="slender"/>
+                    <character char_type="range_value" from="2" from_unit="mm" name="size" to="4" to_unit="mm"/>
+                </structure>
+                <text>outer and middle entire , bodies appressed , entire , acute , spines abruptly spreading , slender , 2 – 4 mm ;</text>
+            </statement>

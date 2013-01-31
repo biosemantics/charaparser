@@ -1,0 +1,15 @@
+            <statement>
+                <structure id="o1" name="stem">
+                    <character name="count" value="1"/>
+                    <character name="orientation" value="erect"/>
+                    <character name="architecture" value="simple"/>
+                    <character name="architecture" value="branched"/>
+                    <character char_type="range_value" from="2" modifier="proximally distally" name="count" to="10"/>
+                    <character name="habit" value="decumbent"/>
+                    <character name="orientation" value="ascending"/>
+                    <character modifier="more or less" name="architecture_or_shape" value="branched"/>
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="sparsely" name="pubescence" value="arachnose"/>
+                </structure>
+                <text>stems 1 , erect , simple or branched proximally and / or distally or 2 – 10 , decumbent to ascending , and ± branched distally , glabrous or sparsely arachnose .</text>
+            </statement>

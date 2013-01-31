@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="982.txt-1">
+    <structure id="o129" name="whole_organism" >
+      <character name="profile" value="variable" modifier="ventral"/>
+    </structure>
+    <structure id="o130" name="cicatrix" />
+    <structure id="o131" name="interarea" >
+      <character name="size" value="short"/>
+    </structure>
+    <relation id="r25" from="o129" name="modified by" negation="false" to="o130" />
+    <relation id="r26" from="o130" name="perpendicular to" modifier="almost" negation="false" to="o131" />
+    <text>ventral profile variable , modified by cicatrix almost perpendicular to short interarea ;</text>
+  </statement>
+</description>
+

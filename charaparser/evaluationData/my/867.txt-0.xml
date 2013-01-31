@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o0" name="whole_organism">
+                    <character char_type="range_value" from="40" from_inclusive="false" from_unit="cm" name="atypical_size" to="60" to_unit="cm"/>
+                    <character char_type="range_value" from="20" from_unit="cm" name="size" to="40" to_unit="cm"/>
+                    <character modifier="mildly" name="odor" value="aromatic"/>
+                    <character name="life_style" value="shrub"/>
+                </structure>
+                <text>shrubs , 20 – 40 ( – 60 ) cm , mildly aromatic ;</text>
+            </statement>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="involucre">
+            <character name="coloration" value="green"/>
+            <character name="coloration" value="purple" modifier="suffused with dark"/>
+            <character name="shape" char_type="range_value" from="ovoid" to="campanulate"/>
+            <character name="shape"  value="ovoid" modifier="broadly" />
+            <character name="shape" value="campanulate"/>
+            <character char_type="range_value" name="length" from="2" to="5" from_unit="cm" to_unit="cm"/>    
+            <character char_type="range_value" name="width" from="1.5" to="5" from_unit="cm" to_unit="cm"/>
+           
+            <character name="pubescence"  value="villous" modifier="loosely to densely"/>
+            <character name="pubescence"  value="tomentose" constraint="with trichomes" constraintid="o2"/>
+            <character name="pubescence"  value="arachnoid-tomentose" constraint="with trichomes" constraintid="o3"/>
+            
+        </structure>
+        <structure id="o2" name="trichome">
+            <character name="architecture" value="septate"/>
+         </structure>
+             
+        <structure id="o3" name="trichome">
+            <character name="architecture" value="non-septate"/>
+            <character name="texture" value="finer"/>   
+        </structure>       
+       
+        <text>involucres green or suffused with dark purple , broadly ovoid to campanulate , 
+            2 – 5 × 1 . 5 – 5 cm , loosely to densely villous or tomentose with septate trichomes 
+            and / or arachnoid_tomentose with finer , non_septate trichomes .</text>
+    </statement>
+</description>

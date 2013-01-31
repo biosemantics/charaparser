@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="septum" constraint="dorsal median">
+            <character name="size" value="wide"/>
+        </structure>
+        <structure id="o2" name="scar" constraint="central muscle">
+        </structure>
+        <structure id="o3" name="margin" constraint="anterior"></structure>
+        
+        <relation id="r1" from="o1" name="extending from" negation="false" to="o2"/>
+        <relation id="r2" from="o1" name="reaching" negation="false" to="o3" modifier="almost"/>
+        <text>dorsal median septum wide , extending from central muscle scars and almost reaching anterior margin ;</text>
+    </statement>
+</description>

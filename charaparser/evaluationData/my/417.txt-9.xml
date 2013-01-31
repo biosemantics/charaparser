@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="involucre">
+                    <character modifier="more or less" name="shape" value="campanulate"/>
+                    <character char_type="range_value" from="6" from_unit="mm" name="atypical_size" to="7" to_inclusive="false" to_unit="mm"/>
+                    <character char_type="range_value" from="7" from_unit="mm" name="size" to="10" to_unit="mm"/>
+                </structure>
+                <text>involucres ± campanulate , ( 6 – ) 7 – 10 mm .</text>
+            </statement>

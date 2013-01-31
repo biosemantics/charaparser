@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="outer" id="o1" name="cypsela">
+                    <character name="shape" value="3-angled"/>
+                </structure>
+                <text>outer 3 - angled ;</text>
+            </statement>

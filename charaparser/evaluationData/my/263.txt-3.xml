@@ -1,0 +1,16 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character name="arrangement_or_shape" value="lance-linear"/>
+                    <character name="arrangement_or_shape" value="linear"/>
+                    <character char_type="range_value" from="lance-linear" name="arrangement_or_shape" to="linear"/>
+                    <character char_type="range_value" from="3" name="count" to="7" upper_restricted="false"/>
+                    <character char_type="range_value" from="2" name="count" to="8" upper_restricted="false"/>
+                    <character char_type="range_value" from="7" name="count" to="15" upper_restricted="false"/>
+                    <character modifier="abaxially" name="relief" value="scabrellous"/>
+                    <character name="coloration_or_relief" value="resin-gland-dotted"/>
+                    <character modifier="adaxially" name="relief" value="scabrellous"/>
+                    <character name="pubescence" value="glabrescent"/>
+                    <character name="coloration_or_relief" value="resin-gland-dotted"/>
+                </structure>
+                <text>blades lance_linear to linear , 3 – 7 + cm × 2 – 8 + mm , l / w = 7 – 15 + , abaxially scabrellous , resin_gland_dotted , adaxially scabrellous , glabrescent , resin_gland_dotted .</text>
+            </statement>

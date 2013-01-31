@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="leaf" constraint="principal cauline">
+         
+            <character name="arrangement" value="distributed" modifier="well"/>
+            <character name="architecture" value="sessile" modifier="becoming"/>
+            <character name="size" value="reduced" modifier="gradually;distally"/>
+        </structure>
+        <structure id="o2" name="base">
+            <character name="shape" value="auriculate-decurrent" constraint="with wings" constraintid="o3"/>
+        </structure>
+        <structure id="o3" name="wing">
+            <character name="size" value="broad"/>
+            <character name="shape" value="spiny-margined"/>
+            <character name="size" value="3" unit="cm" modifier="or less" />
+            <character name="size" value="less" />
+        </structure>
+        <text>principal cauline well distributed , becoming sessile , gradually reduced distally ,
+            bases auriculate_decurrent with broad , spiny_margined wings 3 cm or less ;</text>
+    </statement>
+</description>

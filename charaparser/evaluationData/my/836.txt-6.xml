@@ -1,0 +1,15 @@
+            <statement>
+                <structure id="o0" name="head">
+                    <character name="architecture_or_shape" value="disciform"/>
+                    <character modifier="borne" name="arrangement" value="singly"/>
+                    <character char_type="range_value" constraint="in " constraint_id="o1" from="2" name="atypical_count" to="60" upper_restricted="false"/>
+                </structure>
+                <structure constraint="in arrays" id="o1" name="cluster">
+                    <character name="architecture" value="subcapitate"/>
+                </structure>
+                <structure id="o2" name="array">
+                    <character name="architecture" value="usually corymbiform"/>
+                    <character name="architecture" value="rarely paniculiform"/>
+                </structure>
+                <text>heads disciform , borne singly or ( 2 – 60 + ) in usually corymbiform , rarely paniculiform , arrays or in subcapitate clusters .</text>
+            </statement>

@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o0" name="rib">
+                    <character name="count" value="0"/>
+                </structure>
+                <structure id="o1" name="face">
+                    <character name="pubescence" value="glabrous"/>
+                </structure>
+                <text>ribs 0 , faces glabrous ;</text>
+            </statement>

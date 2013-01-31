@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="849.txt-2">
+    <structure id="o87" name="process" constraint="cardinal">
+      <character name="architecture" value="simple" />
+    </structure>
+    <structure id="o88" name="ridge" constraint="notothyrial">
+      <character name="fusion" value="discrete" />
+    </structure>
+    <structure id="o89" name="brachiophore">
+      <character name="shape" value="rodlike"/>
+      <character name="arrangement" value="divergent" modifier="widely" />
+    </structure>
+    <relation id="r19" from="o87" name="flanked by" negation="false" to="o88" />
+    <text>simple cardinal process flanked by discrete notothyrial ridges , 
+      and rodlike brachiophores widely divergent ;</text>
+  </statement>
+</description>
+

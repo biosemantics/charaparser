@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="408.txt-6">
+        <structure id="o18" name="peduncle">
+            <character name="pubescence" value="stellate-pubescent" modifier="usually" />
+            <character name="pubescence" value="piloso-hirsute" modifier="sometimes" />
+            <character value="stipitate-glandular" modifier="sometimes" name="architecture_or_exudation_or_pubescence" />
+            <character name="pubescence" value="glabrous" modifier="rarely" />
+        </structure>
+        <text>peduncles usually stellate_pubescent , sometimes piloso_hirsute and / or stipitate_glandular as well , rarely glabrous .</text>
+    </statement>
+</description>

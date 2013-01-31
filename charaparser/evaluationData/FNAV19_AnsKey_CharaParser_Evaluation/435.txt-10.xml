@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="435.txt-10">
+        <structure id="o43" name="corolla">
+            <character name="coloration" value="white"/>
+            <character name="coloration" value="yellowish"/>
+            <character name="coloration" char_type="range_value" from="white" to="yellowish"/>
+            <character name="size" char_type="range_value" from="5" from_unit="mm" to="8" to_unit="mm"/>
+        </structure>
+        <structure id="o44" name="phyllary"></structure>
+        <relation id="r40" from="o43" name="equaling" negation="false" to="o44" modifier="at flowering"/>
+        <text>corollas white to yellowish , 5  8 mm ,  equaling phyllaries at flowering .</text>
+    </statement>
+</description>

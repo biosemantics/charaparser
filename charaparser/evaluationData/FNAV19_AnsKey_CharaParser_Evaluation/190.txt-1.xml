@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="blade" constraint="leaf">
+            <character name="shape" value="oblanceolate"/>
+            <character name="size" char_type="range_value" from="10" to="25" from_unit="cm" to_unit="cm" />
+        </structure>
+        <structure id="o2" name="margin">
+            <character name="shape" char_type="range_value" from="dentate" to="lyrate-pinnatifid"/>
+            <character name="shape" value="dentate" />
+            <character name="shape" value="lyrate-pinnatifid"/>
+        </structure>
+        <text>leaf blades oblanceolate , 10 – 25 cm , margins dentate to lyrate_pinnatifid ;</text>
+    </statement>
+</description>

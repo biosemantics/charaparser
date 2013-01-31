@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="phyllary">
+            <character name="count" value="many"/>
+            <character name="size" value="unequal"/>
+        </structure>
+        <structure id="o2" name="series">
+            <character name="count" char_type="range_value" from="6" to="many"/>
+        </structure>
+        <relation id="r1" from="o1" name="in" negation="false" to="o2"/>
+        <structure id="o3" name="part" constraint="proximal">
+            <character name="orientation" value="appressed"/>
+        </structure>
+        <structure id="o4" name="margin" constraint="body">
+            <character name="shape" value="entire"/>
+        </structure>
+        <structure id="o5" name="part" constraint="distal">
+            <character name="size" value="expanded" constraint="into appendages" constraintid="o6"/>
+        </structure>
+        <structure id="o6" name="appendage">
+            <character name="orientation" char_type="range_value" from="erect" to="spreading"/>
+            <character name="orientation" value="erect"/>
+            <character name="orientation" value="spreading"/>
+            <character name="shape" value="dentate" modifier="usually; more or less"/>
+            <character name="shape" value="fringed" modifier="usually"/>
+            <character name="shape" char_type="range_value" from="linear" to="ovate"/>
+            <character name="shape" value="linear" />
+            <character name="shape" value="ovate"/>
+            <character name="architecture" value="spine-tipped"/>
+            <character name="architecture" value="spineless"/>
+        </structure>
+        <text>phyllaries many in 6 – many series , unequal , proximal part appressed ,
+            body margins entire , distal parts expanded into erect to spreading ,
+            usually more or less dentate or fringed , linear to ovate appendages , spine_tipped or spineless .
+        </text>
+    </statement>
+</description>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s11">
+        <structure id="o14" name="head">
+        </structure>
+        <structure id="o15" name="array">
+            <character name="architecture" value="paniculiform" />
+            <character name="typical_length" char_type="range_value" from="5" from_unit="cm" to="8" to_unit="cm" to_inclusive="false" />
+            <character name="length" char_type="range_value" from="8" from_unit="cm" to="12" to_unit="cm"/>
+            <character name="atypical_length" char_type="range_value" from="12" from_unit="cm" to="15" to_unit="cm" from_inclusive="false"/>
+            <character name="atypical_width" char_type="range_value" from="0.5" from_unit="cm" to="1" to_unit="cm" to_inclusive="false"/>
+            <character name="width" char_type="range_value" from="1" from_unit="cm" to="3" to_unit="cm"/>
+        </structure>
+        <relation id="r3" from="o14" name="in" negation="false" to="o15"/>
+        <text>heads in paniculiform arrays ( 5 – ) 8 – 12 ( – 15 ) × ( 0 . 5 – ) 1 – 3 cm .</text>
+    </statement>
+</description>

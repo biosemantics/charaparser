@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s16">
+        <structure id="o25" name="stem">
+            <character name="pubescence" value="matted-villous" constraint="with hairs" constraintid="o26"/>
+            <character name="pubescence" value="glabrescent" modifier="proximally"/>
+            <character name="architecture_or_exudation_or_pubescence" value="glandular" modifier="not evidently"/>
+        </structure>
+        <structure id="o26" name="hair">
+            <character name="coating_or_texture" value="viscid"/>
+            <character name="coating" value="vitreous"/>
+        </structure>
+        
+        <text>stems matted_villous with viscid , vitreous hairs , proximally glabrescent , not evidently glandu_lar .</text>
+    </statement>
+    
+</description>

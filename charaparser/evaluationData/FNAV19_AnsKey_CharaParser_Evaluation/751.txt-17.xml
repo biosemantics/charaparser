@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s6">
+        <structure id="o7" name="pappus" constraint="staminate">
+            <character name="count" value="0" modifier="rarely"/>
+        </structure>
+        <structure id="o8" name="bristle">
+            <character name="count" char_type="range_value" from="1" to="4" modifier="usually"/>
+            <character name="atypical_count" char_type="range_value" from="4" to="8" from_inclusive="false"/>
+            <character name="architecture" value="smooth"/>
+            <character name="architecture" value="barbellulate"/>
+            <character name="architecture" char_type="range_value" from="smooth" to="barbellulate"/>
+            <character name="size" char_type="range_value" from="1.1" from_unit="mm" to="2" to_unit="mm"/>
+        </structure>
+        <relation id="r1" from="o7" name="consist_of" negation="false" to="o8"/>
+        <text>staminate rarely 0 , usually of 1 – 4 ( – 8 ) smooth to barbellulate bristles 1 . 1 – 2 mm .</text>
+    </statement>
+</description>

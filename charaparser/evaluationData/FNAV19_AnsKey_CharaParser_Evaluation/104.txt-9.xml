@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s4">
+        <structure id="o10" name="head">
+            <character name="count" char_type="range_value" from="10" to="many"/>
+   
+            <character name="architecture" value="crowded" modifier="often" constraint="at branch tips" constraintid="o11"/>
+        </structure>
+        <structure id="o11" name="tip" constraint="branch"/>
+        <structure id="o12" name="array">
+            <character name="architecture" value="paniculiform"/>
+        </structure>
+        <relation id="r1" from="o10" name="forming" negation="false" to="o12" modifier="collectively"/>
+        <text>heads 10 – many , often crowded at branch tips , collectively forming paniculiform arrays .
+        </text>
+    </statement>
+</description>

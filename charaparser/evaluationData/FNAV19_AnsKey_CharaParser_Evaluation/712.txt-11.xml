@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="floret" constraint="pistillate">
+            <character char_type="range_value" name="count" from="50" to="130"/>
+            <character name="count" value="numerous" modifier="more" constraint="than florets" constraintid="o2"/>
+        </structure>
+        <structure id="o2" name="floret" constraint="bisexual">
+        </structure>
+        <text>pistillate florets 50 – 130 , more numerous than bisexual florets ;</text>
+    </statement>
+</description>

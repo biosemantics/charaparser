@@ -1,0 +1,7 @@
+            <statement>
+                <structure constraint="distal" id="o0" name="leaf">
+                    <character name="architecture" value="sessile"/>
+                    <character name="size" value="reduced"/>
+                </structure>
+                <text>distal sessile and reduced .</text>
+            </statement>

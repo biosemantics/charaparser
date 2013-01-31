@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s9">
+        <structure id="o10" name="stem">
+            <character name="arrangement_or_habit" value="clustered" modifier="often" constraint="from rootstock" constraintid="o11"/>
+            <character name="size" char_type="range_value" from="15" from_unit="cm" to="40" to_unit="cm"/>
+        </structure>
+        <structure id="o11" name="rootstock">
+            <character name="shape" value="branched"/>
+        </structure>
+        <structure id="o12" name="base">
+            <character name="thickness" value="thickened" modifier="not"/>
+        </structure>
+        <text>stems often clustered from branched rootstock , 15 – 40 cm , bases not thickened .</text>
+    </statement>
+</description>

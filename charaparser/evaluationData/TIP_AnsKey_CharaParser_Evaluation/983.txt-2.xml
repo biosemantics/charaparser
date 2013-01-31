@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="983.txt-2">
+    <structure id="o132" name="denticle">
+      <character name="architecture" value="irregular"/>
+      <character name="shape" value="oblique"/>
+      <character name="presence" value="present" constraint="on dorsal facets" constraintid="o133" />
+    </structure>
+    <structure id="o133" name="facet" constraint="dorsal" />
+    <structure id="o134" name="tooth" />
+    <relation id="r27" from="o133" name="part_of" negation="false" to="o134" />
+    <text>irregular oblique denticles present on dorsal facets of teeth ;</text>
+  </statement>
+</description>
+

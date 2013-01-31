@@ -1,0 +1,50 @@
+            <statement>
+                <relation from="o2" id="r0" name="with" negation="false" to="o3"/>
+                <relation from="o2" id="r1" name="with" negation="false" to="o4"/>
+                <relation from="o5" id="r2" name="along" negation="false" to="o6"/>
+                <structure id="o0" name="blade">
+                    <character modifier="broadly" name="shape" value="elliptic"/>
+                    <character name="shape" value="obovate"/>
+                    <character char_type="range_value" from="elliptic" name="shape" to="obovate"/>
+                    <character char_type="range_value" from="15" from_unit="cm" name="length" to="40" to_unit="cm"/>
+                    <character char_type="range_value" from="7" from_unit="cm" name="width" to="15" to_unit="cm"/>
+                    <character name="shape" value="subentire"/>
+                    <character modifier="coarsely" name="shape" value="pinnatifid"/>
+                    <character char_type="range_value" from="subentire" name="shape" to="pinnatifid"/>
+                    <character char_type="range_value" from="1/2" name="count" to="2/3"/>
+                </structure>
+                <structure id="o1" name="lobe">
+                    <character char_type="range_value" from="1/2" name="count" to="2/3"/>
+                    <character char_type="range_value" from="1/2" name="count" to="2/3"/>
+                    <character char_type="range_value" from="1/2" name="count" to="2/3"/>
+                    <character name="count" value="few"/>
+                    <character name="shape" value="lanceolate"/>
+                    <character name="shape" value="triangular-ovate"/>
+                    <character char_type="range_value" from="lanceolate" name="shape" to="triangular-ovate"/>
+                    <character modifier="shallowly" name="shape" value="lobed"/>
+                    <character name="shape" value="dentate"/>
+                </structure>
+                <structure constraint="main" id="o2" name="spine">
+                    <character name="shape" value="bristlelike"/>
+                    <character name="texture" value="fine"/>
+                    <character name="habit" value="innocuous"/>
+                    <character char_type="range_value" from="3" from_unit="mm" name="size" to="6" to_unit="mm"/>
+                    <character name="pubescence" value="abaxial"/>
+                    <character name="pubescence" value="glabrous"/>
+                    <character name="pubescence" value="villous"/>
+                    <character char_type="range_value" from="glabrous" name="pubescence" to="villous"/>
+                </structure>
+                <structure id="o3" name="trichome">
+                    <character name="architecture" value="septate"/>
+                </structure>
+                <structure id="o4" name="trichome">
+                    <character name="architecture" value="jointed"/>
+                    <character name="pubescence" value="thinly tomentose"/>
+                </structure>
+                <structure constraint="adaxial" id="o5" name="face">
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="loosely" name="pubescence" value="tomentose"/>
+                </structure>
+                <structure constraint="midveins" id="o6" name="blade"/>
+                <text>blades broadly elliptic to obovate , 15 – 40 × 7 – 15 cm , subentire to coarsely pinnatifid 1 / 2 – 2 / 3 length to midveins , lobes few , lanceolate to triangular_ovate , shallowly lobed or dentate , main spines bristlelike , fine , innocuous , 3 – 6 mm , abaxial glabrous to villous with septate trichomes or thinly tomentose with jointed trichomes , adaxial faces glabrous or loosely tomentose along midveins ;</text>
+            </statement>

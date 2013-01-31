@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1301.txt-0">
+    <structure id="o299" name="whole_organism">
+      <character name="profile" value="biplanate" />
+      <character name="profile" value="concavoconvex" modifier="gently" />
+      <character char_type="range_value" name="profile" from="biplanate" to="concavoconvex" />
+    </structure>
+    <text>Profile biplanate to gently concavoconvex ;</text>
+  </statement>
+</description>
+

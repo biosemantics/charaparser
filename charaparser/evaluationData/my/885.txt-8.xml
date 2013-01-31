@@ -1,0 +1,9 @@
+            <statement>
+                <structure constraint="central" id="o1" name="floret">
+                    <character char_type="range_value" from="15" name="count" to="100"/>
+                </structure>
+                <structure constraint="bisexual" id="o2" name="floret">
+                    <character name="reproduction" value="fertile"/>
+                </structure>
+                <text>central 15 – 100 bisexual and fertile ;</text>
+            </statement>

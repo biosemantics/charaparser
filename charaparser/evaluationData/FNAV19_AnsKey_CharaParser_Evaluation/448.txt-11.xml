@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="448.txt-11">
+        <structure id="o55" name="receptacle">
+            <character name="shape" value="convex" />
+            <character value="smooth" name="architecture_or_relief" />
+            <character name="pubescence" value="glabrous" />
+            <character name="architecture" value="epaleate" />
+        </structure>
+        <text>receptacles convex , smooth , glabrous , epaleate .</text>
+    </statement>
+</description>

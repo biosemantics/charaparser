@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="blade" constraint="leaf">
+            <character name="shape" value="lanceolate" modifier="more or less"/>
+            <character char_type="range_value" name="length" from="9" to="15" from_unit="cm" to_unit="cm"/>    
+            
+            <character char_type="range_value" name="atypical_length" from="15" to="25" from_unit="cm" to_unit="cm" from_inclusive="false" upper_restricted="false"/>
+            
+            <character char_type="range_value" name="width" from="15" to="45" unit="mm"/>
+            <character char_type="range_value" name="atypical_width" from="45" to="60" from_unit="mm" to_unit="mm" from_inclusive="false" upper_restricted="false"/>
+            
+            
+            <character char_type="range_value" name="atypical_l_w_ratio" from="3.3" to="4" to_inclusive="false"/>    
+            <character char_type="range_value" name="l_w_ratio" from="4" to="6" upper_restricted="false"/>
+            
+    
+            <character name="relief" value="scabrellous" modifier="abaxially"/>
+            <character name="pubescence" value="tomentose" modifier="abaxially"/>
+            <character name="pubescence" value="pannose" modifier="abaxially"/>
+            <character name="coloration_or_relief" value="resin-gland-dotted" modifier="abaxially"/>
+
+            <character name="relief" value="scabrellous" modifier="adaxially"/>
+            <character name="coloration_or_relief" value="resin-gland-dotted" modifier="adaxially; often"/>
+        </structure>
+        <text>blades more or less lanceolate , 9 – 15 ( – 25 + ) cm × 15 – 45 ( – 60 + ) mm , l / w = ( 3 . 3 – ) 4 – 6 +,
+            abaxially scabrellous , tomentose , or pannose , resin_gland_dotted , adaxially scabrellous , 
+            often resin_gland_dotted .</text>
+    </statement>
+</description>

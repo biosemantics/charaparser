@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="wing" constraint="stem">
+            <character name="size" char_type="range_value" to="15" to_unit="mm"/>
+        </structure>
+        <text>wings to 15 mm wide .</text>
+    </statement>
+</description>

@@ -1,0 +1,25 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character modifier="broadly~to~narrowly" name="shape" value="oblanceolate"/>
+                    <character char_type="range_value" from="1" from_unit="cm" name="size" to="10" to_unit="cm"/>
+                </structure>
+                <structure id="o1" name="margin">
+                    <character name="shape" value="entire"/>
+                    <character modifier="remotely" name="shape" value="dentate"/>
+                    <character name="shape" value="lobed"/>
+                </structure>
+                <structure id="o2" name="lobe">
+                    <character name="shape" value="acute"/>
+                    <character name="shape" value="rounded"/>
+                </structure>
+                <structure id="o3" name="apex">
+                    <character name="shape" value="acute"/>
+                    <character name="shape" value="obtuse"/>
+                    <character char_type="range_value" from="acute" name="shape" to="obtuse"/>
+                </structure>
+                <structure id="o4" name="face">
+                    <character name="architecture" value="eglandular"/>
+                    <character modifier="lightly" name="pubescence" value="glandular-villous"/>
+                </structure>
+                <text>blades broadly to narrowly oblanceolate , 1 – 10 cm , margins entire or remotely dentate or lobed , lobes acute or rounded , apices acute to obtuse , faces eglandular or lightly glandular_villous .</text>
+            </statement>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="971.txt-3">
+    <structure id="o125" name="ribbing">
+      <character name="presence" value="absent" />
+    </structure>
+    <structure id="o126" name="ruga">
+      <character name="texture" value="weak" />
+    </structure>
+    <text>ribbing absent , rugae weak ;</text>
+  </statement>
+</description>
+

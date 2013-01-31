@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1124.txt-3">
+    <structure id="o228" name="exterior" constraint="ventral">
+      <character name="architecture" value="smooth" />
+    </structure>
+    <structure id="o229" name="exterior" constraint="dorsal" />
+    <structure id="o230" name="lamella"  >
+      <character name="prominence" value="prominent"/>
+    </structure>
+    <relation id="r47" from="o229" name="covered by" negation="false" to="o230" modifier="almost totally" />
+    <text>ventral exterior smooth , dorsal exterior almost totally covered by prominent lamellae ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="phyllary">
+            <character name="shape"  value="lanceolate" modifier="broadly"/>
+            <character name="thickness" value="thin"/>
+            <character name="shape" value="keeled" modifier="scarcely"/>
+            <character name="size" char_type="range_value" from="4" to="5" from_unit="mm" to_unit="mm"/>
+            
+            <character name="orientation" value="spreading" modifier="stellately" constraint="in fruit" constraintid="o2"/>
+        </structure>
+        <structure id="o2" name="fruit"></structure>
+      
+        <text>phyllaries broadly lanceolate , thin , scarcely keeled , 4 – 5 mm , stellately spreading in fruit .</text>
+    </statement>
+</description>

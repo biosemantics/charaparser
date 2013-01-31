@@ -1,0 +1,13 @@
+            <statement>
+                <structure constraint="inner" id="o0" name="floret">
+                    <character char_type="range_value" from="6" name="count" to="20" upper_restricted="false"/>
+                    <character name="reproduction" value="fertile"/>
+                </structure>
+                <structure id="o1" name="floret">
+                    <character name="reproduction" value="bisexual"/>
+                </structure>
+                <structure id="o2" name="corolla">
+                    <character modifier="usually" name="coloration" value="whitish"/>
+                </structure>
+                <text>inner 6 – 20 + florets bisexual , fertile , corollas usually whitish ;</text>
+            </statement>

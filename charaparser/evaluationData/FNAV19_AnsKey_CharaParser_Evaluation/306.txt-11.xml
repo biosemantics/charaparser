@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="coloration" char_type="range_value" from="dark" to="golden reddish"/>
+            <character name="coloration" value="dark"/>
+            <character name="coloration" value="reddish" modifier="golden"/>
+            <character name="coloration" value="brown" modifier="yellowish"/>
+            <character name="shape" value="fusiform"/>
+            <character name="size" char_type="range_value" from="3.5" to="8" from_unit="mm" to_unit="mm"/>
+            <character name="shape" value="tapered" modifier="distally"/>
+            <character name="shape" value="beaked"/>
+        </structure>
+        <structure id="o2" name="rib">
+            <character name="count" char_type="range_value" from="10" to="13"/>
+        </structure>
+        <text>cypselae dark to golden reddish or yellowish brown , fusiform , 3 . 5 – 8 mm , 
+            tapered distally or beaked , ribs 10 – 13 ;</text>
+    </statement>
+</description>

@@ -1,0 +1,17 @@
+            <statement>
+                <relation from="o2" id="r0" name="part_of" negation="false" to="o3"/>
+                <structure id="o2" name="apex">
+                    <character name="orientation" value="spreading"/>
+                    <character name="size" value="narrow"/>
+                    <character name="shape" value="flattened"/>
+                    <character modifier="moreorless" name="shape" value="dilated"/>
+                    <character modifier="moreorless" name="shape" value="erose"/>
+                    <character modifier="finely" name="shape" value="serrulate"/>
+                    <character name="shape" value="dilated"/>
+                    <character modifier="moreorless" name="shape" value="erose"/>
+                    <character name="relief_or_shape" value="erose"/>
+                    <character modifier="finely" name="shape" value="serrulate"/>
+                </structure>
+                <structure constraint="inner" id="o3" name="phyllary"/>
+                <text>apices of inner phyllaries spreading , narrow , flattened , ± dilated , ± erose or finely serrulate .</text>
+            </statement>

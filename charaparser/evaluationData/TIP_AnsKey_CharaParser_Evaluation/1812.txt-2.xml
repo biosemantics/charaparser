@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s16">
+    <structure id="o26" name="shell">
+      <character name="profile" value="variable"/>
+      <character name="profile" value="concavoconvex"/>
+      <character name="profile" value="convexoconcave"/>
+      <character name="profile" value="biconvex"/>
+      <character name="profile" char_type="range_value" from="concavoconvex" to="convexoconcave"/>
+    </structure>
+    <structure id="o27" name="line" constraint="hinge">
+      <character name="size" value="wide" modifier="relatively" />
+    </structure>
+    <relation id="r9" from="o26" name="with" negation="false" to="o27" modifier="normally"/>
+    <text>shell outline normally with relatively wide hinge line , 
+      variable profile from concavoconvex to convexoconcave , also biconvex ;</text>
+  </statement>
+</description>
+

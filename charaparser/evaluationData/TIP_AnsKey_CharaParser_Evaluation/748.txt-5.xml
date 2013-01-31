@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="748.txt-5">
+    <structure id="o50" name="pseudointerarea" constraint="dorsal">
+      <character name="prominence" value="raised" constraint="with median groove and propareas" constraintid="o51 o52"/>
+    </structure>
+    <structure id="o51" name="groove" constraint="median">
+      <character name="shape" value="triangular" />
+    </structure>
+    <structure id="o52" name="proparea" >
+      <character name="architecture" value="anacline" modifier="strongly" />
+    </structure>
+    <text>dorsal pseudointerarea raised with triangular median groove and strongly anacline propareas ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    
+    <statement id="s1">
+        <structure id="o1" name="leaf" constraint="distal">
+            <character name="architecture" value="sessile"/>
+            <character name="architecture" value="auriculate-clasping"/>
+            <character name="shape" value="short-decurrent"/>
+            <character name="size" char_type="range_value" from="1" to="10" from_unit="mm" to_unit="mm"/>
+            <character name="size" value="reduced" modifier="progressivley"/>           
+            <character name="shape" value="bractlike" modifier="becoming"/>
+            <character name="shape" value="unlobed" constraint="often"/>
+            <character name="shape" value="divided" modifier="less deeply"/>
+            <character name="architecture" value="spinier" modifier="sometimes" constraint="than proximal" constraintid="o2"/>
+        </structure>
+        
+         <structure id="o2" name="leaf" constraint="proximal">
+           
+        </structure>
+        
+        <text>distal sessile , auriculate_clasping or short_decurrent 1 – 10 mm , progressively 
+            reduced becoming bractlike ,often unlobed or less deeply divided and sometimes 
+            spinier than proximal .</text>
+    </statement>
+</description>

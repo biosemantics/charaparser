@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="coloration" value="brown"/>
+            <character name="shape" char_type="range_value" from="fusiform" to="oblance-oloid"/>
+            <character name="shape" value="fusiform"/>
+            <character name="shape" value="oblance-oloid"/>
+            <character name="shape" value="subterete"/>
+            <character name="shape" value="angled"/>
+            <character name="size" value="5" unit="mm"/>
+            <character name="architecture_or_shape" value="7-10-ribbed" modifier="indistinctly"/>
+        </structure>
+        <text>cypselae brown , fusiform to oblance_oloid , subterete or angled , 5 mm , indistinctly 7 – 10 - ribbed ;</text>
+    </statement>
+</description>

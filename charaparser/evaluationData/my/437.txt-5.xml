@@ -1,0 +1,12 @@
+            <statement>
+                <structure id="o0" name="head">
+                    <character modifier="borne" name="arrangement" value="singly"/>
+                    <character char_type="range_value" constraint="in arrays" constraint_id="o1" from="2" name="count" to="13"/>
+                </structure>
+                <structure id="o1" name="array">
+                    <character name="architecture" value="paniculiform"/>
+                    <character name="architecture" value="corymbiform"/>
+                    <character char_type="range_value" from="paniculiform" name="architecture" to="corymbiform"/>
+                </structure>
+                <text>heads borne singly or 2 – 13 in paniculiform to corymbiform arrays .</text>
+            </statement>

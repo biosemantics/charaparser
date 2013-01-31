@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="whole_organism">
+            <character name="shape" value="subcircular"/>
+        </structure>
+        <structure id="o2" name="valve">
+            <character name="shape" value="biconvex"/>
+        </structure>
+        <structure id="o3" name="ornament">
+            <character name="surface_sculpture" value="multicostellate"/>
+            <character name="aestivation" value="imbricate"/>
+            <character name="arrangement" value="radial"/>
+            <character name="arrangement" value="concentric"/>
+        </structure>
+        <relation id="r1" from="o2" name="with" negation="false" to="o3"/>
+        <text>Subcircular , biconvex valves with multicostellate and imbricate radial and concentric ornaments ;</text>
+    </statement>
+</description>

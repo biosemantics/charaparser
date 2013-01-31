@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1275.txt-7">
+    <structure id="o286" name="shell">
+      <character name="surface_sculpture" value="pseudopunctate" />
+      <character name="surface_sculpture" value="extropunctate" modifier="more rarely" />
+    </structure>
+    <text>shell structure pseudopunctate or more rarely extropunctate ;</text>
+  </statement>
+</description>
+

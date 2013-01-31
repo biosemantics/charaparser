@@ -1,0 +1,16 @@
+            <statement>
+                <structure id="o0" name="phyllary">
+                    <character name="shape" value="ovate"/>
+                    <character modifier="narrowly" name="shape" value="lanceolate"/>
+                    <character char_type="range_value" from="ovate" name="shape" to="lanceolate"/>
+                    <character name="size" value="unequal"/>
+                    <character char_type="range_value" from="2" from_unit="mm" name="size" to="14" to_unit="mm"/>
+                </structure>
+                <structure id="o1" name="apex">
+                    <character modifier="dark" name="coloration" value="brown"/>
+                    <character name="shape" value="obtuse"/>
+                    <character name="shape" value="acute"/>
+                    <character char_type="range_value" from="obtuse" name="shape" to="acute"/>
+                </structure>
+                <text>phyllaries ovate to narrowly lanceolate , unequal , 2 – 14 mm , apices dark brown , obtuse to acute .</text>
+            </statement>

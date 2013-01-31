@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character modifier="narrowly" name="shape" value="oblanceolate"/>
+                    <character name="shape" value="elliptic"/>
+                    <character char_type="range_value" from="oblanceolate" name="shape" to="elliptic"/>
+                </structure>
+                <text>blades narrowly oblanceolate to elliptic .</text>
+            </statement>

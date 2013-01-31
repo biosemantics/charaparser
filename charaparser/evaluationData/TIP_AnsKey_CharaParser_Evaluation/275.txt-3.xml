@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="tooth">
+            <character name="shape" value="denticulate" modifier="very finely" constraint="up to half hinge width" constraintid="o2"/>
+        </structure>
+        <structure id="o2" name="hinge">
+        </structure>
+        <text>very finely denticulate for up to half hinge width ;</text>
+    </statement>
+</description>

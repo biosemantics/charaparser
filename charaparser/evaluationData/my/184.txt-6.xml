@@ -1,0 +1,6 @@
+            <statement>
+                <structure id="o0" name="involucre">
+                    <character char_type="range_value" from="25" from_unit="mm" name="size" to="45" to_unit="mm"/>
+                </structure>
+                <text>involucres 25 – 45 mm diam .</text>
+            </statement>

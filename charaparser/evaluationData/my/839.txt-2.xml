@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="basal" id="o0" name="leaf">
+                    <character modifier="mostly 1-pinnately" name="shape" value="lobed"/>
+                </structure>
+                <text>basal mostly 1 - pinnately lobed ;</text>
+            </statement>

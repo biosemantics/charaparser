@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s19">
+        <structure id="o23" name="stem">
+            <character name="count" char_type="range_value" from="1" to="20"/>
+            <character name="orientation" value="erect"/>
+            <character name="coloration" value="brown"/>
+            <character name="coloration" value="gray-green"/>
+            <character name="coloration" char_type="range_value"  from="brown" to="gray-green"/>
+            <character name="architecture" value="simple"/>
+            <character name="pubescence" value="hairy"/>
+            <character name="pubescence" value="glabrescent"/>
+        </structure>
+        <text>stems 1 – 20 , erect , brown to gray_green , simple , hairy or glabrescent .</text>
+    </statement>
+</description>

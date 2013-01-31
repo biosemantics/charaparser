@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s3">
+        <structure id="o3" name="leaf" constraint="basal">
+            <character name="presence" value="absent" modifier="usually"/>
+            <character name="duration" value="withered" modifier="at flowering"/>
+            <character name="architecture" value="winged petiolate"/>
+        </structure>
+        <text>basal usually absent or withered at flowering , winged petiolate ;</text>
+    </statement>
+</description>

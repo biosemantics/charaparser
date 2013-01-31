@@ -1,0 +1,19 @@
+            <statement>
+                <structure id="o0" name="corolla">
+                    <character name="coloration" value="white"/>
+                    <character name="coloration" value="pink"/>
+                    <character name="coloration" value="purple"/>
+                    <character char_type="range_value" from="pink" name="coloration" to="purple"/>
+                </structure>
+                <structure id="o1" name="tube"/>
+                <structure id="o2" name="throat">
+                    <character name="shape" value="abruptly funnelform"/>
+                </structure>
+                <structure constraint="than abruptly funnelform throats" id="o3" name="tube"/>
+                <structure id="o4" name="lobe">
+                    <character name="count" value="5"/>
+                    <character name="arrangement_or_shape" value="lance-linear"/>
+                    <character name="size" value="unequal"/>
+                </structure>
+                <text>corollas white or pink to purple , tubes longer than abruptly funnelform throats , lobes 5 , lance_linear , unequal .</text>
+            </statement>

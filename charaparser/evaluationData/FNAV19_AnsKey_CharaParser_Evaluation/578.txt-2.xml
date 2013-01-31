@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="578.txt-2">
+        <structure id="o232" name="stem">
+            <character name="count" char_type="range_value" from="1" to="50" upper_restricted="false"/>
+            <character name="orientation" value="erect" modifier="usually"/>
+            <character name="habit" value="decumbent" modifier="rarely"/>
+            <character name="shape" value="scapiform"/>
+            <character name="shape" value="branched" modifier="distally"/>
+            <character name="pubescence" value="glabrous"/>
+            <character name="pubescence" value="villous" modifier="sparingly"/>
+            <character name="pubescence" value="glandular-villous"/>
+        </structure>
+        <text>stems 1  50 + , usually erect , rarely decumbent , scapiform or branched distally , glabrous or sparingly villous , glandular_villous .</text>
+    </statement>
+</description>

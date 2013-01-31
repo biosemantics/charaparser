@@ -1,0 +1,16 @@
+            <statement>
+                <structure id="o2" name="cypsela">
+                    <character name="coloration" value="dark"/>
+                    <character modifier="golden" name="coloration" value="reddish"/>
+                    <character char_type="range_value" from="dark" name="coloration" to="golden_c_reddish"/>
+                    <character modifier="yellowish" name="coloration" value="brown"/>
+                    <character name="shape" value="fusiform"/>
+                    <character char_type="range_value" from="3.5" from_unit="mm" name="size" to="8" to_unit="mm"/>
+                    <character name="shape" value="tapered"/>
+                    <character modifier="distally" name="shape" value="beaked"/>
+                </structure>
+                <structure id="o3" name="rib">
+                    <character char_type="range_value" from="10" name="count" to="13"/>
+                </structure>
+                <text>cypselae dark to golden reddish or yellowish brown , fusiform , 3 . 5 – 8 mm , tapered distally or beaked , ribs 10 – 13 ;</text>
+            </statement>

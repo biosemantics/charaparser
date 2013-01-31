@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="993.txt-6">
+    <structure id="o139" name="system" constraint="muscle" />
+    <structure id="o140" name="muscle" constraint="umbonal" >
+      <character name="arrangement" value="paired"/>
+    </structure>
+    <relation id="r1" from="o139" name="with" to="o140" negation="false"/>
+    <text>muscle system with paired umbonal muscle ;</text>
+  </statement>
+</description>
+

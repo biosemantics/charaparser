@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="665.txt-1">
+        <structure id="o335" name="stolon">
+            <character name="size" char_type="range_value" from="1.5" from_unit="cm" to="4.5" to_unit="cm"/>
+        </structure>
+        <text>stolons 1 . 5  4 . 5 cm .</text>
+    </statement>
+</description>

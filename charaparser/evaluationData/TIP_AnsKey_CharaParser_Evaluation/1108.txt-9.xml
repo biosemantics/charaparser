@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1108.txt-9">
+    <structure id="o220" name="rim" constraint="dorsal subperipheral">
+      <character name="development" value="developed" modifier="variably" />
+    </structure>
+    <text>dorsal subperipheral rim variably developed ;</text>
+  </statement>
+</description>
+

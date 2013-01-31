@@ -1,0 +1,20 @@
+            <statement>
+                <structure id="o0" name="blade">
+                    <character name="shape" value="oblanceolate"/>
+                    <character modifier="narrowly" name="shape" value="elliptic"/>
+                    <character modifier="pinnately" name="shape" value="lobed"/>
+                </structure>
+                <structure constraint="longer" id="o1" name="spine">
+                    <character modifier="more or less" name="fragility" value="stout"/>
+                    <character modifier="usually" name="size" unit="cm" value="1"/>
+                    <character modifier="usually" name="size" value="shorter"/>
+                </structure>
+                <structure constraint="abaxial" id="o2" name="face">
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="thinly" name="pubescence" value="gray-tomentose"/>
+                    <character char_type="range_value" from="glabrous" name="pubescence" to="gray-tomentose"/>
+                    <character name="insertion_or_position" value="adaxial"/>
+                    <character name="pubescence" value="glabrous"/>
+                </structure>
+                <text>blades oblanceolate or narrowly elliptic , pinnately lobed , longer spines ± stout , usually 1 cm or shorter , abaxial faces glabrous to thinly gray_tomentose , adaxial glabrous ;</text>
+            </statement>

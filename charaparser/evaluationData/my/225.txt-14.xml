@@ -1,0 +1,12 @@
+            <statement>
+                <relation from="o1" id="r0" name="consist_of" negation="false" to="o2"/>
+                <structure id="o1" name="pappus"/>
+                <structure id="o2" name="bristle">
+                    <character name="count" value="many"/>
+                    <character name="coloration" value="white"/>
+                    <character name="size" value="unequal"/>
+                    <character name="texture" value="stiff"/>
+                    <character char_type="range_value" from="2.5" from_unit="mm" name="size" to="3" to_unit="mm"/>
+                </structure>
+                <text>pappi of many white , unequal , stiff bristles 2 . 5 – 3 mm .</text>
+            </statement>

@@ -1,0 +1,13 @@
+            <statement>
+                <structure constraint="inner" id="o0" name="phyllary">
+                    <character char_type="range_value" from="6" from_unit="mm" name="size" to="8" to_unit="mm"/>
+                    <character modifier="moreorless densely" name="pubescence" value="strigose"/>
+                    <character name="pubescence" value="villous"/>
+                    <character char_type="range_value" from="strigose" name="pubescence" to="villous"/>
+                </structure>
+                <structure id="o1" name="hair">
+                    <character char_type="range_value" from="0.3" from_unit="mm" name="atypical_size" to="0.5" to_inclusive="false" to_unit="mm"/>
+                    <character char_type="range_value" from="0.5" from_unit="mm" name="size" to="1" to_unit="mm"/>
+                </structure>
+                <text>inner phyllaries 6 – 8 mm , ± densely strigose to villous , hairs ( 0 . 3 – ) 0 . 5 – 1 mm .</text>
+            </statement>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="ridge" constraint="lateral"></structure>
+        <structure id="o2" name="ear"></structure>
+        <relation id="r1" from="o1" name="reach" negation="false" to="o2"/>
+        <structure id="o3" name="septum">
+            <character name="size" value="medium" />
+            <character name="shape" value="divided" modifier="posteriorly"/>
+        </structure>
+        <text>lateral ridges reach ears , medium septum divided posteriorly ;</text>
+    </statement>
+</description>

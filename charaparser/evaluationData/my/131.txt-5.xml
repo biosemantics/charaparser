@@ -1,0 +1,37 @@
+            <statement>
+                <relation from="o3" id="r0" name="with" negation="false" to="o4"/>
+                <structure id="o1" name="blade">
+                    <character modifier="more or less" name="arrangement_or_shape" value="elliptic"/>
+                    <character char_type="range_value" from="8" from_unit="cm" name="length" to="35" to_unit="cm"/>
+                    <character char_type="range_value" constraint="to blade" constraint_id="o2" from="4" from_unit="cm" name="width" to="8" to_unit="cm"/>
+                    <character name="shape" value="divided"/>
+                    <character name="position" value="halfway"/>
+                </structure>
+                <structure constraint="midveins" id="o2" name="blade"/>
+                <structure id="o3" name="lobe">
+                    <character name="orientation" value="spreading"/>
+                    <character name="shape" value="triangular"/>
+                    <character modifier="coarsely" name="shape" value="dentate"/>
+                    <character name="shape" value="obtuse"/>
+                    <character name="shape" value="acute"/>
+                    <character char_type="range_value" from="obtuse" name="shape" to="acute"/>
+                </structure>
+                <structure id="o4" name="lobe">
+                    <character name="count" value="few"/>
+                    <character name="size" value="broad"/>
+                </structure>
+                <structure constraint="main" id="o5" name="spine">
+                    <character char_type="range_value" from="1" from_unit="mm" name="size" to="5" to_unit="mm"/>
+                </structure>
+                <structure constraint="abaxial" id="o6" name="face">
+                    <character name="coloration" value="green"/>
+                    <character name="coloration" value="gray"/>
+                    <character modifier="thinly" name="pubescence" value="tomentose"/>
+                    <character name="insertion_or_position" value="adaxial"/>
+                    <character name="coloration" value="green"/>
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="sparingly" name="pubescence" value="pilose"/>
+                    <character char_type="range_value" from="glabrous" name="pubescence" to="pilose"/>
+                </structure>
+                <text>blades ± elliptic , 8 – 35 × 4 – 8 cm , divided about halfway to midveins , lobes spreading , triangular , coarsely dentate or with a few broad lobes , obtuse to acute , main spines 1 – 5 mm , abaxial faces green or gray , thinly tomentose , adaxial green and glabrous to sparingly pilose ;</text>
+            </statement>

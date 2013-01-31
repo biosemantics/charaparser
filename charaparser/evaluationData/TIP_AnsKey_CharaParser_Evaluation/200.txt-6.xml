@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="system" constraint="ventral mantle canal">
+            <character name="architecture" value="saccate" modifier="basically"/>            
+        </structure>
+        <structure id="o2" name="system" constraint="dorsal mantle canal">
+            <character name="architecture" value="digitate" modifier="basically"/>
+        </structure>
+        <text>ventral and dorsal mantle canal systems basically saccate and digitate respectively ;</text>
+    </statement>
+</description>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="401.txt-5">
+        <structure id="o11" name="head">
+            <character char_type="range_value" name="count" from="8" to="12"/>
+            <character name="atypical_count" char_type="range_value" from="12" to="25" from_inclusive="false" upper_restricted="false"/>
+        </structure>
+        <structure id="o12" name="array">
+            <character name="architecture" value="paniculiform"/>
+        </structure>
+        <relation id="r4" from="o11" name="in" negation="false" to="o12"/>
+        <text>heads 8  12 (  25 + ) in  paniculiform arrays .</text>
+    </statement>
+</description>

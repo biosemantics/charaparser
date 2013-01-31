@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s13">
+    <structure id="o30" name="pseudointerarea" >
+      <character name="development" value="developed" modifier="well"/>
+    </structure>
+    <structure id="o31" name="valve"/>
+    <relation id="r12" from="o30" name="part_of" negation="false" to="o31" />
+    <text>pseudointerarea of both valves well developed ;</text>
+  </statement>
+</description>
+

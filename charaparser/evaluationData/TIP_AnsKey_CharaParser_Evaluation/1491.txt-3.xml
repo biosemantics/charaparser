@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s1">
+    <structure id="o1" name="spine">
+      <character name="arrangement" value="arranged" modifier="symmetrically" />
+      
+      <character name="shape" value="orthomorph oblique"/>
+      <character name="shape" value="angled" modifier="low to high"/>      
+    </structure>
+    <text>spines symmetrically arranged , orthomorph oblique , low to high angled ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,49 @@
+            <statement>
+                <relation from="o1" id="r0" name="at" negation="false" to="o2"/>
+                <relation from="o2" id="r1" name="by" negation="false" to="o3"/>
+                <relation from="o3" id="r2" name="with" negation="false" to="o4"/>
+                <relation from="o4" id="r3" name="borne on" negation="false" to="o5"/>
+                <relation from="o1" id="r4" name="part_of" negation="false" to="o6"/>
+                <relation from="o1" id="r5" name="in" negation="false" to="o7"/>
+                <relation from="o1" id="r6" name="in" negation="false" to="o8"/>
+                <relation from="o9" id="r7" name="beyond" negation="false" to="o10"/>
+                <relation from="o9" id="r8" name="beyond" negation="false" to="o11"/>
+                <relation from="o12" id="r9" modifier="distally" name="on" negation="false" to="o13"/>
+                <structure id="o0" name="whole_organism"/>
+                <structure id="o1" name="style">
+                    <character modifier="usually" name="relief" value="ringed"/>
+                    <character modifier="distally" name="architecture_or_shape" value="2-branched"/>
+                </structure>
+                <structure id="o2" name="base"/>
+                <structure id="o3" name="nectary">
+                    <character name="count" value="1"/>
+                </structure>
+                <structure id="o4" name="papilla">
+                    <character name="habit" value="stigmatic"/>
+                </structure>
+                <structure constraint="adaxial" id="o5" name="face"/>
+                <structure id="o6" name="branch"/>
+                <structure id="o7" name="band">
+                    <character name="architecture" value="continuous"/>
+                </structure>
+                <structure id="o8" name="line">
+                    <character name="count" value="2"/>
+                    <character name="arrangement" value="separate"/>
+                    <character name="arrangement" value="contiguous"/>
+                </structure>
+                <structure constraint="style" id="o9" name="branch">
+                    <character modifier="apically" name="shape" value="truncate"/>
+                    <character name="architecture" value="appendaged"/>
+                </structure>
+                <structure id="o10" name="line"/>
+                <structure id="o11" name="band">
+                    <character name="habit" value="stigmatic"/>
+                </structure>
+                <structure id="o12" name="appendage">
+                    <character modifier="usually" name="pubescence" value="papillate"/>
+                    <character name="pubescence" value="hirsute"/>
+                    <character char_type="range_value" from="papillate" name="pubescence" to="hirsute"/>
+                </structure>
+                <structure constraint="abaxial" id="o13" name="face"/>
+                <text>each style usually ringed at base by a nectary , distally 2 - branched with stigmatic papillae borne on adaxial face of each branch in 2 separate or contiguous lines or in 1 continuous band , style branches apically truncate or appendaged beyond the stigmatic bands or lines , appendages usually papillate to hirsute distally on abaxial faces .</text>
+            </statement>

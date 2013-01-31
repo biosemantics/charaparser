@@ -1,0 +1,7 @@
+            <statement>
+                <structure constraint="basal" id="o0" name="blade">
+                    <character char_type="range_value" from="3" from_unit="mm" name="length" to="50" to_unit="mm"/>
+                    <character char_type="range_value" from="2" from_unit="mm" name="width" to="4" to_unit="mm"/>
+                </structure>
+                <text>basal blades 3 – 50 × 2 – 4 mm .</text>
+            </statement>

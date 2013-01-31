@@ -1,0 +1,10 @@
+            <statement>
+                <structure constraint="stem" id="o0" name="base">
+                    <character name="texture" value="soft"/>
+                    <character name="texture" value="hard"/>
+                    <character char_type="range_value" from="soft" name="texture" to="hard"/>
+                    <character name="habit_or_texture" value="herbaceous"/>
+                    <character modifier="often" name="architecture" value="hollow"/>
+                </structure>
+                <text>stem bases soft to hard , herbaceous , often hollow .</text>
+            </statement>

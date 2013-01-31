@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o1" name="corolla">
+                    <character name="coloration" value="rose-pink"/>
+                    <character name="coloration" value="purplish"/>
+                    <character char_type="range_value" from="rose-pink" name="coloration" to="purplish"/>
+                </structure>
+                <text>corollas rose_pink to purplish .</text>
+            </statement>

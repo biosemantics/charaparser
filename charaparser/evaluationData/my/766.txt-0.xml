@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="whole_organism">
+                    <character modifier="mostly" name="coloration" value="greenish"/>
+                    <character modifier="thinly" name="pubescence" value="arachnoid-sericeous"/>
+                    <character name="life_style" value="plant"/>
+                </structure>
+                <text>plants mostly greenish , thinly arachnoid_sericeous .</text>
+            </statement>

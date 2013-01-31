@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="disc" id="o0" name="floret">
+                    <character char_type="range_value" from="4" name="count" to="8" upper_restricted="false"/>
+                </structure>
+                <text>disc florets 4 – 8 + ;</text>
+            </statement>

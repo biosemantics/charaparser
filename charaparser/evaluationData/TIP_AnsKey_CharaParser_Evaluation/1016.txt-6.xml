@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1016.txt-6">
+    <structure id="o166" name="lobe" constraint="cardinal process">
+      <character name="arrangement" value="separate" />
+      <character name="fusion" value="fused" constraint="to socket ridges" constraintid="o167" />
+    </structure>
+    <structure id="o167" name="ridge" constraint="socket">
+      <character name="arrangement" value="divergent" modifier="widely" />
+      <character name="shape" value="curved" modifier="short" />
+    </structure>
+    <text>cardinal process lobes separate , fused to widely divergent but short curved socket ridges ;</text>
+  </statement>
+</description>
+

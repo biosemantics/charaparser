@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="anderidium">
+            <character name="size" value="reduced"/>
+            <character name="arrangement" value="spaced" modifier="widely"/>
+            <character name="arrangement" value="divergent" modifier="anteriorly; at 90°" />
+        </structure>
+        <text>anderidia reduced , widely spaced , anteriorly divergent at 90 &#176; ;</text>
+    </statement>
+</description>

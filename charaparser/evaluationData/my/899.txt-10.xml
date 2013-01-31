@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o3" name="corolla">
+                    <character name="coloration" value="yellow"/>
+                    <character char_type="range_value" from="1.5" from_unit="mm" name="size" to="2" to_unit="mm"/>
+                    <character name="pubescence" value="glabrous"/>
+                </structure>
+                <text>corollas yellow , 1 . 5 – 2 mm , glabrous .</text>
+            </statement>

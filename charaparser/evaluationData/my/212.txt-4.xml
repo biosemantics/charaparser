@@ -1,0 +1,16 @@
+            <statement>
+                <structure id="o0" name="distal">
+                    <character name="insertion_or_position" value="cauline"/>
+                    <character name="architecture" value="sessile"/>
+                    <character modifier="not" name="shape" value="decurrent"/>
+                    <character modifier="gradually" name="size" value="smaller"/>
+                </structure>
+                <structure id="o1" name="blade">
+                    <character name="shape" value="linear"/>
+                    <character name="shape" value="lanceolate"/>
+                    <character char_type="range_value" from="linear" name="shape" to="lanceolate"/>
+                    <character name="shape" value="entire"/>
+                    <character name="shape" value="dentate"/>
+                </structure>
+                <text>distal cauline sessile , not decurrent , gradually smaller , blades linear to lanceolate , entire or dentate .</text>
+            </statement>

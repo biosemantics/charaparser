@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="coloration" value="black" modifier="greenish"/>
+            <character name="size" char_type="range_value" from="7" to="10" from_unit="mm" to_unit="mm"/>
+            <character name="shape" value="beaked"/>
+        </structure>
+        <text>cypselae greenish black , 7 – 10 mm , beaked ;</text>
+    </statement>
+</description>

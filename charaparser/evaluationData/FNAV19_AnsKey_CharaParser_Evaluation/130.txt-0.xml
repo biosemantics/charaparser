@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="whole_organism">
+            <character name="size" char_type="range_value" from="15" to="45" from_unit="cm" to_unit="cm"/>
+			<character name="life_style" value="perennial"/>
+        </structure>
+        <text>perennials 15 – 45 cm ;</text>
+    </statement>
+</description>

@@ -1,0 +1,6 @@
+            <statement>
+                <structure id="o0" name="stolon">
+                    <character char_type="range_value" from="0.5" from_unit="cm" name="size" to="2.5" to_unit="cm"/>
+                </structure>
+                <text>stolons 0 . 5 – 2 . 5 cm .</text>
+            </statement>

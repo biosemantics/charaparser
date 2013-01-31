@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s13">
+    <structure id="o31" name="sulcus" constraint="ventral">
+      <character name="presence" value="absent" />
+      <character name="presence" value="defined" modifier="ill" />
+    </structure>
+    <text>ventral sulcus absent or ill defined ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="991.txt-2">
+    <structure id="o137" name="scar" constraint="umbonal muscle">
+      <character name="shape" value="heart-shaped" />
+    </structure>
+    <structure id="o138" name="nerve" constraint="pedicle" />
+    <structure id="o139" name="impression"></structure>
+    <relation id="r1" from="o139" name="part_of" negation="false" to="o138"/>
+    <relation id="r28" from="o137" name="bisected by" negation="false" to="o139" />
+    <text>umbonal muscle scar heart - shaped , bisected by impression of pedicle nerve ;</text>
+  </statement>
+</description>
+

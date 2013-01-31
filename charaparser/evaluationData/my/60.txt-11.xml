@@ -1,0 +1,28 @@
+            <statement>
+                <relation from="o0" id="r0" name="in" negation="false" to="o1"/>
+                <relation from="o2" id="r1" name="with" negation="false" to="o3"/>
+                <structure id="o0" name="phyllary">
+                    <character name="aestivation_or_arrangement" value="imbricate"/>
+                    <character name="shape" value="lanceolate"/>
+                    <character name="shape" value="linear"/>
+                    <character char_type="range_value" from="lanceolate" name="shape" to="linear"/>
+                </structure>
+                <structure id="o1" name="series">
+                    <character char_type="range_value" from="6" name="count" to="9"/>
+                </structure>
+                <structure constraint="abaxial" id="o2" name="face"/>
+                <structure id="o3" name="ridge">
+                    <character name="coating_or_texture" value="glutinous"/>
+                    <character modifier="tightly" name="orientation" value="appressed"/>
+                </structure>
+                <structure id="o4" name="body">
+                    <character name="pubescence_or_relief" value="scabrous"/>
+                    <character name="architecture_or_shape" value="spinulose"/>
+                </structure>
+                <structure id="o5" name="spine">
+                    <character name="orientation" value="erect"/>
+                    <character modifier="weakly" name="orientation" value="ascending"/>
+                    <character char_type="range_value" from="1" from_unit="mm" name="size" to="4" to_unit="mm"/>
+                </structure>
+                <text>phyllaries in 6 – 9 series , imbricate , lanceolate to linear , abaxial faces with glutinous ridge , outer and middle tightly appressed , bodies scabrous or spinulose , spines erect or weakly ascending , 1 – 4 mm ;</text>
+            </statement>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="base" constraint="stem">
+            <character name="texture" char_type="range_value" from="soft" to="hard" />
+            <character name="texture" value="soft" />
+            <character name="texture" value="hard" />
+            <character value="herbaceous" name="habit_or_texture" />
+            <character name="architecture" value="hollow" modifier="often" />
+        </structure>
+        <text>stem bases soft to hard , herbaceous , often hollow .</text>
+    </statement>
+</description>

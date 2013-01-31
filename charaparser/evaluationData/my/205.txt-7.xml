@@ -1,0 +1,30 @@
+            <statement>
+                <relation from="o0" id="r0" name="in" negation="false" to="o1"/>
+                <relation from="o3" id="r1" name="into" negation="false" to="o4"/>
+                <structure id="o0" name="phyllary">
+                    <character name="count" value="many"/>
+                </structure>
+                <structure id="o1" name="series">
+                    <character char_type="range_value" from="6" name="count" to="many"/>
+                    <character name="orientation" value="appressed"/>
+                </structure>
+                <structure constraint="body" id="o2" name="margin">
+                    <character name="shape" value="entire"/>
+                </structure>
+                <structure constraint="distal" id="o3" name="part">
+                    <character name="size" value="expanded"/>
+                    <character name="structure" value="spine-tipped"/>
+                </structure>
+                <structure id="o4" name="appendage">
+                    <character name="orientation" value="erect"/>
+                    <character name="orientation" value="spreading"/>
+                    <character char_type="range_value" from="erect" name="orientation" to="spreading"/>
+                    <character name="shape" value="usually moreorless dentate"/>
+                    <character name="shape" value="fringed"/>
+                    <character name="shape" value="linear"/>
+                    <character name="shape" value="ovate"/>
+                    <character char_type="range_value" from="linear" name="shape" to="ovate"/>
+                    <character name="architecture" value="spineless"/>
+                </structure>
+                <text>phyllaries many in 6 – many series , unequal , proximal part appressed , body margins entire , distal parts expanded into erect to spreading , usually ± dentate or fringed , linear to ovate appendages , spine_tipped or spineless .</text>
+            </statement>

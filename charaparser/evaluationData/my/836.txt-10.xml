@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="ray" id="o3" name="floret">
+                    <character name="count" value="0"/>
+                </structure>
+                <text>ray florets 0 .</text>
+            </statement>

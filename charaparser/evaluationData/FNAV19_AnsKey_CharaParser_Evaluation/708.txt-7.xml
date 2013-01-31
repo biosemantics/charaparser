@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="head">
+            <character value="disciform" name="architecture_or_shape" />
+        </structure>
+        <structure id="o2" name="cluster">
+            <character name="architecture_or_shape" value="capitate" modifier="more or less" />
+        </structure>
+        <relation id="r1" from="o1" name="in" negation="false" to="o2" modifier="usually" />
+        <structure id="o3" name="glomerule">
+            <character name="architecture" value="spiciform" />
+        </structure>
+        <relation id="r2" from="o1" name="in" negation="false" to="o3" modifier="sometimes" />
+        <text>heads disciform , usually in more or less capitate clusters , sometimes in spiciform glomerules .</text>
+    </statement>
+</description>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="406.txt-9">
+        <structure id="o16" name="involucre">
+            <character name="shape" value="campanulate"/>
+            <character char_type="range_value" name="size" from="7" from_unit="mm" to="9" to_unit="mm"/>
+        </structure>
+        <text>involucres campanulate , 7  9 mm .</text>
+    </statement>
+</description>

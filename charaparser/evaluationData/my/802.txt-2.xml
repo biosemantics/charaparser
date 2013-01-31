@@ -1,0 +1,12 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character name="orientation" value="erect"/>
+                    <character name="architecture" value="simple"/>
+                    <character modifier="distally" name="architecture" value="branched"/>
+                    <character modifier="finely" name="architecture_or_exudation_or_pubescence" value="glandular"/>
+                </structure>
+                <structure id="o1" name="base">
+                    <character name="pubescence" value="sericeous-woolly"/>
+                </structure>
+                <text>stems erect , simple or distally branched , finely glandular , bases sericeous_woolly .</text>
+            </statement>

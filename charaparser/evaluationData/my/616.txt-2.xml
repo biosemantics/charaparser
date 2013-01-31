@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o1" name="leaf">
+                    <character modifier="moreorless" name="architecture" value="sessile"/>
+                    <character name="architecture" value="petiolate"/>
+                </structure>
+                <text>leaves ± sessile or petiolate ;</text>
+            </statement>

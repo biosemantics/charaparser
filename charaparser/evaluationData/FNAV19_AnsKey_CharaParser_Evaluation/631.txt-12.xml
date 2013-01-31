@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="631.txt-12">
+        <structure id="o296" name="pappus" constraint="pistillate">
+            
+            <character name="size" char_type="range_value" from="2.5" from_unit="mm" to="3" to_unit="mm"/>  
+        </structure>            
+        <text>pistillate 2 . 5  3 mm .</text>
+    </statement>
+</description>

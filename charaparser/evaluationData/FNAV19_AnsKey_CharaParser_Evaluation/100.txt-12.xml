@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="phyllary" constraint="outer and middle">
+            <character name="orientation" value="appressed"/>
+        </structure>
+        <structure id="o3" name="apex">
+            <character name="orientation" value="spreading"/>
+        </structure>
+        <structure id="o4" name="phyllary" constraint="outer">
+            <character name="shape" value="spiny-fringed" modifier="irregularly"/>
+            <character name="shape" value="serrulate" modifier="finely"/>
+        </structure>
+        <structure id="o5" name="spine">
+            <character name="size" value="slender"/>
+            <character name="size" char_type="range_value" from="3" from_unit="mm" to="5" to_unit="mm"/>
+        </structure>
+        <text>
+            outer and middle appressed or apices spreading , at least outer irregularly spiny_fringed , finely serrulate , spines slender , 3 – 5 mm ; 
+        </text>
+    </statement>
+</description>

@@ -1,0 +1,17 @@
+            <statement>
+                <structure constraint="outer and middle" id="o4" name="phyllary">
+                    <character name="orientation" value="appressed"/>
+                    <character/>
+                    <character name="orientation" value="spreading"/>
+                    <character/>
+                    <character modifier="irregularly" name="shape" value="spiny-fringed"/>
+                    <character modifier="finely" name="shape" value="serrulate"/>
+                </structure>
+                <structure id="o5" name="apex"/>
+                <structure constraint="at-least outer" id="o6" name="phyllary"/>
+                <structure id="o7" name="spine">
+                    <character name="size" value="slender"/>
+                    <character char_type="range_value" from="3" from_unit="mm" name="size" to="5" to_unit="mm"/>
+                </structure>
+                <text>outer and middle appressed or apices spreading , at least outer irregularly spiny_fringed , finely serrulate , spines slender , 3 – 5 mm ;</text>
+            </statement>

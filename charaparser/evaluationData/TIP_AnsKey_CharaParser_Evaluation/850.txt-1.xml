@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="850.txt-1">
+    <structure id="o90" name="costa" constraint="median enlarged">
+      <character name="development" value="developed" modifier="when present" constraint="on beak" constraintid="o91" />
+    </structure>
+    <structure id="o91" name="beak" />
+    <text>when present , median enlarged costa developed on beak only ;</text>
+  </statement>
+</description>
+

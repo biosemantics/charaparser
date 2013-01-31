@@ -1,0 +1,16 @@
+            <statement>
+                <structure constraint="proximal" id="o0" name="leaf">
+                    <character name="shape" value="elliptic"/>
+                    <character name="shape" value="oblong-oblanceolate"/>
+                    <character char_type="range_value" from="elliptic" name="shape" to="oblong-oblanceolate"/>
+                    <character modifier="sometimes pinnately" name="shape" value="lobed"/>
+                    <character modifier="not" name="texture" value="fleshy"/>
+                </structure>
+                <structure constraint="ultimate" id="o1" name="margin">
+                    <character modifier="usually" name="shape" value="dentate"/>
+                </structure>
+                <structure id="o2" name="face">
+                    <character name="pubescence" value="glabrous"/>
+                </structure>
+                <text>proximal elliptic to oblong_oblanceolate , sometimes pinnately lobed , not fleshy , ultimate margins usually dentate , faces glabrous ;</text>
+            </statement>

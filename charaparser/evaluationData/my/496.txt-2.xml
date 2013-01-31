@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="peduncle">
+                    <character modifier="usually" name="pubescence" value="glabrous"/>
+                    <character modifier="sometimes apically" name="pubescence" value="puberulent"/>
+                    <character name="architecture" value="eglandular"/>
+                </structure>
+                <text>peduncles usually glabrous , sometimes apically puberulent , eglandular .</text>
+            </statement>

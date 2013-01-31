@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="bristle">
+                    <character name="size" value="unequal"/>
+                    <character name="size" value="longest"/>
+                    <character char_type="range_value" from="5" from_unit="mm" name="size" to="6" to_unit="mm"/>
+                </structure>
+                <text>bristles unequal , longest 5 – 6 mm .</text>
+            </statement>

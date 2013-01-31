@@ -1,0 +1,8 @@
+            <statement>
+                <structure id="o0" name="receptacle">
+                    <character name="shape" value="flat"/>
+                    <character name="architecture" value="epaleate"/>
+                    <character name="pubescence" value="long-bristly"/>
+                </structure>
+                <text>receptacles flat , epaleate , long_bristly .</text>
+            </statement>

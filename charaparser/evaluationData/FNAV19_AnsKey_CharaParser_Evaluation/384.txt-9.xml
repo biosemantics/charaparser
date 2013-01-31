@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="involucre">
+            <character name="shape" value="campanulate" modifier="broadly"/>
+            <character name="shape" value="urceolate" />
+            <character name="size" char_type="range_value" from="4" to="8" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <text>involucres broadly campanulate or urceolate , 4 – 8 mm diam .</text>
+    </statement>
+</description>

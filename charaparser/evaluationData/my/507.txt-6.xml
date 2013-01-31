@@ -1,0 +1,8 @@
+            <statement>
+                <structure constraint="outer" id="o0" name="phyllary">
+                    <character modifier="mostly" name="orientation" value="spreading"/>
+                    <character modifier="adaxially usually more or less" name="pubescence" value="tomentose"/>
+                    <character modifier="rarely" name="pubescence" value="glabrous"/>
+                </structure>
+                <text>outer mostly spreading , adaxially usually ± tomentose , rarely glabrous ;</text>
+            </statement>

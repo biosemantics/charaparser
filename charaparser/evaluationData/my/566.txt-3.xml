@@ -1,0 +1,13 @@
+            <statement>
+                <structure constraint="basal" id="o0" name="blade">
+                    <character name="shape" value="linear"/>
+                    <character name="shape" value="filiform"/>
+                    <character char_type="range_value" from="linear" name="shape" to="filiform"/>
+                    <character char_type="range_value" from="5" from_unit="cm" name="size" to="8" to_unit="cm"/>
+                </structure>
+                <structure id="o1" name="margin">
+                    <character name="shape" value="entire"/>
+                    <character name="shape" value="toothed"/>
+                </structure>
+                <text>basal blades linear to filiform , 5 – 8 cm , margins entire or toothed ;</text>
+            </statement>

@@ -1,0 +1,12 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character name="count" value="1"/>
+                    <character name="orientation" value="erect"/>
+                    <character name="fragility" value="stout"/>
+                    <character name="architecture" value="simple"/>
+                    <character name="architecture" value="branched"/>
+                    <character modifier="coarsely" name="pubescence" value="setose"/>
+                    <character name="pubescence" value="hispid"/>
+                </structure>
+                <text>stems 1 , erect , stout , simple or branched proximally , coarsely setose or hispid .</text>
+            </statement>

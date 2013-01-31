@@ -1,0 +1,9 @@
+            <statement>
+                <structure id="o1" name="involucre">
+                    <character name="shape" value="ovoid"/>
+                    <character char_type="range_value" from="20" from_unit="mm" name="size" to="25" to_unit="mm"/>
+                    <character modifier="very thinly" name="pubescence" value="cobwebby"/>
+                    <character modifier="becoming" name="pubescence" value="glabrous"/>
+                </structure>
+                <text>involucres ovoid , 20 – 25 mm , very thinly cobwebby or becoming glabrous .</text>
+            </statement>

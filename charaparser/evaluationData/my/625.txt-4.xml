@@ -1,0 +1,7 @@
+            <statement>
+                <structure constraint="blade" id="o0" name="margin">
+                    <character modifier="usually" name="shape" value="entire"/>
+                    <character modifier="rarely" name="shape" value="denticulate"/>
+                </structure>
+                <text>blade margins usually entire , rarely denticulate .</text>
+            </statement>

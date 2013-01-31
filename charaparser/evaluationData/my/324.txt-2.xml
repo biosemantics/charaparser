@@ -1,0 +1,22 @@
+            <statement>
+                <structure id="o0" name="stem">
+                    <character char_type="range_value" from="1" name="count" to="10" upper_restricted="false"/>
+                    <character name="orientation" value="ascending"/>
+                    <character name="orientation" value="erect"/>
+                    <character char_type="range_value" from="ascending" name="orientation" to="erect"/>
+                    <character modifier="more or less" name="coloration" value="purplish"/>
+                    <character modifier="densely" name="pubescence" value="villous"/>
+                    <character modifier="becoming" name="pubescence" value="glabrescent"/>
+                    <character modifier="sparsely" name="pubescence" value="villous"/>
+                    <character name="pubescence" value="glabrate"/>
+                    <character char_type="range_value" from="villous" name="pubescence" to="glabrate"/>
+                    <character modifier="sparsely" name="pubescence" value="villous"/>
+                    <character name="pubescence" value="glabrate"/>
+                    <character char_type="range_value" from="villous" name="pubescence" to="glabrate"/>
+                    <character name="pubescence" value="glabrate"/>
+                    <character name="pubescence" value="glabrous"/>
+                    <character name="pubescence" value="glabrous"/>
+                    <character modifier="more or less densely" name="pubescence" value="villous"/>
+                </structure>
+                <text>stems 1 – 10 + , ascending to erect , ± purplish , densely villous becoming glabrescent , sparsely villous to glabrate or glabrous proximally , ± densely villous distally .</text>
+            </statement>

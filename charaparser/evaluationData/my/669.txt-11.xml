@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="staminate" id="o2" name="corolla">
+                    <character char_type="range_value" from="1.9" from_unit="mm" name="size" to="2.8" to_unit="mm"/>
+                </structure>
+                <text>staminate 1 . 9 – 2 . 8 mm ;</text>
+            </statement>

@@ -1,0 +1,6 @@
+            <statement>
+                <structure constraint="pistillate" id="o1" name="pappus">
+                    <character char_type="range_value" from="2.5" from_unit="mm" name="size" to="4" to_unit="mm"/>
+                </structure>
+                <text>pistillate 2 . 5 – 4 mm .</text>
+            </statement>

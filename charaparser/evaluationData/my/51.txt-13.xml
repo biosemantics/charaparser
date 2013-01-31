@@ -1,0 +1,24 @@
+            <statement>
+                <relation from="o0" id="r0" name="in" negation="false" to="o1"/>
+                <relation from="o1" id="r1" name="in" negation="false" to="o2"/>
+                <relation from="o2" id="r2" name="consist_of" negation="false" to="o3"/>
+                <relation from="o2" id="r3" name="consist_of" negation="false" to="o4"/>
+                <structure id="o0" name="pappus">
+                    <character name="duration" value="persistent"/>
+                    <character name="orientation" value="falling"/>
+                </structure>
+                <structure id="o1" name="ring"/>
+                <structure id="o2" name="series">
+                    <character char_type="range_value" from="3" name="count" to="5"/>
+                </structure>
+                <structure id="o3" name="scale">
+                    <character name="shape" value="setiform"/>
+                    <character name="architecture" value="plumose"/>
+                </structure>
+                <structure id="o4" name="bristle">
+                    <character name="count" value="many"/>
+                    <character name="shape" value="flattened"/>
+                    <character name="architecture" value="plumose"/>
+                </structure>
+                <text>pappi persistent or falling in rings , in 3 – 5 series of many flattened , plumose bristles or plumose , setiform scales .</text>
+            </statement>

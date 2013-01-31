@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o2" name="involucre">
+                    <character char_type="range_value" from="2" from_unit="mm" name="length" to="4" to_unit="mm"/>
+                    <character char_type="range_value" from="1.5" from_unit="mm" name="width" to="3" to_unit="mm"/>
+                </structure>
+                <text>involucres 2 – 4 × 1 . 5 – 3 mm .</text>
+            </statement>

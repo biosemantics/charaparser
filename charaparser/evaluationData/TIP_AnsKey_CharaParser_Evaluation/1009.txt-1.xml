@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1009.txt-1">
+    <structure id="o156" name="interior" constraint="ventral" />
+    <structure id="o157" name="plate" constraint="dental" >
+      <character name="orientation" value="projecting"/>
+    </structure>
+    <structure id="o158" name="ridge" constraint="median" />
+    <structure id="o159" name="scar" constraint="muscle" >
+      <character name="shape" value="elongate"/>
+    </structure>
+    <relation id="r1" from="o156" name="with" negation="false" to="o157"/>
+    <relation id="r34" from="o158" name="bisecting" negation="false" to="o159" />
+    <text>ventral interior with projecting dental plates and
+      median ridge bisecting elongate muscle scar ;</text>
+  </statement>
+</description>
+

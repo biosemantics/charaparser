@@ -1,0 +1,8 @@
+            <statement>
+                <structure constraint="cauline" id="o0" name="leaf">
+                    <character name="arrangement_or_shape" value="linear"/>
+                    <character char_type="range_value" from="20" from_unit="mm" name="size" to="40" to_unit="mm"/>
+                    <character modifier="not" name="orientation" value="flagged"/>
+                </structure>
+                <text>cauline leaves linear , 20 – 40 mm , not flagged .</text>
+            </statement>

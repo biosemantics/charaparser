@@ -1,0 +1,9 @@
+            <statement>
+                <structure constraint="basal" id="o0" name="leaf">
+                    <character name="count" value="0"/>
+                </structure>
+                <structure constraint="cauline" id="o1" name="leaf">
+                    <character char_type="range_value" from="12" name="count" to="20" upper_restricted="false"/>
+                </structure>
+                <text>basal 0 , cauline 12 – 20 + ;</text>
+            </statement>

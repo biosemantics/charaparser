@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="941.txt-0">
+    <structure id="o110" name="whole_organism" >
+      <character name="shape" value="ventribiconvex"/>
+    </structure>
+    <structure id="o111" name="delthyrium">
+      <character name="size" value="narrow" modifier="relatively" />
+    </structure>
+    <structure id="o112" name="notothyrium">
+      <character name="size" value="narrow" modifier="relatively" />
+    </structure>
+    <structure id="o113" name="interarea" constraint="ventral">
+      <character name="shape" value="curved"/>
+      <character name="size" value="long" modifier="moderately" />
+    </structure>
+    <relation id="r1" from="o110" name="with" negation="false" to="o111"/>
+    <relation id="r2" from="o110" name="with" negation="false" to="o112"/>
+    <text>Ventribiconvex with relatively narrow delthyrium and notothyrium , curved ventral interarea moderately long ;</text>
+  </statement>
+</description>
+

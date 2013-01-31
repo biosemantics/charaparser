@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1122.txt-2">
+    <structure id="o227" name="pseudointerarea" constraint="ventral">
+      <character name="presence" value="defined" modifier="variably"/>
+      <character name="height" value="high" />
+      <character name="architecture" value="apsacline" />
+      <character name="architecture" value="catacline" />
+      <character name="architecture" value="procline" />
+    </structure>
+    <text>ventral pseudointerarea variably defined , high , apsacline , catacline or procline ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,10 @@
+            <statement>
+                <structure constraint="disc" id="o0" name="floret">
+                    <character char_type="range_value" from="20" from_inclusive="false" name="atypical_count" to="30" upper_restricted="false"/>
+                    <character char_type="range_value" from="2" name="count" to="20"/>
+                    <character name="reproduction" value="bisexual"/>
+                    <character name="reproduction" value="fertile"/>
+                    <character modifier="functionally" name="architecture" value="staminate"/>
+                </structure>
+                <text>disc florets 2 – 20 ( – 30 + ) , bisexual and fertile , or functionally staminate ;</text>
+            </statement>

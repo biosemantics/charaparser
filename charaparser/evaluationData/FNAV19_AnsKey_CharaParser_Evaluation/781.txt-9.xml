@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s8">
+        <structure id="o10" name="palea" constraint="pistillate">
+            <character name="arrangement" value="ranked" modifier="spirally"/>
+            <character name="shape" value="oblanceolate"/>
+            <character name="size" char_type="range_value" from="2.5" from_unit="mm" to="4.5" to_unit="mm"/>
+        </structure>
+        <structure id="o11" name="series">
+            <character name="count" char_type="range_value" from="1" to="3"/>
+        </structure>
+        <relation id="r2" from="o10" name="in" negation="false" to="o11"/>
+        <text>pistillate paleae in 1 – 3 series , spirally ranked , oblanceolate , 2 . 5 – 4 . 5 mm .</text>
+    </statement>
+</description>

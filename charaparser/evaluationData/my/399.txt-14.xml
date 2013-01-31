@@ -1,0 +1,16 @@
+            <statement>
+                <relation from="o0" id="r0" name="consist_of" negation="false" to="o1"/>
+                <relation from="o1" id="r1" name="in" negation="false" to="o2"/>
+                <structure id="o0" name="pappus">
+                    <character char_type="range_value" from="5" from_unit="mm" name="size" to="8" to_unit="mm" upper_restricted="false"/>
+                </structure>
+                <structure id="o1" name="bristle">
+                    <character char_type="range_value" from="50" name="count" to="60" upper_restricted="false"/>
+                    <character name="coloration" value="more"/>
+                    <character name="coloration" value="less stramineous"/>
+                </structure>
+                <structure id="o2" name="series">
+                    <character char_type="range_value" from="2" name="count" upper_restricted="false"/>
+                </structure>
+                <text>pappi of 50 – 60 + , ± stramineous bristles in 2 + series , 5 – 8 + mm .</text>
+            </statement>

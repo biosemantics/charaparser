@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="424.txt-6">
+        <structure id="o39" name="peduncle">
+            <character name="pubescence" value="stellate-pubescent" />
+            <character value="stipitate-glandular" modifier="sometimes" name="architecture_or_exudation_or_pubescence" />
+        </structure>
+        <text>peduncles  stellate_pubescent , sometimes stipitate_glandular as well .</text>
+    </statement>
+</description>

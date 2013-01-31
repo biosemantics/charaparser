@@ -1,0 +1,7 @@
+            <statement>
+                <structure constraint="pappus" id="o1" name="scale">
+                    <character name="orientation" value="erect"/>
+                    <character char_type="range_value" from="0.5" from_unit="mm" name="size" to="1" to_unit="mm"/>
+                </structure>
+                <text>pappus scales erect , 0 . 5 – 1 mm .</text>
+            </statement>

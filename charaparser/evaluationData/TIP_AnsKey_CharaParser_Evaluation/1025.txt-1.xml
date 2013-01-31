@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1025.txt-1">
+    <structure id="o171" name="shell">
+      <character name="profile" value="concavoconvex" modifier="strongly" />
+    </structure>
+    <structure id="o172" name="umbo" constraint="ventral">
+      <character name="manifestation" value="conspicuous" />
+    </structure>
+    <relation id="r1" from="o171" name="with" negation="false" to="o172"/>
+    <text>strongly concavoconvex profile shells with conspicuous ventral umbo ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="940.txt-3">
+    <structure id="o109" name="interarea" constraint="ventral">
+      <character name="architecture" value="orthocline" />
+      <character name="architecture" value="apsacline" />
+    </structure>
+    <text>ventral interarea orthocline or apsacline ;</text>
+  </statement>
+</description>
+

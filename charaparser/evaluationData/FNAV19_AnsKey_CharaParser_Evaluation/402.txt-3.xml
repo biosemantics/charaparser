@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="402.txt-3">
+        <structure id="o19" name="leaf" constraint="basal">
+            <character name="count" char_type="range_value" from="3" to="6" upper_restricted="false"/>
+        </structure>
+        <structure id="o20" name="leaf" constraint="cauline">
+            <character name="count" char_type="range_value" from="3" to="6" upper_restricted="false"/>
+        </structure>
+        <text>basal 3  6 + , cauline 3  6 + ;</text>
+    </statement>
+</description>

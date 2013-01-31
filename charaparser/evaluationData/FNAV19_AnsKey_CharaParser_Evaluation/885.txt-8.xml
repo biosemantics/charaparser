@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s14">
+        <structure id="o18" name="floret" constraint="central">
+            <character name="count" char_type="range_value" from="15" to="100"/>
+            <character name="reproduction" value="bisexual"/>
+            <character name="reproduction" value="fertile"/>
+        </structure>
+        <text>central 15 – 100 bisexual and fertile ;</text>
+    </statement>
+</description>

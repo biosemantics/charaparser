@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description>
+  <statement id="s15">
+    <structure id="o28" name="corpus">
+      <character name="shape" value="planoconvex" modifier="almost" />
+      <character name="depth" value="deep" />
+    </structure>
+    <structure id="o29" name="trail">
+      <character name="orientation" value="spreading" modifier="gently" />
+    </structure>
+    <text>almost planoconvex , deep corpus , gently spreading trail ;</text>
+  </statement>
+</description>
+

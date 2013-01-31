@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s5">
+        <structure id="o6" name="floret" constraint="functionally staminate">
+            <character name="count" char_type="range_value" from="3" to="6" />
+        </structure>
+        <text>functionally staminate florets 3 – 6 ;</text>
+    </statement>
+</description>

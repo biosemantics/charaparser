@@ -1,0 +1,14 @@
+            <statement>
+                <relation from="o0" id="r0" name="with" negation="false" to="o1"/>
+                <structure id="o0" name="stem">
+                    <character name="count" value="single"/>
+                    <character name="orientation" value="erect"/>
+                    <character name="pubescence" value="villous"/>
+                    <character modifier="distally sometimes thinly" name="pubescence" value="tomentose"/>
+                </structure>
+                <structure id="o1" name="trichome">
+                    <character name="architecture" value="septate"/>
+                    <character name="pubescence" value="glabrate"/>
+                </structure>
+                <text>stems single , erect , villous with septate trichomes or glabrate , distally sometimes thinly tomentose ;</text>
+            </statement>

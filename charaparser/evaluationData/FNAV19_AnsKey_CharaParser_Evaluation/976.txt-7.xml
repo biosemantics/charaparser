@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s11">
+        <structure id="o18" name="phyllary">
+            <character name="duration" value="persistent"/>
+            <character name="count" char_type="range_value" from="35" to="60" upper_restricted="false" constraint="in series" constraintid="o19" /> 
+            <character name="fusion" value="distinct"/>
+            <character name="shape" value="ovate"/>
+            <character name="shape" value="lance-ovate"/>
+            <character name="shape" value="oblanceolate"/>
+            <character name="shape" char_type="range_value" from="lance-ovate" to="oblanceolate"/>
+            <character name="size" value="unequal"/>
+        </structure>
+        <structure id="o19" name="series">
+            <character name="count" char_type="range_value" from="3" to="4" upper_restricted="false"/>            
+        </structure>
+        <structure id="o20" name="margin">
+            <character name="texture" value="scarious"/>
+        </structure>
+        <structure id="o21" name="apex">
+            <character name="texture" value="scarious"/>
+        </structure>
+        <text>phyllaries persistent , 35 – 60 + in 3 – 4 + series , distinct , ovate or lance_ovate to oblanceolate , unequal , margins and apices scarious .</text>
+    </statement>
+    
+</description>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="754.txt-3">
+    <structure id="o53" name="process" constraint="adult cardinal" >
+
+    </structure>
+    <structure id="o54" name="ridge">
+      <character name="thickness" value="thick"/>
+    </structure>
+    <structure id="o55" name="myophore" >
+      <character name="shape" value="compressed"/>
+    </structure>
+    <structure id="o56" name="plate" constraint="brachiophore">
+      <character name="direction" value="convergent" />
+      <character name="position" value="recessive" />
+    </structure>
+    <relation id="r1" from="o54" name="with" negation="false" to="o55"/>
+    <text>adult cardinal process thick ridge with compressed myophore , 
+      brachiophore plates convergent , recessive ;</text>
+  </statement>
+</description>
+

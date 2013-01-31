@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s10">
+    <structure id="o17" name="lateralium" constraint="vascula">
+      <character name="shape" value="subparallel" modifier="marginally" />
+    </structure>
+    <structure id="o18" name="valve" />
+    <relation id="r8" from="o17" name="part_of" negation="false" to="o18" />
+    <text>vascula lateralia of both valves subparallel , marginally ;</text>
+  </statement>
+</description>
+

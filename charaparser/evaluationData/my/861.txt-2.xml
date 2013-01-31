@@ -1,0 +1,7 @@
+            <statement>
+                <structure id="o0" name="leaf">
+                    <character name="duration" value="persistent"/>
+                    <character name="coloration" value="gray-green"/>
+                </structure>
+                <text>leaves persistent , gray_green ;</text>
+            </statement>

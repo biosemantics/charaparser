@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="859.txt-2">
+    <structure id="o326" name="ruga">
+      <character name="position" value="posteriorly" />
+      <character name="texture" value="weak" modifier="anteromedianly" />
+    </structure>
+    <text>rugae posteriorly , but weak anteromedianly ;</text>
+  </statement>
+</description>
+

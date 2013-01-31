@@ -1,0 +1,9 @@
+            <statement>
+                <structure constraint="outer" id="o2" name="cypsela">
+                    <character modifier="nearly" name="course" value="straight"/>
+                    <character modifier="more or less" name="orientation" value="erect"/>
+                    <character name="shape" value="compressed"/>
+                    <character char_type="range_value" from="0.9" from_unit="mm" name="size" to="1.1" to_unit="mm"/>
+                </structure>
+                <text>outer nearly straight , ± erect , compressed , 0 . 9 – 1 . 1 mm ;</text>
+            </statement>

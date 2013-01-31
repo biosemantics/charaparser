@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s10">
+        <structure id="o14" name="cypsela">
+            <character name="shape" value="obovoid" modifier="more or less"/>
+            <character name="shape" value="obcompressed" modifier="weakly"/>
+        </structure>
+        <structure id="o15" name="rib"></structure>
+        <structure id="o16" name="nerve"></structure>
+        <text>cypselae more or less obovoid , weakly obcompressed , ribs or nerves :</text>
+    </statement>
+</description>

@@ -1,0 +1,13 @@
+            <statement>
+                <structure id="o0" name="phyllary">
+                    <character char_type="range_value" from="12" name="count" to="15" upper_restricted="false"/>
+                </structure>
+                <structure id="o1" name="apex">
+                    <character modifier="more or less" name="shape" value="rounded"/>
+                </structure>
+                <structure constraint="abaxial" id="o2" name="face">
+                    <character name="pubescence" value="piloso-hirsute"/>
+                    <character name="pubescence" value="stellate-pubescent"/>
+                </structure>
+                <text>phyllaries 12 – 15 + , apices ± rounded , abaxial faces piloso_hirsute and stellate_pubescent .</text>
+            </statement>

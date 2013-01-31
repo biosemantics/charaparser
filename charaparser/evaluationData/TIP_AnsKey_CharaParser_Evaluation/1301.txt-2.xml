@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1301.txt-2">
+    <structure id="o300" name="plate" constraint="dental">
+      <character name="presence" value="no" />
+    </structure>
+    <text>no dental plates ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1005.txt-8">
+    <structure id="o155" name="system" constraint="mantle canal">
+      <character name="architecture" value="baculate" />
+      <character name="shape" value="bifurcate" />
+    </structure>
+    <text>mantle canal system baculate or bifurcate ;</text>
+  </statement>
+</description>
+

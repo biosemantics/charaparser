@@ -1,0 +1,17 @@
+            <statement>
+                <relation from="o0" id="r0" name="in" negation="false" to="o1"/>
+                <structure constraint="ray" id="o0" name="floret">
+                    <character name="count" value="0"/>
+                    <character name="count" value="in 1(-2+) series"/>
+                    <character modifier="usually" name="architecture" value="pistillate"/>
+                    <character modifier="rarely" name="architecture" value="neuter"/>
+                </structure>
+                <structure id="o1" name="series">
+                    <character char_type="range_value" from="1" from_inclusive="false" name="atypical_count" to="2" upper_restricted="false"/>
+                    <character name="count" value="1"/>
+                    <character name="reproduction" value="fertile"/>
+                    <character name="architecture" value="styliferous"/>
+                    <character name="reproduction" value="sterile"/>
+                </structure>
+                <text>ray florets 0 or in 1 ( – 2 + ) series , usually pistillate and fertile , rarely neuter or styliferous and sterile ;</text>
+            </statement>

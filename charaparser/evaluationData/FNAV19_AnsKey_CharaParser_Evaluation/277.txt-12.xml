@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="pappus">
+            <character name="coloration" value="whitish"/>
+            <character name="size" char_type="range_value" from="6" to="13" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <text>pappi whitish , 6 – 13 mm .</text>
+    </statement>
+</description>

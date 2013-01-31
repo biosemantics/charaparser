@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s17">
+    <structure id="o38" name="whole_organism">
+      <character name="outline" value="semicircular" />
+    </structure>
+    <structure id="o40" name="valve" constraint="ventral" />
+    <structure id="o41" name="spine" constraint="hinge" />
+    <relation id="r17" from="o40" name="with" negation="false" to="o41" />
+    <structure id="o42" name="spine">
+      <character name="texture" value="finer"/>
+      <character name="orientation" value="prostrate"/>
+    </structure>
+    <relation id="r18" from="o40" name="with" negation="false" to="o42" />
+    <structure id="o43" name="base">
+      <character name="shape" value="elongate" />
+      <character name="shape" value="swollen" />
+    </structure>
+    <relation id="r19" from="o42" name="from" negation="false" to="o43" />
+    <structure id="o44" name="ornament" >
+      <character name="shape" value="riblike" />
+    </structure>
+    <relation id="r20" from="o43" name="producing" negation="false" to="o44" />
+    <text>semicircular in outline , ventral valve with hinge spines plus finer prostrate spines 
+      from elongate swollen bases producing riblike ornament ;</text>
+  </statement>
+</description>
+

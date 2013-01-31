@@ -1,0 +1,11 @@
+            <statement>
+                <structure id="o0" name="cypsela">
+                    <character modifier="more or less" name="shape" value="terete"/>
+                    <character modifier="not" name="shape" value="beaked"/>
+                </structure>
+                <structure id="o1" name="face">
+                    <character name="pubescence" value="glabrescent"/>
+                    <character modifier="not" name="pubescence" value="glandular-hairy"/>
+                </structure>
+                <text>cypselae ± terete , not beaked , obscurely 4 – 5 - nerved , faces glabrescent , not glandular_hairy ;</text>
+            </statement>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1293.txt-7">
+    <structure id="o292" name="interior" constraint="dorsal" />
+    <structure id="o293" name="platform" constraint="visceral">
+      <character name="architecture" value="solid" />
+      <character name="shape" value="oval" modifier="elongate"/>
+    </structure>
+    <relation id="r1" from="o292" name="with" negation="false" to="o293"/>
+    <text>dorsal interior with solid , elongate oval visceral platform ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,18 @@
+            <statement>
+                <relation from="o1" id="r0" name="with" negation="false" to="o2"/>
+                <structure constraint="principal cauline" id="o0" name="leaf">
+                    <character modifier="well" name="arrangement" value="distributed"/>
+                    <character modifier="becoming" name="architecture" value="sessile"/>
+                    <character modifier="gradually" name="size" value="reduced"/>
+                </structure>
+                <structure id="o1" name="base">
+                    <character name="shape" value="auriculate-decurrent"/>
+                </structure>
+                <structure id="o2" name="wing">
+                    <character name="size" value="broad"/>
+                    <character name="shape" value="spiny-margined"/>
+                    <character name="size" unit="cm" value="3"/>
+                    <character name="size" value="less"/>
+                </structure>
+                <text>principal cauline well distributed , becoming sessile , gradually reduced distally , bases auriculate_decurrent with broad , spiny_margined wings 3 cm or less ;</text>
+            </statement>

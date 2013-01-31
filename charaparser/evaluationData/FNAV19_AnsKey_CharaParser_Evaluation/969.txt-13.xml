@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s5">
+        <structure id="o6" name="corolla">
+            <character name="coloration" value="yellow" modifier="more or less"/>
+        </structure>
+        <structure id="o7" name="tube">
+            <character name="shape" value="cylindric" modifier="more or less"/>
+        </structure>
+        <structure id="o8" name="throat">
+            <character name="shape" value="funnelform"/>
+        </structure>
+        <structure id="o9" name="lobe">
+            <character name="count" value="5"/>
+            <character name="shape" value="deltate" modifier="narrowly"/>
+        </structure>
+        <text>corollas more or less yellow , tubes more or less cylindric , throats funnelform , lobes 5 , narrowly deltate .</text>
+    </statement>
+    
+</description>

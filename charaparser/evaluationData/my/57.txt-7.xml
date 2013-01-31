@@ -1,0 +1,11 @@
+            <statement>
+                <structure constraint="principal cauline" id="o0" name="leaf">
+                    <character modifier="well" name="arrangement" value="distributed"/>
+                    <character modifier="gradually" name="size" value="reduced"/>
+                </structure>
+                <structure id="o1" name="base">
+                    <character name="size" value="narrowed"/>
+                    <character modifier="sometimes weakly" name="architecture" value="clasping"/>
+                </structure>
+                <text>principal cauline well distributed , gradually reduced , bases narrowed , sometimes weakly clasping ;</text>
+            </statement>
