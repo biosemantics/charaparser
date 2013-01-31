@@ -15,9 +15,9 @@ public class SplitXMLOutput {
 	public static void main(String[] args) throws Exception {
 		
 		String input = "outfile.xml"; //TIP_AnsKey_CharaParser_Evaluation //FNAV19_AnsKey_CharaParser_Evaluation
-		String comparisonFiles = "resources//evaluationData//FNAV19_AnsKey_CharaParser_Evaluation";
-		//String comparisonFiles = "resources//evaluationData//TIP_AnsKey_CharaParser_Evaluation";
-		String outDir = "resources//evaluationData//my";
+		String comparisonFiles = "evaluationData//FNAV19_AnsKey_CharaParser_Evaluation";
+		//String comparisonFiles = "evaluationData//TIP_AnsKey_CharaParser_Evaluation";
+		String outDir = "evaluationData//my";
 		File inputFile = new File(input);
 		String line = "";
 		

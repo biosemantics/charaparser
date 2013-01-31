@@ -22,7 +22,7 @@ public class FNAv19Config extends RunConfig {
 		
 		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance("src//semanticMarkup//FNAv19Config.java");
 
-		String evaluationDataPath = "resources//evaluationData//FNAV19_AnsKey_CharaParser_Evaluation";
+		String evaluationDataPath = "evaluationData//FNAV19_AnsKey_CharaParser_Evaluation";
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(evaluationDataPath);
 
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(evaluationDataPath));

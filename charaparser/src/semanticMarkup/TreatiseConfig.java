@@ -22,7 +22,7 @@ public class TreatiseConfig extends RunConfig {
 		
 		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance("src//semanticMarkup//TreatiseConfig.java");
 
-		String evaluationDataPath = "resources//evaluationData//TIP_AnsKey_CharaParser_Evaluation";
+		String evaluationDataPath = "evaluationData//TIP_AnsKey_CharaParser_Evaluation";
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(evaluationDataPath);
 
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(evaluationDataPath));
