@@ -270,7 +270,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			String previousSourceId = "-1";
 			while(resultSet.next()) {
 				String source = resultSet.getString("source");
-				if(selectedSources==null || selectedSources.contains(source)) {
+				if(selectedSources.isEmpty() || selectedSources.contains(source)) {
 					String[] sourceIds = source.split(".txt-");
 					String sourceId = String.valueOf(Integer.valueOf(sourceIds[0])-1);
 					if(!sourceId.equals(previousSourceId)) {
@@ -316,7 +316,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				
 				if(sent.length()!=0){
 					String source = rs.getString("source");
-					if(selectedSources == null || selectedSources.contains(source)) {
+					if(selectedSources.isEmpty() || selectedSources.contains(source)) {
 						String[] sourceIds = source.split(".txt-");
 						
 						String sourceId = String.valueOf(Integer.valueOf(sourceIds[0])-1);

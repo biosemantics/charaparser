@@ -63,7 +63,7 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 			if(!tag.equals("ditto"))
 				parentTag = tag;
 			
-			if(evaluationSources==null || evaluationSources.contains(source)) {
+			if(evaluationSources.isEmpty() || evaluationSources.contains(source)) {
 				String[] sourceIds = source.split(".txt-");
 				
 				String sourceId = String.valueOf(Integer.valueOf(sourceIds[0])-1);
