@@ -53,9 +53,8 @@ public class SentenceChunkerRun implements Runnable {
 		subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
 		
 		String normalizedSentence="";
-		synchronized(this) {
-			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
-		}
+		normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
+		
 		System.out.println("Normalized sentence: " + normalizedSentence);
 		List<Token> sentence = wordTokenizer.tokenize(normalizedSentence);
 		

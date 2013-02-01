@@ -25,9 +25,6 @@ import com.google.inject.name.Named;
 
 
 public abstract class Normalizer implements INormalizer {
-
-	private ArrayList<String> chunkedtokens = null;
-	private ArrayList<String> charactertokensReversed = null;
 	
 	private String or = "_or_";
 	private String units;
@@ -60,8 +57,6 @@ public abstract class Normalizer implements INormalizer {
 	private static Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
 	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
 	
-	private String parentTag = "";
-	private String previousSentenceParentTag = "";
 	private ParentTagProvider parentTagProvider;
 	
 	@Inject
@@ -117,11 +112,8 @@ public abstract class Normalizer implements INormalizer {
 		this.parentTagProvider = parentTagProvider;
 	}
 	
-
-	//TODO make normalizer stateless or create one normalizer per sentence in order to remove
-	// synchronized requirement
 	@Override
-	public synchronized String normalize(String str, String tag, String modifier, String source) {	
+	public String normalize(String str, String tag, String modifier, String source) {	
 		str = dataSetSpecificNormalization(str);
 		
 		str = str.replaceAll("_", "-");
@@ -157,16 +149,17 @@ public abstract class Normalizer implements INormalizer {
 		//if(!scp.equals(str)){
 		//	System.out.println();
 		//}
-		this.chunkedtokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
-    	str = normalizemodifier(str);//shallowly to deeply pinnatifid: this should be done before other normalization that involved composing new tokens using ~
+
+		ArrayList<String> chunkedTokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
+    	str = normalizemodifier(str, chunkedTokens);//shallowly to deeply pinnatifid: this should be done before other normalization that involved composing new tokens using ~
 		//position list does not apply to FNA.			
 		//str = normalizePositionList(str);
-		str = normalizeCountList(str+"");
+		str = normalizeCountList(str+"", chunkedTokens);
 
 		//lookupCharacters(str);//populate charactertokens
-    	lookupCharacters(str, false);//treating -ly as %
-        if(this.charactertokensReversed.contains("color") || this.charactertokensReversed.contains("coloration")){
-        	str = normalizeColorPatterns();
+		ArrayList<String> characterTokensReversed = lookupCharacters(str, false, chunkedTokens);//treating -ly as %
+        if(characterTokensReversed.contains("color") || characterTokensReversed.contains("coloration")){
+        	str = normalizeColorPatterns(chunkedTokens, characterTokensReversed);
         	//lookupCharacters(str);
         }
         //lookupCharacters(str, true); //treating -ly as -ly
@@ -175,7 +168,7 @@ public abstract class Normalizer implements INormalizer {
 				//System.out.println(str);
 			//}
         	//str = normalizeCharacterLists(str); //a set of states of the same character connected by ,/to/or => {color-blue-to-red}
-        	str = normalizeParentheses(str); 
+        	str = normalizeParentheses(str, chunkedTokens); 
         }
 
         if(str.matches(".*? as\\s+[\\w{}<>]+\\s+as .*")){
@@ -426,15 +419,18 @@ public abstract class Normalizer implements INormalizer {
 	/**
 	 * make "suffused with dark blue and purple or green" one token
 	 * ch-ptn"color % color color % color @ color"
+	 * @param chunkedTokens 
+	 * @param characterTokensReversed 
 	 * 
 	 * @return
 	 */
-	private String normalizeColorPatterns() {
+	private String normalizeColorPatterns(ArrayList<String> chunkedTokens, ArrayList<String> characterTokensReversed) {
 		String list = "";
 		String result = "";
 		String header = "ttt";
-		for (int i = this.charactertokensReversed.size() - 1; i >= 0; i--) {
-			list += this.charactertokensReversed.get(i) + " ";
+		
+		for (int i = characterTokensReversed.size() - 1; i >= 0; i--) {
+			list += characterTokensReversed.get(i) + " ";
 		}
 		list = list.trim() + " "; // need to have a trailing space
 		String listcp = list;
@@ -454,21 +450,21 @@ public abstract class Normalizer implements INormalizer {
 			m = colorpattern.matcher(list);
 			// form result string, adjust chunkedtokens
 			for (int i = base; i < start; i++) {
-				result += this.chunkedtokens.get(i) + " ";
+				result += chunkedTokens.get(i) + " ";
 			}
 			if (end > start) { // if it is a list
 				islist = true;
 				String t = "{" + ch + "~list~";
 				for (int i = start; i < end; i++) {
-					t += this.chunkedtokens.get(i).trim()
+					t += chunkedTokens.get(i).trim()
 							.replaceAll("[{}]", "")
 							.replaceAll("[,;\\.]", "punct")
 							+ "~";
-					this.chunkedtokens.set(i, "");
+					chunkedTokens.set(i, "");
 				}
 				t = t.replaceFirst("~$", "}");
 				t = distributePrep(t) + " ";
-				this.chunkedtokens.set(end - 1, t.trim());// "suffused with ..."
+				chunkedTokens.set(end - 1, t.trim());// "suffused with ..."
 															// will not form a
 															// list with other
 															// previously
@@ -489,7 +485,7 @@ public abstract class Normalizer implements INormalizer {
 				+ base - 1; i++) {
 			// for(int i = base+1;
 			// i<(list.trim()+" b").trim().split("\\s+").length+base; i++){
-			result += this.chunkedtokens.get(i) + " ";
+			result += chunkedTokens.get(i) + " ";
 		}
 		/*if (this.printColorList) {
 			System.out.println(islist + ":" + src + ":" + listcp);
@@ -519,8 +515,9 @@ public abstract class Normalizer implements INormalizer {
 	 * this.chunkedTokens
 	 * 
 	 * @param str
+	 * @param chunkedTokens 
 	 */
-	private String normalizeCountList(String str) {
+	private String normalizeCountList(String str, ArrayList<String> chunkedTokens) {
 		Matcher m = this.countptn.matcher(str);
 		while (m.find()) {
 			int start = m.start(1);
@@ -534,15 +531,15 @@ public abstract class Normalizer implements INormalizer {
 			int index = (str.substring(0, start).trim() + " a").trim().split(
 					"\\s").length - 1; // number of tokens before the count
 										// pattern
-			this.chunkedtokens.set(index, rcount);
+			chunkedTokens.set(index, rcount);
 			int num = count.split("\\s+").length;
 			for (int i = index + 1; i < index + num; i++) {
-				this.chunkedtokens.set(i, "");
+				chunkedTokens.set(i, "");
 			}
 			// resemble the str from chunkedtokens, counting all empty elements,
 			// so the str and chunkedtokens are in synch.
 			str = "";
-			for (String t : this.chunkedtokens) {
+			for (String t : chunkedTokens) {
 				str += t + " ";
 			}
 			m = this.countptn.matcher(str);
@@ -557,9 +554,10 @@ public abstract class Normalizer implements INormalizer {
 	 * 
 	 * 
 	 * @param str
+	 * @param chunkedTokens 
 	 * @return
 	 */
-	private String normalizemodifier(String str) {
+	private String normalizemodifier(String str, ArrayList<String> chunkedTokens) {
 		String result = "";
 		int base = 0;
 		Matcher m = modifierlist.matcher(str.trim());
@@ -576,9 +574,9 @@ public abstract class Normalizer implements INormalizer {
 			base = end;
 			// adjust chunkedtokens
 			for (int i = start; i < end; i++) {
-				this.chunkedtokens.set(i, "");
+				chunkedTokens.set(i, "");
 			}
-			this.chunkedtokens.set(start, newtoken);
+			chunkedTokens.set(start, newtoken);
 		}
 		result += str;
 		return result;
@@ -965,54 +963,51 @@ public abstract class Normalizer implements INormalizer {
 	}
 	
 	
-	private void lookupCharacters(String str, boolean markadv) {		
-		if(str.trim().length() ==0){
-			return;
-		}
-		this.charactertokensReversed = new ArrayList<String>();
+	private ArrayList<String> lookupCharacters(String str, boolean markadv, ArrayList<String> chunkedTokens) {		
+		ArrayList<String> characterTokensReversed = new ArrayList<String>();
 		boolean save = false;
 		boolean ambiguous = false;
 		ArrayList<String> saved = new ArrayList<String>();
 		
 		ArrayList<String> amb = new ArrayList<String>();
-		for(int i = this.chunkedtokens.size()-1; i>=0+0; i--){
-			String word = this.chunkedtokens.get(i);	
+		for(int i = chunkedTokens.size()-1; i>=0+0; i--){
+			String word = chunkedTokens.get(i);	
 			if(word.indexOf("~list~")>0){
 				String ch = word.substring(0, word.indexOf("~list~")).replaceAll("\\W", "").replaceFirst("ttt$", "");
-				this.charactertokensReversed.add(ch);
+				characterTokensReversed.add(ch);
 			}else if(organStateKnowledgeBase.isState(word) && !organStateKnowledgeBase.isOrgan(word)) {
 				String ch = characterKnowledgeBase.getCharacter(word); //remember the char for this word (this word is a word before (to|or|\\W)
 				if(ch==null){
-					this.charactertokensReversed.add(word.replaceAll("[{}]", "")); //
+					characterTokensReversed.add(word.replaceAll("[{}]", "")); //
 				}else{
-					this.charactertokensReversed.add(ch); //color
+					characterTokensReversed.add(ch); //color
 					if(save){
-						save(saved, this.chunkedtokens.size()-1-i, ch); 
+						save(saved, chunkedTokens.size()-1-i, ch); 
 						if(ch.indexOf(or)>0){
 							ambiguous = true;
-							amb.add(this.chunkedtokens.size()-1-i+"");
+							amb.add(chunkedTokens.size()-1-i+"");
 						}
 					}
 					save = false;
 				}
 			}else if (organStateKnowledgeBase.isOrgan(word)){
-				this.charactertokensReversed.add("#");
+				characterTokensReversed.add("#");
 				save = true;
 			}else if(word.matches("(to|or|and-or|and/or|and_or)") || word.matches("\\S+ly~(to|or|and-or|and/or|and_or)~\\S+ly")){//loosely~to~densely 
-				this.charactertokensReversed.add("@"); //to|or
+				characterTokensReversed.add("@"); //to|or
 				save = true;
 			}else if(word.compareTo("±")==0){//±
-				this.charactertokensReversed.add("moreorlessly"); //,;. add -ly so it will be treated as an adv.
+				characterTokensReversed.add("moreorlessly"); //,;. add -ly so it will be treated as an adv.
 				save = true;
 			}else if(word.matches("\\W")){
-				if(word.matches("[()\\[\\]]")) save(saved, this.chunkedtokens.size()-1-i, word); 
-				this.charactertokensReversed.add(word); //,;.
+				if(word.matches("[()\\[\\]]")) save(saved, chunkedTokens.size()-1-i, word); 
+				characterTokensReversed.add(word); //,;.
 				save = true;
 			}else if(markadv && word.endsWith("ly")){
-				this.charactertokensReversed.add(word);
+				characterTokensReversed.add(word);
 				save = true;
 			}else{
-				this.charactertokensReversed.add("%");
+				characterTokensReversed.add("%");
 				save = true;
 			}
 		}
@@ -1022,23 +1017,24 @@ public abstract class Normalizer implements INormalizer {
 			Iterator<String> it = amb.iterator();
 			while(it.hasNext()){
 				int i = Integer.parseInt(it.next());
-				Pattern p = Pattern.compile("("+this.charactertokensReversed.get(i)+"|"+this.charactertokensReversed.get(i).replaceAll(or, "|")+")");
+				Pattern p = Pattern.compile("("+characterTokensReversed.get(i)+"|"+characterTokensReversed.get(i).replaceAll(or, "|")+")");
 				String tl = lastSaved(saved, i);
 				Matcher m = p.matcher(tl);
 				//if(m.matches()){
 				if(m.find()){
-					this.charactertokensReversed.set(i, m.group(1));
+					characterTokensReversed.set(i, m.group(1));
 				}else{
 					String tn = nextSaved(saved, i);
 					m = p.matcher(tn);
 					//if(m.matches()){
 					if(m.find()){
-						this.charactertokensReversed.set(i, m.group(1));
+						characterTokensReversed.set(i, m.group(1));
 					}
 				}
 			}
 		}
 		//System.out.println("characterTokensReversed " + this.charactertokensReversed);
+		return characterTokensReversed;
 	}
 	
 	/**
@@ -1108,10 +1104,11 @@ public abstract class Normalizer implements INormalizer {
 	
 	/**
 	 * deal with sentences with parentheses
+	 * @param chunkedTokens 
 	 * @return
 	 */
-	private String normalizeParentheses(String src){
-		lookupCharacters(src, true); //treating -ly as -ly
+	private String normalizeParentheses(String src, ArrayList<String> chunkedTokens){
+		ArrayList<String> characterTokensReversed = lookupCharacters(src, true, chunkedTokens); //treating -ly as -ly
 		
 		//use & as place holders
 		//create list by replace (...) with &s
@@ -1125,8 +1122,8 @@ public abstract class Normalizer implements INormalizer {
 		int inbrackets = 0;
 		
 		boolean hasbrackets = false;
-		for(int i = this.charactertokensReversed.size() -1; i>=0; i--){
-			String t = this.charactertokensReversed.get(i);
+		for(int i = characterTokensReversed.size() -1; i>=0; i--){
+			String t = characterTokensReversed.get(i);
 			if(t.equals("(") || t.equals("[")){
 				inbrackets++;
 				outlist += "& ";
@@ -1147,34 +1144,34 @@ public abstract class Normalizer implements INormalizer {
 		}
 		//System.out.println("outList " + outlist);
 		outlist = outlist.trim()+" "; //need to have a trailing space
-		normalizeCharacterLists(outlist); //chunkedtokens updated
+		normalizeCharacterLists(outlist, chunkedTokens); //chunkedtokens updated
 
 		if(hasbrackets){
 			inlist = inlist.trim()+" "; //need to have a trailing space
-			normalizeCharacterLists(inlist); //chunkedtokens updated
+			normalizeCharacterLists(inlist, chunkedTokens); //chunkedtokens updated
 			//deal with cases where a range is separated by parentheses: eg. (, {yellow-gray}, to, ), {coloration~list~brown~to~black}
-			int orphanedto = getIndexOfOrphanedTo(inlist, 0); //inlist as a list
+			int orphanedto = getIndexOfOrphanedTo(inlist, 0, chunkedTokens); //inlist as a list
 			while(orphanedto >=0){
 				String chara = getCharaOfTo(inlist, orphanedto);
-				if(orphanedto+2 < this.chunkedtokens.size() && this.chunkedtokens.get(orphanedto+1).equals(")")){
-					String nextchara = this.chunkedtokens.get(orphanedto+2);
+				if(orphanedto+2 < chunkedTokens.size() && chunkedTokens.get(orphanedto+1).equals(")")){
+					String nextchara = chunkedTokens.get(orphanedto+2);
 					if(nextchara.contains(chara)){//form a range cross parenthetical boundary, eg. (, {yellow-gray}, to, ), {coloration~list~brown~to~black}
 						if(nextchara.contains("~list~")){
 							nextchara = nextchara.substring(nextchara.indexOf("~list~")+6);
 							//form new range
-							String range ="{"+chara+"~list~"+this.chunkedtokens.get(orphanedto-1).replaceAll("[{}]", "")+"~to~"+nextchara;
-							this.chunkedtokens.set(orphanedto-1, range);
-							this.chunkedtokens.set(orphanedto, "");
+							String range ="{"+chara+"~list~"+chunkedTokens.get(orphanedto-1).replaceAll("[{}]", "")+"~to~"+nextchara;
+							chunkedTokens.set(orphanedto-1, range);
+							chunkedTokens.set(orphanedto, "");
 						}
 					}
 				}
-				orphanedto = getIndexOfOrphanedTo(inlist, ++orphanedto); 
+				orphanedto = getIndexOfOrphanedTo(inlist, ++orphanedto, chunkedTokens); 
 			}
 		}
 		
 		String result = "";
-		for(int i = 0; i<this.chunkedtokens.size(); i++){
-			result += this.chunkedtokens.get(i)+" ";
+		for(int i = 0; i<chunkedTokens.size(); i++){
+			result += chunkedTokens.get(i)+" ";
 		}
 		return result.replaceAll("\\s+", " ").trim(); //{shape~list~lanceolate~(~outer~)~to~linear}, note the constraint( inner ) after liner is not in the shape list, it will be associated to "linear" later in the process (in annotator) when more information become available for more reliable associations.
 	}
@@ -1195,14 +1192,15 @@ public abstract class Normalizer implements INormalizer {
 	/**
 	 * when "to"[@] is the last token in bracketed phrase:
 	 * e.g. (, {yellow-gray}, to, ), {coloration~list~brown~to~black}
+	 * @param chunkedTokens 
 	 * @param inlist: & & & & & & & & & & & & & & & coloration @ & & & & & & & & 
 	 * @return first indexof such "@" as a word after startindex
 	 */
-	private int getIndexOfOrphanedTo(String inlist, int startindex) {
+	private int getIndexOfOrphanedTo(String inlist, int startindex, ArrayList<String> chunkedTokens) {
 		List<String> symbols =  Arrays.asList(inlist.trim().split("\\s+"));
 		boolean found = false;
-		for(int i = startindex; i < this.chunkedtokens.size()-1; i++){		
-			if(this.chunkedtokens.get(i).equals("to") && this.chunkedtokens.get(i+1).equals(")")){
+		for(int i = startindex; i < chunkedTokens.size()-1; i++){		
+			if(chunkedTokens.get(i).equals("to") && chunkedTokens.get(i+1).equals(")")){
 				return i;
 			}
 		}
@@ -1216,10 +1214,11 @@ public abstract class Normalizer implements INormalizer {
 	 * color or color to color
 	 * 
 	 * {color-blue-to-red}
+	 * @param chunkedTokens 
 	 * @return updated string
 	 */
 	//private String normalizeCharacterLists(String list){
-	private void normalizeCharacterLists(String list){
+	private void normalizeCharacterLists(String list, ArrayList<String> chunkedTokens){
 		//charactertokens.toString
 		//String list = ""; //6/29/12
 		//String result = ""; //6/29/12
@@ -1280,19 +1279,19 @@ public abstract class Normalizer implements INormalizer {
 			if(end>start){ //if it is a list
 				String t= "{"+ch+"~list~";
 				for(int i = start; i<end; i++){
-					if(this.chunkedtokens.get(i).length()>0){
-						t += this.chunkedtokens.get(i).trim().replaceAll("[{}]", "").replaceAll("[,;\\.]", "punct")+"~";
+					if(chunkedTokens.get(i).length()>0){
+						t += chunkedTokens.get(i).trim().replaceAll("[{}]", "").replaceAll("[,;\\.]", "punct")+"~";
 					}else if(i == end-1){
-						while(this.chunkedtokens.get(i).length()==0){
+						while(chunkedTokens.get(i).length()==0){
 							i++;
 						}
-						t+=this.chunkedtokens.get(i).trim().replaceAll("[{}]", "").replaceAll("[,;\\.]", "punct")+"~";
+						t+=chunkedTokens.get(i).trim().replaceAll("[{}]", "").replaceAll("[,;\\.]", "punct")+"~";
 					}
-					this.chunkedtokens.set(i, "");
+					chunkedTokens.set(i, "");
 				}
 				t = t.replaceFirst("~$", "}")+" ";
 				if(t.indexOf("ttt~list")>=0) t = t.replaceAll("~color.*?ttt~list", "");
-				this.chunkedtokens.set(start, t);
+				chunkedTokens.set(start, t);
 				//result +=t; //6/29/12
 				/*if(this.printCharacterList){
 					if(this.src.equals("100.txt-1"))
