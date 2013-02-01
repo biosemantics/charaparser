@@ -45,9 +45,9 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 			IPOSTagger posTagger, 
 			IDescriptionExtractor descriptionExtractor, 
 			INormalizer normalizer,
-			ITerminologyLearner terminologyLearner
-			) throws Exception {
-		super();
+			ITerminologyLearner terminologyLearner,
+			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing) throws Exception {
+		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
 		this.chunkerChain = chunkerChain;
@@ -67,10 +67,13 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	private void markupDescriptions(List<Treatment> treatments, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
 		for(Treatment treatment : treatments) {
 			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, terminologyLearner, normalizer, wordTokenizer, 
-					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker);
+					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing);
 			Thread thread = new Thread(descriptionExtractorRun);
 			descriptionExtractorRuns.put(thread, descriptionExtractorRun);
-			thread.run();
+			if(this.parallelProcessing)
+				thread.start();
+			else 
+				thread.run();
 		}
 		for(Thread thread : descriptionExtractorRuns.keySet()) {
 			try {

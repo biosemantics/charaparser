@@ -6,12 +6,17 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.transformation.ITreatmentTransformer;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 
 public abstract class MarkupDescriptionTreatmentTransformer implements ITreatmentTransformer {
 
+	protected boolean parallelProcessing;
+
+
 	@Inject
-	public MarkupDescriptionTreatmentTransformer() {
+	public MarkupDescriptionTreatmentTransformer(@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing) {
+		this.parallelProcessing = parallelProcessing;
 	}
 
 

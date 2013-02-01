@@ -57,6 +57,8 @@ public class RunConfig extends BasicConfig {
 		bind(TreatmentTransformerChain.class).to(CharaparserTreatmentTransformerChain.class);
 		bind(MarkupDescriptionTreatmentTransformer.class).to(OldPerlTreatmentTransformer.class);
 		
+		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(false);
+		
 		bind(String.class).annotatedWith(Names.named("databaseName")).toInstance("annotationevaluation");
 		//markedupdatasets
 		bind(String.class).annotatedWith(Names.named("databaseUser")).toInstance("termsuser");

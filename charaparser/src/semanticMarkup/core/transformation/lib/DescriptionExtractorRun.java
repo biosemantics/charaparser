@@ -32,10 +32,11 @@ public class DescriptionExtractorRun implements Runnable {
 	private ChunkerChain chunkerChain;
 	private IDescriptionExtractor descriptionExtractor;
 	private Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
+	private boolean parallelProcessing;
 
 	public DescriptionExtractorRun(Treatment treatment, ITerminologyLearner terminologyLearner, 
 			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
-			IDescriptionExtractor descriptionExtractor, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
+			IDescriptionExtractor descriptionExtractor, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing) {
 		this.treatment = treatment;
 		this.terminologyLearner = terminologyLearner;
 		this.normalizer = normalizer;
@@ -45,6 +46,7 @@ public class DescriptionExtractorRun implements Runnable {
 		this.chunkerChain = chunkerChain;
 		this.descriptionExtractor = descriptionExtractor;
 		this.sentencesForOrganStateMarker = sentencesForOrganStateMarker;
+		this.parallelProcessing = parallelProcessing;
 	}
 	
 	@Override
@@ -64,7 +66,10 @@ public class DescriptionExtractorRun implements Runnable {
 					posTagger, parser, chunkerChain);
 			Thread thread = new Thread(sentenceChunker);
 			sentenceChunkerRuns.put(thread, sentenceChunker);
-			thread.run();
+			if(parallelProcessing)
+				thread.start();
+			else
+				thread.run();
 		}
 		for(Thread thread : sentenceChunkerRuns.keySet()) {
 			SentenceChunkerRun sentenceChunker = sentenceChunkerRuns.get(thread);

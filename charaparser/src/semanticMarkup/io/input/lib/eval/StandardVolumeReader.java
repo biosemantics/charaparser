@@ -44,7 +44,7 @@ public class StandardVolumeReader implements IVolumeReader {
 				if (listOfFiles[i].isFile()) {
 					file = listOfFiles[i].getName();
 					file = file.replace(".xml", "");
-					if(selectedSources.contains(file)) {
+					if(selectedSources == null || selectedSources.contains(file)) {
 						String[] sourceIds = file.split(".txt-");
 						String treatmentId = String.valueOf(Integer.valueOf(sourceIds[0])-1);
 						//String statementId = sourceIds[1];
