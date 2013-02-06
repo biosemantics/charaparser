@@ -16,6 +16,7 @@ import semanticMarkup.ling.parse.IParseTree;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -44,7 +45,7 @@ public class ThatChunker extends AbstractChunker {
 		thatSubTrees.addAll(parseTree.getDescendants(POS.SBAR, POS.WHNP, "which"));
 
 		for(IParseTree thatSubTree : thatSubTrees) {
-			System.out.println(thatSubTrees);
+			log(LogLevel.DEBUG, thatSubTrees.toString());
 			IParseTree whnp = thatSubTree.getParent(parseTree);
 			IParseTree sbar = whnp.getParent(parseTree);
 			//collapseSubtree(parseTree, sbar, sbar.getTerminalsText(), POS.COLLAPSED_THAT);

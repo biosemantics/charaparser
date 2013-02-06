@@ -14,6 +14,7 @@ import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
+import semanticMarkup.log.LogLevel;
 
 public class SentenceChunkerRun implements Runnable {
 
@@ -43,7 +44,7 @@ public class SentenceChunkerRun implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Process sentence: " + sentenceString);
+		log(LogLevel.DEBUG, "Process sentence: " + sentenceString);
 		
 		String[] sentenceArray = sentenceString.split("##");
 		sentenceString = sentenceArray[2];
@@ -55,18 +56,19 @@ public class SentenceChunkerRun implements Runnable {
 		String normalizedSentence="";
 		normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
 		
-		System.out.println("Normalized sentence: " + normalizedSentence);
+		log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);
 		List<Token> sentence = wordTokenizer.tokenize(normalizedSentence);
 		
 		List<Token> posedSentence = posTagger.tag(sentence);
-		System.out.println("POSed sentence " + posedSentence);
+		log(LogLevel.DEBUG, "POSed sentence " + posedSentence);
 		
 		AbstractParseTree parseTree = parser.parse(posedSentence);
-		System.out.println("Parse tree: ");
-		parseTree.prettyPrint();
+		log(LogLevel.DEBUG, "Parse tree: ");
+		log(LogLevel.DEBUG, parseTree.toString());
+		//parseTree.prettyPrint();
 		
 		this.result = chunkerChain.chunk(parseTree, subjectTag, treatment, source, sentenceString);
-		System.out.println("Sentence processing finished.\n");
+		log(LogLevel.DEBUG, "Sentence processing finished.\n");
 		this.notifyListeners();
 	}
 	

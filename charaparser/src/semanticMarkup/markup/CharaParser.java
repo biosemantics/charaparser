@@ -6,6 +6,7 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.transformation.TreatmentTransformerChain;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.output.IVolumeWriter;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -34,17 +35,17 @@ public class CharaParser implements IMarkupCreator {
 	@Override
 	public void create() {
 		try {
-			System.out.println("reading treatments using " + volumeReader.getClass());
+			log(LogLevel.DEBUG, "reading treatments using " + volumeReader.getClass());
 			treatments = volumeReader.read();
 			
-			System.out.println("transform treatments using " + transformerChain.getClass());
+			log(LogLevel.DEBUG, "transform treatments using " + transformerChain.getClass());
 			treatments = transformerChain.transform(treatments);
 			
-			System.out.println("writing result using " + volumeWriter.getClass());
+			log(LogLevel.DEBUG, "writing result using " + volumeWriter.getClass());
 			volumeWriter.write(treatments);
 				
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 	}
 

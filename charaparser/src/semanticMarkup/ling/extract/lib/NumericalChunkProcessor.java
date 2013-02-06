@@ -89,11 +89,11 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 	}
 	ArrayList<Element> parents = this.attachToLast? lastStructures() : subjects;
 	if(printAttach && subjects.get(0).getAttributeValue("name").compareTo(lastStructures().get(0).getAttributeValue("name")) != 0){
-		System.out.println(text + " attached to "+parents.get(0).getAttributeValue("name"));
+		log(LogLevel.DEBUG, text + " attached to "+parents.get(0).getAttributeValue("name"));
 	}				
 	if(debugNum){
-		System.out.println();
-		System.out.println(">>>>>>>>>>>>>"+text);
+		log(LogLevel.DEBUG, );
+		log(LogLevel.DEBUG, ">>>>>>>>>>>>>"+text);
 	}
 	String modifier1 = "";//m[mostly] [4-]8–12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint
 	String modifier2 = "";

@@ -58,9 +58,9 @@ public class Unzip {
 			}
 
 			zipFile.close();
-		} catch (IOException ioe) {
+		} catch (IOException e) {
 			System.err.println("Unhandled exception:");
-			ioe.printStackTrace();
+			e.printStackTrace();
 			return;
 		}
 	}

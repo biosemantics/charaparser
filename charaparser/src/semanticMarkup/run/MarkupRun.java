@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.Calendar;
 
+import semanticMarkup.log.LogLevel;
 import semanticMarkup.markup.IMarkupCreator;
 
 import com.google.inject.Inject;
@@ -35,24 +36,24 @@ public class MarkupRun extends AbstractRun {
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		String startedAt = "started at " + startTime;
 		bwSetup.append(startedAt + "\n\n");
-		System.out.println(startedAt);
+		log(LogLevel.INFO, startedAt);
 		
 		//the actual processing
-		System.out.println("Creating markup using " + creator.getDescription() + "...");
+		log(LogLevel.INFO, "Creating markup using " + creator.getDescription() + "...");
 		creator.create();
 		
 		long endTime = Calendar.getInstance().getTimeInMillis();
 		String wasDone = "was done at " + endTime;
 		bwSetup.append(wasDone + "\n");
-		System.out.println(wasDone);
+		log(LogLevel.INFO, wasDone);
 		long milliseconds = endTime - startTime;
 		String tookMe = "took me " + (endTime - startTime) + " milliseconds";
 		bwSetup.append(tookMe + "\n");
-		System.out.println(tookMe);
+		log(LogLevel.INFO, tookMe);
 		
 		String timeString = getTimeString(milliseconds);
 		bwSetup.append(timeString + "\n");
-		System.out.println(timeString);
+		log(LogLevel.INFO, timeString);
 		bwSetup.flush();
 		bwSetup.close();
 	}

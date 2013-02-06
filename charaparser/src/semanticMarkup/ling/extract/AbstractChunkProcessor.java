@@ -21,6 +21,7 @@ import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -64,7 +65,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 
 	public List<DescriptionTreatmentElement> process(Chunk chunk, ProcessingContext processingContext) {
-		System.out.println("process chunk " + chunk);
+		log(LogLevel.DEBUG, "process chunk " + chunk);
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		processingContext.addState(chunk, processingContextState);
 		ProcessingContextState newState = (ProcessingContextState)processingContextState.clone();
@@ -97,7 +98,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected ArrayList<DescriptionTreatmentElement> establishSubject(
 			Chunk subjectChunk, ProcessingContextState processingContextState) {
-		System.out.println("establish subject from " + subjectChunk);
+		log(LogLevel.DEBUG, "establish subject from " + subjectChunk);
 		ArrayList<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		
 		ArrayList<Chunk> subjectChunks = new ArrayList<Chunk>();
@@ -110,7 +111,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 	
 	protected ArrayList<DescriptionTreatmentElement> reestablishSubject(ProcessingContextState processingContextState) {
-		System.out.println("reestablish subject");
+		log(LogLevel.DEBUG, "reestablish subject");
 		ArrayList<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
@@ -145,12 +146,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		//assumption: this can be extracted
 		
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
-		System.out.println("create structure element from subjectChunks " + subjectChunks);
+		log(LogLevel.DEBUG, "create structure element from subjectChunks " + subjectChunks);
 		Chunk organChunk = subjectChunk.getChunkDFS(ChunkType.ORGAN);
 		//subjectChunk.getChunks(ChunkType.ORGAN);
 
 		
-		//System.out.println("organChunk " + organChunk);
+		//log(LogLevel.DEBUG, "organChunk " + organChunk);
 		if(organChunk!=null) {
 			
 			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
@@ -496,7 +497,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		ArrayList<ArrayList<Chunk>> twoParts = separate(object);  
 		//find the organs in object o[.........{m} {m} (o1) and {m} (o2)]
 		
-		//System.out.println("twoParts " + twoParts);
+		//log(LogLevel.DEBUG, "twoParts " + twoParts);
 		structures = createStructureElements(twoParts.get(1), processingContextState);
 		// 7-12-02 add cs//to be added structures found in 2nd part, not rewrite this.latestelements yet
 		if(!twoParts.get(0).isEmpty()) {
@@ -510,8 +511,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				LinkedHashSet<Chunk> firstOrgans = beforePlus;
 				Chunk lastOrgan = getLastOrgan(twoParts.get(1));
 				for(int i = structures.size()-1; i>=0;  i--){
-					//System.out.println(structures.get(i));
-					//System.out.println(lastOrgan);
+					//log(LogLevel.DEBUG, structures.get(i));
+					//log(LogLevel.DEBUG, lastOrgan);
 					if(!structures.get(i).getProperty("name").equals(inflector.getSingular(lastOrgan.getTerminalsText()))){
 						structures.remove(i);
 					}
@@ -742,7 +743,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		}*/
 		
 		String characterName = content.getProperty("characterName");
-		System.out.println("characterName " + characterName);
+		log(LogLevel.DEBUG, "characterName " + characterName);
 		//String characterName = parts[0];
 		if(processingContextState.getUnassignedCharacter() != null){
 			characterName = processingContextState.getUnassignedCharacter();
@@ -989,7 +990,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected DescriptionTreatmentElement createCharacterElement(LinkedList<DescriptionTreatmentElement> parents, List<Chunk> modifiers, 
 			String characterValue, String characterName, String char_type, ProcessingContextState processingContextState) {
-		System.out.println("create character element " + characterName + ": " +  characterValue + " for parent "  + parents);
+		log(LogLevel.DEBUG, "create character element " + characterName + ": " +  characterValue + " for parent "  + parents);
 		String modifierString = "";
 		if(modifiers != null)
 			for(Chunk modifier : modifiers)
@@ -1183,7 +1184,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected LinkedList<DescriptionTreatmentElement> createRelationElements(String relation, 
 			List<DescriptionTreatmentElement> fromStructures, List<DescriptionTreatmentElement> toStructures, List<Chunk> modifiers, boolean symmetric, 
 			ProcessingContextState processingContextState) {
-		System.out.println("create relation " + relation + " between " + fromStructures + " to " + toStructures);
+		log(LogLevel.DEBUG, "create relation " + relation + " between " + fromStructures + " to " + toStructures);
 		//add relation elements
 		LinkedList<DescriptionTreatmentElement> relationElements = new LinkedList<DescriptionTreatmentElement>();
 		for(int i = 0; i < fromStructures.size(); i++) {
@@ -2167,7 +2168,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		}
 		plaincharset = matcher2.replaceAll("#");
 		matcher2.reset();
-		//System.out.println("plaincharset2:"+plaincharset);
+		//log(LogLevel.DEBUG, "plaincharset2:"+plaincharset);
 		return plaincharset;
 	}
 	

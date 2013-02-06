@@ -15,6 +15,7 @@ import semanticMarkup.ling.parse.IParseTree;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -67,16 +68,16 @@ public abstract class AbstractChunker implements IChunker {
 		
 		root.setPOS(collapsePOS);
 		
-		System.out.println("rearranged chunks are reassigned");
+		log(LogLevel.DEBUG, "rearranged chunks are reassigned");
 		for(Chunk chunk : savedChunks) 
 			chunkCollector.addChunk(chunk);
-		System.out.println("end of reassignment");
+		log(LogLevel.DEBUG, "end of reassignment");
 		
 		return root;
 	}
 	
 	protected Chunk createTwoValuedChunk(ChunkType chunkType, IParseTree root, ChunkCollector chunkCollector) {
-		root.prettyPrint();
+		//root.prettyPrint();
 		
 		Chunk functionChunk = null;
 		Chunk objectChunk = null;

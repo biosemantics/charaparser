@@ -19,6 +19,7 @@ import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -147,7 +148,7 @@ public abstract class Normalizer implements INormalizer {
 		String scp = str;
 		str = str.replaceAll("(?<![\\d(\\[–—-]\\s?)[–—-]+\\s*(?="+numberpattern+"\\s+\\W?("+units+")\\W?)", " to "); //fna: tips>-2.5 {mm}
 		//if(!scp.equals(str)){
-		//	System.out.println();
+		//	log(LogLevel.DEBUG, );
 		//}
 
 		ArrayList<String> chunkedTokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
@@ -165,7 +166,7 @@ public abstract class Normalizer implements INormalizer {
         //lookupCharacters(str, true); //treating -ly as -ly
         if(str.indexOf(" to ")>=0 ||str.indexOf(" or ")>=0){
         	//if(this.printCharacterList){
-				//System.out.println(str);
+				//log(LogLevel.DEBUG, str);
 			//}
         	//str = normalizeCharacterLists(str); //a set of states of the same character connected by ,/to/or => {color-blue-to-red}
         	str = normalizeParentheses(str, chunkedTokens); 
@@ -243,12 +244,12 @@ public abstract class Normalizer implements INormalizer {
 			//leave threeing out as multiple tokens can be given to sp and protect them from being split up 
 			//str = threeingSentence(str);
 			if(hasUnmatchedBrackets(str)){
-				System.out.println("unmatched: "+str);
+				log(LogLevel.DEBUG, "unmatched: "+str);
 			}
 	            //if(strcp.compareTo(str)!=0){
-        	//   System.out.println("orig sent==>"+ strcp);
-        	//   System.out.println("rmarked==>"+ strcp2);
-        	//   System.out.println("threed-sent==>"+ str);
+        	//   log(LogLevel.DEBUG, "orig sent==>"+ strcp);
+        	//   log(LogLevel.DEBUG, "rmarked==>"+ strcp2);
+        	//   log(LogLevel.DEBUG, "threed-sent==>"+ str);
 			//}
            //str = str.replaceAll("}>", "/NN").replaceAll(">}", "/NN").replaceAll(">", "/NN").replaceAll("}", "/JJ").replaceAll("[<{]", "");
 		
@@ -268,7 +269,7 @@ public abstract class Normalizer implements INormalizer {
 		//String singularTag = inflector.getSingular(tag);
 		//String pluralTag = inflector.getSingular(tag);
 		
-		//System.out.println("modifier " + modifier + " tag " + tag);
+		//log(LogLevel.DEBUG, "modifier " + modifier + " tag " + tag);
 		//Set<Integer> tagPositions = new HashSet<Integer>();
 		
 		/*int index = str.indexOf(singularTag);
@@ -286,7 +287,7 @@ public abstract class Normalizer implements INormalizer {
 		int index = str.indexOf(tag);
 		if(index >= 0) {
 		//while (index >= 0) {
-			//System.out.println("index " + index);
+			//log(LogLevel.DEBUG, "index " + index);
 			//tagPositions.add(index);
 				
 			String prefixStr = str.substring(0, index).trim();
@@ -300,7 +301,7 @@ public abstract class Normalizer implements INormalizer {
 				//searchIndex = index + 1 + modifier.length();
 			}
 			
-			//System.out.println("search " + searchIndex);
+			//log(LogLevel.DEBUG, "search " + searchIndex);
 		    //index = str.indexOf(tag, searchIndex);
 		}
 				
@@ -488,9 +489,9 @@ public abstract class Normalizer implements INormalizer {
 			result += chunkedTokens.get(i) + " ";
 		}
 		/*if (this.printColorList) {
-			System.out.println(islist + ":" + src + ":" + listcp);
-			System.out.println(islist + ":" + src + ":" + result);
-			System.out.println();
+			log(LogLevel.DEBUG, islist + ":" + src + ":" + listcp);
+			log(LogLevel.DEBUG, islist + ":" + src + ":" + result);
+			log(LogLevel.DEBUG, );
 		}*/
 		return result;
 	}
@@ -780,8 +781,8 @@ public abstract class Normalizer implements INormalizer {
 		}
 		fixed +=sent;
 		//if(printNormalizeBrackets  && !fixed.equals(sentorig)){
-		//	System.out.println("orig : "+sentorig);
-		//	System.out.println("fixed: "+fixed);
+		//	log(LogLevel.DEBUG, "orig : "+sentorig);
+		//	log(LogLevel.DEBUG, "fixed: "+fixed);
 		//}
 		return fixed.replaceAll("\\s+", " ");
 	}
@@ -892,7 +893,7 @@ public abstract class Normalizer implements INormalizer {
          matcher1 = pattern6.matcher(str);//remove space around 0
          str = matcher1.replaceAll("0");
          if(!scptemp.equals(str)){
-		   System.out.println();
+		   log(LogLevel.DEBUG, );
          }
          matcher1.reset();*/
          
@@ -1033,7 +1034,7 @@ public abstract class Normalizer implements INormalizer {
 				}
 			}
 		}
-		//System.out.println("characterTokensReversed " + this.charactertokensReversed);
+		//log(LogLevel.DEBUG, "characterTokensReversed " + this.charactertokensReversed);
 		return characterTokensReversed;
 	}
 	
@@ -1142,7 +1143,7 @@ public abstract class Normalizer implements INormalizer {
 				inlist+=t+" ";
 			}
 		}
-		//System.out.println("outList " + outlist);
+		//log(LogLevel.DEBUG, "outList " + outlist);
 		outlist = outlist.trim()+" "; //need to have a trailing space
 		normalizeCharacterLists(outlist, chunkedTokens); //chunkedtokens updated
 
@@ -1233,7 +1234,7 @@ public abstract class Normalizer implements INormalizer {
 		
 		//pattern match: collect state one by one
 		String listcopy = list;
-		//System.out.println(list);
+		//log(LogLevel.DEBUG, list);
 		int base = 0;
 		//Pattern pt = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([a-z-]+ )+([@,;\\.] )+\\s*)(([a-z-]+ )*(\\4)+[@,;\\.%\\[\\]\\(\\)#].*)");//
 		Matcher mt = charalistpattern.matcher(list);
@@ -1295,7 +1296,7 @@ public abstract class Normalizer implements INormalizer {
 				//result +=t; //6/29/12
 				/*if(this.printCharacterList){
 					if(this.src.equals("100.txt-1"))
-						System.out.println(this.src+":"+">>>"+t);
+						log(LogLevel.DEBUG, this.src+":"+">>>"+t);
 				}*/
 			}
 			base = end;
@@ -1351,8 +1352,8 @@ public abstract class Normalizer implements INormalizer {
 			
 			String[] beforeTokens = before.split(" ");
 			String[] afterTokens = after.split(" ");
-			System.out.println("before token " + beforeTokens[beforeTokens.length-1]);
-			System.out.println(organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]));
+			log(LogLevel.DEBUG, "before token " + beforeTokens[beforeTokens.length-1]);
+			log(LogLevel.DEBUG, String.valueOf(organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1])));
 			if(!organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]) &&
 					!organStateKnowledgeBase.isOrgan(afterTokens[0])) {
 				boolean beforeContainsOrgan = false;
@@ -1461,7 +1462,7 @@ public abstract class Normalizer implements INormalizer {
 		}
 		fixed +=taggedsent;
 		if(needfix){
-			//System.out.println("fixed "+fixedcount+":["+source+"] "+fixed);
+			//log(LogLevel.DEBUG, "fixed "+fixedcount+":["+source+"] "+fixed);
 			//fixedcount++;
 		}
 		if(fixed.trim().length()<1){

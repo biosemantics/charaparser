@@ -8,6 +8,7 @@ import java.util.List;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
+import semanticMarkup.log.LogLevel;
 
 /**
  * Always use ChunkCollectors interface to modify a Chunk. 
@@ -30,9 +31,9 @@ public class ChunkCollector implements Iterable<Chunk> {
 	
 	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Treatment treatment, String source, String sentenceString) {
 		this.parseTree = parseTree;
-		/*System.out.println("root before " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));
+		/*log(LogLevel.DEBUG, "root before " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));
 		for(IParseTree terminal : parseTree.getTerminals()) {
-			System.out.println("terminal before " + terminal.getClass().getName() + "@" + Integer.toHexString(terminal.hashCode()));
+			log(LogLevel.DEBUG, "terminal before " + terminal.getClass().getName() + "@" + Integer.toHexString(terminal.hashCode()));
 		}*/
 		this.subjectTag = subjectTag;
 		this.treatment = treatment;
@@ -57,7 +58,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 		//result.append("addOnTerminals: ").append(addOnTerminals).append("\n");
 		/*for(IParseTree key : chunks.keySet()) {
-			System.out.println(key.getClass().getName() + "@" + Integer.toHexString(key.hashCode()));
+			log(LogLevel.DEBUG, key.getClass().getName() + "@" + Integer.toHexString(key.hashCode()));
 		}*/
 		return result.toString();
 	}
@@ -81,7 +82,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 	
 	public void addChunk(Chunk chunk) {
 		if(!(chunk instanceof AbstractParseTree))
-			System.out.println("add chunk " + chunk);
+			log(LogLevel.DEBUG, "add chunk " + chunk);
 				
 		//checks for "valid" chunking as of current definition
 		List<AbstractParseTree> terminals = chunk.getTerminals();
@@ -89,7 +90,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		for(AbstractParseTree terminal : terminals) {
 			int currentTerminalId = getTerminalId(terminal);
 			if(currentTerminalId-1 != previousTerminalId)
-				System.out.println("This is not a valid chunk of consecutive terminals!");
+				log(LogLevel.DEBUG, "This is not a valid chunk of consecutive terminals!");
 			previousTerminalId = currentTerminalId;
 		}
 		
@@ -100,7 +101,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 			Chunk previousChunk = chunks.get(firstTerminalId - 1);
 			for(AbstractParseTree terminal : chunk.getTerminals()) {
 				if(previousChunk.contains(terminal))
-					System.out.println("This is not a valid chunk. Terminal was already included in previous chunk");
+					log(LogLevel.DEBUG, "This is not a valid chunk. Terminal was already included in previous chunk");
 			}
 		}
 
@@ -108,7 +109,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 			Chunk nextChunk = chunks.get(lastTerminalId + 1);
 			for(AbstractParseTree terminal : chunk.getTerminals()) {
 				if(nextChunk.contains(terminal))
-					System.out.println("This is not a valid chunk. Terminal was already included in next chunk");
+					log(LogLevel.DEBUG, "This is not a valid chunk. Terminal was already included in next chunk");
 			}
 		}
 				

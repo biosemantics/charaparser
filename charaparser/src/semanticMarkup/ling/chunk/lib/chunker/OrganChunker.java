@@ -33,9 +33,9 @@ public class OrganChunker extends AbstractChunker {
 	public void chunk(ChunkCollector chunkCollector) {
 		
 		/*IParseTree parseTree = chunkCollector.getParseTree();
-		System.out.println("parseTree in organ chunker " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));
+		log(LogLevel.DEBUG, "parseTree in organ chunker " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));
 		for(IParseTree terminal : parseTree.getTerminals()) {
-			System.out.println("terminals1 in organ chunker " + terminal.getClass().getName() + "@" + Integer.toHexString(terminal.hashCode()));
+			log(LogLevel.DEBUG, "terminals1 in organ chunker " + terminal.getClass().getName() + "@" + Integer.toHexString(terminal.hashCode()));
 		}*/
 		
 		Chunk previousOrgan = null;

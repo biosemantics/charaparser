@@ -8,6 +8,7 @@ import java.util.List;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.IVolumeReader;
+import semanticMarkup.log.LogLevel;
 import semanticMarkup.markup.IMarkupCreator;
 
 import com.google.inject.Inject;
@@ -41,47 +42,46 @@ public class MarkupEvaluationRun extends AbstractRun {
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		String startedAt = "started at " + startTime;
 		bwSetup.append(startedAt + "\n\n");
-		System.out.println(startedAt);
+		log(LogLevel.INFO, startedAt);
 		
 		//the actual processing
-		System.out.println("Creating markup using " + creator.getDescription() + "...");
+		log(LogLevel.INFO, "Creating markup using " + creator.getDescription() + "...");
 		creator.create();
 		
 		long endTime = Calendar.getInstance().getTimeInMillis();
 		String wasDone = "was done at " + endTime;
 		bwSetup.append(wasDone + "\n");
-		System.out.println(wasDone);
+		log(LogLevel.INFO, wasDone);
 		long milliseconds = endTime - startTime;
 		String tookMe = "took me " + (endTime - startTime) + " milliseconds";
 		bwSetup.append(tookMe + "\n");
-		System.out.println(tookMe);
+		log(LogLevel.INFO, tookMe);
 		
 		String timeString = getTimeString(milliseconds);
 		bwSetup.append(timeString + "\n");
-		System.out.println(timeString);
-		System.out.println();
+		log(LogLevel.INFO, timeString);
 		
-		System.out.println("Evaluating markup using " + evaluator.getDescription() + "...");
+		log(LogLevel.INFO, "Evaluating markup using " + evaluator.getDescription() + "...");
 		List<Treatment> markedUpResult = creator.getResult();
 		
-		System.out.println("read gold standard using " + goldStandardReader.getClass());
+		log(LogLevel.INFO, "read gold standard using " + goldStandardReader.getClass());
 		List<Treatment> goldStandard = goldStandardReader.read();
 		
 		evaluator.evaluate(markedUpResult, goldStandard);
-		System.out.println("Evaluation result: \n" + evaluator.getResult());
+		log(LogLevel.INFO, "Evaluation result: \n" + evaluator.getResult());
 		
 		long endEvaluationTime = Calendar.getInstance().getTimeInMillis();
 		String wasDoneEvaluating = "was done at " + endEvaluationTime;
 		bwSetup.append(wasDoneEvaluating + "\n");
-		System.out.println(wasDoneEvaluating);
+		log(LogLevel.INFO, wasDoneEvaluating);
 		long millisecondsEvaluating = endEvaluationTime - endTime;
 		String tookMeEvaluating = "took me " + (endEvaluationTime - endTime) + " milliseconds";
 		bwSetup.append(tookMeEvaluating + "\n");
-		System.out.println(tookMeEvaluating);
+		log(LogLevel.INFO, tookMeEvaluating);
 		
 		String timeStringEvaluating = getTimeString(millisecondsEvaluating);
 		bwSetup.append(timeStringEvaluating + "\n");
-		System.out.println(timeStringEvaluating);
+		log(LogLevel.INFO, timeStringEvaluating);
 		bwSetup.flush();
 		bwSetup.close();
 	}

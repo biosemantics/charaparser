@@ -17,6 +17,7 @@ import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -66,9 +67,9 @@ public class CleanupChunker extends AbstractChunker {
 
 	
 	private int composeChunk(List<AbstractParseTree> terminals, int pointer, ChunkCollector chunkCollector) {
-		//System.out.println(terminals.get(pointer) + " " + chunkCollector.isPartOfANonTerminalChunk(terminals.get(pointer)));
+		//log(LogLevel.DEBUG, terminals.get(pointer) + " " + chunkCollector.isPartOfANonTerminalChunk(terminals.get(pointer)));
 		if(terminals.get(pointer).getTerminalsText().equals("quasi")){
-			System.out.println("quasi");
+			log(LogLevel.DEBUG, "quasi");
 		}
 		if(chunkCollector.isPartOfANonTerminalChunk(terminals.get(pointer))) {
 			return ++pointer;
@@ -540,7 +541,7 @@ public class CleanupChunker extends AbstractChunker {
 	private ChunkType getChunkType(int id, ChunkCollector chunkCollector) {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		AbstractParseTree terminal = terminals.get(id);
-		//System.out.println("terminal " + terminal);
+		//log(LogLevel.DEBUG, "terminal " + terminal);
 		Chunk terminalChunk = chunkCollector.getChunk(terminal);
 		if(terminalChunk.containsChunkType(ChunkType.CHARACTER_STATE)) {
 			return ChunkType.CHARACTER_STATE;
@@ -632,7 +633,7 @@ public class CleanupChunker extends AbstractChunker {
 		if((terminalChunk.isOfChunkType(ChunkType.THAN_PHRASE) || terminalChunk.isOfChunkType(ChunkType.THAN_CHARACTER_PHRASE)) 
 				&& terminalChunk.getTerminals().size()!=0) { 
 			//returns three different types of ChunkTHAN
-			System.out.println("the " + terminalChunk);
+			log(LogLevel.DEBUG, "the " + terminalChunk);
 			List<AbstractParseTree> chunksTerminals = terminalChunk.getTerminals();
 			int thanIndex = 0;
 			for(; thanIndex< chunksTerminals.size(); thanIndex++) { //AbstractParseTree chunksTerminal : chunksTerminals) {

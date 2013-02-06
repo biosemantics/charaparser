@@ -79,9 +79,9 @@ public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 					for(IWordID wordId : indexWord.getWordIDs()) {
 						IWord aWord = dictionary.getWord(wordId);
 						//ISynset synset = aWord.getSynset();
-						//System.out.println(synset.getGloss());
+						//log(LogLevel.DEBUG, synset.getGloss());
 						ISenseEntry senseEntry = dictionary.getSenseEntry(aWord.getSenseKey());
-						//System.out.println(senseEntry.getSenseNumber());
+						//log(LogLevel.DEBUG, senseEntry.getSenseNumber());
 						count += senseEntry.getTagCount();
 					}
 					

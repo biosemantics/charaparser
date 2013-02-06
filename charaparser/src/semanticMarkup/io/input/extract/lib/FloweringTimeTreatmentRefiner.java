@@ -45,7 +45,7 @@ public class FloweringTimeTreatmentRefiner implements ITreatmentRefiner {
 	
 	public void refine(Treatment treatment, String clue, String nameForValues) {
 		clue = clue.toLowerCase().replaceFirst("flowering\\s+", "").replaceAll("–", "-");
-		//System.out.println("original: "+text);
+		//log(LogLevel.DEBUG, "original: "+text);
 		//clean up the text
 		Matcher m = valuePattern.matcher(clue);
 		String clean = "";
@@ -54,7 +54,7 @@ public class FloweringTimeTreatmentRefiner implements ITreatmentRefiner {
 			clue = m.group(4);
 			m=valuePattern.matcher(clue);			
 		}
-		//System.out.println("cleaned: "+clean);
+		//log(LogLevel.DEBUG, "cleaned: "+clean);
 		//fetch the values
 		String[] ranges = clean.split("\\s*@\\s*");
 		ArrayList<String> values = new ArrayList<String>();

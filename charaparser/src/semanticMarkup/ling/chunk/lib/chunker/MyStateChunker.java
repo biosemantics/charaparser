@@ -102,7 +102,7 @@ public class MyStateChunker extends AbstractChunker {
 							
 							if(!characterOverlap.isEmpty()) {
 								fixParseTreeForToCharacter(i, terminals, chunkCollector.getParseTree());	
-								chunkCollector.getParseTree().prettyPrint();
+								//chunkCollector.getParseTree().prettyPrint();
 								
 								String characterString = "";
 								Iterator<String> characterIterator = characterOverlap.iterator();
@@ -132,7 +132,7 @@ public class MyStateChunker extends AbstractChunker {
 	}
 
 	private void fixParseTreeForToCharacter(int i, List<AbstractParseTree> terminals, IParseTree parseTree) {
-		parseTree.prettyPrint();
+		//parseTree.prettyPrint();
 		AbstractParseTree previousTerminal = terminals.get(i-1);
 		AbstractParseTree terminal = terminals.get(i);
 		IParseTree beforePreviousParent = previousTerminal;

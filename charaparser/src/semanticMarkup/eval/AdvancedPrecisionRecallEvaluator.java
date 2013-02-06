@@ -28,11 +28,11 @@ public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEva
 		int candidateScore = -1;
 		for(DescriptionTreatmentElement createdElement : createdElements) {
 			for(DescriptionTreatmentElement correctElement : correctElements) {
-				/*System.out.println("structure comparison: ");
-				System.out.println(createdElement.getProperty("name"));
-				System.out.println(correctElement.getProperty("name"));
-				System.out.println(createdElement.getProperty("constraint"));
-				System.out.println(correctElement.getProperty("constraint"));*/
+				/*log(LogLevel.DEBUG, "structure comparison: ");
+				log(LogLevel.DEBUG, createdElement.getProperty("name"));
+				log(LogLevel.DEBUG, correctElement.getProperty("name"));
+				log(LogLevel.DEBUG, createdElement.getProperty("constraint"));
+				log(LogLevel.DEBUG, correctElement.getProperty("constraint"));*/
 				if(isEqualProperty(correctElement.getProperty("name"), createdElement.getProperty("name")) &&
 						isEqualProperty(correctElement.getProperty("constraint"), createdElement.getProperty("constraint"))) {
 					int score = getCharachterOverlap(getCharacters(createdElement), getCharacters(correctElement)).size();
@@ -53,15 +53,15 @@ public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEva
 			if(correct.containsKey(keyName)) {
 				Set<DescriptionTreatmentElement> createdElements = created.get(keyName);
 				Set<DescriptionTreatmentElement> correctElements = correct.get(keyName);
-				/*System.out.println("character comparison: ");
-				System.out.println(createdElement.getProperty("name"));
-				System.out.println(correctElement.getProperty("name"));
-				System.out.println(createdElement.getProperty("value"));
-				System.out.println(correctElement.getProperty("value"));
-				System.out.println(createdElement.getProperty("from"));
-				System.out.println(correctElement.getProperty("from"));
-				System.out.println(createdElement.getProperty("to"));
-				System.out.println(correctElement.getProperty("to"));*/
+				/*log(LogLevel.DEBUG, "character comparison: ");
+				log(LogLevel.DEBUG, createdElement.getProperty("name"));
+				log(LogLevel.DEBUG, correctElement.getProperty("name"));
+				log(LogLevel.DEBUG, createdElement.getProperty("value"));
+				log(LogLevel.DEBUG, correctElement.getProperty("value"));
+				log(LogLevel.DEBUG, createdElement.getProperty("from"));
+				log(LogLevel.DEBUG, correctElement.getProperty("from"));
+				log(LogLevel.DEBUG, createdElement.getProperty("to"));
+				log(LogLevel.DEBUG, correctElement.getProperty("to"));*/
 				String bestMatch = getBestCharacterMatch(keyName, createdElements, correctElements);
 				if(bestMatch!=null)
 					result.add(bestMatch);
@@ -73,8 +73,8 @@ public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEva
 	private String getBestCharacterMatch(String name, Set<DescriptionTreatmentElement> createdElements, Set<DescriptionTreatmentElement> correctElements) {
 		for(DescriptionTreatmentElement createdElement : createdElements) {
 			for(DescriptionTreatmentElement correctElement : correctElements) {
-				//System.out.println("created element " + createdElement);
-				///System.out.println("correct element " + correctElements);
+				//log(LogLevelDEBUG, "created element " + createdElement);
+				///log(LogLevel.DEBUG, "correct element " + correctElements);
 				if(isEqualProperty(correctElement.getProperty("name"), createdElement.getProperty("name")) && 
 						isEqualProperty(correctElement.getProperty("value"), createdElement.getProperty("value")) &&
 						isEqualProperty(correctElement.getProperty("from"), createdElement.getProperty("from")) && 
@@ -96,27 +96,27 @@ public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEva
 			if(correctRelationsSet.containsKey(keyName)) {
 				Set<DescriptionTreatmentElement> createdElements = createdRelationsSet.get(keyName);
 				Set<DescriptionTreatmentElement> correctElements = correctRelationsSet.get(keyName);
-				/*System.out.println("relation comparison: ");
-				System.out.println(createdElement.getProperty("name"));
-				System.out.println(correctElement.getProperty("name"));
-				System.out.println(createdElement.getProperty("negation"));
-				System.out.println(correctElement.getProperty("negation"));
-				System.out.println(createdElement.getProperty("from"));
-				System.out.println(correctElement.getProperty("from"));
-				System.out.println(createdElement.getProperty("to"));
-				System.out.println(correctElement.getProperty("to")); */
-				/*System.out.println("1" + createdRelationsSet);
-				System.out.println("2" + createdStructuresByIdSet);
-				System.out.println("3" + correctRelationsSet);
-				System.out.println("4" + correctStructuresByIdSet);
-				System.out.println("5" + createdElement.getProperty("to"));
-				System.out.println("6" + createdElement.getProperty("from"));
-				System.out.println("7" + correctElement.getProperty("to"));
-				System.out.println("8" + correctElement.getProperty("from"));
-				System.out.println("9" + createdStructuresByIdSet.get(createdElement.getProperty("to")));
-				System.out.println("10" + createdStructuresByIdSet.get(createdElement.getProperty("from")));
-				System.out.println("11" + correctStructuresByIdSet.get(correctElement.getProperty("to")));
-				System.out.println("12" + correctStructuresByIdSet.get(correctElement.getProperty("from")));*/
+				/*log(LogLevel.DEBUG, "relation comparison: ");
+				log(LogLevel.DEBUG, createdElement.getProperty("name"));
+				log(LogLevel.DEBUG, correctElement.getProperty("name"));
+				log(LogLevel.DEBUG, createdElement.getProperty("negation"));
+				log(LogLevel.DEBUG, correctElement.getProperty("negation"));
+				log(LogLevel.DEBUG, createdElement.getProperty("from"));
+				log(LogLevel.DEBUG, correctElement.getProperty("from"));
+				log(LogLevel.DEBUG, createdElement.getProperty("to"));
+				log(LogLevel.DEBUG, correctElement.getProperty("to")); */
+				/*log(LogLevel.DEBUG, "1" + createdRelationsSet);
+				log(LogLevel.DEBUG, "2" + createdStructuresByIdSet);
+				log(LogLevel.DEBUG, "3" + correctRelationsSet);
+				log(LogLevel.DEBUG, "4" + correctStructuresByIdSet);
+				log(LogLevel.DEBUG, "5" + createdElement.getProperty("to"));
+				log(LogLevel.DEBUG, "6" + createdElement.getProperty("from"));
+				log(LogLevel.DEBUG, "7" + correctElement.getProperty("to"));
+				log(LogLevel.DEBUG, "8" + correctElement.getProperty("from"));
+				log(LogLevel.DEBUG, "9" + createdStructuresByIdSet.get(createdElement.getProperty("to")));
+				log(LogLevel.DEBUG, "10" + createdStructuresByIdSet.get(createdElement.getProperty("from")));
+				log(LogLevel.DEBUG, "11" + correctStructuresByIdSet.get(correctElement.getProperty("to")));
+				log(LogLevel.DEBUG, "12" + correctStructuresByIdSet.get(correctElement.getProperty("from")));*/
 				
 				String bestMatch = getBestRelationMatch(keyName, createdElements, correctElements, createdStructuresByIdSet, correctStructuresByIdSet);
 				if(bestMatch!=null)

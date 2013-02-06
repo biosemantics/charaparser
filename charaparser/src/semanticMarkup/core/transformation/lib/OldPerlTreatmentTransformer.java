@@ -22,6 +22,7 @@ import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -79,7 +80,7 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 			try {
 				thread.join();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log(LogLevel.ERROR, e);
 			}
 		}
 	}

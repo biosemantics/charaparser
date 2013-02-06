@@ -43,7 +43,7 @@ public class PPListChunker extends AbstractChunker {
 		List<AbstractParseTree> ppCCSubTrees = parseTree.getDescendants(POS.PP, POS.CC);
 		
 		for(IParseTree ppCCSubTree : ppCCSubTrees) {
-			//System.out.println("ppCCSubTree " + ppCCSubTree.getTerminalsText());
+			//log(LogLevel.DEBUG, "ppCCSubTree " + ppCCSubTree.getTerminalsText());
 			//parseTree.prettyPrint();
 			IParseTree cc = ppCCSubTree;
 			IParseTree pp = ppCCSubTree.getParent(parseTree);
@@ -54,25 +54,25 @@ public class PPListChunker extends AbstractChunker {
 			boolean isList = true;
 			if(!cc.getTerminalsText().matches("and|or")) {
 				isList = false;
-				//System.out.println("islist false.");
+				//log(LogLevel.DEBUG, "islist false.");
 			}
 			List<IParseTree> ccs = pp.getChildrenOfPOS(POS.CC);
 			if(ccs.size() > 1) {
 				isList = false;
-				//System.out.println("islist false0");
+				//log(LogLevel.DEBUG, "islist false0");
 			}
 			
 			int lastin = -1;
 			int lastcc = -1;
 			int count = 0;
 			for(IParseTree child : ppChildren) {
-				//System.out.println("child " + child.getTerminalsText());
+				//log(LogLevel.DEBUG, "child " + child.getTerminalsText());
 				if(child.isTerminal())
 					continue;
 				POS childPOS = child.getPOS();
 				if(!(childPOS.equals(POS.PP) || childPOS.equals(POS.IN) || childPOS.equals(POS.CC) ||
 						childPOS.equals(POS.NP) || childPOS.equals(POS.TO) || childPOS.equals(POS.ADVP) || childPOS.equals(POS.NONE))) {
-					//System.out.println("islist false1");
+					//log(LogLevel.DEBUG, "islist false1");
 					isList = false;
 				}
 				if(childPOS.equals(POS.PP) || childPOS.equals(POS.IN) || childPOS.equals(POS.TO)) {
@@ -82,19 +82,19 @@ public class PPListChunker extends AbstractChunker {
 					lastcc = count;
 				}
 				if(childPOS.equals(POS.PP) && child.getChildrenOfPOS(POS.IN).size() == 0) {
-					//System.out.println("islist false2");
+					//log(LogLevel.DEBUG, "islist false2");
 					isList = false;
 				}
 				if(childPOS.equals(POS.PP) && child.getChildren().size() > 2){ 
 					//PP is expected to have an IN and an NP as children
 					isList = false;
-					//System.out.println("islist false3");
+					//log(LogLevel.DEBUG, "islist false3");
 				}
 				count++;
 			}
 			if(lastin-lastcc != 1){
 				isList = false;
-				//System.out.println("islist false4");
+				//log(LogLevel.DEBUG, "islist false4");
 			}
 			
 			if(isList) {

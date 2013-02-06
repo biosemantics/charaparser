@@ -10,6 +10,7 @@ import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.ling.chunk.Chunk;
+import semanticMarkup.log.LogLevel;
 
 public class ProcessingContextState implements Cloneable {
 
@@ -319,7 +320,7 @@ public class ProcessingContextState implements Cloneable {
 			//clone.result = this.result;
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return null;
 	}

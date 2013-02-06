@@ -18,6 +18,7 @@ import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
+import semanticMarkup.log.LogLevel;
 
 public class DescriptionExtractorRun implements Runnable {
 
@@ -51,7 +52,7 @@ public class DescriptionExtractorRun implements Runnable {
 	
 	@Override
 	public void run() {
-		System.out.println("Create description for treatment: " + treatment.getName());
+		log(LogLevel.DEBUG, "Create description for treatment: " + treatment.getName());
 		createNewDescription(treatment, sentencesForOrganStateMarker.get(treatment));
 	}
 	
@@ -77,11 +78,11 @@ public class DescriptionExtractorRun implements Runnable {
 				thread.join();
 				treatmentChunkCollectors.add(sentenceChunker.getResult());
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				log(LogLevel.ERROR, e);
 			}
 		}
 		
-		System.out.println("Extract new description using " + descriptionExtractor.getDescription() + "...");
+		log(LogLevel.DEBUG, "Extract new description using " + descriptionExtractor.getDescription() + "...");
 		TreatmentElement newDescriptionElement = descriptionExtractor.extract(treatmentChunkCollectors);
 
 		List<ValueTreatmentElement> descriptions = treatment.getValueTreatmentElements("description");
@@ -90,7 +91,7 @@ public class DescriptionExtractorRun implements Runnable {
 			treatment.removeTreatmentElement(description);
 			break;
 		}
-		System.out.println(" -> JAXB: ");
-		System.out.println(treatment);
+		log(LogLevel.DEBUG, " -> JAXB: ");
+		log(LogLevel.DEBUG, treatment.toString());
 	}
 }

@@ -33,7 +33,7 @@ public class PPINChunker extends AbstractChunker {
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		IParseTree parseTree = chunkCollector.getParseTree();
-		parseTree.prettyPrint();
+		//parseTree.prettyPrint();
 		
 		List<AbstractParseTree> ppINSubtrees = null;
 		do {
@@ -49,12 +49,12 @@ public class PPINChunker extends AbstractChunker {
 			ppINSubtrees = parseTree.getDescendants(POS.PP, posBs);
 			
 			for(AbstractParseTree ppINSubtree : ppINSubtrees) {
-				//System.out.println("ppINSubtree " + ppINSubtree.getTerminalsText());
+				//log(LogLevel.DEBUG, "ppINSubtree " + ppINSubtree.getTerminalsText());
 				// this and the next step are to
 				// select PP nodes containing no
 				// other PP/INs
 				List<AbstractParseTree> ppINSubtreesInParent = ppINSubtree.getParent(parseTree).getDescendants(POS.PP, posBs);
-				//System.out.println(ppINSubtreesInParent.size());
+				//log(LogLevel.DEBUG, ppINSubtreesInParent.size());
 				if(ppINSubtreesInParent.size() == 0) {
 					singlePPINSubtrees.add(ppINSubtree);
 				}
@@ -67,7 +67,7 @@ public class PPINChunker extends AbstractChunker {
 		for(int i=singlePPINSubtrees.size()-1; i>=0; i--) {
 			AbstractParseTree singlePPINSubtree = singlePPINSubtrees.get(i);
 			
-			//System.out.println("singlePPINSubtree " + singlePPINSubtree.getTerminalsText());
+			//log(LogLevel.DEBUG, "singlePPINSubtree " + singlePPINSubtree.getTerminalsText());
 			AbstractParseTree in = singlePPINSubtree;
 			AbstractParseTree pp = singlePPINSubtree.getParent(parseTree);
 			
@@ -88,10 +88,10 @@ public class PPINChunker extends AbstractChunker {
 					return;
 				}
 				
-				//System.out.println("pp " + pp);
-				//System.out.println("in " + in);
-				//System.out.println("firstNP " + firstNPTree);
-				//System.out.println("collapse two subtrees " + in.getTerminalsText() + " "  + firstNPTree.getTerminalsText());
+				//log(LogLevel.DEBUG, "pp " + pp);
+				//log(LogLevel.DEBUG, "in " + in);
+				//log(LogLevel.DEBUG, "firstNP " + firstNPTree);
+				//log(LogLevel.DEBUG, "collapse two subtrees " + in.getTerminalsText() + " "  + firstNPTree.getTerminalsText());
 				IParseTree collapsedTree = this.collapseTwoSubtrees(pp, POS.COLLAPSED_PPIN, in, POS.PREPOSITION, firstNPTree, POS.OBJECT, chunkCollector);
 				//parseTree.prettyPrint();
 				

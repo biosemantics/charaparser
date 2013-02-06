@@ -1,4 +1,4 @@
-package semanticMarkup.io.output.serial;
+package semanticMarkup.io.output.lib.serial;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;

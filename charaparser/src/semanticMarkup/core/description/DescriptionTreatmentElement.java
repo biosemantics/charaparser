@@ -66,18 +66,6 @@ public class DescriptionTreatmentElement extends ContainerTreatmentElement {
 		this.properties.remove(key);
 	}
 	
-	@Override
-	public String toString() {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-		    ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-		    return writer.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
-	}
-	
 	@Override 
 	public Object clone() {
 		DescriptionTreatmentElement clone = (DescriptionTreatmentElement)super.clone();

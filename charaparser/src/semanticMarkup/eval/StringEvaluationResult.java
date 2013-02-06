@@ -8,9 +8,7 @@ public class StringEvaluationResult implements IEvaluationResult {
 		this.result = result;
 	}
 	
-	@Override
-	public String toString() {
-		return result;
+	public String getResult() {
+		return this.result;
 	}
-
 }

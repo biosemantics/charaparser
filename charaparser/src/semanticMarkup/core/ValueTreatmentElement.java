@@ -32,16 +32,4 @@ public class ValueTreatmentElement extends TreatmentElement {
 		clone.value = new String(value);
 		return clone;
 	}
-	
-	@Override
-	public String toString() {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-		    ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-		    return writer.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
-	}
 }

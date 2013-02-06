@@ -37,7 +37,7 @@ public class ConjunctedOrgansRecoverChunker extends AbstractChunker {
 		
 		for(int i = 0; i < terminals.size(); i++){
 			AbstractParseTree terminal = terminals.get(i);
-			//System.out.println("terminal " + terminal);
+			//log(LogLevel.DEBUG, "terminal " + terminal);
 			if(terminals.size() > i + 2) {
 				if((chunkCollector.isPartOfChunkType(terminal, ChunkType.PP) 
 						|| chunkCollector.isPartOfChunkType(terminal, ChunkType.VP)) && 
@@ -55,8 +55,8 @@ public class ConjunctedOrgansRecoverChunker extends AbstractChunker {
 					LinkedHashSet<Chunk> newOrgan = new LinkedHashSet<Chunk>();
 					AbstractParseTree organ = terminals.get(++j);					
 					do {
-						//System.out.println("do loop " + terminals.get(j));
-						//System.out.println("add " + chunkCollector.getChunk(organ));
+						//log(LogLevel.DEBUG, "do loop " + terminals.get(j));
+						//log(LogLevel.DEBUG, "add " + chunkCollector.getChunk(organ));
 						newOrgan.add(chunkCollector.getChunk(organ));
 						organ = terminals.get(++j);					
 					} while(chunkCollector.isPartOfChunkType(organ, ChunkType.ORGAN) && j+1 < terminals.size());
@@ -64,10 +64,10 @@ public class ConjunctedOrgansRecoverChunker extends AbstractChunker {
 					Chunk chunk = chunkCollector.getChunk(terminal);
 					newOrgan.remove(chunk);
 					LinkedHashSet<Chunk> childChunks = chunk.getChunks();
-					//System.out.println("chunkCollector " + chunkCollector.toString());
+					//log(LogLevel.DEBUG, "chunkCollector " + chunkCollector.toString());
 					childChunks.addAll(newOrgan);
-					//System.out.println("childChunks");
-					//System.out.println(childChunks);
+					//log(LogLevel.DEBUG, "childChunks");
+					//log(LogLevel.DEBUG, childChunks);
 					
 					chunk = new Chunk(chunk.getChunkType(), childChunks);
 					
@@ -83,7 +83,7 @@ public class ConjunctedOrgansRecoverChunker extends AbstractChunker {
 				}
 			}
 		}
-		//System.out.println("done here");
+		//log(LogLevel.DEBUG, "done here");
 	}
 	
 	

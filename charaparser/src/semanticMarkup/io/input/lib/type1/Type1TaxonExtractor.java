@@ -125,7 +125,7 @@ public class Type1TaxonExtractor {
 				String laname = aname.toLowerCase();
 				if(namelist.indexOf("|"+laname+"|")>=0){
 					//listener.info("", filename, "Repeated taxon name:"+aname+" [family rank]");
-					//System.out.println("::::::::::duplicate "+aname+" [family rank]"); //should not occur
+					//log(LogLevel.DEBUG, "::::::::::duplicate "+aname+" [family rank]"); //should not occur
 				} else {
 					namelist += laname+"|";
 					return aname; //family
@@ -138,7 +138,7 @@ public class Type1TaxonExtractor {
 					String laname = aname.toLowerCase();
 					if(namelist.indexOf("|"+laname+"|")>=0){
 						//listener.info("", filename, "Repeated taxon name:"+aname+" [genus rank]");
-						//System.out.println("::::::::::duplicate "+aname+" [genus rank]"); //should not occur
+						//log(LogLevel.DEBUG, "::::::::::duplicate "+aname+" [genus rank]"); //should not occur
 					} else {
 						namelist += laname+"|";
 						return aname; //genus

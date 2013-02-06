@@ -37,7 +37,7 @@ public class VBChunker extends AbstractChunker {
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		IParseTree parseTree = chunkCollector.getParseTree();
-		parseTree.prettyPrint();
+		//parseTree.prettyPrint();
 		List<AbstractParseTree> VBs = null;
 		do {
 			List<AbstractParseTree> filteredVBs = new ArrayList<AbstractParseTree>();

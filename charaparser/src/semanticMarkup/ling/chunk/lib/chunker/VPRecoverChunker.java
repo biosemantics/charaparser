@@ -47,7 +47,7 @@ public class VPRecoverChunker extends AbstractChunker {
 			text += terminals.get(i) + " ";
 		}
 		if(text.contains("usually whitish to stramineous"))
-			System.out.println("here");*/
+			log(LogLevel.DEBUG, "here");*/
 		
 		List<AbstractParseTree> terminals  = chunkCollector.getTerminals();
 		for(int i = 0; i < terminals.size(); i++){

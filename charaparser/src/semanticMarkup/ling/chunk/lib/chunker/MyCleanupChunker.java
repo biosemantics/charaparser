@@ -307,7 +307,7 @@ public class MyCleanupChunker extends AbstractChunker {
 			AbstractParseTree terminal = terminals.get(i);
 			
 			Chunk chunk = chunkCollector.getChunk(terminal);
-			//System.out.println(chunk);
+			//log(LogLevel.DEBUG, chunk);
 			List<Chunk> characterStateChunks = chunk.getChunks(ChunkType.CHARACTER_STATE);
 			boolean hasChanged = false;
 			for(Chunk characterStateChunk : characterStateChunks) {

@@ -224,7 +224,7 @@ public class Chunk {
 	 * @return the number of child chunks left in this chunk so that it may be discarded when 0 is returned
 	 */
 	public int removeChunk(Chunk chunk) {
-		//System.out.println(this + " removeChunk " + chunk);
+		//log(LogLevel.DEBUG, this + " removeChunk " + chunk);
 		if(chunks.contains(chunk))
 			chunks.remove(chunk);
 		else {
@@ -234,7 +234,7 @@ public class Chunk {
 				if(!childChunk.isTerminal()) {
 					int leftChildren = childChunk.removeChunk(chunk);
 					if(leftChildren == 0) {
-						//System.out.println("remove " + childChunk);
+						//log(LogLevel.DEBUG, "remove " + childChunk);
 						chunkIterator.remove();
 					}
 				}

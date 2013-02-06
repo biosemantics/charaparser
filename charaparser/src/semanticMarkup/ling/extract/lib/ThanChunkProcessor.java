@@ -18,6 +18,7 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -95,7 +96,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 						thanObject.containsChildOfChunkType(ChunkType.VALUE_PERCENTAGE)) {
 					//second case
 					for(Chunk child : thanObject.getChunks()) {
-						System.out.println("child " + child);
+						log(LogLevel.DEBUG, "child " + child);
 						List<DescriptionTreatmentElement> characters = processingContext.getChunkProcessor(child.getChunkType()).process(child, processingContext);
 						result.addAll(characters);
 					}
@@ -107,7 +108,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				} else {
 					//third case
 					for(Chunk child : thanObject.getChunks()) {
-						System.out.println("child " + child);
+						log(LogLevel.DEBUG, "child " + child);
 						if(child.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 							LinkedHashSet<Chunk> characterTerminals = new LinkedHashSet<Chunk>();
 							characterTerminals.addAll(content.getTerminals());
@@ -188,7 +189,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				// the whole text of the before part. the character name is the one of the character found
 				
 				for(Chunk child : afterChunk.getChunks()) {
-					System.out.println("child " + child);
+					log(LogLevel.DEBUG, "child " + child);
 					List<DescriptionTreatmentElement> result = processingContext.getChunkProcessor(child.getChunkType()).process(child, processingContext);
 					characters.addAll(result);
 				}
@@ -239,7 +240,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 		List<DescriptionTreatmentElement> characters = new LinkedList<DescriptionTreatmentElement>();
 		for(Chunk child : beforeChunk.getChunks()) {
-			System.out.println("child " + child);
+			log(LogLevel.DEBUG, "child " + child);
 			characters = processingContext.getChunkProcessor(child.getChunkType()).process(child, processingContext);
 			result.addAll(characters);
 		}

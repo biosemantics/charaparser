@@ -1,5 +1,6 @@
 package semanticMarkup;
 
+import semanticMarkup.log.LogLevel;
 import semanticMarkup.run.IRun;
 
 import com.google.inject.Guice;
@@ -16,11 +17,17 @@ public class Main {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
+		Main main = new Main();
+		main.run();
+	}
+
+	private void run() throws Exception {
 		//TreatisehConfig //FNAv19Config
 		Injector injector = Guice.createInjector(new FNAv19Config());
 		IRun run = injector.getInstance(IRun.class);
-		System.out.println("running " + run.getDescription() + "...");
-		run.run();	
+		
+		log(LogLevel.INFO, "running " + run.getDescription() + "...");
+		run.run();
 	}
 	
 }

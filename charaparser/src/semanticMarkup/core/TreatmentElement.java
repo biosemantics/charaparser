@@ -2,6 +2,8 @@ package semanticMarkup.core;
 
 import javax.xml.bind.annotation.XmlElement;
 
+import semanticMarkup.log.LogLevel;
+
 public class TreatmentElement implements Cloneable {
 
 	protected String name;
@@ -28,7 +30,7 @@ public class TreatmentElement implements Cloneable {
 			clone.setName(new String(name));
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return null;
 	}

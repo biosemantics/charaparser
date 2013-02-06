@@ -13,6 +13,7 @@ import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.transform.ITokenCombiner;
 import semanticMarkup.ling.transform.ITokenizer;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -70,7 +71,7 @@ public class DehyphenTreatmentTransformer implements ITreatmentTransformer {
 		try {
 			fillInWords();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 			
 		normalizeTreatments(treatments);

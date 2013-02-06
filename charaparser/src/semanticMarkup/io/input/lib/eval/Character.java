@@ -171,19 +171,4 @@ public class Character {
 	public void setFromInclusive(String fromInclusive) {
 		this.fromInclusive = fromInclusive;
 	}
-	
-	
-	public String toString() {
-		StringBuilder sb = new StringBuilder();		
-		sb.append("name " + name + "\n");
-		sb.append("value " + value + "\n");
-		sb.append("modifier" + modifier + "\n");
-		sb.append("constraint " + constraint + "\n");
-		sb.append("constraintId " + constraintId + "\n");
-		sb.append("characterType " + characterType + "\n");
-		sb.append("from " + from + "\n");
-		sb.append("to " + to + "\n");
-		sb.append("fromInclusive " + fromInclusive + "\n");
-		return sb.toString();
-	}
 }

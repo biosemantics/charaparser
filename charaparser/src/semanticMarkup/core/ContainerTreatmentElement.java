@@ -233,18 +233,6 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		}
 		return clone;
 	}
-	
-	@Override
-	public String toString() {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-		    ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-		    return writer.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
-	}
 
 	@Override
 	public Iterator<TreatmentElement> iterator() {

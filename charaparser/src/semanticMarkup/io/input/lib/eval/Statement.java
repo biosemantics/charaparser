@@ -58,13 +58,4 @@ public class Statement {
 	public void setRelation(ArrayList<Relation> relation) {
 		this.relation = relation;
 	}
-	
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("id " + id + "\n");
-		sb.append("text" + text + "\n");
-		sb.append("structures " + structure.toString() + "\n");
-		sb.append("relations " + relation.toString() + "\n");
-		return sb.toString();
-	}
 }

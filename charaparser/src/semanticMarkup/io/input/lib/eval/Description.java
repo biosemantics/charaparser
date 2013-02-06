@@ -18,8 +18,4 @@ public class Description {
 	public void setStatement(Statement statement) {
 		this.statement = statement;
 	} 
-	
-	public String toString() {
-		return statement.toString();
-	}
 }

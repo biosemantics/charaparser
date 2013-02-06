@@ -99,7 +99,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			}*/
 		}
 		
-		//System.out.println("Skip first chunk " + skipFirstChunk);
+		//log(LogLevel.DEBUG, "Skip first chunk " + skipFirstChunk);
 		return result;
 	}
 	

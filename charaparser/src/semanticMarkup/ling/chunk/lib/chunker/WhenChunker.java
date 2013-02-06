@@ -84,7 +84,7 @@ public class WhenChunker extends AbstractChunker {
 		boolean collect = false;
 		for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
 			String text = terminal.getTerminalsText();
-			//System.out.println(text + " " +  chunkCollector.getChunkType(terminal));
+			//log(LogLevel.DEBUG, text + " " +  chunkCollector.getChunkType(terminal));
 			if(startTerminal.equals(terminal)) 
 				collect = true;
 			if(collect)

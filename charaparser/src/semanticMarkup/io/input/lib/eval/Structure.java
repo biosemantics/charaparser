@@ -57,13 +57,4 @@ public class Structure {
 	public void setCharacter(ArrayList<Character> character) {
 		this.character = character;
 	}
-	
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("id " + id + "\n");
-		sb.append("name " + name + "\n");
-		sb.append("constraint " + constraint + "\n");
-		sb.append("characters " + character + "\n");
-		return sb.toString();
-	}
 }

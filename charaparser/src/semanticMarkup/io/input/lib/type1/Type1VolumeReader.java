@@ -18,6 +18,7 @@ import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 import semanticMarkup.io.input.extract.lib.DistributionTreatmentRefiner;
 import semanticMarkup.io.input.extract.lib.FloweringTimeTreatmentRefiner;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -107,16 +108,16 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 			documentElements = documentElementsExtractor.extract();
 		taxonExtractor.extract(documentElements);
 		
-		System.out.println("---------------- read the document elements. Below the results: ");
-		System.out.println("---------------- # of treatments: " + documentElements.size());
-		System.out.println("---------------- the documentElements: \n" + new DocumentElementPrinter().print(documentElements));
+		log(LogLevel.DEBUG, "---------------- read the document elements. Below the results: ");
+		log(LogLevel.DEBUG, "---------------- # of treatments: " + documentElements.size());
+		log(LogLevel.DEBUG, "---------------- the documentElements: \n" + new DocumentElementPrinter().print(documentElements));
 		
 		styleMappings = new Properties();
 		styleMappings.load(new FileInputStream(styleMappingFile));
 		
 		List<Treatment> treatments = populateTreatments(documentElements);
-		System.out.println("---------------- populate treatments. Below the results: ");
-		System.out.println(treatments.toString());
+		log(LogLevel.DEBUG, "---------------- populate treatments. Below the results: ");
+		log(LogLevel.DEBUG, treatments.toString());
 		
 		return treatments;
 	}
@@ -179,7 +180,7 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 
 	private void processDocumentElement(DocumentElement documentElement, 
 			String style, Treatment treatment) {
-		//System.out.println("process documentElement \n" + documentElement.toString());
+		//log(LogLevelDEBUG, "process documentElement \n" + documentElement.toString());
 		
 		String textType = styleMappings.getProperty(style);
 		String text = documentElement.getText();
@@ -205,7 +206,7 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 		assembleKeys(treatment);
 		List<ContainerTreatmentElement> taxonKeys = 
 				treatment.getContainerTreatmentElements("TaxonKey");
-		//System.out.println("taxonKeys size " + taxonKeys.size());
+		//log(LogLevel.DEBUG, "taxonKeys size " + taxonKeys.size());
 		for(ContainerTreatmentElement taxonKey : taxonKeys) {
 			furtherMarkupKeyStatements(taxonKey, treatment);
 		}
@@ -316,7 +317,7 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 			if(element.getName().equals("run_in_sidehead") &&
 					(element.getValue().trim().startsWith("Key to ") || 
 							element.getValue().trim().matches("Group \\d+.*"))){
-				//System.out.println("found key here");
+				//log(LogLevel.DEBUG, "found key here");
 				foundKey = true;
 				if(key!=null)
 					treatment.addTreatmentElement(key);
@@ -324,7 +325,7 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 			}
 			if(!foundKey && (element.getName().equals("key")) || 
 					element.getName().equals("couplet")) {
-				//System.out.println("found key");
+				//log(LogLevel.DEBUG, "found key");
 				foundKey = true;
 				key = new ContainerTreatmentElement("TaxonKey");
 			}	
@@ -464,7 +465,7 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 		String number = taxonExtractor.getNumber(treatment);
 		// TODO: add the number tag to the sytle mapping
 		
-		//System.out.println("parseName creates a number for treatment " + treatment.hashCode());
+		//log(LogLevel.DEBUG, "parseName creates a number for treatment " + treatment.hashCode());
 		if(!treatment.containsTreatmentElement("number"))
 			treatment.addTreatmentElement(new ValueTreatmentElement("number", number));
 		

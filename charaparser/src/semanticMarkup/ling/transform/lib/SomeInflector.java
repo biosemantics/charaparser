@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 
@@ -68,7 +69,7 @@ public class SomeInflector implements IInflector {
 	@Override
 	public String getSingular(String word) {
 		if(word.equals("leaves"))
-			System.out.println("leaves");
+			log(LogLevel.DEBUG, "leaves");
 		
 		String s = "";
 		word = word.toLowerCase().replaceAll("\\W", "").trim();

@@ -14,6 +14,7 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.log.LogLevel;
 
 public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
@@ -31,8 +32,8 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
 	@Override
 	public void evaluate(List<Treatment> createdTreatments, List<Treatment> correctTreatments) {
-		//System.out.println("created treatments " + createdTreatments);
-		//System.out.println("correct treatments " + correctTreatments);
+		//log(LogLevel.DEBUG, "created treatments " + createdTreatments);
+		//log(LogLevel.DEBUG, "correct treatments " + correctTreatments);
 		Collections.sort(createdTreatments, new Comparator<Treatment>() {
 			@Override
 			public int compare(Treatment t1, Treatment t2) {
@@ -63,12 +64,12 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 		int createdCharacters = 0;
 		int correctCharacters = 0;
 		
-		System.out.println("number of treatments to compare: " + correctTreatments.size());
+		log(LogLevel.DEBUG, "number of treatments to compare: " + correctTreatments.size());
 		for(int i=0; i<createdTreatments.size(); i++) {
-			System.out.println("evaluate treatment " + createdTreatments.get(i).getName());
-			//System.out.println("evaluate treatment " + createdTreatments.get(i));
-			/*System.out.println(createdTreatments.get(i).getName());
-			System.out.println(correctTreatments.get(i).getName());*/
+			log(LogLevel.DEBUG, "evaluate treatment " + createdTreatments.get(i).getName());
+			//log(LogLevel.DEBUG, "evaluate treatment " + createdTreatments.get(i));
+			/*log(LogLevel.DEBUG, createdTreatments.get(i).getName());
+			log(LogLevel.DEBUG, correctTreatments.get(i).getName());*/
 			
 			ContainerTreatmentElement createdDescription = createdTreatments.get(i).getContainerTreatmentElement("description");
 			ContainerTreatmentElement correctDescription = correctTreatments.get(i).getContainerTreatmentElement("description");
@@ -92,13 +93,13 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 						break;
 				}
 				if(correctStatement == null) {
-					System.out.println("couldnt find a correct statement that matches the source of the created statement: " 
+					log(LogLevel.DEBUG, "couldnt find a correct statement that matches the source of the created statement: " 
 							+ createdStatement.getProperty("source"));
 					break;
 				}
-				System.out.println("source " + createdStatement.getProperty("source"));
+				log(LogLevel.DEBUG, "source " + createdStatement.getProperty("source"));
 			
-				//System.out.println("statement " + j);
+				//log(LogLevel.DEBUG, "statement " + j);
 				//DescriptionTreatmentElement createdStatement = (DescriptionTreatmentElement)createdStatements.get(j);
 				//DescriptionTreatmentElement correctStatement = (DescriptionTreatmentElement)correctStatements.get(j);
 				
@@ -106,13 +107,13 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 				HashMap<String, Set<DescriptionTreatmentElement>> correctStructuresSet = getStructures(correctStatement);
 				HashMap<String, DescriptionTreatmentElement> createdStructuresByIdSet = getStructuresById(createdStatement);
 				HashMap<String, DescriptionTreatmentElement> correctStructuresByIdSet = getStructuresById(correctStatement);
-				System.out.println("created structures " + createdStructuresSet.keySet());
-				System.out.println("correct structures " + correctStructuresSet.keySet());
+				log(LogLevel.DEBUG, "created structures " + createdStructuresSet.keySet());
+				log(LogLevel.DEBUG, "correct structures " + correctStructuresSet.keySet());
 				for(String structure : createdStructuresSet.keySet()) {
 					String print = structure + " created " + createdStructuresSet.get(structure).size() + " : correct ";
 					if(correctStructuresSet.containsKey(structure))
 						print += correctStructuresSet.get(structure).size();
-					System.out.println(print);
+					log(LogLevel.DEBUG, print);
 				}
 				Set<String> remaining = new HashSet<String>(correctStructuresSet.keySet());
 				remaining.removeAll(createdStructuresSet.keySet());
@@ -120,18 +121,18 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 					String print = structure + " correct " + correctStructuresSet.get(structure).size() + " : created ";
 					if(createdStructuresSet.containsKey(structure))
 						print += createdStructuresSet.get(structure).size();
-					System.out.println(print);
+					log(LogLevel.DEBUG, print);
 				}
 				
 				HashMap<String, Set<DescriptionTreatmentElement>> createdRelationsSet = getRelations(createdStatement);
 				HashMap<String, Set<DescriptionTreatmentElement>> correctRelationsSet = getRelations(correctStatement);
-				System.out.println("created relations " + createdRelationsSet.keySet());
-				System.out.println("correct relations " + correctRelationsSet.keySet());
+				log(LogLevel.DEBUG, "created relations " + createdRelationsSet.keySet());
+				log(LogLevel.DEBUG, "correct relations " + correctRelationsSet.keySet());
 				for(String relation : createdRelationsSet.keySet()) {
 					String print = relation + " created " + createdRelationsSet.get(relation).size() + " : correct ";
 					if(createdRelationsSet.containsKey(relation))
 						print += createdRelationsSet.get(relation).size();
-					System.out.println(print);
+					log(LogLevel.DEBUG, print);
 				}
 				remaining = new HashSet<String>(correctRelationsSet.keySet());
 				remaining.removeAll(createdRelationsSet.keySet());
@@ -139,16 +140,16 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 					String print = relation + " correct " + correctRelationsSet.get(relation).size() + " : created ";
 					if(createdRelationsSet.containsKey(relation))
 						print += createdRelationsSet.get(relation).size();
-					System.out.println(print);
+					log(LogLevel.DEBUG, print);
 				}
 				
 				Set<String> overlapStructuresSet = getStructureOverlap(createdStructuresSet, correctStructuresSet);
-				System.out.println("-----------------structures overlap " + overlapStructuresSet);
+				log(LogLevel.DEBUG, "-----------------structures overlap " + overlapStructuresSet);
 				overlapStructures += overlapStructuresSet.size();
 				createdStructures += createdStructuresSet.size();
 				correctStructures += correctStructuresSet.size();
 				for(String structure : overlapStructuresSet) {
-					System.out.println("do structure " + structure);
+					log(LogLevel.DEBUG, "do structure " + structure);
 					
 					String[] nameIdParts = structure.split(": ");
 					structure = nameIdParts[0];
@@ -158,13 +159,13 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 					
 					HashMap<String, Set<DescriptionTreatmentElement>> createdCharactersSet = getCharacters(createdStructuresSet.get(structure), createdStructureId);
 					HashMap<String, Set<DescriptionTreatmentElement>> correctCharactersSet = getCharacters(correctStructuresSet.get(structure), correctStructureId);
-					System.out.println("created characters for " +structure + " " + createdCharactersSet.keySet());
-					System.out.println("correct characters for " +structure + " " + correctCharactersSet.keySet());
+					log(LogLevel.DEBUG, "created characters for " +structure + " " + createdCharactersSet.keySet());
+					log(LogLevel.DEBUG, "correct characters for " +structure + " " + correctCharactersSet.keySet());
 					for(String character : createdCharactersSet.keySet()) {
 						String print = character + " created " + createdCharactersSet.get(character).size() + " : correct ";
 						if(correctCharactersSet.containsKey(character))
 							print += correctCharactersSet.get(character).size();
-						System.out.println(print);
+						log(LogLevel.DEBUG, print);
 					}
 					remaining = new HashSet<String>(correctCharactersSet.keySet());
 					remaining.removeAll(createdCharactersSet.keySet());
@@ -172,11 +173,11 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 						String print = character + " correct " + correctCharactersSet.get(character).size() + " : created ";
 						if(createdCharactersSet.containsKey(character))
 							print += createdCharactersSet.get(character).size();
-						System.out.println(print);
+						log(LogLevel.DEBUG, print);
 					}
 					
 					Set<String> overlapCharactersSet = getCharachterOverlap(createdCharactersSet, correctCharactersSet);
-					System.out.println("characters overlap " + overlapCharactersSet);
+					log(LogLevel.DEBUG, "characters overlap " + overlapCharactersSet);
 					overlapCharacters += overlapCharactersSet.size();
 					createdCharacters += createdCharactersSet.size();
 					correctCharacters += correctCharactersSet.size();
@@ -185,7 +186,7 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 				
 				Set<String> overlapRelationsSet = getRelationOverlap(createdRelationsSet, createdStructuresByIdSet,
 						correctRelationsSet, correctStructuresByIdSet);
-				System.out.println("----------------------relations overlap " + overlapRelationsSet.size());
+				log(LogLevel.DEBUG, "----------------------relations overlap " + overlapRelationsSet.size());
 				overlapRelations += overlapRelationsSet.size();
 				createdRelations += countAllElements(createdRelationsSet);
 				correctRelations += countAllElements(correctRelationsSet);
@@ -196,27 +197,27 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 		int createdItems = createdStructures + createdRelations + createdCharacters;
 		int correctItems = correctStructures + correctRelations + correctCharacters;
 		
-		System.out.println("overlap " + overlap);
-		System.out.println("createdItems " + createdItems);
-		System.out.println("correctItems " + correctItems);
+		log(LogLevel.DEBUG, "overlap " + overlap);
+		log(LogLevel.DEBUG, "createdItems " + createdItems);
+		log(LogLevel.DEBUG, "correctItems " + correctItems);
 		double precision = ((double)overlap)/createdItems;
 		double recall = ((double)overlap)/correctItems;
 		
-		System.out.println("overlapStructures " + overlapStructures);
-		System.out.println("createdStructures " + createdStructures);
-		System.out.println("correctStructures " + correctStructures);
+		log(LogLevel.DEBUG, "overlapStructures " + overlapStructures);
+		log(LogLevel.DEBUG, "createdStructures " + createdStructures);
+		log(LogLevel.DEBUG, "correctStructures " + correctStructures);
 		double precisionStructures = ((double)overlapStructures) / createdStructures;
 		double recallStructures = ((double)overlapStructures) / correctStructures;
 		
-		System.out.println("overlapRelations " + overlapRelations);
-		System.out.println("createdRelations " + createdRelations);
-		System.out.println("correctRelations " + correctRelations);
+		log(LogLevel.DEBUG, "overlapRelations " + overlapRelations);
+		log(LogLevel.DEBUG, "createdRelations " + createdRelations);
+		log(LogLevel.DEBUG, "correctRelations " + correctRelations);
 		double precisionRelations = ((double)overlapRelations) / createdRelations;
 		double recallRelations = ((double)overlapRelations) / correctRelations;
 		
-		System.out.println("overlapCharacters " + overlapCharacters);
-		System.out.println("createdCharacters " + createdCharacters);
-		System.out.println("correctCharacters " + correctCharacters);
+		log(LogLevel.DEBUG, "overlapCharacters " + overlapCharacters);
+		log(LogLevel.DEBUG, "createdCharacters " + createdCharacters);
+		log(LogLevel.DEBUG, "correctCharacters " + correctCharacters);
 		double precisionCharacters = ((double)overlapCharacters) / createdCharacters;
 		double recallCharacters = ((double)overlapCharacters) / correctCharacters;
 				
@@ -306,7 +307,7 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 		propertyB = normalizePropertyName(propertyB);
 		boolean result = Objects.equals(propertyA, propertyB);	
 		//if(!result)
-		//	System.out.println("properties deemed not equal: " + propertyA + " <-> " + propertyB);
+		//	log(LogLevel.DEBUG, "properties deemed not equal: " + propertyA + " <-> " + propertyB);
 		return result;	
 	}
 	

@@ -9,6 +9,7 @@ import java.util.Set;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.learn.ITerminologyLearner;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 
@@ -74,7 +75,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			Set<String> categories = new HashSet<String>();
 
 			Map<String, Set<String>> termCategories = terminologyLearner.getTermCategories();
-			//System.out.println("termcategories " + termCategories);
+			//log(LogLevel.DEBUG, "termcategories " + termCategories);
 			if(termCategories.containsKey(word))
 				categories.addAll(termCategories.get(word));
 			//Set<String> categories = new HashSet<String>(termCategories.get(w));
@@ -92,7 +93,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			if (categoriesString.length() > 0) {
 				categoriesString = categoriesString.replaceFirst(this.or + "$", "");
 				if(word.equals("pale"))
-					System.out.println("categoriesString " + categoriesString);
+					log(LogLevel.DEBUG, "categoriesString " + categoriesString);
 				return categoriesString;
 			}
 		}

@@ -20,12 +20,4 @@ public class DocumentElement {
 	public void setProperty(String property) {
 		this.property = property;
 	}
-	
-	@Override
-	public String toString() {
-		if(this.property==null)
-			return this.text;
-		else 
-			return this.text + ":" + this.property;
-	}
 }

@@ -6,6 +6,7 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.transformation.lib.OldPerlTreatmentTransformer;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.output.IVolumeWriter;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -29,16 +30,16 @@ public class AfterPerlBlackBox implements IMarkupCreator {
 	@Override
 	public void create() {
 		try {
-			System.out.println("reading treatments using " + volumeReader.getClass());
+			log(LogLevel.DEBUG, "reading treatments using " + volumeReader.getClass());
 			treatments = volumeReader.read();
 			
 			treatments = inputTransformer.transform(treatments);
 
-			System.out.println("writing result using " + volumeWriter.getClass());
+			log(LogLevel.DEBUG, "writing result using " + volumeWriter.getClass());
 			volumeWriter.write(treatments);
 				
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 	}
 

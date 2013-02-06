@@ -66,16 +66,6 @@ public class Relation {
 	public void setNegation(String negation) {
 		this.negation = negation;
 	} 
-	
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("id " + id + "\n");
-		sb.append("name " + name + "\n");
-		sb.append("from " + from + "\n");
-		sb.append("to " + to + "\n");
-		sb.append("negation " + negation + "\n");
-		return sb.toString();
-	}
 }
 
 

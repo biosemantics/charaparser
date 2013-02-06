@@ -23,6 +23,7 @@ import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.extract.IFirstChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 
@@ -80,9 +81,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		ListIterator<Chunk> iterator = chunks.listIterator();
 		processingContext.setChunkListIterator(iterator);
 		
-		System.out.println("describe chunk using " + firstChunkProcessor.getDescription() + " ...");
+		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
 		addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext));
-		System.out.println("result " + result);
+		log(LogLevel.DEBUG, "result " + result);
 		while(iterator.hasNext()) {
 			if(!iterator.hasPrevious() && firstChunkProcessor.skipFirstChunk()) {
 				iterator.next();
@@ -91,7 +92,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			if(iterator.hasNext()) {
 				addToResult(result, describeChunk(processingContext));
 			}
-			System.out.println("result " + result);
+			log(LogLevel.DEBUG, "result " + result);
 		}
 		
 		/*StructureContainerTreatmentElement structureElement = new StructureContainerTreatmentElement("structureName", "Id", "constraint");
@@ -214,10 +215,10 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		IChunkProcessor chunkProcessor = chunkProcessorProvider.getChunkProcessor(chunkType);
 		if(chunkProcessor!=null && !(chunkProcessor instanceof DummyChunkProcessor)) {
-			System.out.println("chunk processor for chunkType " + chunkType + " found; proceed using " + chunkProcessor.getDescription() + " ...");
+			log(LogLevel.DEBUG, "chunk processor for chunkType " + chunkType + " found; proceed using " + chunkProcessor.getDescription() + " ...");
 			result.addAll(chunkProcessor.process(chunk, processingContext));
 		} else {
-			System.out.println("no chunk processor for chunkType " + chunkType);
+			log(LogLevel.DEBUG, "no chunk processor for chunkType " + chunkType);
 		}
 		return result;
 	}

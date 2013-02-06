@@ -24,6 +24,7 @@ import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.ITokenizer;
+import semanticMarkup.log.LogLevel;
 
 import com.google.inject.name.Named;
 
@@ -111,7 +112,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			this.termCategories = readTermCategories();
 			
 		}catch(Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 	}
 
@@ -129,7 +130,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				termCategories.get(term).add(category);
 			}
 		} catch (Exception e) {
-			System.out.println("term_category table not found");
+			log(LogLevel.ERROR, "term_category table not found");
 		}
 		return termCategories;
 	}
@@ -151,7 +152,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				wordsToRoles.get(word).add(semanticRole);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return wordsToRoles;
 	}
@@ -165,7 +166,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				heuristicNouns.put(resultSet.getString("word"), resultSet.getString("type"));
 			}
 		} catch (Exception e) {
-			System.out.println("heuristicnouns table not found");
+			log(LogLevel.ERROR, "heuristicnouns table not found");
 		}
 		return heuristicNouns;
 	}
@@ -187,7 +188,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				roleToWords.get(semanticRole).add(word);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return roleToWords;
 	}
@@ -209,7 +210,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return wordToSources;
 	}
@@ -228,7 +229,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					tags.add(tag);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return tags;
 	}
@@ -255,7 +256,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return tags;
 	}
@@ -294,7 +295,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			resultSet.close();
 			statement.close();
 		} catch(Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return tags;
 	}
@@ -340,7 +341,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		
 		return sentences;
@@ -361,7 +362,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				result.put(tag, modifier);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return result;
 	}
@@ -376,7 +377,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				result.add(modifier);
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return result;
 	}
@@ -392,7 +393,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				result.add(sentence);
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, e);
 		}
 		return result;
 	}
@@ -463,14 +464,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		String s = "";
 		int i = 0;
 		while ((s = stdInput.readLine()) != null) {
-			System.out.println(s + " at " + (System.currentTimeMillis() - time)
+			log(LogLevel.DEBUG, s + " at " + (System.currentTimeMillis() - time)
 					/ 1000 + " seconds");
 		}
 		
 		// read the errors from the command
 		String e = "";
 		while ((e = errInput.readLine()) != null) {
-			System.out.println(e + " at " + (System.currentTimeMillis() - time)
+			log(LogLevel.DEBUG, e + " at " + (System.currentTimeMillis() - time)
 					/ 1000 + " seconds");
 		}
 	}
@@ -479,7 +480,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		int i = 0;
 		for(Treatment treatment : treatments) {
 			File treatmentFile = new File(file.getAbsolutePath() + "//" + i++ + ".txt");
-			System.out.println(treatmentFile.getAbsolutePath());
+			log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
 			treatmentFile.createNewFile();
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(treatmentFile));
 			
