@@ -64,7 +64,7 @@ public class SentenceChunkerRun implements Runnable {
 		
 		AbstractParseTree parseTree = parser.parse(posedSentence);
 		log(LogLevel.DEBUG, "Parse tree: ");
-		log(LogLevel.DEBUG, parseTree.toString());
+		log(LogLevel.DEBUG, parseTree.prettyPrint());
 		//parseTree.prettyPrint();
 		
 		this.result = chunkerChain.chunk(parseTree, subjectTag, treatment, source, sentenceString);

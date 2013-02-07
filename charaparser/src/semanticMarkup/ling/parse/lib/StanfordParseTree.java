@@ -1,5 +1,7 @@
 package semanticMarkup.ling.parse.lib;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -149,8 +151,14 @@ public class StanfordParseTree extends AbstractParseTree {
 	}
 
 	@Override
-	public void prettyPrint() {
-		this.stanfordParseTree.indentedXMLPrint();
+	public String prettyPrint() {
+		StringWriter stringWriter = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(stringWriter);
+		this.stanfordParseTree.indentedXMLPrint(printWriter, true);
+		printWriter.flush();
+		printWriter.close();
+		return stringWriter.toString();
+		
 	}
 
 	@Override

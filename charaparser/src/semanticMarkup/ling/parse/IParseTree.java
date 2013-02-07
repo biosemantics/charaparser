@@ -58,7 +58,7 @@ public interface IParseTree extends Iterable<IParseTree> {
 
 	public List<IParseTree> getDescendants(POS posA, POS posB, String terminalText);
 	
-	public void prettyPrint();
+	public String prettyPrint();
 	
 	public boolean isRoot();
 	
