@@ -68,12 +68,15 @@ public class SplitXMLOutput {
 					}
 					
 					copyfile(file.getAbsolutePath(), outDir + "/" + id + ".txt-" + statementId + ".xml");// + 1) + ".txt-" + statementId + ".xml");
+					file.deleteOnExit();
 				}
 
 				treatmentFiles = new ArrayList<File>();
 			}
 		}
-		
+		fw.close();
+
+		currentFile.deleteOnExit();
 	}
 	
 	
