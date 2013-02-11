@@ -23,7 +23,7 @@ import semanticMarkup.log.LogLevel;
 public class DescriptionExtractorRun implements Runnable {
 
 	private Treatment treatment;
-	private Map<Thread, SentenceChunkerRun> sentenceChunkerRuns = new HashMap<Thread, SentenceChunkerRun>();
+	private Map<Thread, SentenceChunkerRun> sentenceChunkerRuns = new LinkedHashMap<Thread, SentenceChunkerRun>();
 	private List<ChunkCollector> treatmentChunkCollectors = new ArrayList<ChunkCollector>();
 	private ITerminologyLearner terminologyLearner;
 	private INormalizer normalizer;

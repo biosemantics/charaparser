@@ -36,7 +36,7 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	private ITerminologyLearner terminologyLearner;
 	private ITokenizer wordTokenizer;
 	private ChunkerChain chunkerChain;
-	private Map<Thread, DescriptionExtractorRun> descriptionExtractorRuns = new HashMap<Thread, DescriptionExtractorRun>();
+	private Map<Thread, DescriptionExtractorRun> descriptionExtractorRuns = new LinkedHashMap<Thread, DescriptionExtractorRun>();
 	
 	@Inject
 	public OldPerlTreatmentTransformer(
