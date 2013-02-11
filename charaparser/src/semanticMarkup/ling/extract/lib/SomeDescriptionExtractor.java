@@ -63,9 +63,15 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			descriptionTreatmentElement.addTreatmentElement(statement);
 			
 			processingContext.setChunkCollector(chunkCollector);
-			List<DescriptionTreatmentElement> descriptiveTreatmentElements = getDescriptiveTreatmentElements(processingContext);
-			for(DescriptionTreatmentElement descriptiveTreatmentElement : descriptiveTreatmentElements) {
-				statement.addTreatmentElement(descriptiveTreatmentElement);
+			try {
+				List<DescriptionTreatmentElement> descriptiveTreatmentElements = getDescriptiveTreatmentElements(processingContext);
+				for(DescriptionTreatmentElement descriptiveTreatmentElement : descriptiveTreatmentElements) {
+					statement.addTreatmentElement(descriptiveTreatmentElement);
+				}
+			} catch (Exception e) {
+				log(LogLevel.ERROR, e);
+				e.printStackTrace();
+				System.out.println(chunkCollector);
 			}
 		}
 		return descriptionTreatmentElement;
@@ -214,11 +220,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		ChunkType chunkType = chunk.getChunkType();
 		
 		IChunkProcessor chunkProcessor = chunkProcessorProvider.getChunkProcessor(chunkType);
-		if(chunkProcessor!=null && !(chunkProcessor instanceof DummyChunkProcessor)) {
+		if(chunkProcessor!=null) {
 			log(LogLevel.DEBUG, "chunk processor for chunkType " + chunkType + " found; proceed using " + chunkProcessor.getDescription() + " ...");
 			result.addAll(chunkProcessor.process(chunk, processingContext));
-		} else {
-			log(LogLevel.DEBUG, "no chunk processor for chunkType " + chunkType);
 		}
 		return result;
 	}
