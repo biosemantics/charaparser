@@ -17,7 +17,12 @@ public class ChunkerChain {
 		for(IChunker chunker : chunkers) {
 			log(LogLevel.DEBUG, "Chunker " + chunker.getName() + " is run ...");
 			chunkCollector.resetHasChanged();
-			chunker.chunk(chunkCollector);	
+			try {
+				chunker.chunk(chunkCollector);	
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(0);
+			}
 			if(chunkCollector.hasChanged()) 
 				log(LogLevel.DEBUG, chunkCollector.toString());
 		}

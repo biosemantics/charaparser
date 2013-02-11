@@ -44,32 +44,37 @@ public class SentenceChunkerRun implements Runnable {
 
 	@Override
 	public void run() {
-		log(LogLevel.DEBUG, "Process sentence: " + sentenceString);
-		
-		String[] sentenceArray = sentenceString.split("##");
-		sentenceString = sentenceArray[2];
-		String subjectTag = sentenceArray[1];
-		String modifier = sentenceArray[0];
-		modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
-		subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
-		
-		String normalizedSentence="";
-		normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
-		
-		log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);
-		List<Token> sentence = wordTokenizer.tokenize(normalizedSentence);
-		
-		List<Token> posedSentence = posTagger.tag(sentence);
-		log(LogLevel.DEBUG, "POSed sentence " + posedSentence);
-		
-		AbstractParseTree parseTree = parser.parse(posedSentence);
-		log(LogLevel.DEBUG, "Parse tree: ");
-		log(LogLevel.DEBUG, parseTree.prettyPrint());
-		//parseTree.prettyPrint();
-		
-		this.result = chunkerChain.chunk(parseTree, subjectTag, treatment, source, sentenceString);
-		log(LogLevel.DEBUG, "Sentence processing finished.\n");
-		this.notifyListeners();
+		try { 
+			log(LogLevel.DEBUG, "Process sentence: " + sentenceString);
+			
+			String[] sentenceArray = sentenceString.split("##");
+			sentenceString = sentenceArray[2];
+			String subjectTag = sentenceArray[1];
+			String modifier = sentenceArray[0];
+			modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
+			subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
+			
+			String normalizedSentence="";
+			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
+			
+			log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);
+			List<Token> sentence = wordTokenizer.tokenize(normalizedSentence);
+			
+			List<Token> posedSentence = posTagger.tag(sentence);
+			log(LogLevel.DEBUG, "POSed sentence " + posedSentence);
+			
+			AbstractParseTree parseTree = parser.parse(posedSentence);
+			log(LogLevel.DEBUG, "Parse tree: ");
+			log(LogLevel.DEBUG, parseTree.prettyPrint());
+			//parseTree.prettyPrint();
+			
+			this.result = chunkerChain.chunk(parseTree, subjectTag, treatment, source, sentenceString);
+			log(LogLevel.DEBUG, "Sentence processing finished.\n");
+			this.notifyListeners();
+		} catch (Exception e) {
+			e.printStackTrace();
+			log(LogLevel.ERROR, e);
+		}
 	}
 	
 	public ChunkCollector getResult() {

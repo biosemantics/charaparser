@@ -39,6 +39,7 @@ public class AfterPerlBlackBox implements IMarkupCreator {
 			volumeWriter.write(treatments);
 				
 		} catch (Exception e) {
+			e.printStackTrace();
 			log(LogLevel.ERROR, e);
 		}
 	}
