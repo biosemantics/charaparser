@@ -108,7 +108,7 @@ public class MyCleanupChunker extends AbstractChunker {
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) && 
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
 				Chunk stateParentChunk = chunkCollector.getChunk(terminal);
-				Chunk stateChunk = stateParentChunk.getChunkBFS(ChunkType.STATE);
+				Chunk stateChunk = stateParentChunk.getChunkOfTypeAndTerminal(ChunkType.STATE, terminal);
 				if(previousTerminalOrgan)
 					stateChunk.setChunkType(ChunkType.CONSTRAINT);
 				else if(previousTerminalState)
@@ -312,7 +312,8 @@ public class MyCleanupChunker extends AbstractChunker {
 			boolean hasChanged = false;
 			for(Chunk characterStateChunk : characterStateChunks) {
 				String character = characterStateChunk.getProperty("characterName");
-				if(character.contains("position")) {
+				if(character!=null &&  character.contains("position") && 
+						!chunkCollector.isPartOfChunkType(characterStateChunk.getTerminals().get(0), ChunkType.TO_PHRASE)) {
 					characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));
 					characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
 					characterStateChunk.clearProperties();
@@ -332,7 +333,7 @@ public class MyCleanupChunker extends AbstractChunker {
 				for(Chunk characterStateChunk : characterStateChunks) {
 					Chunk stateChunk = characterStateChunk.getChunkBFS(ChunkType.STATE);
 					String character = characterStateChunk.getProperty("characterName");
-					if(character.contains("size") && (stateChunk.getTerminalsText().endsWith("est") || stateChunk.getTerminalsText().endsWith("er"))) {
+					if(character != null && character.contains("size") && (stateChunk.getTerminalsText().endsWith("est") || stateChunk.getTerminalsText().endsWith("er"))) {
 						characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));
 						characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
 						characterStateChunk.clearProperties();

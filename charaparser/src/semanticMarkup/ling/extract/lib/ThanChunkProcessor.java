@@ -74,7 +74,8 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				this.createConstraintedCharacters(content, beforeChunk, structures, processingContext);
 			}
 		} else {
-			Chunk thanObject = thanChunk.getChildChunk(ChunkType.PP).getChildChunk(ChunkType.OBJECT);
+			Chunk thanObject = thanChunk.getChunkDFS(ChunkType.OBJECT);
+			//Chunk thanObject = thanChunk.getChildChunk(ChunkType.PP).getChildChunk(ChunkType.OBJECT);
 			LinkedHashSet<Chunk> beforeOrganChunks = new LinkedHashSet<Chunk>(); 
 			LinkedHashSet<Chunk> organChunks = new LinkedHashSet<Chunk>();
 			LinkedHashSet<Chunk> afterOrganChunks = new LinkedHashSet<Chunk>(); 
@@ -241,8 +242,11 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		List<DescriptionTreatmentElement> characters = new LinkedList<DescriptionTreatmentElement>();
 		for(Chunk child : beforeChunk.getChunks()) {
 			log(LogLevel.DEBUG, "child " + child);
-			characters = processingContext.getChunkProcessor(child.getChunkType()).process(child, processingContext);
-			result.addAll(characters);
+			IChunkProcessor processor = processingContext.getChunkProcessor(child.getChunkType());
+			if(processor != null) {
+				characters = processor.process(child, processingContext);
+				result.addAll(characters);
+			}
 		}
 		
 		for(DescriptionTreatmentElement element : characters) {

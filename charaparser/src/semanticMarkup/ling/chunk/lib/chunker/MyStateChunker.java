@@ -135,36 +135,64 @@ public class MyStateChunker extends AbstractChunker {
 		//parseTree.prettyPrint();
 		AbstractParseTree previousTerminal = terminals.get(i-1);
 		AbstractParseTree terminal = terminals.get(i);
-		IParseTree beforePreviousParent = previousTerminal;
-		IParseTree beforeTerminalParent = terminal;
 	
 		if(parseTree.getDepth(previousTerminal) != parseTree.getDepth(terminal)) {
-			for(int j=1; j<Integer.MAX_VALUE; j++) {
-				IParseTree terminalParent = null;
-				IParseTree previousParent = null;
-				if(parseTree.getDepth(previousTerminal) < parseTree.getDepth(terminal)) {
-					terminalParent = terminal.getAncestor(j, parseTree);
-				} else if(parseTree.getDepth(previousTerminal) > parseTree.getDepth(terminal)) {
-					previousParent = previousTerminal.getAncestor(j, parseTree);
+			//from previous iteration 
+			IParseTree beforePreviousParent = previousTerminal;
+			IParseTree beforeTerminalParent = terminal;
+			
+			//IParseTree lastPreviousParent = previousTerminal;
+			
+			//this iteration
+			IParseTree terminalParent = terminal;
+			IParseTree previousParent = previousTerminal;
+
+			int previousAncestorHeight = 1;
+			int terminalAncestorHeight = 1;
+			while(true) {
+				
+				boolean previousParentHasChanged = false;
+				boolean terminalParentHasChanged = false;
+				if(parseTree.getDepth(previousParent) < parseTree.getDepth(terminalParent)) {
+					terminalParent = terminal.getAncestor(terminalAncestorHeight, parseTree);
+					terminalParentHasChanged = true;
+				} else if(parseTree.getDepth(previousParent) > parseTree.getDepth(terminalParent)) {
+					previousParent = previousTerminal.getAncestor(previousAncestorHeight, parseTree);
+					previousParentHasChanged = true;
 				} else {
-					terminalParent = terminal.getAncestor(j, parseTree);
-					previousParent = previousTerminal.getAncestor(j, parseTree);
+					terminalParent = terminal.getAncestor(terminalAncestorHeight, parseTree);
+					previousParent = previousTerminal.getAncestor(previousAncestorHeight, parseTree);
+					previousParentHasChanged = true;
+					terminalParentHasChanged = true;
 				}
 	
 				if(previousParent.equals(terminalParent)) {
+					/*
+					while(true) {
+						lastPreviousParent = previousTerminal.getAncestor(--j, parseTree);
+						if(!lastPreviousParent.equals(previousParent))
+							break;
+					}*/
 					int beforePreviousParentIndex = terminalParent.indexOf(beforePreviousParent);
-					//int beforeTerminalParentIndex = terminalParent.indexOf(beforeTerminalParent);
-					int beforeTerminalParentIndex = beforePreviousParentIndex + beforePreviousParent.getChildren().size();
-					terminalParent.addChildren(beforePreviousParentIndex, beforePreviousParent.getChildren());
-					terminalParent.addChildren(beforeTerminalParentIndex, beforeTerminalParent.getChildren());
-					
+					int beforeTerminalParentIndex = terminalParent.indexOf(beforeTerminalParent); //beforePreviousParentIndex + beforePreviousParent.getChildren().size();
 					terminalParent.removeChild(beforePreviousParent);
+					terminalParent.addChildren(beforePreviousParentIndex, beforePreviousParent.getChildren());
 					terminalParent.removeChild(beforeTerminalParent);
+					terminalParent.addChildren(beforeTerminalParentIndex, beforeTerminalParent.getChildren());
 					break;
 				}
 				
-				beforePreviousParent = previousParent;
-				beforeTerminalParent = terminalParent;
+				//if(previousParentHasChanged) {
+				//	lastPreviousParent = previousParent;
+				//}
+				if(previousParentHasChanged) {
+					beforePreviousParent = previousParent;
+					previousAncestorHeight++;
+				}
+				if(terminalParentHasChanged) {
+					beforeTerminalParent = terminalParent;
+					terminalAncestorHeight++;
+				}
 			}		
 		}
 	}

@@ -1068,7 +1068,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-		DescriptionTreatmentElement lastElement = lastElements.getLast();
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 		
 		List<Chunk> unassignedModifiers = processingContext.getCurrentState().getUnassignedModifiers();
@@ -1083,7 +1082,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if(baseCountWords.contains(object.getTerminalsText())) {
 			base = "each";
 		}
-		if(lastIsChara){
+		if(lastIsChara && !lastElements.isEmpty()) {
+			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			//if last character is size, change to location: <margins> r[p[with] o[3–6 (spines)]] 1–3 {mm} r[p[{near}] o[(bases)]]. 
 			//1-3 mm is not a size, but a location of spines
 			if(lastElement.getProperty("name").equals("size") && 

@@ -129,7 +129,8 @@ public class VPRecoverChunker extends AbstractChunker {
 				foundOrgan = true;
 			} else if(chunkCollector.isPartOfChunkType(terminal, ChunkType.OBJECT) || 
 					chunkCollector.isPartOfChunkType(terminal, ChunkType.NP_LIST)) {//found noun)
-				collectedTerminals.add(terminal);
+				Chunk chunk = chunkCollector.getChunk(terminal);
+				collectedTerminals.addAll(chunk.getTerminals());
 				foundOrgan = true;
 				j++;
 				break;
@@ -169,8 +170,12 @@ public class VPRecoverChunker extends AbstractChunker {
 					for(AbstractParseTree terminal : collectedTerminals) {
 						List<Chunk> childChunksList = new ArrayList<Chunk>(childChunks);
 						childChunks.clear();
-						childChunks.add(chunkCollector.getChunk(terminal));
+						Chunk chunk = chunkCollector.getChunk(terminal);
+						//System.out.println(chunk.toString());
+						if(!chunk.equals(vpChunk) && !chunk.contains(vpChunk))
+							childChunks.add(chunk);
 						childChunks.addAll(childChunksList);
+						//System.out.println(childChunks);
 					}
 					vpChunk = new Chunk(ChunkType.VP, childChunks);
 					chunkCollector.addChunk(vpChunk);

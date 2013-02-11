@@ -141,23 +141,26 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		}else { //if(content.indexOf("[")<0){ //{forked} {moreorless} unevenly ca . 3-4 times , 
 			//content = 3-4 times; v = 3-4; n=times
 			//marked as a constraint to the last character "forked". "ca." should be removed from sentences in SentenceOrganStateMarker.java
-			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
-				for(DescriptionTreatmentElement element : processingContextState.getLastElements()) {
-					if(!processingContextState.getUnassignedModifiers().isEmpty()){
-						List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
-						String modifierString = "";
-						for(Chunk modifier : unassignedModifiers) 
-							modifierString += modifier + " ";
-						element.setProperty("modifier", modifierString);
-						processingContextState.clearUnassignedModifiers();
+			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+			if(!lastElements.isEmpty()) {
+				DescriptionTreatmentElement lastElement = lastElements.getLast();
+				if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
+					for(DescriptionTreatmentElement element : processingContextState.getLastElements()) {
+						if(!processingContextState.getUnassignedModifiers().isEmpty()){
+							List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
+							String modifierString = "";
+							for(Chunk modifier : unassignedModifiers) 
+								modifierString += modifier + " ";
+							element.setProperty("modifier", modifierString);
+							processingContextState.clearUnassignedModifiers();
+						}
+						lastElement.setProperty("constraint", content.getTerminalsText());
 					}
-					lastElement.setProperty("constraint", content.getTerminalsText());
+				} else if(lastElement.isOfDescriptionType(DescriptionType.STRUCTURE)){
+					return new LinkedList<DescriptionTreatmentElement>(); //parsing failure
 				}
-			} else if(lastElement.isOfDescriptionType(DescriptionType.STRUCTURE)){
-				return new LinkedList<DescriptionTreatmentElement>(); //parsing failure
+				return processingContextState.getLastElements();
 			}
-			return processingContextState.getLastElements();
 		}
 		return new LinkedList<DescriptionTreatmentElement>();
 	}

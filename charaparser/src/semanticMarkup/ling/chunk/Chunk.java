@@ -259,6 +259,10 @@ public class Chunk {
 		return false;
 	}
 	
+	public boolean containsAsChild(Chunk chunk) {
+		return chunks.contains(chunk);
+	}
+	
 	public void removeChunks(Collection<Chunk> chunks) {
 		for(Chunk chunk : chunks)
 			this.removeChunk(chunk);
@@ -268,14 +272,51 @@ public class Chunk {
 		return this instanceof AbstractParseTree;
 	}
 
-	public List<Chunk> getChunksWithoutTerminal(AbstractParseTree terminal) {
+	public List<Chunk> getChunksIncludingAfterTerminal(AbstractParseTree terminal) {
 		List<Chunk> result = new LinkedList<Chunk>();
 		for(Chunk chunk : this.getChunks()) {
-			if(chunk.contains(terminal) || chunk.equals(terminal)) {
-				result.addAll(chunk.getChunksWithoutTerminal(terminal));
-			} else
+			if(chunk.contains(terminal)) {
+				result.addAll(chunk.getChunksIncludingAfterTerminal(terminal));
+			} else if(chunk.equals(terminal)) {
+				result.add(terminal);
+			} else if(!result.isEmpty()) 
 				result.add(chunk);
 		}
 		return result;
+	}
+
+	public Chunk getChunkOfTypeAndTerminal(ChunkType chunkType, AbstractParseTree ofTerminal) {
+		Chunk result = null;
+		if(this.getChunkType().equals(chunkType) && this.contains(ofTerminal)) {
+			result = this;
+		} else {
+			for(Chunk chunk : chunks) {
+				result = chunk.getChunkOfTypeAndTerminal(chunkType, ofTerminal);
+				if(result != null)
+					break;
+			}
+		}
+		return result;
+	}
+
+	public void addAndReplaceChunks(Chunk chunk) {
+		AbstractParseTree firstTerminal = chunk.getTerminals().get(0);
+		for(Chunk child : chunks) {
+			if(child.contains(firstTerminal)) {
+				child.addAndReplaceChunks(chunk);
+				break;
+			}
+			if(child.equals(firstTerminal)) {
+				LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
+				for(Chunk childChunk : chunks) {
+					if(chunk.contains(childChunk))
+						newChunks.add(chunk);
+					else 
+						newChunks.add(childChunk);
+				}
+				chunks = newChunks;
+				break;
+			}
+		}
 	}
 }

@@ -38,11 +38,14 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 		//probably want to put the modifier somewhere to the processingContext
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-		DescriptionTreatmentElement lastElement = lastElements.getLast();
-		if(lastElement.isOfDescriptionType(DescriptionType.RELATION) || lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
-			lastElement.appendProperty("modifier", chunk.getTerminalsText());
-		} else 
-			processingContextState.getUnassignedModifiers().add(chunk);
+		if(!lastElements.isEmpty()) {
+			DescriptionTreatmentElement lastElement = lastElements.getLast();
+			
+			if(lastElement.isOfDescriptionType(DescriptionType.RELATION) || lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
+				lastElement.appendProperty("modifier", chunk.getTerminalsText());
+			} else 
+				processingContextState.getUnassignedModifiers().add(chunk);
+		}
 		return new ArrayList<DescriptionTreatmentElement>();
 	}
 }
