@@ -66,7 +66,7 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 			if(evaluationSources.isEmpty() || evaluationSources.contains(source)) {
 				String[] sourceIds = source.split(".txt-");
 				
-				String sourceId = String.valueOf(Integer.valueOf(sourceIds[0])-1);
+				String sourceId = sourceIds[0];//String.valueOf(Integer.valueOf(sourceIds[0])-1);
 				if(!addedTreatments.contains(sourceId)) {
 					addedTreatments.add(sourceId);
 					Treatment t = new Treatment(sourceId);

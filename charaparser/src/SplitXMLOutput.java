@@ -25,7 +25,7 @@ public class SplitXMLOutput {
 		
 		File currentFile = null;
 		FileWriter fw = null;
-		Integer number = null;
+		String id = null;
 		List<File> treatmentFiles = new ArrayList<File>();
 		while((line = br.readLine()) != null) {
 			
@@ -38,8 +38,8 @@ public class SplitXMLOutput {
 				fw.append(line + "\n");
 			
 			if(line.contains("<number>")) {
-				Integer newNumber = Integer.parseInt(line.split("<number>")[1].split("</number>")[0]);
-				number = newNumber;
+				String newId = line.split("<number>")[1].split("</number>")[0];//Integer.parseInt(line.split("<number>")[1].split("</number>")[0]);
+				id = newId;
 			}
 			
 			if(line.contains("</statement>")) {
@@ -60,14 +60,14 @@ public class SplitXMLOutput {
 					statementId++;
 					
 					for(; ; statementId++) {
-						int realNumber = number + 1;
-						File comparisonFile = new File(comparisonFiles + "/" + realNumber + ".txt-" + statementId + ".xml");
+						//int realNumber = number + 1;
+						File comparisonFile = new File(comparisonFiles + "/" + id + ".txt-" + statementId + ".xml");
 						System.out.println(comparisonFile);
 						if(comparisonFile.exists())
 							break;
 					}
 					
-					copyfile(file.getAbsolutePath(), outDir + "/" + (number + 1) + ".txt-" + statementId + ".xml");
+					copyfile(file.getAbsolutePath(), outDir + "/" + id + ".txt-" + statementId + ".xml");// + 1) + ".txt-" + statementId + ".xml");
 				}
 
 				treatmentFiles = new ArrayList<File>();
