@@ -41,9 +41,9 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(stateChunker);
 		this.add(numericalChunker);
 		this.add(npChunker);
+		this.add(vbChunker);
 		this.add(ppINChunker);
 		this.add(ppListChunker);
-		this.add(vbChunker);
 		this.add(thatChunker);
 		this.add(whereChunker);
 		this.add(whenChunker);

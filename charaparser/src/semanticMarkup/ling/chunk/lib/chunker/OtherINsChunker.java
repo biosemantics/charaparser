@@ -93,8 +93,7 @@ public class OtherINsChunker extends AbstractChunker {
 					//any word in betweens
 					Chunk lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
 					if(lookAheadChunk.equals(chunkCollector.getChunk(terminal))) {
-						List<Chunk> lookAheadChunks = lookAheadChunk.getChunksIncludingAfterTerminal(terminal);
-						lookAheadChunks.remove(0);
+						List<Chunk> lookAheadChunks = lookAheadChunk.getChunksWithoutTerminal(terminal);
 						for(Chunk chunk : lookAheadChunks) {
 							if(chunk.isOfChunkType(ChunkType.OBJECT))
 								organTerminals.addAll(chunk.getChunks());
@@ -169,14 +168,7 @@ public class OtherINsChunker extends AbstractChunker {
 					childChunks.add(functionChunk);
 					childChunks.add(objectChunk);
 					Chunk ppChunk = new Chunk(ChunkType.PP, childChunks);
-
-					if(!chunkCollector.isPartOfANonTerminalChunk(terminal)) {
-						chunkCollector.addChunk(ppChunk);
-					} else {
-						Chunk parentChunk = chunkCollector.getChunk(terminal);
-						parentChunk.addAndReplaceChunks(ppChunk);
-						chunkCollector.addChunk(parentChunk);
-					}
+					chunkCollector.addChunk(ppChunk);
 					
 					/*if(chunkCollector.isPartOfAChunk(terminal)) {
 						Chunk organChunk = new Chunk(ChunkType.ChunkOrgan, organTerminals);

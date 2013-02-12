@@ -319,4 +319,15 @@ public class Chunk {
 			}
 		}
 	}
+	
+	public List<Chunk> getChunksWithoutTerminal(AbstractParseTree terminal) {
+		List<Chunk> result = new LinkedList<Chunk>();
+		for(Chunk chunk : this.getChunks()) {
+			if(chunk.contains(terminal) || chunk.equals(terminal)) {
+				result.addAll(chunk.getChunksWithoutTerminal(terminal));
+			} else
+				result.add(chunk);
+		}
+		return result;
+	}
 }

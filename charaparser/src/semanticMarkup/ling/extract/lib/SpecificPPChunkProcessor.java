@@ -63,7 +63,8 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 		
 		//c: {loosely} {arachnoid}
 		
-		if(posKnowledgeBase.isVerb(nonModifiers.get(nonModifiers.size()-1).getTerminalsText()) || preposition.getTerminalsText().equals("to")) {
+		if(!nonModifiers.isEmpty()) {
+			if(posKnowledgeBase.isVerb(nonModifiers.get(nonModifiers.size()-1).getTerminalsText()) || preposition.getTerminalsText().equals("to")) {
 			//t[c[{connected}] r[p[by] o[{conspicuous} {arachnoid} <trichomes>]]] TODO: what if c was not included in this chunk?
 			
 			String relation = "";
@@ -85,15 +86,16 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 			result.addAll(relationElement);
 			processingContextState.setLastElements(relationElement);
 			result.addAll(structures);
-		}else{//c: {loosely} {arachnoid} : should be m[loosly] architecture[arachnoid]
-			//String[] tokens = c.replaceAll("[{}]", "").split("\\s+");
-			//ArrayList<Element> charas = this.processCharacterText(tokens, this.subjects);
-
-			Chunk tempChunk = new Chunk(ChunkType.UNASSIGNED, nonModifiers);			
-			IChunkProcessor characterStateProcessor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
-			result.addAll(characterStateProcessor.process(tempChunk, processingContext));
-			IChunkProcessor ppProcessor = processingContext.getChunkProcessor(ChunkType.PP);
-			result.addAll(ppProcessor.process(pp, processingContext)); //not as a relation
+			}else{//c: {loosely} {arachnoid} : should be m[loosly] architecture[arachnoid]
+				//String[] tokens = c.replaceAll("[{}]", "").split("\\s+");
+				//ArrayList<Element> charas = this.processCharacterText(tokens, this.subjects);
+	
+				Chunk tempChunk = new Chunk(ChunkType.UNASSIGNED, nonModifiers);			
+				IChunkProcessor characterStateProcessor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
+				result.addAll(characterStateProcessor.process(tempChunk, processingContext));
+				IChunkProcessor ppProcessor = processingContext.getChunkProcessor(ChunkType.PP);
+				result.addAll(ppProcessor.process(pp, processingContext)); //not as a relation
+			}
 		}
 		return result;
 	}

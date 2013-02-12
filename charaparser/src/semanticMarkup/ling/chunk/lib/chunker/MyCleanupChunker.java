@@ -312,8 +312,7 @@ public class MyCleanupChunker extends AbstractChunker {
 			boolean hasChanged = false;
 			for(Chunk characterStateChunk : characterStateChunks) {
 				String character = characterStateChunk.getProperty("characterName");
-				if(character!=null &&  character.contains("position") && 
-						!chunkCollector.isPartOfChunkType(characterStateChunk.getTerminals().get(0), ChunkType.TO_PHRASE)) {
+				if(character!=null && character.contains("position")) {
 					characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));
 					characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
 					characterStateChunk.clearProperties();

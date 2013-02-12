@@ -44,17 +44,20 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		modifiers.addAll(unassignedModifiers);
 		
+		
 		//process characters recursively with the appropriate processor
 		List<Chunk> characterStateChunks = chunk.getChunks(ChunkType.CHARACTER_STATE);
-		for(Chunk characterStateChunk : characterStateChunks) {
-			IChunkProcessor processor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
-			results.addAll(processor.process(characterStateChunk, processingContext));
+		if(!characterStateChunks.isEmpty()) {
+			for(Chunk characterStateChunk : characterStateChunks) {
+				IChunkProcessor processor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
+				results.addAll(processor.process(characterStateChunk, processingContext));
+			}
+			
+			//and create a range charater too
+			String characterStateString = characterStateChunks.get(0).getProperty("characterName");
+			String character = chunk.getTerminalsText();
+			this.createRangeCharacterElement(parents, results, modifiers, character, characterStateString, processingContextState);
 		}
-		
-		//and create a range charater too
-		String characterStateString = characterStateChunks.get(0).getProperty("characterName");
-		String character = chunk.getTerminalsText();
-		this.createRangeCharacterElement(parents, results, modifiers, character, characterStateString, processingContextState);
 		
 		return new LinkedList<DescriptionTreatmentElement>();
 	}

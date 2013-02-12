@@ -124,13 +124,16 @@ public class VPRecoverChunker extends AbstractChunker {
 					|| chunkCollector.isPartOfANonTerminalChunk(terminal))) {
 				break;
 			}
-			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN)) {
+			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.VP)) {
+				Chunk chunk = chunkCollector.getChunk(terminal);
+				collectedTerminals.addAll(chunk.getTerminals());
+				foundOrgan = true;
+			} else if(chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN)) {
 				collectedTerminals.add(terminal);
 				foundOrgan = true;
 			} else if(chunkCollector.isPartOfChunkType(terminal, ChunkType.OBJECT) || 
 					chunkCollector.isPartOfChunkType(terminal, ChunkType.NP_LIST)) {//found noun)
-				Chunk chunk = chunkCollector.getChunk(terminal);
-				collectedTerminals.addAll(chunk.getTerminals());
+				collectedTerminals.add(terminal);
 				foundOrgan = true;
 				j++;
 				break;
@@ -164,19 +167,17 @@ public class VPRecoverChunker extends AbstractChunker {
 			chunkCollector.addChunk(chunk);
 
 		} else if(chunkCollector.containsPartOfChunkType(collectedTerminals, ChunkType.OBJECT)) {
-			if(chunkCollector.containsPartOfChunkType(collectedTerminals, ChunkType.VP)) {
+			if(!chunkCollector.isPartOfChunkType(collectedTerminals.get(0), ChunkType.PP) && chunkCollector.containsPartOfChunkType(collectedTerminals, ChunkType.VP)) {
 					Chunk vpChunk = chunkCollector.getChunkOfChunkType(collectedTerminals, ChunkType.VP);
-					LinkedHashSet<Chunk> childChunks = vpChunk.getChunks();
+					LinkedHashSet<Chunk> childChunks = (LinkedHashSet<Chunk>)vpChunk.getChunks().clone();
 					for(AbstractParseTree terminal : collectedTerminals) {
 						List<Chunk> childChunksList = new ArrayList<Chunk>(childChunks);
 						childChunks.clear();
-						Chunk chunk = chunkCollector.getChunk(terminal);
-						//System.out.println(chunk.toString());
-						if(!chunk.equals(vpChunk) && !chunk.contains(vpChunk))
-							childChunks.add(chunk);
+						Chunk terminalChunk = chunkCollector.getChunk(terminal);
+						childChunks.add(terminalChunk);
 						childChunks.addAll(childChunksList);
-						//System.out.println(childChunks);
 					}
+					//System.out.println(childChunks.toString());
 					vpChunk = new Chunk(ChunkType.VP, childChunks);
 					chunkCollector.addChunk(vpChunk);
 			} else if(chunkCollector.isPartOfChunkType(collectedTerminals.get(0), ChunkType.PP)) {
