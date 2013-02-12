@@ -37,6 +37,8 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	private ITokenizer wordTokenizer;
 	private ChunkerChain chunkerChain;
 	private Map<Thread, DescriptionExtractorRun> descriptionExtractorRuns = new LinkedHashMap<Thread, DescriptionExtractorRun>();
+	private int descriptionExtractorRunMaximum;
+	private int sentenceChunkerRunMaximum;
 	
 	@Inject
 	public OldPerlTreatmentTransformer(
@@ -47,7 +49,9 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 			IDescriptionExtractor descriptionExtractor, 
 			INormalizer normalizer,
 			ITerminologyLearner terminologyLearner,
-			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing) throws Exception {
+			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
+			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
+			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -56,6 +60,8 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 		this.normalizer = normalizer;
 		this.terminologyLearner = terminologyLearner;
 		this.wordTokenizer = wordTokenizer;
+		this.descriptionExtractorRunMaximum = descriptionExtractorRunMaximum;
+		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
 	}
 
 	public List<Treatment> transform(List<Treatment> treatments) {
@@ -66,9 +72,13 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	}
 
 	private void markupDescriptions(List<Treatment> treatments, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
+		int threadId = 0;
 		for(Treatment treatment : treatments) {
+			if(threadId % descriptionExtractorRunMaximum == 0)
+				waitForThreadsToFinish();
+			threadId++;
 			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, terminologyLearner, normalizer, wordTokenizer, 
-					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing);
+					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum);
 			Thread thread = new Thread(descriptionExtractorRun);
 			descriptionExtractorRuns.put(thread, descriptionExtractorRun);
 			if(this.parallelProcessing)
@@ -76,6 +86,10 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 			else 
 				thread.run();
 		}
+		waitForThreadsToFinish();
+	}
+
+	private void waitForThreadsToFinish() {
 		for(Thread thread : descriptionExtractorRuns.keySet()) {
 			try {
 				thread.join();
@@ -83,5 +97,6 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 				log(LogLevel.ERROR, e);
 			}
 		}
+		descriptionExtractorRuns.clear();
 	}
 }

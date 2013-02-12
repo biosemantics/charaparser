@@ -34,10 +34,12 @@ public class DescriptionExtractorRun implements Runnable {
 	private IDescriptionExtractor descriptionExtractor;
 	private Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
 	private boolean parallelProcessing;
+	private int sentenceChunkerRunMaximum;
 
 	public DescriptionExtractorRun(Treatment treatment, ITerminologyLearner terminologyLearner, 
 			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
-			IDescriptionExtractor descriptionExtractor, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing) {
+			IDescriptionExtractor descriptionExtractor, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing,
+			int sentenceChunkerRunMaximum) {
 		this.treatment = treatment;
 		this.terminologyLearner = terminologyLearner;
 		this.normalizer = normalizer;
@@ -48,6 +50,7 @@ public class DescriptionExtractorRun implements Runnable {
 		this.descriptionExtractor = descriptionExtractor;
 		this.sentencesForOrganStateMarker = sentencesForOrganStateMarker;
 		this.parallelProcessing = parallelProcessing;
+		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
 	}
 	
 	@Override
@@ -60,7 +63,11 @@ public class DescriptionExtractorRun implements Runnable {
 			LinkedHashMap<String, String> sentences) {
 		treatmentChunkCollectors.clear();
 		sentenceChunkerRuns.clear();
+		int threadId = 0;
 		for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
+			if(threadId % this.sentenceChunkerRunMaximum == 0)
+				waitForThreadsToFinish();
+			threadId++;
 			String sentenceString = sentenceEntry.getValue();
 			String source = sentenceEntry.getKey();
 			SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString, treatment, terminologyLearner, normalizer, wordTokenizer, 
@@ -72,15 +79,7 @@ public class DescriptionExtractorRun implements Runnable {
 			else
 				thread.run();
 		}
-		for(Thread thread : sentenceChunkerRuns.keySet()) {
-			SentenceChunkerRun sentenceChunker = sentenceChunkerRuns.get(thread);
-			try {
-				thread.join();
-				treatmentChunkCollectors.add(sentenceChunker.getResult());
-			} catch (InterruptedException e) {
-				log(LogLevel.ERROR, e);
-			}
-		}
+		waitForThreadsToFinish();
 		
 		log(LogLevel.DEBUG, "Extract new description using " + descriptionExtractor.getDescription() + "...");
 		TreatmentElement newDescriptionElement = descriptionExtractor.extract(treatmentChunkCollectors);
@@ -93,5 +92,18 @@ public class DescriptionExtractorRun implements Runnable {
 		}
 		log(LogLevel.DEBUG, " -> JAXB: ");
 		log(LogLevel.DEBUG, treatment.toString());
+	}
+
+	private void waitForThreadsToFinish() {
+		for(Thread thread : sentenceChunkerRuns.keySet()) {
+			SentenceChunkerRun sentenceChunker = sentenceChunkerRuns.get(thread);
+			try {
+				thread.join();
+				treatmentChunkCollectors.add(sentenceChunker.getResult());
+			} catch (InterruptedException e) {
+				log(LogLevel.ERROR, e);
+			}
+		}
+		sentenceChunkerRuns.clear();
 	}
 }
