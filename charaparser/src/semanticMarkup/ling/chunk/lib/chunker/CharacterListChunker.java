@@ -45,15 +45,67 @@ public class CharacterListChunker extends AbstractChunker {
 	public void chunk(ChunkCollector chunkCollector) {
 		for(AbstractParseTree terminal : chunkCollector.getTerminals())  { 
 			String terminalsText = terminal.getTerminalsText();
+			
 			if(terminalsText.contains("~list~")) {
 				normalizeCharacterList(terminal, chunkCollector);
 			}
-			if(terminalsText.equals("moreorless")) {
+			else if(terminalsText.equals("moreorless")) {
 				normalizeMoreOrLess(terminal, chunkCollector);
 			}
+			else if(terminalsText.contains("~")) {
+				normalizeModifiers(terminal, chunkCollector);
+			}
 		}
+		System.out.println(chunkCollector.getParseTree().prettyPrint());
 	}
 	
+	private void normalizeModifiers(AbstractParseTree terminal,
+			ChunkCollector chunkCollector) {
+		String[] modifierTokens = terminal.getTerminalsText().split("~");
+		terminal.setPOS(POS.ADVP);
+		for(String modifierToken : modifierTokens) {
+			if(posKnowledgeBase.isAdverb(modifierToken)) {
+				AbstractParseTree modifierTerminal = parseTreeFactory.create();
+				modifierTerminal.setTerminalsText(modifierToken);
+				terminal.addChild(modifierTerminal);
+				Chunk modifierChunk = new Chunk(ChunkType.MODIFIER, modifierTerminal);
+				chunkCollector.addChunk(modifierChunk);
+			} else {
+				if((modifierToken.equals(",") || modifierToken.equals("and") || modifierToken.equals("or") || modifierToken.equals("to"))) {
+					if(modifierToken.equals(",")) {
+						AbstractParseTree punctTree = parseTreeFactory.create();
+						punctTree.setPOS(POS.PUNCT);
+						AbstractParseTree punct = parseTreeFactory.create();
+						punct.setTerminalsText(modifierToken);
+						punctTree.addChild(punct);
+						terminal.addChild(punctTree);
+					} else if(modifierToken.equals("and")) {
+						AbstractParseTree ccTree = parseTreeFactory.create();
+						ccTree.setPOS(POS.CC);
+						AbstractParseTree cc = parseTreeFactory.create();
+						cc.setTerminalsText(modifierToken);
+						ccTree.addChild(cc);
+						terminal.addChild(ccTree);
+					} else if(modifierToken.equals("or")) {
+						AbstractParseTree ccTree = parseTreeFactory.create();
+						ccTree.setPOS(POS.CC);
+						AbstractParseTree cc = parseTreeFactory.create();
+						cc.setTerminalsText(modifierToken);
+						ccTree.addChild(cc);
+						terminal.addChild(ccTree);
+					} else if(modifierToken.equals("to")) {
+						AbstractParseTree toTree = parseTreeFactory.create();
+						toTree.setPOS(POS.TO);
+						AbstractParseTree to = parseTreeFactory.create();
+						to.setTerminalsText(modifierToken);
+						toTree.addChild(to);
+						terminal.addChild(toTree);
+					} 
+				}
+			}	
+		}
+	}
+
 	private void normalizeMoreOrLess(AbstractParseTree terminal,
 			ChunkCollector chunkCollector) {
 		AbstractParseTree parseTree = chunkCollector.getParseTree();
