@@ -64,16 +64,23 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
 				structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
 				structureElement.setProperty("name", previousMainSubjectOrgan);
+				
+				LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+				structureElements.add(structureElement);
+				result.addAll(establishSubject(structureElements, processingContextState));
+				skipFirstChunk = false;
 			} else {
-				structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+				/*structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
 				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
 				structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
-				structureElement.setProperty("name", "whole_organism");
+				structureElement.setProperty("name", "whole_organism"); */
 			}	
-			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+			/*LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
 			structureElements.add(structureElement);
 			result.addAll(establishSubject(structureElements, processingContextState));
-			skipFirstChunk = false;
+			skipFirstChunk = false; */
+			
+			
 			
 			//does not start with an organ (subject)
 			/*if(firstChunk.isOfChunkType(ChunkType.PP)) {

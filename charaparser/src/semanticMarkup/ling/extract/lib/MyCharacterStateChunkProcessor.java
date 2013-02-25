@@ -42,6 +42,9 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
 		LinkedList<DescriptionTreatmentElement> characters = processCharacterState(chunk, parents, 
 				processingContextState, processingContext);//apices of basal leaves spread 
+		if(parents.isEmpty()) {
+			processingContextState.getUnassignedCharacters().addAll(characters);
+		}
 		processingContextState.setLastElements(characters);
 		return characters;
 	}

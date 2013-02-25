@@ -13,6 +13,7 @@ import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.extract.AbstractChunkProcessor;
+import semanticMarkup.ling.extract.ILastChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
@@ -21,7 +22,7 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-public class EosEolChunkProcessor extends AbstractChunkProcessor {
+public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILastChunkProcessor {
 
 	@Inject
 	public EosEolChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
@@ -74,9 +75,32 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor {
 			}
 		}
 		
+		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
+		if(!unassignedCharacters.isEmpty()) {
+			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+			structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
+			structureElement.setProperty("name", "whole_organism"); 
+			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+			structureElements.add(structureElement);
+			result.addAll(establishSubject(structureElements, processingContextState));
+			
+			for(DescriptionTreatmentElement character : unassignedCharacters) {
+				for(DescriptionTreatmentElement parent : structureElements) {
+					parent.addTreatmentElement(character);
+				}
+			}
+		}
+		unassignedCharacters.clear();
+		
 		processingContextState.clearUnassignedModifiers();
 		processingContextState.clearUnassignedCharacters();
 		
 		return result;
+	}
+
+	@Override
+	public List<DescriptionTreatmentElement> process(ProcessingContext processingContext) {
+		return this.process(null, processingContext);
 	}
 }

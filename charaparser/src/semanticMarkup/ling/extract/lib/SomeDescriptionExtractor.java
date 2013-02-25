@@ -21,6 +21,7 @@ import semanticMarkup.ling.extract.IChunkProcessor;
 import semanticMarkup.ling.extract.IChunkProcessorProvider;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.extract.IFirstChunkProcessor;
+import semanticMarkup.ling.extract.ILastChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.log.LogLevel;
@@ -32,16 +33,19 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	private Set<String> lifeStyles;
 	
 	private IFirstChunkProcessor firstChunkProcessor;
+	private ILastChunkProcessor lastChunkProcessor;
 
 	private IChunkProcessorProvider chunkProcessorProvider;
 	
 	@Inject
 	public SomeDescriptionExtractor(IGlossary glossary, 
 			IChunkProcessorProvider chunkProcessorProvider, 
-			IFirstChunkProcessor firstChunkProcessor) {
+			IFirstChunkProcessor firstChunkProcessor, 
+			ILastChunkProcessor lastChunkProcessor) {
 		lifeStyles = glossary.getWords("life_style");
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
+		this.lastChunkProcessor = lastChunkProcessor;
 	}
 
 	
@@ -100,6 +104,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			}
 			log(LogLevel.DEBUG, "result " + result);
 		}
+		
+		addToResult(result, lastChunkProcessor.process(processingContext));
 		
 		/*StructureContainerTreatmentElement structureElement = new StructureContainerTreatmentElement("structureName", "Id", "constraint");
 		structureElement.addTreatmentElement(new CharacterTreatmentElement("characterName", "value", "modifier", "constraint", 
