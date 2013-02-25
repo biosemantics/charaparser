@@ -72,6 +72,7 @@ public class MyCleanupChunker extends AbstractChunker {
 		
 		boolean previousTerminalOrgan = false;
 		boolean previousTerminalState = false;
+		boolean previousTerminalConstraint = false;
 		
 		for(int i=terminals.size()-1; i>=0; i--) {
 			AbstractParseTree terminal = terminals.get(i);
@@ -105,6 +106,19 @@ public class MyCleanupChunker extends AbstractChunker {
 				}
 			}*/
 			
+			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) && 
+					previousTerminalConstraint) {
+				Chunk chunk = chunkCollector.getChunk(terminal);
+				Chunk characterStateChunk = chunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
+				characterStateChunk.clearProperties();
+				characterStateChunk.clearChunks();
+				LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
+				chunks.add(terminal);
+				characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
+				characterStateChunk.setChunks(chunks);
+				chunkCollector.addChunk(chunk);
+			}
+			
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) && 
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
 				Chunk stateParentChunk = chunkCollector.getChunk(terminal);
@@ -115,6 +129,39 @@ public class MyCleanupChunker extends AbstractChunker {
 					stateChunk.setChunkType(ChunkType.MODIFIER);
 				chunkCollector.addChunk(stateParentChunk);
 			}
+			
+			/*
+			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) && 
+				!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
+				Chunk stateParentChunk = chunkCollector.getChunk(terminal);
+				Chunk stateChunk = stateParentChunk.getChunkOfTypeAndTerminal(ChunkType.STATE, terminal);
+				if(previousTerminalState) {
+					stateChunk.setChunkType(ChunkType.MODIFIER);
+					chunkCollector.addChunk(stateParentChunk);
+				}
+			}
+			
+			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) && 
+					(chunkCollector.isPartOfChunkType(terminal, ChunkType.PP) || 
+							!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE))) { 
+					//{// && 
+					//!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
+				Chunk stateParentChunk = chunkCollector.getChunk(terminal);
+				Chunk stateChunk = stateParentChunk.getChunkOfTypeAndTerminal(ChunkType.STATE, terminal);
+				if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) { 
+					stateChunk = stateParentChunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
+				}
+				if(previousTerminalOrgan) {
+					stateChunk.clearProperties();
+					stateChunk.clearChunks();
+					
+					LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
+					chunks.add(terminal);
+					stateChunk.setChunks(chunks);
+					stateChunk.setChunkType(ChunkType.CONSTRAINT);
+					chunkCollector.addChunk(stateParentChunk);
+				}
+			}*/
 	
 			/*if(!chunkCollector.isPartOfANonTerminalChunk(terminal)) {
 				if(previousTerminalOrgan) {
@@ -165,6 +212,8 @@ public class MyCleanupChunker extends AbstractChunker {
 			} else {
 				previousTerminalState = false;
 			}
+			
+			previousTerminalConstraint = chunkCollector.isPartOfChunkType(terminal, ChunkType.CONSTRAINT);
 		}
 		
 		/*for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
