@@ -41,11 +41,13 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 		if(!lastElements.isEmpty()) {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			
-			if(lastElement.isOfDescriptionType(DescriptionType.RELATION) || lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
+			if(!processingContextState.isCommaEosEolAfterLastElements() && 
+					(lastElement.isOfDescriptionType(DescriptionType.RELATION) || lastElement.isOfDescriptionType(DescriptionType.CHARACTER))) {
 				lastElement.appendProperty("modifier", chunk.getTerminalsText());
 			} else 
 				processingContextState.getUnassignedModifiers().add(chunk);
 		}
+		processingContextState.setCommaEosEolAfterLastElements(false);
 		return new ArrayList<DescriptionTreatmentElement>();
 	}
 }

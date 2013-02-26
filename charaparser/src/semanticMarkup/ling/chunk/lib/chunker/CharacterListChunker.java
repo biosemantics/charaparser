@@ -56,7 +56,7 @@ public class CharacterListChunker extends AbstractChunker {
 				normalizeModifiers(terminal, chunkCollector);
 			}
 		}
-		System.out.println(chunkCollector.getParseTree().prettyPrint());
+		//System.out.println(chunkCollector.getParseTree().prettyPrint());
 	}
 	
 	private void normalizeModifiers(AbstractParseTree terminal,

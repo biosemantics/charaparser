@@ -1265,8 +1265,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			addClauseModifierConstraint(element, processingContextState);
 			for(DescriptionTreatmentElement parent : parents) {
 				parent.addTreatmentElement(element);
-				result.add(element);
 			}
+			result.add(element);
 		}
 		return result;
 	}

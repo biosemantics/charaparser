@@ -44,6 +44,7 @@ public class ValuePercentageOrDegreeChunkProcessor extends AbstractChunkProcesso
 		}else{
 			processingContextState.getUnassignedModifiers().add(chunk);
 		}	
+		processingContextState.setCommaEosEolAfterLastElements(false);
 		return result;
 	}
 

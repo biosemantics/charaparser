@@ -41,6 +41,7 @@ public class AreaChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
 				parents, false, processingContextState);
 		processingContextState.getLastElements().addAll(characters);
+		processingContextState.setCommaEosEolAfterLastElements(false);
 		return characters;
 	}
 

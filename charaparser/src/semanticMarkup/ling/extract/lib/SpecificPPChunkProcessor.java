@@ -97,6 +97,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				result.addAll(ppProcessor.process(pp, processingContext)); //not as a relation
 			}
 		}
+		processingContextState.setCommaEosEolAfterLastElements(false);
 		return result;
 	}
 }

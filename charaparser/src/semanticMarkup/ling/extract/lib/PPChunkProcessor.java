@@ -132,7 +132,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				}
 			}
 		}
-		
+		processingContextState.setCommaEosEolAfterLastElements(false);
 		return result;
 	}
 

@@ -38,6 +38,7 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
+		processingContextState.setCommaEosEolAfterLastElements(true);
 		String modifierString = "";
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		for(Chunk modifier : unassignedModifiers)

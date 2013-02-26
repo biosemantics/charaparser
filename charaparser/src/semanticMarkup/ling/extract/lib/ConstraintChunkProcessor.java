@@ -59,6 +59,7 @@ public class ConstraintChunkProcessor extends AbstractChunkProcessor {
 				contextState.setLastElements(result);
 			}
 		}
+		contextState.setCommaEosEolAfterLastElements(false);
 		return result;
 	}
 }
