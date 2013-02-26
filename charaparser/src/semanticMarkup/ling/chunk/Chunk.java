@@ -10,8 +10,9 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import semanticMarkup.ling.parse.AbstractParseTree;
+import semanticMarkup.log.LogLevel;
 
-public class Chunk {
+public class Chunk implements Cloneable {
 
 	private ChunkType chunkType;
 	private LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
@@ -329,5 +330,25 @@ public class Chunk {
 				result.add(chunk);
 		}
 		return result;
+	}
+	
+	@Override 
+	public Object clone() {
+		try {
+			Chunk clone = (Chunk)super.clone();
+			clone.chunkType = this.getChunkType();
+			clone.properties = new HashMap<String, String>();
+			for(Entry<String, String> entry : this.properties.entrySet()) {
+				clone.properties.put(entry.getKey(), entry.getValue());
+			}
+			clone.chunks = new LinkedHashSet<Chunk>();
+			for(Chunk chunk : this.chunks) {
+				clone.chunks.add((Chunk)chunk.clone());
+			}
+			return clone;
+		} catch (CloneNotSupportedException e) {
+			log(LogLevel.ERROR, e);
+		}
+		return null;
 	}
 }

@@ -62,72 +62,74 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			unassignedModifiers.add(chunk);
 			return result;
 		}
-
+		
 		DescriptionTreatmentElement lastElement = lastElements.getLast();
-		lastIsStructure = lastElement.isOfDescriptionType(DescriptionType.STRUCTURE);
-		lastIsCharacter = lastElement.isOfDescriptionType(DescriptionType.CHARACTER);
-		
-		if(lastIsStructure && isNumerical(object)) {
-			List<Chunk> modifiers = new ArrayList<Chunk>();
-			result.addAll(annotateNumericals(object.getTerminalsText(), "count", modifiers, lastElements, false, processingContextState));
-			return result;
-		}
-		
-		Set<Chunk> objects = new HashSet<Chunk>();
-		if(object.containsChildOfChunkType(ChunkType.OR)) {
-			objects = splitObject(object);
-		} else {
-			objects.add(object);
-		}
-		
-
-		LinkedList<DescriptionTreatmentElement> subjectStructures = processingContextState.getLastElements();
-		if(!lastIsStructure) {
-			subjectStructures = processingContextState.getSubjects();
-		}
-		for(Chunk aObject : objects) {
-			boolean lastChunkIsOrgan = true;
-			boolean foundOrgan = false;
-			LinkedHashSet<Chunk> beforeOrganChunks = new LinkedHashSet<Chunk>(); 
-			LinkedHashSet<Chunk> organChunks = new LinkedHashSet<Chunk>();
-			LinkedHashSet<Chunk> afterOrganChunks = new LinkedHashSet<Chunk>(); 
+		if(lastElement != null) {
+			lastIsStructure = lastElement.isOfDescriptionType(DescriptionType.STRUCTURE);
+			lastIsCharacter = lastElement.isOfDescriptionType(DescriptionType.CHARACTER);
 			
-			this.getOrganChunks(aObject, beforeOrganChunks, organChunks, afterOrganChunks);
-			foundOrgan = !organChunks.isEmpty();
-			lastChunkIsOrgan = afterOrganChunks.isEmpty() && foundOrgan;
+			if(lastIsStructure && isNumerical(object)) {
+				List<Chunk> modifiers = new ArrayList<Chunk>();
+				result.addAll(annotateNumericals(object.getTerminalsText(), "count", modifiers, lastElements, false, processingContextState));
+				return result;
+			}
 			
-			/*for(Chunk objectChunk : object.getChunks()) {
-				if(objectChunk.isOfChunkType(ChunkType.ORGAN)) {
-					lastChunkIsOrgan = true;
-					foundOrgan = true;
-					
-					organChunks.add(objectChunk);
-				} else {
-					lastChunkIsOrgan = false;
-					
-					if(foundOrgan)
-						afterOrganChunks.add(objectChunk);
-					else
-						beforeOrganChunks.add(objectChunk);
-				}
-			}*/
-			if(lastChunkIsOrgan) {
-				result.addAll(linkObjects(subjectStructures, modifier, preposition, aObject, lastIsStructure, lastIsCharacter, processingContext, processingContextState));
-			} else if(foundOrgan) {
-				LinkedHashSet<Chunk> objectChunks = new LinkedHashSet<Chunk>();
-				objectChunks.addAll(beforeOrganChunks);
-				objectChunks.addAll(organChunks);
-				//obj = beforeOrganChunks + organChunks;
-				//modi = afterOrganChunks;
-				
-				Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
-				result.addAll(linkObjects(subjectStructures, modifier, preposition, objectChunk, lastIsStructure, lastIsCharacter, processingContext, processingContextState)); 
-				//result.addAll(structures);
+			Set<Chunk> objects = new HashSet<Chunk>();
+			if(object.containsChildOfChunkType(ChunkType.OR)) {
+				objects = splitObject(object);
 			} else {
-				if(lastIsStructure)
-					lastElement.appendProperty("constraint", chunk.getTerminalsText());
-				else if(lastIsCharacter)
-					lastElement.appendProperty("modifier", chunk.getTerminalsText());
+				objects.add(object);
+			}
+			
+	
+			LinkedList<DescriptionTreatmentElement> subjectStructures = processingContextState.getLastElements();
+			if(!lastIsStructure) {
+				subjectStructures = processingContextState.getSubjects();
+			}
+			for(Chunk aObject : objects) {
+				boolean lastChunkIsOrgan = true;
+				boolean foundOrgan = false;
+				LinkedHashSet<Chunk> beforeOrganChunks = new LinkedHashSet<Chunk>(); 
+				LinkedHashSet<Chunk> organChunks = new LinkedHashSet<Chunk>();
+				LinkedHashSet<Chunk> afterOrganChunks = new LinkedHashSet<Chunk>(); 
+				
+				this.getOrganChunks(aObject, beforeOrganChunks, organChunks, afterOrganChunks);
+				foundOrgan = !organChunks.isEmpty();
+				lastChunkIsOrgan = afterOrganChunks.isEmpty() && foundOrgan;
+				
+				/*for(Chunk objectChunk : object.getChunks()) {
+					if(objectChunk.isOfChunkType(ChunkType.ORGAN)) {
+						lastChunkIsOrgan = true;
+						foundOrgan = true;
+						
+						organChunks.add(objectChunk);
+					} else {
+						lastChunkIsOrgan = false;
+						
+						if(foundOrgan)
+							afterOrganChunks.add(objectChunk);
+						else
+							beforeOrganChunks.add(objectChunk);
+					}
+				}*/
+				if(lastChunkIsOrgan) {
+					result.addAll(linkObjects(subjectStructures, modifier, preposition, aObject, lastIsStructure, lastIsCharacter, processingContext, processingContextState));
+				} else if(foundOrgan) {
+					LinkedHashSet<Chunk> objectChunks = new LinkedHashSet<Chunk>();
+					objectChunks.addAll(beforeOrganChunks);
+					objectChunks.addAll(organChunks);
+					//obj = beforeOrganChunks + organChunks;
+					//modi = afterOrganChunks;
+					
+					Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
+					result.addAll(linkObjects(subjectStructures, modifier, preposition, objectChunk, lastIsStructure, lastIsCharacter, processingContext, processingContextState)); 
+					//result.addAll(structures);
+				} else {
+					if(lastIsStructure)
+						lastElement.appendProperty("constraint", chunk.getTerminalsText());
+					else if(lastIsCharacter)
+						lastElement.appendProperty("modifier", chunk.getTerminalsText());
+				}
 			}
 		}
 		

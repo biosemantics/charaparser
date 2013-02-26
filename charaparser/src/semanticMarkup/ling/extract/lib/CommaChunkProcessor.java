@@ -43,9 +43,11 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().get(0);
 			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
 				DescriptionTreatmentElement parent = processingContext.getParent(lastElement);
-				LinkedList<DescriptionTreatmentElement> newLastElements = new LinkedList<DescriptionTreatmentElement>();
-				newLastElements.add(parent);
-				processingContextState.setLastElements(newLastElements);
+				if(parent!=null) {
+					LinkedList<DescriptionTreatmentElement> newLastElements = new LinkedList<DescriptionTreatmentElement>();
+					newLastElements.add(parent);
+					processingContextState.setLastElements(newLastElements);
+				}
 			}
 		}
 		return new ArrayList<DescriptionTreatmentElement>();

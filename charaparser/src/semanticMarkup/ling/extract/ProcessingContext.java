@@ -122,4 +122,8 @@ public class ProcessingContext {
 		chunkListIterator.next();
 		return previousChunk.getTerminalsText().matches(",");
 	}
+
+	public void reset() {
+		 currentState = new ProcessingContextState();
+	}
 }

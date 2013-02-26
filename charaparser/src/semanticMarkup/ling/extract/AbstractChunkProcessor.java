@@ -580,7 +580,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				results.addAll(result);
 				//results = this.processCharacterList(token, parents, processingContextState, processingContext);
 			} else {
+				List<Chunk> chunkModifiers = token.getChunks(ChunkType.MODIFIER);
+				modifiers.addAll(chunkModifiers);
+				
 				String w = token.getTerminalsText();
+				if(token.containsChunkType(ChunkType.STATE))
+					w = token.getChunkBFS(ChunkType.STATE).getTerminalsText();
 				String tokensCharacter = null;
 				if(token.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 					tokensCharacter = token.getProperty("characterName");

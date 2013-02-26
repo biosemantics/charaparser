@@ -61,6 +61,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		//going through all sentences
 		for(ChunkCollector chunkCollector : chunkCollectors) {
+			processingContext.reset();
 			DescriptionTreatmentElement statement = new DescriptionTreatmentElement(DescriptionType.STATEMENT);
 			statement.setProperty("text", chunkCollector.getSentence());
 			statement.setProperty("source", chunkCollector.getSource());
