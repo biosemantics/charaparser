@@ -32,9 +32,43 @@ public class MyCleanupChunker extends AbstractChunker {
 	}
 
 	private boolean[] getTranslateCharacterToConstraintArray(List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
-		boolean[] result = new boolean[terminals.size()];
+
+		boolean[] modifier = new boolean[terminals.size()];
+		for(int i=terminals.size() - 1; i>=0; i--) {
+			AbstractParseTree terminal = terminals.get(i);
+			Chunk terminalChunk = chunkCollector.getChunk(terminal);
+			if(terminalChunk.isPartOfChunkType(terminal, ChunkType.MODIFIER)) {
+				modifier[i] = true;
+			}
+		}
 		
-		boolean seenOtherThanOrganOrConstraint = false;
+		boolean[] character = new boolean[terminals.size()];
+		for(int i=terminals.size() - 1; i>=0; i--) {
+			AbstractParseTree terminal = terminals.get(i);
+			Chunk terminalChunk = chunkCollector.getChunk(terminal);
+			if(terminalChunk.isPartOfChunkType(terminal, ChunkType.STATE)) {
+				character[i] = true;
+			}
+		}
+		
+		boolean[] organ = new boolean[terminals.size()];
+		for(int i=terminals.size() - 1; i>=0; i--) {
+			AbstractParseTree terminal = terminals.get(i);
+			Chunk terminalChunk = chunkCollector.getChunk(terminal);
+			if(terminalChunk.isPartOfChunkType(terminal, ChunkType.ORGAN)) {
+				organ[i] = true;
+			}
+			if(terminalChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) && i+1 < terminals.size() && organ[i+1]) {
+				organ[i] = true;
+			}
+		}
+		
+		boolean[] result = new boolean[terminals.size()];
+		for(int i=terminals.size()-1; i>=0; i--)
+			result[i] = character[i] && i+1 < terminals.size() && (organ[i+1] || result[i+1]) && ((i-1 >= 0 && !modifier[i-1]) || i==0);
+		
+		
+		/*boolean seenOtherThanOrganOrConstraint = false;
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
 			result[i] = true;
@@ -45,13 +79,13 @@ public class MyCleanupChunker extends AbstractChunker {
 			if(!terminalChunk.isPartOfChunkType(terminal, ChunkType.ORGAN) && !terminalChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) && 
 					!terminalChunk.isPartOfChunkType(terminal, ChunkType.UNASSIGNED) && !terminalChunk.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE))
 				seenOtherThanOrganOrConstraint = true;
-		}
+		}*/
 		
-		boolean previousOrganOrConstraint = false;
+		/*boolean previousOrganOrConstraint = false;
 		for(int i=terminals.size()-1; i>=0; i--) {
 			AbstractParseTree terminal = terminals.get(i);
 			Chunk terminalChunk = chunkCollector.getChunk(terminal);
-			if(chunkCollector.getChunk(terminal).isOfChunkType(ChunkType.CONSTRAINT)) {
+			if(terminalChunk.isPartOfChunkType(terminal, ChunkType.STATE)) {
 				if(previousOrganOrConstraint) {
 					result[i] = true;
 				}
@@ -59,10 +93,11 @@ public class MyCleanupChunker extends AbstractChunker {
 				previousOrganOrConstraint = terminalChunk.isPartOfChunkType(terminal, ChunkType.ORGAN) || 
 						(terminalChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) && previousOrganOrConstraint);
 			}
-		}
+		}*/
 		
 		return result;
 	}
+
 	
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
@@ -107,7 +142,7 @@ public class MyCleanupChunker extends AbstractChunker {
 			}*/
 			
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) && 
-					previousTerminalConstraint) {
+					previousTerminalConstraint && translateCharacterToConstraintArray[i]) {
 				Chunk chunk = chunkCollector.getChunk(terminal);
 				Chunk characterStateChunk = chunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
 				characterStateChunk.clearProperties();
