@@ -74,7 +74,16 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 				modifiers, lastStructures(processingContext, processingContextState), resetFrom, processingContextState);
 		processingContextState.setLastElements(characters);
 		
-		
+		if(parents.isEmpty()) {
+			processingContextState.getUnassignedCharacters().addAll(characters);
+		} else {
+			for(DescriptionTreatmentElement parent : parents) {
+				for(DescriptionTreatmentElement characterElement : characters) {
+					parent.addTreatmentElement(characterElement);
+				}
+			}
+		}
+		processingContextState.setCommaEosEolAfterLastElements(false);
 		return characters;
 	}
 	
