@@ -59,6 +59,14 @@ public class MyStateChunker extends AbstractChunker {
 				continue;
 			}
 			
+			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && terminal.getTerminalsText().equals("no")) {
+				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);
+				chunkCollector.addChunk(stateChunk);
+				Chunk characterChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
+				characterChunk.setProperty("characterName", "presence");
+				chunkCollector.addChunk(characterChunk);
+			}
+			
 			if(organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
 				String character = null;
 				if(characterKnowledgeBase.contains(terminal.getTerminalsText())) {
