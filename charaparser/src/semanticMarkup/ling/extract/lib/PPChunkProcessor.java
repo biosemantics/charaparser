@@ -128,7 +128,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					if(lastIsStructure)
 						lastElement.appendProperty("constraint", chunk.getTerminalsText());
 					else if(lastIsCharacter)
-						lastElement.appendProperty("modifier", chunk.getTerminalsText());
+						lastElement.appendProperty("constraint", chunk.getTerminalsText());
 				}
 			}
 		}
