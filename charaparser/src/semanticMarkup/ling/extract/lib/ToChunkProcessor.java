@@ -56,7 +56,7 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 			//and create a range charater too
 			String characterStateString = characterStateChunks.get(0).getProperty("characterName");
 			String character = chunk.getTerminalsText();
-			this.createRangeCharacterElement(parents, results, modifiers, character, characterStateString, processingContextState);
+			results.addAll(createRangeCharacterElement(parents, modifiers, character, characterStateString, processingContextState));
 		}
 		processingContextState.setCommaEosEolAfterLastElements(false);
 		return new LinkedList<DescriptionTreatmentElement>();

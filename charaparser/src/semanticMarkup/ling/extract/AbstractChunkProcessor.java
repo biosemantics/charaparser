@@ -589,12 +589,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				String tokensCharacter = null;
 				if(token.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 					tokensCharacter = token.getProperty("characterName");
+				} else {
+					tokensCharacter = characterKnowledgeBase.getCharacter(w);
 				}
-				tokensCharacter = characterKnowledgeBase.getCharacter(w);
 				if(tokensCharacter==null && w.matches("no")){
 					tokensCharacter = "presence";
 				}
-				if(tokensCharacter==null && posKnowledgeBase.isAdverb(w)) {
+				if(tokensCharacter==null && posKnowledgeBase.isAdverb(w) && !modifiers.contains(token)) {
 					//TODO: can be made more efficient, since sometimes character is already given
 					modifiers.add(token);
 				}else if(w.matches(".*?\\d.*") && !w.matches(".*?[a-z].*")){//TODO: 2 times =>2-times?
@@ -764,7 +765,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			return results;
 		}
 		if(characterValue.contains(" to ")){
-			createRangeCharacterElement(parents, results, modifiers, characterValue.replaceAll("punct", ","), characterName, processingContextState); 
+			results.addAll(createRangeCharacterElement(parents, modifiers, characterValue.replaceAll("punct", ","), characterName, processingContextState)); 
 			//add a general statement: coloration="red to brown"
 		}
 		
@@ -942,9 +943,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param cvalue
 	 * @param cname
 	 */
-	protected String createRangeCharacterElement(LinkedList<DescriptionTreatmentElement> parents,
-			LinkedList<DescriptionTreatmentElement> results, List<Chunk> modifiers, String characterValue,
-			String characterName, ProcessingContextState processingContextState) {
+	protected LinkedList<DescriptionTreatmentElement> createRangeCharacterElement(LinkedList<DescriptionTreatmentElement> parents,
+			List<Chunk> modifiers, String characterValue, String characterName, ProcessingContextState processingContextState) {
+		LinkedList<DescriptionTreatmentElement> results = new  LinkedList<DescriptionTreatmentElement>();
 		String modifiersString = "";
 		for(Chunk modifier : modifiers)
 			modifiersString += modifier.getTerminalsText() + " ";
@@ -961,21 +962,18 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String to = getFirstCharacter(tokens[0]);
 		character.setProperty("from", from.replaceAll("-c-", " ")); //a or b to c => b to c
 		character.setProperty("to", to.replaceAll("-c-", " "));
+		if(!modifiersString.isEmpty())
+			character.setProperty("modifier", modifiersString);
 		
-		boolean usedModifiers = false;
+		if(parents.isEmpty())
+			processingContextState.getUnassignedCharacters().add(character);
 		for(DescriptionTreatmentElement parent : parents) {
-			if(modifiersString.trim().length() > 0){
-				character.setProperty("modifier", modifiersString);
-				usedModifiers = true;
-			}
-			results.add(character); //add to results
 			parent.addTreatmentElement(character);
 		}
-		if(usedModifiers){
-			modifiersString = "";
-		}
+		results.add(character); 
+		
 		addClauseModifierConstraint(character, processingContextState);
-		return modifiersString;
+		return results;
 	}
 	
 	/**
@@ -1049,8 +1047,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				}
 				character.setProperty("name", characterName);
 				character.setProperty("value", characterValue);
+				if(!modifierString.isEmpty())
+					character.setProperty("modifier", modifierString);
 			}
-			boolean usedModifiers = false;
+			
+			for(DescriptionTreatmentElement parent : parents) {
+				parent.addTreatmentElement(character);
+			}
+			
+			/*boolean usedModifiers = false;
 			for(DescriptionTreatmentElement parent : parents) {
 				if(modifierString.trim().length() >0) {
 					character.setProperty("modifier", modifierString);
@@ -1060,7 +1065,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 			if(usedModifiers){
 				modifierString = "";
-			}
+			}*/
 			
 			addClauseModifierConstraint(character, processingContextState);
 		}
