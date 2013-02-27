@@ -41,7 +41,7 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 		if(!lastElements.isEmpty()) {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			
-			if(!processingContextState.isCommaEosEolAfterLastElements() && 
+			if(!processingContextState.isCommaEosEolAfterLastElements() && !processingContextState.isUnassignedChunkAfterLastElements() && 
 					(lastElement.isOfDescriptionType(DescriptionType.RELATION) || lastElement.isOfDescriptionType(DescriptionType.CHARACTER))) {
 				lastElement.appendProperty("modifier", chunk.getTerminalsText());
 			} else 

@@ -231,6 +231,11 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			log(LogLevel.DEBUG, "chunk processor for chunkType " + chunkType + " found; proceed using " + chunkProcessor.getDescription() + " ...");
 			result.addAll(chunkProcessor.process(chunk, processingContext));
 		}
+		if(chunkType.equals(ChunkType.UNASSIGNED))
+			processingContext.getCurrentState().setUnassignedChunkAfterLastElements(true);
+		else
+			processingContext.getCurrentState().setUnassignedChunkAfterLastElements(false);
+		
 		return result;
 	}
 	

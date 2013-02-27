@@ -26,6 +26,7 @@ public class ProcessingContextState implements Cloneable {
 	private LinkedList<DescriptionTreatmentElement> lastElements = new LinkedList<DescriptionTreatmentElement>();
 	
 	private boolean commaEosEolAfterLastElements = false; 
+	private boolean unassignedChunkAfterLastElements = false;
 
 	private int structureId;
 	private HashMap<Integer, DescriptionTreatmentElement> structures = new HashMap<Integer, DescriptionTreatmentElement>();
@@ -47,6 +48,18 @@ public class ProcessingContextState implements Cloneable {
 		unassignedCharacter = null;
 		mainSubjectStructure = null;
 	}
+
+	public boolean isUnassignedChunkAfterLastElements() {
+		return unassignedChunkAfterLastElements;
+	}
+
+
+	public void setUnassignedChunkAfterLastElements(
+			boolean unassignedChunkAfterLastElements) {
+		this.unassignedChunkAfterLastElements = unassignedChunkAfterLastElements;
+	}
+
+
 
 	public DescriptionTreatmentElement getStructure(int structureId) {
 		return structures.get(structureId);

@@ -69,6 +69,7 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 		//List<Chunk> modifiers = content.getChunks(ChunkType.MODIFIER);
 		List<Chunk> modifiers = verb.getChunks(ChunkType.MODIFIER);
 		verb.removeChunks(modifiers);
+		modifiers.addAll(processingContextState.getUnassignedModifiers());
 		//verb.removeChunks(modifiers);
 		//String rest = content.replace(object, "").trim();
 		//String relation = rest.substring(rest.indexOf("v["));
