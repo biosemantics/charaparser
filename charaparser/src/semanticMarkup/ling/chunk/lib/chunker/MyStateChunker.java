@@ -11,6 +11,7 @@ import java.util.Set;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
+import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
@@ -29,32 +30,48 @@ public class MyStateChunker extends AbstractChunker {
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
 	private String or = "_or_";
+	private IPOSKnowledgeBase posKnowledgeBase;
 
 	@Inject
 	public MyStateChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase, 
-			ICharacterKnowledgeBase characterKnowledgeBase) {
+			ICharacterKnowledgeBase characterKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, inflector);
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.characterKnowledgeBase = characterKnowledgeBase;
+		this.posKnowledgeBase = posKnowledgeBase;
 	}
 
+	private boolean[] getStateNotModifier(List<AbstractParseTree> terminals) {
+		boolean[] result = new boolean[terminals.size()];
+		for(int i=0; i<terminals.size(); i++) {
+			AbstractParseTree terminal = terminals.get(i);
+			
+			boolean validCharacterState = organStateKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.contains(terminal.getTerminalsText());
+			boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
+					organStateKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.contains(terminal.getTerminalsText());
+			boolean stateNotModifier = validCharacterState && !adverbCharacterState;
+			result[i] = stateNotModifier;
+		}
+		return result;
+	}
+	
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		List<Chunk> modifierChunks = new ArrayList<Chunk>();
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		
-		for(AbstractParseTree terminal : terminals)  { 			
+		boolean stateNotModifier[] = getStateNotModifier(terminals);
+		
+		for(int i=0; i<terminals.size(); i++)  { 			
+			AbstractParseTree terminal = terminals.get(i);
 			Chunk chunk = chunkCollector.getChunk(terminal);
 			
 			if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE) || chunk.isOfChunkType(ChunkType.TO_PHRASE) || chunk.isOfChunkType(ChunkType.CONSTRAINT)) 
 				continue;
 			
-			boolean stateNotModifier = organStateKnowledgeBase.isState(terminal.getTerminalsText())
-					&& characterKnowledgeBase.contains(terminal.getTerminalsText());
-			
-			if(chunk.isOfChunkType(ChunkType.MODIFIER) && !stateNotModifier) {
+			if(chunk.isOfChunkType(ChunkType.MODIFIER) && !stateNotModifier[i]) {
 				modifierChunks.add(chunk);
 				continue;
 			}
