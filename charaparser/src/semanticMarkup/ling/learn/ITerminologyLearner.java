@@ -78,5 +78,10 @@ public interface ITerminologyLearner {
 	 * @return <term, category set> map used in term_category table
 	 */
 	public Map<String, Set<String>> getTermCategories();
+
+	
+	public Set<String> getTags();
+	
+	public Set<String> getModifiers();
 	
 }

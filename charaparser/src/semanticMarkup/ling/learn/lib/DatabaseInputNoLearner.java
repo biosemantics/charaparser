@@ -36,12 +36,14 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 		this.adjnounsent = readAdjNounSent();
 		this.sentenceTags = readSentenceTags(treatments);
 		this.bracketTags = readBracketTags(treatments);
-		this.wordRoleTags = readWordRoleTags(); //these are in the previous version only given by the users in GUI not by the algorithm autonomously
+		this.wordRoleTags = readWordRoleTags(); 
 		this.wordSources = readWordToSourcesMap();
 		this.roleToWords = readRoleToWords();
 		this.wordsToRoles = readWordsToRoles();
 		this.heuristicNouns = readHeuristicNouns();
 		this.termCategories = readTermCategories();
+		this.tags = readTags();
+		this.modifiers = readModifiers();
 	}
 
 }

@@ -42,6 +42,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Map<String, Set<String>> wordsToRoles;
 	protected Map<String, String> heuristicNouns;
 	protected Map<String, Set<String>> termCategories;
+	protected Set<String> tags;
+	protected Set<String> modifiers;
 	
 	private Connection connection;
 	private String temporaryPath;
@@ -110,10 +112,44 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			this.wordsToRoles = readWordsToRoles();
 			this.heuristicNouns = readHeuristicNouns();
 			this.termCategories = readTermCategories();
+			this.tags = readTags();
+			this.modifiers = readModifiers();
 			
 		}catch(Exception e) {
 			log(LogLevel.ERROR, e);
 		}
+	}
+
+
+	protected Set<String> readModifiers() {
+		Set<String> modifiers = new HashSet<String>();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("select modifier from " + this.databasePrefix + "_sentence");
+			while(resultSet.next()) {
+				String modifier = resultSet.getString("modifier");
+				modifiers.add(modifier);
+			}
+		} catch(Exception e) {
+			log(LogLevel.ERROR, "sentence table not found");
+		}
+		return modifiers;
+	}
+
+
+	protected Set<String> readTags() {
+		Set<String> tags = new HashSet<String>();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("select tag from " + this.databasePrefix + "_sentence");
+			while(resultSet.next()) {
+				String tag = resultSet.getString("tag");
+				tags.add(tag);
+			}
+		} catch(Exception e) {
+			log(LogLevel.ERROR, "sentence table not found");
+		}
+		return tags;
 	}
 
 
@@ -515,5 +551,17 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	@Override
 	public Map<String, Set<String>> getTermCategories() {
 		return this.termCategories;
+	}
+
+
+	@Override
+	public Set<String> getTags() {
+		return this.tags;
+	}
+
+
+	@Override
+	public Set<String> getModifiers() {
+		return this.modifiers;
 	}
 }

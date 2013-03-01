@@ -396,7 +396,12 @@ public class MyCleanupChunker extends AbstractChunker {
 			boolean hasChanged = false;
 			for(Chunk characterStateChunk : characterStateChunks) {
 				String character = characterStateChunk.getProperty("characterName");
-				if(character!=null && character.contains("position")) {
+				String characterState = characterStateChunk.getChunkBFS(ChunkType.STATE).getTerminalsText();
+				if(character!=null && 
+						((character.contains("position") || character.contains("insertion") || character.contains("structure_type") && !characterState.equals("low")) ||
+								this.terminologyLearner.getTags().contains(characterState) ||
+								this.terminologyLearner.getModifiers().contains(characterState))
+						) {
 					characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));
 					characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
 					characterStateChunk.clearProperties();
