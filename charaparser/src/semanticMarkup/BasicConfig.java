@@ -45,6 +45,7 @@ import semanticMarkup.ling.extract.IChunkProcessor;
 import semanticMarkup.ling.extract.IChunkProcessorProvider;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.extract.IFirstChunkProcessor;
+import semanticMarkup.ling.extract.ILastChunkProcessor;
 import semanticMarkup.ling.extract.lib.AreaChunkProcessor;
 import semanticMarkup.ling.extract.lib.BracketedChunkProcessor;
 import semanticMarkup.ling.extract.lib.ChromChunkProcessor;
@@ -162,6 +163,7 @@ public class BasicConfig extends AbstractModule {
 		
 		bind(IDescriptionExtractor.class).to(SomeDescriptionExtractor.class).in(Singleton.class);
 		bind(IFirstChunkProcessor.class).to(SomeFirstChunkProcessor.class).in(Singleton.class);
+		bind(ILastChunkProcessor.class).to(EosEolChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessorProvider.class).to(ChunkProcessorProvider.class).in(Singleton.class);
 		//ChunkProcessorProvider
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Area")).to(AreaChunkProcessor.class).in(Singleton.class);
