@@ -249,6 +249,8 @@ public class Chunk implements Cloneable {
 	}
 	
 	public boolean contains(Chunk chunk) {
+		if(this.equals(chunk))
+			return true;
 		if(chunks.contains(chunk))
 			return true;
 		else {
@@ -258,6 +260,86 @@ public class Chunk implements Cloneable {
 			}
 		}
 		return false;
+	}
+	
+	public Chunk getMaxDepthChunkThatCoinsOnlyTerminal(AbstractParseTree terminal) {
+		List<AbstractParseTree> terminals = this.getTerminals();
+		if(terminals.size()==1 && terminals.contains(terminal)) {
+			return this;
+		} else if(terminals.contains(terminal)) {
+			for(Chunk chunk : this.chunks) {
+				Chunk maxChunk = chunk.getMaxDepthChunkThatCoinsOnlyTerminal(terminal);
+				if(maxChunk!=null)
+					return maxChunk;
+			}
+		}
+		return null;
+	}
+	
+	public Chunk getMaxDepthChunkThatCoinsAButNotB(Collection<AbstractParseTree> terminalsA, Collection<AbstractParseTree> terminalsB) {
+		if(this.containsAll(terminalsA) && !this.containsAny(terminalsB)) {
+			return this;
+		} else {
+			for(Chunk child : this.getChunks()) {
+				Chunk result = child.getMaxDepthChunkThatCoinsAButNotB(terminalsA, terminalsB);
+				if(result != null)
+					return result;
+			}
+		}
+		return null;
+	}
+	
+	public boolean containsAll(Collection<AbstractParseTree> terminals) {
+		boolean result = true;
+		for(AbstractParseTree terminal : terminals) {
+			result &= this.contains(terminal);
+			if(!result)
+				return result;
+		}
+		return result;
+	}
+	
+	public boolean containsAny(Collection<AbstractParseTree> terminals) {
+		boolean result = false;
+		for(AbstractParseTree terminal : terminals) {
+			result |= this.contains(terminal);
+			if(result)
+				return result;
+		}
+		return result;
+	}
+	
+	public Chunk getParentChunk(Chunk chunk) {
+		if(this.containsAsChild(chunk))
+			return this;
+		else
+			for(Chunk child : chunks) {
+				Chunk parentChunk = child.getParentChunk(chunk);
+				if(parentChunk != null)
+					return parentChunk;
+			}
+		return null;
+	}
+	
+	public Chunk getCommonParent(Chunk chunkA, Chunk chunkB) {
+		if(chunkA.contains(chunkB)) {
+			return chunkA;
+		}
+		if(chunkB.contains(chunkA)) {
+			return chunkB;
+		}
+		Chunk parentA = this.getParentChunk(chunkA);
+		Chunk result = this.getCommonParent(parentA, chunkB);
+		if(result != null)
+			return result;
+		
+		Chunk parentB = this.getParentChunk(chunkB);
+		result = this.getCommonParent(parentA, chunkB);
+		if(result != null)
+			return result;
+		
+		result = this.getCommonParent(parentA, parentB);
+		return result;
 	}
 	
 	public boolean containsAsChild(Chunk chunk) {
@@ -298,6 +380,14 @@ public class Chunk implements Cloneable {
 			}
 		}
 		return result;
+	}
+	
+	public Chunk getChildChunkOfTerminal(AbstractParseTree ofTerminal) {
+		for(Chunk chunk : chunks) {
+			if(chunk.contains(ofTerminal))
+				return chunk;
+		}
+		return null;
 	}
 
 	public void addAndReplaceChunks(Chunk chunk) {

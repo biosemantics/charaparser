@@ -1,6 +1,7 @@
 package semanticMarkup.ling.chunk;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -52,7 +53,7 @@ public abstract class AbstractChunker implements IChunker {
 	}
 	
 	
-	protected IParseTree collapseTwoSubtrees(IParseTree root, POS collapsePOS, IParseTree first, POS firstPOS, IParseTree second, POS secondPOS, ChunkCollector chunkCollector) {	
+	protected AbstractParseTree collapseTwoSubtrees(AbstractParseTree root, POS collapsePOS, IParseTree first, POS firstPOS, IParseTree second, POS secondPOS, ChunkCollector chunkCollector) {	
 		//terminalIds may change due to rearrangement in parseTree. Hence chunks need to be saved and reassigned.
 		Set<Chunk> savedChunks = new HashSet<Chunk>();
 		for(AbstractParseTree terminal : root.getTerminals()) {
@@ -75,53 +76,94 @@ public abstract class AbstractChunker implements IChunker {
 		
 		return root;
 	}
-	
-	protected Chunk createTwoValuedChunk(ChunkType chunkType, IParseTree root, ChunkCollector chunkCollector) {
-		//root.prettyPrint();
-		
-		Chunk functionChunk = null;
-		Chunk objectChunk = null;
+
+
+	protected void createTwoValuedChunk(ChunkType chunkType, AbstractParseTree root, ChunkCollector chunkCollector) {
+		Chunk possibleParentChunk = chunkCollector.getChunk(root.getTerminals().get(0));
+		boolean parentExists = possibleParentChunk.containsAll(root.getTerminals());
+
+		List<AbstractParseTree> functionTerminals = new ArrayList<AbstractParseTree>();
+		List<AbstractParseTree> objectTerminals = new ArrayList<AbstractParseTree>();
+		ChunkType functionChunkType = null;
 		for(AbstractParseTree child : root.getChildren()) {
-			if(child.getPOS().equals(POS.PREPOSITION)) {
-				LinkedHashSet<Chunk> terminalChunks = new LinkedHashSet<Chunk>();
-				for(AbstractParseTree terminal : child.getTerminals()) {
-					terminalChunks.add(chunkCollector.getChunk(terminal));
+			if(!child.getTerminalsText().equals("S")) {
+				if(child.getPOS().equals(POS.PREPOSITION)) {
+					functionTerminals.addAll(child.getTerminals());
+					functionChunkType = ChunkType.PREPOSITION;
 				}
-				functionChunk = new Chunk(ChunkType.PREPOSITION, terminalChunks);
-				chunkCollector.addChunk(functionChunk);
-			}
-			if(child.getPOS().equals(POS.VERB)) {
-				LinkedHashSet<Chunk> terminalChunks = new LinkedHashSet<Chunk>();
-				for(AbstractParseTree terminal : child.getTerminals()) {
-					terminalChunks.add(chunkCollector.getChunk(terminal));
+				if(child.getPOS().equals(POS.VERB)) {
+					functionTerminals.addAll(child.getTerminals());
+					functionChunkType = ChunkType.VERB;
 				}
-				functionChunk = new Chunk(ChunkType.VERB, terminalChunks);
-				chunkCollector.addChunk(functionChunk);
-			}
-			if(child.getPOS().equals(POS.OBJECT)) {
-				createOrganChunk(child, chunkCollector);
-				LinkedHashSet<Chunk> terminalChunks = new LinkedHashSet<Chunk>();
-				for(AbstractParseTree terminal : child.getTerminals()) {
-					terminalChunks.add(chunkCollector.getChunk(terminal));
+				if(child.getPOS().equals(POS.OBJECT)) {
+					createOrganChunk(child, chunkCollector);
+					objectTerminals.addAll(child.getTerminals());
 				}
-				objectChunk = new Chunk(ChunkType.OBJECT, terminalChunks);
-				chunkCollector.addChunk(objectChunk);
-				break;
 			}
 		}
-		
-		Chunk chunk = null;
-		if(functionChunk != null && objectChunk != null) {
+		if(parentExists) {
+			Chunk maxFunctionChunk = possibleParentChunk.getMaxDepthChunkThatCoinsAButNotB(functionTerminals, objectTerminals);
+			Chunk maxObjectChunk =  possibleParentChunk.getMaxDepthChunkThatCoinsAButNotB(objectTerminals, functionTerminals);
+			//Chunk maxParentChunkFunction = possibleParentChunk.getParentChunk(maxFunctionChunk);
+			//Chunk maxParentChunkObject = possibleParentChunk.getParentChunk(maxObjectChunk);
+			//Chunk maxCommonParent = possibleParentChunk.getCommonParent(maxParentChunkFunction, maxParentChunkObject);
+			
+			Chunk oldFunctionChunk = null;
+			LinkedHashSet<Chunk> functionChunks = new LinkedHashSet<Chunk>();
+			if(maxFunctionChunk != null) {
+				oldFunctionChunk = maxFunctionChunk;
+				//Chunk functionContent = (Chunk)maxFunctionChunk.clone();
+				functionChunks.add(maxFunctionChunk);
+			} else {
+				oldFunctionChunk = chunkCollector.getChunk(functionTerminals.get(0));
+				functionChunks.addAll(functionTerminals);
+			}
+			Chunk functionChunk = new Chunk(functionChunkType, functionChunks);
+
+			LinkedHashSet<Chunk> objectChunks = new LinkedHashSet<Chunk>();
+			if(maxObjectChunk != null)
+				objectChunks.add(maxObjectChunk);
+			else {
+				for(AbstractParseTree terminal : objectTerminals) {
+					objectChunks.add(possibleParentChunk.getMaxDepthChunkThatCoinsOnlyTerminal(terminal));
+				}
+			}
+			Chunk objectChunk = new Chunk(ChunkType.OBJECT, objectChunks);
+			
+			Chunk twoValuedChunk = new Chunk(chunkType);
+			Chunk parentChunk = possibleParentChunk.getParentChunk(oldFunctionChunk);
+			LinkedHashSet<Chunk> parentChunkChildren = new LinkedHashSet<Chunk>();
+			for(Chunk chunk : parentChunk.getChunks()) {
+				if(!chunk.equals(oldFunctionChunk) && !chunk.containsAny(objectTerminals))
+					parentChunkChildren.add(chunk);
+				else if(chunk.equals(oldFunctionChunk))
+					parentChunkChildren.add(twoValuedChunk);
+			}
+			parentChunk.setChunks(parentChunkChildren);
+			LinkedHashSet<Chunk> twoValuedChildChunks = new LinkedHashSet<Chunk>();
+			twoValuedChildChunks.add(functionChunk);
+			twoValuedChildChunks.add(objectChunk);
+			twoValuedChunk.setChunks(twoValuedChildChunks);
+			chunkCollector.addChunk(possibleParentChunk);
+			
+		} else {
+			LinkedHashSet<Chunk> functionChunks = new LinkedHashSet<Chunk>();
+			for(AbstractParseTree function : functionTerminals) 
+				functionChunks.add(chunkCollector.getChunk(function));
+			Chunk functionChunk = new Chunk(functionChunkType, functionChunks);
+			LinkedHashSet<Chunk> objectChunks = new LinkedHashSet<Chunk>();
+			for(AbstractParseTree object : objectTerminals) 
+				objectChunks.add(chunkCollector.getChunk(object));
+			Chunk objectChunk = new Chunk(ChunkType.OBJECT, objectChunks);
+			
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 			childChunks.add(functionChunk);
 			childChunks.add(objectChunk);
-			chunk = new Chunk(chunkType, childChunks);
+			Chunk twoValuedChunk = new Chunk(chunkType, childChunks);
+			chunkCollector.addChunk(twoValuedChunk);
 		}
-		
-		return chunk;
 	}
-	
-	
+
 	private void createOrganChunk(AbstractParseTree child, ChunkCollector chunkCollector) {
 		if(!chunkCollector.containsPartOfChunkType(child.getChildren(), ChunkType.ORGAN)) {
 			Set<POS> nounPOS = new HashSet<POS>();

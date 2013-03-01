@@ -91,8 +91,8 @@ public class VBChunker extends AbstractChunker {
 		//do extraction here
 		//print(VP, child, "", chaso);
 
-		IParseTree collapseRoot = this.collapseTwoSubtrees(vp, POS.COLLAPSED_VB, vb, POS.VERB, firstNPTree, POS.OBJECT, chunkCollector);
-		chunkCollector.addChunk(createTwoValuedChunk(ChunkType.VP, collapseRoot, chunkCollector));
+		AbstractParseTree collapseRoot = this.collapseTwoSubtrees(vp, POS.COLLAPSED_VB, vb, POS.VERB, firstNPTree, POS.OBJECT, chunkCollector);
+		createTwoValuedChunk(ChunkType.VP, collapseRoot, chunkCollector);
 	}
 	
 	private List<AbstractParseTree> getVBs(IParseTree parseTree) {

@@ -92,10 +92,10 @@ public class PPINChunker extends AbstractChunker {
 				//log(LogLevel.DEBUG, "in " + in);
 				//log(LogLevel.DEBUG, "firstNP " + firstNPTree);
 				//log(LogLevel.DEBUG, "collapse two subtrees " + in.getTerminalsText() + " "  + firstNPTree.getTerminalsText());
-				IParseTree collapsedTree = this.collapseTwoSubtrees(pp, POS.COLLAPSED_PPIN, in, POS.PREPOSITION, firstNPTree, POS.OBJECT, chunkCollector);
+				AbstractParseTree collapsedTree = this.collapseTwoSubtrees(pp, POS.COLLAPSED_PPIN, in, POS.PREPOSITION, firstNPTree, POS.OBJECT, chunkCollector);
 				//parseTree.prettyPrint();
 				
-				chunkCollector.addChunk(this.createTwoValuedChunk(ChunkType.PP, collapsedTree, chunkCollector));
+				createTwoValuedChunk(ChunkType.PP, collapsedTree, chunkCollector);
 			}
 		}
 	}
