@@ -44,6 +44,7 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 		this.termCategories = readTermCategories();
 		this.tags = readTags();
 		this.modifiers = readModifiers();
+		this.categories = readCategories();
 	}
 
 }

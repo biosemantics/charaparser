@@ -16,7 +16,8 @@ public class CharaparserChunkerChain extends ChunkerChain {
 			@Named("ModifierChunker") IChunker modifierChunker,
 			@Named("NumericalChunker") IChunker numericalChunker,
 			@Named("NPListChunker") IChunker npChunker, 
-			@Named("PPListChunker") IChunker ppListChunker, 
+			@Named("PPListChunker") IChunker ppListChunker,
+			@Named("CharacterNameChunker") IChunker characterNameChunker,
 			@Named("PPINChunker") IChunker ppINChunker,
 			@Named("VBChunker") IChunker vbChunker,
 			@Named("ThatChunker") IChunker thatChunker, 
@@ -41,6 +42,7 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(stateChunker);
 		this.add(numericalChunker);
 		this.add(npChunker);
+		this.add(characterNameChunker);
 		this.add(vbChunker);
 		this.add(ppINChunker);
 		this.add(ppListChunker);

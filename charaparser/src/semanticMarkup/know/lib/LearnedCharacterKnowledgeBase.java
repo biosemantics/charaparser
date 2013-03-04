@@ -27,7 +27,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 	
 	@Override
-	public String getCharacter(String word) {
+	public String getCharacterName(String word) {
 		if (word.trim().length() == 0)
 			return null;
 		if(this.addedCharacters.containsKey(word))
@@ -62,7 +62,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 	
 	
-	public String lookup(String word) {
+	private String lookup(String word) {
 		StringBuilder categoriesStringBuilder = new StringBuilder();
 
 		// check glossarytable
@@ -102,13 +102,20 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 
 	@Override
-	public boolean contains(String word) {
-		return this.getCharacter(word)!=null;
+	public boolean containsCharacterState(String word) {
+		return this.getCharacterName(word)!=null;
 	}
 
 	@Override
-	public void addCharacter(String word, String character) {
+	public void addCharacterStateToName(String word, String character) {
 		this.addedCharacters.put(word, character);
+	}
+
+	@Override
+	public boolean containsCharacterName(String characterName) {
+		Set<String> glossaryCategories = glossary.getCategories();
+		Set<String> learnedCategories = terminologyLearner.getCategories();
+		return glossaryCategories.contains(characterName) || learnedCategories.contains(characterName);
 	}
 
 }

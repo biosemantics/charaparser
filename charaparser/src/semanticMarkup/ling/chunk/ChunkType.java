@@ -81,6 +81,7 @@ public enum ChunkType {
 	
 							// e.g  c[..] is used too, however not certain if can both be used similarly with CHARACTER see ChunkedSentence
 	CHARACTER_STATE,		// e.g. a[...] .. contains a CHARACTER chunk, + a number of STATE chunks?! aka ChunkSimpleCharacterState
+	CHARACTER_NAME, 		// e.g. sometimes in text character names are explicitly specified e.g. deep in profile
 	COMPARATIVE_VALUE,		// 0.5-1 times a[CHARACTER[width]]
 	
 	TO_PHRASE,

@@ -11,5 +11,7 @@ public interface IGlossary {
 	public boolean contains(String word);
 	
 	public Set<String> getWordsNotInCategories(Set<String> categories);
+
+	public Set<String> getCategories();
 	
 }

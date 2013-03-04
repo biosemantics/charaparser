@@ -2,10 +2,12 @@ package semanticMarkup.know;
 
 public interface ICharacterKnowledgeBase {
 
-	public String getCharacter(String word);
+	public String getCharacterName(String characterState);
 	
-	public boolean contains(String word);
+	public boolean containsCharacterState(String characterState);
 
-	public void addCharacter(String word, String character);
+	public void addCharacterStateToName(String characterState, String characterName);
+
+	public boolean containsCharacterName(String terminalsText);
 	
 }

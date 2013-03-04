@@ -590,7 +590,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				if(token.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 					tokensCharacter = token.getProperty("characterName");
 				} else {
-					tokensCharacter = characterKnowledgeBase.getCharacter(w);
+					tokensCharacter = characterKnowledgeBase.getCharacterName(w);
 				}
 				if(tokensCharacter==null && w.matches("no")){
 					tokensCharacter = "presence";
@@ -984,7 +984,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String[] tokens = character.trim().split("\\s+");
 		String result = "";
 		for(int i = 0; i < tokens.length; i++){
-			if(characterKnowledgeBase.getCharacter(tokens[i]) != null){
+			if(characterKnowledgeBase.getCharacterName(tokens[i]) != null){
 				 result += tokens[i]+" ";
 			}
 		}

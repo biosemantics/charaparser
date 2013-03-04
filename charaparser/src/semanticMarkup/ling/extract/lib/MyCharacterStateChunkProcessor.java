@@ -102,8 +102,8 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			String newState = equalCharacters.get(characterState);
 			if(newState != null){
 				characterStateString = newState;
-				if(characterKnowledgeBase.contains(characterStateString))
-					character = characterKnowledgeBase.getCharacter(characterStateString);
+				if(characterKnowledgeBase.containsCharacterState(characterStateString))
+					character = characterKnowledgeBase.getCharacterName(characterStateString);
 			}
 			if(character.equals("character") && modifiers.size() == 0) {
 				//high relief: character=relief, reset the character of "high" to "relief"

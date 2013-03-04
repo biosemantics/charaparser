@@ -283,7 +283,7 @@ public class CleanupChunker extends AbstractChunker {
 						return  pointer;
 					}
 				} else {
-					String character = this.characterKnowledgeBase.getCharacter(terminalsText);
+					String character = this.characterKnowledgeBase.getCharacterName(terminalsText);
 					if(!foundState && character != null){
 						AbstractParseTree characterTerminal = parseTreeFactory.create();
 						characterTerminal.setTerminalsText(character);
@@ -358,7 +358,7 @@ public class CleanupChunker extends AbstractChunker {
 									
 									if(savedCharacterState!=null) {
 										for(Chunk beforeOrganChunk : beforeOrgan) {
-											String characterFound = characterKnowledgeBase.getCharacter(beforeOrganChunk.getTerminalsText());
+											String characterFound = characterKnowledgeBase.getCharacterName(beforeOrganChunk.getTerminalsText());
 											if(characterFound!=null){
 												LinkedHashSet<Chunk> characterStateChildren = new LinkedHashSet<Chunk>();
 												AbstractParseTree characterTerminal = parseTreeFactory.create();
@@ -384,7 +384,7 @@ public class CleanupChunker extends AbstractChunker {
 									chunkCollector.addChunk(savedCharacterState);
 									return pointer;
 								}
-								String lookForwardCharacter =  characterKnowledgeBase.getCharacter(lookForwardTerminalText);
+								String lookForwardCharacter =  characterKnowledgeBase.getCharacterName(lookForwardTerminalText);
 								if((!findChunk && !findOrgan) && (
 										chunkCollector.isPartOfChunkType(lookForwardTerminal, ChunkType.NP_LIST) ||
 										chunkCollector.isPartOfChunkType(lookForwardTerminal, ChunkType.TO) ||
@@ -650,7 +650,7 @@ public class CleanupChunker extends AbstractChunker {
 			}
 			String character = null;
 			if(!characterWord.matches("("+moreWords+")")){
-				character =  characterKnowledgeBase.getCharacter(characterWord);
+				character =  characterKnowledgeBase.getCharacterName(characterWord);
 			}
 			
 			//String beforethan = token.substring(0, token.indexOf(" than "));

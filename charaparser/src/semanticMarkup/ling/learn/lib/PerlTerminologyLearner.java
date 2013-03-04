@@ -44,6 +44,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Map<String, Set<String>> termCategories;
 	protected Set<String> tags;
 	protected Set<String> modifiers;
+	protected Set<String> categories;
 	
 	private Connection connection;
 	private String temporaryPath;
@@ -112,6 +113,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			this.wordsToRoles = readWordsToRoles();
 			this.heuristicNouns = readHeuristicNouns();
 			this.termCategories = readTermCategories();
+			this.categories = readCategories();
 			this.tags = readTags();
 			this.modifiers = readModifiers();
 			
@@ -169,6 +171,22 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			log(LogLevel.ERROR, "term_category table not found");
 		}
 		return termCategories;
+	}
+	
+
+	protected Set<String> readCategories() {
+		Set<String> categories = new HashSet<String>();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("select category from " + this.databasePrefix + "_term_category");
+			while(resultSet.next()) {
+				String category = resultSet.getString("category");
+				categories.add(category);
+			}
+		} catch (Exception e) {
+			log(LogLevel.ERROR, "term_category table not found");
+		}
+		return categories;
 	}
 
 
@@ -563,5 +581,11 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	@Override
 	public Set<String> getModifiers() {
 		return this.modifiers;
+	}
+
+
+	@Override
+	public Set<String> getCategories() {
+		return this.categories;
 	}
 }

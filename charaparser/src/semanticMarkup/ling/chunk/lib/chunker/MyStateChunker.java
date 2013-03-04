@@ -48,9 +48,9 @@ public class MyStateChunker extends AbstractChunker {
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
 			
-			boolean validCharacterState = organStateKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.contains(terminal.getTerminalsText());
+			boolean validCharacterState = organStateKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 			boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
-					organStateKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.contains(terminal.getTerminalsText());
+					organStateKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 			boolean stateNotModifier = validCharacterState && !adverbCharacterState;
 			result[i] = stateNotModifier;
 		}
@@ -86,8 +86,8 @@ public class MyStateChunker extends AbstractChunker {
 			
 			if(organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
 				String character = null;
-				if(characterKnowledgeBase.contains(terminal.getTerminalsText())) {
-					character = characterKnowledgeBase.getCharacter(terminal.getTerminalsText());
+				if(characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText())) {
+					character = characterKnowledgeBase.getCharacterName(terminal.getTerminalsText());
 				}
 				
 				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);

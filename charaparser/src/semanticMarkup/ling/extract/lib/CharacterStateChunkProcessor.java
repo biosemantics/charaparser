@@ -68,7 +68,7 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 		String newState = equalCharacters.get(state);
 		if(newState != null){
 			state = newState;
-			String newCharacter = characterKnowledgeBase.getCharacter(state);
+			String newCharacter = characterKnowledgeBase.getCharacterName(state);
 			if(newCharacter != null) {
 				character = newCharacter;
 			}

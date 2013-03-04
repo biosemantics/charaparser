@@ -83,5 +83,7 @@ public interface ITerminologyLearner {
 	public Set<String> getTags();
 	
 	public Set<String> getModifiers();
+
+	public Set<String> getCategories();
 	
 }
