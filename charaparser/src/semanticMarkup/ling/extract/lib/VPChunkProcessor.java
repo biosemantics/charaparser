@@ -81,6 +81,14 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 			results.addAll(toStructures);
 		
 			String relation = verb.getTerminalsText();
+			for(Chunk chunk : object.getChunks()) {
+				if(chunk.isOfChunkType(ChunkType.UNASSIGNED)) {
+					relation += " " + chunk.getTerminalsText();
+				} else {
+					break;
+				}
+			}
+			
 			results.addAll(this.createRelationElements(relation, processingContextState.getSubjects(), toStructures, modifiers, false, processingContextState));
 		}
 		return results;
