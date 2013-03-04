@@ -237,6 +237,8 @@ public abstract class AbstractChunker implements IChunker {
 		}
 		
 		for(AbstractParseTree child : parseTree.getChildren()) {
+			if(child.getTerminalsText().matches("\\p{Punct}"))
+				break;
 			LinkedList<AbstractParseTree> childResult = new LinkedList<AbstractParseTree>();
 			after = getFirstTree(child, afterThisTree, chunkCollector, childResult, after);
 			if(!childResult.isEmpty()) {
