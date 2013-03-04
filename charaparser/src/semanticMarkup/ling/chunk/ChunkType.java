@@ -53,6 +53,7 @@ public enum ChunkType {
 	SBAR,					// text only
 	NUMERICALS,				// text only
 	OR,						// text only
+	AND,					
 	COUNT,					// text only
 	BASED_COUNT,			// text only
 	

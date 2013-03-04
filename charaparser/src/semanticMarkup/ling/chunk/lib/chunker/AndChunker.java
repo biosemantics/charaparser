@@ -5,6 +5,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
@@ -16,13 +19,10 @@ import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-public class OrChunker extends AbstractChunker {
+public class AndChunker extends AbstractChunker {
 
 	@Inject
-	public OrChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
+	public AndChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary, terminologyLearner, inflector);
@@ -34,8 +34,8 @@ public class OrChunker extends AbstractChunker {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		for(int i=0; i<terminals.size(); i++)  {
 			AbstractParseTree terminal = terminals.get(i);
-			if(!chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().equals("or")) {
-				chunkCollector.addChunk(new Chunk(ChunkType.OR, terminal));
+			if(!chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().equals("and")) {
+				chunkCollector.addChunk(new Chunk(ChunkType.AND, terminal));
 				if(previousChunk != null && previousChunk.isOfChunkType(ChunkType.PP)) {
 					connectOrganWithPP(i, previousChunk, terminals, chunkCollector);
 				}
@@ -43,9 +43,8 @@ public class OrChunker extends AbstractChunker {
 			previousChunk = chunkCollector.getChunk(terminal);
 		}
 	}
-
+	
 	private void connectOrganWithPP(int i,  Chunk ppChunk, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
-		
 		boolean foundOrgan = false;
 		LinkedHashSet<Chunk> collectedChunks = new LinkedHashSet<Chunk>();
 		for(; i<terminals.size(); i++) {
@@ -57,10 +56,10 @@ public class OrChunker extends AbstractChunker {
 				if(lookAheadChunk.isOfChunkType(ChunkType.COMMA)) {
 					collectedChunks.add(lookAheadChunk);
 				}
-				if(lookAheadChunk.isOfChunkType(ChunkType.OR)) {
+				if(lookAheadChunk.isOfChunkType(ChunkType.AND)) {
 					collectedChunks.add(lookAheadChunk);
 				}
-				if(lookAheadChunk.isOfChunkType(ChunkType.AND)) {
+				if(lookAheadChunk.isOfChunkType(ChunkType.OR)) {
 					collectedChunks.add(lookAheadChunk);
 				}
 				if(lookAheadChunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {

@@ -75,7 +75,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			}
 			
 			Set<Chunk> objects = new HashSet<Chunk>();
-			if(object.containsChildOfChunkType(ChunkType.OR)) {
+			if(object.containsChildOfChunkType(ChunkType.OR) || object.containsChildOfChunkType(ChunkType.AND) || object.containsChildOfChunkType(ChunkType.NP_LIST)) {
 				objects = splitObject(object);
 			} else {
 				objects.add(object);
@@ -140,8 +140,12 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		Set<Chunk> objectChunks = new HashSet<Chunk>();
 		LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 		boolean collectedOrgan = false;
+		
+		if(object.containsChildOfChunkType(ChunkType.NP_LIST))
+			object = object.getChildChunk(ChunkType.NP_LIST);
+		
 		for(Chunk chunk : object.getChunks()) {
-			if(chunk.isOfChunkType(ChunkType.OR) && collectedOrgan) {
+			if((chunk.isOfChunkType(ChunkType.OR) || chunk.isOfChunkType(ChunkType.AND) || chunk.getTerminalsText().equals("and") || chunk.getTerminalsText().equals("or")) && collectedOrgan) {
 				Chunk objectChunk = new Chunk(ChunkType.OBJECT, childChunks);
 				objectChunks.add(objectChunk);				
 				childChunks.clear();
