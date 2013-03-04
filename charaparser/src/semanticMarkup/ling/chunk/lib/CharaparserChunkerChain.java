@@ -31,6 +31,7 @@ public class CharaparserChunkerChain extends ChunkerChain {
 			@Named("OrganRecoverChunker") IChunker organRecoverChunker,
 			@Named("CleanupChunker") IChunker cleanupChunker,
 			@Named("OrChunker") IChunker orChunker,
+			@Named("AndChunker") IChunker andChunker,
 			@Named("PunctuationChunker") IChunker punctuationChunker,
 			@Named("SpecificPPChunker") IChunker specificPPChunker
 			) {
@@ -55,6 +56,7 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(conjunctedOrgansRecoverChunker);
 		this.add(organRecoverChunker);
 		this.add(orChunker);
+		this.add(andChunker);
 		this.add(cleanupChunker);
 	}
 }

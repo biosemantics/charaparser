@@ -19,7 +19,9 @@ import semanticMarkup.know.lib.WordNetPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.chunk.IChunker;
 import semanticMarkup.ling.chunk.lib.CharaparserChunkerChain;
+import semanticMarkup.ling.chunk.lib.chunker.AndChunker;
 import semanticMarkup.ling.chunk.lib.chunker.CharacterListChunker;
+import semanticMarkup.ling.chunk.lib.chunker.CharacterNameChunker;
 import semanticMarkup.ling.chunk.lib.chunker.ConjunctedOrgansRecoverChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyCleanupChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyModifierChunker;
@@ -48,6 +50,7 @@ import semanticMarkup.ling.extract.IFirstChunkProcessor;
 import semanticMarkup.ling.extract.ILastChunkProcessor;
 import semanticMarkup.ling.extract.lib.AreaChunkProcessor;
 import semanticMarkup.ling.extract.lib.BracketedChunkProcessor;
+import semanticMarkup.ling.extract.lib.CharacterNameChunkProcessor;
 import semanticMarkup.ling.extract.lib.ChromChunkProcessor;
 import semanticMarkup.ling.extract.lib.ChunkProcessorProvider;
 import semanticMarkup.ling.extract.lib.CommaChunkProcessor;
@@ -154,9 +157,11 @@ public class BasicConfig extends AbstractModule {
 		bind(IChunker.class).annotatedWith(Names.named("ModifierChunker")).to(MyModifierChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("NumericalChunker")).to(NumericalChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("OrChunker")).to(OrChunker.class).in(Singleton.class);
+		bind(IChunker.class).annotatedWith(Names.named("AndChunker")).to(AndChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("PunctuationChunker")).to(PunctuationChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("CharacterListChunker")).to(CharacterListChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("SpecificPPChunker")).to(SpecificPPChunker.class).in(Singleton.class);
+		bind(IChunker.class).annotatedWith(Names.named("CharacterNameChunker")).to(CharacterNameChunker.class).in(Singleton.class);
 		
 		bind(IPOSKnowledgeBase.class).to(WordNetPOSKnowledgeBase.class).in(Singleton.class);
 		bind(IPOSKnowledgeBase.class).annotatedWith(Names.named("LearnedPOSKnowledgeBase")).to(LearnedPOSKnowledgeBase.class).in(Singleton.class);
@@ -224,6 +229,7 @@ public class BasicConfig extends AbstractModule {
 		bind(IChunkProcessor.class).annotatedWith(Names.named("When")).to(SBARChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Where")).to(SBARChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("To")).to(ToChunkProcessor.class).in(Singleton.class);
+		bind(IChunkProcessor.class).annotatedWith(Names.named("CharacterName")).to(CharacterNameChunkProcessor.class).in(Singleton.class);
 		
 		bind(Boolean.class).annotatedWith(Names.named("AttachToLast")).toInstance(false);
 	
