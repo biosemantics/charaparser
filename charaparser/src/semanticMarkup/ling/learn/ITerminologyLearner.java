@@ -84,6 +84,6 @@ public interface ITerminologyLearner {
 	
 	public Set<String> getModifiers();
 
-	public Set<String> getCategories();
+	public Map<String, Set<String>> getCategoryTerms();
 	
 }

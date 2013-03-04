@@ -44,7 +44,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Map<String, Set<String>> termCategories;
 	protected Set<String> tags;
 	protected Set<String> modifiers;
-	protected Set<String> categories;
+	protected Map<String, Set<String>> categoryTerms;
 	
 	private Connection connection;
 	private String temporaryPath;
@@ -113,7 +113,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			this.wordsToRoles = readWordsToRoles();
 			this.heuristicNouns = readHeuristicNouns();
 			this.termCategories = readTermCategories();
-			this.categories = readCategories();
+			this.categoryTerms = readCategoryTerms();
 			this.tags = readTags();
 			this.modifiers = readModifiers();
 			
@@ -173,22 +173,23 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return termCategories;
 	}
 	
-
-	protected Set<String> readCategories() {
-		Set<String> categories = new HashSet<String>();
+	protected Map<String, Set<String>> readCategoryTerms() {
+		Map<String, Set<String>> categoryNames = new HashMap<String, Set<String>>();
 		try {
 			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select category from " + this.databasePrefix + "_term_category");
+			ResultSet resultSet = statement.executeQuery("select term, category from " + this.databasePrefix + "_term_category");
 			while(resultSet.next()) {
+				String term = resultSet.getString("term");
 				String category = resultSet.getString("category");
-				categories.add(category);
+				if(!categoryNames.containsKey(category))
+					categoryNames.put(category, new HashSet<String>());
+				categoryNames.get(category).add(term);
 			}
 		} catch (Exception e) {
 			log(LogLevel.ERROR, "term_category table not found");
 		}
-		return categories;
+		return categoryNames;
 	}
-
 
 	protected Map<String, Set<String>> readWordsToRoles() {
 		Map<String, Set<String>> wordsToRoles = new HashMap<String, Set<String>>();
@@ -585,7 +586,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 
 	@Override
-	public Set<String> getCategories() {
-		return this.categories;
+	public Map<String, Set<String>> getCategoryTerms() {
+		return this.categoryTerms;
 	}
 }

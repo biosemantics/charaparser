@@ -76,9 +76,4 @@ public class CSVGlossary implements IGlossary {
 		}
 		return result;
 	}
-
-	@Override
-	public Set<String> getCategories() {
-		return reverseGlossary.keySet();
-	}
 }

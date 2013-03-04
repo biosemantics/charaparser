@@ -43,7 +43,8 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 			@Named("State") IChunkProcessor stateChunkProcessor, 
 			@Named("Comma") IChunkProcessor commaChunkProcessor, 
 			@Named("Constraint") IChunkProcessor constraintChunkProcessor, 
-			@Named("To") IChunkProcessor toChunkProcessor) {
+			@Named("To") IChunkProcessor toChunkProcessor, 
+			@Named("CharacterName") IChunkProcessor characterNameProcessor) {
 		chunkProcessors.put(ChunkType.AREA, areaChunkProcessor);
 		chunkProcessors.put(ChunkType.BRACKETED, bracketedChunkProcessor);
 		chunkProcessors.put(ChunkType.CHARACTER_STATE, characterStateProcessor);
@@ -74,6 +75,7 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 		chunkProcessors.put(ChunkType.COMMA, commaChunkProcessor);
 		chunkProcessors.put(ChunkType.CONSTRAINT, constraintChunkProcessor);
 		chunkProcessors.put(ChunkType.TO_PHRASE, toChunkProcessor);
+		chunkProcessors.put(ChunkType.CHARACTER_NAME, characterNameProcessor);
 	}
 	
 	@Override

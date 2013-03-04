@@ -49,7 +49,7 @@ public class OtherINsChunker extends AbstractChunker {
 			if(isFunctionOfPPWithoutOrgan) {
 				Chunk ppChunk = chunkCollector.getChunk(terminal);
 				Chunk objectChunk = ppChunk.getChildChunk(ChunkType.OBJECT);
-				if(posKnowledgeBase.isNoun(objectChunk.getTerminalsText()) && objectChunk.getTerminalsText().endsWith("ing")) {
+				if(objectChunk != null && posKnowledgeBase.isNoun(objectChunk.getTerminalsText()) && objectChunk.getTerminalsText().endsWith("ing")) {
 					Chunk modifierChunk = new Chunk(ChunkType.MODIFIER);
 					LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
 					chunks.addAll(ppChunk.getTerminals());

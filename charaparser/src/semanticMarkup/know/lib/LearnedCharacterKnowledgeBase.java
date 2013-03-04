@@ -113,8 +113,10 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 
 	@Override
 	public boolean containsCharacterName(String characterName) {
-		Set<String> glossaryCategories = glossary.getCategories();
-		Set<String> learnedCategories = terminologyLearner.getCategories();
+		Set<String> glossaryCategories = glossary.getWords("character");
+		Set<String> learnedCategories = terminologyLearner.getCategoryTerms().get("character");
+		if(learnedCategories == null)
+			learnedCategories = new HashSet<String>();
 		return glossaryCategories.contains(characterName) || learnedCategories.contains(characterName);
 	}
 

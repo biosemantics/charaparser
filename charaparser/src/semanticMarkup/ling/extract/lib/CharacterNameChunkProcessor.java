@@ -16,6 +16,7 @@ import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
+import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
@@ -34,9 +35,12 @@ public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		DescriptionTreatmentElement lastResult = processingContext.getLastResult();
-		if(lastResult.isOfDescriptionType(DescriptionType.CHARACTER)) {
-			lastResult.setProperty("characterName", chunk.getTerminalsText());
+		ProcessingContextState processingContextState = processingContext.getCurrentState();
+		if(!processingContextState.getLastElements().isEmpty()) {
+			DescriptionTreatmentElement lastResult = processingContextState.getLastElements().getLast();
+			if(lastResult.isOfDescriptionType(DescriptionType.CHARACTER)) {
+				lastResult.setProperty("name", chunk.getTerminalsText());
+			}
 		}
 		return new LinkedList<DescriptionTreatmentElement>();
 	}

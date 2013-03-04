@@ -8,6 +8,6 @@ public interface ICharacterKnowledgeBase {
 
 	public void addCharacterStateToName(String characterState, String characterName);
 
-	public boolean containsCharacterName(String terminalsText);
+	public boolean containsCharacterName(String characterName);
 	
 }
