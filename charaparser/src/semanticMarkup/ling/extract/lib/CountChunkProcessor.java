@@ -57,7 +57,7 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		}
 		
 		processingContextState.setLastElements(result);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

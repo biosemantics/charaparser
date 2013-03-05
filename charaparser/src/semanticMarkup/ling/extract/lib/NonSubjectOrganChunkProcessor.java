@@ -49,7 +49,7 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 			annotateType(chunk, lastElement);
 		else 
 			processingContextState.setLastElements(structures);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

@@ -46,7 +46,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			processingContextState.getUnassignedCharacters().addAll(characters);
 		}
 		processingContextState.setLastElements(characters);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
 	}
 	

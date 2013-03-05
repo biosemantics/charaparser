@@ -44,7 +44,7 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 				processingContextState);//apices of basal leaves spread 
 		
 		processingContextState.setLastElements(characters);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
 	}
 	

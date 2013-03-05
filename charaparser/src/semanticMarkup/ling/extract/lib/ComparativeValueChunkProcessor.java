@@ -46,7 +46,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 				parents, processingContext, processingContextState);
 		
 		processingContextState.setLastElements(characters);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
 	}
 	

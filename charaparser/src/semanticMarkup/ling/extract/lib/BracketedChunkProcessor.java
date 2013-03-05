@@ -43,7 +43,7 @@ public class BracketedChunkProcessor extends AbstractChunkProcessor {
 			result.addAll(describeChunk(childChunk, processingContext));
 		}
 		processingContextState.decreaseInBrackets();
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

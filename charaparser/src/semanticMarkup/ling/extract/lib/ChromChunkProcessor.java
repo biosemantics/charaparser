@@ -46,7 +46,7 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> modifiers = null;
 		this.annotateNumericals(content, "count", modifiers, result, false, processingContextState);
 		addClauseModifierConstraint(structure, processingContextState);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

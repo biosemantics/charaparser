@@ -42,7 +42,7 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> es = processVP(chunk, parents, processingContext, processingContextState); //apices of basal leaves spread 
 		
 		processingContextState.setLastElements(es);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return es;
 	}
 	

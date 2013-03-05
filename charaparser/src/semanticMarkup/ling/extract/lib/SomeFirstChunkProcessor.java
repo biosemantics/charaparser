@@ -107,7 +107,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		}
 		
 		//log(LogLevel.DEBUG, "Skip first chunk " + skipFirstChunk);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 	

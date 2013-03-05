@@ -81,7 +81,6 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				objects.add(object);
 			}
 			
-	
 			LinkedList<DescriptionTreatmentElement> subjectStructures = processingContextState.getLastElements();
 			if(!lastIsStructure) {
 				subjectStructures = processingContextState.getSubjects();
@@ -127,12 +126,19 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				} else {
 					if(lastIsStructure)
 						lastElement.appendProperty("constraint", chunk.getTerminalsText());
-					else if(lastIsCharacter)
+					else if(lastIsCharacter) {
+						LinkedList<DescriptionTreatmentElement> objectStructures = 
+								this.extractStructuresFromObject(object, processingContext, processingContextState); 
 						lastElement.appendProperty("constraint", chunk.getTerminalsText());
+						if(!objectStructures.isEmpty()) {
+							result.addAll(objectStructures);
+							lastElement.setProperty("constraintId", listStructureIds(objectStructures));
+						}
+					}
 				}
 			}
 		}
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

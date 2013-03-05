@@ -33,7 +33,7 @@ public class StateChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
-		processingContext.getCurrentState().setCommaEosEolAfterLastElements(false);
+		processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
 		return new LinkedList<DescriptionTreatmentElement>();
 	}
 	

@@ -162,7 +162,7 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 		processingContextState.setClauseModifierContraintId(-1); 
 		//return to original status
 		//this.unassignedmodifiers = null;
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

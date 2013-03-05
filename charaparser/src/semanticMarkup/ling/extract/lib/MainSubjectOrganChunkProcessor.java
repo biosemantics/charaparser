@@ -35,7 +35,7 @@ public class MainSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 			ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		ArrayList<DescriptionTreatmentElement> result = this.establishSubject(chunk, processingContextState);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

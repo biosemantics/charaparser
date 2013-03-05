@@ -35,7 +35,7 @@ public class NPListChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		ArrayList<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		result.addAll(establishSubject(chunk, processingContextState));		
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 

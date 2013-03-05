@@ -25,7 +25,7 @@ public class ProcessingContextState implements Cloneable {
 	private LinkedList<DescriptionTreatmentElement> subjects = new LinkedList<DescriptionTreatmentElement>();
 	private LinkedList<DescriptionTreatmentElement> lastElements = new LinkedList<DescriptionTreatmentElement>();
 	
-	private boolean commaEosEolAfterLastElements = false; 
+	private boolean commaAndOrEosEolAfterLastElements = false; 
 	private boolean unassignedChunkAfterLastElements = false;
 
 	private int structureId;
@@ -300,12 +300,12 @@ public class ProcessingContextState implements Cloneable {
 	}
 	
 
-	public boolean isCommaEosEolAfterLastElements() {
-		return commaEosEolAfterLastElements;
+	public boolean isCommaAndOrEosEolAfterLastElements() {
+		return commaAndOrEosEolAfterLastElements;
 	}
 
-	public void setCommaEosEolAfterLastElements(boolean commaEosEolAfterLastElements) {
-		this.commaEosEolAfterLastElements = commaEosEolAfterLastElements;
+	public void setCommaAndOrEosEolAfterLastElements(boolean commaAndOrEosEolAfterLastElements) {
+		this.commaAndOrEosEolAfterLastElements = commaAndOrEosEolAfterLastElements;
 	}
 
 	@Override

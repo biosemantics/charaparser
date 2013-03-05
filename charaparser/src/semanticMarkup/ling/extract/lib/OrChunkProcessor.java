@@ -128,7 +128,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 		
 		if(!result.isEmpty())
 			processingContextState.setLastElements(result);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(true);
 		return result;
 	}
 

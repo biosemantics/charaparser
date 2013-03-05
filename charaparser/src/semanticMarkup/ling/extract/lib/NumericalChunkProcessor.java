@@ -83,7 +83,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 				}
 			}
 		}
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
 	}
 	

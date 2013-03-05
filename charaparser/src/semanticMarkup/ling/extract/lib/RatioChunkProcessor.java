@@ -42,7 +42,7 @@ public class RatioChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "lwratio", modifiers, 
 				lastStructures(processingContext, processingContextState), false, processingContextState);
 		processingContextState.setLastElements(characters);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
 	}
 

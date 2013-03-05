@@ -58,7 +58,7 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 			String character = chunk.getTerminalsText();
 			results.addAll(createRangeCharacterElement(parents, modifiers, character, characterStateString, processingContextState));
 		}
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return new LinkedList<DescriptionTreatmentElement>();
 	}
 

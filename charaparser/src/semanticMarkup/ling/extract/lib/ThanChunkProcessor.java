@@ -41,7 +41,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> result = processTHAN(chunk, processingContextState.getSubjects(), processingContext, 
 				processingContextState);
 		processingContextState.setLastElements(result);
-		processingContextState.setCommaEosEolAfterLastElements(false);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
 	

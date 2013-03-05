@@ -1,10 +1,12 @@
 package semanticMarkup.ling.extract.lib;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
@@ -13,17 +15,13 @@ import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
-import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+public class AndChunkProcessor extends AbstractChunkProcessor {
 
-public class AreaChunkProcessor extends AbstractChunkProcessor {
-	
 	@Inject
-	public AreaChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
+	public AndChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
 			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositionWords")Set<String> locationPrepositions, 
 			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
@@ -34,16 +32,8 @@ public class AreaChunkProcessor extends AbstractChunkProcessor {
 
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = this.attachToLast? lastStructures(processingContext, processingContextState) 
-				: processingContextState.getSubjects();
-		List<Chunk> modifiers = new ArrayList<Chunk>();
-		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
-				parents, false, processingContextState);
-		processingContextState.getLastElements().addAll(characters);
-		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
-		return characters;
+		processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(true);
+		return new LinkedList<DescriptionTreatmentElement>();
 	}
-
 
 }

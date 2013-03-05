@@ -39,7 +39,7 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		processingContext.getCurrentState().clearUnassignedModifiers();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		processingContextState.setCommaEosEolAfterLastElements(true);
+		processingContextState.setCommaAndOrEosEolAfterLastElements(true);
 		if(!processingContextState.getLastElements().isEmpty()) {
 			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().get(0);
 			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
