@@ -65,6 +65,10 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		}
 		Chunk beforeChunk = new Chunk(ChunkType.UNASSIGNED, beforeThan);
 		
+		String characterName = null;
+		if(beforeChunk.containsChunkType(ChunkType.CHARACTER_STATE)) 
+			characterName = beforeChunk.getChunkDFS(ChunkType.CHARACTER_STATE).getProperty("characterName");
+		
 		Chunk thanChunk = content.getChildChunk(ChunkType.THAN);
 		if(!thanChunk.containsChunkType(ChunkType.PP)) {
 			if(thanChunk.containsChunkType(ChunkType.CONSTRAINT) && !thanChunk.containsChunkType(ChunkType.ORGAN)) {
@@ -112,6 +116,8 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					for(Chunk child : thanObject.getChunks()) {
 						log(LogLevel.DEBUG, "child " + child);
 						if(child.isOfChunkType(ChunkType.CHARACTER_STATE)) {
+							if(characterName != null)
+								child.setProperty("characterName", characterName);
 							LinkedHashSet<Chunk> characterTerminals = new LinkedHashSet<Chunk>();
 							characterTerminals.addAll(content.getTerminals());
 							child.getChunks(ChunkType.STATE).get(0).setChunks(characterTerminals);
