@@ -31,6 +31,15 @@ public class MyCleanupChunker extends AbstractChunker {
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 	}
 
+	/**
+	 * returns boolean array which specifies whether a character can be translated to a constraint based on the
+	 * following factors:
+	 * character directly preceeds a (constraint) organ chain AND is the character itself is not preceeded by a modifier
+	 * this definition extends recursively for all possible character predecessors of such a chain
+	 * @param terminals
+	 * @param chunkCollector
+	 * @return
+	 */
 	private boolean[] getTranslateCharacterToConstraintArray(List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
 
 		boolean[] modifier = new boolean[terminals.size()];
@@ -67,34 +76,6 @@ public class MyCleanupChunker extends AbstractChunker {
 		for(int i=terminals.size()-1; i>=0; i--)
 			result[i] = character[i] && i+1 < terminals.size() && (organ[i+1] || result[i+1]) && ((i-1 >= 0 && !modifier[i-1]) || i==0);
 		
-		
-		/*boolean seenOtherThanOrganOrConstraint = false;
-		for(int i=0; i<terminals.size(); i++) {
-			AbstractParseTree terminal = terminals.get(i);
-			result[i] = true;
-			Chunk terminalChunk = chunkCollector.getChunk(terminal);
-			if(terminalChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && !seenOtherThanOrganOrConstraint) {
-				result[i] = false;
-			}
-			if(!terminalChunk.isPartOfChunkType(terminal, ChunkType.ORGAN) && !terminalChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) && 
-					!terminalChunk.isPartOfChunkType(terminal, ChunkType.UNASSIGNED) && !terminalChunk.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE))
-				seenOtherThanOrganOrConstraint = true;
-		}*/
-		
-		/*boolean previousOrganOrConstraint = false;
-		for(int i=terminals.size()-1; i>=0; i--) {
-			AbstractParseTree terminal = terminals.get(i);
-			Chunk terminalChunk = chunkCollector.getChunk(terminal);
-			if(terminalChunk.isPartOfChunkType(terminal, ChunkType.STATE)) {
-				if(previousOrganOrConstraint) {
-					result[i] = true;
-				}
-			} else {
-				previousOrganOrConstraint = terminalChunk.isPartOfChunkType(terminal, ChunkType.ORGAN) || 
-						(terminalChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) && previousOrganOrConstraint);
-			}
-		}*/
-		
 		return result;
 	}
 
@@ -109,9 +90,16 @@ public class MyCleanupChunker extends AbstractChunker {
 		boolean previousTerminalState = false;
 		boolean previousTerminalConstraint = false;
 		
+		/**
+		 * from back to front 
+		 */
 		for(int i=terminals.size()-1; i>=0; i--) {
 			AbstractParseTree terminal = terminals.get(i);
 			
+			/**
+			 * check if character and that character can be translated into constraint according to array
+			 * if so translate character for position characters
+			 */
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) && translateCharacterToConstraintArray[i]) {
 				if(translateCharacterToConstraintForPosition(i, terminals, chunkCollector)) {
 					previousTerminalOrgan = true;
@@ -120,27 +108,10 @@ public class MyCleanupChunker extends AbstractChunker {
 				}
 			}
 			
-			
-			/*
-			if(previousTerminalOrgan) {
-				if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
-					Chunk stateParentChunk = chunkCollector.getChunk(terminal);
-					Chunk stateChunk = stateParentChunk.getChunkBFS(ChunkType.CHARACTER_STATE);
-					stateChunk.clearChunks();
-					stateChunk.clearProperties();
-					LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
-					chunks.add(terminal);
-					stateChunk.setChunks(chunks);
-					stateChunk.setChunkType(ChunkType.CONSTRAINT);
-					chunkCollector.addChunk(stateParentChunk);
-				} else if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE)) {
-					Chunk stateParentChunk = chunkCollector.getChunk(terminal);
-					Chunk stateChunk = stateParentChunk.getChunkBFS(ChunkType.STATE);
-					stateChunk.setChunkType(ChunkType.CONSTRAINT);
-					chunkCollector.addChunk(stateParentChunk);
-				}
-			}*/
-			
+			/**
+			 * check if character and prev terminal constraint and array allows translation
+			 * -> translate character to constraint
+			 */
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) && 
 					previousTerminalConstraint && translateCharacterToConstraintArray[i]) {
 				Chunk chunk = chunkCollector.getChunk(terminal);
@@ -154,6 +125,11 @@ public class MyCleanupChunker extends AbstractChunker {
 				chunkCollector.addChunk(chunk);
 			}
 			
+			/**
+			 * if terminal part of a state but not a character chunk then 
+			 * -> translate to constranit if previous organ
+			 * -> translate to modifier if previously state/character
+			 */
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) && 
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
 				Chunk stateParentChunk = chunkCollector.getChunk(terminal);
@@ -165,50 +141,10 @@ public class MyCleanupChunker extends AbstractChunker {
 				chunkCollector.addChunk(stateParentChunk);
 			}
 			
-			/*
-			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) && 
-				!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
-				Chunk stateParentChunk = chunkCollector.getChunk(terminal);
-				Chunk stateChunk = stateParentChunk.getChunkOfTypeAndTerminal(ChunkType.STATE, terminal);
-				if(previousTerminalState) {
-					stateChunk.setChunkType(ChunkType.MODIFIER);
-					chunkCollector.addChunk(stateParentChunk);
-				}
-			}
-			
-			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) && 
-					(chunkCollector.isPartOfChunkType(terminal, ChunkType.PP) || 
-							!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE))) { 
-					//{// && 
-					//!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
-				Chunk stateParentChunk = chunkCollector.getChunk(terminal);
-				Chunk stateChunk = stateParentChunk.getChunkOfTypeAndTerminal(ChunkType.STATE, terminal);
-				if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) { 
-					stateChunk = stateParentChunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
-				}
-				if(previousTerminalOrgan) {
-					stateChunk.clearProperties();
-					stateChunk.clearChunks();
-					
-					LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
-					chunks.add(terminal);
-					stateChunk.setChunks(chunks);
-					stateChunk.setChunkType(ChunkType.CONSTRAINT);
-					chunkCollector.addChunk(stateParentChunk);
-				}
-			}*/
-	
-			/*if(!chunkCollector.isPartOfANonTerminalChunk(terminal)) {
-				if(previousTerminalOrgan) {
-					Chunk newChunk = new Chunk(ChunkType.CONSTRAINT, terminal);
-					chunkCollector.addChunk(newChunk);
-				}
-				if(previousTerminalState) {
-					Chunk newChunk = new Chunk(ChunkType.MODIFIER, terminal);
-					chunkCollector.addChunk(newChunk);
-				}
-			}*/
-			
+			/**
+			 * if terminal part of modifier and previously organ
+			 * -> translate modifier to constraint
+			 */
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.MODIFIER) && previousTerminalOrgan){
 				Chunk modifierChunkParent = chunkCollector.getChunk(terminal);
 				List<Chunk> modifierChunks = modifierChunkParent.getChunks(ChunkType.MODIFIER);
@@ -221,6 +157,10 @@ public class MyCleanupChunker extends AbstractChunker {
 				chunkCollector.addChunk(modifierChunkParent);
 			}
 			
+			/**
+			 * terminal part of constraint and previously state/character
+			 * -> translate to modifier
+			 */
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) && previousTerminalState) {
 				Chunk constraintChunkParent = chunkCollector.getChunk(terminal);
 				List<Chunk> constraintChunks = constraintChunkParent.getChunks(ChunkType.CONSTRAINT);
@@ -233,6 +173,10 @@ public class MyCleanupChunker extends AbstractChunker {
 				chunkCollector.addChunk(constraintChunkParent);
 			}
 			
+			
+			/**
+			 *	if current terminal part of organ/constraint or charater/modifier/state then set bools accordingly for next round 
+			 */
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN) || chunkCollector.isPartOfChunkType(terminal, ChunkType.NON_SUBJECT_ORGAN) 
 					|| chunkCollector.isPartOfChunkType(terminal, ChunkType.MAIN_SUBJECT_ORGAN) || 
 					(previousTerminalOrgan && chunkCollector.isPartOfChunkType(terminal, ChunkType.CONSTRAINT))) {
@@ -240,7 +184,6 @@ public class MyCleanupChunker extends AbstractChunker {
 			} else {
 				previousTerminalOrgan = false;
 			}
-			
 			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) || chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE) 
 					|| (previousTerminalState && chunkCollector.isPartOfChunkType(terminal, ChunkType.MODIFIER))) {
 				previousTerminalState = true;
@@ -251,62 +194,49 @@ public class MyCleanupChunker extends AbstractChunker {
 			previousTerminalConstraint = chunkCollector.isPartOfChunkType(terminal, ChunkType.CONSTRAINT);
 		}
 		
-		/*for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
-			if(!chunkCollector.isPartOfANonTerminalChunk(terminal)) {
-				modifierConstraintCandidates.add(terminal);
-			} else if(chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN) || chunkCollector.isPartOfChunkType(terminal, ChunkType.NON_SUBJECT_ORGAN) ) 
-				|| chunkCollector.isPartOfChunkType(terminal, ChunkType.MAIN_SUBJECT_ORGAN)) {
-					
-				Chunk organChunk = chunkCollector.getChunk(terminal);
-				LinkedHashSet<Chunk> childChunks = organChunk.getChunks();
-				LinkedHashSet<Chunk> newChildChunks = new LinkedHashSet<Chunk>();
-					
-				for(AbstractParseTree modifierConstraintCandidate : modifierConstraintCandidates) {
-					newChildChunks.add(new Chunk(ChunkType.CONSTRAINT, modifierConstraintCandidate));
-				}
-				
-				newChildChunks.addAll(childChunks);
-				organChunk.setChunks(newChildChunks);
-			} else if(chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) || chunkCollector.isPartOfChunkType(terminal, ChunkType.STATE)) {
-				
-				Chunk organChunk = chunkCollector.getChunk(terminal);
-				LinkedHashSet<Chunk> childChunks = organChunk.getChunks();
-				LinkedHashSet<Chunk> newChildChunks = new LinkedHashSet<Chunk>();
-					
-				for(AbstractParseTree modifierConstraintCandidate : modifierConstraintCandidates) {
-					newChildChunks.add(new Chunk(ChunkType.CONSTRAINT, modifierConstraintCandidate));
-				}
-				
-				newChildChunks.addAll(childChunks);
-				organChunk.setChunks(newChildChunks);
-				
-			} else if(chunkCollector.isPar){
-				modifierConstraintCandidates.clear();
-			}
-		}*/
 		
-		
+		/**
+		 * from back to front 
+		 */
 		for(int i=terminals.size()-1; i>=0; i--) {
 			AbstractParseTree terminal = terminals.get(i);
+			
+			/**
+			 * treat the case where terminal is 'and' or 'or'
+			 */
 			if(terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or")) {
 				if(i-1>=0 && i+1<terminals.size()) {
 					AbstractParseTree previousTerminal = terminals.get(i-1);
 					AbstractParseTree nextTerminal = terminals.get(i+1);
 					
+					/**
+					 * check the chunks of previous and next terminal
+					 */
 					//outer and middle phyllary
 					boolean previousConstraint = chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.CONSTRAINT);
 					boolean previousModifier = chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.MODIFIER);
 					boolean nextConstraint = chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.CONSTRAINT);
 					boolean nextModifier = chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.MODIFIER);
+					
+					/**
+					 * previously and next a modifying/constraining thing
+					 */
 					if((previousConstraint || previousModifier) && (nextConstraint || nextModifier)) {
 					/*if((chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.CONSTRAINT) || 
 							chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.MODIFIER) &&
 							chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.CONSTRAINT)) || 
 							chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.MODIFIER)) {*/
-						Chunk chunkParent = chunkCollector.getChunk(nextTerminal);
 						
+						/**
+						 * assumption that previous, and/or, nextchunk already in one parentchunk together
+						 */
+						Chunk chunkParent = chunkCollector.getChunk(nextTerminal);
 						List<Chunk> modifierChunks = chunkParent.getChunks(ChunkType.MODIFIER);
 	
+						/**
+						 * if nextTerminal is contained in a modifier chunk then remove previous terminal and and/or from the parent
+						 * and instead stick them into the modifier chunk of next terminal
+						 */
 						for(Chunk modifierChunk : modifierChunks) {
 							if(modifierChunk.contains(nextTerminal)) {
 								chunkParent.removeChunk(previousTerminal);
@@ -320,6 +250,10 @@ public class MyCleanupChunker extends AbstractChunker {
 							}
 						}
 						
+						/**
+						 * if nextTerminal is contained in a constraint chunk then remove previous terminal and and/or from the parent
+						 * and instead stick them into the constraint chunk of next terminal
+						 */
 						List<Chunk> constraintChunks = chunkParent.getChunks(ChunkType.CONSTRAINT);
 						for(Chunk constraintChunk : constraintChunks) {
 							if(constraintChunk.contains(nextTerminal)) {
@@ -335,17 +269,32 @@ public class MyCleanupChunker extends AbstractChunker {
 						}
 			
 						chunkCollector.addChunk(chunkParent);
+					
+					/**
+					* !previously and next a modifying/constraining thing
+					*/
 					} else {
 					
 						//outer phyllary and middle phyllary
+						
+						/**
+						 * next terminal still part of constraint
+						 */
 						if(chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.CONSTRAINT)) {
 							Chunk chunkParent = chunkCollector.getChunk(nextTerminal);
 							List<Chunk> constraintChunks = chunkParent.getChunks(ChunkType.CONSTRAINT);
 							
 							for(Chunk constraintChunk : constraintChunks) {
 								if(constraintChunk.contains(nextTerminal)) {
+									/**
+									 * get the previous and next organ chunk from there on
+									 */
 									Chunk previousOrganChunk = getPreviousOrganChunk(i, terminals, chunkCollector);
 									Chunk nextOrganChunk = getNextOrganChunk(i, terminals, chunkCollector);
+									
+									/**
+									 * if found in both directions and both organs are the same stick the and/or terminal into the chunk parent of next terminal (?)
+									 */
 									if(previousOrganChunk != null && nextOrganChunk != null && 
 											previousOrganChunk.getTerminalsText().equals(nextOrganChunk.getTerminalsText())) {
 										chunkParent.removeChunk(terminal);
@@ -363,29 +312,16 @@ public class MyCleanupChunker extends AbstractChunker {
 				}
 			}
 		}
-		
-		//connectConstraints(terminals, chunkCollector);
 	}
 
-	private void connectConstraints(List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
-		LinkedHashSet<Chunk> collectedChunks = new LinkedHashSet<Chunk>();
-		for(int i=0; i<terminals.size(); i++) {
-			AbstractParseTree terminal = terminals.get(i);
-			if((terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or")) || 
-					!collectedChunks.isEmpty()) {
-				collectedChunks.add(terminal);
-			} else {	
-				Chunk chunk = chunkCollector.getChunk(terminal);
-				if(chunk.isOfChunkType(ChunkType.CONSTRAINT))
-					collectedChunks.addAll(chunk.getTerminals());
-				else if(chunk.containsChunkType(ChunkType.ORGAN)) 
-					chunkCollector.addChunk(new Chunk(ChunkType.CONSTRAINT, collectedChunks));
-				else 
-					collectedChunks.clear();
-			}
-		}
-	}
-
+	/**
+	 * translates character to constraint if characterstate of certani value or charactername of certain type
+	 * or if next terminal is organ and previous characters are of comparison type
+	 * @param i
+	 * @param terminals
+	 * @param chunkCollector
+	 * @return true if translateion has been done
+	 */
 	private boolean translateCharacterToConstraintForPosition(int i, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
 		if(i+1<terminals.size()) {
 			AbstractParseTree terminal = terminals.get(i);
@@ -394,9 +330,18 @@ public class MyCleanupChunker extends AbstractChunker {
 			//log(LogLevel.DEBUG, chunk);
 			List<Chunk> characterStateChunks = chunk.getChunks(ChunkType.CHARACTER_STATE);
 			boolean hasChanged = false;
+			
+			/**
+			 * for all characterstate chunks at terminal i position
+			 */
 			for(Chunk characterStateChunk : characterStateChunks) {
 				String character = characterStateChunk.getProperty("characterName");
 				String characterState = characterStateChunk.getChunkBFS(ChunkType.STATE).getTerminalsText();
+				
+				/**
+				 * if the characterstate is not low and (tags or modifiers or the character is of the certain types 
+				 * translate character to constraint
+				 */
 				if(character!=null && !characterState.equals("low") &&
 						(character.contains("position") || character.contains("insertion") || character.contains("structure_type") ||
 								this.terminologyLearner.getTags().contains(characterState) || this.terminologyLearner.getModifiers().contains(characterState))
@@ -412,6 +357,9 @@ public class MyCleanupChunker extends AbstractChunker {
 				return true;
 			}
 			
+			/**
+			 * if the nextterminal is an organ and previously there are characterstates
+			 */
 			AbstractParseTree nextTerminal = terminals.get(i+1);
 			if(chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.ORGAN)) {
 				chunk = chunkCollector.getChunk(terminal);
@@ -420,6 +368,11 @@ public class MyCleanupChunker extends AbstractChunker {
 				for(Chunk characterStateChunk : characterStateChunks) {
 					Chunk stateChunk = characterStateChunk.getChunkBFS(ChunkType.STATE);
 					String character = characterStateChunk.getProperty("characterName");
+					
+					/**
+					 * if the characters is of size and the value is of a comparison kind (-er/-est)
+					 * translate to constraint
+					 */
 					if(character != null && character.contains("size") && (stateChunk.getTerminalsText().endsWith("est") || stateChunk.getTerminalsText().endsWith("er"))) {
 						characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));
 						characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
@@ -436,6 +389,12 @@ public class MyCleanupChunker extends AbstractChunker {
 		return false;
 	}
 
+	/**
+	 * @param i
+	 * @param terminals
+	 * @param chunkCollector
+	 * @return the next organ chunk from i onwards
+	 */
 	private Chunk getNextOrganChunk(int i, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
 		for(; i<terminals.size(); i++) {
 			AbstractParseTree nextTerminal = terminals.get(i);
@@ -447,6 +406,12 @@ public class MyCleanupChunker extends AbstractChunker {
 		return null;
 	}
 
+	/**
+	 * @param i
+	 * @param terminals
+	 * @param chunkCollector
+	 * @return the previous organ chunk from i backwards
+	 */
 	private Chunk getPreviousOrganChunk(int i, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
 		for(; i>=0; i--) {
 			AbstractParseTree previousTerminal = terminals.get(i);
