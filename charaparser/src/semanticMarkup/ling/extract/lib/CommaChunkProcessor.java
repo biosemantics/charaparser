@@ -36,6 +36,8 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
+		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+		
 		processingContext.getCurrentState().clearUnassignedModifiers();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
@@ -51,7 +53,26 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 				}
 			}
 		}
-		return new ArrayList<DescriptionTreatmentElement>();
+		
+		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
+		if(!unassignedCharacters.isEmpty()) {
+			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+			structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
+			structureElement.setProperty("name", "whole_organism"); 
+			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+			structureElements.add(structureElement);
+			result.addAll(establishSubject(structureElements, processingContextState));
+			
+			for(DescriptionTreatmentElement character : unassignedCharacters) {
+				for(DescriptionTreatmentElement parent : structureElements) {
+					parent.addTreatmentElement(character);
+				}
+			}
+		}
+		unassignedCharacters.clear();
+		
+		return result;
 	}
 	
 	@Override
