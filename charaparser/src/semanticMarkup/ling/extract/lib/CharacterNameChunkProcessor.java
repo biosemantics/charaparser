@@ -41,6 +41,8 @@ public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 			if(lastResult.isOfDescriptionType(DescriptionType.CHARACTER)) {
 				lastResult.setProperty("name", chunk.getTerminalsText());
 			}
+		} else {
+			processingContextState.setUnassignedCharacter(chunk.getTerminalsText().toLowerCase());
 		}
 		return new LinkedList<DescriptionTreatmentElement>();
 	}

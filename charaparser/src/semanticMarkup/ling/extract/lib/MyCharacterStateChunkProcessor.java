@@ -71,6 +71,11 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		characters.add(content);
 		if(character != null) {
 			//LinkedList<DescriptionTreatmentElement> characterElement = this.processCharacterText(characters, parents, character, processingContextState);
+			if(processingContextState.getUnassignedCharacter()!=null) {
+				character = processingContextState.getUnassignedCharacter();
+				processingContextState.setUnassignedCharacter(null);
+			}
+			
 			if(characterStateString.contains(" to "))
 				results.addAll(createRangeCharacterElement(parents, modifiers, characterStateString, character, processingContextState));
 			else {
