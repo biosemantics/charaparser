@@ -3,6 +3,7 @@ package semanticMarkup.ling.chunk.lib.chunker;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -95,7 +96,23 @@ public class PPINChunker extends AbstractChunker {
 				AbstractParseTree collapsedTree = this.collapseTwoSubtrees(pp, POS.COLLAPSED_PPIN, in, POS.PREPOSITION, firstNPTree, POS.OBJECT, chunkCollector);
 				//parseTree.prettyPrint();
 				
+				
 				createTwoValuedChunk(ChunkType.PP, collapsedTree, chunkCollector);
+				AbstractParseTree prepositionTerminal = singlePPINSubtree.getTerminals().get(0);
+				int prepositionTerminalId = chunkCollector.getTerminalId(prepositionTerminal);
+				if(prepositionTerminalId > 0) {
+					AbstractParseTree predecessor = chunkCollector.getTerminals().get(prepositionTerminalId-1);
+					Chunk predecessorChunk = chunkCollector.getChunk(predecessor);
+					if(predecessorChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && predecessorChunk.getProperty("characterName").contains("insertion")) {
+						Chunk ppChunk = chunkCollector.getChunk(prepositionTerminal);
+						Chunk prepositionChunk = ppChunk.getChunkBFS(ChunkType.PREPOSITION);
+						LinkedHashSet<Chunk> oldChunks = prepositionChunk.getChunks();
+						LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
+						newChunks.add(predecessorChunk);
+						newChunks.addAll(oldChunks);
+						prepositionChunk.setChunks(newChunks);
+					}
+				}
 			}
 		}
 	}
