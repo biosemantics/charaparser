@@ -82,7 +82,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			}
 			
 			LinkedList<DescriptionTreatmentElement> subjectStructures = processingContextState.getLastElements();
-			if(!lastIsStructure) {
+			if(!lastIsStructure || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 				subjectStructures = processingContextState.getSubjects();
 			}
 			for(Chunk aObject : objects) {
