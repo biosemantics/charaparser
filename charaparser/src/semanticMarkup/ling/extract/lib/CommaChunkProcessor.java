@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
@@ -12,6 +13,7 @@ import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.Chunk;
+import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
@@ -55,7 +57,7 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		}
 		
 		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
-		if(!unassignedCharacters.isEmpty()) {
+		if(!unassignedCharacters.isEmpty() && nextChunkIsOrgan(processingContext)) {
 			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
 			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
 			structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
@@ -69,12 +71,28 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 					parent.addTreatmentElement(character);
 				}
 			}
+			unassignedCharacters.clear(); 
 		}
-		unassignedCharacters.clear();
 		
 		return result;
 	}
 	
+	private boolean nextChunkIsOrgan(ProcessingContext processingContext) {
+		ListIterator<Chunk> iterator = processingContext.getChunkListIterator();
+		Chunk nextChunk = iterator.next();
+		int i=1;
+		while(nextChunk.isOfChunkType(ChunkType.UNASSIGNED)) {
+			nextChunk = iterator.next();
+			i++;
+		}
+		
+		for(int j=0; j<i; j++) 
+			iterator.previous();
+		
+		return processingContext.getChunkCollector().isPartOfChunkType(nextChunk.getTerminals().get(0), ChunkType.ORGAN) || 
+				processingContext.getChunkCollector().isPartOfChunkType(nextChunk.getTerminals().get(0), ChunkType.CONSTRAINT);
+	}
+
 	@Override
 	public String getDescription() {
 		return "comma chunk processor";
