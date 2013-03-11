@@ -59,6 +59,7 @@ public class VPRecoverChunker extends AbstractChunker {
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) &&
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN) && 
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.PP) &&
+					!chunkCollector.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) &&
 					posKnowledgeBase.isVerb(terminal.getTerminalsText())) { 
 				recoverVPChunk(terminals, i, chunkCollector);
 			//!chunkCollector.isPartOfAChunk(terminal)
@@ -66,6 +67,7 @@ public class VPRecoverChunker extends AbstractChunker {
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE) &&
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN) &&
 					!chunkCollector.isPartOfChunkType(terminal, ChunkType.PP) &&
+					!chunkCollector.isPartOfChunkType(terminal, ChunkType.CONSTRAINT) &&
 					terminal.getTerminalsText().endsWith("ing")) {
 				if(connectsTwoOrgans(terminals, i, chunkCollector)){
 					 posKnowledgeBase.addVerb(terminal.getTerminalsText().replaceAll("\\W", ""));
