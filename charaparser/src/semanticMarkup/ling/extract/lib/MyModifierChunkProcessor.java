@@ -47,7 +47,6 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 			} else 
 				processingContextState.getUnassignedModifiers().add(chunk);
 		}
-		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return new ArrayList<DescriptionTreatmentElement>();
 	}
 }

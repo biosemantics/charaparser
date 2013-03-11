@@ -37,7 +37,7 @@ public class ProcessingContextState implements Cloneable {
 	
 	private String notInModifier;
 
-	private int clauseModifierContraintId = -1;
+	private String clauseModifierContraintId = null;
 	private String clauseModifierContraint = null;
 
 	private ArrayList<Entry<String, String>> scopeProperties;
@@ -115,11 +115,11 @@ public class ProcessingContextState implements Cloneable {
 		this.scopeProperties = scopeProperties;
 	}
 
-	public int getClauseModifierContraintId() {
+	public String getClauseModifierContraintId() {
 		return clauseModifierContraintId;
 	}
 
-	public void setClauseModifierContraintId(int clauseModifierContraintId) {
+	public void setClauseModifierContraintId(String clauseModifierContraintId) {
 		this.clauseModifierContraintId = clauseModifierContraintId;
 	}
 
@@ -334,7 +334,7 @@ public class ProcessingContextState implements Cloneable {
 			clone.notInModifier = this.notInModifier==null ? null : new String(this.notInModifier);
 			//clone.chunkListIterator = chunkCollector.getChunks().listIterator(this.chunkListIterator.nextIndex());
 			//clone.chunkCollector = this.chunkCollector;
-			clone.clauseModifierContraintId = new Integer(this.clauseModifierContraintId);
+			clone.clauseModifierContraintId = this.clauseModifierContraintId==null ? null : new String(this.clauseModifierContraintId);
 			clone.clauseModifierContraint = this.clauseModifierContraint==null ? null : new String(this.clauseModifierContraint);
 			clone.scopeProperties = new ArrayList<Entry<String, String>>();
 			if(scopeProperties!=null)

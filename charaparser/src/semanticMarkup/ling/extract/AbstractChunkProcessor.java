@@ -102,8 +102,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		ArrayList<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		
 		ArrayList<Chunk> subjectChunks = new ArrayList<Chunk>();
-		subjectChunks.add(subjectChunk);
 		subjectChunks.addAll(processingContextState.getUnassignedConstraints());
+		subjectChunks.add(subjectChunk);
 		processingContextState.clearUnassignedConstraints();
 		LinkedList<DescriptionTreatmentElement> subjectStructures = createStructureElements(subjectChunks, processingContextState);
 		return this.establishSubject(subjectStructures, processingContextState);
@@ -291,11 +291,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected void addClauseModifierConstraint(DescriptionTreatmentElement descriptionElement, ProcessingContextState processingContextState) {
 		String clauseModifierConstraint = processingContextState.getClauseModifierContraint();
-		int clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
+		String clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
 		if (clauseModifierConstraint != null)
 			descriptionElement.setProperty("constraint", clauseModifierConstraint);
-		if (clauseModifierConstraintId != -1)
-			descriptionElement.setProperty("constraintId", String.valueOf(clauseModifierConstraintId));
+		if (clauseModifierConstraintId != null)
+			descriptionElement.setProperty("constraintId", clauseModifierConstraintId);
 	}
 	
 	protected LinkedList<DescriptionTreatmentElement> lastStructures(ProcessingContext processingContext, 

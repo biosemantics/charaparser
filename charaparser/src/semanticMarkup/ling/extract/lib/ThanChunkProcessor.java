@@ -52,6 +52,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 	 * @param subjects2
 	 * @return
 	 */
+	
 	private LinkedList<DescriptionTreatmentElement> processTHAN(Chunk content, LinkedList<DescriptionTreatmentElement> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
@@ -257,9 +258,14 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		}
 		
 		for(DescriptionTreatmentElement element : characters) {
-			element.setProperty("constraint", content.getChildChunk(ChunkType.THAN).getTerminalsText());
+			ProcessingContextState processingContextState = processingContext.getCurrentState();
+			String constraint = processingContextState.getClauseModifierContraint() + "; " + 
+					content.getChildChunk(ChunkType.THAN).getTerminalsText();
+			String structureIds = processingContextState.getClauseModifierContraintId() + " " + 
+					listStructureIds(structures);
+			element.setProperty("constraint", constraint);
 			//if(thanObject!=null) {
-				element.setProperty("constraintId", listStructureIds(structures));
+				element.setProperty("constraintId", structureIds);
 				//TODO: check: some constraints are without constraintid
 			//}
 		}

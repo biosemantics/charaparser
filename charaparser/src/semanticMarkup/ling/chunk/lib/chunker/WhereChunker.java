@@ -44,6 +44,15 @@ public class WhereChunker extends AbstractChunker {
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		IParseTree parseTree = chunkCollector.getParseTree();
+		
+		for(AbstractParseTree terminal : parseTree.getTerminals()) {
+			if(terminal.getTerminalsText().equals("where") && !chunkCollector.isPartOfANonTerminalChunk(terminal)) {
+				Chunk whereChunk = new Chunk(ChunkType.WHERE, terminal);
+				chunkCollector.addChunk(whereChunk);
+			}
+		}
+		
+		/*IParseTree parseTree = chunkCollector.getParseTree();
 		List<IParseTree> thatSubTrees = parseTree.getDescendants(POS.SBAR, POS.WHADVP, "where");
 		
 		for(IParseTree whereSubTree : thatSubTrees) {
@@ -59,6 +68,6 @@ public class WhereChunker extends AbstractChunker {
 			}
 			Chunk whereChunk = new Chunk(ChunkType.WHERE, childChunks);
 			chunkCollector.addChunk(whereChunk);
-		}
+		}*/
 	}
 }
