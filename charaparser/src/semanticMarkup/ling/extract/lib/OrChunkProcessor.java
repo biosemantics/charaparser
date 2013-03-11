@@ -122,7 +122,13 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 				if(!result.isEmpty())
 					processingContextState.setLastElements(result);
 				return result;
-			} 			
+			} else if(previousChunk.isOfChunkType(ChunkType.PP)) {
+				LinkedList<DescriptionTreatmentElement> subjects = processingContextState.getSubjects();
+				if(!subjects.isEmpty()) {
+					lastElements.clear();
+					lastElements.add(subjects.getLast());
+				}
+			}
 			chunkListIterator.previous();
 		}
 		
