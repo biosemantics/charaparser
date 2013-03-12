@@ -147,67 +147,64 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
 		log(LogLevel.DEBUG, "create structure element from subjectChunks " + subjectChunks);
-		Chunk organChunk = subjectChunk.getChunkDFS(ChunkType.ORGAN);
+		List<Chunk> organChunks = subjectChunk.getChunks(ChunkType.ORGAN);
+		//Chunk organChunk = subjectChunk.getChunkDFS(ChunkType.ORGAN);
 		//subjectChunk.getChunks(ChunkType.ORGAN);
-
 		
 		//log(LogLevel.DEBUG, "organChunk " + organChunk);
-		if(organChunk!=null) {
+		if(!organChunks.isEmpty()) {
+			for(Chunk organChunk : organChunks) {
+				DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+				structureElement.setProperty("id", "o" + String.valueOf(structureIdString));
 			
-			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
-			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-			structureElement.setProperty("id", "o" + String.valueOf(structureIdString));
+				LinkedHashSet<Chunk> constraintChunks = getConstraintOf(organChunk, subjectChunk);
+				if(!constraintChunks.isEmpty()) {
+					Chunk constraintsChunk = new Chunk(ChunkType.UNASSIGNED, constraintChunks);
+					structureElement.setProperty("constraint", constraintsChunk.getTerminalsText());
+				}
 		
-			List<Chunk> constraintChunks = subjectChunk.getChunks(ChunkType.CONSTRAINT);
-			if(!constraintChunks.isEmpty()) {
-				Chunk constraintsChunk = new Chunk(ChunkType.UNASSIGNED, constraintChunks);
-				structureElement.setProperty("constraint", constraintsChunk.getTerminalsText());
-			}
-	
-			String organName = organChunk.getTerminalsText();
-			structureElement.setProperty("name", inflector.getSingular(organName));
-			
-			
-			LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
-			parents.add(structureElement);
-			
-			List<AbstractParseTree> terminals = subjectChunk.getTerminals();
-			for(int i=0; i<terminals.size(); i++) {
-				if(organChunk.contains(terminals.get(i))) {
-					if(i-1>=0 && (terminals.get(i-1).getTerminalsText().equals("a") || terminals.get(i-1).getTerminalsText().equals("an"))) {
-						this.createCharacterElement(parents, null, "1", "count", "", processingContextState);
+				String organName = organChunk.getTerminalsText();
+				structureElement.setProperty("name", inflector.getSingular(organName));
+				
+				LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
+				parents.add(structureElement);
+				
+				List<AbstractParseTree> terminals = subjectChunk.getTerminals();
+				for(int i=0; i<terminals.size(); i++) {
+					if(organChunk.contains(terminals.get(i))) {
+						if(i-1>=0 && (terminals.get(i-1).getTerminalsText().equals("a") || terminals.get(i-1).getTerminalsText().equals("an"))) {
+							this.createCharacterElement(parents, null, "1", "count", "", processingContextState);
+						}
+						break;
 					}
-					break;
 				}
-			}
-			
-			List<Chunk> characterStateChunks = subjectChunk.getChunks(ChunkType.CHARACTER_STATE);
-			for(Chunk characterStateChunk : characterStateChunks) {
-				String character = characterStateChunk.getProperty("characterName");
 				
-				//constraint rather than 
-				if(character.equals("insertion_or_position")) {
+				LinkedHashSet<Chunk> characterStateChunks = getCharacterStatesOf(organChunk, subjectChunk);
+				for(Chunk characterStateChunk : characterStateChunks) {
+					String character = characterStateChunk.getProperty("characterName");
 					
+					Chunk state = characterStateChunk.getChunkDFS(ChunkType.STATE);
+					LinkedHashSet<Chunk> modifierChunks = getModifiersOf(characterStateChunk, subjectChunk);
+					List<Chunk> modifierChunkList = new LinkedList<Chunk>(modifierChunks);
+					//List<Chunk> modifierChunks = characterStateChunk.getChunks(ChunkType.MODIFIER);
+					//modifierChunks.addAll(subjectChunk.getChunks(ChunkType.MODIFIER))
+					
+					this.createCharacterElement(parents, modifierChunkList, state.getTerminalsText(), character, "", processingContextState);
+					
+					//Chunk modifierChunk = new Chunk(ChunkType.UNASSIGNED, modifierChunks);
+					//DescriptionTreatmentElement characterElement = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
+					//characterElement.setProperty(, value)
 				}
-				Chunk state = characterStateChunk.getChunkDFS(ChunkType.STATE);
-				List<Chunk> modifierChunks = subjectChunk.getChunks(ChunkType.MODIFIER);
-				//List<Chunk> modifierChunks = characterStateChunk.getChunks(ChunkType.MODIFIER);
-				//modifierChunks.addAll(subjectChunk.getChunks(ChunkType.MODIFIER))
 				
-				this.createCharacterElement(parents, modifierChunks, state.getTerminalsText(), character, "", processingContextState);
-				
-				//Chunk modifierChunk = new Chunk(ChunkType.UNASSIGNED, modifierChunks);
-				//DescriptionTreatmentElement characterElement = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-				//characterElement.setProperty(, value)
-			}
+				List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
+				for(DescriptionTreatmentElement unassignedCharacter : unassignedCharacters) {
+					structureElement.addTreatmentElement(unassignedCharacter);
+				}
+				unassignedCharacters.clear();
 			
-			List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
-			for(DescriptionTreatmentElement unassignedCharacter : unassignedCharacters) {
-				structureElement.addTreatmentElement(unassignedCharacter);
+				results.add(structureElement);
 			}
-			unassignedCharacters.clear();
-		
-			results.add(structureElement);
 		}
 		
 		//todo extract constraints/modifiers
@@ -289,6 +286,70 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return results;
 	}
 	
+	private LinkedHashSet<Chunk> getModifiersOf(Chunk characterStateChunk, Chunk subjectChunk) {
+		LinkedHashSet<Chunk> modifiers = new LinkedHashSet<Chunk>();
+		
+		for(AbstractParseTree terminal : subjectChunk.getTerminals()) {
+			if(subjectChunk.isPartOfChunkType(terminal, ChunkType.MODIFIER)) {
+				Chunk modifier = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.MODIFIER, terminal);
+				if(modifier!=null)
+					modifiers.add(modifier);
+			} else if(characterStateChunk.contains(terminal)) {
+				modifiers.addAll(characterStateChunk.getChunks(ChunkType.MODIFIER));
+				return modifiers;
+			} else {
+				modifiers.clear();
+			}
+		}
+		
+		return modifiers;
+	}
+
+
+	private LinkedHashSet<Chunk> getCharacterStatesOf(Chunk organChunk,
+			Chunk subjectChunk) {
+		LinkedHashSet<Chunk> characterStates = new LinkedHashSet<Chunk>();
+		
+		boolean isLastOrgan = false;
+		for(AbstractParseTree terminal : subjectChunk.getTerminals()) {
+			if(subjectChunk.isPartOfChunkType(terminal, ChunkType.ORGAN) && subjectChunk.getChunkOfTypeAndTerminal(ChunkType.ORGAN, terminal).equals(organChunk)) {
+				isLastOrgan = true;
+			}
+			if(subjectChunk.isPartOfChunkType(terminal, ChunkType.ORGAN) && !subjectChunk.getChunkOfTypeAndTerminal(ChunkType.ORGAN, terminal).equals(organChunk)) {
+				isLastOrgan = false;
+			}
+		}
+		
+		for(AbstractParseTree terminal : subjectChunk.getTerminals()) {
+			if(subjectChunk.isPartOfChunkType(terminal, ChunkType.CHARACTER_STATE)) {
+				Chunk characterState = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
+				if(characterState!=null)
+					characterStates.add(characterState);
+			}
+			if(organChunk.contains(terminal) && !isLastOrgan) {
+				return characterStates;
+			} 
+		}
+		return characterStates;
+	}
+
+
+	private LinkedHashSet<Chunk> getConstraintOf(Chunk organChunk, Chunk subjectChunk) {
+		LinkedHashSet<Chunk> constraints = new LinkedHashSet<Chunk>();
+		for(AbstractParseTree terminal : subjectChunk.getTerminals()) {
+			if(subjectChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT)) {
+				Chunk constraintChunk = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.CONSTRAINT, terminal);
+				if(constraintChunk!=null)
+					constraints.add(constraintChunk);
+			}
+			if(organChunk.contains(terminal)) {
+				return constraints;
+			}
+		}
+		return constraints;
+	}
+
+
 	protected void addClauseModifierConstraint(DescriptionTreatmentElement descriptionElement, ProcessingContextState processingContextState) {
 		String clauseModifierConstraint = processingContextState.getClauseModifierContraint();
 		String clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
