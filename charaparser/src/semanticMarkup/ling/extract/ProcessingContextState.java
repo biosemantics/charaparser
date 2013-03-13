@@ -266,10 +266,6 @@ public class ProcessingContextState implements Cloneable {
 	public void clearUnassignedModifiers() {
 		this.unassignedModifiers.clear();
 	}
-
-	public void clearUnassignedCharacters() {
-		this.unassignedCharacter = null;
-	}
 	
 	public void setUnassignedModifiers(List<Chunk> unassignedModifiers) {
 		this.unassignedModifiers = unassignedModifiers;

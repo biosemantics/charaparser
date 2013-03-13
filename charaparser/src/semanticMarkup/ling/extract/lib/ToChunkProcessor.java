@@ -54,6 +54,7 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 		if(!characterStateChunks.isEmpty()) {
 			for(Chunk characterStateChunk : characterStateChunks) {
 				processingContextState.setUnassignedCharacter(characterName);
+				processingContextState.setLastElements(parents);
 				IChunkProcessor processor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
 				results.addAll(processor.process(characterStateChunk, processingContext));
 				processingContextState = processingContext.getCurrentState();

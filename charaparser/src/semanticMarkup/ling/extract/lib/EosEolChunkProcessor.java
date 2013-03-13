@@ -95,7 +95,6 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 		unassignedCharacters.clear();
 		
 		processingContextState.clearUnassignedModifiers();
-		processingContextState.clearUnassignedCharacters();
 		
 		return result;
 	}

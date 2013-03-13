@@ -77,6 +77,10 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 		
 		if(object.containsChunkType(ChunkType.ORGAN)) { 
 			LinkedList<DescriptionTreatmentElement> toStructures = this.extractStructuresFromObject(object, processingContext, processingContextState); 
+			for(DescriptionTreatmentElement toStructure : toStructures)
+				for(DescriptionTreatmentElement character : processingContextState.getUnassignedCharacters())
+					toStructure.addTreatmentElement(character);
+			processingContextState.getUnassignedCharacters().clear();
 			//TODO: fix content is wrong. i8: o[a] architecture[surrounding (involucre)]
 			results.addAll(toStructures);
 		

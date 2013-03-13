@@ -362,7 +362,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected LinkedList<DescriptionTreatmentElement> lastStructures(ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
-		if(!processingContext.isNewSegment() && (processingContextState.getLastElements().size()> 0 && 
+		if(/*!processingContext.isNewSegment() &*/ (processingContextState.getLastElements().size()> 0 && 
 				processingContextState.getLastElements().getLast().isOfDescriptionType(DescriptionType.STRUCTURE))) {
 			parents.addAll(processingContextState.getLastElements());
 		}else{
