@@ -44,21 +44,31 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		modifiers.addAll(unassignedModifiers);
 		
+		String characterName = "";
+		if(processingContextState.getUnassignedCharacter()!=null) {
+			characterName = processingContextState.getUnassignedCharacter();
+		}
 		
 		//process characters recursively with the appropriate processor
 		List<Chunk> characterStateChunks = chunk.getChunks(ChunkType.CHARACTER_STATE);
 		if(!characterStateChunks.isEmpty()) {
 			for(Chunk characterStateChunk : characterStateChunks) {
+				processingContextState.setUnassignedCharacter(characterName);
 				IChunkProcessor processor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
 				results.addAll(processor.process(characterStateChunk, processingContext));
+				processingContextState = processingContext.getCurrentState();
 			}
 			
+			
 			//and create a range charater too
-			String characterStateString = characterStateChunks.get(0).getProperty("characterName");
+			if(characterName.isEmpty())
+				characterName = characterStateChunks.get(0).getProperty("characterName");
+			
 			String character = chunk.getTerminalsText();
-			results.addAll(createRangeCharacterElement(parents, modifiers, character, characterStateString, processingContextState));
+			results.addAll(createRangeCharacterElement(parents, modifiers, character, characterName, processingContextState));
 		}
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
+		processingContextState.setUnassignedCharacter(null);
 		return new LinkedList<DescriptionTreatmentElement>();
 	}
 
