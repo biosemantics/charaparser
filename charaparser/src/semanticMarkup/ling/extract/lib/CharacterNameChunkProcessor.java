@@ -37,10 +37,16 @@ public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		if(!processingContextState.getLastElements().isEmpty()) {
-			DescriptionTreatmentElement lastResult = processingContextState.getLastElements().getLast();
-			if(lastResult.isOfDescriptionType(DescriptionType.CHARACTER)) {
-				lastResult.setProperty("name", chunk.getTerminalsText());
+			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+			//DescriptionTreatmentElement lastResult = lastElements.getLast();
+			
+			for(DescriptionTreatmentElement element : lastElements){
+				if(element.isOfDescriptionType(DescriptionType.CHARACTER)) {
+					element.setProperty("name", chunk.getTerminalsText());
+				}
 			}
+			
+			
 		} else {
 			processingContextState.setUnassignedCharacter(chunk.getTerminalsText().toLowerCase());
 		}
