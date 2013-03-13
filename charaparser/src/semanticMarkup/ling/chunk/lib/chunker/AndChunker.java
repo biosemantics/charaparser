@@ -40,6 +40,11 @@ public class AndChunker extends AbstractChunker {
 					connectOrganWithPP(i, previousChunk, terminals, chunkCollector);
 				}
 			}
+			if(chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().equals("and")) {
+				Chunk chunk = chunkCollector.getChunk(terminal);
+				chunk.replaceChunk(terminal, new Chunk(ChunkType.AND, terminal));
+				chunkCollector.addChunk(chunk);
+			}
 			previousChunk = chunkCollector.getChunk(terminal);
 		}
 	}

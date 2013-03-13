@@ -441,4 +441,22 @@ public class Chunk implements Cloneable {
 		}
 		return null;
 	}
+
+	public void replaceChunk(Chunk toReplaceChunk, Chunk replaceChunk) {
+		for(Chunk chunk : this.chunks) {
+			if(chunk.equals(toReplaceChunk)) {
+				LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
+				for(Chunk oldChunk : this.chunks) {
+					if(oldChunk.equals(toReplaceChunk))
+						newChunks.add(replaceChunk);
+					else
+						newChunks.add(oldChunk);
+				}
+				this.chunks = newChunks;
+				break;
+			}
+			else
+				chunk.replaceChunk(toReplaceChunk, replaceChunk);
+		}
+	}
 }

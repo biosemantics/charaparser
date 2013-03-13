@@ -40,6 +40,11 @@ public class OrChunker extends AbstractChunker {
 					connectOrganWithPP(i, previousChunk, terminals, chunkCollector);
 				}
 			}
+			if(chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().equals("or")) {
+				Chunk chunk = chunkCollector.getChunk(terminal);
+				chunk.replaceChunk(terminal, new Chunk(ChunkType.OR, terminal));
+				chunkCollector.addChunk(chunk);
+			}
 			previousChunk = chunkCollector.getChunk(terminal);
 		}
 	}
