@@ -37,6 +37,36 @@ public class TreatiseConfig extends RunConfig {
 	protected HashSet<String> getSelectedSources(String evaluationDataPath) {
 		HashSet<String> result = new HashSet<String>();
 
+
+		//result.add("1601.txt-0");
+		//result.add("1973.txt-3");
+		//result.add("468.txt-0");
+		//result.add("282.txt-1");
+		//result.add("1051.txt-0");
+		
+		//result.add("1092.txt-4");
+		//result.add("1110.txt-6");
+		//result.add("1103.txt-8");
+		//result.add("1269.txt-2");
+		//result.add("690.txt-6");
+		//result.add("379.txt-1");
+		//result.add("41.txt-1");
+		
+		//result.add("1132.txt-2");
+		//result.add("1366.txt-2");
+		
+		//result.add("1561.txt-5");
+		//result.add("1862.txt-0");
+		
+		//result.add("1889.txt-0");
+		//result.add("1110.txt-6");
+		//result.add("723.txt-1");
+		
+		//result.add("379.txt-1");
+		//result.add("101.txt-1");
+		//result.add("708.txt-4");
+	
+		
 		String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
@@ -69,8 +99,7 @@ public class TreatiseConfig extends RunConfig {
 					// break; //TODO remove. only for test
 				}
 			}
-		}
-
-		return result;
+		} 
+		return result; 
 	}
 }

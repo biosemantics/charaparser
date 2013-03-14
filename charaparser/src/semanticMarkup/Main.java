@@ -22,8 +22,8 @@ public class Main {
 	}
 
 	private void run() throws Exception {
-		//TreatisehConfig //FNAv19Config
-		Injector injector = Guice.createInjector(new FNAv19Config());
+		//TreatiseConfig //FNAv19Config
+		Injector injector = Guice.createInjector(new TreatiseConfig());
 		IRun run = injector.getInstance(IRun.class);
 		
 		log(LogLevel.INFO, "running " + run.getDescription() + "...");

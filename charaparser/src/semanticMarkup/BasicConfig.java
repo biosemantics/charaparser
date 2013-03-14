@@ -25,6 +25,7 @@ import semanticMarkup.ling.chunk.lib.chunker.CharacterNameChunker;
 import semanticMarkup.ling.chunk.lib.chunker.ConjunctedOrgansRecoverChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyCleanupChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyModifierChunker;
+import semanticMarkup.ling.chunk.lib.chunker.MyNewCleanupChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyStateChunker;
 import semanticMarkup.ling.chunk.lib.chunker.NPListChunker;
 import semanticMarkup.ling.chunk.lib.chunker.NumericalChunker;
@@ -48,6 +49,7 @@ import semanticMarkup.ling.extract.IChunkProcessorProvider;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.extract.IFirstChunkProcessor;
 import semanticMarkup.ling.extract.ILastChunkProcessor;
+import semanticMarkup.ling.extract.lib.AndChunkProcessor;
 import semanticMarkup.ling.extract.lib.AreaChunkProcessor;
 import semanticMarkup.ling.extract.lib.BracketedChunkProcessor;
 import semanticMarkup.ling.extract.lib.CharacterNameChunkProcessor;
@@ -59,8 +61,8 @@ import semanticMarkup.ling.extract.lib.ConstraintChunkProcessor;
 import semanticMarkup.ling.extract.lib.CountChunkProcessor;
 import semanticMarkup.ling.extract.lib.DummyChunkProcessor;
 import semanticMarkup.ling.extract.lib.EosEolChunkProcessor;
+import semanticMarkup.ling.extract.lib.MainSubjectOrganChunkProcessor;
 import semanticMarkup.ling.extract.lib.MyCharacterStateChunkProcessor;
-import semanticMarkup.ling.extract.lib.MyMainSubjectOrganChunkProcessor;
 import semanticMarkup.ling.extract.lib.MyModifierChunkProcessor;
 import semanticMarkup.ling.extract.lib.NPListChunkProcessor;
 import semanticMarkup.ling.extract.lib.NonSubjectOrganChunkProcessor;
@@ -77,6 +79,7 @@ import semanticMarkup.ling.extract.lib.ThanChunkProcessor;
 import semanticMarkup.ling.extract.lib.ToChunkProcessor;
 import semanticMarkup.ling.extract.lib.VPChunkProcessor;
 import semanticMarkup.ling.extract.lib.ValuePercentageOrDegreeChunkProcessor;
+import semanticMarkup.ling.extract.lib.WhereChunkProcessor;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.ling.parse.IParser;
@@ -153,7 +156,7 @@ public class BasicConfig extends AbstractModule {
 		bind(IChunker.class).annotatedWith(Names.named("VPRecoverChunker")).to(VPRecoverChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("ConjunctedOrgansRecoverChunker")).to(ConjunctedOrgansRecoverChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("OrganRecoverChunker")).to(OrganRecoverChunker.class).in(Singleton.class);
-		bind(IChunker.class).annotatedWith(Names.named("CleanupChunker")).to(MyCleanupChunker.class).in(Singleton.class);
+		bind(IChunker.class).annotatedWith(Names.named("CleanupChunker")).to(MyNewCleanupChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("ModifierChunker")).to(MyModifierChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("NumericalChunker")).to(NumericalChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("OrChunker")).to(OrChunker.class).in(Singleton.class);
@@ -185,7 +188,7 @@ public class BasicConfig extends AbstractModule {
 		//EosEolChunkProcessor
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Eol")).to(EosEolChunkProcessor.class).in(Singleton.class);
 		//EosEolChunkProcessor
-		bind(IChunkProcessor.class).annotatedWith(Names.named("MainSubjectOrgan")).to(MyMainSubjectOrganChunkProcessor.class).in(Singleton.class);
+		bind(IChunkProcessor.class).annotatedWith(Names.named("MainSubjectOrgan")).to(MainSubjectOrganChunkProcessor.class).in(Singleton.class);
 		//MainSubjectOrganChunkProcessor, MyMainSubjectOrganChunkProcessor
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Modifier")).to(MyModifierChunkProcessor.class).in(Singleton.class);
 		//MyModifierChunkProcessor, MyMainSubjectOrganChunkProcessor
@@ -203,6 +206,8 @@ public class BasicConfig extends AbstractModule {
 		//NumericalChunkProcessor
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Or")).to(OrChunkProcessor.class).in(Singleton.class);
 		//OrChunkProcessor
+		bind(IChunkProcessor.class).annotatedWith(Names.named("And")).to(AndChunkProcessor.class).in(Singleton.class);
+		//AndChunkProcessor
 		bind(IChunkProcessor.class).annotatedWith(Names.named("PP")).to(PPChunkProcessor.class).in(Singleton.class);
 		//PPChunkProcessor, MyPPChunkProcessor
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Ratio")).to(RatioChunkProcessor.class).in(Singleton.class);
@@ -227,7 +232,7 @@ public class BasicConfig extends AbstractModule {
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Constraint")).to(ConstraintChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("That")).to(SBARChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("When")).to(SBARChunkProcessor.class).in(Singleton.class);
-		bind(IChunkProcessor.class).annotatedWith(Names.named("Where")).to(SBARChunkProcessor.class).in(Singleton.class);
+		bind(IChunkProcessor.class).annotatedWith(Names.named("Where")).to(WhereChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("To")).to(ToChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("CharacterName")).to(CharacterNameChunkProcessor.class).in(Singleton.class);
 		

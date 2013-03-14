@@ -57,8 +57,8 @@ public class RunConfig extends BasicConfig {
 		bind(TreatmentTransformerChain.class).to(CharaparserTreatmentTransformerChain.class);
 		bind(MarkupDescriptionTreatmentTransformer.class).to(OldPerlTreatmentTransformer.class);
 		
-		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(true);
-		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")).toInstance(50);
+		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(false);
+		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")).toInstance(30);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")).toInstance(Integer.MAX_VALUE);
 		
 		bind(String.class).annotatedWith(Names.named("databaseName")).toInstance("annotationevaluation");

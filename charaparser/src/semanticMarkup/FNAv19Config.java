@@ -36,7 +36,11 @@ public class FNAv19Config extends RunConfig {
 	
 	protected HashSet<String> getSelectedSources(String evaluationDataPath) {
 		HashSet<String> result = new HashSet<String>();
-
+		
+		//result.add("735.txt-21");
+		//result.add("121.txt-3");
+		//result.add("765.txt-6");
+		
 		String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
