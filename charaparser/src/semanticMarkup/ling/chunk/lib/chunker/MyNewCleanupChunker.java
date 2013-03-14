@@ -43,16 +43,26 @@ public class MyNewCleanupChunker extends AbstractChunker {
 
 		for(int i=0; i<terminals.size(); i++) {
 			if(translateCharacterToConstraint[i])
-				if(characterPermitsTranslation(i, terminals, chunkCollector))
+				if(characterPermitsTranslation(i, terminals, chunkCollector)) {
 					translate(ChunkType.CHARACTER_STATE, ChunkType.CONSTRAINT, i, chunkCollector);
-			if(translateStateToConstraint[i])
+					chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
+				}
+			if(translateStateToConstraint[i]) {
 				translate(ChunkType.STATE, ChunkType.CONSTRAINT, i, chunkCollector);
-			if(translateModifierToConstraint[i])
+				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
+			}
+			if(translateModifierToConstraint[i]) {
 				translate(ChunkType.MODIFIER, ChunkType.CONSTRAINT, i, chunkCollector);
-			if(translateStateToModifier[i])
+				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
+			}
+			if(translateStateToModifier[i]) {
 				translate(ChunkType.STATE, ChunkType.MODIFIER, i, chunkCollector);
-			if(translateConstraintToModifier[i])
+				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
+			}
+			if(translateConstraintToModifier[i]) {
 				translate(ChunkType.CONSTRAINT, ChunkType.MODIFIER, i, chunkCollector);
+				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
+			}
 		}
 
 		//moveChunksForAndOrLists(terminals, chunkCollector);		
@@ -78,7 +88,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 				constraintOrgan[i] = organ[i] || (i+1 < terminals.size() && constraint[i] && organ[i+1]); 
 				changedConstraintOrgan |= constraintOrgan[i] != before;
 			}
-			log(LogLevel.DEBUG, "changedConstraintOrgan " + changedConstraintOrgan);
+			//log(LogLevel.DEBUG, "changedConstraintOrgan " + changedConstraintOrgan);
 			changed |= changedConstraintOrgan;
 			
 			boolean changedCharacterToConstraint = false;
@@ -101,7 +111,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 					translateStateToModifier[i] =  i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1];
 					changedStateToX |= translateStateToModifier[i] != before;
 				}
-			log(LogLevel.DEBUG, "changedStateToX " + changedStateToX);
+			//log(LogLevel.DEBUG, "changedStateToX " + changedStateToX);
 			changed |= changedStateToX;
 			
 			boolean changedModifierToConstraint = false;
@@ -111,7 +121,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 						translateStateToConstraint[i+1]);
 				changedModifierToConstraint |= translateModifierToConstraint[i] != before;
 			}
-			log(LogLevel.DEBUG, "changedModifierToConstraint " + changedModifierToConstraint);
+			//log(LogLevel.DEBUG, "changedModifierToConstraint " + changedModifierToConstraint);
 			changed |= changedModifierToConstraint;
 			
 			boolean changedConstraintToModifier = false;
@@ -121,7 +131,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 					i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1];
 				changedConstraintToModifier |= translateConstraintToModifier[i] != before;
 			}
-			log(LogLevel.DEBUG, "changedConstraintToModifier " + changedConstraintToModifier);
+			//log(LogLevel.DEBUG, "changedConstraintToModifier " + changedConstraintToModifier);
 			changed |= changedConstraintToModifier;
 		}
 	}
@@ -144,21 +154,25 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			notAllowedCharacterStates.add("low");
 			
 			//split character name by "_" ?
-			if(characterName != null) {
-				String[] singleCharacterNames = characterName.split("_");
-				for(String singleCharacterName : singleCharacterNames) {
-					if(allowedCharacterNames.contains(singleCharacterName) && !notAllowedCharacterStates.contains(characterState))
-						return true;
-				}
+			if(characterName != null && !characterName.contains("_or_")) {
+				if(allowedCharacterNames.contains(characterName) && !notAllowedCharacterStates.contains(characterState))
+					return true;
+				//String[] singleCharacterNames = characterName.split("_or_");
+				//for(String singleCharacterName : singleCharacterNames) {
+				//	if(allowedCharacterNames.contains(singleCharacterName) && !notAllowedCharacterStates.contains(characterState))
+				//		return true;
+				//}
 			}
 				
 			//split character name with "_" instead of string contains
-			if(characterName != null) {
-				String[] singleCharacterNames = characterName.split("_");
+			if(characterName != null && !characterName.contains("_or_")) {
+				if(characterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
+					return true;
+				/*String[] singleCharacterNames = characterName.split("_or_");
 				for(String singleCharacterName : singleCharacterNames) {
 					if(singleCharacterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
 						return true;
-				}
+				}*/
 			}
 		}
 		return false;
@@ -168,6 +182,8 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		AbstractParseTree terminal = chunkCollector.getTerminals().get(i);
 		Chunk parentChunk = chunkCollector.getChunk(terminal);
 		Chunk chunk = parentChunk.getChunkOfTypeAndTerminal(oldChunkType, terminal);
+		//if(oldChunkType.equals(ChunkType.CHARACTER_STATE))
+		//	chunk.clearProperties();
 		chunk.setChunkType(newChunkType);
 	}	
 	
