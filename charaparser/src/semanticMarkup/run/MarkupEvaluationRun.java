@@ -9,6 +9,7 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.log.Timer;
 import semanticMarkup.markup.IMarkupCreator;
 
 import com.google.inject.Inject;
@@ -84,6 +85,8 @@ public class MarkupEvaluationRun extends AbstractRun {
 		log(LogLevel.INFO, timeStringEvaluating);
 		bwSetup.flush();
 		bwSetup.close();
+		
+		log(LogLevel.INFO, "parse time " + this.getTimeString(Timer.getParseTime()));
 	}
 
 	@Override

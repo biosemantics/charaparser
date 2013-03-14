@@ -1,5 +1,6 @@
 package semanticMarkup.core.transformation.lib;
 
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +16,7 @@ import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.log.Timer;
 
 public class SentenceChunkerRun implements Runnable {
 
@@ -63,7 +65,11 @@ public class SentenceChunkerRun implements Runnable {
 			List<Token> posedSentence = posTagger.tag(sentence);
 			log(LogLevel.DEBUG, "POSed sentence " + posedSentence);
 			
+			long startTime = Calendar.getInstance().getTimeInMillis();
 			AbstractParseTree parseTree = parser.parse(posedSentence);
+			long endTime = Calendar.getInstance().getTimeInMillis();
+			Timer.addParseTime(endTime - startTime);
+			
 			log(LogLevel.DEBUG, "Parse tree: ");
 			log(LogLevel.DEBUG, parseTree.prettyPrint());
 			//parseTree.prettyPrint();
