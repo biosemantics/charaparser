@@ -37,7 +37,7 @@ public class SpecificPPChunker extends AbstractChunker {
 			Chunk terminalChunk = chunkCollector.getChunk(terminal);
 			if(terminalChunk.isOfChunkType(ChunkType.CHARACTER_STATE) || terminalChunk.isOfChunkType(ChunkType.STATE)) {
 				LinkedHashSet<Chunk> function = new LinkedHashSet<Chunk>(); 
-				function.addAll(terminalChunk.getTerminals());
+				function.add(terminalChunk);
 				Chunk functionChunk = new Chunk(ChunkType.SPECIFIER, function);
 				
 				LinkedHashSet<Chunk> specificPP = new LinkedHashSet<Chunk>(); 
@@ -49,9 +49,9 @@ public class SpecificPPChunker extends AbstractChunker {
 					AbstractParseTree lookAheadTerminal = terminals.get(i);
 					Chunk lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
 				
-					if(lookAheadChunk.isOfChunkType(ChunkType.MODIFIER)) {
+					/*if(lookAheadChunk.isOfChunkType(ChunkType.MODIFIER)) {
 						specificPP.add(lookAheadChunk);
-					} else if(lookAheadChunk.isOfChunkType(ChunkType.PP)) {
+					} else*/ if(lookAheadChunk.isOfChunkType(ChunkType.PP)) {
 						specificPP.add(lookAheadChunk);
 						Chunk specificPPChunk = new Chunk(ChunkType.SPECIFIC_PP, specificPP);
 						chunkCollector.addChunk(specificPPChunk);

@@ -76,7 +76,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 					processingContextState);
 			List<DescriptionTreatmentElement> entity1 = null;
 			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
+			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER) || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 				entity1 = processingContextState.getSubjects();
 			}else{
 				entity1 = (LinkedList<DescriptionTreatmentElement>)processingContextState.getLastElements().clone();
