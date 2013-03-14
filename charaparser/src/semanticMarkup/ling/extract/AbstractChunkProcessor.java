@@ -362,7 +362,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected LinkedList<DescriptionTreatmentElement> lastStructures(ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
-		if(/*!processingContext.isNewSegment() &*/ (processingContextState.getLastElements().size()> 0 && 
+		
+		boolean newSegment = processingContext.getCurrentState().isCommaAndOrEosEolAfterLastElements();
+		if(!newSegment & (processingContextState.getLastElements().size()> 0 && 
 				processingContextState.getLastElements().getLast().isOfDescriptionType(DescriptionType.STRUCTURE))) {
 			parents.addAll(processingContextState.getLastElements());
 		}else{
@@ -581,6 +583,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 			
 			//String[] expectedFormatTokens = convertChunksToTokens(twoParts.get(0));
+			processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
 			processCharacterText(twoParts.get(0), structures, null, processingContextState, processingContext);
 			// 7-12-02 add cs //process part 1, which applies to all lateststructures, invisible
 			structures = structuresCopy;

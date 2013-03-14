@@ -101,27 +101,6 @@ public class ProcessingContext {
 		}
 		return null;
 	}
-	
-	
-	public boolean isNewStatement() {
-		chunkListIterator.previous();
-		Chunk previousChunk = chunkListIterator.previous();
-		chunkListIterator.next();
-		chunkListIterator.next();
-		return previousChunk.getTerminalsText().matches("(:|;|\\.)");
-	}
-	
-	public boolean isNewSegment() {
-		chunkListIterator.previous();
-		if(!chunkListIterator.hasPrevious()) {
-			chunkListIterator.next();
-			return true;
-		}
-		Chunk previousChunk = chunkListIterator.previous();
-		chunkListIterator.next();
-		chunkListIterator.next();
-		return previousChunk.getTerminalsText().matches(",");
-	}
 
 	public void reset() {
 		 currentState = new ProcessingContextState();
