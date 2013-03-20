@@ -28,6 +28,7 @@ public class TreatiseConfig extends RunConfig {
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(evaluationDataPath));
 		
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance("treatiseh"); 
+		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance("treatisehglossaryfixed");
 
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance("resources//treatisehglossaryfixed.csv"); 
 		

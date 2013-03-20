@@ -27,7 +27,8 @@ public class FNAv19Config extends RunConfig {
 
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(evaluationDataPath));
 		
-		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance("fnav19"); 
+		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance("type2"); 
+		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance("fnaglossaryfixed");
 
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance("resources//fnaglossaryfixed.csv"); 
 		
@@ -37,11 +38,13 @@ public class FNAv19Config extends RunConfig {
 	protected HashSet<String> getSelectedSources(String evaluationDataPath) {
 		HashSet<String> result = new HashSet<String>();
 		
+		//result.add("3.txt-3");
+		
 		//result.add("735.txt-21");
 		//result.add("121.txt-3");
 		//result.add("765.txt-6");
 		
-		String file;
+		/*String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
 			File[] listOfFiles = folder.listFiles();
@@ -73,7 +76,7 @@ public class FNAv19Config extends RunConfig {
 					// break; //TODO remove. only for test
 				}
 			}
-		}
+		}*/
 		return result;
 	}
 }

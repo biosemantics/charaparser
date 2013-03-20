@@ -65,12 +65,14 @@ public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeB
 	}
 	
 	private void addStates() {
-		Set<String> words = terminologyLearner.getRoleToWords().get("c");
-		for (String word : words) {
-			if (!word.matches("\\W+")
-					&& !stopWords.contains(word)
-					&& !prepositionWords.contains(word)) {
-				this.states.add(word);
+		if(terminologyLearner.getRoleToWords().containsKey("c")) {
+			Set<String> words = terminologyLearner.getRoleToWords().get("c");
+			for (String word : words) {
+				if (!word.matches("\\W+")
+						&& !stopWords.contains(word)
+						&& !prepositionWords.contains(word)) {
+					this.states.add(word);
+				}
 			}
 		}
 	}

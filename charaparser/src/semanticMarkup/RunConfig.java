@@ -9,12 +9,14 @@ import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.io.input.lib.eval.StandardVolumeReader;
+import semanticMarkup.io.input.lib.type2.Type2VolumeReader;
 import semanticMarkup.io.output.IVolumeWriter;
 import semanticMarkup.io.output.lib.xml2.XML2VolumeWriter;
 import semanticMarkup.markup.AfterPerlBlackBox;
 import semanticMarkup.markup.IMarkupCreator;
 import semanticMarkup.run.IRun;
 import semanticMarkup.run.MarkupEvaluationRun;
+import semanticMarkup.run.MarkupRun;
 
 import com.google.inject.name.Names;
 
@@ -28,7 +30,7 @@ public class RunConfig extends BasicConfig {
 	public void configure() {
 		super.configure();
 		
-		bind(IRun.class).to(MarkupEvaluationRun.class);
+		bind(IRun.class).to(MarkupRun.class);
 		//MarkupRun, EvaluationRun, MarkupEvaluationRun
 		bind(String.class).annotatedWith(Names.named("Run_OutFile")).toInstance("outfile");
 		
@@ -41,7 +43,7 @@ public class RunConfig extends BasicConfig {
 		
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(AfterPerlBlackBox.class);
 		//CharaParser.class //AfterPerlBlackBox
-		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(EvaluationDBVolumeReader.class);
+		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(Type2VolumeReader.class);
 		//Type1VolumeReader, Type2VolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader
 		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_Sourcefile")).toInstance("document_test.xml");
 		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_StyleStartPattern")).toInstance(".*?(Heading|Name).*");
@@ -50,7 +52,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_Tribegennamestyle")).toInstance("caps");
 		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_StyleMappingFile")).toInstance("" +
 				"resources//stylemapping.properties");
-		bind(String.class).annotatedWith(Names.named("Type2VolumeReader_Sourcefile")).toInstance("someFile.xml");
+		bind(String.class).annotatedWith(Names.named("Type2VolumeReader_Sourcefile")).toInstance("evaluationData\\source\\");
 		
 		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_Sourcefile")).toInstance("outfile");
 		

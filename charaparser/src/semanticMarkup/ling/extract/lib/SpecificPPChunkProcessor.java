@@ -65,28 +65,32 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 		
 		if(!nonModifiers.isEmpty()) {
 			if(posKnowledgeBase.isVerb(nonModifiers.get(nonModifiers.size()-1).getTerminalsText()) || preposition.getTerminalsText().equals("to")) {
-			//t[c[{connected}] r[p[by] o[{conspicuous} {arachnoid} <trichomes>]]] TODO: what if c was not included in this chunk?
-			
-			String relation = "";
-			for(Chunk nonModifier : nonModifiers) 
-				relation += nonModifier.getTerminalsText() + " ";
-			relation += preposition.getTerminalsText();
-			
-			LinkedList<DescriptionTreatmentElement> structures = extractStructuresFromObject(object, processingContext, 
-					processingContextState);
-			List<DescriptionTreatmentElement> entity1 = null;
-			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER) || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
-				entity1 = processingContextState.getSubjects();
-			}else{
-				entity1 = (LinkedList<DescriptionTreatmentElement>)processingContextState.getLastElements().clone();
-				//entity1.remove(entity1.size()-1);
-			}
-			LinkedList<DescriptionTreatmentElement> relationElement = createRelationElements(relation, entity1, structures, modifiers, false, processingContextState);
-			result.addAll(relationElement);
-			processingContextState.setLastElements(relationElement);
-			result.addAll(structures);
-			}else{//c: {loosely} {arachnoid} : should be m[loosly] architecture[arachnoid]
+				//t[c[{connected}] r[p[by] o[{conspicuous} {arachnoid} <trichomes>]]] TODO: what if c was not included in this chunk?
+				
+				String relation = "";
+				for(Chunk nonModifier : nonModifiers) 
+					relation += nonModifier.getTerminalsText() + " ";
+				relation += preposition.getTerminalsText();
+				
+				LinkedList<DescriptionTreatmentElement> structures = extractStructuresFromObject(object, processingContext, 
+						processingContextState);
+				
+				if(!processingContextState.getLastElements().isEmpty() && structures.isEmpty()) {
+					List<DescriptionTreatmentElement> entity1 = null;
+					DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
+					if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER) || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
+						entity1 = processingContextState.getSubjects();
+					}else{
+						entity1 = (LinkedList<DescriptionTreatmentElement>)processingContextState.getLastElements().clone();
+					}
+					
+					LinkedList<DescriptionTreatmentElement> relationElement = createRelationElements(relation, entity1, structures, modifiers, false, processingContextState);
+					result.addAll(relationElement);
+					processingContextState.setLastElements(relationElement);
+					result.addAll(structures);
+				}
+			} else {
+				//c: {loosely} {arachnoid} : should be m[loosly] architecture[arachnoid]
 				//String[] tokens = c.replaceAll("[{}]", "").split("\\s+");
 				//ArrayList<Element> charas = this.processCharacterText(tokens, this.subjects);
 	

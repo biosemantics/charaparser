@@ -56,7 +56,8 @@ public class DescriptionExtractorRun implements Runnable {
 	@Override
 	public void run() {
 		log(LogLevel.DEBUG, "Create description for treatment: " + treatment.getName());
-		createNewDescription(treatment, sentencesForOrganStateMarker.get(treatment));
+		if(sentencesForOrganStateMarker.containsKey(treatment))
+			createNewDescription(treatment, sentencesForOrganStateMarker.get(treatment));
 	}
 	
 	private void createNewDescription(Treatment treatment, //List<Token> sentences, 

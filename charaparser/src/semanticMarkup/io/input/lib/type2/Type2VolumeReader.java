@@ -20,6 +20,7 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 
@@ -34,6 +35,7 @@ public class Type2VolumeReader extends  AbstractFileVolumeReader {
 	private XPathExpression<Element> descriptionExpression = 
 			factory.compile("//treatment/description", elementFilter, null, namespace);
 	
+	@Inject
 	public Type2VolumeReader(@Named("Type2VolumeReader_Sourcefile") String filepath) {
 		super(filepath);
 	}
@@ -49,7 +51,7 @@ public class Type2VolumeReader extends  AbstractFileVolumeReader {
 		for(int i = 0; i<total; i++) {
 			Treatment treatment = new Treatment(String.valueOf(i));
 		
-			File file = files[i];		
+			File file = files[i];
 			Document doc = builder.build(file);
 			Element root = doc.getRootElement();
 			List<Element> descriptions = descriptionExpression.evaluate(root);
@@ -57,6 +59,7 @@ public class Type2VolumeReader extends  AbstractFileVolumeReader {
 				String text = description.getTextNormalize();
 				treatment.addTreatmentElement(new ValueTreatmentElement("description", text));
 			}
+			treatments.add(treatment);
 		}
 		
 		return treatments;

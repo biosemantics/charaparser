@@ -82,6 +82,7 @@ import semanticMarkup.ling.extract.lib.ValuePercentageOrDegreeChunkProcessor;
 import semanticMarkup.ling.extract.lib.WhereChunkProcessor;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
+import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.parse.lib.StanfordParseTreeFactory;
@@ -126,7 +127,7 @@ public class BasicConfig extends AbstractModule {
 		bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);;
 		bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
 		
-		bind(ITerminologyLearner.class).to(DatabaseInputNoLearner.class).in(Singleton.class); //PerlTerminologyLearner
+		bind(ITerminologyLearner.class).to(PerlTerminologyLearner.class).in(Singleton.class); //PerlTerminologyLearner //DatabaseInputNoLearner
 		
 		bind(String.class).annotatedWith(Names.named("temporaryPath")).toInstance("temp");
 		bind(String.class).annotatedWith(Names.named("descriptionSeparator")).toInstance("-------------");

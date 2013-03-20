@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -26,7 +28,9 @@ import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.mysql.jdbc.log.Log;
 
 public class PerlTerminologyLearner implements ITerminologyLearner {
 
@@ -58,18 +62,21 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private String descriptionSeparator;
 	private Set<String> stopWords;
 	private Set<String> selectedSources;
+	private String glossaryTable;
 
+	@Inject
 	public PerlTerminologyLearner(@Named("temporaryPath") String temporaryPath, 
 			@Named("descriptionSeparator") String descriptionSeparator, 
 			@Named("markupMode") String markupMode,
 			@Named("databaseName") String databaseName,
+			@Named("GlossaryTable") String glossaryTable,
 			@Named("databasePrefix") String databasePrefix, 
 			@Named("databaseUser") String databaseUser, 
 			@Named("databasePassword") String databasePassword, 
 			@Named("StopWords") Set<String> stopWords,
 			@Named("selectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
-			ITokenizer tokenizer) throws Exception {
+			@Named("WordTokenizer") ITokenizer tokenizer) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.descriptionSeparator = descriptionSeparator;
 		this.markupMode = markupMode;
@@ -81,6 +88,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.tokenizer = tokenizer;
 		this.stopWords = stopWords;
 		this.selectedSources = selectedSources;
+		this.glossaryTable = glossaryTable;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
@@ -92,8 +100,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		File directory = new File(temporaryPath);
 		
 		try {
-			File inDirectory = new File(directory.getAbsolutePath() + "//in");
-			inDirectory.mkdir();
+			File inDirectory = new File(directory.getAbsolutePath() + "//in//");
 			
 			//create the files
 			writeTreatmentsToFiles(treatments, inDirectory);
@@ -459,7 +466,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	public List<String> getAdjNouns() {
 		return this.adjnouns;
 	}
-
+	
 	@Override
 	public Map<String, String> getAdjNounSent() {
 		return this.adjnounsent;
@@ -500,11 +507,37 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 	
 	private void runPerl(File inDirectory) throws Exception {
-		String command = "perl src/main/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath()
-				+ "\" "+ this.databaseName + " " + this.markupMode + " " + databasePrefix;
+		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "//"
+				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix + " " + this.glossaryTable;
+		createTablesNeededForPerl();
 		runCommand(command);
 	}
 	
+	private void createTablesNeededForPerl() {
+        try {
+            Statement stmt = connection.createStatement();
+            String cleanupQuery = "DROP TABLE IF EXISTS " + 
+									this.databasePrefix + "_allwords, " + 
+									this.databasePrefix + "_discounted, " + 
+									this.databasePrefix + "_heuristicnouns, " + 
+									this.databasePrefix + "_isa, " + 
+									this.databasePrefix + "_modifiers, " + 
+									this.databasePrefix + "_sentence, " + 
+									this.databasePrefix + "_sentinfile, " + 
+									this.databasePrefix + "_singularplural, " + 
+									this.databasePrefix + "_substructure, " + 
+									this.databasePrefix + "_unknownwords, " + 
+									this.databasePrefix + "_wordpos, " + 
+									this.databasePrefix + "_wordroles;";
+            stmt.execute(cleanupQuery);
+            stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)");
+    		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");			
+        } catch(Exception e) {
+        	log(LogLevel.ERROR, e);
+	    }
+	}
+
+
 	private void runCommand(String command) throws Exception {
 		long time = System.currentTimeMillis();
 		
