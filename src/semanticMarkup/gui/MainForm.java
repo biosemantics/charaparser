@@ -90,6 +90,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 
+import semanticMarkup.know.IPOSKnowledgeBase;
+import semanticMarkup.gui.WordUtilities;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.jcraft.jsch.Channel;
@@ -319,6 +322,10 @@ public class MainForm {
 	private boolean fourdotonesave = false;
 	private boolean fourdottwosave = false;
 	private boolean fourdotthreesave = false;
+	private IPOSKnowledgeBase posKnowledgeBase;
+	private String databasePrefix;
+	private String sourceDirectory;
+	private String configDirectory;
 	public static String databaseName;
 	public static String targetDirectory;
 	public static String databaseUser;
@@ -327,17 +334,16 @@ public class MainForm {
 	
 	@Inject
 	public MainForm(MainFormDbAccessor mainDb, @Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
-			@Named("databasePassword") String databasePassword) {
+			@Named("databasePassword") String databasePassword, @Named("databasePrefix")String databasePrefix, IPOSKnowledgeBase posKnowledgeBase) {
 		this.mainDb = mainDb;
 		this.databaseName = databaseName;
 		this.databaseUser = databaseUser;
 		this.databasePassword = databasePassword;
-		this.targetDirectory = "out";
-		try {
-			this.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
+		this.targetDirectory = "evaluationData//perlTest//target";
+		this.sourceDirectory = "evaluationData//perlTest//source";
+		this.configDirectory = "evaluationData//perltest//config";
+		this.posKnowledgeBase = posKnowledgeBase;
+		this.databasePrefix = databasePrefix;
 	}
 	
 	
@@ -356,8 +362,9 @@ public class MainForm {
 		 green = display.getSystemColor(SWT.COLOR_GREEN);
 		 grey = display.getSystemColor(SWT.COLOR_GRAY);
 		
-		
 		createContents(display);
+		makeReqDirectories("evaluationData//perlTest//");
+		this.startMarkup();
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
@@ -396,12 +403,18 @@ public class MainForm {
 			}
 			//Logic for tab access goes here
 			public void widgetSelected(SelectionEvent arg0) {
+				
+				
+				
 				// TODO Auto-generated method stub
 				// chk if values were loaded
 				StringBuffer messageText = new StringBuffer();
 				String tabName = arg0.item.toString();
 				tabName = tabName.substring(tabName.indexOf("{")+1, tabName.indexOf("}"));
 	
+				if(tabName.equals("Character States"))
+					loadCharacterTab();
+				
 				/****** Logic for tab access goes here*******/
 				//if status is true  - u can go to the next tab, else don't even think! 
 				// For general tab
@@ -575,7 +588,8 @@ public class MainForm {
 			}
 			
 			private void loadCharacterTab() {
-					charDb = new CharacterStateDBAccess(dataPrefixCombo.getText().replaceAll("-", "_").trim(), glossaryPrefixCombo.getText().trim());
+					charDb = new CharacterStateDBAccess(MainForm.databaseName, MainForm.databaseUser, MainForm.databasePassword, 
+							dataPrefixCombo.getText().replaceAll("-", "_").trim(), glossaryPrefixCombo.getText().trim());
 					// set the decisions combo
 					categories = setCharacterTabDecisions();
 					if(categories.length>0){
@@ -591,7 +605,9 @@ public class MainForm {
 					try{
 						if(conn == null){
 							Class.forName("com.mysql.jdbc.Driver");
-							conn = DriverManager.getConnection(MainForm.databaseName);
+							String URL = "jdbc:mysql://localhost/" + MainForm.databaseName + "?user=" + MainForm.databaseUser + "&password=" + 
+									MainForm.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+							conn = DriverManager.getConnection(URL);
 						}
 						Statement stmt = conn.createStatement();
 						stmt.execute("drop table if exists "+dataPrefixCombo.getText().replaceAll("-", "_").trim()+"_group_decisions");
@@ -750,6 +766,8 @@ public class MainForm {
 		glossaryCombo.setItems(glossprefixes);
 		glossaryPrefixCombo = glossaryCombo;
 
+		this.setDefaultValues();
+		
 		//contain indexed part: rib 5 => the fifth rib
 		containIndexedParts = new Button(grpCreateANew, SWT.CHECK);
 		containIndexedParts.setBounds(23, 140, 730, 23);
@@ -1415,24 +1433,25 @@ public class MainForm {
 		final TabFolder markupNReviewTabFolder = new TabFolder(composite_4, SWT.NONE);
 		markupNReviewTabFolder.setBounds(0, 0, 795, 515);
 		
-		TabItem tbtmPerlProgram = new TabItem(markupNReviewTabFolder, SWT.NONE);
+		/*TabItem tbtmPerlProgram = new TabItem(markupNReviewTabFolder, SWT.NONE);
 		tbtmPerlProgram.setText("Run Perl Program");
+		*/
 		
-		Composite composite_9 = new Composite(markupNReviewTabFolder, SWT.NONE);
-		tbtmPerlProgram.setControl(composite_9);
+		//Composite composite_9 = new Composite(markupNReviewTabFolder, SWT.NONE);
+		//tbtmPerlProgram.setControl(composite_9);
 		
-		tab5desc = new Text(composite_9, SWT.READ_ONLY | SWT.WRAP);
-		tab5desc.setToolTipText("This step produces sentence level annotation and identifies structure names and character descriptors. Use the sub-tabs " +
+		//tab5desc = new Text(composite_9, SWT.READ_ONLY | SWT.WRAP);
+		/*tab5desc.setToolTipText("This step produces sentence level annotation and identifies structure names and character descriptors. Use the sub-tabs " +
 				"to review and categorize terms. Save the final categorization by clicking the 'Save' button on EACH subtab. \n\nClick Run button" +
 				" to run the Perl program to extract terms. When it is completed, you will see a message \"Done\" in the message box below.");
 		tab5desc.setText("This step produces sentence level annotation and identifies structure names and character descriptors. Use the sub-tabs to " +
 				"review and categorize terms. Save the final categorization by clicking the 'Save' button on EACH subtab. \n\nClick Run button to run " +
 				"the Perl program to extract terms. When it is completed, you will see a message \"Done\" in the message box below.");
 		tab5desc.setEditable(false);
-		tab5desc.setBounds(10, 10, 744, 99);
+		tab5desc.setBounds(10, 10, 744, 99);*/
 		
 		/*"run perl" subtab*/
-		markUpPerlLog = new Text(composite_9, SWT.WRAP | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER);
+		/*markUpPerlLog = new Text(composite_9, SWT.WRAP | SWT.V_SCROLL | SWT.MULTI | SWT.BORDER);
 		markUpPerlLog.setBounds(10, 113, 744, 250);
 		markUpPerlLog.setEnabled(true);
 
@@ -1473,12 +1492,12 @@ public class MainForm {
 						String message = "No data to load. Please proceed to the next tab.";				
 						MainForm.showPopUpWindow(message, messageHeader, SWT.ICON_INFORMATION);
 					}*/
-				} catch (Exception exc) {
+		/*		} catch (Exception exc) {
 					exc.printStackTrace();
 				}
 				
 			}
-		});
+		});*/
 		
 		/*3 subtabs*/
 		composite4structures = new Composite(markupNReviewTabFolder, SWT.NONE);
@@ -2012,11 +2031,11 @@ public class MainForm {
 		/********************************/
 		/*"unknown removal" tab: step 5 */
 		/********************************/
-		//final TabItem tagTabItem = new TabItem(tabFolder, SWT.NONE);
-		//tagTabItem.setText(""unknown" Removal");
+		final TabItem tagTabItem = new TabItem(tabFolder, SWT.NONE);
+		tagTabItem.setText("\"unknown\" Removal");
 
 		final Composite composite_6 = new Composite(tabFolder, SWT.NONE);
-		//tagTabItem.setControl(composite_6);
+		tagTabItem.setControl(composite_6);
 
 		tab6desc = new Text(composite_6, SWT.READ_ONLY|SWT.WRAP);
 		tab6desc.setText("This step allows you to load sentences for manual markup. Click on Load Task to start. " +
@@ -2178,7 +2197,7 @@ public class MainForm {
 				loadTagTable(tabFolder);
 				
 				try {
-					mainDb.saveStatus("\"unknown\" Removal", combo.getText(), true);
+					//mainDb.saveStatus("\"unknown\" Removal", combo.getText(), true);
 					statusOfMarkUp[5] = true;
 				} catch (Exception exc) {
 					exc.printStackTrace();
@@ -2848,6 +2867,23 @@ public class MainForm {
 		label.setBounds(569, 485, 253, 71);*/
 
 	}
+
+	private void setDefaultValues() {
+		this.configurationText.setText(this.configDirectory);
+		this.sourceText.setText(this.sourceDirectory);
+		this.targetText.setText(this.targetDirectory);
+		this.dataPrefixCombo.setText(this.databasePrefix);
+		this.glossaryPrefixCombo.setText("fnaglossaryfixed");
+		statusOfMarkUp[0] = true;
+		statusOfMarkUp[1] = true;
+		statusOfMarkUp[2] = true;
+		statusOfMarkUp[3] = true;
+		statusOfMarkUp[4] = true;
+		statusOfMarkUp[5] = true;
+		statusOfMarkUp[6] = true;
+		statusOfMarkUp[7] = true;
+	}
+
 
 	/**
 	 * 
@@ -3896,19 +3932,19 @@ public class MainForm {
 	}
 	
 	private void startMarkup() {
-		/*if(vd == null || !vd.isAlive()){
-			MainForm.markupstarted  = true;
+		//if(vd == null || !vd.isAlive()){
+			//MainForm.markupstarted  = true;
 			mainDb.createWordRoleTable();//roles are: op for plural organ names, os for singular, c for character, v for verb
 			mainDb.createNonEQTable();
 			mainDb.createTyposTable();
 			String workdir = MainForm.targetDirectory;
 			//if there is a characters folder,add the files in characters folder to descriptions folder
 			mergeCharDescFolders(new File(workdir));
-			String todofoldername = ApplicationUtilities.getProperty("DESCRIPTIONS");
+			/*String todofoldername = ApplicationUtilities.getProperty("DESCRIPTIONS");
 			String databasename = ApplicationUtilities.getProperty("database.name");
 			ProcessListener listener = new ProcessListener(findStructureTable, markupProgressBar, shell.getDisplay());
 			
-			vd = new VolumeDehyphenizer(listener, workdir, todofoldername,
+			/*vd = new VolumeDehyphenizer(listener, workdir, todofoldername,
 					databasename, shell.getDisplay(), markUpPerlLog, 
 					dataPrefixCombo.getText().replaceAll("-", "_").trim(), /*findDescriptorTable,*/ 
 		/*this);
@@ -4039,10 +4075,10 @@ public class MainForm {
 				}
 				String dataPrefix = MainForm.dataPrefixCombo.getText().replaceAll("-", "_").trim();
 				String glosstable = MainForm.glossaryPrefixCombo.getText().trim();
-				StateCollectorTest sct = new StateCollectorTest(conn, dataPrefix,true,glosstable, shell.getDisplay(), contextStyledText); /*using learned semanticroles only*/
-				sct.collect();
-				sct.saveStates();
-				XMLFileCount = sct.grouping4GraphML();
+				//StateCollectorTest sct = new StateCollectorTest(conn, dataPrefix,true,glosstable, shell.getDisplay(), contextStyledText); /*using learned semanticroles only*/
+				//sct.collect();
+				//sct.saveStates();
+				//XMLFileCount = sct.grouping4GraphML();
 				contextStyledText.append("Done! Ready to move to the next step.");
 				//tabFolder.setSelection(4); //[general, step3, 4, 5, 6, 7] index starts at 0
 				//tabFolder.setFocus();
@@ -4154,7 +4190,7 @@ public class MainForm {
 	@SuppressWarnings("unused")
 	private void reportGlossary() {
 		
-		LearnedTermsReport ltr = new LearnedTermsReport(this.databaseName + "_corpus");
+		LearnedTermsReport ltr = new LearnedTermsReport(this.databaseName + "_corpus", this.databaseUser, this.databaseUser);
 		glossaryStyledText.append(ltr.report());
 	}
 	
@@ -5073,10 +5109,11 @@ public class MainForm {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true"););
+						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
-			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(prefix,glossaryPrefixCombo.getText().trim());
+			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(this.databaseName, this.databaseUser, this.databasePassword, 
+					prefix,glossaryPrefixCombo.getText().trim());
 			words = vmdb.structureTags4Curation(words);
 			for(String word: words){
 				if(word.compareToIgnoreCase("ditto")==0) continue;
@@ -5084,7 +5121,8 @@ public class MainForm {
 				if(word.length()==0) continue;
 				if(word.startsWith("[") && word.endsWith("]")) continue;
 				//before structure terms are set, partOfPrepPhrases can not be reliability determined
-				if(Utilities.mustBeVerb(word, MainForm.conn, prefix) || Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
+				WordUtilities utilities = new WordUtilities(posKnowledgeBase);
+				if(utilities.mustBeVerb(word, MainForm.conn, prefix) || utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 					//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 						noneqwords.add(word);
 						contextText.append(word+" is excluded\n");
@@ -5123,10 +5161,12 @@ public class MainForm {
 						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
-			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(prefix, glossaryPrefixCombo.getText().trim());
+			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(this.databaseName, this.databaseUser, this.databasePassword, 
+					prefix, glossaryPrefixCombo.getText().trim());
 			words = (ArrayList<String>)vmdb.descriptorTerms4Curation();
+			WordUtilities utilities = new WordUtilities(posKnowledgeBase);
 			for(String word: words){
-				if(Utilities.mustBeVerb(word, conn, prefix) || Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
+				if(utilities.mustBeVerb(word, conn, prefix) || utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 					noneqwords.add(word);
 					//display filtered word in the context box
 					contextText.append(word+" is excluded\n");
@@ -5150,7 +5190,8 @@ public class MainForm {
 		ArrayList <String> noneqwords = new ArrayList<String>();
 		try{
 			
-			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(dataPrefixCombo.getText().replaceAll("-", "_").trim(),glossaryPrefixCombo.getText().trim());
+			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(this.databaseName, this.databaseUser, this.databasePassword, 
+					dataPrefixCombo.getText().replaceAll("-", "_").trim(),glossaryPrefixCombo.getText().trim());
 			if(inistructureterms==null || inistructureterms.size()==0){
 				inistructureterms = vmdb.structureTags4Curation(new ArrayList<String>());
 			}
@@ -5160,12 +5201,13 @@ public class MainForm {
 			words=(ArrayList<String>)vmdb.contentTerms4Curation(words, inistructureterms, inicharacterterms);
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
-				conn = DriverManager.getConnection(ApplicationUtilities.getProperty("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
+				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
 						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
+			WordUtilities utilities = new WordUtilities(posKnowledgeBase);
 			for(String word: words){
-				if(Utilities.mustBeVerb(word, conn, prefix) || Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
+				if(utilities.mustBeVerb(word, conn, prefix) || utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 					noneqwords.add(word);
 					contextText.append(word+" is excluded\n");
 					continue;
@@ -5550,4 +5592,10 @@ public class MainForm {
 		}
 		return returnVal;
 	}
+	
+	/*
+	public static void main(String[] args) {
+		MainForm mainForm = new MainForm(new MainFormDbAccessor("mainDb, databaseName, databaseName, databaseName, posKnowledgeBase);
+		mainForm.open();
+	}*/
 }

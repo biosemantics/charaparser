@@ -12,6 +12,7 @@ import java.util.Set;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.ValueTreatmentElement;
+import semanticMarkup.gui.MainForm;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkerChain;
@@ -39,6 +40,7 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	private Map<Thread, DescriptionExtractorRun> descriptionExtractorRuns = new LinkedHashMap<Thread, DescriptionExtractorRun>();
 	private int descriptionExtractorRunMaximum;
 	private int sentenceChunkerRunMaximum;
+	private MainForm mainForm;
 	
 	@Inject
 	public OldPerlTreatmentTransformer(
@@ -51,7 +53,8 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 			ITerminologyLearner terminologyLearner,
 			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
-			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum) throws Exception {
+			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
+			MainForm mainForm) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -62,10 +65,16 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 		this.wordTokenizer = wordTokenizer;
 		this.descriptionExtractorRunMaximum = descriptionExtractorRunMaximum;
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
+		this.mainForm = mainForm;
 	}
 
 	public List<Treatment> transform(List<Treatment> treatments) {
 		terminologyLearner.learn(treatments);
+		try {
+			mainForm.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker = terminologyLearner.getSentencesForOrganStateMarker();
 		markupDescriptions(treatments, sentencesForOrganStateMarker);		
 		return treatments;

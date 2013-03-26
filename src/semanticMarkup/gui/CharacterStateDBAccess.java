@@ -18,14 +18,20 @@ public class CharacterStateDBAccess {
 	private String databasPrefix;
 	private String glossaryTable;
 	private Connection conn = null;
+	private String databaseUser;
+	private String databasePassword;
 	
-	public CharacterStateDBAccess(String databaseName, String databasPrefix, String glossaryTable){
+	public CharacterStateDBAccess(String databaseName, String databaseUser, String databasePassword, String databasPrefix, String glossaryTable){
 		this.databasPrefix = databasPrefix;
 		this.glossaryTable = glossaryTable;
 		this.databaseName = databaseName;
+		this.databaseUser = databaseUser;
+		this.databasePassword = databasePassword;
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			this.conn = DriverManager.getConnection(databaseName);
+			String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
+					this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+			this.conn = DriverManager.getConnection(URL);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

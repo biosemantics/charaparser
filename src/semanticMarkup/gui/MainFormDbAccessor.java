@@ -55,14 +55,22 @@ public class MainFormDbAccessor {
 	private static Connection connection = null;
 	private String databaseName;
 	private String databasePrefix;
+	private String databasePassword;
+	private String databaseUser;
 
 	@Inject
-	public MainFormDbAccessor(@Named("databaseName")String databaseName, @Named("databasePrefix")String databasePrefix) {
+	public MainFormDbAccessor(@Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
+			@Named("databasePassword")String databasePassword, @Named("databasePrefix")String databasePrefix) {
 		this.databaseName = databaseName;
+		this.databaseUser = databaseUser;
+		this.databasePassword = databasePassword;
 		this.databasePrefix = databasePrefix;
+		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection(databaseName);
+			String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
+					this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+			connection = DriverManager.getConnection(URL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -709,6 +717,11 @@ public class MainFormDbAccessor {
 
 		try {
 			// conn = DriverManager.getConnection(url);
+			System.out.println(tab);
+			System.out.println(tabStatus);
+			String query = "update datasetprefix set " + tab + "= "
+					+ tabStatus + " where prefix='" + prefix + "'";
+			System.out.println(query);
 			stmt = connection
 					.prepareStatement("update datasetprefix set " + tab + "= "
 							+ tabStatus + " where prefix='" + prefix + "'");

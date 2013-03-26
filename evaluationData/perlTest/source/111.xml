@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<treatment>
+  <number>9.</number>
+  <TaxonIdentification Status="ACCEPTED">
+    <genus_name>Arenaria</genus_name>
+    <species_name>serpyllifolia</species_name>
+    <species_authority>Linnaeus</species_authority>
+    <place_of_publication>
+      <publication_title>Sp. Pl.</publication_title>
+      <place_in_publication>1: 423. 1753</place_in_publication>
+    </place_of_publication>
+  </TaxonIdentification>
+  <common_name>Thymeleaf sandwort</common_name>
+  <common_name>sabline á feuilles de serpolet</common_name>
+  <description>Plants annual. Taproots filiform. Stems 1–100+, erect to ascending or sprawling,
+    green, 3–40+ cm; internodes terete to ellipsoid, 2–8 times as long as leaves, dull, retrorsely
+    pubescent throughout, sometimes also stipitate-glandu-lar. Leaves often connate basally, with
+    scarious or mostly herba-ceous sheath 0.2–0.3 mm, petiolate (proximal leaves) or usually
+    sessile; petiole 1–4 mm; blade 3–5 veined, elliptic to broadly ovate or rarely orbiculate, 2–7 ×
+    1–4 mm, herbaceous, margins flat, herbaceous, dull, ciliate especially proximally, apex acute to
+    acuminate, pustulate, sparsely minutely pubescent or glabrous; axillary leaf clusters absent.
+    Inflorescences terminal, open, leafy, 3–50+-flowered cymes. Pedicels erect or ascending in
+    fruit, 1–12 mm, retrorsely pubescent. Flowers: sepals green, often prominently 3-veined, not
+    keeled, lanceolate to ovate-lanceolate (herbaceous portion narrowly elliptic to broadly
+    lanceolate), 2–3 mm, to 4 mm in fruit, apex narrowly acute to acuminate, ± minutely pustulate,
+    stipitate-glandular; petals oblong, 0.6–2.7 mm, 1/5–3/4 times as long as sepals, apex obtuse to
+    rounded. Capsules loosely enclosed by calyx, ovoid to cylindric-ovoid, 3–3.5 mm, 4/5–11/5 times
+    as long as sepals. Seeds 10–15, ashy black, reniform, plump, 0.4–0.6 mm, not shiny, with
+    low-elongate, prominent tubercules.</description>
+  <number_of_infrataxa>Varieties 3+ (2 in the flora):</number_of_infrataxa>
+  <introduced>introduced</introduced>
+  <global_distribution>North America</global_distribution>
+  <global_distribution>Eurasia</global_distribution>
+  <global_distribution>Africa</global_distribution>
+  <global_distribution>introduced in Australia.</global_distribution>
+  <discussion>Variation in Arenaria serpyllifolia in the broad sense is treated in various ways. The
+    two varieties recognized here have been treated also as subspecies (e.g., A. O. Chater and G.
+    Halliday 1993) or species (e.g., M. N. Abuhadra 2000; B. Jonsell 2001). Jonsell admitted that
+    accepting them as species is questionable; while the morphological differences are slight (see
+    esp. Abuhadra), the ploidy-level difference (2n = 40 in var. serpyllifolia vs. 2n = 20 in var.
+    tenuior) is important.</discussion>
+  <key>
+    <key_statement>
+      <statement_id>1.</statement_id>
+      <statement>Capsules ovoid to ovoid-conic, broader at base; seeds 0.5–0.6 mm</statement>
+      <determination>9a. Arenaria serpyllifolia var. serpyllifolia</determination>
+    </key_statement>
+    <key_statement>
+      <statement_id>1.</statement_id>
+      <statement>Capsules cylindric to cylindric-ovoid, not significantly broader at base (walls
+        nearly straight); seeds ca. 0.4 mm</statement>
+      <determination>9b. Arenaria serpyllifolia var. tenuior</determination>
+    </key_statement>
+  </key>
+</treatment>

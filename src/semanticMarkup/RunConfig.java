@@ -52,7 +52,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_Tribegennamestyle")).toInstance("caps");
 		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_StyleMappingFile")).toInstance("" +
 				"resources//stylemapping.properties");
-		bind(String.class).annotatedWith(Names.named("Type2VolumeReader_Sourcefile")).toInstance("evaluationData\\source\\");
+		bind(String.class).annotatedWith(Names.named("Type2VolumeReader_Sourcefile")).toInstance("evaluationData\\perlTest\\source\\");
 		
 		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_Sourcefile")).toInstance("outfile");
 		

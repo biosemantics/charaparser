@@ -14,9 +14,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
-import fna.parsing.ApplicationUtilities;
-import fna.parsing.DeHyphenizerCorrected;
-import fna.parsing.MainForm;
+
 /**
  * compare learned terms with what is in glossary, produce a report
  * @author hongcui
@@ -31,7 +29,6 @@ public class LearnedTermsReport {
 	static private String otablename2 = "wordpos";
 	static private String otablename = "learnedstructures";
 	static private String gstablename = "glossstructures";
-	private String database;
 	private static final Logger LOGGER = Logger.getLogger(LearnedTermsReport.class);
 	static private Connection conn = null;
 	//static private String username = ApplicationUtilities.getProperty("database.username");
@@ -47,20 +44,25 @@ public class LearnedTermsReport {
 	private HashSet learnedstructures = new HashSet();
 	private HashSet learnedstates = new HashSet();
 	private Hashtable donestates = new Hashtable();
+	private String databasePassword;
+	private String databaseUser;
+	private String databaseName;
 	
 	
-	
-	
-	public LearnedTermsReport(String database) {
+	public LearnedTermsReport(String databaseName, String databaseUser, String databasePassword) {
+		this.databaseName =databaseName;
+		this.databaseUser = databaseUser;
+		this.databasePassword = databasePassword;
+		
 		//check if fnaglossary and learnedstates tables exist
-		this.database = database;
 		boolean g = false;
 		boolean s = false;
 		boolean o1 = false;
 		boolean o2 = false;
 		try{
 			if(conn == null){
-				String URL = ApplicationUtilities.getProperty("database.url");
+				String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
+									this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
 				conn = DriverManager.getConnection(URL);
 			}
 			Statement stmt = conn.createStatement();
@@ -100,11 +102,11 @@ public class LearnedTermsReport {
 			createGlossStructureTable();
 			//make another table with learned singular organ names.
 			createLearnedStructureTable();
-			DeHyphenizerCorrected dh = new DeHyphenizerCorrected(ApplicationUtilities.getProperty("database.name"), 
-					otablename, "structure", null, "_", MainForm.dataPrefixCombo.getText().replaceAll("-", "_"), null);//TODO: replace last null with glossary
+			DeHyphenizerCorrected dh = new DeHyphenizerCorrected(this.databaseName, this.databaseUser, this.databasePassword,
+					otablename, "structure", null, "_", MainForm.dataPrefixCombo.getText().replaceAll("-", "_"));//TODO: replace last null with glossary
 			dh.deHyphen();
 		}catch(Exception e){
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 	}
 	
@@ -135,7 +137,7 @@ public class LearnedTermsReport {
 		sb.append("FNA Glossary All Character Count: "+getAllCharacterCount()+ls);
 		//organ/structure names
 		sb.append(ls+":::::::::::::::::::::::::::::::::::::"+ls);
-		sb.append("Structures Learned from "+database+":"+ls);
+		sb.append("Structures Learned from " + this.databaseName + ":"+ls);
 		sb.append("Learned Structure Count: "+getLearnedStructuresCount()+ls);
 		compareStructureTerms();
 		sb.append("\t Learned Structure Names Overlap with Glossary: "+this.overlappedstructures.size()+ls);
@@ -154,7 +156,7 @@ public class LearnedTermsReport {
 		//character states
 		
 		sb.append(ls+":::::::::::::::::::::::::::::::::::::"+ls);
-		sb.append("States Learned from "+database+":"+ls);
+		sb.append("States Learned from " + this.databaseName +":"+ls);
 		sb.append("Learned States Count: "+getLearnedStatesCount()+ls);
 		compareStateTerms();
 		sb.append("\t Learned State Names Overlap with Glossary: "+this.overlappedstates.size()+ls);
@@ -186,8 +188,7 @@ public class LearnedTermsReport {
 			stmt.execute("drop table if exists "+LearnedTermsReport.gstablename);
 			stmt.execute("create table if not exists "+LearnedTermsReport.gstablename+" as select term from "+gtablename+" where category in ('STRUCTURE / SUBSTANCE','STRUCTURE', 'CHARACTER', 'FEATURE', 'SUBSTANCE', 'PLANT', 'nominative') and status !='learned' and term not in (select distinct term2 from termforms where type ='pl')");
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport createGlossStructureTable", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 	}
 	/**
@@ -208,8 +209,7 @@ public class LearnedTermsReport {
 				}
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport createLearnedStructureTable", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 	}
 
@@ -269,8 +269,7 @@ public class LearnedTermsReport {
 			}
 			unused.removeAll(toremove);
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport unusedStructures", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return unused;
 	}
@@ -306,8 +305,7 @@ public class LearnedTermsReport {
 			}
 			
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport unusedStates", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return unused;
 	}
@@ -321,8 +319,7 @@ public class LearnedTermsReport {
 				donestates.put(rs.getString("term"), rs.getString("category"));
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport statesAssignedCharacters", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 	}
 	
@@ -369,8 +366,7 @@ public class LearnedTermsReport {
 				learnedstructures.add(rs.getString("word").trim());
 			}*/
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport getLearnedStructuresCount", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return learnedstructures.size();
 	}
@@ -384,8 +380,7 @@ public class LearnedTermsReport {
 				learnedstates.add(rs.getString("state"));
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport getLearnedStatesCount", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return learnedstates.size();
 	}
@@ -399,8 +394,7 @@ public class LearnedTermsReport {
 				return rs.getInt(1);
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport getAllCharacterCount", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return -1;
 	}
@@ -416,8 +410,7 @@ public class LearnedTermsReport {
 				return rs.getInt(1);
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport getAllStateCount", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return -1;
 	}
@@ -433,8 +426,7 @@ public class LearnedTermsReport {
 				return rs.getInt(1);
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport getAllStateCount", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return -1;
 	}
@@ -449,8 +441,7 @@ public class LearnedTermsReport {
 				match = true;
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport matchInGlossStates", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return match;
 	}
@@ -465,8 +456,7 @@ public class LearnedTermsReport {
 				find = true;
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport findInGlossStates", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return find;
 	}
@@ -482,8 +472,7 @@ public class LearnedTermsReport {
 				return rs.getInt(1);
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport getAllStructureCount", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return -1;
 	}
@@ -498,8 +487,7 @@ public class LearnedTermsReport {
 				match = true;
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport matchInGlossStructure", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return match;
 	}
@@ -514,8 +502,7 @@ public class LearnedTermsReport {
 				find = true;
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport findInGlossStructure", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return find;
 	}
@@ -531,18 +518,9 @@ public class LearnedTermsReport {
 				find = true;
 			}
 		}catch(Exception e){
-			LOGGER.error("Exception in LearnedTermsReport stringMatchInGloss", e);
-			StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
+			e.printStackTrace();
 		}
 		return find;
-	}
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		LearnedTermsReport ltr = new LearnedTermsReport("fnav5_corpus");
-		ltr.report();
 	}
 
 }
