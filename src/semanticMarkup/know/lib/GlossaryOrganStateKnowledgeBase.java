@@ -71,4 +71,10 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 	public void addOrgan(String word) {
 		this.organs.add(word);
 	}
+
+
+	@Override
+	public boolean contains(String word) {
+		return this.isOrgan(word) || this.isState(word);
+	}
 }

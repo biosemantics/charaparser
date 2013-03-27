@@ -107,22 +107,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			
 			//run the perl script	
 			runPerl(inDirectory);
-		
-			this.sentences = readSentences();
-			this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(treatments);
-			this.adjnouns = readAdjNouns();
-			this.adjnounsent = readAdjNounSent();
-			this.sentenceTags = readSentenceTags(treatments);
-			this.bracketTags = readBracketTags(treatments);
-			this.wordRoleTags = readWordRoleTags(); 
-			this.wordSources = readWordToSourcesMap();
-			this.roleToWords = readRoleToWords();
-			this.wordsToRoles = readWordsToRoles();
-			this.heuristicNouns = readHeuristicNouns();
-			this.termCategories = readTermCategories();
-			this.categoryTerms = readCategoryTerms();
-			this.tags = readTags();
-			this.modifiers = readModifiers();
+			
+			this.readResults(treatments);
 			
 		}catch(Exception e) {
 			log(LogLevel.ERROR, e);
@@ -517,7 +503,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
         try {
             Statement stmt = connection.createStatement();
             String cleanupQuery = "DROP TABLE IF EXISTS " + 
-									this.databasePrefix + "_allwords, " + 
+									//this.databasePrefix + "_allwords, " +  //allwords table is created outside of perl by dehypenizer
 									this.databasePrefix + "_discounted, " + 
 									this.databasePrefix + "_heuristicnouns, " + 
 									this.databasePrefix + "_isa, " + 
@@ -621,5 +607,25 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	@Override
 	public Map<String, Set<String>> getCategoryTerms() {
 		return this.categoryTerms;
+	}
+
+
+	@Override
+	public void readResults(List<Treatment> treatments) {
+		this.sentences = readSentences();
+		this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(treatments);
+		this.adjnouns = readAdjNouns();
+		this.adjnounsent = readAdjNounSent();
+		this.sentenceTags = readSentenceTags(treatments);
+		this.bracketTags = readBracketTags(treatments);
+		this.wordRoleTags = readWordRoleTags(); 
+		this.wordSources = readWordToSourcesMap();
+		this.roleToWords = readRoleToWords();
+		this.wordsToRoles = readWordsToRoles();
+		this.heuristicNouns = readHeuristicNouns();
+		this.termCategories = readTermCategories();
+		this.categoryTerms = readCategoryTerms();
+		this.tags = readTags();
+		this.modifiers = readModifiers();
 	}
 }

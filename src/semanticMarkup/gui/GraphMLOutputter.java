@@ -32,14 +32,16 @@ public class GraphMLOutputter {
 			"<key attr.name='name' attr.type='string' for='node' id='name'/> " +nl+
 			"<key attr.name='type' attr.type='string' for='all' id='type'/> " +nl+
 			"<key attr.name='weight' attr.type='float' for='edge' id='weight'/>"+nl;
+	private String workdir;
+	
 	/**
 	 * 
 	 */
 	public GraphMLOutputter() {
 		//empty up the folder
-
-		String path = "out";
-		File dir = new File(path, "co-occurrence");
+		this.workdir = "evaluationData//perlTest//target";
+		
+		File dir = new File(workdir, "co-occurrence");
 		File[] files = dir.listFiles();
 		for(int i = 0; i<files.length; i++){
 			files[i].delete();
@@ -112,8 +114,7 @@ public class GraphMLOutputter {
 	
 	private void output2file(int id, String text) {
 		try {
-			String path = "out";
-			File file = new File(path, "co-occurrence" + "/" +"Group_"+id+".xml");
+			File file = new File(workdir, "co-occurrence" + "/" +"Group_"+id+".xml");
 			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 			out.write(text);
 			out.close(); // don't forget to close the output stream!!!

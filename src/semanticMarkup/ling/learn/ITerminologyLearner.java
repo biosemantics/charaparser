@@ -19,6 +19,8 @@ public interface ITerminologyLearner {
 	 */
 	public void learn(List<Treatment> treatments);
 	
+	public void readResults(List<Treatment> treatments);
+	
 	/**
 	 * @return <treatment, <source, sentence>> map
 	 */

@@ -69,12 +69,17 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	}
 
 	public List<Treatment> transform(List<Treatment> treatments) {
+		mainForm.startMarkup(treatments);
+		
 		terminologyLearner.learn(treatments);
+			
 		try {
 			mainForm.open();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		terminologyLearner.readResults(treatments);
+		
 		Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker = terminologyLearner.getSentencesForOrganStateMarker();
 		markupDescriptions(treatments, sentencesForOrganStateMarker);		
 		return treatments;

@@ -9,5 +9,7 @@ public interface IOrganStateKnowledgeBase {
 	public void addState(String word);
 	
 	public void addOrgan(String word);
+
+	public boolean contains(String string);
 	
 }

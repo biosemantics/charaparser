@@ -703,7 +703,7 @@ public class MainFormDbAccessor {
 			if (tab.equals("Step 7")) {
 				tab = "tab_finalm";
 			}
-			if (tab.equals("Step 6")) {
+			if (tab.equals("Character States")) {
 				tab = "tab_gloss";
 			}
 		}
@@ -721,7 +721,6 @@ public class MainFormDbAccessor {
 			System.out.println(tabStatus);
 			String query = "update datasetprefix set " + tab + "= "
 					+ tabStatus + " where prefix='" + prefix + "'";
-			System.out.println(query);
 			stmt = connection
 					.prepareStatement("update datasetprefix set " + tab + "= "
 							+ tabStatus + " where prefix='" + prefix + "'");

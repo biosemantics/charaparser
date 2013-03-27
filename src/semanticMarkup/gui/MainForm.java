@@ -15,6 +15,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -90,7 +91,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
+import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.core.Treatment;
 import semanticMarkup.gui.WordUtilities;
 
 import com.google.inject.Inject;
@@ -330,12 +334,18 @@ public class MainForm {
 	public static String targetDirectory;
 	public static String databaseUser;
 	public static String databasePassword;
+	private final Display display;
+	private IOrganStateKnowledgeBase organStateKnowledgeBase;
+	private IInflector inflector;
 
 	
 	@Inject
 	public MainForm(MainFormDbAccessor mainDb, @Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
-			@Named("databasePassword") String databasePassword, @Named("databasePrefix")String databasePrefix, IPOSKnowledgeBase posKnowledgeBase) {
+			@Named("databasePassword") String databasePassword, @Named("databasePrefix")String databasePrefix, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase, IInflector inflector) {
+		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.mainDb = mainDb;
+		this.inflector = inflector;
 		this.databaseName = databaseName;
 		this.databaseUser = databaseUser;
 		this.databasePassword = databasePassword;
@@ -344,6 +354,19 @@ public class MainForm {
 		this.configDirectory = "evaluationData//perltest//config";
 		this.posKnowledgeBase = posKnowledgeBase;
 		this.databasePrefix = databasePrefix;
+
+		display = Display.getDefault();
+	
+		 red = display.getSystemColor(SWT.COLOR_RED);
+		 green = display.getSystemColor(SWT.COLOR_GREEN);
+		 grey = display.getSystemColor(SWT.COLOR_GRAY);
+		
+		try {
+			createContents(display);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		makeReqDirectories("evaluationData//perlTest//");
 	}
 	
 	
@@ -351,20 +374,14 @@ public class MainForm {
 	 * Open the window
 	 */
 	public void open() throws Exception {
-		final Display display = Display.getDefault();
+		
 	    /*DeviceData data = new DeviceData();
 	    data.tracking = true;
 	    final Display display = new Display(data);
 	    Sleak sleak = new Sleak();
 	    sleak.open();*/
-	    
-		 red = display.getSystemColor(SWT.COLOR_RED);
-		 green = display.getSystemColor(SWT.COLOR_GREEN);
-		 grey = display.getSystemColor(SWT.COLOR_GRAY);
-		
-		createContents(display);
-		makeReqDirectories("evaluationData//perlTest//");
-		this.startMarkup();
+
+		//this.startMarkup();
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
@@ -379,7 +396,7 @@ public class MainForm {
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-			System.exit(0);
+			//System.exit(0);
 		}
 	}
 
@@ -3931,25 +3948,43 @@ public class MainForm {
 	
 	}
 	
-	private void startMarkup() {
+	private void outputElementText(String workdir, String name, String text) {
+		try {
+			File file = new File(workdir, "descriptions" + "/" + name + ".txt");
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(text);
+			out.close(); 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void startMarkup(List<Treatment> treatments) {
+		String workdir = MainForm.targetDirectory;
+		
+		for(Treatment treatment : treatments) {
+			String text = treatment.getValueTreatmentElements("description").get(0).getValue();
+			outputElementText(workdir, treatment.getName(), text);
+		}
+		
 		//if(vd == null || !vd.isAlive()){
 			//MainForm.markupstarted  = true;
 			mainDb.createWordRoleTable();//roles are: op for plural organ names, os for singular, c for character, v for verb
 			mainDb.createNonEQTable();
 			mainDb.createTyposTable();
-			String workdir = MainForm.targetDirectory;
+			
 			//if there is a characters folder,add the files in characters folder to descriptions folder
 			mergeCharDescFolders(new File(workdir));
-			/*String todofoldername = ApplicationUtilities.getProperty("DESCRIPTIONS");
-			String databasename = ApplicationUtilities.getProperty("database.name");
+			String todofoldername = "descriptions";
+			/*String databasename = ApplicationUtilities.getProperty("database.name");
 			ProcessListener listener = new ProcessListener(findStructureTable, markupProgressBar, shell.getDisplay());
+			*/
+			VolumeDehyphenizer vd = new VolumeDehyphenizer(workdir, todofoldername,
+					this.databaseName, this.databaseUser, this.databasePassword, shell.getDisplay(), markUpPerlLog, 
+					dataPrefixCombo.getText().replaceAll("-", "_").trim(), this);
+			vd.run();
 			
-			/*vd = new VolumeDehyphenizer(listener, workdir, todofoldername,
-					databasename, shell.getDisplay(), markUpPerlLog, 
-					dataPrefixCombo.getText().replaceAll("-", "_").trim(), /*findDescriptorTable,*/ 
-		/*this);
-		/*	vd.start();
-		}*/
+		//}
 	}
 	
 	private void mergeCharDescFolders(File parentfolder) {
@@ -4075,10 +4110,11 @@ public class MainForm {
 				}
 				String dataPrefix = MainForm.dataPrefixCombo.getText().replaceAll("-", "_").trim();
 				String glosstable = MainForm.glossaryPrefixCombo.getText().trim();
-				//StateCollectorTest sct = new StateCollectorTest(conn, dataPrefix,true,glosstable, shell.getDisplay(), contextStyledText); /*using learned semanticroles only*/
-				//sct.collect();
-				//sct.saveStates();
-				//XMLFileCount = sct.grouping4GraphML();
+				StateCollectorTest sct = new StateCollectorTest(conn, dataPrefix,true,glosstable, shell.getDisplay(), contextStyledText, 
+						this.organStateKnowledgeBase, this.posKnowledgeBase, this.inflector); /*using learned semanticroles only*/
+				sct.collect();
+				sct.saveStates();
+				XMLFileCount = sct.grouping4GraphML();
 				contextStyledText.append("Done! Ready to move to the next step.");
 				//tabFolder.setSelection(4); //[general, step3, 4, 5, 6, 7] index starts at 0
 				//tabFolder.setFocus();
@@ -4634,7 +4670,6 @@ public class MainForm {
 								MainForm.targetDirectory+
 									"co-occurrence"+ "/"+ group + ".xml");
 					}
-
 				}
 			}
 	

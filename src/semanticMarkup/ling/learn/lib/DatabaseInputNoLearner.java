@@ -30,7 +30,7 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	}
 	
 	@Override
-	public void learn(List<Treatment> treatments) {
+	public void readResults(List<Treatment> treatments) {
 		this.sentences = readSentences();
 		this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(treatments);
 		this.adjnouns = readAdjNouns();
