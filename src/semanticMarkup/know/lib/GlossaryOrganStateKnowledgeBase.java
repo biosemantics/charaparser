@@ -5,15 +5,18 @@ import java.util.Set;
 
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
+import semanticMarkup.ling.transform.IInflector;
 
 public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase {
 
 	protected Set<String> organs = new HashSet<String>();
 	protected Set<String> states = new HashSet<String>();
 	private IGlossary glossary;
+	protected IInflector inflector;
 	
-	public GlossaryOrganStateKnowledgeBase(IGlossary glossary) {
+	public GlossaryOrganStateKnowledgeBase(IGlossary glossary, IInflector inflector) {
 		this.glossary = glossary;
+		this.inflector = inflector;
 		getOrgans();
 		getStates();
 	}
@@ -22,6 +25,7 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 	@Override
 	public boolean isOrgan(String word) {
 		word = word.toLowerCase();
+		word = inflector.getSingular(word);
 		return organs.contains(word);
 	}
 

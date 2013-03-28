@@ -5,6 +5,7 @@ import java.util.Set;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.learn.ITerminologyLearner;
+import semanticMarkup.ling.transform.IInflector;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -17,22 +18,20 @@ public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeB
 	private boolean learned = false;
 
 	@Inject
-	public LearnedOrganStateKnowledgeBase(IGlossary glossary, ITerminologyLearner terminologyLearner, 
+	public LearnedOrganStateKnowledgeBase(IGlossary glossary, IInflector inflector, ITerminologyLearner terminologyLearner, 
 			@Named("StopWords") Set<String> stopWords, @Named("PrepositionWordsSet") Set<String> prepositionWords) {
-		super(glossary);
+		super(glossary, inflector);
 		this.terminologyLearner = terminologyLearner;
 		this.stopWords = stopWords;
 		this.prepositionWords = prepositionWords;
 	}
 	
 	@Override
-	public boolean isOrgan(String word) {
-		word = word.toLowerCase();
-		
+	public boolean isOrgan(String word) {		
 		if(!learned)
 			addLearnedOrgansAndStates();
 		
-		return organs.contains(word);
+		return super.isOrgan(word);
 	}
 
 	@Override

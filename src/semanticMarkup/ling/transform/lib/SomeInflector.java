@@ -68,11 +68,12 @@ public class SomeInflector implements IInflector {
 	
 	@Override
 	public String getSingular(String word) {
-		if(word.equals("leaves"))
-			log(LogLevel.DEBUG, "leaves");
+		String originalWord = word;
 		
 		String s = "";
 		word = word.toLowerCase().replaceAll("\\W", "").trim();
+		if(word.isEmpty())
+			return originalWord;
 
 		// check cache
 		s = singulars.get(word);

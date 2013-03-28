@@ -33,6 +33,9 @@ public class CSVGlossary implements IGlossary {
 			String term = line[1].toLowerCase();
 			String category = line[2].toLowerCase();
 			
+			//if(term.equals("rhizome")) 
+			//	System.out.println("here");
+			
 			if(!glossary.containsKey(term))
 				glossary.put(term, new HashSet<String>());
 			glossary.get(term).add(category);
@@ -40,6 +43,9 @@ public class CSVGlossary implements IGlossary {
 			if(!reverseGlossary.containsKey(category))
 				reverseGlossary.put(category, new HashSet<String>());
 			reverseGlossary.get(category).add(term);
+			
+			//if(category.equalsIgnoreCase("structure")) 
+			//	System.out.println(reverseGlossary.get(category));
 		}
 		
 		reader.close();
@@ -69,10 +75,10 @@ public class CSVGlossary implements IGlossary {
 	@Override
 	public Set<String> getWordsNotInCategories(Set<String> categories) {
 		Set<String> result = new HashSet<String>();
-		for(String category : this.glossary.keySet()) {
+		for(String category : this.reverseGlossary.keySet()) {
 			category = category.toLowerCase();
 			if(!categories.contains(category))
-				result.addAll(glossary.get(category));
+				result.addAll(reverseGlossary.get(category));
 		}
 		return result;
 	}
