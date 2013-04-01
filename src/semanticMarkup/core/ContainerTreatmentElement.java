@@ -13,6 +13,10 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
+/**
+ * A ContainerTreatmentElement contains a number of children TreatmentElements and are associated with a name
+ * @author rodenhausen
+ */
 public class ContainerTreatmentElement extends TreatmentElement implements Iterable<TreatmentElement> {
 
 	//retains the order of elements.. TODO could use LinkedHashMap
@@ -23,13 +27,21 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 	protected Map<String, List<TreatmentElement>> namedChildren = 
 			new HashMap<String, List<TreatmentElement>>();
 
-	// for JAXB
+	/**
+	 * JAXB needs a non-argument constructor
+	 */
 	public ContainerTreatmentElement() { }
 	
+	/**
+	 * @param name
+	 */
 	public ContainerTreatmentElement(String name) {
 		super(name);
 	}
 	
+	/**
+	 * @param treatmentElement to add to children
+	 */
 	public void addTreatmentElement(TreatmentElement treatmentElement) {
 		children.add(treatmentElement);
 		if(!namedChildren.containsKey(treatmentElement.getName()))
@@ -37,16 +49,25 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		namedChildren.get(treatmentElement.getName()).add(treatmentElement);
 	}
 	
+	/**
+	 * @param treatmentElements to add to children
+	 */
 	public void addTreatmentElements(List<TreatmentElement> treatmentElements) {
 		for(TreatmentElement treatmentElement : treatmentElements) 
 			this.addTreatmentElement(treatmentElement);
 	}
 	
+	/**
+	 * @param elementName to remove
+	 */
 	public void removeTreatmentElement(String elementName) {
 		List<TreatmentElement> child = namedChildren.get(elementName);
 		children.remove(child);
 	}
 	
+	/**
+	 * @param treatmentElement to remove in any descendants
+	 */
 	public void removeTreatmentElementRecursively(TreatmentElement treatmentElement) {
 		if(this.contains(treatmentElement))
 			this.removeTreatmentElement(treatmentElement);
@@ -58,15 +79,24 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		}
 	}
 	
+	/**
+	 * @param treatmentElement to remove from children
+	 */
 	public void removeTreatmentElement(TreatmentElement treatmentElement) {
 		children.remove(treatmentElement);
 		namedChildren.get(treatmentElement.getName()).remove(treatmentElement);
 	}
 	
+	/**
+	 * @return
+	 */
 	public List<TreatmentElement> getTreatmentElements() {
 		return this.children;
 	}
 	
+	/**
+	 * @return the children of type ValueTreatmentElement
+	 */
 	@JsonIgnore
 	public List<ValueTreatmentElement> getValueTreatmentElements() {
 		List<ValueTreatmentElement> result = 
@@ -78,6 +108,9 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return result;
 	}
 	
+	/**
+	 * @return the children of type ContainerTreatmentElement
+	 */
 	@JsonIgnore
 	public List<ContainerTreatmentElement> getContainerTreatmentElements() {
 		List<ContainerTreatmentElement> result = 
@@ -89,14 +122,26 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return result;
 	}
 	
+	/**
+	 * @param treatmentElement
+	 * @return if the treatmentElement is contained in the children
+	 */
 	public boolean contains(TreatmentElement treatmentElement) {
 		return children.contains(treatmentElement);
 	}
 	
+	/**
+	 * @param treatmentElement
+	 * @return if the treatmentElement is contained in any of the descendants
+	 */
 	public boolean containsAsDescendant(TreatmentElement treatmentElement) {
 		return this.getParent(treatmentElement) != null;
 	}
 	
+	/**
+	 * @param treatmentElement
+	 * @return the parent of treatmentElement, assuming it is contained in any of this descendants else null
+	 */
 	public TreatmentElement getParent(TreatmentElement treatmentElement) {
 		if(contains(treatmentElement))
 			return this;
@@ -112,10 +157,18 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return null;
 	}
 	
+	/**
+	 * @param elementName
+	 * @return
+	 */
 	public boolean containsTreatmentElement(String elementName) {
 		return this.namedChildren.containsKey(elementName);
 	}
 	
+	/**
+	 * @param elementName
+	 * @return if a ValueTreatmentElement of elementName is contained in the children 
+	 */
 	public boolean containsValueTreatmentElement(String elementName) {
 		if(!containsTreatmentElement(elementName))
 			return false;
@@ -124,6 +177,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return true;
 	}
 	
+	/**
+	 * @param elementName
+	 * @return if a ContainerTreatmentElemetn of elementName is contained in the children
+	 */
 	public boolean containsContainerTreatmentElement(String elementName) {
 		if(!containsTreatmentElement(elementName))
 			return false;
@@ -132,11 +189,18 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return true;
 	}
 	
+	/**
+	 * @return the names of the children treatment elements
+	 */
 	@JsonIgnore
 	public Set<String> getTreatmentElementNames() {
 		return this.namedChildren.keySet();
 	}
 	
+	/**
+	 * @param elementName
+	 * @return the treatmenetElements of elementName
+	 */
 	public List<TreatmentElement> getTreatmentElements(String elementName) {
 		if(namedChildren.containsKey(elementName))
 			return this.namedChildren.get(elementName);
@@ -144,6 +208,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 			return new LinkedList<TreatmentElement>();
 	}
 	
+	/**
+	 * @param elementName
+	 * @return the first treatmentElement of elementName
+	 */
 	public TreatmentElement getTreatmentElement(String elementName) {
 		if(namedChildren.containsKey(elementName))
 			return this.namedChildren.get(elementName).get(0);
@@ -151,6 +219,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 			return null;
 	}
 	
+	/**
+	 * @param elementName
+	 * @return the treatmenetElements of elementName and type ValueTreatmenetElement
+	 */
 	public List<ValueTreatmentElement> getValueTreatmentElements(String elementName) {
 		List<ValueTreatmentElement> result = new LinkedList<ValueTreatmentElement>();
 		if(namedChildren.containsKey(elementName)) 
@@ -164,6 +236,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return result;
 	}
 	
+	/**
+	 * @param elementName
+	 * @return the first treatmenetElements of elementName and type ValueTreatmenetElement
+	 */
 	public ValueTreatmentElement getValueTreatmentElement(String elementName) {
 		if(namedChildren.containsKey(elementName)) {
 			for(TreatmentElement element : namedChildren.get(elementName)) {
@@ -175,6 +251,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return null;
 	}
 	
+	/**
+	 * @param elementName
+	 * @return the treatmenetElements of elementName and type ContainerTreatmentElement
+	 */
 	public List<ContainerTreatmentElement> getContainerTreatmentElements(String elementName) {
 		List<ContainerTreatmentElement> result = 
 				new LinkedList<ContainerTreatmentElement>();
@@ -189,6 +269,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return result;
 	}
 	
+	/**
+	 * @param elementName
+	 * @return the first treatmenetElements of elementName and type ContainerTreatmentElement
+	 */
 	public ContainerTreatmentElement getContainerTreatmentElement(String elementName) {
 		if(namedChildren.containsKey(elementName)) {
 			for(TreatmentElement element : namedChildren.get(elementName)) {
@@ -200,6 +284,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return null;
 	}
 
+	/**
+	 * @param elementName
+	 * @return the first treatmenetElements of elementName and type ContainerTreatmentElement
+	 */
 	@JsonIgnore
 	public List<ValueTreatmentElement> getValueTreatmentElementsRecursively() {
 		List<ValueTreatmentElement> result = this.getValueTreatmentElements();
@@ -210,7 +298,10 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 		return result;
 	}
 	
-	
+	/**
+	 * @param elementName
+	 * @return the treatmenetElements of elementName and type ValueTreatmenetElement in any of the descendants
+	 */
 	public List<ValueTreatmentElement> getValueTreatmentElementsRecursively(String elementName) {
 		List<ValueTreatmentElement> result = 
 				this.getValueTreatmentElements(elementName);

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -40,7 +40,7 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		
 		LinkedList<DescriptionTreatmentElement> parents = processingContextState.getLastElements();
 
-		if(!parents.isEmpty() && parents.getLast().isOfDescriptionType(DescriptionType.STRUCTURE)) {
+		if(!parents.isEmpty() && parents.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
 			List<DescriptionTreatmentElement> characterElement = 
 					this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
 			//DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, chunk.getTerminalsText(), 

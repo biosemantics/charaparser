@@ -9,11 +9,14 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Utility class that splits the single xml output file (which contains the markup result of multiple treatments)
+ * into multiple single files (each containing the markup result of a single treatment)
+ * @author rodenhausen
+ */
 public class SplitXMLOutput {
 
 	public static void main(String[] args) throws Exception {
-		
 		String input = "outfile.xml"; //TIP_AnsKey_CharaParser_Evaluation //FNAV19_AnsKey_CharaParser_Evaluation
 		String comparisonFiles = "evaluationData//FNAV19_AnsKey_CharaParser_Evaluation";
 		//String comparisonFiles = "evaluationData//TIP_AnsKey_CharaParser_Evaluation";

@@ -28,6 +28,13 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * Transforms the treatments by semantically marking up the description treatment element of a treatment
+ * Uses MainForm from previous Charaparser (all classes in semanticMarkup.gui are of the previous version and 
+ * coupled with MainForm but nothing outside of the package) and hence requires e.g. certain database tables 
+ * to process the results of the perl learning part.
+ * @author rodenhausen
+ */
 public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTransformer {
 
 	private IParser parser;
@@ -42,6 +49,19 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	private int sentenceChunkerRunMaximum;
 	private MainForm mainForm;
 	
+	/**
+	 * @param wordTokenizer
+	 * @param parser
+	 * @param chunkerChain
+	 * @param posTagger
+	 * @param descriptionExtractor
+	 * @param normalizer
+	 * @param terminologyLearner
+	 * @param parallelProcessing
+	 * @param descriptionExtractorRunMaximum
+	 * @param sentenceChunkerRunMaximum
+	 * @param mainForm
+	 */
 	@Inject
 	public OldPerlTreatmentTransformer(
 			@Named("WordTokenizer")ITokenizer wordTokenizer, 
@@ -54,7 +74,7 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
-			MainForm mainForm) throws Exception {
+			MainForm mainForm) {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -68,41 +88,65 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 		this.mainForm = mainForm;
 	}
 
+	@Override
 	public List<Treatment> transform(List<Treatment> treatments) {
+		// prepare main form (e.g. needs to create certain database tables) 
 		mainForm.startMarkup(treatments);
 		
+		// learn terminology
 		terminologyLearner.learn(treatments);
-			
+		
+		// show main form to correct/extend learned terminology
 		try {
 			mainForm.open();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		// MainForm expects datatable structure of perl learning part and hence if PerlTerminologyLearner is
+		// used terminology has to be re-read from database 
 		terminologyLearner.readResults(treatments);
 		
 		Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker = terminologyLearner.getSentencesForOrganStateMarker();
+		// do the actual markup
 		markupDescriptions(treatments, sentencesForOrganStateMarker);		
 		return treatments;
 	}
 
+	/**
+	 * @param treatments
+	 * @param sentencesForOrganStateMarker
+	 */
 	private void markupDescriptions(List<Treatment> treatments, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
 		int threadId = 0;
+		
+		// process each treatment separately
 		for(Treatment treatment : treatments) {
+			
+			//only maximally start a descriptionExtractorRunMaximum number of threads to process treatments, hence wait if already processing this many
 			if(threadId % descriptionExtractorRunMaximum == 0)
 				waitForThreadsToFinish();
+			
 			threadId++;
+			
+			// start a DescriptionExtractorRun for the treatment to process as a separate thread
 			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, terminologyLearner, normalizer, wordTokenizer, 
 					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum);
 			Thread thread = new Thread(descriptionExtractorRun);
 			descriptionExtractorRuns.put(thread, descriptionExtractorRun);
+			//if parallel processing is to be used fork here
 			if(this.parallelProcessing)
 				thread.start();
 			else 
 				thread.run();
 		}
+		//only continue when all threads are done
 		waitForThreadsToFinish();
 	}
 
+	/**
+	 * holds this executing thread until all the descriptionExtractorRun threads are done processing
+	 */
 	private void waitForThreadsToFinish() {
 		for(Thread thread : descriptionExtractorRuns.keySet()) {
 			try {

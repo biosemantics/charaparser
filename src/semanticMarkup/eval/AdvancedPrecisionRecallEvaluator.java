@@ -33,12 +33,12 @@ public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEva
 				log(LogLevel.DEBUG, correctElement.getProperty("name"));
 				log(LogLevel.DEBUG, createdElement.getProperty("constraint"));
 				log(LogLevel.DEBUG, correctElement.getProperty("constraint"));*/
-				if(isEqualProperty(correctElement.getProperty("name"), createdElement.getProperty("name")) &&
-						isEqualProperty(correctElement.getProperty("constraint"), createdElement.getProperty("constraint"))) {
+				if(isEqualProperty(correctElement.getAttribute("name"), createdElement.getAttribute("name")) &&
+						isEqualProperty(correctElement.getAttribute("constraint"), createdElement.getAttribute("constraint"))) {
 					int score = getCharachterOverlap(getCharacters(createdElement), getCharacters(correctElement)).size();
 					if(score > candidateScore) {
 						candidateScore = score;
-						candidate = name + ": " + createdElement.getProperty("id") + " <-> " + correctElement.getProperty("id");
+						candidate = name + ": " + createdElement.getAttribute("id") + " <-> " + correctElement.getAttribute("id");
 					}
 				}
 			}
@@ -75,10 +75,10 @@ public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEva
 			for(DescriptionTreatmentElement correctElement : correctElements) {
 				//log(LogLevelDEBUG, "created element " + createdElement);
 				///log(LogLevel.DEBUG, "correct element " + correctElements);
-				if(isEqualProperty(correctElement.getProperty("name"), createdElement.getProperty("name")) && 
-						isEqualProperty(correctElement.getProperty("value"), createdElement.getProperty("value")) &&
-						isEqualProperty(correctElement.getProperty("from"), createdElement.getProperty("from")) && 
-						isEqualProperty(correctElement.getProperty("to"), createdElement.getProperty("to")) ) {
+				if(isEqualProperty(correctElement.getAttribute("name"), createdElement.getAttribute("name")) && 
+						isEqualProperty(correctElement.getAttribute("value"), createdElement.getAttribute("value")) &&
+						isEqualProperty(correctElement.getAttribute("from"), createdElement.getAttribute("from")) && 
+						isEqualProperty(correctElement.getAttribute("to"), createdElement.getAttribute("to")) ) {
 					return name;// + ": " + createdElement.getProperty("name") + " <-> " + correctElement.getProperty("name");
 				}
 			}
@@ -131,19 +131,19 @@ public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEva
 			HashMap<String, DescriptionTreatmentElement> createdStructuresByIdSet, 
 			HashMap<String, DescriptionTreatmentElement> correctStructuresByIdSet) {
 		for(DescriptionTreatmentElement createdElement : createdElements) {
-			if(createdStructuresByIdSet.containsKey(createdElement.getProperty("to")) && createdStructuresByIdSet.containsKey(createdElement.getProperty("from"))) {
-				String createdToStructureName = createdStructuresByIdSet.get(createdElement.getProperty("to")).getName();
-				String createdFromStructureName = createdStructuresByIdSet.get(createdElement.getProperty("from")).getName();
+			if(createdStructuresByIdSet.containsKey(createdElement.getAttribute("to")) && createdStructuresByIdSet.containsKey(createdElement.getAttribute("from"))) {
+				String createdToStructureName = createdStructuresByIdSet.get(createdElement.getAttribute("to")).getName();
+				String createdFromStructureName = createdStructuresByIdSet.get(createdElement.getAttribute("from")).getName();
 				
 				for(DescriptionTreatmentElement correctElement : correctElements) {
-					String correctToStructureName = correctStructuresByIdSet.get(correctElement.getProperty("to")).getName();
-					String correctFromStructureName = correctStructuresByIdSet.get(correctElement.getProperty("from")).getName();
+					String correctToStructureName = correctStructuresByIdSet.get(correctElement.getAttribute("to")).getName();
+					String correctFromStructureName = correctStructuresByIdSet.get(correctElement.getAttribute("from")).getName();
 					
-					if(isEqualProperty(correctElement.getProperty("name"), createdElement.getProperty("name")) &&
-							isEqualProperty(correctElement.getProperty("negation"), createdElement.getProperty("negation")) &&
+					if(isEqualProperty(correctElement.getAttribute("name"), createdElement.getAttribute("name")) &&
+							isEqualProperty(correctElement.getAttribute("negation"), createdElement.getAttribute("negation")) &&
 							isEqualProperty(createdToStructureName, correctToStructureName) && 
 							isEqualProperty(createdFromStructureName, correctFromStructureName) ) {
-						return name + ": " + createdElement.getProperty("id") + " <-> " + correctElement.getProperty("id");
+						return name + ": " + createdElement.getAttribute("id") + " <-> " + correctElement.getAttribute("id");
 					}
 				}
 			}

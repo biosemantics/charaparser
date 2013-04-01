@@ -109,7 +109,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					}
 					if(!beforeThan.isEmpty()) {
 						for(DescriptionTreatmentElement element : result) {
-							element.setProperty("modifier", beforeChunk.getTerminalsText() + " than");
+							element.setAttribute("modifier", beforeChunk.getTerminalsText() + " than");
 						}
 					}
 				} else {
@@ -263,9 +263,9 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					content.getChildChunk(ChunkType.THAN).getTerminalsText();
 			String structureIds = processingContextState.getClauseModifierContraintId() + " " + 
 					listStructureIds(structures);
-			element.setProperty("constraint", constraint);
+			element.setAttribute("constraint", constraint);
 			//if(thanObject!=null) {
-				element.setProperty("constraintId", structureIds);
+				element.setAttribute("constraintId", structureIds);
 				//TODO: check: some constraints are without constraintid
 			//}
 		}

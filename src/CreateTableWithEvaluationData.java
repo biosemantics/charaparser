@@ -3,7 +3,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
-
+/**
+ * Utility class that filters the sentence table according to available 
+ * standard sentence data (available as files in a folder)
+ * @author rodenhausen
+ */
 public class CreateTableWithEvaluationData {
 
 	

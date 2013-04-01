@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -42,8 +42,8 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			
 			if(!processingContextState.isCommaAndOrEosEolAfterLastElements() && !processingContextState.isUnassignedChunkAfterLastElements() && 
-					(lastElement.isOfDescriptionType(DescriptionType.RELATION) || lastElement.isOfDescriptionType(DescriptionType.CHARACTER))) {
-				lastElement.appendProperty("modifier", chunk.getTerminalsText());
+					(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.RELATION) || lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER))) {
+				lastElement.appendAttribute("modifier", chunk.getTerminalsText());
 			} else 
 				processingContextState.getUnassignedModifiers().add(chunk);
 		}

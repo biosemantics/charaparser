@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -78,7 +78,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				if(!processingContextState.getLastElements().isEmpty() && structures.isEmpty()) {
 					List<DescriptionTreatmentElement> entity1 = null;
 					DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-					if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER) || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
+					if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER) || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 						entity1 = processingContextState.getSubjects();
 					}else{
 						entity1 = (LinkedList<DescriptionTreatmentElement>)processingContextState.getLastElements().clone();

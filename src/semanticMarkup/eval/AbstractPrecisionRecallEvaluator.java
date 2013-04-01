@@ -13,7 +13,7 @@ import semanticMarkup.core.ContainerTreatmentElement;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.log.LogLevel;
 
 public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
@@ -77,8 +77,8 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 			//statements are expected to have the same number if not, then some trivial error must have occured. They are hence not included in 
 			//recall precision measures but instead an error is thrown if this is not the case.
 			
-			List<TreatmentElement> createdStatements = createdDescription.getTreatmentElements(DescriptionType.STATEMENT.toString());
-			List<TreatmentElement> correctStatements = correctDescription.getTreatmentElements(DescriptionType.STATEMENT.toString());
+			List<TreatmentElement> createdStatements = createdDescription.getTreatmentElements(DescriptionTreatmentElementType.STATEMENT.toString());
+			List<TreatmentElement> correctStatements = correctDescription.getTreatmentElements(DescriptionTreatmentElementType.STATEMENT.toString());
 			if(createdStatements.size()!=correctStatements.size()) {
 				result = new StringEvaluationResult("not equals size of statements");
 				return;
@@ -89,15 +89,15 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 				DescriptionTreatmentElement correctStatement = null;
 				for(int k=0; k<correctStatements.size(); k++) {
 					correctStatement = (DescriptionTreatmentElement)correctStatements.get(k);
-					if(createdStatement.getProperty("source").equals(correctStatement.getProperty("source"))) 
+					if(createdStatement.getAttribute("source").equals(correctStatement.getAttribute("source"))) 
 						break;
 				}
 				if(correctStatement == null) {
 					log(LogLevel.DEBUG, "couldnt find a correct statement that matches the source of the created statement: " 
-							+ createdStatement.getProperty("source"));
+							+ createdStatement.getAttribute("source"));
 					break;
 				}
-				log(LogLevel.DEBUG, "source " + createdStatement.getProperty("source"));
+				log(LogLevel.DEBUG, "source " + createdStatement.getAttribute("source"));
 			
 				//log(LogLevel.DEBUG, "statement " + j);
 				//DescriptionTreatmentElement createdStatement = (DescriptionTreatmentElement)createdStatements.get(j);
@@ -239,7 +239,7 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
 	private HashMap<String, Set<DescriptionTreatmentElement>> getCharacters(Set<DescriptionTreatmentElement> structures, String structureId) {
 		for(DescriptionTreatmentElement structure : structures) {
-			if(structure.getProperty("id").equals(structureId)) {
+			if(structure.getAttribute("id").equals(structureId)) {
 				return getCharacters(structure);
 			}
 		}
@@ -248,9 +248,9 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
 	protected HashMap<String, Set<DescriptionTreatmentElement>> getCharacters(DescriptionTreatmentElement structure) {
 		HashMap<String, Set<DescriptionTreatmentElement>> result = new HashMap<String, Set<DescriptionTreatmentElement>>();
-		for(TreatmentElement characterElement : structure.getTreatmentElements(DescriptionType.CHARACTER.toString())) {
+		for(TreatmentElement characterElement : structure.getTreatmentElements(DescriptionTreatmentElementType.CHARACTER.toString())) {
 			DescriptionTreatmentElement character = (DescriptionTreatmentElement)characterElement;
-			String name = normalizePropertyName(character.getProperty("name"));
+			String name = normalizePropertyName(character.getAttribute("name"));
 			if(!result.containsKey(name))
 				result.put(name, new HashSet<DescriptionTreatmentElement>());
 			result.get(name).add(character);
@@ -260,9 +260,9 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
 	private HashMap<String, DescriptionTreatmentElement> getStructuresById(DescriptionTreatmentElement statement) {
 		HashMap<String, DescriptionTreatmentElement> result = new HashMap<String, DescriptionTreatmentElement>();
-		for(TreatmentElement structureElement : statement.getTreatmentElements(DescriptionType.STRUCTURE.toString())) {
+		for(TreatmentElement structureElement : statement.getTreatmentElements(DescriptionTreatmentElementType.STRUCTURE.toString())) {
 			DescriptionTreatmentElement structure = (DescriptionTreatmentElement)structureElement;
-			result.put(structure.getProperty("id"), structure);
+			result.put(structure.getAttribute("id"), structure);
 		}
 		return result;
 	}
@@ -280,9 +280,9 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
 	private HashMap<String, Set<DescriptionTreatmentElement>> getRelations(DescriptionTreatmentElement statement) {
 		HashMap<String, Set<DescriptionTreatmentElement>> result = new HashMap<String, Set<DescriptionTreatmentElement>>();
-		for(TreatmentElement relationElement : statement.getTreatmentElements(DescriptionType.RELATION.toString())) {
+		for(TreatmentElement relationElement : statement.getTreatmentElements(DescriptionTreatmentElementType.RELATION.toString())) {
 			DescriptionTreatmentElement relation = (DescriptionTreatmentElement)relationElement;
-			String name = normalizePropertyName(relation.getProperty("name"));
+			String name = normalizePropertyName(relation.getAttribute("name"));
 			if(!result.containsKey(name))
 				result.put(name, new HashSet<DescriptionTreatmentElement>());
 			result.get(name).add(relation);
@@ -292,9 +292,9 @@ public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
 	private HashMap<String, Set<DescriptionTreatmentElement>> getStructures(DescriptionTreatmentElement statement) {
 		HashMap<String, Set<DescriptionTreatmentElement>> result = new HashMap<String, Set<DescriptionTreatmentElement>>();
-		for(TreatmentElement structureElement : statement.getTreatmentElements(DescriptionType.STRUCTURE.toString())) {
+		for(TreatmentElement structureElement : statement.getTreatmentElements(DescriptionTreatmentElementType.STRUCTURE.toString())) {
 			DescriptionTreatmentElement structure = (DescriptionTreatmentElement)structureElement;
-			String name = normalizePropertyName(structure.getProperty("name"));
+			String name = normalizePropertyName(structure.getAttribute("name"));
 			if(!result.containsKey(name))
 				result.put(name, new HashSet<DescriptionTreatmentElement>());
 			result.get(name).add(structure);

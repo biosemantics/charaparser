@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -45,7 +45,7 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> structures = this.createStructureElements(chunks, processingContextState);
 		result.addAll(structures);
 		DescriptionTreatmentElement lastElement = lastElements.isEmpty() ? null : lastElements.getLast();
-		if(lastElement != null && lastElement.isOfDescriptionType(DescriptionType.STRUCTURE))
+		if(lastElement != null && lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
 			annotateType(chunk, lastElement);
 		else 
 			processingContextState.setLastElements(structures);

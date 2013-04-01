@@ -63,7 +63,7 @@ public class RunConfig extends BasicConfig {
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")).toInstance(30);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")).toInstance(Integer.MAX_VALUE);
 		
-		bind(String.class).annotatedWith(Names.named("databaseName")).toInstance("annotationevaluation");
+		bind(String.class).annotatedWith(Names.named("databaseName")).toInstance("testNewCode");
 		//markedupdatasets
 		bind(String.class).annotatedWith(Names.named("databaseUser")).toInstance("termsuser");
 		bind(String.class).annotatedWith(Names.named("databasePassword")).toInstance("termspassword");

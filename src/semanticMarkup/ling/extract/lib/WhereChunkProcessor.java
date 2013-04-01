@@ -49,7 +49,7 @@ public class WhereChunkProcessor extends AbstractChunkProcessor {
 				LinkedList<DescriptionTreatmentElement> lastElements = contextState.getLastElements();
 				
 				contextState.setClauseModifierContraint(previousChunk.getTerminalsText());
-				contextState.setClauseModifierContraintId(lastElements.getLast().getProperty("id"));
+				contextState.setClauseModifierContraintId(lastElements.getLast().getAttribute("id"));
 				
 				lastElements.clear();
 				lastElements.add(subjects.getLast());

@@ -12,7 +12,7 @@ import semanticMarkup.core.ContainerTreatmentElement;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.io.output.AbstractFileVolumeWriter;
 
 import com.google.inject.Inject;
@@ -50,38 +50,38 @@ public class XML2VolumeWriter extends AbstractFileVolumeWriter {
 				
 				Description newDescription = new Description();
 				ArrayList<Statement> statements = new ArrayList<Statement>();
-				for(ContainerTreatmentElement statement : description.getContainerTreatmentElements(DescriptionType.STATEMENT.toString())) {
+				for(ContainerTreatmentElement statement : description.getContainerTreatmentElements(DescriptionTreatmentElementType.STATEMENT.toString())) {
 					DescriptionTreatmentElement statementElement = (DescriptionTreatmentElement)statement;
 					Statement newStatement = new Statement();
-					newStatement.setText(statementElement.getProperty("text"));
+					newStatement.setText(statementElement.getAttribute("text"));
 					ArrayList<Structure> newStructureList = new ArrayList<Structure>();
 				
-					for(ContainerTreatmentElement structure : statementElement.getContainerTreatmentElements(DescriptionType.STRUCTURE.toString())) {
+					for(ContainerTreatmentElement structure : statementElement.getContainerTreatmentElements(DescriptionTreatmentElementType.STRUCTURE.toString())) {
 						DescriptionTreatmentElement structureElement = (DescriptionTreatmentElement)structure;
 						Structure newStructure = new Structure();
-						newStructure.setConstraint(structureElement.getProperty("constraint"));
-						newStructure.setId(structureElement.getProperty("id"));
-						newStructure.setName(structureElement.getProperty("name"));
+						newStructure.setConstraint(structureElement.getAttribute("constraint"));
+						newStructure.setId(structureElement.getAttribute("id"));
+						newStructure.setName(structureElement.getAttribute("name"));
 						
 						ArrayList<Character> newCharacterList = new ArrayList<Character>();
-						for(TreatmentElement character : structureElement.getTreatmentElements(DescriptionType.CHARACTER.toString())) {
+						for(TreatmentElement character : structureElement.getTreatmentElements(DescriptionTreatmentElementType.CHARACTER.toString())) {
 							DescriptionTreatmentElement characterElement = (DescriptionTreatmentElement)character;
 							Character newCharacter = new Character();
-							newCharacter.setCharacterType(characterElement.getProperty("type"));
-							newCharacter.setConstraint(characterElement.getProperty("constraint"));
-							newCharacter.setConstraintId(characterElement.getProperty("constraintId"));
-							newCharacter.setFrom(characterElement.getProperty("from"));
-							newCharacter.setFromInclusive(characterElement.getProperty("fromInclusive"));
-							newCharacter.setModifier(characterElement.getProperty("modifier"));
-							newCharacter.setName(characterElement.getProperty("name"));
-							newCharacter.setTo(characterElement.getProperty("to"));
-							newCharacter.setValue(characterElement.getProperty("value"));
-							newCharacter.setUnit(characterElement.getProperty("unit"));
-							newCharacter.setFromUnit(characterElement.getProperty("fromUnit"));
-							newCharacter.setToUnit(characterElement.getProperty("toUnit"));
-							newCharacter.setUpperRestricted(characterElement.getProperty("upperRestricted"));
-							newCharacter.setToInclusive(characterElement.getProperty("toInclusive"));
-							newCharacter.setRelativeConstraint(characterElement.getProperty("relativeConstraint"));
+							newCharacter.setCharacterType(characterElement.getAttribute("type"));
+							newCharacter.setConstraint(characterElement.getAttribute("constraint"));
+							newCharacter.setConstraintId(characterElement.getAttribute("constraintId"));
+							newCharacter.setFrom(characterElement.getAttribute("from"));
+							newCharacter.setFromInclusive(characterElement.getAttribute("fromInclusive"));
+							newCharacter.setModifier(characterElement.getAttribute("modifier"));
+							newCharacter.setName(characterElement.getAttribute("name"));
+							newCharacter.setTo(characterElement.getAttribute("to"));
+							newCharacter.setValue(characterElement.getAttribute("value"));
+							newCharacter.setUnit(characterElement.getAttribute("unit"));
+							newCharacter.setFromUnit(characterElement.getAttribute("fromUnit"));
+							newCharacter.setToUnit(characterElement.getAttribute("toUnit"));
+							newCharacter.setUpperRestricted(characterElement.getAttribute("upperRestricted"));
+							newCharacter.setToInclusive(characterElement.getAttribute("toInclusive"));
+							newCharacter.setRelativeConstraint(characterElement.getAttribute("relativeConstraint"));
 							newCharacterList.add(newCharacter);
 						}
 						newStructure.setCharacter(newCharacterList);
@@ -90,16 +90,16 @@ public class XML2VolumeWriter extends AbstractFileVolumeWriter {
 					newStatement.setStructure(newStructureList);
 					
 					ArrayList<Relation> newRelationList = new ArrayList<Relation>();
-					for(TreatmentElement relation : statementElement.getTreatmentElements(DescriptionType.RELATION.toString())) {
+					for(TreatmentElement relation : statementElement.getTreatmentElements(DescriptionTreatmentElementType.RELATION.toString())) {
 						DescriptionTreatmentElement relationElement = (DescriptionTreatmentElement)relation;
 						
 						Relation newRelation = new Relation();
-						newRelation.setFrom(relationElement.getProperty("from"));
-						newRelation.setId(relationElement.getProperty("id"));
-						newRelation.setName(relationElement.getProperty("name"));
-						newRelation.setNegation(relationElement.getProperty("negation"));
-						newRelation.setTo(relationElement.getProperty("to"));
-						newRelation.setModifier(relationElement.getProperty("modifier"));
+						newRelation.setFrom(relationElement.getAttribute("from"));
+						newRelation.setId(relationElement.getAttribute("id"));
+						newRelation.setName(relationElement.getAttribute("name"));
+						newRelation.setNegation(relationElement.getAttribute("negation"));
+						newRelation.setTo(relationElement.getAttribute("to"));
+						newRelation.setModifier(relationElement.getAttribute("modifier"));
 						//relation doesnt have modifier?
 						//newRelation.setTo(relationElement.getProperty("modifier"));
 						

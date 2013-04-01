@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -65,8 +65,8 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		
 		DescriptionTreatmentElement lastElement = lastElements.getLast();
 		if(lastElement != null) {
-			lastIsStructure = lastElement.isOfDescriptionType(DescriptionType.STRUCTURE);
-			lastIsCharacter = lastElement.isOfDescriptionType(DescriptionType.CHARACTER);
+			lastIsStructure = lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE);
+			lastIsCharacter = lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER);
 			
 			if(lastIsStructure && isNumerical(object)) {
 				List<Chunk> modifiers = new ArrayList<Chunk>();
@@ -125,14 +125,14 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					//result.addAll(structures);
 				} else {
 					if(lastIsStructure)
-						lastElement.appendProperty("constraint", chunk.getTerminalsText());
+						lastElement.appendAttribute("constraint", chunk.getTerminalsText());
 					else if(lastIsCharacter) {
 						LinkedList<DescriptionTreatmentElement> objectStructures = 
 								this.extractStructuresFromObject(object, processingContext, processingContextState); 
-						lastElement.appendProperty("constraint", chunk.getTerminalsText());
+						lastElement.appendAttribute("constraint", chunk.getTerminalsText());
 						if(!objectStructures.isEmpty()) {
 							result.addAll(objectStructures);
-							lastElement.setProperty("constraintId", listStructureIds(objectStructures));
+							lastElement.setAttribute("constraintId", listStructureIds(objectStructures));
 						}
 					}
 				}

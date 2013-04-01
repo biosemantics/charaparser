@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -46,15 +46,15 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 		
 		if(!unassignedModifiers.isEmpty()) {
 			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-			if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionType.STRUCTURE)) {
+			if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
 				for(DescriptionTreatmentElement element : lastElements) {
-					int structureId = Integer.valueOf(element.getProperty("id").substring(1));
+					int structureId = Integer.valueOf(element.getAttribute("id").substring(1));
 					
 					Set<DescriptionTreatmentElement> relations = processingContextState.getRelationsTo(structureId);
 					int greatestId = 0;
 					DescriptionTreatmentElement latestRelation = null;
 					for(DescriptionTreatmentElement relation : relations) {
-						int id = Integer.valueOf(relation.getProperty("id").substring(1));
+						int id = Integer.valueOf(relation.getAttribute("id").substring(1));
 						if(id > greatestId) {
 							greatestId = id;
 							latestRelation = relation;
@@ -62,15 +62,15 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 					}
 					
 					if(latestRelation != null) {
-						latestRelation.appendProperty("modifier", modifierString);
+						latestRelation.appendAttribute("modifier", modifierString);
 						result.add(latestRelation);
 					}
 					//TODO: otherwise, categorize modifier and create a character for the structure e.g.{thin} {dorsal} {median} <septum> {centrally} only ;
 				}
 				
-			} else if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionType.CHARACTER)) {
+			} else if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 				for(DescriptionTreatmentElement element : lastElements) {
-					element.appendProperty("modifier", modifierString);
+					element.appendAttribute("modifier", modifierString);
 					result.add(element);
 				}
 			}
@@ -78,10 +78,10 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 		
 		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
 		if(!unassignedCharacters.isEmpty()) {
-			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-			structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
-			structureElement.setProperty("name", "whole_organism"); 
+			structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
+			structureElement.setAttribute("name", "whole_organism"); 
 			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
 			structureElements.add(structureElement);
 			result.addAll(establishSubject(structureElements, processingContextState));

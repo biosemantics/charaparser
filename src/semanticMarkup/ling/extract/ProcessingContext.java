@@ -6,7 +6,7 @@ import java.util.ListIterator;
 
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
@@ -81,7 +81,7 @@ public class ProcessingContext {
 		return result.get(result.size()-1);
 	}
 
-	public DescriptionTreatmentElement getLastResult(DescriptionType descriptionType) {
+	public DescriptionTreatmentElement getLastResult(DescriptionTreatmentElementType descriptionType) {
 		DescriptionTreatmentElement result = null;
 		for(int i=this.result.size()-1; i>=0; i--) {
 			DescriptionTreatmentElement element = this.result.get(i);

@@ -7,7 +7,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -52,9 +52,9 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 			
 			if(nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE)) 
 				return result;
-			if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionType.CHARACTER)) {
+			if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 				
-				String characterName = lastElements.getLast().getProperty("name");
+				String characterName = lastElements.getLast().getAttribute("name");
 				if(!nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && 
 						!nextChunk.isOfChunkType(ChunkType.NUMERICALS) && 
 						!nextChunk.isOfChunkType(ChunkType.ORGAN) && 
@@ -76,14 +76,14 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					
 					if(!previousResult.isEmpty()) {
 						DescriptionTreatmentElement structure = processingContext.getParent(previousResult.get(0));				
-						DescriptionTreatmentElement newElement = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
+						DescriptionTreatmentElement newElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
 						structure.addTreatmentElement(newElement);
-						newElement.setProperty("name", characterName);
+						newElement.setAttribute("name", characterName);
 						String chunkText = nextChunk.getTerminalsText();
 						if(chunkText.contains("~list~")) {
 							chunkText = chunkText.replaceFirst("\\w{2,}.*?~list~","").replaceAll("punct", ",").replaceAll("~", " ");
 						}
-						newElement.setProperty("value", chunkText);
+						newElement.setAttribute("value", chunkText);
 						addClauseModifierConstraint(newElement, processingContextState); 
 						result.add(newElement);
 						
@@ -110,13 +110,13 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 				processingContext.setCurrentState(previousChunk);
 				List<DescriptionTreatmentElement> ppResult = ppChunkProcessor.process(previousChunk, processingContext);
 				this.removeResults(ppResult, processingContext.getResult());
-				DescriptionTreatmentElement previousRelation = this.getFirstDescriptionElement(ppResult, DescriptionType.RELATION);
+				DescriptionTreatmentElement previousRelation = this.getFirstDescriptionElement(ppResult, DescriptionTreatmentElementType.RELATION);
 
 				processingContext.setCurrentState(currentState);
 				List<DescriptionTreatmentElement> nextResult = ppChunkProcessor.process(nextChunk, processingContext);
-				DescriptionTreatmentElement newRelation = this.getFirstDescriptionElement(nextResult, DescriptionType.RELATION);
+				DescriptionTreatmentElement newRelation = this.getFirstDescriptionElement(nextResult, DescriptionTreatmentElementType.RELATION);
 				if(previousRelation !=null && newRelation!=null) {
-					newRelation.setProperty("from", previousRelation.getProperty("from"));
+					newRelation.setAttribute("from", previousRelation.getAttribute("from"));
 				}
 				result.addAll(nextResult);
 				if(!result.isEmpty())

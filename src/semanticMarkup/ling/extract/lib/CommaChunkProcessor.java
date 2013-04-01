@@ -8,7 +8,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -46,7 +46,7 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		processingContextState.setCommaAndOrEosEolAfterLastElements(true);
 		if(!processingContextState.getLastElements().isEmpty()) {
 			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().get(0);
-			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
+			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 				DescriptionTreatmentElement parent = processingContext.getParent(lastElement);
 				if(parent!=null) {
 					LinkedList<DescriptionTreatmentElement> newLastElements = new LinkedList<DescriptionTreatmentElement>();
@@ -58,10 +58,10 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		
 		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
 		if(!unassignedCharacters.isEmpty() && nextChunkIsOrgan(processingContext)) {
-			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-			structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
-			structureElement.setProperty("name", "whole_organism"); 
+			structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
+			structureElement.setAttribute("name", "whole_organism"); 
 			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
 			structureElements.add(structureElement);
 			result.addAll(establishSubject(structureElements, processingContextState));

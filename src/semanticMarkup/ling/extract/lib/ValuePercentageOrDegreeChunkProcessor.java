@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -38,8 +38,8 @@ public class ValuePercentageOrDegreeChunkProcessor extends AbstractChunkProcesso
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		String content = chunk.getTerminalsText();
 		DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-		if(lastElement != null && lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
-			lastElement.setProperty("modifier", content);
+		if(lastElement != null && lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
+			lastElement.setAttribute("modifier", content);
 			result.add(lastElement);
 		}else{
 			processingContextState.getUnassignedModifiers().add(chunk);

@@ -89,8 +89,8 @@ public class ProcessingContextState implements Cloneable {
 	
 	public int fetchAndIncrementRelationId(DescriptionTreatmentElement relation) {
 		relations.put(relationId, relation);
-		int fromId = Integer.parseInt(relation.getProperty("from").substring(1));
-		int toId = Integer.parseInt(relation.getProperty("to").substring(1));
+		int fromId = Integer.parseInt(relation.getAttribute("from").substring(1));
+		int toId = Integer.parseInt(relation.getAttribute("to").substring(1));
 		
 		if(!relationsFromStructure.containsKey(fromId))
 			relationsFromStructure.put(fromId, new HashSet<DescriptionTreatmentElement>());

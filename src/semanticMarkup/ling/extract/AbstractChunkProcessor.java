@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -87,7 +87,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		lastElements.clear();
 		
 		for(DescriptionTreatmentElement element : subjectStructures) {
-			if(element.isOfDescriptionType(DescriptionType.STRUCTURE)) {
+			if(element.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
 				//ignore character elements
 				subjects.add(element);
 				lastElements.add(element);
@@ -154,18 +154,18 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		//log(LogLevel.DEBUG, "organChunk " + organChunk);
 		if(!organChunks.isEmpty()) {
 			for(Chunk organChunk : organChunks) {
-				DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+				DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-				structureElement.setProperty("id", "o" + String.valueOf(structureIdString));
+				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));
 			
 				LinkedHashSet<Chunk> constraintChunks = getConstraintOf(organChunk, subjectChunk);
 				if(!constraintChunks.isEmpty()) {
 					Chunk constraintsChunk = new Chunk(ChunkType.UNASSIGNED, constraintChunks);
-					structureElement.setProperty("constraint", constraintsChunk.getTerminalsText());
+					structureElement.setAttribute("constraint", constraintsChunk.getTerminalsText());
 				}
 		
 				String organName = organChunk.getTerminalsText();
-				structureElement.setProperty("name", inflector.getSingular(organName));
+				structureElement.setAttribute("name", inflector.getSingular(organName));
 				
 				LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
 				parents.add(structureElement);
@@ -354,9 +354,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String clauseModifierConstraint = processingContextState.getClauseModifierContraint();
 		String clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
 		if (clauseModifierConstraint != null)
-			descriptionElement.setProperty("constraint", clauseModifierConstraint);
+			descriptionElement.setAttribute("constraint", clauseModifierConstraint);
 		if (clauseModifierConstraintId != null)
-			descriptionElement.setProperty("constraintId", clauseModifierConstraintId);
+			descriptionElement.setAttribute("constraintId", clauseModifierConstraintId);
 	}
 	
 	protected LinkedList<DescriptionTreatmentElement> lastStructures(ProcessingContext processingContext, 
@@ -365,7 +365,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		
 		boolean newSegment = processingContext.getCurrentState().isCommaAndOrEosEolAfterLastElements();
 		if(!newSegment & (processingContextState.getLastElements().size()> 0 && 
-				processingContextState.getLastElements().getLast().isOfDescriptionType(DescriptionType.STRUCTURE))) {
+				processingContextState.getLastElements().getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))) {
 			parents.addAll(processingContextState.getLastElements());
 		}else{
 			parents.addAll(processingContextState.getSubjects());
@@ -576,7 +576,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				for(int i = structures.size()-1; i>=0;  i--){
 					//log(LogLevel.DEBUG, structures.get(i));
 					//log(LogLevel.DEBUG, lastOrgan);
-					if(!structures.get(i).getProperty("name").equals(inflector.getSingular(lastOrgan.getTerminalsText()))){
+					if(!structures.get(i).getAttribute("name").equals(inflector.getSingular(lastOrgan.getTerminalsText()))){
 						structures.remove(i);
 					}
 				}
@@ -680,8 +680,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 							}else if(processingContextState.getLastElements().size() >= 1){
 								lastelement = processingContextState.getLastElements().getLast();
 							}
-							if(lastelement != null && lastelement.isOfDescriptionType(DescriptionType.CHARACTER)){
-								lastelement.setProperty("name", w);
+							if(lastelement != null && lastelement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)){
+								lastelement.setAttribute("name", w);
 							}
 						}else{
 							String[] characterValues = w.split("\\bor\\b|\\band\\b");
@@ -1014,20 +1014,20 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		for(Chunk modifier : modifiers)
 			modifiersString += modifier.getTerminalsText() + " ";
 		
-		DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
+		DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
 		//if(this.inbrackets){character.setAttribute("in_bracket", "true");}
-		character.setProperty("type", "range_value");
-		character.setProperty("name", characterName);
+		character.setAttribute("type", "range_value");
+		character.setAttribute("name", characterName);
 		
 		String[] range = characterValue.split("\\s+to\\s+");//a or b, c, to d, c, e
 		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+or\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
 		String from = getFirstCharacter(tokens[tokens.length-1]);
 		tokens = range[1].split("\\s*,\\s*");
 		String to = getFirstCharacter(tokens[0]);
-		character.setProperty("from", from.replaceAll("-c-", " ")); //a or b to c => b to c
-		character.setProperty("to", to.replaceAll("-c-", " "));
+		character.setAttribute("from", from.replaceAll("-c-", " ")); //a or b to c => b to c
+		character.setAttribute("to", to.replaceAll("-c-", " "));
 		if(!modifiersString.isEmpty())
-			character.setProperty("modifier", modifiersString);
+			character.setAttribute("modifier", modifiersString);
 		
 		if(parents.isEmpty())
 			processingContextState.getUnassignedCharacters().add(character);
@@ -1077,25 +1077,25 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		}
 		
 		if(characterValue.length() > 0){
-			character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
+			character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
 			//if(this.inbrackets){character.setAttribute("in_bracket", "true");}
 			if(characterName.compareTo("count")==0 && characterValue.indexOf("-")>=0 && characterValue.indexOf("-")==characterValue.lastIndexOf("-")){
 				String[] values = characterValue.split("-");
-				character.setProperty("type", "range_value");
-				character.setProperty("name", characterName);
-				character.setProperty("from", values[0]);
+				character.setAttribute("type", "range_value");
+				character.setAttribute("name", characterName);
+				character.setAttribute("from", values[0]);
 				if(values[1].endsWith("+")) {
-					character.setProperty("to", values[1].substring(0, values[1].length()-1));
-					character.setProperty("upperRestricted", "false");
+					character.setAttribute("to", values[1].substring(0, values[1].length()-1));
+					character.setAttribute("upperRestricted", "false");
 				} else
-					character.setProperty("to", values[1]);
+					character.setAttribute("to", values[1]);
 				
 			}else{
 				if (characterName.compareTo("size") == 0) {
 					String value = characterValue.replaceFirst("\\b(" + units + ")\\b", "").trim(); // 5-10 mm
 					String unit = characterValue.replace(value, "").trim();
 					if (unit.length() > 0) {
-						character.setProperty("unit", unit);
+						character.setAttribute("unit", unit);
 					}
 					characterValue = value;
 				}else if(characterValue.indexOf("_c_")>=0 && (characterName.equals("color") || characterName.equals("coloration"))){
@@ -1107,12 +1107,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					characterValue = color;
 				}
 				if(char_type.length() > 0){
-					character.setProperty("type", char_type);
+					character.setAttribute("type", char_type);
 				}
-				character.setProperty("name", characterName);
-				character.setProperty("value", characterValue);
+				character.setAttribute("name", characterName);
+				character.setAttribute("value", characterValue);
 				if(!modifierString.isEmpty())
-					character.setProperty("modifier", modifierString);
+					character.setAttribute("modifier", modifierString);
 			}
 			
 			for(DescriptionTreatmentElement parent : parents) {
@@ -1160,17 +1160,17 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			//if last character is size, change to location: <margins> r[p[with] o[3–6 (spines)]] 1–3 {mm} r[p[{near}] o[(bases)]]. 
 			//1-3 mm is not a size, but a location of spines
-			if(lastElement.getProperty("name").equals("size") && 
-					((lastElement.getProperty("value") != null && lastElement.getProperty("value").matches(".*?\\d.*")) || 
-							(lastElement.getProperty("from") != null && lastElement.getProperty("from").matches(".*?\\d.*"))) 
+			if(lastElement.getAttribute("name").equals("size") && 
+					((lastElement.getAttribute("value") != null && lastElement.getAttribute("value").matches(".*?\\d.*")) || 
+							(lastElement.getAttribute("from") != null && lastElement.getAttribute("from").matches(".*?\\d.*"))) 
 				&& locationPrepositions.contains(preposition.getTerminalsText())) {
-				lastElement.setProperty("name", "location");
+				lastElement.setAttribute("name", "location");
 			}
-			lastElement.setProperty("constraint", preposition.getTerminalsText() + " " + listStructureNames(object));
-			lastElement.setProperty("constraintId", listStructureIds(structures));
+			lastElement.setAttribute("constraint", preposition.getTerminalsText() + " " + listStructureNames(object));
+			lastElement.setAttribute("constraintId", listStructureIds(structures));
 			if(!modifiers.isEmpty()) {
 				for(Chunk modifier : modifiers) {
-					lastElement.appendProperty("modifier", modifier.getTerminalsText());
+					lastElement.appendAttribute("modifier", modifier.getTerminalsText());
 				}
 			}
 		} else {			
@@ -1221,13 +1221,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String result = "part_of";
 		
 		for (int i = 0; i<organsBeforeOf.size(); i++){
-			String b = organsBeforeOf.get(i).getProperty("name");
+			String b = organsBeforeOf.get(i).getAttribute("name");
 			if(clusters.contains(b)){
 				result = "consist_of";
 				break;
 			}
 			for(int j = 0; j<organsAfterOf.size(); j++){
-				String a = organsAfterOf.get(j).getProperty("name");
+				String a = organsAfterOf.get(j).getAttribute("name");
 				//String pattern = a+"[ ]+of[ ]+[0-9]+.*"+b+"[,\\.]"; //consists-of
 				if(a.length()>0 && b.length()>0){
 					String pb = inflector.getPlural(b);
@@ -1262,9 +1262,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		//add relation elements
 		LinkedList<DescriptionTreatmentElement> relationElements = new LinkedList<DescriptionTreatmentElement>();
 		for(int i = 0; i < fromStructures.size(); i++) {
-			String o1id = fromStructures.get(i).getProperty("id");
+			String o1id = fromStructures.get(i).getAttribute("id");
 			for(int j = 0; j<toStructures.size(); j++){
-				String o2id = toStructures.get(j).getProperty("id");
+				String o2id = toStructures.get(j).getAttribute("id");
 				boolean negation=false;
 				
 				Iterator<Chunk> modifiersIterator = modifiers.iterator();
@@ -1287,19 +1287,19 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected DescriptionTreatmentElement addRelation(String relation, List<Chunk> modifiers,
 			boolean symmetric, String o1id, String o2id, boolean negation, ProcessingContextState processingContextState) {
-		DescriptionTreatmentElement relationElement = new DescriptionTreatmentElement(DescriptionType.RELATION);
-		relationElement.setProperty("name", relation);
-		relationElement.setProperty("from", o1id);
-		relationElement.setProperty("to", o2id);
-		relationElement.setProperty("negation", String.valueOf(negation));
-		relationElement.setProperty("id", "r" + String.valueOf(processingContextState.fetchAndIncrementRelationId(relationElement)));	
+		DescriptionTreatmentElement relationElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.RELATION);
+		relationElement.setAttribute("name", relation);
+		relationElement.setAttribute("from", o1id);
+		relationElement.setAttribute("to", o2id);
+		relationElement.setAttribute("negation", String.valueOf(negation));
+		relationElement.setAttribute("id", "r" + String.valueOf(processingContextState.fetchAndIncrementRelationId(relationElement)));	
 		if(modifiers.size() > 0){
 			String modifierString = "";
 			for(Chunk modifier : modifiers) {
 				modifierString += modifier.getTerminalsText() + ", ";
 			}
 			
-			relationElement.appendProperty("modifier", modifierString.substring(0, modifierString.length() - 2));
+			relationElement.appendAttribute("modifier", modifierString.substring(0, modifierString.length() - 2));
 		}
 		addClauseModifierConstraint(relationElement, processingContextState);
 		return relationElement;
@@ -1320,15 +1320,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		}
 		
 		for(DescriptionTreatmentElement element : characters) {
-			if(resetFrom && element.getProperty("from") != null && element.getProperty("from").equals("0") && 
-					(element.getProperty("fromInclusive")==null || element.getProperty("fromInclusive").equals("true"))){// to 6[-9] m.
-				element.removeProperty("from");
-				if(element.getProperty("fromUnit")!=null){
-					element.removeProperty("fromUnit");
+			if(resetFrom && element.getAttribute("from") != null && element.getAttribute("from").equals("0") && 
+					(element.getAttribute("fromInclusive")==null || element.getAttribute("fromInclusive").equals("true"))){// to 6[-9] m.
+				element.removeAttribute("from");
+				if(element.getAttribute("fromUnit")!=null){
+					element.removeAttribute("fromUnit");
 				}
 			}
 			if(modifierString !=null && modifierString.compareTo("")!=0) {
-				element.setProperty("modifier", modifierString);
+				element.setAttribute("modifier", modifierString);
 			}
 
 			addClauseModifierConstraint(element, processingContextState);
@@ -1453,22 +1453,22 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     		String match = numberexp.substring(i, j);
     		int en = match.indexOf('-');
     		if (match.contains("+")){
-    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-    			character.setProperty("type", "range_value");
-    			character.setProperty("name", "l_w_ratio");
+    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+    			character.setAttribute("type", "range_value");
+    			character.setAttribute("name", "l_w_ratio");
     			//character.setAttribute("from", match.substring(match.indexOf('=')+2,en).trim());
-    			character.setProperty("from", match.substring(match.indexOf('=')+1,en).trim());
-    			character.setProperty("to", match.substring(en+1, match.indexOf('+',en+1)).trim());
-    			character.setProperty("upperRestricted", "false");
+    			character.setAttribute("from", match.substring(match.indexOf('=')+1,en).trim());
+    			character.setAttribute("to", match.substring(en+1, match.indexOf('+',en+1)).trim());
+    			character.setAttribute("upperRestricted", "false");
     			innertagstate.add(character);
     			//innertagstate=innertagstate.concat("<character char_type=\"range_value\" name=\"l_w_ratio\" from=\""+match.substring(match.indexOf('=')+2,en).trim()+"\" to=\""+match.substring(en+1, match.indexOf('+',en+1)).trim()+"\" upper_restricted=\"false\"/>");
     		}else{
-    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-    			character.setProperty("type", "range_value");
-    			character.setProperty("name", "l_w_ratio");
+    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+    			character.setAttribute("type", "range_value");
+    			character.setAttribute("name", "l_w_ratio");
     			//character.setAttribute("from", match.substring(match.indexOf('=')+2,en).trim());
-    			character.setProperty("from", match.substring(match.indexOf('=')+1,en).trim());
-    			character.setProperty("to", match.substring(en+1, match.indexOf(' ',en+1)).trim());
+    			character.setAttribute("from", match.substring(match.indexOf('=')+1,en).trim());
+    			character.setAttribute("to", match.substring(en+1, match.indexOf(' ',en+1)).trim());
     			innertagstate.add(character);
     			//innertagstate=innertagstate.concat("<character char_type=\"range_value\" name=\"l_w_ratio\" from=\""+match.substring(match.indexOf('=')+2,en).trim()+"\" to=\""+match.substring(en+1, match.indexOf(' ',en+1)).trim()+"\"/>");
        		}
@@ -1510,19 +1510,19 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
         		int p = matcher1.start();
         		int q = matcher1.end();
         		if(extreme.charAt(q-2)=='–' | extreme.charAt(q-2)=='-'){
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("type", "relative_range_value");
-        			character.setProperty("name", "atypical_size");
-        			character.setProperty("from", extreme.substring(p+1,q-2).trim());
-        			character.setProperty("to", "");
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("type", "relative_range_value");
+        			character.setAttribute("name", "atypical_size");
+        			character.setAttribute("from", extreme.substring(p+1,q-2).trim());
+        			character.setAttribute("to", "");
         			innertagstate.add(character);
         			//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
         		}else{
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("type", "relative_range_value");
-        			character.setProperty("name", "atypical_size");
-        			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-        			character.setProperty("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("type", "relative_range_value");
+        			character.setAttribute("name", "atypical_size");
+        			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+        			character.setAttribute("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
         			innertagstate.add(character);
         		    //innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
         		}
@@ -1538,40 +1538,40 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
         		int q = matcher1.end();
         		if (extreme.charAt(p+1)=='–' | extreme.charAt(p+1)=='-'){
         			if (extreme.charAt(q-2)=='+'){
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "relative_range_value");
-            			character.setProperty("name", "atypical_size");
-            			character.setProperty("from", "");
-            			character.setProperty("to", extreme.substring(p+2,q-2).trim());
-            			character.setProperty("upperRestricted", "false");
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "relative_range_value");
+            			character.setAttribute("name", "atypical_size");
+            			character.setAttribute("from", "");
+            			character.setAttribute("to", extreme.substring(p+2,q-2).trim());
+            			character.setAttribute("upperRestricted", "false");
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-2).trim()+"\" upper_restricted=\"false\"/>");
         			}else{
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "relative_range_value");
-            			character.setProperty("name", "atypical_size");
-            			character.setProperty("from","");
-            			character.setProperty("to", extreme.substring(p+2,q-1).trim());
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "relative_range_value");
+            			character.setAttribute("name", "atypical_size");
+            			character.setAttribute("from","");
+            			character.setAttribute("to", extreme.substring(p+2,q-1).trim());
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-1).trim()+"\"/>");
         			}
         		}
         		else{
         			if (extreme.charAt(q-2)=='+'){
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "relative_range_value");
-            			character.setProperty("name", "atypical_size");
-            			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-            			character.setProperty("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim());
-            			character.setProperty("upperRestricted", "false");
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "relative_range_value");
+            			character.setAttribute("name", "atypical_size");
+            			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+            			character.setAttribute("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim());
+            			character.setAttribute("upperRestricted", "false");
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
         			}else{
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "relative_range_value");
-            			character.setProperty("name", "atypical_size");
-            			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-            			character.setProperty("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim() );
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "relative_range_value");
+            			character.setAttribute("name", "atypical_size");
+            			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+            			character.setAttribute("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim() );
             			//character.setAttribute("upper_restricted", "true");
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
@@ -1588,18 +1588,18 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
         		int p = matcher1.start();
         		int q = matcher1.end();
         		if (extreme.charAt(q-2)=='+'){
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("type", "relative_value");
-        			character.setProperty("name", "atypical_size");
-        			character.setProperty("from", extreme.substring(p+1,q-2).trim());
-        			character.setProperty("upperRestricted", "false");
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("type", "relative_value");
+        			character.setAttribute("name", "atypical_size");
+        			character.setAttribute("from", extreme.substring(p+1,q-2).trim());
+        			character.setAttribute("upperRestricted", "false");
         			innertagstate.add(character);
         			//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
         		}else{
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("type", "relative_value");
-        			character.setProperty("name", "atypical_size");
-        			character.setProperty("value", extreme.substring(p+1,q-1).trim());
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("type", "relative_value");
+        			character.setAttribute("name", "atypical_size");
+        			character.setAttribute("value", extreme.substring(p+1,q-1).trim());
         			innertagstate.add(character);
     				//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"atypical_size\" value=\""+extreme.substring(p+1,q-1).trim()+"\"/>");
         		}
@@ -1618,12 +1618,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
             	extract = matcher3.replaceAll("#");
             	matcher3.reset();
             	
-    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-    			character.setProperty("type", "relative_range_value");
-    			character.setProperty("name", "size");
-    			character.setProperty("from", extract.substring(0, extract.indexOf('-')).trim());
-    			character.setProperty("to", extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim());
-    			character.setProperty("relativeConstraint",relative.trim());
+    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+    			character.setAttribute("type", "relative_range_value");
+    			character.setAttribute("name", "size");
+    			character.setAttribute("from", extract.substring(0, extract.indexOf('-')).trim());
+    			character.setAttribute("to", extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim());
+    			character.setAttribute("relativeConstraint",relative.trim());
     			innertagstate.add(character);
             	//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"size\" from=\""+extract.substring(0, extract.indexOf('-')).trim()+"\" to=\""+extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim()+"\" relative_constraint=\""+relative.trim()+"\"/>");
     			toval = extract.substring(0, extract.indexOf('-'));
@@ -1640,11 +1640,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
             	}
             	extract = matcher3.replaceAll("#");
             	matcher3.reset();
-    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-    			character.setProperty("type", "relative_value");
-    			character.setProperty("name", "size");
-    			character.setProperty("value", extract.substring(0,extract.indexOf('#')).trim());
-    			character.setProperty("relativeConstraint", relative.trim());
+    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+    			character.setAttribute("type", "relative_value");
+    			character.setAttribute("name", "size");
+    			character.setAttribute("value", extract.substring(0,extract.indexOf('#')).trim());
+    			character.setAttribute("relativeConstraint", relative.trim());
     			innertagstate.add(character);
             	//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"size\" value=\""+extract.substring(0,extract.indexOf('#')).trim()+"\" relative_constraint=\""+relative.trim()+"\"/>");
     			toval = extract.substring(0,extract.indexOf('#'));
@@ -1652,17 +1652,17 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     		}
     		
         	for(DescriptionTreatmentElement element : innertagstate) {
-    			if(element.getProperty("to") != null && element.getProperty("to").compareTo("")==0){
+    			if(element.getAttribute("to") != null && element.getAttribute("to").compareTo("")==0){
     				if(toval.endsWith("+")){
     					toval = toval.replaceFirst("\\+$", "");
-    					element.setProperty("upperRestricted", "false");
+    					element.setAttribute("upperRestricted", "false");
     				}
-    				element.setProperty("to", toval.trim());
-    				element.setProperty("toInclusive", "false");
+    				element.setAttribute("to", toval.trim());
+    				element.setAttribute("toInclusive", "false");
     			}
-    			if(element.getProperty("from") != null && element.getProperty("from").compareTo("")==0){
-    				element.setProperty("from", fromval.trim());
-    				element.setProperty("fromInclusive", "false");
+    			if(element.getAttribute("from") != null && element.getAttribute("from").compareTo("")==0){
+    				element.setAttribute("from", fromval.trim());
+    				element.setAttribute("fromInclusive", "false");
     			}
     		}
         	
@@ -1735,23 +1735,23 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
         		int p = matcher1.start();
         		int q = matcher1.end();
         		if(extreme.charAt(q-2)=='–' | extreme.charAt(q-2)=='-'){
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("type", "range_value");
-        			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-        			character.setProperty("from", extreme.substring(p+1,q-2).trim());
-        			character.setProperty("to", "");
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("type", "range_value");
+        			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+        			character.setAttribute("from", extreme.substring(p+1,q-2).trim());
+        			character.setAttribute("to", "");
         			innertagstate.add(character);
         			
         			//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
         		}else{
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("type", "range_value");
-        			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-        			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("type", "range_value");
+        			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+        			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
         			String tmp = extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim();
-        			character.setProperty("to", tmp.replaceFirst("[^0-9]+$", ""));
+        			character.setAttribute("to", tmp.replaceFirst("[^0-9]+$", ""));
         			if(tmp.endsWith("+")){
-        				character.setProperty("upperRestricted", "false");
+        				character.setAttribute("upperRestricted", "false");
         			}
         			innertagstate.add(character);
         			//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
@@ -1770,40 +1770,40 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
         		j = p;
         		if (extreme.charAt(p+1)=='–' | extreme.charAt(p+1)=='-'){
         			if (extreme.charAt(q-2)=='+'){
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "range_value");
-            			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-            			character.setProperty("from", "");
-            			character.setProperty("to", extreme.substring(p+2,q-2).trim());
-            			character.setProperty("upperRestricted", "false");
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "range_value");
+            			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+            			character.setAttribute("from", "");
+            			character.setAttribute("to", extreme.substring(p+2,q-2).trim());
+            			character.setAttribute("upperRestricted", "false");
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\"\" to=\""+extreme.substring(p+2,q-2).trim()+"\" upper_restricted=\"false\"/>");
         			}else{
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "range_value");
-            			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-            			character.setProperty("from", "");
-            			character.setProperty("to", extreme.substring(p+2,q-1).trim());
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "range_value");
+            			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+            			character.setAttribute("from", "");
+            			character.setAttribute("to", extreme.substring(p+2,q-1).trim());
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\"\" to=\""+extreme.substring(p+2,q-1).trim()+"\"/>");
         			}
         		}
         		else{
         			if (extreme.charAt(q-2)=='+'){
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "range_value");
-            			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-            			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-            			character.setProperty("to", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-            			character.setProperty("upperRestricted", "false");
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "range_value");
+            			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+            			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+            			character.setAttribute("to", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+            			character.setAttribute("upperRestricted", "false");
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
         			}else{
-            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-            			character.setProperty("type", "range_value");
-            			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-            			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-            			character.setProperty("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
+            			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+            			character.setAttribute("type", "range_value");
+            			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+            			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+            			character.setAttribute("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
             			innertagstate.add(character);
         				//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
         			}
@@ -1818,17 +1818,17 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
         		int q = matcher1.end();
         		j = p;
         		if (extreme.charAt(q-2)=='+'){
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("type", "range_value");
-        			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-        			character.setProperty("from", extreme.substring(p+1,q-2).trim());
-        			character.setProperty("upperRestricted", "false");
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("type", "range_value");
+        			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+        			character.setAttribute("from", extreme.substring(p+1,q-2).trim());
+        			character.setAttribute("upperRestricted", "false");
         			innertagstate.add(character);
         			//innertagstate = innertagstate.concat("<character name=\"atypical_count\" from=\""+extreme.substring(p+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
         		}else{
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("name", "atypical_"+(cname==null?"count": cname));
-        			character.setProperty("value", extreme.substring(p+1,q-1).trim());
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("name", "atypical_"+(cname==null?"count": cname));
+        			character.setAttribute("value", extreme.substring(p+1,q-1).trim());
            			innertagstate.add(character);
     				//innertagstate = innertagstate.concat("<character name=\"atypical_count\" value=\""+extreme.substring(p+1,q-1).trim()+"\"/>");
         		}
@@ -1850,13 +1850,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     				upperrestricted = false;
     				to = to.replaceFirst("\\+$", "");
     			}
-    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-    			character.setProperty("type", "range_value");
-    			character.setProperty("name", cname==null?"count": cname);
-    			character.setProperty("from", extract.substring(0, extract.indexOf('-')).trim());
-    			character.setProperty("to", to);
+    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+    			character.setAttribute("type", "range_value");
+    			character.setAttribute("name", cname==null?"count": cname);
+    			character.setAttribute("from", extract.substring(0, extract.indexOf('-')).trim());
+    			character.setAttribute("to", to);
     			if(!upperrestricted)
-    				character.setProperty("upperRestricted", upperrestricted+"");
+    				character.setAttribute("upperRestricted", upperrestricted+"");
     			innertagstate.add(character);
             	//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"count\" from=\""+extract.substring(0, extract.indexOf('-')).trim()+"\" to=\""+extract.substring(extract.indexOf('-')+1,extract.length()).trim()+"\"/>");
     			toval = extract.substring(0, extract.indexOf('-'));
@@ -1865,15 +1865,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     		}else{
     			//String extract = extreme.substring(i,j).trim();
     			if(extract.length()>0){
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("name", cname==null?"count": cname);
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("name", cname==null?"count": cname);
         			if(extract.endsWith("+")){
         				extract = extract.replaceFirst("\\+$", "").trim();
-        				character.setProperty("type", "range_value");
-        				character.setProperty("from", extract);
-        				character.setProperty("upperRestricted", "false");
+        				character.setAttribute("type", "range_value");
+        				character.setAttribute("from", extract);
+        				character.setAttribute("upperRestricted", "false");
         			}else{
-        				character.setProperty("value", extract);
+        				character.setAttribute("value", extract);
         			}
         			innertagstate.add(character);
         			//innertagstate = innertagstate.concat("<character name=\"count\" value=\""+extract.trim()+"\"/>");
@@ -1897,13 +1897,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     				upperrestricted = false;
     				to = to.replaceFirst("\\+$", "");
     			}
-    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-    			character.setProperty("type", "range_value");
-    			character.setProperty("name", cname==null?"count": cname);
-    			character.setProperty("from", extract.substring(0, extract.indexOf('-')).trim());
-    			character.setProperty("to", to);
+    			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+    			character.setAttribute("type", "range_value");
+    			character.setAttribute("name", cname==null?"count": cname);
+    			character.setAttribute("from", extract.substring(0, extract.indexOf('-')).trim());
+    			character.setAttribute("to", to);
     			if(!upperrestricted)
-    				character.setProperty("upperRestricted", upperrestricted+"");
+    				character.setAttribute("upperRestricted", upperrestricted+"");
     			innertagstate.add(character);
             	//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"count\" from=\""+extract.substring(0, extract.indexOf('-')).trim()+"\" to=\""+extract.substring(extract.indexOf('-')+1,extract.length()).trim()+"\"/>");
     			toval = extract.substring(0, extract.indexOf('-'));
@@ -1912,15 +1912,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     		}else{
     			//String extract = extreme.substring(i,j).trim();
     			if(extract.length()>0){
-        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-        			character.setProperty("name", cname==null?"count": cname);
+        			DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+        			character.setAttribute("name", cname==null?"count": cname);
         			if(extract.endsWith("+")){
         				extract = extract.replaceFirst("\\+$", "").trim();
-        				character.setProperty("type", "range_value");
-        				character.setProperty("from", extract);
-        				character.setProperty("upperRestricted", "false");
+        				character.setAttribute("type", "range_value");
+        				character.setAttribute("from", extract);
+        				character.setAttribute("upperRestricted", "false");
         			}else{
-        				character.setProperty("value", extract);
+        				character.setAttribute("value", extract);
         			}
         			innertagstate.add(character);
         			//innertagstate = innertagstate.concat("<character name=\"count\" value=\""+extract.trim()+"\"/>");
@@ -1931,17 +1931,17 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     		}
     		
     		for(DescriptionTreatmentElement element : innertagstate) {
-    			if(element.getProperty("to") != null && element.getProperty("to").compareTo("")==0){
+    			if(element.getAttribute("to") != null && element.getAttribute("to").compareTo("")==0){
     				if(toval.endsWith("+")){
     					toval = toval.replaceFirst("\\+$", "");
-    					element.setProperty("upperRestricted", "false");
+    					element.setAttribute("upperRestricted", "false");
     				}
-    				element.setProperty("to", toval.trim());
-    				element.setProperty("toInclusive", "false");
+    				element.setAttribute("to", toval.trim());
+    				element.setAttribute("toInclusive", "false");
     			}
-    			if(element.getProperty("from") != null && element.getProperty("from").compareTo("")==0){
-    				element.setProperty("from", fromval.trim());
-    				element.setProperty("fromInclusive", "false");
+    			if(element.getAttribute("from") != null && element.getAttribute("from").compareTo("")==0){
+    				element.setAttribute("from", fromval.trim());
+    				element.setAttribute("fromInclusive", "false");
     			}
     		}
     		/*
@@ -1982,7 +1982,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected String listStructureIds(List<DescriptionTreatmentElement> structures) {
 		StringBuffer list = new StringBuffer();
 		for(DescriptionTreatmentElement element : structures)
-			list.append(element.getProperty("id")).append(", ");
+			list.append(element.getAttribute("id")).append(", ");
 		return list.toString().trim().replaceFirst(",$", "");
 	}
 
@@ -2003,17 +2003,17 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String lastWord = terminals.get(terminals.size()-1).getTerminalsText();
 		if(characters.contains(lastWord)) {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
-			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {//shell oval in outline
+			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {//shell oval in outline
 				for(DescriptionTreatmentElement element : lastElements)
-					element.setProperty("name", lastWord);
+					element.setAttribute("name", lastWord);
 				done = true;
-			}else if(lastElement.isOfDescriptionType(DescriptionType.STRUCTURE)) {//shell in oval outline
+			}else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {//shell in oval outline
 				//String cvalue = ..
 				Chunk characterValue = chunk.getChunkDFS(ChunkType.PREPOSITION);
 						//ckstring.replaceFirst(".*?\\]", "").replaceAll("\\w+\\[","").replaceAll(lastword, "").replaceAll("[{}\\]\\[]", "");
 				for(DescriptionTreatmentElement element : lastElements) {
-					element.setProperty("name", lastWord);
-					element.setProperty("value", characterValue.getTerminalsText());
+					element.setAttribute("name", lastWord);
+					element.setAttribute("value", characterValue.getTerminalsText());
 				}
 				done = true;
 			}
@@ -2025,13 +2025,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		List<Chunk> modifiers = chunk.getChunks(ChunkType.MODIFIER);
 		List<Chunk> objects = chunk.getChunks(ChunkType.OBJECT);
 		
-		DescriptionTreatmentElement typeElement = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
+		DescriptionTreatmentElement typeElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
 		lastElement.addTreatmentElement(typeElement);
 		//if(this.inbrackets) this.addAttribute(type, "in_bracket", "true");
 		for(Chunk object : objects) 
-			typeElement.appendProperty("type", object.getTerminalsText());
+			typeElement.appendAttribute("type", object.getTerminalsText());
 		for(Chunk modifier : modifiers) 
-			typeElement.appendProperty("modifier", modifier.getTerminalsText());
+			typeElement.appendAttribute("modifier", modifier.getTerminalsText());
 	}
 	
 	protected String annotateSize(String plaincharset, LinkedList<DescriptionTreatmentElement> innertagstate, String chara) {
@@ -2060,24 +2060,24 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				int p = matcher1.start();
 				int q = matcher1.end();
 				if(extreme.charAt(q-2)=='–' | extreme.charAt(q-2)=='-'){
-					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-					character.setProperty("type", "range_value");
-					character.setProperty("name", "atypical_"+chara);
-					character.setProperty("from", extreme.substring(p+1,q-2).trim());
-					character.setProperty("to", "");
-					character.setProperty("fromUnit", unit);
-					character.setProperty("toUnit", unit);
+					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+					character.setAttribute("type", "range_value");
+					character.setAttribute("name", "atypical_"+chara);
+					character.setAttribute("from", extreme.substring(p+1,q-2).trim());
+					character.setAttribute("to", "");
+					character.setAttribute("fromUnit", unit);
+					character.setAttribute("toUnit", unit);
 					//character.setAttribute("upper_restricted", "false");
 					innertagstate.add(character);
 					//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
 				}else{
-					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-					character.setProperty("type", "range_value");
-					character.setProperty("name", "atypical_"+chara);
-					character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-					character.setProperty("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
-					character.setProperty("fromUnit", unit);
-					character.setProperty("toUnit", unit);
+					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+					character.setAttribute("type", "range_value");
+					character.setAttribute("name", "atypical_"+chara);
+					character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+					character.setAttribute("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
+					character.setAttribute("fromUnit", unit);
+					character.setAttribute("toUnit", unit);
 					//character.setAttribute("upper_restricted", "??");
 					innertagstate.add(character);
 					//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
@@ -2094,24 +2094,24 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				int q = matcher1.end();
 				if (extreme.charAt(p+1)=='–' | extreme.charAt(p+1)=='-'){
 					if (extreme.charAt(q-2)=='+'){
-						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-		    			character.setProperty("type", "range_value");
-		    			character.setProperty("name", "atypical_"+chara);
-		    			character.setProperty("from", "");
-		    			character.setProperty("to", extreme.substring(p+2,q-2).trim());
-		    			character.setProperty("fromUnit", unit);
-		    			character.setProperty("toUnit", unit);
-		    			character.setProperty("upperRestricted", "false");
+						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+		    			character.setAttribute("type", "range_value");
+		    			character.setAttribute("name", "atypical_"+chara);
+		    			character.setAttribute("from", "");
+		    			character.setAttribute("to", extreme.substring(p+2,q-2).trim());
+		    			character.setAttribute("fromUnit", unit);
+		    			character.setAttribute("toUnit", unit);
+		    			character.setAttribute("upperRestricted", "false");
 		    			innertagstate.add(character);
 						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-2).trim()+"\" upper_restricted=\"false\"/>");
 					}else{
-						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-		    			character.setProperty("type", "range_value");
-		    			character.setProperty("name", "atypical_"+chara);
-		    			character.setProperty("from", "");
-		    			character.setProperty("to", extreme.substring(p+2,q-1).trim());
-		    			character.setProperty("fromUnit", unit);
-		    			character.setProperty("toUnit", unit);
+						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+		    			character.setAttribute("type", "range_value");
+		    			character.setAttribute("name", "atypical_"+chara);
+		    			character.setAttribute("from", "");
+		    			character.setAttribute("to", extreme.substring(p+2,q-1).trim());
+		    			character.setAttribute("fromUnit", unit);
+		    			character.setAttribute("toUnit", unit);
 		    			//character.setAttribute("upper_restricted", "true");
 		    			innertagstate.add(character);
 						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-1).trim()+"\"/>");
@@ -2119,24 +2119,24 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				}
 				else{
 					if (extreme.charAt(q-2)=='+'){
-						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-		    			character.setProperty("type", "range_value");
-		    			character.setProperty("name", "atypical_"+chara);
-		    			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-		    			character.setProperty("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim());
-		    			character.setProperty("fromUnit", unit);
-		    			character.setProperty("toUnit", unit);
-		    			character.setProperty("upperRestricted", "false");
+						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+		    			character.setAttribute("type", "range_value");
+		    			character.setAttribute("name", "atypical_"+chara);
+		    			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+		    			character.setAttribute("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim());
+		    			character.setAttribute("fromUnit", unit);
+		    			character.setAttribute("toUnit", unit);
+		    			character.setAttribute("upperRestricted", "false");
 		    			innertagstate.add(character);
 						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
 					}else{
-						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-		    			character.setProperty("type", "range_value");
-		    			character.setProperty("name", "atypical_"+chara);
-		    			character.setProperty("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-		    			character.setProperty("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
-		    			character.setProperty("fromUnit", unit);
-		    			character.setProperty("toUnit", unit);
+						DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+		    			character.setAttribute("type", "range_value");
+		    			character.setAttribute("name", "atypical_"+chara);
+		    			character.setAttribute("from", extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+		    			character.setAttribute("to", extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
+		    			character.setAttribute("fromUnit", unit);
+		    			character.setAttribute("toUnit", unit);
 		    			//character.setAttribute("upper_restricted", "true");
 		    			innertagstate.add(character);
 						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
@@ -2152,20 +2152,20 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				int p = matcher1.start();
 				int q = matcher1.end();
 				if (extreme.charAt(q-2)=='+'){
-					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-					character.setProperty("name", "atypical_"+chara);
-					character.setProperty("from", extreme.substring(p+1,q-2).trim());
-					character.setProperty("to", "");
-					character.setProperty("fromUnit", unit);
-					character.setProperty("toUnit", unit);
-					character.setProperty("upperRestricted", "false");
+					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+					character.setAttribute("name", "atypical_"+chara);
+					character.setAttribute("from", extreme.substring(p+1,q-2).trim());
+					character.setAttribute("to", "");
+					character.setAttribute("fromUnit", unit);
+					character.setAttribute("toUnit", unit);
+					character.setAttribute("upperRestricted", "false");
 					innertagstate.add(character);
 					//innertagstate = innertagstate.concat("<character name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
 				}else{
-					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-					character.setProperty("name", "atypical_"+chara);
-					character.setProperty("value", extreme.substring(p+1,q-1).trim());
-					character.setProperty("unit", unit);
+					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+					character.setAttribute("name", "atypical_"+chara);
+					character.setAttribute("value", extreme.substring(p+1,q-1).trim());
+					character.setAttribute("unit", unit);
 					//character.setAttribute("unit", extreme.substring(q-1).trim());
 					innertagstate.add(character);
 					//innertagstate = innertagstate.concat("<character name=\"atypical_size\" value=\""+extreme.substring(p+1,q-1).trim()+"\"/>");
@@ -2189,15 +2189,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		    	boolean upperrestricted = ! to.endsWith("+");
 		    	to = to.replaceFirst("\\+$", "").trim();
 		    	
-		    	DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-				character.setProperty("type", "range_value");
-				character.setProperty("name", chara);
-				character.setProperty("from", from);
-				character.setProperty("fromUnit", unit.trim());
-				character.setProperty("to", to);
-				character.setProperty("toUnit", unit.trim());
+		    	DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+				character.setAttribute("type", "range_value");
+				character.setAttribute("name", chara);
+				character.setAttribute("from", from);
+				character.setAttribute("fromUnit", unit.trim());
+				character.setAttribute("to", to);
+				character.setAttribute("toUnit", unit.trim());
 				if(!upperrestricted)
-					character.setProperty("upperRestricted", upperrestricted+"");
+					character.setAttribute("upperRestricted", upperrestricted+"");
 				innertagstate.add(character);
 		    	//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"size\" from=\""+from+"\" from_unit=\""+unit.trim()+"\" to=\""+to+"\" to_unit=\""+unit.trim()+"\" upper_restricted=\""+upperrestricted+"\"/>");
 				toval = extract.substring(0, extract.indexOf('-'));
@@ -2215,10 +2215,10 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		    	extract = matcher3.replaceAll("#");
 		    	matcher3.reset();
 		    	
-		    	DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-				character.setProperty("name", chara);
-				character.setProperty("value", extract.substring(0,extract.indexOf('#')).trim());
-				character.setProperty("unit", unit.trim());
+		    	DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+				character.setAttribute("name", chara);
+				character.setAttribute("value", extract.substring(0,extract.indexOf('#')).trim());
+				character.setAttribute("unit", unit.trim());
 				innertagstate.add(character);
 		    	//innertagstate = innertagstate.concat("<character name=\"size\" value=\""+extract.substring(0,extract.indexOf('#')).trim()+"\" unit=\""+unit.trim()+"\"/>");
 				toval = extract.substring(0,extract.indexOf('#'));
@@ -2226,17 +2226,17 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 			
 			for(DescriptionTreatmentElement element : innertagstate) {
-				if(element.getProperty("to") != null && element.getProperty("to").compareTo("")==0){
+				if(element.getAttribute("to") != null && element.getAttribute("to").compareTo("")==0){
 					if(toval.endsWith("+")){
 						toval = toval.replaceFirst("\\+$", "");
-						element.setProperty("upperRestricted", "false");
+						element.setAttribute("upperRestricted", "false");
 					}
-					element.setProperty("to", toval.trim());
-					element.setProperty("toInclusive", "false");
+					element.setAttribute("to", toval.trim());
+					element.setAttribute("toInclusive", "false");
 				}
-				if(element.getProperty("from") != null && element.getProperty("from").compareTo("")==0){
-					element.setProperty("from", fromval.trim());
-					element.setProperty("fromInclusive", "false");
+				if(element.getAttribute("from") != null && element.getAttribute("from").compareTo("")==0){
+					element.setAttribute("from", fromval.trim());
+					element.setAttribute("fromInclusive", "false");
 				}
 			}
 		}
@@ -2247,7 +2247,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 	
 
-	protected LinkedList<DescriptionTreatmentElement> latest(DescriptionType descriptionType, List<DescriptionTreatmentElement> list) {
+	protected LinkedList<DescriptionTreatmentElement> latest(DescriptionTreatmentElementType descriptionType, List<DescriptionTreatmentElement> list) {
 		LinkedList<DescriptionTreatmentElement> selected = new LinkedList<DescriptionTreatmentElement>();
 		int size = list.size();
 		for(int i = size-1; i>=0; i--){
@@ -2265,7 +2265,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return this.getClass().toString();
 	}
 	
-	public DescriptionTreatmentElement getFirstDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionType descriptionType) {
+	public DescriptionTreatmentElement getFirstDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionTreatmentElementType descriptionType) {
 		DescriptionTreatmentElement result = null;
 		for(int i=0; i<elements.size(); i++) {
 			DescriptionTreatmentElement element = elements.get(i);
@@ -2277,7 +2277,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return result;
 	}
 	
-	public DescriptionTreatmentElement getLastDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionType descriptionType) {
+	public DescriptionTreatmentElement getLastDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionTreatmentElementType descriptionType) {
 		DescriptionTreatmentElement result = null;
 		for(int i=elements.size()-1; i>=0; i--) {
 			DescriptionTreatmentElement element = elements.get(i);

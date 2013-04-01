@@ -18,6 +18,10 @@ import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.log.Timer;
 
+/**
+ * A SentenceChunkerRun chunks the sentence of a given treatment and collects the chunks in a ChunkCollector
+ * @author rodenhausen
+ */
 public class SentenceChunkerRun implements Runnable {
 
 	private String source;
@@ -31,6 +35,17 @@ public class SentenceChunkerRun implements Runnable {
 	private ChunkCollector result;
 	private Treatment treatment;
 
+	/**
+	 * @param source
+	 * @param sentenceString
+	 * @param treatment
+	 * @param terminologyLearner
+	 * @param normalizer
+	 * @param wordTokenizer
+	 * @param posTagger
+	 * @param parser
+	 * @param chunkerChain
+	 */
 	public SentenceChunkerRun(String source, String sentenceString, Treatment treatment, ITerminologyLearner terminologyLearner, INormalizer normalizer, 
 			ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain) {
 		this.source = source;
@@ -56,15 +71,19 @@ public class SentenceChunkerRun implements Runnable {
 			modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
 			subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
 			
+			// normalize sentence
 			String normalizedSentence="";
 			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
-			
 			log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);
+			
+			// tokenize sentence
 			List<Token> sentence = wordTokenizer.tokenize(normalizedSentence);
 			
+			// POS tag sentence
 			List<Token> posedSentence = posTagger.tag(sentence);
 			log(LogLevel.DEBUG, "POSed sentence " + posedSentence);
 			
+			// parse sentence
 			long startTime = Calendar.getInstance().getTimeInMillis();
 			AbstractParseTree parseTree = parser.parse(posedSentence);
 			long endTime = Calendar.getInstance().getTimeInMillis();
@@ -74,8 +93,11 @@ public class SentenceChunkerRun implements Runnable {
 			log(LogLevel.DEBUG, parseTree.prettyPrint());
 			//parseTree.prettyPrint();
 			
+			// chunk sentence using chunkerChain
 			this.result = chunkerChain.chunk(parseTree, subjectTag, treatment, source, sentenceString);
 			log(LogLevel.DEBUG, "Sentence processing finished.\n");
+			
+			// notify listeners to be done
 			this.notifyListeners();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -83,26 +105,41 @@ public class SentenceChunkerRun implements Runnable {
 		}
 	}
 	
+	/**
+	 * @return the resulting ChunkCollector
+	 */
 	public ChunkCollector getResult() {
 		return result;
 	}
 	
 	private Set<ISentenceChunkerRunListener> listeners = new HashSet<ISentenceChunkerRunListener>();
 
+	/**
+	 * @param listener
+	 */
 	public void addListener(ISentenceChunkerRunListener listener) {
 		listeners.add(listener);
 	}
 	
+	/**
+	 * @param listener
+	 */
 	public void removeListener(ISentenceChunkerRunListener listener) {
 		listeners.remove(listener);
 	}
 
-	public void notifyListeners() {
+	/**
+	 * notify the ISentenceChunkerRunListeners
+	 */
+	private void notifyListeners() {
 		for(ISentenceChunkerRunListener listener : listeners) {
 			listener.done(this);
 		}
 	}
 
+	/**
+	 * @return the treatment this SentenceChunkerRun is for
+	 */
 	public Treatment getTreatment() {
 		return this.treatment;
 	}

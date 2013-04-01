@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -43,18 +43,18 @@ public class ConstraintChunkProcessor extends AbstractChunkProcessor {
 		if(!lastElements.isEmpty()) {
 			DescriptionTreatmentElement lastElement = lastElements.get(0);
 			DescriptionTreatmentElement structure = null;
-			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
+			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 				structure = processingContext.getParent(lastElements.get(0));
-			} else if(lastElement.isOfDescriptionType(DescriptionType.STRUCTURE)) {
+			} else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
 				structure = lastElement;
 			}
 			if(structure!=null) {
 				DescriptionTreatmentElement constraintStructure = 
-						new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+						new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 				int structureId = contextState.fetchAndIncrementStructureId(constraintStructure);
-				constraintStructure.setProperty("id", "o" + structureId);
-				constraintStructure.setProperty("name", structure.getProperty("name"));
-				constraintStructure.setProperty("constraint", chunk.getTerminalsText());
+				constraintStructure.setAttribute("id", "o" + structureId);
+				constraintStructure.setAttribute("name", structure.getAttribute("name"));
+				constraintStructure.setAttribute("constraint", chunk.getTerminalsText());
 				result.add(constraintStructure);
 				contextState.setLastElements(result);
 			}

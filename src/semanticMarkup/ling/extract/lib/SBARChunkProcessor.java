@@ -8,7 +8,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -43,8 +43,8 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		//LinkedList<DescriptionTreatmentElement> subjectsCopy = processingContext.getSubjects();
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-		if(lastElements.getLast().isOfDescriptionType(DescriptionType.STRUCTURE)) {
-			processingContextState.setSubjects(latest(DescriptionType.STRUCTURE, lastElements));
+		if(lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
+			processingContextState.setSubjects(latest(DescriptionTreatmentElementType.STRUCTURE, lastElements));
 		} else {
 			ListIterator<Chunk> chunkIterator = processingContext.getChunkListIterator();
 			chunkIterator.previous();
@@ -112,9 +112,9 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			//Chunk contentChunk = new Chunk(ChunkType.UNASSIGNED, content);
 			
 			//attach modifier to the last characters
-			if(lastElements.getLast().isOfDescriptionType(DescriptionType.CHARACTER)) {
+			if(lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 				for(DescriptionTreatmentElement lastElement : lastElements)
-					lastElement.setProperty("modifier", modifierChunk.getTerminalsText());
+					lastElement.setAttribute("modifier", modifierChunk.getTerminalsText());
 			} else { 
 				//if(newcs!=null) 
 					//processingContext.getUnassignedModifiers().add(modifierChunk);

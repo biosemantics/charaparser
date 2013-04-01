@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -76,10 +76,10 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 		if(character.equals("character") && modifiers.size() == 0) {
 			//high relief: character=relief, reset the character of "high" to "relief"
 			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-			if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) 
+			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) 
 				for(DescriptionTreatmentElement element : processingContextState.getLastElements()) 
-					element.setProperty("name", state);
-			else if(lastElement.isOfDescriptionType(DescriptionType.STRUCTURE))
+					element.setAttribute("name", state);
+			else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
 				processingContextState.setUnassignedCharacter(state);
 			results.addAll(processingContextState.getLastElements());
 		}else if(state.length()>0) {

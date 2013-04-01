@@ -9,7 +9,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -41,8 +41,8 @@ public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 			//DescriptionTreatmentElement lastResult = lastElements.getLast();
 			
 			for(DescriptionTreatmentElement element : lastElements){
-				if(element.isOfDescriptionType(DescriptionType.CHARACTER)) {
-					element.setProperty("name", chunk.getTerminalsText());
+				if(element.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
+					element.setAttribute("name", chunk.getTerminalsText());
 				}
 			}
 			

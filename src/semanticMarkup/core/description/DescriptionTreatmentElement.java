@@ -9,70 +9,113 @@ import org.codehaus.jackson.map.ObjectWriter;
 
 import semanticMarkup.core.ContainerTreatmentElement;
 
+/**
+ * A DescriptionTreatmentElemetn has a DescriptionTreatmentElementType and can have a number of attributes that have a name and value
+ * @author rodenhausen
+ */
 public class DescriptionTreatmentElement extends ContainerTreatmentElement {
 
 	@JsonIgnore
-	private DescriptionType descriptionType; //enum and used for name constructor
-	private HashMap<String, String> properties = new HashMap<String, String>();
+	private DescriptionTreatmentElementType descriptionType; //enum and used for name constructor
+	private HashMap<String, String> attributes = new HashMap<String, String>();
 	
-	public DescriptionTreatmentElement() {
-		
-	}
+	/**
+	 * JAXB needs a non-argument constructor
+	 */
+	public DescriptionTreatmentElement() { }
 	
-	public DescriptionTreatmentElement(DescriptionType descriptionType) {
+	/**
+	 * @param descriptionType
+	 */
+	public DescriptionTreatmentElement(DescriptionTreatmentElementType descriptionType) {
 		super(descriptionType.toString());
 		this.descriptionType = descriptionType;
 	}
 	
-	public HashMap<String, String> getProperties() {
-		return this.properties;
+	/**
+	 * @return the attributes
+	 */
+	public HashMap<String, String> getAttributes() {
+		return this.attributes;
 	}
 	
-	public boolean isOfDescriptionType(DescriptionType descriptionType) {
+	/**
+	 * @param descriptionType
+	 * @return if this is of descriptionType
+	 */
+	public boolean isOfDescriptionType(DescriptionTreatmentElementType descriptionType) {
 		return this.descriptionType.equals(descriptionType);
 	}
 	
-	public boolean containsProperty(String key) {
-		return this.properties.containsKey(key);
+	/**
+	 * @param name
+	 * @return if this contains an attribute of name
+	 */
+	public boolean containsAttribute(String name) {
+		return this.attributes.containsKey(name);
 	}
 	
-	public void setProperty(String key, String value) {
-		this.properties.put(key, value);
+	/**
+	 * set the attribute of name with value
+	 * @param name
+	 * @param value
+	 */
+	public void setAttribute(String name, String value) {
+		this.attributes.put(name, value);
 	}
 	
-	public String getProperty(String key) {
-		return this.properties.get(key.trim());
+	/**
+	 * @param key
+	 * @return the attribute value of name
+	 */
+	public String getAttribute(String name) {
+		return this.attributes.get(name.trim());
 	}
 	
-	public void appendProperty(String key, String value) {
+	/**
+	 * append to the current value of the attribute with name the given value separated by comma
+	 * @param name
+	 * @param value
+	 */
+	public void appendAttribute(String name, String value) {
 		String newValue = "";
-		if(this.properties.containsKey(key)) {
-			newValue = this.properties.get(key) + ", " + value;
+		if(this.attributes.containsKey(name)) {
+			newValue = this.attributes.get(name) + ", " + value;
 		} else {
 			newValue = value;
 		}
-		this.properties.put(key, newValue);
+		this.attributes.put(name, newValue);
 	}
 
-	public DescriptionType getDescriptionType() {
+	/**
+	 * @return the DescriptionTreatmentElementType
+	 */
+	public DescriptionTreatmentElementType getDescriptionType() {
 		return descriptionType;
 	}
 
-	public void setDescriptionType(DescriptionType descriptionType) {
+	/**
+	 * @param set the DescriptionTreatmentElementType
+	 */
+	public void setDescriptionType(DescriptionTreatmentElementType descriptionType) {
 		this.descriptionType = descriptionType;
 	}
 	
-	public void removeProperty(String key) {
-		this.properties.remove(key);
+	/**
+	 * remove the attribute with the given name
+	 * @param name
+	 */
+	public void removeAttribute(String name) {
+		this.attributes.remove(name);
 	}
 	
 	@Override 
 	public Object clone() {
 		DescriptionTreatmentElement clone = (DescriptionTreatmentElement)super.clone();
 		clone.descriptionType = this.getDescriptionType();
-		clone.properties = new HashMap<String, String>();
-		for(Entry<String, String> entry : this.properties.entrySet()) {
-			clone.properties.put(entry.getKey(), entry.getValue());
+		clone.attributes = new HashMap<String, String>();
+		for(Entry<String, String> entry : this.attributes.entrySet()) {
+			clone.attributes.put(entry.getKey(), entry.getValue());
 		}
 		return clone;
 	}

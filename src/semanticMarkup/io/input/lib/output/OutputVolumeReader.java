@@ -10,7 +10,7 @@ import javax.xml.bind.Unmarshaller;
 import semanticMarkup.core.ContainerTreatmentElement;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 import semanticMarkup.io.output.lib.xml2.Character;
 import semanticMarkup.io.output.lib.xml2.Description;
@@ -54,49 +54,49 @@ public class OutputVolumeReader extends AbstractFileVolumeReader {
 	        	
 	        	ArrayList<Statement> xmlStatements = xmlDescription.getStatement();
 	        	for(Statement xmlStatement : xmlStatements) {
-	        		DescriptionTreatmentElement statement = new DescriptionTreatmentElement(DescriptionType.STATEMENT);
-	        		statement.setProperty("text", xmlStatement.getText());
-	        		statement.setProperty("source", xmlStatement.getSource());
+	        		DescriptionTreatmentElement statement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STATEMENT);
+	        		statement.setAttribute("text", xmlStatement.getText());
+	        		statement.setAttribute("source", xmlStatement.getSource());
 	        		description.addTreatmentElement(statement);
 	        		
 	        		ArrayList<Structure> xmlStructures = xmlStatement.getStructure();
 	        		for(Structure xmlStructure : xmlStructures) {
-	        			DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
-	        			structure.setProperty("id", xmlStructure.getId());
-	        			structure.setProperty("constraint", xmlStructure.getConstraint());
-	        			structure.setProperty("name", xmlStructure.getName());
+	        			DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+	        			structure.setAttribute("id", xmlStructure.getId());
+	        			structure.setAttribute("constraint", xmlStructure.getConstraint());
+	        			structure.setAttribute("name", xmlStructure.getName());
 	        			statement.addTreatmentElement(structure);
 	        			
 	        			ArrayList<Character> xmlCharacters = xmlStructure.getCharacter();
 	        			for(Character xmlCharacter : xmlCharacters) {
-	        				DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-	        				character.setProperty("type", xmlCharacter.getCharacterType());
-	        				character.setProperty("constraint", xmlCharacter.getConstraint());
-	        				character.setProperty("constraintId", xmlCharacter.getConstraintId());
-	        				character.setProperty("from", xmlCharacter.getFrom());
-	        				character.setProperty("fromInclusive", xmlCharacter.getFromInclusive());
-	        				character.setProperty("modifier", xmlCharacter.getModifier());
-	        				character.setProperty("name" , xmlCharacter.getName());
-	        				character.setProperty("to", xmlCharacter.getTo());
-	        				character.setProperty("value", xmlCharacter.getValue());
-							character.setProperty("unit", xmlCharacter.getUnit());
-							character.setProperty("fromUnit", xmlCharacter.getFromUnit());
-							character.setProperty("toUnit", xmlCharacter.getToUnit());
-							character.setProperty("upperRestricted", xmlCharacter.getUpperRestricted());
-							character.setProperty("toInclusive", xmlCharacter.getToInclusive());
-							character.setProperty("relativeConstraint", xmlCharacter.getRelativeConstraint());
+	        				DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+	        				character.setAttribute("type", xmlCharacter.getCharacterType());
+	        				character.setAttribute("constraint", xmlCharacter.getConstraint());
+	        				character.setAttribute("constraintId", xmlCharacter.getConstraintId());
+	        				character.setAttribute("from", xmlCharacter.getFrom());
+	        				character.setAttribute("fromInclusive", xmlCharacter.getFromInclusive());
+	        				character.setAttribute("modifier", xmlCharacter.getModifier());
+	        				character.setAttribute("name" , xmlCharacter.getName());
+	        				character.setAttribute("to", xmlCharacter.getTo());
+	        				character.setAttribute("value", xmlCharacter.getValue());
+							character.setAttribute("unit", xmlCharacter.getUnit());
+							character.setAttribute("fromUnit", xmlCharacter.getFromUnit());
+							character.setAttribute("toUnit", xmlCharacter.getToUnit());
+							character.setAttribute("upperRestricted", xmlCharacter.getUpperRestricted());
+							character.setAttribute("toInclusive", xmlCharacter.getToInclusive());
+							character.setAttribute("relativeConstraint", xmlCharacter.getRelativeConstraint());
 	        				
 	        				structure.addTreatmentElement(character);
 	        			}
 	        		}
 	        		
 	        		for(Relation xmlRelation : xmlStatement.getRelation()) {
-	        			DescriptionTreatmentElement relation = new DescriptionTreatmentElement(DescriptionType.RELATION);
-	        			relation.setProperty("name", xmlRelation.getName());
-	        			relation.setProperty("from",xmlRelation.getFrom());
-	        			relation.setProperty("id",xmlRelation.getId());
-	        			relation.setProperty("negation",xmlRelation.getNegation());
-	        			relation.setProperty("to",xmlRelation.getTo());
+	        			DescriptionTreatmentElement relation = new DescriptionTreatmentElement(DescriptionTreatmentElementType.RELATION);
+	        			relation.setAttribute("name", xmlRelation.getName());
+	        			relation.setAttribute("from",xmlRelation.getFrom());
+	        			relation.setAttribute("id",xmlRelation.getId());
+	        			relation.setAttribute("negation",xmlRelation.getNegation());
+	        			relation.setAttribute("to",xmlRelation.getTo());
 	        			statement.addTreatmentElement(relation);
 	        		}
 	        	}

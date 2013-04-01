@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -37,9 +37,9 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		String content = chunk.toString().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
 		//Element structure = new Element("chromosome");
-		DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
-		structure.setProperty("name", "chromosome");
-		structure.setProperty("id", "o" + String.valueOf(processingContextState.fetchAndIncrementStructureId(structure)));
+		DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+		structure.setAttribute("name", "chromosome");
+		structure.setAttribute("id", "o" + String.valueOf(processingContextState.fetchAndIncrementStructureId(structure)));
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 		result.add(structure);
 		

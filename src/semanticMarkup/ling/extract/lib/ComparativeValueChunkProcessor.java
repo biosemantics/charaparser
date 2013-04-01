@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -145,19 +145,19 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
 			if(!lastElements.isEmpty()) {
 				DescriptionTreatmentElement lastElement = lastElements.getLast();
-				if(lastElement.isOfDescriptionType(DescriptionType.CHARACTER)) {
+				if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 					for(DescriptionTreatmentElement element : processingContextState.getLastElements()) {
 						if(!processingContextState.getUnassignedModifiers().isEmpty()){
 							List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 							String modifierString = "";
 							for(Chunk modifier : unassignedModifiers) 
 								modifierString += modifier + " ";
-							element.setProperty("modifier", modifierString);
+							element.setAttribute("modifier", modifierString);
 							processingContextState.clearUnassignedModifiers();
 						}
-						lastElement.setProperty("constraint", content.getTerminalsText());
+						lastElement.setAttribute("constraint", content.getTerminalsText());
 					}
-				} else if(lastElement.isOfDescriptionType(DescriptionType.STRUCTURE)){
+				} else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)){
 					return new LinkedList<DescriptionTreatmentElement>(); //parsing failure
 				}
 				return processingContextState.getLastElements();

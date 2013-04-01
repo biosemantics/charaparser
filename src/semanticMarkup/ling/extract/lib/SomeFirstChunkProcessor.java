@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionType;
+import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
@@ -60,10 +60,10 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			if(processingContext.getChunkCollector().getSubjectTag().equals("ditto")) {
 				String previousMainSubjectOrgan = parentTagProvider.getParentTag(processingContext.getChunkCollector().getSource());
 				previousMainSubjectOrgan = previousMainSubjectOrgan.equals("general")? "whole_organism" : previousMainSubjectOrgan;
-				structureElement = new DescriptionTreatmentElement(DescriptionType.STRUCTURE);
+				structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-				structureElement.setProperty("id", "o" + String.valueOf(structureIdString));	
-				structureElement.setProperty("name", previousMainSubjectOrgan);
+				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
+				structureElement.setAttribute("name", previousMainSubjectOrgan);
 				
 				LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
 				structureElements.add(structureElement);
