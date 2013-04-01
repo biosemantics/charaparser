@@ -6,6 +6,10 @@ import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
 
+/**
+ * AdvancedPrecisionRecallEvaluator implements the definition of overlap of structure, characters and relations 
+ * @author rodenhausen
+ */
 public class AdvancedPrecisionRecallEvaluator extends AbstractPrecisionRecallEvaluator {
 
 	@Override

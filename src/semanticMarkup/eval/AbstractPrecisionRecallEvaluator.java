@@ -16,9 +16,13 @@ import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.log.LogLevel;
 
+/**
+ * AbstractPrecisionRecallEvaluator evaluates Precision and Recall for a generated list of treatments and given a correct list of treatments 
+ * @author rodenhausen
+ */
 public abstract class AbstractPrecisionRecallEvaluator implements IEvaluator {
 
-	IEvaluationResult result = null;
+	private IEvaluationResult result = null;
 
 	@Override
 	public IEvaluationResult getResult() {
