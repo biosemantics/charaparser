@@ -13,6 +13,11 @@ import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 
+/**
+ * LearnedCharacterKnowledgeBase poses an ICharacterKnowledgeBase by making use of learned terminology by an ITerminologyLearner
+ * and an IGlossary
+ * @author rodenhausen
+ */
 public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	
 	private IGlossary glossary;
@@ -20,6 +25,10 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private ITerminologyLearner terminologyLearner;
 	private HashMap<String, String> addedCharacters = new HashMap<String, String>();
 
+	/**
+	 * @param terminologyLearner
+	 * @param glossary
+	 */
 	@Inject
 	public LearnedCharacterKnowledgeBase(ITerminologyLearner terminologyLearner, IGlossary glossary) {
 		this.terminologyLearner = terminologyLearner;

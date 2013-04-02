@@ -7,6 +7,10 @@ import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.transform.IInflector;
 
+/**
+ * GlossaryOrganStateKnowledgeBase creates an IOrganStateKnowledgeBase using an IGlossary
+ * @author rodenhausen
+ */
 public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase {
 
 	protected Set<String> organs = new HashSet<String>();
@@ -14,6 +18,10 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 	private IGlossary glossary;
 	protected IInflector inflector;
 	
+	/**
+	 * @param glossary
+	 * @param inflector
+	 */
 	public GlossaryOrganStateKnowledgeBase(IGlossary glossary, IInflector inflector) {
 		this.glossary = glossary;
 		this.inflector = inflector;

@@ -13,16 +13,19 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-
 /**
- * CSVGlossary expects a CSV file in the format word;category
- * @author thomas rodenhausen
+ * A CSVGlossary creates an IGlossary from a CSV file; expected CSV file format: word;category
+ * @author rodenhausen
  */
 public class CSVGlossary implements IGlossary {
 
 	private HashMap<String, Set<String>> glossary = new HashMap<String, Set<String>>();
 	private HashMap<String, Set<String>> reverseGlossary = new HashMap<String, Set<String>>();
 	
+	/**
+	 * @param filePath
+	 * @throws IOException
+	 */
 	@Inject
 	public CSVGlossary(@Named("CSVGlossary_filePath") String filePath) throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(filePath));
@@ -51,6 +54,7 @@ public class CSVGlossary implements IGlossary {
 		reader.close();
 	}
 	
+	@Override
 	public Set<String> getWords(String category) {
 		category = category.toLowerCase();
 		if(reverseGlossary.containsKey(category))
@@ -59,11 +63,13 @@ public class CSVGlossary implements IGlossary {
 			return new HashSet<String>();
 	}
 
+	@Override
 	public boolean contains(String word) {
 		word = word.toLowerCase();
 		return glossary.containsKey(word);
 	}
 
+	@Override
 	public Set<String> getCategories(String word) {
 		word = word.toLowerCase();
 		if(glossary.containsKey(word))

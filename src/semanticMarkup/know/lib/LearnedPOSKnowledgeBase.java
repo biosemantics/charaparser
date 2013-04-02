@@ -11,6 +11,11 @@ import semanticMarkup.ling.pos.POS;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * LearnedPOSKnowledgeBase poses an IPOSKnowledgeBase by relying on learned part of speech and using a fall back knowledgebase
+ * such as WordNetPOSKnowledgeBase
+ * @author rodenhausen
+ */
 public class LearnedPOSKnowledgeBase implements IPOSKnowledgeBase {
 
 	private IGlossary glossary;
@@ -26,6 +31,11 @@ public class LearnedPOSKnowledgeBase implements IPOSKnowledgeBase {
 	
 	private Set<String> stopWords;
 
+	/**
+	 * @param glossary
+	 * @param fallbackKnowledgeBase
+	 * @param stopWords
+	 */
 	@Inject
 	public LearnedPOSKnowledgeBase(IGlossary glossary, IPOSKnowledgeBase fallbackKnowledgeBase,
 			@Named("StopWords") Set<String> stopWords) {

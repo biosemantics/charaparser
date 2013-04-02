@@ -24,10 +24,19 @@ import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.morph.WordnetStemmer;
 
+/**
+ * WordNetPOSKnowledgeBase poses an IPOSKnowledgeBase by relying on WordNet
+ * @author rodenhausen
+ */
 public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 
 	private IDictionary dictionary;
 	
+	/**
+	 * @param path of the wordnet source files
+	 * @param loadInRAM specified whether the dictionary should be loaded into RAM or read from disk when needed
+	 * @throws IOException
+	 */
 	@Inject
 	public WordNetPOSKnowledgeBase(@Named("WordNetAPI_Sourcefile") String path, @Named("WordNetAPI_LoadInRAM") boolean loadInRAM) throws IOException {
 		if(loadInRAM) 
@@ -58,7 +67,7 @@ public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 	}
 	
 	/**
-	 * needs to be synchronized, otherwise not thread safe. Underlying linkedHashMap throws ConcurrentModificationException
+	 * Needs to be synchronized, otherwise not thread safe. Underlying linkedHashMap throws ConcurrentModificationException
 	 */
 	@Override
 	public synchronized POS getMostLikleyPOS(String word) {

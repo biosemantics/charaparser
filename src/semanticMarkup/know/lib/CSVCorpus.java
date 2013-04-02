@@ -11,10 +11,18 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * A CSVCorpus creates an ICorpus from a CSV file
+ * @author rodenhausen
+ */
 public class CSVCorpus implements ICorpus {
 
 	private HashMap<String, Integer> frequencies = new HashMap<String, Integer>();
 	
+	/**
+	 * @param filePath
+	 * @throws IOException
+	 */
 	@Inject
 	public CSVCorpus(@Named("CSVCorpus_filePath") String filePath) throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(filePath));
@@ -24,7 +32,6 @@ public class CSVCorpus implements ICorpus {
 		}
 		reader.close();
 	}
-	
 	
 	@Override
 	public int getFrequency(String word) {

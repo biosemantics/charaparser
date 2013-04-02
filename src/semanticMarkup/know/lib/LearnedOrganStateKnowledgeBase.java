@@ -10,6 +10,10 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * LearnedOrganStateKnowledgeBase creates an IOrganStateKnowledgeBase relying on learned terminology
+ * @author rodenhausen
+ */
 public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase {
 
 	private ITerminologyLearner terminologyLearner;
@@ -17,6 +21,13 @@ public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeB
 	private Set<String> prepositionWords;
 	private boolean learned = false;
 
+	/**
+	 * @param glossary
+	 * @param inflector
+	 * @param terminologyLearner
+	 * @param stopWords
+	 * @param prepositionWords
+	 */
 	@Inject
 	public LearnedOrganStateKnowledgeBase(IGlossary glossary, IInflector inflector, ITerminologyLearner terminologyLearner, 
 			@Named("StopWords") Set<String> stopWords, @Named("PrepositionWordsSet") Set<String> prepositionWords) {
