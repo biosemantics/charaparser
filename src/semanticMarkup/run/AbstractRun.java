@@ -8,10 +8,17 @@ import java.io.IOException;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * An AbstractRun implements some shared functionality of concrete Run implementations such as time string formating, config reporting,..
+ * @author rodenhausen
+ */
 public abstract class AbstractRun implements IRun {
 
 	private String guiceModuleFile;
 
+	/**
+	 * @param guiceModuleFile
+	 */
 	@Inject
 	public AbstractRun(@Named("GuiceModuleFile")String guiceModuleFile) {
 		this.guiceModuleFile = guiceModuleFile;

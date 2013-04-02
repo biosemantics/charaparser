@@ -11,8 +11,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 /**
- * AnnotateRun runs an annotation process based on a configuration given
- * @author thomas rodenhausen
+ * A MarkupRun creates a markup of treatments using an IMarkupCreator
+ * @author rodenhausen
  */
 public class MarkupRun extends AbstractRun {
 	
@@ -29,6 +29,7 @@ public class MarkupRun extends AbstractRun {
 		this.creator = creator;
 	}
 	
+	@Override
 	public void run() throws Exception {
 		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(outFile + ".config.txt"));
 		appendConfigFile(bwSetup);

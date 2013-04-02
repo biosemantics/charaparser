@@ -15,6 +15,11 @@ import semanticMarkup.markup.IMarkupCreator;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * A MarkupEvaluationRun creates a markup of treatments using an IMarkupCreator and afterwards evaluating the created markup 
+ * using an IEvaluator
+ * @author rodenhausen
+ */
 public class MarkupEvaluationRun extends AbstractRun {
 
 	private String outFile;
@@ -23,6 +28,13 @@ public class MarkupEvaluationRun extends AbstractRun {
 	private IEvaluator evaluator;
 	private IVolumeReader goldStandardReader;
 
+	/**
+	 * @param outFile
+	 * @param guiceModuleFile
+	 * @param creator
+	 * @param evaluator
+	 * @param goldStandardReader
+	 */
 	@Inject
 	public MarkupEvaluationRun(@Named("Run_OutFile")String outFile,
 			@Named("GuiceModuleFile")String guiceModuleFile, 
@@ -36,6 +48,7 @@ public class MarkupEvaluationRun extends AbstractRun {
 		this.evaluator = evaluator;
 	}
 	
+	@Override
 	public void run() throws Exception {
 		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(outFile + ".config.txt"));
 		appendConfigFile(bwSetup);

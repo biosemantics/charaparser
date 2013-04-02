@@ -15,6 +15,11 @@ import semanticMarkup.markup.IMarkupCreator;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+
+/**
+ * A EvaluationRun evaluates marked up treatments using an IEvaluator
+ * @author rodenhausen
+ */
 public class EvaluationRun extends AbstractRun {
 
 	private String outFile;
@@ -22,6 +27,14 @@ public class EvaluationRun extends AbstractRun {
 	private IVolumeReader createdVolumeReader;
 	private IVolumeReader goldStandardReader;
 
+	/**
+	 * @param outFile
+	 * @param guiceModuleFile
+	 * @param creator
+	 * @param evaluator
+	 * @param createdVolumeReader
+	 * @param goldStandardReader
+	 */
 	@Inject
 	public EvaluationRun(@Named("Run_OutFile")String outFile,
 			@Named("GuiceModuleFile")String guiceModuleFile, 
