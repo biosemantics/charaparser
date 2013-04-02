@@ -5,15 +5,24 @@ import java.util.List;
 import semanticMarkup.core.Treatment;
 
 /**
- * Annotator annotates a volume based on a given configuration
+ * IMarkupCreator creates a markup for treatments and can return the marked up result
  * @author thomas rodenhausen
  */
 public interface IMarkupCreator {
 
+	/**
+	 * Create the markup of treatments
+	 */
 	public void create();
 	
+	/**
+	 * @return the resulting treatments
+	 */
 	public List<Treatment> getResult();
 	
+	/**
+	 * @return a descriptive String of the IMarkupCreator
+	 */
 	public String getDescription();
 	
 }

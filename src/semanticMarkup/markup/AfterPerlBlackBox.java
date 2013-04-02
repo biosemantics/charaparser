@@ -11,6 +11,10 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * AfterPerlBlackBox creates a markup by reading treatments, transforming them using OldPerlTreatmentTransformer and writing them out
+ * @author thomas rodenhausen
+ */
 public class AfterPerlBlackBox implements IMarkupCreator {
 
 	private OldPerlTreatmentTransformer inputTransformer;
@@ -18,6 +22,11 @@ public class AfterPerlBlackBox implements IMarkupCreator {
 	private IVolumeReader volumeReader;
 	private List<Treatment> treatments;
 
+	/**
+	 * @param volumeReader
+	 * @param inputTransformer
+	 * @param volumeWriter
+	 */
 	@Inject
 	public AfterPerlBlackBox(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
 			OldPerlTreatmentTransformer inputTransformer, 

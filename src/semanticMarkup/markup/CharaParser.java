@@ -11,9 +11,8 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-
 /**
- * Annotates a volume based on the CharaParser methodology
+ * CharaParser creates a markup by reading treatments, transforming them using a TreatmentTransformerChain and writing them out
  * @author thomas rodenhausen
  */
 public class CharaParser implements IMarkupCreator {
@@ -23,6 +22,11 @@ public class CharaParser implements IMarkupCreator {
 	private IVolumeWriter volumeWriter;
 	private List<Treatment> treatments;
 
+	/**
+	 * @param volumeReader
+	 * @param transformerChain
+	 * @param volumeWriter
+	 */
 	@Inject
 	public CharaParser(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
 			TreatmentTransformerChain transformerChain,
