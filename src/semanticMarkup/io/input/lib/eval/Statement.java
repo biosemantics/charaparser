@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * Statement serves as data container for a statement for JAXB  
+ * @author rodenhausen
+ */
 public class Statement {
 
 	private String id;

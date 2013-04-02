@@ -2,6 +2,10 @@ package semanticMarkup.io.output.lib.xml2;
 
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * Key serves as data container for a key for JAXB  
+ * @author rodenhausen
+ */
 public class Key {
 
 	private String statement_id;

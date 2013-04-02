@@ -23,7 +23,12 @@ import semanticMarkup.io.input.AbstractFileVolumeReader;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-
+/**
+ * Type2VolumeReader reads a list of treatments from a by the previous charaparser version termed Type 2 input format. This is a
+ * description in XML format.
+ * TODO Use JAXB instead of JDOM; Extract all content instead of description only
+ * @author rodenhausen
+ */
 public class Type2VolumeReader extends  AbstractFileVolumeReader {
 
 	private static final String NAMESPACE_URI = "http://schemas.openxmlformats.org/unknown";
@@ -35,11 +40,15 @@ public class Type2VolumeReader extends  AbstractFileVolumeReader {
 	private XPathExpression<Element> descriptionExpression = 
 			factory.compile("//treatment/description", elementFilter, null, namespace);
 	
+	/**
+	 * @param filepath
+	 */
 	@Inject
 	public Type2VolumeReader(@Named("Type2VolumeReader_Sourcefile") String filepath) {
 		super(filepath);
 	}
 
+	@Override
 	public List<Treatment> read() throws Exception {
 		List<Treatment> treatments = new ArrayList<Treatment>();
 		

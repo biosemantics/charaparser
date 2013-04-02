@@ -23,7 +23,11 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-
+/**
+ * Type1VolumeReader reads a list of treatments from a by the previous charaparser version termed Type 1 input format. This is a
+ * description in Microsoft Word format.
+ * @author rodenhausen
+ */
 public class Type1VolumeReader extends AbstractFileVolumeReader {
 	private String organNamesPattern ="2n|achene|anther|apex|awn|ax|bark|beak|blade|bract|bracteole|branch|branchlet|broad|calyx|capsule|cap_sule|caropohore|carpophore|caudex|cluster|corolla|corona|crown|cup_|cusp|cyme|cymule|embryo|endosperm|fascicle|filament|flower|fruit|head|herb|homophyllous|hypanthium|hypanth_ium|indument|inflore|inflorescence|inflores_cence|inflo_rescence|internode|involucre|invo_lucre|in_florescence|in_ternode|leaf|limb|lobe|margin|midvein|nectary|node|ocrea|ocreola|ovary|ovule|pair|papilla|pedicel|pedicle|peduncle|perennial|perianth|petal|petiole|plant|prickle|rhizome|rhi_zome|root|rootstock|rosette|scape|seed|sepal|shoot|spikelet|spur|stamen|stem|stigma|stipule|sti_pule|structure|style|subshrub|taproot|taprooted|tap_root|tendril|tepal|testa|tooth|tree|tube|tubercle|tubercule|tuft|twig|utricle|vein|vine|wing|x";
 	private String organNamepPattern ="achenes|anthers|awns|axes|blades|bracteoles|bracts|branches|buds|bumps|calyces|capsules|clusters|crescents|crowns|cusps|cymes|cymules|ends|escences|fascicles|filaments|flowers|fruits|heads|herbs|hoods|inflores|inflorescences|internodes|involucres|leaves|lengths|limbs|lobes|margins|midribs|midveins|nectaries|nodes|ocreae|ocreolae|ovules|pairs|papillae|pedicels|pedicles|peduncles|perennials|perianths|petals|petioles|pistils|plants|prickles|pules|rescences|rhizomes|rhi_zomes|roots|rows|scapes|seeds|sepals|shoots|spikelets|stamens|staminodes|stems|stigmas|stipules|sti_pules|structures|styles|subshrubs|taproots|tap_roots|teeth|tendrils|tepals|trees|tubercles|tubercules|tubes|tufts|twigs|utricles|veins|vines|wings";
@@ -73,6 +77,16 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 	private String lastTextType;
 	private int textcount;
 	
+	/**
+	 * @param filepath
+	 * @param styleStartPattern
+	 * @param styleNamePattern
+	 * @param styleKeyPattern
+	 * @param tribegennamestyle
+	 * @param styleMappingFile
+	 * @param distributionTreatmentRefiner
+	 * @param floweringTimeTreatmentRefiner
+	 */
 	@Inject
 	public Type1VolumeReader(@Named("Type1VolumeReader_Sourcefile") String filepath,
 			@Named("Type1VolumeReader_StyleStartPattern") String styleStartPattern,
@@ -102,6 +116,7 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 		this.floweringTimeTreatmentRefiner = floweringTimeTreatmentRefiner;
 	}
 	
+	@Override
 	public List<Treatment> read() throws Exception {
 		//mapping of treatment to ... mapping of style to list of texts
 		LinkedHashMap<Treatment, LinkedHashMap<String, ArrayList<DocumentElement>>> 

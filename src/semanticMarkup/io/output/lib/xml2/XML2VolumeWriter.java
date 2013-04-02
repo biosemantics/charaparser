@@ -18,6 +18,10 @@ import semanticMarkup.io.output.AbstractFileVolumeWriter;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * XML2VolumeWriter writes a list of treatments to an XML file
+ * @author rodenhausen
+ */
 public class XML2VolumeWriter extends AbstractFileVolumeWriter {
 
 	@Inject

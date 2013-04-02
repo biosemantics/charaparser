@@ -17,11 +17,21 @@ import semanticMarkup.io.input.IVolumeReader;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * StandardVolumeReader reads a list of Treatments given a set of sourcefiles in xml format following the charaparser markup schema
+ * TODO: Eventually TreatmentElement classes could possibly be mapped directly by JAXB instead of using the intermediat 
+ * data container classes within this package
+ * @author rodenhausen
+ */
 public class StandardVolumeReader implements IVolumeReader {
 
 	private String sourceFiles;
 	private Set<String> selectedSources;
 
+	/**
+	 * @param sourceFiles
+	 * @param selectedSources
+	 */
 	@Inject
 	public StandardVolumeReader(@Named("StandardVolumeReader_Sourcefiles")String sourceFiles, 
 			@Named("selectedSources") Set<String> selectedSources) {

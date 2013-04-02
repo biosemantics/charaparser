@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,13 @@ import semanticMarkup.io.input.IVolumeReader;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * PerlDBVolumeReader reads a list of 'dummy' treatments given treatment informations (from previous charaparser version 
+ * generated from perl part) in a database 
+ * This class is likely only used in transition and testing phase between the two charaparser version
+ * @author rodenhausen
+ *
+ */
 public class PerlDBVolumeReader implements IVolumeReader {
 
 	private String databasePrefix;

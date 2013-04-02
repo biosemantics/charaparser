@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * Description serves as data description for a key for JAXB  
+ * @author rodenhausen
+ */
 public class Description {
 
 	private ArrayList<Statement> statement = new ArrayList<Statement>();

@@ -17,6 +17,13 @@ import semanticMarkup.io.input.IVolumeReader;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * EvaluationDBVolumeReader reads a list of 'dummy' treatments given treatment informations (from previous charaparser version 
+ * generated from perl part) in a database 
+ * and initializes ParentTagProvider
+ * This class is likely only used in transition and testing phase between the two charaparser version
+ * @author rodenhausen
+ */
 public class EvaluationDBVolumeReader implements IVolumeReader {
 	
 	private String databasePrefix;
@@ -24,6 +31,15 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 	private Set<String> evaluationSources;
 	private ParentTagProvider parentTagProvider;
 
+	/**
+	 * @param databaseName
+	 * @param databasePrefix
+	 * @param databaseUser
+	 * @param databasePassword
+	 * @param selectedSources
+	 * @param parentTagProvider
+	 * @throws Exception
+	 */
 	@Inject
 	public EvaluationDBVolumeReader(
 			@Named("databaseName") String databaseName,

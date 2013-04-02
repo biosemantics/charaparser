@@ -7,8 +7,15 @@ import java.util.List;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.io.output.AbstractFileVolumeWriter;
 
+/**
+ * SerializedVolumeWriter java serializes treatments and writes them out
+ * @author rodenhausen
+ */
 public class SerializedVolumeWriter extends AbstractFileVolumeWriter {
 
+	/**
+	 * @param filePath
+	 */
 	public SerializedVolumeWriter(String filePath) {
 		super(filePath);
 	}

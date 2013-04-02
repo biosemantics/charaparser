@@ -9,6 +9,10 @@ import javax.xml.bind.annotation.XmlType;
 
 import semanticMarkup.core.Treatment;
 
+/**
+ * XMLTreatmentContainer contains a list of treatments and defines the root element for JAXB
+ * @author rodenhausen
+ */
 @XmlType(namespace = "http://some/namespace")
 @XmlRootElement(name="treatments")
 public class XMLTreatmentContainer {

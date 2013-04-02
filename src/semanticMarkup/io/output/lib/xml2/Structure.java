@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * Structure serves as data container for a structure for JAXB  
+ * @author rodenhausen
+ */
 public class Structure {
 
 	private String name;

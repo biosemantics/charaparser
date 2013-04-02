@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * Treatment serves as data container for a treatment for JAXB  
+ * @author rodenhausen
+ */
 public class Treatment {
 
 	private String number;

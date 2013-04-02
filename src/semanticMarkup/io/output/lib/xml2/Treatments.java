@@ -6,6 +6,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+/**
+ * Treatments serves as data container for a treatments for JAXB  
+ * @author rodenhausen
+ */
 @XmlType(namespace = "http://some/namespace")
 @XmlRootElement
 public class Treatments {

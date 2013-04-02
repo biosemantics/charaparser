@@ -10,9 +10,15 @@ import semanticMarkup.io.output.AbstractFileVolumeWriter;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-
+/**
+ * ToStringVolumeWriter writes a list of treatments to a String
+ * @author rodenhausen
+ */
 public class ToStringVolumeWriter extends AbstractFileVolumeWriter {
 
+	/**
+	 * @param filePath
+	 */
 	@Inject
 	public ToStringVolumeWriter(@Named("Run_OutFile") String filePath) {
 		super(filePath);

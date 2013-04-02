@@ -7,6 +7,10 @@ import java.util.List;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 
+/**
+ * SerializedVolumeReader reads a list of treatments from the output of a SerializedVolumeWriter
+ * @author rodenhausen
+ */
 public class SerializedVolumeReader extends AbstractFileVolumeReader {
 
 	public SerializedVolumeReader(String filepath) {

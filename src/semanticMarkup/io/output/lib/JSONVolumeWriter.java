@@ -12,8 +12,15 @@ import semanticMarkup.io.output.AbstractFileVolumeWriter;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * JSONVolumeWriter writes a list of treatments to JSON format
+ * @author rodenhausen
+ */
 public class JSONVolumeWriter extends AbstractFileVolumeWriter {
 
+	/**
+	 * @param filePath
+	 */
 	@Inject
 	public JSONVolumeWriter(@Named("Run_OutFile") String filePath) {
 		super(filePath);

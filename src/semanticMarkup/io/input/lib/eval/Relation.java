@@ -2,6 +2,10 @@ package semanticMarkup.io.input.lib.eval;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
+/**
+ * Relation serves as data container for a relation for JAXB  
+ * @author rodenhausen
+ */
 public class Relation {
 
 	private String name;

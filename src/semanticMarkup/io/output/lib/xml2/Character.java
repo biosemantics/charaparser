@@ -2,6 +2,10 @@ package semanticMarkup.io.output.lib.xml2;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
+/**
+ * Character serves as data character for a key for JAXB  
+ * @author rodenhausen
+ */
 public class Character {
 
 	private String name;

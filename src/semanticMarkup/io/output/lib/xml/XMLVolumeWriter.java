@@ -17,6 +17,12 @@ import semanticMarkup.io.output.AbstractFileVolumeWriter;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * XMLVolumeWriter is not usable at this time
+ * TODO: Work on Mapping TreatmentElement classes directly to JAXB instead of using the intermediate data container classes (this is done with
+ * XML2VolumeWriter)
+ * @author rodenhausen
+ */
 public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 
 	@Inject

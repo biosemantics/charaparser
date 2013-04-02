@@ -22,8 +22,15 @@ import semanticMarkup.io.output.lib.xml2.Treatments;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * OutputVolumeReader reads a list of treatments from the output file of XML2VolumeReader
+ * @author rodenhausen
+ */
 public class OutputVolumeReader extends AbstractFileVolumeReader {
 	
+	/**
+	 * @param filepath
+	 */
 	@Inject
 	public OutputVolumeReader(@Named("OutputVolumeReader_Sourcefile")String filepath) {
 		super(filepath);

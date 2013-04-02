@@ -10,6 +10,10 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * TODO Unzip: For eventual use in Type1VolumeReader to extract XML contents of the Microsoft Word format document
+ * @author rodenhausen
+ */
 public class Unzip {
 
 	public static final void copyInputStream(InputStream in, OutputStream out) throws IOException {

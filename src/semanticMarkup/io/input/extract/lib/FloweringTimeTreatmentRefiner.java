@@ -11,7 +11,10 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.extract.ITreatmentRefiner;
 
-
+/**
+ * DistributionTreatmentRefiner creates new descriptive treatment elements from flowering time describing input
+ * @author rodenhausen
+ */
 public class FloweringTimeTreatmentRefiner implements ITreatmentRefiner {
 
 	private Hashtable<String, String> m2smapping = new Hashtable<String, String>();
@@ -23,6 +26,9 @@ public class FloweringTimeTreatmentRefiner implements ITreatmentRefiner {
 	private String seasons = "(spring|summer|fall|winter)";
 	private String months ="(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)";
 	
+	/**
+	 * 
+	 */
 	public FloweringTimeTreatmentRefiner(){
 		m2smapping.put("jan", "winter");
 		m2smapping.put("feb", "winter");
@@ -43,6 +49,7 @@ public class FloweringTimeTreatmentRefiner implements ITreatmentRefiner {
 		s2mmapping.put("winter", "dec@jan@feb");
 	}
 	
+	@Override
 	public void refine(Treatment treatment, String clue, String nameForValues) {
 		clue = clue.toLowerCase().replaceFirst("flowering\\s+", "").replaceAll("–", "-");
 		//log(LogLevel.DEBUG, "original: "+text);

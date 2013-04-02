@@ -8,13 +8,16 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.extract.ITreatmentRefiner;
 
-
+/**
+ * DistributionTreatmentRefiner creates new descriptive treatment elements from distribution describing input
+ * @author rodenhausen
+ */
 public class DistributionTreatmentRefiner implements ITreatmentRefiner {
 
 	private Pattern allValuesPattern = Pattern.compile("(.*?)\\(([^)]*?@[^)]*?)\\)(.*)");
 	private Pattern formatPattern = Pattern.compile("(.*?)(\\([^)]*,[^)]*\\))(.*)"); 
 
-
+	@Override
 	public void refine(Treatment treatment, String clue, String nameForValues) {
 		ArrayList<String> values = new ArrayList<String>();
 		clue = format(clue); 
