@@ -3,10 +3,17 @@ package semanticMarkup.log;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
+/**
+ * A singleton ObjectStringifier transforms objects into String representations by using Jackson
+ * @author rodenhausen
+ */
 public class ObjectStringifier {
 
 	private static ObjectStringifier instance;
 	
+	/**
+	 * @return the singleton instance of ObjectStringifier
+	 */
 	public static ObjectStringifier getInstance() {
 		if(instance == null) 
 			instance = new ObjectStringifier();
@@ -16,6 +23,9 @@ public class ObjectStringifier {
 	private ObjectMapper mapper;
 	private ObjectWriter writer;
 	
+	/**
+	 * 
+	 */
 	private ObjectStringifier() { 
 		this.mapper  = new ObjectMapper();
 		this.writer = mapper.writerWithDefaultPrettyPrinter();

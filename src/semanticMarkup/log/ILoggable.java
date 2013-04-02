@@ -1,4 +1,7 @@
 package semanticMarkup.log;
 
-public interface ILoggable {
-}
+/**
+ * To an ILoggable a log method is added via AspectJ  
+ * @author rodenhausen
+ */
+public interface ILoggable { }

@@ -1,7 +1,16 @@
 package semanticMarkup.log;
 
+/**
+ * LogInjectionAspect specifies ILoggables and adds them a log method
+ * @author rodenhausen
+ */
 public aspect LogInjectionAspect {
 	
+	/**
+	 * log method is defined for ILoggables
+	 * @param logLevel
+	 * @param message
+	 */
 	public void ILoggable.log(LogLevel logLevel, Object message) {
 		Logger logger = Logger.getLogger(this.getClass());
 		switch(logLevel) {
@@ -26,5 +35,8 @@ public aspect LogInjectionAspect {
 		}
 	}
 	
+	/**
+	 * ILoggables are specified
+	 */
 	declare parents : semanticMarkup..* implements ILoggable;
 }
