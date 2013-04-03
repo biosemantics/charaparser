@@ -18,8 +18,27 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * DummyChunkProcessor does not do any processing. It may be used as a placeholder IChunkProcessor in the configuration
+ * @author rodenhausen
+ */
 public class DummyChunkProcessor extends AbstractChunkProcessor {
 
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public DummyChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
@@ -34,11 +53,6 @@ public class DummyChunkProcessor extends AbstractChunkProcessor {
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
 		return new ArrayList<DescriptionTreatmentElement>();
-	}
-	
-	@Override
-	public String getDescription() {
-		return "dummy chunker";
 	}
 
 }

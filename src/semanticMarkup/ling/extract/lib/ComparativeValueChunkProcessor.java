@@ -23,10 +23,29 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * ComparativeValueChunkProcessor processes chunks of ChunkType.COMPARATIVE_VALUE
+ * @author rodenhausen
+ */
 public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	
 	private String times;
 	
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public ComparativeValueChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,

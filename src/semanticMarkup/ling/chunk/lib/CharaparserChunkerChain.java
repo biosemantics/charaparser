@@ -6,8 +6,38 @@ import semanticMarkup.ling.chunk.IChunker;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * CharaparserChunkerChain chains a number of IChunkers according to previous charaparser version 
+ * @author rodenhausen
+ */
 public class CharaparserChunkerChain extends ChunkerChain {
 
+	/**
+	 * @param characterListChunker
+	 * @param organChunker
+	 * @param stateChunker
+	 * @param modifierChunker
+	 * @param numericalChunker
+	 * @param npChunker
+	 * @param ppListChunker
+	 * @param characterNameChunker
+	 * @param ppINChunker
+	 * @param vbChunker
+	 * @param thatChunker
+	 * @param whereChunker
+	 * @param whenChunker
+	 * @param otherINsChunker
+	 * @param thanChunker
+	 * @param toChunker
+	 * @param vpRecoverChunker
+	 * @param conjunctedOrgansRecoverChunker
+	 * @param organRecoverChunker
+	 * @param cleanupChunker
+	 * @param orChunker
+	 * @param andChunker
+	 * @param punctuationChunker
+	 * @param specificPPChunker
+	 */
 	@Inject
 	public CharaparserChunkerChain(
 			@Named("CharacterListChunker") IChunker characterListChunker,
@@ -35,7 +65,6 @@ public class CharaparserChunkerChain extends ChunkerChain {
 			@Named("PunctuationChunker") IChunker punctuationChunker,
 			@Named("SpecificPPChunker") IChunker specificPPChunker
 			) {
-		
 		this.add(characterListChunker);
 		this.add(punctuationChunker);
 		this.add(modifierChunker);

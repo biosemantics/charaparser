@@ -21,8 +21,22 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * ThatChunker chunks by handling "that" terminals
+ * @author rodenhausen
+ */
 public class ThatChunker extends AbstractChunker {
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 */
 	@Inject
 	public ThatChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 

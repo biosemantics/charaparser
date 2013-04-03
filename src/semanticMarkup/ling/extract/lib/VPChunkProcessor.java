@@ -20,10 +20,29 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * ValuePercentageOrDegreeChunkProcessor processes chunks of ChunkType.VP
+ * @author rodenhausen
+ */
 public class VPChunkProcessor extends AbstractChunkProcessor {
 
 	private boolean attachToLast;
 
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public VPChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,

@@ -25,6 +25,10 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * MyStateChunker chunks by handling state terminals 
+ * @author rodenhausen
+ */
 public class MyStateChunker extends AbstractChunker {
 
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
@@ -32,6 +36,19 @@ public class MyStateChunker extends AbstractChunker {
 	private String or = "_or_";
 	private IPOSKnowledgeBase posKnowledgeBase;
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param organStateKnowledgeBase
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 */
 	@Inject
 	public MyStateChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 

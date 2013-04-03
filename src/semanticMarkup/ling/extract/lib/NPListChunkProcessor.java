@@ -18,8 +18,27 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * NPListChunkProcessor processes chunks of ChunkType.NP_LIST
+ * @author rodenhausen
+ */
 public class NPListChunkProcessor extends AbstractChunkProcessor {
 
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public NPListChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,

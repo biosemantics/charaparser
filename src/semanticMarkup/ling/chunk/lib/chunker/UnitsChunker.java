@@ -16,6 +16,10 @@ import semanticMarkup.ling.transform.IInflector;
 
 import com.google.inject.name.Named;
 
+/**
+ * UnitsChunker chunks by handling "unit" terminals
+ * @author rodenhausen
+ */
 public class UnitsChunker extends AbstractChunker {
 
 	public UnitsChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,

@@ -18,8 +18,27 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * StateChunkProcessor processes chunks of ChunkType.STATE
+ * @author rodenhausen
+ */
 public class StateChunkProcessor extends AbstractChunkProcessor {
 
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public StateChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
@@ -35,10 +54,5 @@ public class StateChunkProcessor extends AbstractChunkProcessor {
 			ProcessingContext processingContext) {
 		processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
 		return new LinkedList<DescriptionTreatmentElement>();
-	}
-	
-	@Override
-	public String getDescription() {
-		return "state chunk processor";
 	}
 }

@@ -19,8 +19,23 @@ import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 
+/**
+ * AndChunker chunks by handling "and" terminals
+ * @author rodenhausen
+ */
 public class AndChunker extends AbstractChunker {
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param organStateKnowledgeBase
+	 */
 	@Inject
 	public AndChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 

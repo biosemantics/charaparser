@@ -28,6 +28,10 @@ import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 
+/**
+ * SomeDescriptionExtractor poses an IDescriptionExtractor
+ * @author rodenhausen
+ */
 public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 	private Set<String> lifeStyles;
@@ -37,6 +41,12 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 	private IChunkProcessorProvider chunkProcessorProvider;
 	
+	/**
+	 * @param glossary
+	 * @param chunkProcessorProvider
+	 * @param firstChunkProcessor
+	 * @param lastChunkProcessor
+	 */
 	@Inject
 	public SomeDescriptionExtractor(IGlossary glossary, 
 			IChunkProcessorProvider chunkProcessorProvider, 

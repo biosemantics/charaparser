@@ -21,8 +21,27 @@ import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
 
+/**
+ * CharacterNameChunkProcessor processes chunks of ChunkType.CHARACTER_NAME
+ * @author rodenhausen
+ */
 public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public CharacterNameChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,

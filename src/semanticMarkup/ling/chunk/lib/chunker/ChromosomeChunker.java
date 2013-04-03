@@ -13,8 +13,22 @@ import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 
+/**
+ * ChromosomeChunker chunks by handling chromosome describing terminals
+ * @author rodenhausen
+ */
 public class ChromosomeChunker extends AbstractChunker {
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 */
 	public ChromosomeChunker(ParseTreeFactory parseTreeFactory,
 			String prepositionWords, Set<String> stopWords, String units,
 			HashMap<String, String> equalCharacters, IGlossary glossary,

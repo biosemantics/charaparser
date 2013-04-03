@@ -19,10 +19,25 @@ import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
 
+/**
+ * AndChunker chunks by handling character name describing terminals
+ * @author rodenhausen
+ */
 public class CharacterNameChunker extends AbstractChunker {
 
 	private ICharacterKnowledgeBase characterKnowledgeBase;
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param characterKnowledgeBase
+	 */
 	@Inject
 	public CharacterNameChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 

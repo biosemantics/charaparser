@@ -3,6 +3,8 @@ package semanticMarkup.ling.chunk.lib.chunker;
 import java.util.HashMap;
 import java.util.Set;
 
+import com.google.inject.Inject;
+
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
@@ -13,8 +15,23 @@ import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.ParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 
+/**
+ * AreaChunker chunks by handling an area describing terminals
+ * @author rodenhausen
+ */
 public class AreaChunker extends AbstractChunker {
 	
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 */
+	@Inject
 	public AreaChunker(ParseTreeFactory parseTreeFactory,
 			String prepositionWords, Set<String> stopWords, String units,
 			HashMap<String, String> equalCharacters, IGlossary glossary,

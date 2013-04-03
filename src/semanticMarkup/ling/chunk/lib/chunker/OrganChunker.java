@@ -17,10 +17,25 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * OrganChunker chunks by handling 'organ' terminals
+ * @author rodenhausen
+ */
 public class OrganChunker extends AbstractChunker {
 
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param organStateKnowledgeBase
+	 */
 	@Inject
 	public OrganChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 

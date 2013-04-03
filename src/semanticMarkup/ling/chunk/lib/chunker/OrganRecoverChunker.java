@@ -20,6 +20,10 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * OrganRecoverChunker attempts to mark modified non-subject organs as a chunk
+ * @author rodenhausen
+ */
 public class OrganRecoverChunker extends AbstractChunker {
 
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;

@@ -19,6 +19,10 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * ConjunctedOrgansRecoverChunker attempts to include broken-away conjuncted organs to pp and vb phrase
+ * @author rodenhausen
+ */
 public class ConjunctedOrgansRecoverChunker extends AbstractChunker {
 
 	@Inject

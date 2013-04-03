@@ -20,6 +20,10 @@ import com.google.inject.name.Named;
 
 //not used class because functionality already implemented in CleanupChunker
 //however, CleanupChunker is a big class and could be separated according to handling numerics or other things
+/**
+ * NumericalChunker chunks by handling numerical terminals 
+ * @author rodenhausen
+ */
 public class NumericalChunker extends AbstractChunker {
 
 	private String percentageWords;
@@ -28,6 +32,21 @@ public class NumericalChunker extends AbstractChunker {
 	private String timesWords;
 	private String numberPattern;
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param percentageWords
+	 * @param degreeWords
+	 * @param countWords
+	 * @param timesWords
+	 * @param numberPattern
+	 */
 	@Inject
 	public NumericalChunker(ParseTreeFactory parseTreeFactory,
 			@Named("PrepositionWords")String prepositionWords,

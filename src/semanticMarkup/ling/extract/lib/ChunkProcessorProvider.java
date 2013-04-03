@@ -9,10 +9,49 @@ import semanticMarkup.ling.extract.IChunkProcessorProvider;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * ChunkProcessorProvider poses an IChunkProcessorProvider
+ * @author rodenhausen
+ */
 public class ChunkProcessorProvider implements IChunkProcessorProvider {
 
-	HashMap<ChunkType, IChunkProcessor> chunkProcessors = new HashMap<ChunkType, IChunkProcessor>();
+	private HashMap<ChunkType, IChunkProcessor> chunkProcessors = new HashMap<ChunkType, IChunkProcessor>();
 	
+	/**
+	 * @param areaChunkProcessor
+	 * @param bracketedChunkProcessor
+	 * @param characterStateProcessor
+	 * @param chromChunkProcessor
+	 * @param comparativeValueChunkProcessor
+	 * @param eosChunkProcessor
+	 * @param eolChunkProcessor
+	 * @param mainSubjectOrganChunkProcessor
+	 * @param modifierChunkProcessor
+	 * @param nonSubjectOrganChunkProcessor
+	 * @param npListChunkProcessor
+	 * @param numericalChunkProcessor
+	 * @param valueChunkProcessor
+	 * @param countChunkProcessor
+	 * @param basedCountChunkProcessor
+	 * @param orChunkProcessor
+	 * @param ppChunkProcessor
+	 * @param ratioChunkProcessor
+	 * @param sbarChunkProcessor
+	 * @param specificPPChunkProcessor
+	 * @param thanChunkProcessor
+	 * @param thanCharacterChunkProcessor
+	 * @param valuePercentageChunkProcessor
+	 * @param valueDegreeChunkProcessor
+	 * @param vpChunkProcessor
+	 * @param unassignedChunkProcessor
+	 * @param stateChunkProcessor
+	 * @param commaChunkProcessor
+	 * @param constraintChunkProcessor
+	 * @param toChunkProcessor
+	 * @param characterNameProcessor
+	 * @param andChunkProcessor
+	 * @param whereChunkProcessor
+	 */
 	@Inject
 	public ChunkProcessorProvider(@Named("Area") IChunkProcessor areaChunkProcessor,
 			@Named("Bracketed") IChunkProcessor bracketedChunkProcessor,

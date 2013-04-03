@@ -25,8 +25,27 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * SBARChunkProcessor processes chunks of ChunkType.SBAR
+ * @author rodenhausen
+ */
 public class SBARChunkProcessor extends AbstractChunkProcessor {
 
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public SBARChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
@@ -149,7 +168,7 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			if(last.containsChunkType(ChunkType.ORGAN)) {
 				int constraintId = processingContextState.getStructureId() - 1;				
 				processingContextState.setClauseModifierContraint(last.getTerminalsText());
-				processingContextState.setClauseModifierContraintId(constraintId);
+				processingContextState.setClauseModifierContraintId(String.valueOf(constraintId));
 			}
 		}
 		
@@ -159,7 +178,7 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 		//annotateByChunk(newcs, false); //no need to updateLatestElements				
 		//processingContext.setSubjects(subjectsCopy);//return to original status
 		processingContextState.setClauseModifierContraint(null);
-		processingContextState.setClauseModifierContraintId(-1); 
+		processingContextState.setClauseModifierContraintId("-1"); 
 		//return to original status
 		//this.unassignedmodifiers = null;
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

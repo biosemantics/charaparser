@@ -26,6 +26,10 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * AbstractChunkProcessor implements common functionality of an IChunkProcessor shared among concret IChunkProcessor implementations
+ * @author rodenhausen
+ */
 public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 	protected IInflector inflector;
@@ -42,6 +46,21 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected boolean attachToLast;
 	protected String times;
 	
+	/**
+	 * @param inflector
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param characterKnowledgeBase
+	 * @param posKnowledgeBase
+	 * @param baseCountWords
+	 * @param locationPrepositions
+	 * @param clusters
+	 * @param units
+	 * @param equalCharacters
+	 * @param numberPattern
+	 * @param attachToLast
+	 * @param times
+	 */
 	@Inject
 	public AbstractChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
@@ -63,7 +82,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		this.times = times;
 	}
 	
-
+	/**
+	 * The current processingContextState of the given processingContext will be cloned and preserved for restore
+	 * @param chunk
+	 * @param processingContext
+	 * @return list of DescriptionTreatmentElements resulting from the processing of chunk in processingContext
+	 * TODO: it shouldnt be the chunk processors responsibility and freedom to or not to preserve the processingContextState
+	 * This should be taken care of elsewhere
+	 */
 	public List<DescriptionTreatmentElement> process(Chunk chunk, ProcessingContext processingContext) {
 		log(LogLevel.DEBUG, "process chunk " + chunk);
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
@@ -73,6 +99,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return processChunk(chunk, processingContext);
 	}
 	
+	/**
+	 * @param chunk
+	 * @param processingContext
+	 * @return list of DescriptionTreatmentElements resulting from the processing of chunk in processingContext
+	 */
 	protected abstract List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext);
 		
 	protected ArrayList<DescriptionTreatmentElement> establishSubject(LinkedList<DescriptionTreatmentElement> subjectStructures, 
@@ -2265,7 +2296,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return this.getClass().toString();
 	}
 	
-	public DescriptionTreatmentElement getFirstDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionTreatmentElementType descriptionType) {
+	protected DescriptionTreatmentElement getFirstDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionTreatmentElementType descriptionType) {
 		DescriptionTreatmentElement result = null;
 		for(int i=0; i<elements.size(); i++) {
 			DescriptionTreatmentElement element = elements.get(i);
@@ -2277,7 +2308,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return result;
 	}
 	
-	public DescriptionTreatmentElement getLastDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionTreatmentElementType descriptionType) {
+	protected DescriptionTreatmentElement getLastDescriptionElement(List<DescriptionTreatmentElement> elements, DescriptionTreatmentElementType descriptionType) {
 		DescriptionTreatmentElement result = null;
 		for(int i=elements.size()-1; i>=0; i--) {
 			DescriptionTreatmentElement element = elements.get(i);

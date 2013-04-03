@@ -20,8 +20,24 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * MyCleanupChunker reformats the chunks after all other chunkers have been run to obtain an overall consistent chunking result
+ * Specifically modifier, character, constraint and organ chunks are reconsidered
+ * @author rodenhausen
+ */
 public class MyNewCleanupChunker extends AbstractChunker {
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param organStateKnowledgeBase
+	 */
 	@Inject
 	public MyNewCleanupChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
@@ -214,159 +230,4 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		}
 		return result;
 	}
-	
-	
-	
-//	private void moveChunksForAndOrLists(List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
-//		for(int i=terminals.size()-1; i>=0; i--) {
-//			AbstractParseTree terminal = terminals.get(i);
-//		
-//			/**
-//			 * treat the case where terminal is 'and' or 'or'
-//			 */
-//			if(terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or")) {
-//				if(i-1>=0 && i+1<terminals.size()) {
-//					AbstractParseTree previousTerminal = terminals.get(i-1);
-//					AbstractParseTree nextTerminal = terminals.get(i+1);
-//					
-//					/**
-//					 * check the chunks of previous and next terminal
-//					 */
-//					//outer and middle phyllary
-//					boolean previousConstraint = chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.CONSTRAINT);
-//					boolean previousModifier = chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.MODIFIER);
-//					boolean nextConstraint = chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.CONSTRAINT);
-//					boolean nextModifier = chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.MODIFIER);
-//					
-//					/**
-//					 * previously and next a modifying/constraining thing
-//					 */
-//					if((previousConstraint || previousModifier) && (nextConstraint || nextModifier)) {
-//					/*if((chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.CONSTRAINT) || 
-//							chunkCollector.isPartOfChunkType(previousTerminal, ChunkType.MODIFIER) &&
-//							chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.CONSTRAINT)) || 
-//							chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.MODIFIER)) {*/
-//						
-//						/**
-//						 * assumption that previous, and/or, nextchunk already in one parentchunk together
-//						 */
-//						Chunk chunkParent = chunkCollector.getChunk(nextTerminal);
-//						List<Chunk> modifierChunks = chunkParent.getChunks(ChunkType.MODIFIER);
-//	
-//						/**
-//						 * if nextTerminal is contained in a modifier chunk then remove previous terminal and and/or from the parent
-//						 * and instead stick them into the modifier chunk of next terminal
-//						 */
-//						for(Chunk modifierChunk : modifierChunks) {
-//							if(modifierChunk.contains(nextTerminal)) {
-//								chunkParent.removeChunk(previousTerminal);
-//								chunkParent.removeChunk(terminal);
-//								
-//								LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
-//								newChunks.add(previousTerminal);
-//								newChunks.add(terminal);
-//								newChunks.addAll(modifierChunk.getChunks());
-//								modifierChunk.setChunks(newChunks);
-//							}
-//						}
-//						
-//						/**
-//						 * if nextTerminal is contained in a constraint chunk then remove previous terminal and and/or from the parent
-//						 * and instead stick them into the constraint chunk of next terminal
-//						 */
-//						List<Chunk> constraintChunks = chunkParent.getChunks(ChunkType.CONSTRAINT);
-//						for(Chunk constraintChunk : constraintChunks) {
-//							if(constraintChunk.contains(nextTerminal)) {
-//								chunkParent.removeChunk(previousTerminal);
-//								chunkParent.removeChunk(terminal);
-//								
-//								LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
-//								newChunks.add(previousTerminal);
-//								newChunks.add(terminal);
-//								newChunks.addAll(constraintChunk.getChunks());
-//								constraintChunk.setChunks(newChunks);
-//							}
-//						}
-//			
-//						chunkCollector.addChunk(chunkParent);
-//					
-//					/**
-//					* !previously and next a modifying/constraining thing
-//					*/
-//					} else {
-//					
-//						//outer phyllary and middle phyllary
-//						
-//						/**
-//						 * next terminal still part of constraint
-//						 */
-//						if(chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.CONSTRAINT)) {
-//							Chunk chunkParent = chunkCollector.getChunk(nextTerminal);
-//							List<Chunk> constraintChunks = chunkParent.getChunks(ChunkType.CONSTRAINT);
-//							
-//							for(Chunk constraintChunk : constraintChunks) {
-//								if(constraintChunk.contains(nextTerminal)) {
-//									/**
-//									 * get the previous and next organ chunk from there on
-//									 */
-//									Chunk previousOrganChunk = getPreviousOrganChunk(i, terminals, chunkCollector);
-//									Chunk nextOrganChunk = getNextOrganChunk(i, terminals, chunkCollector);
-//									
-//									/**
-//									 * if found in both directions and both organs are the same stick the and/or terminal into the chunk parent of next terminal (?)
-//									 */
-//									if(previousOrganChunk != null && nextOrganChunk != null && 
-//											previousOrganChunk.getTerminalsText().equals(nextOrganChunk.getTerminalsText())) {
-//										chunkParent.removeChunk(terminal);
-//										
-//										LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
-//										newChunks.add(terminal);
-//										newChunks.addAll(constraintChunk.getChunks());
-//										constraintChunk.setChunks(newChunks);
-//									}
-//								}
-//							}
-//							chunkCollector.addChunk(chunkParent);
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//	
-//	
-//	/**
-//	 * @param i
-//	 * @param terminals
-//	 * @param chunkCollector
-//	 * @return the next organ chunk from i onwards
-//	 */
-//	private Chunk getNextOrganChunk(int i, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
-//		for(; i<terminals.size(); i++) {
-//			AbstractParseTree nextTerminal = terminals.get(i);
-//			Chunk nextChunk = chunkCollector.getChunk(nextTerminal);
-//			Chunk organChunk = nextChunk.getChunkDFS(ChunkType.ORGAN);
-//			if(organChunk!=null) 
-//				return organChunk;
-//		}
-//		return null;
-//	}
-//
-//	/**
-//	 * @param i
-//	 * @param terminals
-//	 * @param chunkCollector
-//	 * @return the previous organ chunk from i backwards
-//	 */
-//	private Chunk getPreviousOrganChunk(int i, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
-//		for(; i>=0; i--) {
-//			AbstractParseTree previousTerminal = terminals.get(i);
-//			Chunk nextChunk = chunkCollector.getChunk(previousTerminal);
-//			Chunk organChunk = nextChunk.getChunkDFS(ChunkType.ORGAN);
-//			if(organChunk!=null) 
-//				return organChunk;
-//		}
-//		return null;
-//	}
-	
 }

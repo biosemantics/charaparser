@@ -21,6 +21,10 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * AbstractChunker implements common functionality of an IChunker shared among concret IChunker implementations
+ * @author rodenhausen
+ */
 public abstract class AbstractChunker implements IChunker {
 
 	protected ParseTreeFactory parseTreeFactory;
@@ -32,6 +36,16 @@ public abstract class AbstractChunker implements IChunker {
 	protected Set<String> stopWords;
 	protected IInflector inflector;
 	
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 */
 	@Inject
 	public AbstractChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
@@ -46,12 +60,9 @@ public abstract class AbstractChunker implements IChunker {
 		this.inflector = inflector;
 	}
 		
-	
 	protected void collapseSubtree(IParseTree parseTree, IParseTree collapseRoot, POS pos) {
-		collapseRoot.setPOS(pos);
-		
+		collapseRoot.setPOS(pos);	
 	}
-	
 	
 	protected AbstractParseTree collapseTwoSubtrees(AbstractParseTree root, POS collapsePOS, IParseTree first, POS firstPOS, IParseTree second, POS secondPOS, ChunkCollector chunkCollector) {	
 		//terminalIds may change due to rearrangement in parseTree. Hence chunks need to be saved and reassigned.
@@ -76,7 +87,6 @@ public abstract class AbstractChunker implements IChunker {
 		
 		return root;
 	}
-
 
 	protected void createTwoValuedChunk(ChunkType chunkType, AbstractParseTree root, ChunkCollector chunkCollector) {
 		Chunk possibleParentChunk = chunkCollector.getChunk(root.getTerminals().get(0));
@@ -186,7 +196,6 @@ public abstract class AbstractChunker implements IChunker {
 			}
 		}
 	}
-
 
 	protected IParseTree getFirstTree(Set<POS> pos, AbstractParseTree parseTree, ChunkCollector chunkCollector) {
 		IParseTree result = null;

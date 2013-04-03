@@ -22,6 +22,10 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * CleanupChunker reformats the chunks after all other chunkers have been run to obtain an overall consistent chunking result
+ * @author rodenhausen
+ */
 public class CleanupChunker extends AbstractChunker {
 
 	private String skipWords;
@@ -38,6 +42,25 @@ public class CleanupChunker extends AbstractChunker {
 	//private boolean rightAfterSubject = false;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param skipWords
+	 * @param moreWords
+	 * @param numberPattern
+	 * @param posKnowledgeBase
+	 * @param percentage
+	 * @param degree
+	 * @param counts
+	 * @param times
+	 * @param characterKnowledgeBase
+	 */
 	@Inject
 	public CleanupChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
@@ -517,7 +540,7 @@ public class CleanupChunker extends AbstractChunker {
 		return !chunkCollector.getSubjectTag().equals("ignore");
 	}
 
-	public String originalNumForm(String token){
+	private String originalNumForm(String token){
 		if(token.matches(".*[a-z].*?")){
 			return token.replaceAll("-\\s*LRB-/-LRB\\s*-?", "(").replaceAll("-\\s*RRB-/-RRB\\s*-?", ")");
 		}else{

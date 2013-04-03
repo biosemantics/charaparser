@@ -12,6 +12,10 @@ import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.log.LogLevel;
 
+/**
+ * ProcessingContextState provides contextual information for the processing of a single chunk
+ * @author rodenhausen
+ */
 public class ProcessingContextState implements Cloneable {
 
 	private String unassignedCharacter;
@@ -44,31 +48,50 @@ public class ProcessingContextState implements Cloneable {
 
 	private int inBracketsLevel = 0;
 	
+	/**
+	 * Reset: clear unassignedCharacter and mainSubjectStructure
+	 */
 	public void reset() {
 		unassignedCharacter = null;
 		mainSubjectStructure = null;
 	}
 
+	/**
+	 * @return if there was an unassigned chunk after the last elements
+	 */
 	public boolean isUnassignedChunkAfterLastElements() {
 		return unassignedChunkAfterLastElements;
 	}
 
-
+	/**
+	 * @param unassignedChunkAfterLastElements
+	 * sets the unassignedChunkAfterLastElements flag
+	 */
 	public void setUnassignedChunkAfterLastElements(
 			boolean unassignedChunkAfterLastElements) {
 		this.unassignedChunkAfterLastElements = unassignedChunkAfterLastElements;
 	}
 
-
-
+	/**
+	 * @param structureId
+	 * @return the structure with the structureId
+	 */
 	public DescriptionTreatmentElement getStructure(int structureId) {
 		return structures.get(structureId);
 	}
 	
+	/**
+	 * @param relationId
+	 * @return the relation with the relationId
+	 */
 	public DescriptionTreatmentElement getRelation(int relationId) {
 		return relations.get(relationId);
 	}
 	
+	/**
+	 * @param toStructureId
+	 * @return the set of relations that use toStructureId has target
+	 */
 	public Set<DescriptionTreatmentElement> getRelationsTo(int toStructureId) {
 		Set<DescriptionTreatmentElement> result = new HashSet<DescriptionTreatmentElement>();
 		if(relationsToStructure.containsKey(toStructureId))
@@ -76,6 +99,10 @@ public class ProcessingContextState implements Cloneable {
 		return result;
 	}
 	
+	/**
+	 * @param fromStructureId
+	 * @return the set of relations that use fromStructureId as source
+	 */
 	public Set<DescriptionTreatmentElement> getRelationsFrom(int fromStructureId) {
 		Set<DescriptionTreatmentElement> result = new HashSet<DescriptionTreatmentElement>();
 		if(relationsFromStructure.containsKey(fromStructureId))
@@ -83,10 +110,17 @@ public class ProcessingContextState implements Cloneable {
 		return result;
 	}
 	
+	/**
+	 * @return the current relationId
+	 */
 	public int getRelationId() {
 		return relationId;
 	}
-	
+
+	/**
+	 * @param relation
+	 * @return returns and increases the current relationId
+	 */
 	public int fetchAndIncrementRelationId(DescriptionTreatmentElement relation) {
 		relations.put(relationId, relation);
 		int fromId = Integer.parseInt(relation.getAttribute("from").substring(1));
@@ -102,64 +136,109 @@ public class ProcessingContextState implements Cloneable {
 		return relationId++;
 	}
 
+	/**
+	 * @param relationId to set
+	 */
 	public void setRelationId(int relationId) {
 		this.relationId = relationId;
 	}
 
+	/**
+	 * @return the scope properties
+	 */
 	public ArrayList<Entry<String, String>> getScopeProperties() {
 		return scopeProperties;
 	}
 
+	/**
+	 * @param scopeProperties to set
+	 */
 	public void setScopeProperties(
 			ArrayList<Entry<String, String>> scopeProperties) {
 		this.scopeProperties = scopeProperties;
 	}
 
+	/**
+	 * @return the clauseModifierConstraintId
+	 */
 	public String getClauseModifierContraintId() {
 		return clauseModifierContraintId;
 	}
 
+	/**
+	 * @param clauseModifierContraintId to set
+	 */
 	public void setClauseModifierContraintId(String clauseModifierContraintId) {
 		this.clauseModifierContraintId = clauseModifierContraintId;
 	}
 
+	/**
+	 * @return the clauseModifierConstraint
+	 */
 	public String getClauseModifierContraint() {
 		return clauseModifierContraint;
 	}
 
+	/**
+	 * @param clauseModifierContraint to set
+	 */
 	public void setClauseModifierContraint(String clauseModifierContraint) {
 		this.clauseModifierContraint = clauseModifierContraint;
 	}
 
-
+	/**
+	 * @return unassignedCharacter
+	 */
 	public String getUnassignedCharacter() {
 		return unassignedCharacter;
 	}
 
+	/**
+	 * @param unassignedCharacter to set
+	 */
 	public void setUnassignedCharacter(String unassignedCharacter) {
 		this.unassignedCharacter = unassignedCharacter;
 	}
 
+	/**
+	 * @return the mainSubjectStructure
+	 */
 	public DescriptionTreatmentElement getMainSubjectStructure() {
 		return mainSubjectStructure;
 	}
 
+	/**
+	 * @return the previousCharacter
+	 */
 	public DescriptionTreatmentElement getPreviousCharacter() {
 		return previousCharacter;
 	}
 
+	/**
+	 * @return the subjects
+	 */
 	public LinkedList<DescriptionTreatmentElement> getSubjects() {
 		return subjects;
 	}
 	
+	/**
+	 * set the subjects
+	 * @param subjects
+	 */
 	public void setSubjects(LinkedList<DescriptionTreatmentElement> subjects) {
 		this.subjects = subjects;
 	}
 
+	/**
+	 * @return the last elements
+	 */
 	public LinkedList<DescriptionTreatmentElement> getLastElements() {
 		return lastElements;
 	}
 
+	/**
+	 * @param lastElements to set
+	 */
 	public void setLastElements(LinkedList<DescriptionTreatmentElement> lastElements) {
 		if(lastElements==null)
 			this.lastElements.clear();
@@ -167,139 +246,138 @@ public class ProcessingContextState implements Cloneable {
 			this.lastElements = lastElements;
 	}
 	
-	//same info stored in the results list of descriptionextractor?
-	/*
-	public boolean hasLastElements() {
-		return !lastElements.isEmpty();
-	}
-	
-	public int numberOfLastElements() {
-		return lastElements.size();
-	}
-	
-	public DescriptionTreatmentElement getLastElement() {
-		return lastElements.getLast();
-	}
-	
-	public DescriptionTreatmentElement getIthLastElement(int i) {
-		return lastElements.get(lastElements.size()-(i));
-	}
-	
-	public void addLastElement(DescriptionTreatmentElement lastElement) {
-		lastElements.add(lastElement);
-	}
-	
-	public void addLastElements(List<DescriptionTreatmentElement> lastElements) {
-		lastElements.addAll(lastElements);
-	}
-	
-	public void clearLastElements() {
-		lastElements.clear();
-	}*/
-	
-	/*public boolean hasSubjectElements() {
-		return !subjects.isEmpty();
-	}
-	
-	public int numberOfSubjectElements() {
-		return subjects.size();
-	}
-	
-	public DescriptionTreatmentElement getLastSubject() {
-		return subjects.getLast();
-	}
-	
-	public DescriptionTreatmentElement getIthLastSubject(int i) {
-		return subjects.get(subjects.size()-(i));
-	}
-	
-	public void addSubject(DescriptionTreatmentElement subject) {
-		subjects.add(subject);
-	}
-	
-	public void addSubjects(List<DescriptionTreatmentElement> subjects) {
-		this.subjects.addAll(subjects);
-	}
-	
-	public void clearLastElements() {
-		subjects.clear();
-	}*/
-	
+	/**
+	 * @return the current structure id
+	 */
 	public int getStructureId() {
 		return structureId;
 	}
 	
+	/**
+	 * @param structure
+	 * @return and increase the current structure id
+	 */
 	public int fetchAndIncrementStructureId(DescriptionTreatmentElement structure) {
 		structures.put(structureId, structure);
 		return structureId++;
 	}
 
+	/**
+	 * @return notInModifier
+	 */
 	public String getNotInModifier() {
 		return notInModifier;
 	}
 
+	/**
+	 * @return unassigned Modifiers
+	 */
 	public List<Chunk> getUnassignedModifiers() {
 		return unassignedModifiers;
 	}
 	
+	/**
+	 * @return unassigned constraints
+	 */
 	public List<Chunk> getUnassignedConstraints() {
 		return unassignedConstraints;
 	}
 
+	/**
+	 * @param previousCharacter to set
+	 */
 	public void setPreviousCharacter(
 			DescriptionTreatmentElement previousCharacter) {
 		this.previousCharacter = previousCharacter;
 	}
 
+	/**
+	 * @param structureId to set
+	 */
 	public void setStructureId(int structureId) {
 		this.structureId = structureId;
 	}
 
+	/**
+	 * clears the unassigned constraints
+	 */
 	public void clearUnassignedConstraints() {
 		this.unassignedConstraints.clear();
 	}
 	
+	/**
+	 * @param unassignedConstraints to set
+	 */
 	public void setUnassignedConstraints(List<Chunk> unassignedConstraints) {
 		this.unassignedConstraints = unassignedConstraints;
 	}
 
+	/**
+	 * clears unassigned modifiers
+	 */
 	public void clearUnassignedModifiers() {
 		this.unassignedModifiers.clear();
 	}
 	
+	/**
+	 * @param unassignedModifiers to set
+	 */
 	public void setUnassignedModifiers(List<Chunk> unassignedModifiers) {
 		this.unassignedModifiers = unassignedModifiers;
 	}
 
+	/**
+	 * increases the inbrackets count
+	 */
 	public void increaseInBrackets() {
 		this.inBracketsLevel++;
 	}
 	
+	/**
+	 * decreases the inbrackets count
+	 */
 	public void decreaseInBrackets() {
 		this.inBracketsLevel--;
 	}
 	
+	/**
+	 * @return if current processed chunks are within brackets
+	 */
 	public boolean isInBrackets() {
 		return this.inBracketsLevel != 0;
 	}
 	
+	/**
+	 * @return inbrackets count
+	 */
 	public int getInBracketsLevel() {
 		return this.inBracketsLevel;
 	}
 	
+	/**
+	 * @return unassigned characters
+	 */
 	public List<DescriptionTreatmentElement> getUnassignedCharacters() {
 		return unassignedCharacters;
 	}
 
+	/**
+	 * @param unassignedCharacters to set
+	 */
 	public void setUnassignedCharacters(List<DescriptionTreatmentElement> unassignedCharacters) {
 		this.unassignedCharacters = unassignedCharacters;
 	}
 	
-
+	/**
+	 * @return if comma, and, or, eos, or eol appeared after the last elements
+	 */
 	public boolean isCommaAndOrEosEolAfterLastElements() {
 		return commaAndOrEosEolAfterLastElements;
 	}
 
+	/**
+	 * @param commaAndOrEosEolAfterLastElements to set
+	 */
 	public void setCommaAndOrEosEolAfterLastElements(boolean commaAndOrEosEolAfterLastElements) {
 		this.commaAndOrEosEolAfterLastElements = commaAndOrEosEolAfterLastElements;
 	}

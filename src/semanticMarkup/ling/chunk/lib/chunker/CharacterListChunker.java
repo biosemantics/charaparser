@@ -20,18 +20,30 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 /**
- * This has to be the first chunker, as the tree will be rearranged.
+ * CharacterListChunker chunks by handling a number of character describing terminals.
+ * 
+ * TODO: This has to be the first chunker, as the tree will be rearranged.
  * Hence, chunkCollector will loose the references in the hashmap of terminal Id -> chunk if tree is normalized at a later step
  * It would be an option to let chunkCollector be aware of changes in the tree, or internally use a hashmap of AbstractParseTree (terminal) -> chunk
  * However, hashing in AbstractParseTree is implemented such that two same named terminals get the same hash. Hash function would have to be rewritten.
- * TODO
+ * 
  * @author rodenhausen
- *
  */
 public class CharacterListChunker extends AbstractChunker {
 
 	private IPOSKnowledgeBase posKnowledgeBase;
 
+	/**
+	 * @param parseTreeFactory
+	 * @param prepositionWords
+	 * @param stopWords
+	 * @param units
+	 * @param equalCharacters
+	 * @param glossary
+	 * @param terminologyLearner
+	 * @param inflector
+	 * @param posKnowledgeBase
+	 */
 	@Inject
 	public CharacterListChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
