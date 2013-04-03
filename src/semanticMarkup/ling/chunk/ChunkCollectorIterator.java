@@ -4,11 +4,19 @@ import java.util.Iterator;
 
 import semanticMarkup.ling.parse.AbstractParseTree;
 
+/**
+ * ChunkCollectorIterator allows to iterate over the Chunks of a chunkCollector
+ * @author rodenhausen
+ * @param <T>
+ */
 public class ChunkCollectorIterator<T> implements Iterator<Chunk> {
 
 	private ChunkCollector chunkCollector;
 	private Iterator<AbstractParseTree> terminalsIterator;
 
+	/**
+	 * @param chunkCollector
+	 */
 	public ChunkCollectorIterator(ChunkCollector chunkCollector) {
 		this.chunkCollector = chunkCollector;
 		this.terminalsIterator = chunkCollector.getTerminals().iterator();

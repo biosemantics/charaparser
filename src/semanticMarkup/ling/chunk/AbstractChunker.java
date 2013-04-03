@@ -102,8 +102,8 @@ public abstract class AbstractChunker implements IChunker {
 			}
 		}
 		if(parentExists) {
-			Chunk maxFunctionChunk = possibleParentChunk.getMaxDepthChunkThatCoinsAButNotB(functionTerminals, objectTerminals);
-			Chunk maxObjectChunk =  possibleParentChunk.getMaxDepthChunkThatCoinsAButNotB(objectTerminals, functionTerminals);
+			Chunk maxFunctionChunk = possibleParentChunk.getMaxDepthChunkThatContainsAButNotB(functionTerminals, objectTerminals);
+			Chunk maxObjectChunk =  possibleParentChunk.getMaxDepthChunkThatContainsAButNotB(objectTerminals, functionTerminals);
 			//Chunk maxParentChunkFunction = possibleParentChunk.getParentChunk(maxFunctionChunk);
 			//Chunk maxParentChunkObject = possibleParentChunk.getParentChunk(maxObjectChunk);
 			//Chunk maxCommonParent = possibleParentChunk.getCommonParent(maxParentChunkFunction, maxParentChunkObject);
@@ -125,7 +125,7 @@ public abstract class AbstractChunker implements IChunker {
 				objectChunks.add(maxObjectChunk);
 			else {
 				for(AbstractParseTree terminal : objectTerminals) {
-					objectChunks.add(possibleParentChunk.getMaxDepthChunkThatCoinsOnlyTerminal(terminal));
+					objectChunks.add(possibleParentChunk.getMaxDepthChunkThatContainsOnlyTerminal(terminal));
 				}
 			}
 			Chunk objectChunk = new Chunk(ChunkType.OBJECT, objectChunks);

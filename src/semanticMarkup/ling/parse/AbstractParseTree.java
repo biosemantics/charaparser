@@ -8,8 +8,15 @@ import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.pos.POS;
 
+/**
+ * An AbstractParseTree poses an IParseTree and implements functionality shared among different IParseTrees 
+ * @author rodenhausen
+ */
 public abstract class AbstractParseTree extends Chunk implements IParseTree {
 
+	/**
+	 * 
+	 */
 	public AbstractParseTree() {
 		super(ChunkType.UNASSIGNED);
 	}

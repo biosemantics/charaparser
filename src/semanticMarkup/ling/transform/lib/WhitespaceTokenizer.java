@@ -6,6 +6,10 @@ import java.util.List;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.transform.ITokenizer;
 
+/**
+ * WhitespaceTokenizer tokenizes a text by whitespace.
+ * @author rodenhausen
+ */
 public class WhitespaceTokenizer implements ITokenizer {
 
 	@Override

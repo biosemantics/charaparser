@@ -14,8 +14,43 @@ import semanticMarkup.ling.transform.IInflector;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * FNAv19Normalizer extends Normalizer adding FNAv19 dataset specific normalization
+ */
 public class FNAv19Normalizer extends Normalizer {
 
+	/**
+	 * @param glossary
+	 * @param units
+	 * @param numberPattern
+	 * @param singulars
+	 * @param plurals
+	 * @param posKnowledgeBase
+	 * @param lyAdverbPattern
+	 * @param p1
+	 * @param p2
+	 * @param p3
+	 * @param p4
+	 * @param p5
+	 * @param p6
+	 * @param p7
+	 * @param p75
+	 * @param p8
+	 * @param terminologyLearner
+	 * @param viewPattern
+	 * @param countPattern
+	 * @param positionPattern
+	 * @param romanRangePattern
+	 * @param romanPattern
+	 * @param romanNumbers
+	 * @param stopWords
+	 * @param prepositionWords
+	 * @param modifierList
+	 * @param parentTagProvider
+	 * @param characterKnowledgeBase
+	 * @param organStateKnowledgeBase
+	 * @param inflector
+	 */
 	@Inject
 	public FNAv19Normalizer(IGlossary glossary, @Named("Units") String units, @Named("NumberPattern")String numberPattern,
 			@Named("Singulars")HashMap<String, String> singulars, @Named("Plurals")HashMap<String, String> plurals, 

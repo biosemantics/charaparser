@@ -24,7 +24,9 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-
+/**
+ * Normalizer implements a strategy to normalize text according to the previous version of charaparser
+ */
 public abstract class Normalizer implements INormalizer {
 	
 	private String or = "_or_";
@@ -60,6 +62,38 @@ public abstract class Normalizer implements INormalizer {
 	
 	private ParentTagProvider parentTagProvider;
 	
+	/**
+	 * @param glossary
+	 * @param units
+	 * @param numberPattern
+	 * @param singulars
+	 * @param plurals
+	 * @param posKnowledgeBase
+	 * @param lyAdverbPattern
+	 * @param p1
+	 * @param p2
+	 * @param p3
+	 * @param p4
+	 * @param p5
+	 * @param p6
+	 * @param p7
+	 * @param p75
+	 * @param p8
+	 * @param terminologyLearner
+	 * @param viewPattern
+	 * @param countPattern
+	 * @param positionPattern
+	 * @param romanRangePattern
+	 * @param romanPattern
+	 * @param romanNumbers
+	 * @param stopWords
+	 * @param prepositionWords
+	 * @param modifierList
+	 * @param parentTagProvider
+	 * @param characterKnowledgeBase
+	 * @param organStateKnowledgeBase
+	 * @param inflector
+	 */
 	@Inject
 	public Normalizer(IGlossary glossary, @Named("Units") String units, @Named("NumberPattern")String numberPattern,
 			@Named("Singulars")HashMap<String, String> singulars, @Named("Plurals")HashMap<String, String> plurals, 
@@ -262,6 +296,10 @@ public abstract class Normalizer implements INormalizer {
 		return str;
 	}
 	
+	/**
+	 * @param sentence
+	 * @return dataset specific normalization result
+	 */
 	protected abstract String dataSetSpecificNormalization(String sentence);
 
 
@@ -666,7 +704,7 @@ public abstract class Normalizer implements INormalizer {
 	}
 	
 	
-	public String ratio2number(String sent){
+	private String ratio2number(String sent){
 		String small = "\\b(?:one|two|three|four|five|six|seven|eight|nine)\\b";
 		String big = "\\b(?:half|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)s?\\b";
 		//ratio
@@ -692,7 +730,7 @@ public abstract class Normalizer implements INormalizer {
 		return sent;
 	}
 	
-	public String toNumber(String ratio){
+	private String toNumber(String ratio){
 		ratio = ratio.replaceAll("\\btwo\\b", "2");
 		ratio = ratio.replaceAll("\\bthree\\b", "3");
 		ratio = ratio.replaceAll("\\bfour\\b", "4");
@@ -704,7 +742,7 @@ public abstract class Normalizer implements INormalizer {
 		return ratio;
 	}
 	
-	public String toRatio(String ratio){
+	private String toRatio(String ratio){
 		ratio = ratio.replaceAll("\\bone\\b", "1/");
 		ratio = ratio.replaceAll("\\btwo\\b", "2/");
 		ratio = ratio.replaceAll("\\bthree\\b", "3/");
@@ -787,7 +825,7 @@ public abstract class Normalizer implements INormalizer {
 		return fixed.replaceAll("\\s+", " ");
 	}
 	
-    public int hasUnmatchedBracket(String text, String lbracket, String rbracket) {
+    private int hasUnmatchedBracket(String text, String lbracket, String rbracket) {
     	if(lbracket.equals("[")) lbracket = "\\[";
     	if(lbracket.equals("]")) lbracket = "\\]";
     	
@@ -820,7 +858,7 @@ public abstract class Normalizer implements INormalizer {
      * @param str
      * @return index of unmatched bracket in str
      */
-	public int indexOfunmatched(char bracket, String str) {
+	private int indexOfunmatched(char bracket, String str) {
 		int cnt = 0;
 		char l = '('; char r=')';
 		switch(bracket){
@@ -857,7 +895,7 @@ public abstract class Normalizer implements INormalizer {
 		return -1;
 	}
 	
-	public String threeingSentence(String str) {
+	private String threeingSentence(String str) {
 		//hide the numbers in count list: {count~list~9~or~less~} <fin> <rays>
 		ArrayList<String> lists = new ArrayList<String>();
 		str = hideLists(str, lists);		

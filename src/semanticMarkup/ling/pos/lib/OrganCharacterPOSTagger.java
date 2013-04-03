@@ -18,6 +18,10 @@ import semanticMarkup.ling.pos.POSedToken;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * OrganCharacterPOSTagger taggs tokens using IOrganStateKnowledgeBase, ITerminologyLearner, and an ICorpus
+ * @author rodenhausen
+ */
 public class OrganCharacterPOSTagger implements IPOSTagger {
 
 	public static final String roman="i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX";
@@ -30,6 +34,15 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 	private Pattern compreppattern = Pattern.compile("\\{?(according-to|ahead-of|along-with|apart-from|as-for|aside-from|as-per|as-to-as-well-as|away-from|because-of|but-for|by-means-of|close-to|contrary-to|depending-on|due-to|except-for|forward-of|further-to|in-addition-to|in-between|in-case-of|in-face-of|in-favour-of|in-front-of|in-lieu-of|in-spite-of|instead-of|in-view-of|near-to|next-to|on-account-of|on-behalf-of|on-board|on-to|on-top-of|opposite-to|other-than|out-of|outside-of|owing-to|preparatory-to|prior-to|regardless-of|save-for|thanks-to|together-with|up-against|up-to|up-until|vis-a-vis|with-reference-to|with-regard-to)\\}?");
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	
+	/**
+	 * @param corpus
+	 * @param prepositions
+	 * @param stopWords
+	 * @param units
+	 * @param terminologyLearner
+	 * @param vbWords
+	 * @param organStateKnowledgeBase
+	 */
 	@Inject
 	public OrganCharacterPOSTagger(ICorpus corpus, @Named("PrepositionWords") String prepositions, @Named("StopWords") Set<String> stopWords,
 			@Named("Units") String units, ITerminologyLearner terminologyLearner, @Named("VBWords")Set<String> vbWords, 

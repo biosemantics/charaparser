@@ -7,11 +7,23 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.log.LogLevel;
 
-
+/**
+ * ChunkChain allows to chain a number of IChunkers and execute them consecutively
+ * @author rodenhausen
+ */
 public class ChunkerChain {
 	
 	protected List<IChunker> chunkers = new LinkedList<IChunker>();
 	
+	/**
+	 * Execute chunkers consecutively
+	 * @param parseTree
+	 * @param subjectTag
+	 * @param treatment
+	 * @param source
+	 * @param sentenceString
+	 * @return the resulting chunkCollector
+	 */
 	public ChunkCollector chunk(AbstractParseTree parseTree, String subjectTag, Treatment treatment, String source, String sentenceString) {
 		ChunkCollector chunkCollector = new ChunkCollector(parseTree, subjectTag, treatment, source, sentenceString);
 		for(IChunker chunker : chunkers) {
@@ -29,10 +41,18 @@ public class ChunkerChain {
 		return chunkCollector;
 	}
 
+	/**
+	 * @param chunker
+	 * @return if the chunker was added successfully
+	 */
 	public boolean add(IChunker chunker) {
 		return chunkers.add(chunker);
 	}
 
+	/**
+	 * @param chunker
+	 * @return if the chunker was removed successfully
+	 */
 	public boolean remove(IChunker chunker) {
 		return chunkers.remove(chunker);
 	}

@@ -1,7 +1,7 @@
 package semanticMarkup.ling.pos;
 
 /**
- * The penn treebank tags of all levels
+ * A POS poses a tag of the penn treebank of any level. Also, additional tags that are necessary for marking are added.
  * @author rodenhausen
  */
 public enum POS {

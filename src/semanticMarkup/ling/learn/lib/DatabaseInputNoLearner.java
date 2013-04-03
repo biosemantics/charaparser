@@ -10,8 +10,28 @@ import semanticMarkup.ling.transform.ITokenizer;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * DatabaseInputNoLearner does not learn actively itself but reads the results of a learn process of the e.g. the previous charaparser perl part, 
+ * or PerlTerminologyLearner from the database.
+ * @author rodenhausen
+ */
 public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 
+	/**
+	 * @param temporaryPath
+	 * @param descriptionSeparator
+	 * @param markupMode
+	 * @param databaseName
+	 * @param glossaryTable
+	 * @param databasePrefix
+	 * @param databaseUser
+	 * @param databasePassword
+	 * @param stopWords
+	 * @param selectedSources
+	 * @param glossary
+	 * @param tokenizer
+	 * @throws Exception
+	 */
 	@Inject
 	public DatabaseInputNoLearner(@Named("temporaryPath") String temporaryPath, 
 			@Named("descriptionSeparator") String descriptionSeparator, 

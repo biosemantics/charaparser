@@ -9,10 +9,17 @@ import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.pos.POSedToken;
 
+/**
+ * OrganCharacterPOSTagger taggs tokens using an IPOSKnowledgeBase
+ * @author rodenhausen
+ */
 public class WordNetPOSTagger implements IPOSTagger {
 
 	private IPOSKnowledgeBase posKnowledgeBase;
 
+	/**
+	 * @param posKnowledgeBase
+	 */
 	public WordNetPOSTagger(IPOSKnowledgeBase posKnowledgeBase) {
 		this.posKnowledgeBase = posKnowledgeBase;
 	}

@@ -15,11 +15,19 @@ import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.Tree;
 
+/**
+ * A StanfordParserWrapper parses a list of tokens using stanford parser
+ * @author rodenhausen
+ */
 public class StanfordParserWrapper implements IParser {
 
 	private LexicalizedParser parser;
 	private IStanfordParserTokenTransformer tokenTransformer;
 	
+	/**
+	 * @param modelFile
+	 * @param tokenTransformer
+	 */
 	@Inject
 	public StanfordParserWrapper(@Named("StanfordParserWrapper_modelFile")String modelFile, IStanfordParserTokenTransformer tokenTransformer) {
 		this.tokenTransformer = tokenTransformer;

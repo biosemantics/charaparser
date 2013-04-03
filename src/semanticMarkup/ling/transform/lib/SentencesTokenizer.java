@@ -6,6 +6,10 @@ import java.util.List;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.transform.ITokenizer;
 
+/**
+ * SentenceTokenizer tokenizes a text by sentence termination punctuation and whitespace.
+ * @author rodenhausen
+ */
 public class SentencesTokenizer implements ITokenizer {
 
 	@Override

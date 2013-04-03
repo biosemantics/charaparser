@@ -12,47 +12,81 @@ import java.util.Map.Entry;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.log.LogLevel;
 
+/**
+ * A Chunk has a ChunkType, contains a ordered set of children chunks and may have properties.
+ * A AbstractParseTree constitutes a terminal Chunk.
+ * @author rodenhausen
+ */
 public class Chunk implements Cloneable {
 
 	private ChunkType chunkType;
 	private LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
 	private HashMap<String, String> properties = new HashMap<String, String>(); 
 	
+	/**
+	 * @param chunkType
+	 */
 	public Chunk(ChunkType chunkType) {
 		this.chunkType = chunkType;
 	}
 	
+	/**
+	 * @return the size of the chunk, i.e. the number of children chunks
+	 */
 	public int size() {
 		return chunks.size();
 	}
 	
+	/**
+	 * @param chunkType
+	 * @param chunk
+	 */
 	public Chunk(ChunkType chunkType, Chunk chunk) {
 		this.chunkType = chunkType;
 		this.chunks.add(chunk);
 	}
 	
+	/**
+	 * @param chunkType
+	 * @param chunks
+	 */
 	public Chunk(ChunkType chunkType, Collection<Chunk> chunks) {
 		this.chunkType = chunkType;
 		for(Chunk chunk : chunks)
 			this.chunks.add(chunk);
 	}
 	
+	/**
+	 * @return this chunks chunkType
+	 */
 	public ChunkType getChunkType() {
 		return chunkType;
 	}
 
+	/**
+	 * @param chunkType to set
+	 */
 	public void setChunkType(ChunkType chunkType) {
 		this.chunkType = chunkType;
 	}
 	
+	/**
+	 * @param chunks to set
+	 */
 	public void setChunks(LinkedHashSet<Chunk> chunks) {
 		this.chunks = chunks;
 	}
 
+	/**
+	 * @return the child chunks
+	 */
 	public LinkedHashSet<Chunk> getChunks() {
 		return this.chunks;
 	}
 	
+	/**
+	 * @return the terminals of this chunk
+	 */
 	public List<AbstractParseTree> getTerminals() {
 		ArrayList<AbstractParseTree> result = new ArrayList<AbstractParseTree>();
 		if(this instanceof AbstractParseTree)
@@ -64,14 +98,24 @@ public class Chunk implements Cloneable {
 		return result;
 	}
 	
+	/**
+	 * @return if this chunk is of ChunkType.UNASSIGNED
+	 */
 	public boolean isUnassigned() {
 		return this.isOfChunkType(ChunkType.UNASSIGNED);
 	}
 	
+	/**
+	 * @param chunkType
+	 * @return if this chunk is of chunkType
+	 */
 	public boolean isOfChunkType(ChunkType chunkType) {
 		return this.chunkType.equals(chunkType);
 	}
 	
+	/**
+	 * @return the text of the terminals
+	 */
 	public String getTerminalsText() {
 		StringBuilder result = new StringBuilder();
 		for(AbstractParseTree terminal : getTerminals()) 
@@ -79,6 +123,10 @@ public class Chunk implements Cloneable {
 		return result.toString().trim();
 	}
 	
+	/**
+	 * @param chunkType
+	 * @return if this contains a child of chunkType
+	 */
 	public boolean containsChildOfChunkType(ChunkType chunkType) {
 		for(Chunk chunk : chunks) {
 			if(chunk.getChunkType().equals(chunkType))
@@ -87,6 +135,10 @@ public class Chunk implements Cloneable {
 		return false;
 	}
 	
+	/**
+	 * @param chunkType
+	 * @return if this contains a chunk descendant of chunkType
+	 */
 	public boolean containsChunkType(ChunkType chunkType) {
 		if(this.chunkType.equals(chunkType))
 			return true;
@@ -97,6 +149,11 @@ public class Chunk implements Cloneable {
 		return false;
 	}
 	
+	/**
+	 * @param parseTree
+	 * @param chunkType
+	 * @return if parseTree is part of this chunk and further is part of chunkType
+	 */
 	public boolean isPartOfChunkType(AbstractParseTree parseTree,
 			ChunkType chunkType) {
 		if(this.chunkType.equals(chunkType) && this.getTerminals().contains(parseTree))
@@ -126,9 +183,8 @@ public class Chunk implements Cloneable {
 	}
 	
 	/**
-	 * returns first chunk of this chunkType in depth first search manner
 	 * @param chunkType
-	 * @return
+	 * @return first chunk of chunkType in breadth first search manner
 	 */
 	public Chunk getChunkBFS(ChunkType chunkType) {
 		LinkedList<Chunk> searchQueue = new LinkedList<Chunk>();
@@ -172,14 +228,25 @@ public class Chunk implements Cloneable {
 		return null;
 	}
 	
+	/**
+	 * @param key
+	 * @return the property value of the property specified by key
+	 */
 	public String getProperty(String key) {
 		return this.properties.get(key);
 	}
 	
+	/**
+	 * @param key
+	 * @param value to set for the property specified by key
+	 */
 	public void setProperty(String key, String value) {
 		this.properties.put(key, value);
 	}
 	
+	/**
+	 * clears the properties
+	 */
 	public void clearProperties() {
 		this.properties.clear();
 	}
@@ -194,7 +261,10 @@ public class Chunk implements Cloneable {
 		return result.toString().trim();
 	}
 	
-	
+	/** 
+	 * @param key
+	 * @return the first property specified by key in all descendant chunks searched in depth first search
+	 */
 	public String getPropertyDFS(String key) {
 		if(this.properties.containsKey(key)) 
 			return properties.get(key);
@@ -207,6 +277,10 @@ public class Chunk implements Cloneable {
 		return null;
 	}
 	
+	/** 
+	 * @param key
+	 * @return the first property specified by key in all descendant chunks searched in breadth first search
+	 */
 	public String getPropertyBFS(String key) {
 		LinkedList<Chunk> searchQueue = new LinkedList<Chunk>();
 		searchQueue.offer(this);
@@ -222,7 +296,7 @@ public class Chunk implements Cloneable {
 	
 	/**
 	 * @param chunk
-	 * @return the number of child chunks left in this chunk so that it may be discarded when 0 is returned
+	 * @return the number of child chunks left in this chunk
 	 */
 	public int removeChunk(Chunk chunk) {
 		//log(LogLevel.DEBUG, this + " removeChunk " + chunk);
@@ -244,10 +318,17 @@ public class Chunk implements Cloneable {
 		return chunks.size();
 	}
 	
+	/**
+	 * removes all child chunks
+	 */
 	public void clearChunks() {
 		this.chunks.clear();
 	}
 	
+	/**
+	 * @param chunk
+	 * @return if chunk is contained as a descendant
+	 */
 	public boolean contains(Chunk chunk) {
 		if(this.equals(chunk))
 			return true;
@@ -262,13 +343,17 @@ public class Chunk implements Cloneable {
 		return false;
 	}
 	
-	public Chunk getMaxDepthChunkThatCoinsOnlyTerminal(AbstractParseTree terminal) {
+	/**
+	 * @param terminal
+	 * @return the chunk at maximal depth, which contains only terminal
+	 */
+	public Chunk getMaxDepthChunkThatContainsOnlyTerminal(AbstractParseTree terminal) {
 		List<AbstractParseTree> terminals = this.getTerminals();
 		if(terminals.size()==1 && terminals.contains(terminal)) {
 			return this;
 		} else if(terminals.contains(terminal)) {
 			for(Chunk chunk : this.chunks) {
-				Chunk maxChunk = chunk.getMaxDepthChunkThatCoinsOnlyTerminal(terminal);
+				Chunk maxChunk = chunk.getMaxDepthChunkThatContainsOnlyTerminal(terminal);
 				if(maxChunk!=null)
 					return maxChunk;
 			}
@@ -276,12 +361,18 @@ public class Chunk implements Cloneable {
 		return null;
 	}
 	
-	public Chunk getMaxDepthChunkThatCoinsAButNotB(Collection<AbstractParseTree> terminalsA, Collection<AbstractParseTree> terminalsB) {
+	/**
+	 * 
+	 * @param terminalsA
+	 * @param terminalsB
+	 * @return the chunk at maximal depth, which contains terminalsA but not terminalsB
+	 */
+	public Chunk getMaxDepthChunkThatContainsAButNotB(Collection<AbstractParseTree> terminalsA, Collection<AbstractParseTree> terminalsB) {
 		if(this.containsAll(terminalsA) && !this.containsAny(terminalsB)) {
 			return this;
 		} else {
 			for(Chunk child : this.getChunks()) {
-				Chunk result = child.getMaxDepthChunkThatCoinsAButNotB(terminalsA, terminalsB);
+				Chunk result = child.getMaxDepthChunkThatContainsAButNotB(terminalsA, terminalsB);
 				if(result != null)
 					return result;
 			}
@@ -289,6 +380,10 @@ public class Chunk implements Cloneable {
 		return null;
 	}
 	
+	/**
+	 * @param terminals
+	 * @return if all terminals are contained in this chunk
+	 */
 	public boolean containsAll(Collection<AbstractParseTree> terminals) {
 		boolean result = true;
 		for(AbstractParseTree terminal : terminals) {
@@ -299,6 +394,10 @@ public class Chunk implements Cloneable {
 		return result;
 	}
 	
+	/**
+	 * @param terminals
+	 * @return if any of the terminals is contained in this chunk
+	 */
 	public boolean containsAny(Collection<AbstractParseTree> terminals) {
 		boolean result = false;
 		for(AbstractParseTree terminal : terminals) {
@@ -309,6 +408,10 @@ public class Chunk implements Cloneable {
 		return result;
 	}
 	
+	/**
+	 * @param chunk
+	 * @return the parent chunk of the given chunk or null if is is not contained in this chunk
+	 */
 	public Chunk getParentChunk(Chunk chunk) {
 		if(this.containsAsChild(chunk))
 			return this;
@@ -321,7 +424,12 @@ public class Chunk implements Cloneable {
 		return null;
 	}
 	
-	public Chunk getCommonParent(Chunk chunkA, Chunk chunkB) {
+	/**
+	 * @param chunkA
+	 * @param chunkB
+	 * @return the common ancestor of maximal depth, which contains both chunkA and chunkB 
+	 */
+	public Chunk getCommonAncestor(Chunk chunkA, Chunk chunkB) {
 		if(chunkA.contains(chunkB)) {
 			return chunkA;
 		}
@@ -329,32 +437,46 @@ public class Chunk implements Cloneable {
 			return chunkB;
 		}
 		Chunk parentA = this.getParentChunk(chunkA);
-		Chunk result = this.getCommonParent(parentA, chunkB);
+		Chunk result = this.getCommonAncestor(parentA, chunkB);
 		if(result != null)
 			return result;
 		
 		Chunk parentB = this.getParentChunk(chunkB);
-		result = this.getCommonParent(parentA, chunkB);
+		result = this.getCommonAncestor(parentA, chunkB);
 		if(result != null)
 			return result;
 		
-		result = this.getCommonParent(parentA, parentB);
+		result = this.getCommonAncestor(parentA, parentB);
 		return result;
 	}
 	
+	/**
+	 * @param chunk
+	 * @return if chunk is contained as child
+	 */
 	public boolean containsAsChild(Chunk chunk) {
 		return chunks.contains(chunk);
 	}
 	
+	/**
+	 * @param chunks to remove
+	 */
 	public void removeChunks(Collection<Chunk> chunks) {
 		for(Chunk chunk : chunks)
 			this.removeChunk(chunk);
 	}
 	
+	/**
+	 * @return if this chunk is a terminal chunk
+	 */
 	public boolean isTerminal() {
 		return this instanceof AbstractParseTree;
 	}
 
+	/**
+	 * @param terminal
+	 * @return list of children chunks that appear in the children after the chunk which contains terminal
+	 */
 	public List<Chunk> getChunksIncludingAfterTerminal(AbstractParseTree terminal) {
 		List<Chunk> result = new LinkedList<Chunk>();
 		for(Chunk chunk : this.getChunks()) {
@@ -368,6 +490,11 @@ public class Chunk implements Cloneable {
 		return result;
 	}
 
+	/**
+	 * @param chunkType
+	 * @param ofTerminal
+	 * @return descendant chunk that is of chunkType and contains ofTerminal
+	 */
 	public Chunk getChunkOfTypeAndTerminal(ChunkType chunkType, AbstractParseTree ofTerminal) {
 		Chunk result = null;
 		if(this.getChunkType().equals(chunkType) && this.contains(ofTerminal)) {
@@ -382,6 +509,10 @@ public class Chunk implements Cloneable {
 		return result;
 	}
 	
+	/**
+	 * @param ofTerminal
+	 * @return descendant chunk that contains ofTerminal
+	 */
 	public Chunk getChildChunkOfTerminal(AbstractParseTree ofTerminal) {
 		for(Chunk chunk : chunks) {
 			if(chunk.contains(ofTerminal))
@@ -390,6 +521,10 @@ public class Chunk implements Cloneable {
 		return null;
 	}
 
+	/**
+	 * @param chunk to insert. Descendant chunk of this which is of maximal depth and contains the first terminal of given chunk
+	 * will be replaced by given chunk.
+	 */
 	public void addAndReplaceChunks(Chunk chunk) {
 		AbstractParseTree firstTerminal = chunk.getTerminals().get(0);
 		for(Chunk child : chunks) {
@@ -411,6 +546,10 @@ public class Chunk implements Cloneable {
 		}
 	}
 	
+	/**
+	 * @param terminal
+	 * @return minimal depth descendant chunks that do not contain terminal 
+	 */
 	public List<Chunk> getChunksWithoutTerminal(AbstractParseTree terminal) {
 		List<Chunk> result = new LinkedList<Chunk>();
 		for(Chunk chunk : this.getChunks()) {
@@ -442,6 +581,10 @@ public class Chunk implements Cloneable {
 		return null;
 	}
 
+	/**
+	 * @param toReplaceChunk is removed
+	 * @param replaceChunk is inserted
+	 */
 	public void replaceChunk(Chunk toReplaceChunk, Chunk replaceChunk) {
 		for(Chunk chunk : this.chunks) {
 			if(chunk.equals(toReplaceChunk)) {

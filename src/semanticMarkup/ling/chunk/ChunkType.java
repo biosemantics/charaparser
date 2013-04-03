@@ -1,5 +1,9 @@
 package semanticMarkup.ling.chunk;
 
+/**
+ * ChunkTypes a Chunk can be of
+ * @author rodenhausen
+ */
 public enum ChunkType {
 	/*ORGAN, 
 	NON_SUBJECT_ORGAN, 

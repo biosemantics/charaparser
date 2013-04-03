@@ -32,6 +32,10 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.mysql.jdbc.log.Log;
 
+/**
+ * PerlTerminologyLearner learns using the previous charaparser perl part
+ * @author rodenhausen
+ */
 public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Set<String> sentences;
@@ -64,6 +68,21 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private Set<String> selectedSources;
 	private String glossaryTable;
 
+	/**
+	 * @param temporaryPath
+	 * @param descriptionSeparator
+	 * @param markupMode
+	 * @param databaseName
+	 * @param glossaryTable
+	 * @param databasePrefix
+	 * @param databaseUser
+	 * @param databasePassword
+	 * @param stopWords
+	 * @param selectedSources
+	 * @param glossary
+	 * @param tokenizer
+	 * @throws Exception
+	 */
 	@Inject
 	public PerlTerminologyLearner(@Named("temporaryPath") String temporaryPath, 
 			@Named("descriptionSeparator") String descriptionSeparator, 

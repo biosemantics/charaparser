@@ -11,6 +11,10 @@ import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 
+/**
+ * SomeInflector uses word endings and IPOSKnowledgeBase to determine inflections
+ * @author rodenhausen
+ */
 public class SomeInflector implements IInflector {
 
 	private Hashtable<String, String> singulars = new Hashtable<String, String>();
@@ -27,6 +31,9 @@ public class SomeInflector implements IInflector {
 	private Pattern p8 = Pattern.compile("(.*?)s$");
 	private IPOSKnowledgeBase posKnowledgeBase;
 
+	/**
+	 * @param posKnowledgeBase
+	 */
 	@Inject
 	public SomeInflector(IPOSKnowledgeBase posKnowledgeBase) {
 		this.posKnowledgeBase = posKnowledgeBase;

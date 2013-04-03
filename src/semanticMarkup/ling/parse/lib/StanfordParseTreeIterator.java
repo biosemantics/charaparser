@@ -5,10 +5,17 @@ import java.util.Iterator;
 import semanticMarkup.ling.parse.IParseTree;
 import edu.stanford.nlp.trees.Tree;
 
+/**
+ * StanfordParseTreeIterator allows to iterate over all the nodes in a StanfordParseTree in preorder
+ * @author rodenhausen
+ */
 public class StanfordParseTreeIterator implements Iterator<IParseTree> {
 
 	private Iterator<Tree> stanfordParseTreeIterator;
 	
+	/**
+	 * @param stanfordParseTreeIterator
+	 */
 	public StanfordParseTreeIterator(Iterator<Tree> stanfordParseTreeIterator) {
 		this.stanfordParseTreeIterator = stanfordParseTreeIterator;
 	}

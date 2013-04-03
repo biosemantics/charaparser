@@ -14,10 +14,17 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.trees.Tree;
 
+/**
+ * A StanfordParseTree poses an IParseTree and is the result of StanfordParserWrapper
+ * @author rodenhausen
+ */
 public class StanfordParseTree extends AbstractParseTree {
 	
 	private Tree stanfordParseTree;
 
+	/**
+	 * @param stanfordParseTree
+	 */
 	public StanfordParseTree(Tree stanfordParseTree) {
 		super();
 		this.stanfordParseTree = stanfordParseTree;

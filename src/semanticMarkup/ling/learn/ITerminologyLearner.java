@@ -8,17 +8,21 @@ import java.util.Set;
 import semanticMarkup.core.Treatment;
 
 /**
- * For a better explanation of what is to be returned see PerlTerminologyLearner in combination with the perl code
+ * ITerminologyLearner learns the terminology of a list of treatments
  * @author rodenhausen
  */
 public interface ITerminologyLearner {
 
 	/**
-	 * learns the terminology used in the treatments
+	 * Learns the terminology used in the treatments
 	 * @param treatments
 	 */
 	public void learn(List<Treatment> treatments);
 	
+	/**
+	 * Reads the results for the treatments, so that any other function returns the 'freshest' results
+	 * @param treatments
+	 */
 	public void readResults(List<Treatment> treatments);
 	
 	/**
@@ -80,12 +84,20 @@ public interface ITerminologyLearner {
 	 * @return <term, category set> map used in term_category table
 	 */
 	public Map<String, Set<String>> getTermCategories();
-
 	
+	/**
+	 * @return tag set used in sentence table
+	 */
 	public Set<String> getTags();
 	
+	/**
+	 * @return modifier set used in sentence table
+	 */
 	public Set<String> getModifiers();
 
+	/**
+	 * @return <category, term set> map used in term_category table
+	 */
 	public Map<String, Set<String>> getCategoryTerms();
 	
 }

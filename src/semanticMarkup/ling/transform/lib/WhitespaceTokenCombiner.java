@@ -5,6 +5,10 @@ import java.util.List;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.transform.ITokenCombiner;
 
+/**
+ * WhitespaceTokenCombiner combintes a list of tokens by whitespace
+ * @author rodenhausen
+ */
 public class WhitespaceTokenCombiner implements ITokenCombiner {
 
 	@Override
