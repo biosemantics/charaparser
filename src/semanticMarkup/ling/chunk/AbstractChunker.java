@@ -13,7 +13,7 @@ import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
-import semanticMarkup.ling.parse.ParseTreeFactory;
+import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
@@ -27,7 +27,7 @@ import com.google.inject.name.Named;
  */
 public abstract class AbstractChunker implements IChunker {
 
-	protected ParseTreeFactory parseTreeFactory;
+	protected IParseTreeFactory parseTreeFactory;
 	protected String prepositionWords;
 	protected String units;
 	protected HashMap<String, String> equalCharacters;
@@ -47,7 +47,7 @@ public abstract class AbstractChunker implements IChunker {
 	 * @param inflector
 	 */
 	@Inject
-	public AbstractChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
+	public AbstractChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector) {		
 		this.parseTreeFactory = parseTreeFactory;

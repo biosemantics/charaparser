@@ -84,7 +84,7 @@ import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.ling.parse.IParser;
-import semanticMarkup.ling.parse.ParseTreeFactory;
+import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.parse.lib.StanfordParseTreeFactory;
 import semanticMarkup.ling.parse.lib.StanfordParserWrapper;
 import semanticMarkup.ling.pos.IPOSTagger;
@@ -137,7 +137,7 @@ public class BasicConfig extends AbstractModule {
 		bind(IParser.class).to(StanfordParserWrapper.class).in(Singleton.class);
 		bind(IStanfordParserTokenTransformer.class).to(WordStanfordParserTokenTransformer.class).in(Singleton.class);
 		bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_modelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
-		bind(ParseTreeFactory.class).to(StanfordParseTreeFactory.class).in(Singleton.class);
+		bind(IParseTreeFactory.class).to(StanfordParseTreeFactory.class).in(Singleton.class);
 		
 		bind(ChunkerChain.class).annotatedWith(Names.named("ChunkerChain")).to(CharaparserChunkerChain.class).in(Singleton.class);
 		//MyChunkerChain, CharaparserChunkChain

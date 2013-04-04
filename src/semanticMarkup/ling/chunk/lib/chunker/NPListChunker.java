@@ -13,7 +13,7 @@ import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
-import semanticMarkup.ling.parse.ParseTreeFactory;
+import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.transform.IInflector;
 
@@ -37,7 +37,7 @@ public class NPListChunker extends AbstractChunker {
 	 * @param inflector
 	 */
 	@Inject
-	public NPListChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
+	public NPListChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary, terminologyLearner, inflector);

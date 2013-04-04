@@ -14,7 +14,7 @@ import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
-import semanticMarkup.ling.parse.ParseTreeFactory;
+import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.transform.IInflector;
 
@@ -41,7 +41,7 @@ public class OtherINsChunker extends AbstractChunker {
 	 * @param posKnowledgeBase
 	 */
 	@Inject
-	public OtherINsChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
+	public OtherINsChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
 			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase) {

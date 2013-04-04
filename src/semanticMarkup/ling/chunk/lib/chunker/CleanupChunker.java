@@ -15,7 +15,7 @@ import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
-import semanticMarkup.ling.parse.ParseTreeFactory;
+import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
 
@@ -62,7 +62,7 @@ public class CleanupChunker extends AbstractChunker {
 	 * @param characterKnowledgeBase
 	 */
 	@Inject
-	public CleanupChunker(ParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
+	public CleanupChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, @Named("SkipWords")String skipWords, 
 			@Named("MoreWords")String moreWords, @Named("NumberPattern") String numberPattern, IPOSKnowledgeBase posKnowledgeBase, 

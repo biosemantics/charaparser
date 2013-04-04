@@ -12,7 +12,7 @@ import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
-import semanticMarkup.ling.parse.ParseTreeFactory;
+import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 
 /**
@@ -32,7 +32,7 @@ public class AreaChunker extends AbstractChunker {
 	 * @param inflector
 	 */
 	@Inject
-	public AreaChunker(ParseTreeFactory parseTreeFactory,
+	public AreaChunker(IParseTreeFactory parseTreeFactory,
 			String prepositionWords, Set<String> stopWords, String units,
 			HashMap<String, String> equalCharacters, IGlossary glossary,
 			ITerminologyLearner terminologyLearner, IInflector inflector) {
