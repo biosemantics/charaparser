@@ -8,6 +8,19 @@ Project Page
 ----------
 More information is available on the <a href="http://etc-project.org/">project page</a>.
 
+Constribution
+----------
+If you want to contribute, the source is built using Maven and AspectJ.
+In Eclipse you can therefore use 
+* m2e - Maven Integration for Eclipse (e.g. for Juno version: http://download.eclipse.org/releases/juno)
+* AspectJ Development Tools (http://download.eclipse.org/tools/ajdt/42/update)
+* Maven Integration for AJDT (http://dist.springsource.org/release/AJDT/configurator/)
+
+and configure your Eclipse project to be a Maven and AspectJ Project.
+
+Sources are built for Java compiler compliance level 1.7.
+
+
 JavaDoc
 ----------
 The javadoc can be found  <a href="http://biosemantics.github.com/charaparser/javadoc">here</a>.
