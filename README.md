@@ -8,6 +8,7 @@ More information is available on the <a href="http://etc-project.org/">project p
 The javadoc can be found  <a href="http://biosemantics.github.com/charaparser/javadoc">here</a>.
 
 The following class diagrams given an overview on charaparsers architecture:
+
 <a href="http://biosemantics.github.com/charaparser/images/classDiagrams/01IRun.png">
 <img src="http://biosemantics.github.com/charaparser/images/classDiagrams/01IRun.png">
 </a>
