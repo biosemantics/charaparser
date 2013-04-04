@@ -461,7 +461,7 @@ public abstract class Normalizer implements INormalizer {
 	 * @param chunkedTokens 
 	 * @param characterTokensReversed 
 	 * 
-	 * @return
+	 * @return color-pattern-normalized String
 	 */
 	private String normalizeColorPatterns(ArrayList<String> chunkedTokens, ArrayList<String> characterTokensReversed) {
 		String list = "";
@@ -589,12 +589,9 @@ public abstract class Normalizer implements INormalizer {
 		
 	/**
 	 * shallowly to deeply pinnatifid => //shallowly~to~deeply pinnatifid
-	 * 
-	 * 
-	 * 
 	 * @param str
 	 * @param chunkedTokens 
-	 * @return
+	 * @return modifier-normalized String
 	 */
 	private String normalizemodifier(String str, ArrayList<String> chunkedTokens) {
 		String result = "";
@@ -959,7 +956,7 @@ public abstract class Normalizer implements INormalizer {
 	 * so the numbers will not be turned into 3.
 	 * @param str
 	 * @param countlists
-	 * @return
+	 * @return hidden-list-normalized String
 	 */
 	private String hideLists(String str,
 			ArrayList<String> lists) {
@@ -1080,7 +1077,7 @@ public abstract class Normalizer implements INormalizer {
 	 * lookback
 	 * @param saved
 	 * @param index
-	 * @return
+	 * @return looked up String
 	 */
 	private String lastSaved(ArrayList<String> saved, int index){
 		int inbrackets = 0;
@@ -1097,7 +1094,7 @@ public abstract class Normalizer implements INormalizer {
 	 * lookahead
 	 * @param saved
 	 * @param index
-	 * @return
+	 * @return looked up String
 	 */
 	private String nextSaved(ArrayList<String> saved, int index){
 		int inbrackets = 0;
@@ -1125,7 +1122,7 @@ public abstract class Normalizer implements INormalizer {
 	 * as wide as or/to wider than inner
 	 * as wide as inner
 	 * as wide as long
-	 * @return
+	 * @return as-as-normalized String
 	 */	
 	private String normalizeAsAs(String str) {
 		String result = "";
@@ -1144,7 +1141,7 @@ public abstract class Normalizer implements INormalizer {
 	/**
 	 * deal with sentences with parentheses
 	 * @param chunkedTokens 
-	 * @return
+	 * @return paraentheses-normalized String
 	 */
 	private String normalizeParentheses(String src, ArrayList<String> chunkedTokens){
 		ArrayList<String> characterTokensReversed = lookupCharacters(src, true, chunkedTokens); //treating -ly as -ly
@@ -1365,7 +1362,7 @@ public abstract class Normalizer implements INormalizer {
 	 * mark Inner as organ for sent such as inner red.
 	 * @param adjnouns
 	 * @param taggedsent
-	 * @return
+	 * @return inner-fixed String
 	 */
 	private String fixInner(String taggedsent, String tag, String adjnounslist, String source) {
 		//this.showOutputMessage("System is rewriting some sentences...");

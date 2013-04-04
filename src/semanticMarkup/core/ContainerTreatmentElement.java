@@ -88,7 +88,7 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 	}
 	
 	/**
-	 * @return
+	 * @return the children treatmentElements
 	 */
 	public List<TreatmentElement> getTreatmentElements() {
 		return this.children;
@@ -159,7 +159,7 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 	
 	/**
 	 * @param elementName
-	 * @return
+	 * @return if a treatmenetElement with elementName is contained in the children
 	 */
 	public boolean containsTreatmentElement(String elementName) {
 		return this.namedChildren.containsKey(elementName);
@@ -285,7 +285,6 @@ public class ContainerTreatmentElement extends TreatmentElement implements Itera
 	}
 
 	/**
-	 * @param elementName
 	 * @return the first treatmenetElements of elementName and type ContainerTreatmentElement
 	 */
 	@JsonIgnore

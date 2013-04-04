@@ -102,12 +102,6 @@ public class StateMatrix {
 		return states;
 	}
 	
-	/**
-	 * 
-	 * @param s1
-	 * @param s2
-	 * @param score: count = 1 for now
-	 */
 	public void addPair(State s1, State s2, int score, String source){
 		//which one(s) is a new state?
 		if(s1.isEmpty() || s2.isEmpty()){

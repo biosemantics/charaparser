@@ -4085,8 +4085,6 @@ public class MainForm {
 	
 	/**
 	 * simplified step 5
-	 * @param tabFolder
-	 * @return
 	 */
 	private int loadTagTable(TabFolder tabFolder) {
 		//tagTable.removeAll();
@@ -4636,8 +4634,6 @@ public class MainForm {
 	
 	/**
 	 * check and see if Terms contains only term1s
-	 * @param terms
-	 * @return
 	 */
 	private boolean unPairedTerms(ArrayList<TermsDataBean> terms) {
 		if(terms==null) return false;
@@ -4895,8 +4891,6 @@ public class MainForm {
 	
 	/***
 	 * This function creates the graph for the remaining character tab terms
-	 * @param terms
-	 * @return
 	 */
 	private ArrayList<ArrayList> createGraphML(ArrayList<TermsDataBean> terms) {
 		ArrayList<ArrayList> group = new ArrayList<ArrayList>();
@@ -4923,8 +4917,6 @@ public class MainForm {
 	
 	/***
 	 * This function will get all the removed terms and form the pool
-	 * @param groupNo
-	 * @return
 	 */
 	private ArrayList<TermsDataBean> getRemovedTerms(int groupNo) {
 		ArrayList <TermsDataBean> terms = new ArrayList<TermsDataBean>();
@@ -4946,9 +4938,6 @@ public class MainForm {
 	 * This is a helper internal function that gets the specific removed 
 	 * terms information from the character tab's removed terms'
 	 * Remove duplicate words, remove words already in glossary, and sort all words in one colume, i.e. term1
-	 * @param charGroupBean
-	 * @param groupNo
-	 * @return
 	 */
 	private ArrayList <TermsDataBean> getRemovedTermsInformation (CharacterGroupBean charGroupBean, int groupNo){
 		
@@ -5063,7 +5052,6 @@ public class MainForm {
 	/**
 	 * This function checks how 
 	 * many groups were saved
-	 * @return
 	 */  	
 	private int getNumberOfGroupsSaved(){
 		int returnValue = 0;
@@ -5080,9 +5068,7 @@ public class MainForm {
 	
 	/**
 	 * This function checks if there are terms remaining that are not yet grouped.
-	 * @return boolean
 	 */
-	
 	private boolean isTermsNotGrouped(){
 		boolean returnValue = false;
 		Set <String>

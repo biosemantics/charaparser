@@ -363,7 +363,6 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 	 * <references><reference>Behnke, H.-D., C. Chang, I. J. Eifert, and T. J. Mabry. 1974. Betalains and P-type sieve-tube plastids in Petiveria and Agdestis (Phytolaccaceae). Taxon 23: 541–542. </reference> <reference>...</reference>....</references>
 	 * @param treatment 
 	 * @param ref
-	 * @return
 	 */
 	private void furtherMarkupReference(ValueTreatmentElement referenceTreatmentElement, ContainerTreatmentElement referencesContainerElement,
 			Treatment treatment) {
@@ -599,7 +598,7 @@ public class Type1VolumeReader extends AbstractFileVolumeReader {
 	 * 
 	 * Cactaceae Jussieu subfam. O puntioideae Burnett
 	 * @param name
-	 * @return
+	 * @return nameinfo array
 	 */
 	private String[] getNameAuthority(String name) {
 		String[] nameinfo = new String[2];

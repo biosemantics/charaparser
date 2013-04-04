@@ -44,7 +44,7 @@ public class DistributionTreatmentRefiner implements ITreatmentRefiner {
 	/**
 	 * mexican (a@b) =>mexican(a), mexican(b)
 	 * @param area
-	 * @return
+	 * @return list of all values
 	 */
 	private ArrayList<String> allValues(String area) {
 		ArrayList<String> values = new ArrayList<String>();

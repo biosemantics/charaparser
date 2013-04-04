@@ -50,9 +50,7 @@ public class NPListChunker extends AbstractChunker {
 	 * 	NP b     => NP
 	 * 	CC and        NNS a, b, and c 
 	 * 	NP c
-	 * 	
-	 * @param doc
-	 * @return
+	 * 
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {

@@ -67,11 +67,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 	/**
 	 * size[{longer}] constraint[than (object)]";
 	 * shape[{lobed} constraint[than (proximal)]]
-	 * @param replaceFirst
-	 * @param subjects2
-	 * @return
 	 */
-	
 	private LinkedList<DescriptionTreatmentElement> processTHAN(Chunk content, LinkedList<DescriptionTreatmentElement> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();

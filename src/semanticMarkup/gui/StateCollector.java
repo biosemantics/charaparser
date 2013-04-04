@@ -289,9 +289,6 @@ public class StateCollector  {
 	
 	/**
 	 * watch out for "internodes glabrous or midstem ones slightly scabrous ."
-	 * @param sentid
-	 * @param sent
-	 * @return
 	 */
 	protected String doSimple(String source, String sent){
 		Pattern simplep = Pattern.compile(this.simple);
@@ -330,8 +327,6 @@ public class StateCollector  {
 	
 	/**
 	 * a state is of typical length if each section of the state separated by or/and/to contains no more than two words
-	 * @param state
-	 * @return
 	 */
 	protected boolean isValidStateString(String statestring) {
 		/*if(statestring.matches(".*?\\b("+this.organnames+")\\b.*")){
@@ -407,7 +402,6 @@ public class StateCollector  {
 	mark sentences one by one using tags
 	tag only the starting words of a sentence.
 	convert numbers to NUM
- * @param sentencetable
  */
 /*
 	protected void mark() {

@@ -217,8 +217,6 @@ public class SentenceOrganStateMarker {
 	 * between 1.0 and 2.0 => 10-20
 	 * from 1/3 to 1/2 
 	 * 10 to 20
-	 * @param text
-	 * @return
 	 */
 	private String formatNumericalRange(String text) {
 		String copy = text;
@@ -301,8 +299,6 @@ public class SentenceOrganStateMarker {
 	/**
 	 * turn reddish purple to reddish_c_purple
 	 * shades of yellow
-	 * @param replaceAll
-	 * @return
 	 */
 	private String stringColors(String text) {
 		if(this.colors==null || this.colors.length() == 0) return text;
@@ -405,9 +401,6 @@ public class SentenceOrganStateMarker {
 	
 	/**
 	 * mark Inner as organ for sent such as inner red.
-	 * @param adjnouns
-	 * @param taggedsent
-	 * @return
 	 */
 	private String fixInner(String source, String taggedsent, String tag) {
 		//this.showOutputMessage("System is rewriting some sentences...");
@@ -513,9 +506,6 @@ public class SentenceOrganStateMarker {
 
 	/**
 	 * retag {caline} 10 to <caline> 10 when an adjnoun does not follow an organ or proceeds  an organ.
-	 * @param adjnouns
-	 * @param taggedsent
-	 * @return
 	 */
 	@SuppressWarnings("unused")
 	private String fixAdjNouns(ArrayList adjnouns, String adjnoun, String taggedsent) {

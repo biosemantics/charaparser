@@ -53,7 +53,6 @@ public class WhereChunker extends AbstractChunker {
               (VP (TO to)
                 (VP (VB be)
                   (ADJP (JJ elongate))))))))       
-	 * @param parseTree 
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {

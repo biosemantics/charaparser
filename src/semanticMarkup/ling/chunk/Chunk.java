@@ -166,9 +166,8 @@ public class Chunk implements Cloneable {
 	}
 
 	/**
-	 * returns first chunk of this chunkType in depth first search manner
 	 * @param chunkType
-	 * @return
+	 * @return first chunk of this chunkType in depth first search manner
 	 */
 	public Chunk getChunkDFS(ChunkType chunkType) {
 		if(this.getChunkType().equals(chunkType)) 

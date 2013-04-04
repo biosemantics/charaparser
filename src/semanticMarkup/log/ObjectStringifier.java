@@ -35,7 +35,7 @@ public class ObjectStringifier {
 	 * synchronization necessary, even though ObjectMapper and ObjectWriter JavaDoc state that they are thread-safe
 	 * It might not be used in the right way then in this case. If removed and more threads print JSonMappingException is thrown for DescriptionTreatmentElement['name']
 	 * @param object
-	 * @return
+	 * @return stringified object
 	 */
 	public synchronized String stringify(Object object) {
 		try {

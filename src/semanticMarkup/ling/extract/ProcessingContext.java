@@ -138,7 +138,7 @@ public class ProcessingContext {
 	}
 
 	/**
-	 * @param descriptionType
+	 * @param descriptionTreatmentElementType
 	 * @return the last DescriptionTreatmentElement of descriptionTreatmentElementType of the result
 	 */
 	public DescriptionTreatmentElement getLastResult(DescriptionTreatmentElementType descriptionTreatmentElementType) {

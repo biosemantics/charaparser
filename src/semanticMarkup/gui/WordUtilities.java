@@ -51,9 +51,6 @@ public class WordUtilities {
 	 * 1. its pos is "verb" only, or
 	 * 2. "does not" word
 	 * 3. has "verb" pos and seen patterns (word "a/the", or word prep <organ>) and not seen pattern (word \w+ly$). 
-	 * @param word
-	 * @param conn
-	 * @return
 	 */
 	public boolean mustBeVerb(String word, Connection conn, String prefix) {
 		if(word.length()==0) return false;

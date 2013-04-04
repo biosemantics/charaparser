@@ -1146,13 +1146,6 @@ public class MainFormDbAccessor {
 
 	}
 
-	/**
-	 * 
-	 * @param table
-	 * @param typo
-	 * @param correction
-	 * @param exactmatch
-	 */
 	public void correctTypoInTableWordMatch(String table, String column,
 			String typo, String correction, String PK) {
 		try {
@@ -1197,13 +1190,7 @@ public class MainFormDbAccessor {
 		}
 	}
 
-	/**
-	 * 
-	 * @param table
-	 * @param typo
-	 * @param correction
-	 * @param exactmatch
-	 */
+
 	public void correctTypoInTableExactMatch(String table, String column,
 			String typo, String correction) {
 		try {

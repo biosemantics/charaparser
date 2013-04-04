@@ -333,9 +333,9 @@ public class DehyphenTreatmentTransformer implements ITreatmentTransformer {
 	}
 
 	/**
-	 * the distance between a 1 in upper matrix to the diagonal line
-	 * @param is
-	 * @return
+	 * @param arow
+	 * @param rownumber
+	 * @return the distance between a 1 in upper matrix to the diagonal line
 	 */
 	private int getDistance(int[] arow, int rownumber) {
 		for(int i = arow.length-1; i>=0; i--){

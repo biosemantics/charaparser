@@ -92,11 +92,7 @@ public class VPRecoverChunker extends AbstractChunker {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param i :index of the verb
-	 * @return
-	 */
+
 	private boolean connectsTwoOrgans(List<AbstractParseTree> terminals, int i, ChunkCollector chunkCollector) {
 		boolean organ1 = false;
 		boolean organ2 = false;

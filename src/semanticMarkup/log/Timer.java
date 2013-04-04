@@ -21,7 +21,7 @@ public class Timer {
 	}
 	
 	/**
-	 * @returns the time
+	 * @return the time
 	 */
 	public static long getParseTime() {
 		return times.get("parse");

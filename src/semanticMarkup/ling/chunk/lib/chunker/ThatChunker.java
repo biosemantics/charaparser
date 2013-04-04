@@ -50,7 +50,6 @@ public class ThatChunker extends AbstractChunker {
               (S
                 (VP (VBP resemble)
                   (NP (NN tacks)))))
-	 * @param parseTree 
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {

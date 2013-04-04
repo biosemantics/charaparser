@@ -36,9 +36,10 @@ public class UploadTerms2OTO{
 	private static String databaseUser;
 
 	private static String databaseName;
-    /**
+   
+	/**
      * 
-     * @param dataprefix: must the the dataprefix set in the configuration tab of CharaParser
+     * dataprefix: must the the dataprefix set in the configuration tab of CharaParser
      */
 	public UploadTerms2OTO(@Named("databaseName") String databaseName, @Named("databaseUser") String databaseUser, 
 			@Named("databasePassword") String databasePassword, @Named("databasePrefix") String databasePrefix) {

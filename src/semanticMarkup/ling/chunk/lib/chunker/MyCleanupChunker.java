@@ -48,13 +48,16 @@ public class MyCleanupChunker extends AbstractChunker {
 	}
 
 	/**
-	 * returns boolean array which specifies whether a character can be translated to a constraint based on the
+
+	 */
+	/**
+	 * 
+	 * @param terminals
+	 * @param chunkCollector
+	 * @return boolean array which specifies whether a character can be translated to a constraint based on the
 	 * following factors:
 	 * character directly preceeds a (constraint) organ chain AND is the character itself is not preceeded by a modifier
 	 * this definition extends recursively for all possible character predecessors of such a chain
-	 * @param terminals
-	 * @param chunkCollector
-	 * @return
 	 */
 	private boolean[] getTranslateCharacterToConstraintArray(List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
 

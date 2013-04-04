@@ -224,8 +224,6 @@ public class VolumeMarkupDbAccessor {
 
 	/**
 	 * load descriptor subtab in step 4 (perl markup)
-	 * @return
-	 * @throws SQLException
 	 */
 	public ArrayList<String> descriptorTerms4Curation() throws SQLException {
 		
@@ -336,8 +334,6 @@ public class VolumeMarkupDbAccessor {
 
 /**
  * called also by "load last project"	
- * @return
- * @throws SQLException
  */
 public ArrayList<String> getSavedDescriptorWords() throws SQLException {
 		

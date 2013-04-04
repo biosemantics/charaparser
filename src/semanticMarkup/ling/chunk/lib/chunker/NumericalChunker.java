@@ -69,7 +69,7 @@ public class NumericalChunker extends AbstractChunker {
 
 	/**
 	 * TODO: deal with LRB-/-LRB
-	 * @return e.g. 3 cm, what about "3 cm to 10 dm"?
+	 * e.g. 3 cm, what about "3 cm to 10 dm"?
 	 * also 3 times (... longer than, as wide as ...)
 	 */
 	@Override

@@ -54,9 +54,7 @@ public class GraphMLOutputter {
 	}
 	/**
 	 * output groups as a GraphML document, with nodes and links
-	 * @param sets
 	 */
-
 	@SuppressWarnings("unchecked")
 	public void output(ArrayList<ArrayList> groups, int initialgroupnumber){		
 		int gcount = initialgroupnumber;

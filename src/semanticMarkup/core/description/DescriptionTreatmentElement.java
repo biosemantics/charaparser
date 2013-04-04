@@ -65,7 +65,7 @@ public class DescriptionTreatmentElement extends ContainerTreatmentElement {
 	}
 	
 	/**
-	 * @param key
+	 * @param name
 	 * @return the attribute value of name
 	 */
 	public String getAttribute(String name) {
@@ -95,9 +95,9 @@ public class DescriptionTreatmentElement extends ContainerTreatmentElement {
 	}
 
 	/**
-	 * @param set the DescriptionTreatmentElementType
+	 * @param descriptionTreatmentElementType to set
 	 */
-	public void setDescriptionType(DescriptionTreatmentElementType descriptionType) {
+	public void setDescriptionType(DescriptionTreatmentElementType descriptionTreatmentElementType) {
 		this.descriptionType = descriptionType;
 	}
 	

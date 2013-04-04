@@ -69,9 +69,6 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	/**
 	 * 
 	 * m[usually] v[comprising] o[a {surrounding} (involucre)]
-	 * @param content
-	 * @param parents
-	 * @return
 	 */
 	private LinkedList<DescriptionTreatmentElement> processVP(Chunk content, LinkedList<DescriptionTreatmentElement> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {

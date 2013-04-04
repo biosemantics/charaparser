@@ -24,7 +24,7 @@ public interface IParseTree extends Iterable<IParseTree> {
 	public List<AbstractParseTree> getTerminals();
 	
 	/**
-	 * @Param text
+	 * @param text
 	 * @return the terminal IParseTrees of the given text
 	 */
 	public List<IParseTree> getTerminalsOfText(String text);

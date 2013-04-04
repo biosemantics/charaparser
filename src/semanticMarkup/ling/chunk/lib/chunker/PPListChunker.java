@@ -47,9 +47,6 @@ public class PPListChunker extends AbstractChunker {
 	 * 	IN on
 	 *  CC or    => PP
 	 * 	IN above      IN on or above
-	 * 	
-	 * @param doc
-	 * @return
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {

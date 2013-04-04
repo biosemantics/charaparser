@@ -56,7 +56,6 @@ public class WhenChunker extends AbstractChunker {
             (WHADVP (WHENCLS when desiccated))
             ))))
         (. .))) 
-	 * @param parseTree 
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
@@ -90,8 +89,6 @@ public class WhenChunker extends AbstractChunker {
 	
 	/**
 	 * following text order, collect text for new element "when" until a , or . is reached
-	 * @param e
-	 * @return
 	 */
 	private List<AbstractParseTree> collectTerminals(IParseTree startTerminal, ChunkCollector chunkCollector) {
 		List<AbstractParseTree> terminals = new ArrayList<AbstractParseTree>();

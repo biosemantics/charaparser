@@ -77,9 +77,8 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
        1–3 times {pinnately} {lobed}
        1–2 times shape[{shape~list~pinnately~lobed~or~divided}]
        4 times longer than wide
-	 * @param content: 0.5–0.6+ times a[type[bodies]]
-	 * @param subjects2
-	 * @return
+	 	content: 0.5–0.6+ times a[type[bodies]]
+	 	subjects2
 	 */
 	private LinkedList<DescriptionTreatmentElement> processComparativeValue(Chunk content,
 			List<DescriptionTreatmentElement> parents, ProcessingContext processingContext, 

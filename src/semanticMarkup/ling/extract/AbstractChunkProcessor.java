@@ -550,12 +550,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return twoParts;
 	}
 	
-	/**
-	 * o[.........{m} {m} (o1) and {m} (o2)]
-	 * o[each {bisexual} , architecture[{architecture-list-functionally-staminate-punct-or-pistillate}] (floret)]] ; 
-	 * @param object
-	 * @return
-	 */
+
 	/*protected Stack<DescriptionTreatmentElement> extractStructuresFromObject(Chunk object, ProcessingContext processingContext) {
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 		
@@ -583,6 +578,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		}
 		return structures;
 	}*/
+	/**
+	 * o[.........{m} {m} (o1) and {m} (o2)]
+	 * o[each {bisexual} , architecture[{architecture-list-functionally-staminate-punct-or-pistillate}] (floret)]] ; 
+	 * @param object
+	 * @return the extracted structures
+	 */
 	protected LinkedList<DescriptionTreatmentElement> extractStructuresFromObject(Chunk object, ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
@@ -813,7 +814,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 *       {pubescence-list-sometimes-bristly-or-hairy}
 	 * @param content: pubescence[m[not] {pubescence-list-sometimes-bristly-or-hairy}]
 	 * @param parents
-	 * @return
+	 * @return the characters
 	 */
 	protected LinkedList<DescriptionTreatmentElement> processCharacterList(Chunk content,
 			LinkedList<DescriptionTreatmentElement> parents, ProcessingContextState processingContextState, ProcessingContext processingContext) {
@@ -2020,7 +2021,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	/**
 	 * 
 	 * @param ckstring:r[p[in] o[outline]]
-	 * @return
+	 * @return if character has sufficiently been dealt with
 	 */
 	protected boolean characterPrep(Chunk chunk, ProcessingContextState processingContextState) {
 		boolean done = false;

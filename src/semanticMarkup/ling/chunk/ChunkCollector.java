@@ -211,7 +211,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 	/**
 	 * @param parseTrees
 	 * @param chunkType
-	 * @returns true if any of the parseTrees is part of chunkType
+	 * @return true if any of the parseTrees is part of chunkType
 	 */
 	public boolean containsPartOfChunkType(List<AbstractParseTree> parseTrees, ChunkType chunkType) {
 		for(AbstractParseTree parseTree : parseTrees) {
