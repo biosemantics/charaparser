@@ -6,4 +6,4 @@ in XML format.
 
 More information is available on the <a href="http://etc-project.org/">project page</a>.
 
-The javadoc can be found  <a href="http://biosemantics.github.com/charaparser">here</a>.
+The javadoc can be found  <a href="http://biosemantics.github.com/charaparser/javadoc">here</a>.
