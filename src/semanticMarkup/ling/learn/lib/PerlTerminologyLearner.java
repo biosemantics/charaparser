@@ -346,7 +346,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						listId++;
 					}
 					
-					String tag = resultSet.getString("tag").replaceAll("\\W", "");
+					String tag = resultSet.getString("tag");
+					if(tag == null)
+						tag = "";
+					tag = tag.replaceAll("\\W", "");
 					Treatment treatment = treatments.get(listId);
 					
 					if(!tags.containsKey(treatment)) 
@@ -374,7 +377,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			ResultSet rs = statement.executeQuery("select source, modifier, tag, sentence, originalsent from " + this.databasePrefix + "_sentence");
 			// order by sentid desc");
 			
-			int listId = -1;
+			//int listId = -1;
 			String previousSourceId = "-1";
 			
 			//leave ditto as it is
@@ -390,7 +393,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						String sourceId = sourceIds[0]; //String.valueOf(Integer.valueOf(sourceIds[0])-1);
 						if(!sourceId.equals(previousSourceId)) {
 							previousSourceId = sourceId;
-							listId++;
+							//listId++; // in the db 1 is followed by 10 by 11 and not 2
 						}
 						
 						String osent = rs.getString("originalsent");
@@ -400,7 +403,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
 						text = rs.getString("modifier")+"##"+tag+"##"+text;
 						
-						Treatment treatment = treatments.get(listId);
+						Treatment treatment = treatments.get(Integer.valueOf(sourceId));
 						if(!sentences.containsKey(treatment))
 							sentences.put(treatment, new LinkedHashMap<String, String>());
 						sentences.get(treatment).put(source, text);
