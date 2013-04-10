@@ -23,7 +23,7 @@ import semanticMarkup.io.input.AbstractFileVolumeReader;
 public class XMLVolumeReader extends AbstractFileVolumeReader {
 
 	/**
-	 * @param filepath
+	 * @param sourceDirectory
 	 */
 	@Inject
 	public XMLVolumeReader(@Named("XMLVolumeReader_SourceDirectory")String sourceDirectory) {

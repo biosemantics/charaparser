@@ -17,7 +17,7 @@ import com.google.inject.name.Named;
 public class ToStringVolumeWriter extends AbstractFileVolumeWriter {
 
 	/**
-	 * @param filePath
+	 * @param outDirectory
 	 */
 	@Inject
 	public ToStringVolumeWriter(@Named("Run_OutDirectory") String outDirectory) {

@@ -24,7 +24,7 @@ public class DescriptionTreatmentElement extends ContainerTreatmentElement {
 	public DescriptionTreatmentElement() { }
 	
 	/**
-	 * @param descriptionType
+	 * @param descriptionTreatmentElementType
 	 */
 	public DescriptionTreatmentElement(DescriptionTreatmentElementType descriptionTreatmentElementType) {
 		super(descriptionTreatmentElementType.toString());

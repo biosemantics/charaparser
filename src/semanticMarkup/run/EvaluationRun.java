@@ -29,7 +29,7 @@ public class EvaluationRun extends AbstractRun {
 	private IVolumeReader goldStandardReader;
 
 	/**
-	 * @param outFile
+	 * @param outDirectory
 	 * @param guiceModuleFile
 	 * @param creator
 	 * @param evaluator

@@ -17,7 +17,7 @@ import semanticMarkup.io.output.AbstractFileVolumeWriter;
 public class SerializedVolumeWriter extends AbstractFileVolumeWriter {
 
 	/**
-	 * @param filePath
+	 * @param outDirectory
 	 */
 	@Inject
 	public SerializedVolumeWriter(@Named("Run_OutDirectory")String outDirectory) {

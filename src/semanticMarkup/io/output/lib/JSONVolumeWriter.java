@@ -19,7 +19,7 @@ import com.google.inject.name.Named;
 public class JSONVolumeWriter extends AbstractFileVolumeWriter {
 
 	/**
-	 * @param filePath
+	 * @param outDirectory
 	 */
 	@Inject
 	public JSONVolumeWriter(@Named("Run_OutDirectory") String outDirectory) {

@@ -35,7 +35,7 @@ import com.google.inject.name.Named;
 public class OutputVolumeReader extends AbstractFileVolumeReader {
 	
 	/**
-	 * @param filepath
+	 * @param sourceDirectory
 	 */
 	@Inject
 	public OutputVolumeReader(@Named("OutputVolumeReader_SourceDirectory")String sourceDirectory) {
