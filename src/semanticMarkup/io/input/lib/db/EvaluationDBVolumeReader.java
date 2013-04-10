@@ -21,7 +21,7 @@ import com.google.inject.name.Named;
  * EvaluationDBVolumeReader reads a list of 'dummy' treatments given treatment informations (from previous charaparser version 
  * generated from perl part) in a database 
  * and initializes ParentTagProvider
- * This class is likely only used in transition and testing phase between the two charaparser version
+ * This EvaluationDBVolumeReader is likely only used in transition and testing phase between the two charaparser version
  * @author rodenhausen
  */
 public class EvaluationDBVolumeReader implements IVolumeReader {

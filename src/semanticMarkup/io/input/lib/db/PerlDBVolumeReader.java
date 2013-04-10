@@ -20,7 +20,7 @@ import com.google.inject.name.Named;
 /**
  * PerlDBVolumeReader reads a list of 'dummy' treatments given treatment informations (from previous charaparser version 
  * generated from perl part) in a database 
- * This class is likely only used in transition and testing phase between the two charaparser version
+ * This PerlDBVolumeReader is likely only used in transition and testing phase between the two charaparser version
  * @author rodenhausen
  *
  */

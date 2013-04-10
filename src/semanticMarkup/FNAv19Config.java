@@ -20,9 +20,9 @@ public class FNAv19Config extends RunConfig {
 	public void configure() {
 		super.configure();
 		
-		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance("src//semanticMarkup//FNAv19Config.java");
+		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance("src" + File.separator + "semanticMarkup" + File.separator + "FNAv19Config.java");
 
-		String evaluationDataPath = "evaluationData//FNAV19_AnsKey_CharaParser_Evaluation";
+		String evaluationDataPath = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(evaluationDataPath);
 
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(evaluationDataPath));
@@ -30,7 +30,7 @@ public class FNAv19Config extends RunConfig {
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance("type2"); 
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance("fnaglossaryfixed");
 
-		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance("resources//fnaglossaryfixed.csv"); 
+		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance("resources" + File.separator + "fnaglossaryfixed.csv"); 
 		
 		bind(INormalizer.class).to(FNAv19Normalizer.class); //FNAv19Normalizer, TreatisehNormalizer
 	}

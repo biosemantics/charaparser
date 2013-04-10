@@ -22,15 +22,15 @@ public class JSONVolumeWriter extends AbstractFileVolumeWriter {
 	 * @param filePath
 	 */
 	@Inject
-	public JSONVolumeWriter(@Named("Run_OutFile") String filePath) {
-		super(filePath);
+	public JSONVolumeWriter(@Named("Run_OutDirectory") String outDirectory) {
+		super(outDirectory);
 	}
 
 	@Override
 	public void write(List<Treatment> treatments) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 	    ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-	    writer.writeValue(new File(filePath + ".json"), treatments);
+	    writer.writeValue(new File(outDirectory + File.separator + "treatments.json"), treatments);
 	}
 
 }

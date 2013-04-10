@@ -1,5 +1,7 @@
 package semanticMarkup;
 
+import java.io.File;
+
 import semanticMarkup.core.transformation.TreatmentTransformerChain;
 import semanticMarkup.core.transformation.lib.CharaparserTreatmentTransformerChain;
 import semanticMarkup.core.transformation.lib.MarkupDescriptionTreatmentTransformer;
@@ -8,10 +10,13 @@ import semanticMarkup.eval.AdvancedPrecisionRecallEvaluator;
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
-import semanticMarkup.io.input.lib.eval.StandardVolumeReader;
-import semanticMarkup.io.input.lib.type2.Type2VolumeReader;
+import semanticMarkup.io.input.lib.word.AbstractWordVolumeReader;
+import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
+import semanticMarkup.io.input.lib.word.XMLWordVolumeReader;
+import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
+import semanticMarkup.io.input.lib.xmlOutput.OutputVolumeReader;
 import semanticMarkup.io.output.IVolumeWriter;
-import semanticMarkup.io.output.lib.xml2.XML2VolumeWriter;
+import semanticMarkup.io.output.lib.xml.XMLVolumeWriter;
 import semanticMarkup.markup.AfterPerlBlackBox;
 import semanticMarkup.markup.IMarkupCreator;
 import semanticMarkup.run.IRun;
@@ -32,29 +37,32 @@ public class RunConfig extends BasicConfig {
 		
 		bind(IRun.class).to(MarkupRun.class);
 		//MarkupRun, EvaluationRun, MarkupEvaluationRun
-		bind(String.class).annotatedWith(Names.named("Run_OutFile")).toInstance("outfile");
+		
+		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance("." + File.separator + "out" + File.separator);
 		
 		bind(IEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(AdvancedPrecisionRecallEvaluator.class);
 		//SimplePrecisionRecallEvaluator, AdvancedPrecisionRecallEvaluator
-		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_GoldStandardReader")).to(StandardVolumeReader.class);
+		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_GoldStandardReader")).to(XMLVolumeReader.class);
 		//OutputVolumeReader, StandardVolumeReader
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_CreatedVolumeReader")).to(EvaluationDBVolumeReader.class);
 		//OutputVolumeReader, EvaluationDBVolumeReader, PerlDBVolumeReader
 		
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(AfterPerlBlackBox.class);
 		//CharaParser.class //AfterPerlBlackBox
-		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(Type2VolumeReader.class);
-		//Type1VolumeReader, Type2VolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader
-		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_Sourcefile")).toInstance("document_test.xml");
-		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_StyleStartPattern")).toInstance(".*?(Heading|Name).*");
-		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_StyleNamePattern")).toInstance(".*?(Syn|Name).*");
-		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_StyleKeyPattern")).toInstance(".*?-Key.*");
-		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_Tribegennamestyle")).toInstance("caps");
-		bind(String.class).annotatedWith(Names.named("Type1VolumeReader_StyleMappingFile")).toInstance("" +
-				"resources//stylemapping.properties");
-		bind(String.class).annotatedWith(Names.named("Type2VolumeReader_Sourcefile")).toInstance("evaluationData\\perlTest\\source\\");
+		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(DocWordVolumeReader.class);
+		//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader
+		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Sourcefile")).toInstance("evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
+				"source" + File.separator + "FNA19 Excerpt-source.docx");//"document.xml");//"FNA19 Excerpt-source.docx");
+		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleStartPattern")).toInstance(".*?(Heading|Name).*");
+		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleNamePattern")).toInstance(".*?(Syn|Name).*");
+		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleKeyPattern")).toInstance(".*?-Key.*");
+		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Tribegennamestyle")).toInstance("caps");
+		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleMappingFile")).toInstance("" +
+				"resources" + File.separator + "stylemapping.properties");
+		bind(String.class).annotatedWith(Names.named("XMLVolumeReader_SourceDirectory")).toInstance("evaluationData" + File.separator + "perlTest" + File.separator + "source" +
+				File.separator);
 		
-		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_Sourcefile")).toInstance("outfile");
+		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_SourceDirectory")).toInstance("." + File.separator + "out" + File.separator);
 		
 		bind(TreatmentTransformerChain.class).to(CharaparserTreatmentTransformerChain.class);
 		bind(MarkupDescriptionTreatmentTransformer.class).to(OldPerlTreatmentTransformer.class);
@@ -68,7 +76,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("databaseUser")).toInstance("termsuser");
 		bind(String.class).annotatedWith(Names.named("databasePassword")).toInstance("termspassword");
 		
-		bind(IVolumeWriter.class).annotatedWith(Names.named("MarkupCreator_VolumeWriter")).to(XML2VolumeWriter.class); 
+		bind(IVolumeWriter.class).annotatedWith(Names.named("MarkupCreator_VolumeWriter")).to(XMLVolumeWriter.class); 
 		//ToStringVolumeWriter, JSONVolumeWriter, XMLVolumeWriter XML2VolumeWriter
 	}
 }

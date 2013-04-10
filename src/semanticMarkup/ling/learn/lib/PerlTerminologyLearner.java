@@ -119,7 +119,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		File directory = new File(temporaryPath);
 		
 		try {
-			File inDirectory = new File(directory.getAbsolutePath() + "//in//");
+			File inDirectory = new File(directory.getAbsolutePath() + File.separator + "perlInput");
+			inDirectory.mkdirs();
 			
 			//create the files
 			writeTreatmentsToFiles(treatments, inDirectory);
@@ -575,7 +576,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private void writeTreatmentsToFiles(List<Treatment> treatments, File file) throws IOException {
 		int i = 0;
 		for(Treatment treatment : treatments) {
-			File treatmentFile = new File(file.getAbsolutePath() + "//" + i++ + ".txt");
+			File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 			log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
 			treatmentFile.createNewFile();
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(treatmentFile));

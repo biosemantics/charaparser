@@ -1,6 +1,7 @@
 package semanticMarkup.run;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.Calendar;
 import java.util.List;
@@ -22,7 +23,7 @@ import com.google.inject.name.Named;
  */
 public class EvaluationRun extends AbstractRun {
 
-	private String outFile;
+	private String outDirectory;
 	private IEvaluator evaluator;
 	private IVolumeReader createdVolumeReader;
 	private IVolumeReader goldStandardReader;
@@ -36,14 +37,14 @@ public class EvaluationRun extends AbstractRun {
 	 * @param goldStandardReader
 	 */
 	@Inject
-	public EvaluationRun(@Named("Run_OutFile")String outFile,
+	public EvaluationRun(@Named("Run_OutDirectory")String outDirectory,
 			@Named("GuiceModuleFile")String guiceModuleFile, 
 			@Named("MarkupCreator") IMarkupCreator creator, 
 			@Named("EvaluationRun_Evaluator")IEvaluator evaluator, 
 			@Named("EvaluationRun_CreatedVolumeReader")IVolumeReader createdVolumeReader,
 			@Named("EvaluationRun_GoldStandardReader")IVolumeReader goldStandardReader) {
 		super(guiceModuleFile);
-		this.outFile = outFile;
+		this.outDirectory = outDirectory;
 		this.createdVolumeReader = createdVolumeReader;
 		this.goldStandardReader = goldStandardReader;
 		this.evaluator = evaluator;
@@ -51,7 +52,8 @@ public class EvaluationRun extends AbstractRun {
 	
 	@Override
 	public void run() throws Exception {
-		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(outFile + ".config.txt"));
+		new File(outDirectory + File.separator + "config.txt").getParentFile().mkdirs();
+		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(outDirectory + File.separator + "config.txt"));
 		appendConfigFile(bwSetup);
 		
 		long startTime = Calendar.getInstance().getTimeInMillis();

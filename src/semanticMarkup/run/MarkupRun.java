@@ -1,6 +1,7 @@
 package semanticMarkup.run;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.Calendar;
 
@@ -16,22 +17,23 @@ import com.google.inject.name.Named;
  */
 public class MarkupRun extends AbstractRun {
 	
-	private String outFile;
+	private String outDirectory;
 	private String guiceModuleFile;
 	private IMarkupCreator creator;
 
 	@Inject
-	public MarkupRun(@Named("Run_OutFile")String outFile,
+	public MarkupRun(@Named("Run_OutDirectory")String outDirectory,
 			@Named("GuiceModuleFile")String guiceModuleFile, 
 			@Named("MarkupCreator") IMarkupCreator creator) {
 		super(guiceModuleFile);
-		this.outFile = outFile;
+		this.outDirectory = outDirectory;
 		this.creator = creator;
 	}
 	
 	@Override
 	public void run() throws Exception {
-		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(outFile + ".config.txt"));
+		new File(outDirectory + File.separator + "config.txt").getParentFile().mkdirs();
+		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(outDirectory + File.separator + "config.txt"));
 		appendConfigFile(bwSetup);
 		
 		long startTime = Calendar.getInstance().getTimeInMillis();

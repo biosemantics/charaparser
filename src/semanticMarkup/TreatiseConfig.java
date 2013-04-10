@@ -20,9 +20,9 @@ public class TreatiseConfig extends RunConfig {
 	public void configure() {
 		super.configure();
 		
-		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance("src//semanticMarkup//TreatiseConfig.java");
+		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance("src" + File.separator + "semanticMarkup" + File.separator + "TreatiseConfig.java");
 
-		String evaluationDataPath = "evaluationData//TIP_AnsKey_CharaParser_Evaluation";
+		String evaluationDataPath = "evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation";
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(evaluationDataPath);
 
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(evaluationDataPath));
@@ -30,7 +30,7 @@ public class TreatiseConfig extends RunConfig {
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance("treatiseh"); 
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance("treatisehglossaryfixed");
 
-		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance("resources//treatisehglossaryfixed.csv"); 
+		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance("resources" + File.separator + "treatisehglossaryfixed.csv"); 
 		
 		bind(INormalizer.class).to(TreatisehNormalizer.class); //FNAv19Normalizer, TreatisehNormalizer
 	}

@@ -20,13 +20,13 @@ public class ToStringVolumeWriter extends AbstractFileVolumeWriter {
 	 * @param filePath
 	 */
 	@Inject
-	public ToStringVolumeWriter(@Named("Run_OutFile") String filePath) {
-		super(filePath);
+	public ToStringVolumeWriter(@Named("Run_OutDirectory") String outDirectory) {
+		super(outDirectory);
 	}
 
 	@Override
 	public void write(List<Treatment> treatments) throws Exception {
-		FileWriter fileWriter = new FileWriter(new File(filePath + ".string"));
+		FileWriter fileWriter = new FileWriter(new File(outDirectory + File.separator + "treatments.string"));
 		fileWriter.write(treatments.toString());
 		fileWriter.close();
 	}

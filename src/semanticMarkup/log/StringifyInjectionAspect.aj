@@ -48,10 +48,8 @@ public aspect StringifyInjectionAspect {
 	declare parents : semanticMarkup.io.input.extract..* implements IPrintable;
 	declare parents : semanticMarkup.io.input.lib.db.* implements IPrintable;
 	declare parents : semanticMarkup.io.input.lib.serial.* implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.type1 implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.type2 implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.type3 implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.type4 implements IPrintable;
+	declare parents : semanticMarkup.io.input.lib.xml implements IPrintable;
+	declare parents : semanticMarkup.io.input.lib.word implements IPrintable;
 	declare parents : semanticMarkup.io.output.* implements IPrintable;
 	declare parents : semanticMarkup.io.output.lib.* implements IPrintable;
 	declare parents : semanticMarkup.io.output.lib.serial.* implements IPrintable;

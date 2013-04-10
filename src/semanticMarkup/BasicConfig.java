@@ -1,5 +1,6 @@
 package semanticMarkup;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -119,8 +120,8 @@ public class BasicConfig extends AbstractModule {
 		
 		bind(IGlossary.class).to(CSVGlossary.class).in(Singleton.class);
 		bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance("resources//brown.csv");
-		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources//wordNet3.1//dict//");
+		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance("resources" + File.separator + "brown.csv");
+		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
 		//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 		bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 		bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="treatment">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" ref="number"/>
+         
+          <xs:choice maxOccurs="unbounded">
+            <xs:element ref="TaxonIdentification"/>
+            <xs:element ref="etymology"/>
+            <xs:element ref="other_info"/>
+            <xs:element ref="conserved_name"/>
+            <xs:element ref="common_name"/>
+            <xs:element ref="invalid_name"/>
+            <xs:element ref="past_name"/>
+            <xs:element ref="author"/>
+            <xs:element ref="conservation"/>
+            <xs:element ref="weedy"/>
+            <xs:element ref="endemic"/>
+            <xs:element ref="illustrated"/>
+            <xs:element ref="description"/> 
+            <xs:element ref="phenology"/>
+            <xs:element ref="phenology_fruiting"/> 
+            <xs:element ref="habitat"/>
+            <xs:element ref="elevation"/>
+            <xs:element ref="number_of_infrataxa"/>
+            <xs:element ref="introduced"/>
+            <xs:element ref="ca_distribution"/>
+            <xs:element ref="us_distribution"/>
+            <xs:element ref="global_distribution"/>
+            <xs:element ref="discussion"/>
+          </xs:choice>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="references"/>
+            <xs:element ref="key"/>
+          </xs:choice>
+          
+        
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="number" type="xs:NMTOKEN"/>
+  <xs:element name="TaxonIdentification">
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="family_name"/>
+        <xs:element ref="family_authority"/>
+        <xs:element ref="subfamily_name"/>
+        <xs:element ref="subfamily_authority"/>
+        <xs:element ref="tribe_name"/>
+        <xs:element ref="tribe_authority"/>
+        <xs:element ref="subtribe_name"/>
+        <xs:element ref="subtribe_authority"/>
+        <xs:element ref="genus_name"/>
+        <xs:element ref="genus_authority"/>
+        <xs:element ref="subgenus_name"/>
+        <xs:element ref="subgenus_authority"/>
+        <xs:element ref="section_name"/>
+        <xs:element ref="section_authority"/>
+        <xs:element ref="subsection_name"/>
+        <xs:element ref="subsection_authority"/>
+        <xs:element ref="series_name"/>
+        <xs:element ref="series_authority"/>
+        <xs:element ref="species_name"/>
+        <xs:element ref="species_authority"/>
+        <xs:element ref="subspecies_name"/>
+        <xs:element ref="subspecies_authority"/>
+        <xs:element ref="variety_name"/>
+        <xs:element ref="variety_authority"/>
+        <xs:element ref="unranked_epithet_name"/>
+        <xs:element ref="unranked_epithet_authority"/>
+        <xs:element ref="other_info"/>
+        <xs:element ref="place_of_publication"/>
+      </xs:choice>
+      <xs:attribute name="Status" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="family_authority" type="xs:string"/>
+  <xs:element name="family_name" type="xs:NCName"/>
+  <xs:element name="genus_authority" type="xs:string"/>
+  <xs:element name="place_of_publication">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="publication_title"/>
+        <xs:element minOccurs="0" ref="place_in_publication"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="other_info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="publication_title" type="xs:string"/>
+  <xs:element name="place_in_publication" type="xs:string"/>
+  <xs:element name="section_authority" type="xs:string"/>
+  <xs:element name="section_name" type="xs:NCName"/>
+  
+  <xs:element name="series_authority" type="xs:string"/>
+  <xs:element name="series_name" type="xs:NCName"/>
+  <xs:element name="species_authority" type="xs:string"/>
+  <xs:element name="subfamily_authority" type="xs:string"/>
+  <xs:element name="subfamily_name" type="xs:NCName"/>
+  <xs:element name="subgenus_authority" type="xs:string"/>
+  <xs:element name="subsection_authority" type="xs:string"/>
+  <xs:element name="subsection_name" type="xs:string"/>
+  <xs:element name="subspecies" type="xs:NCName"/>
+  <xs:element name="subspecies_authority" type="xs:string"/>
+  <xs:element name="subspecies_name" type="xs:string"/>
+  <xs:element name="subtribe_authority" type="xs:string"/>
+  <xs:element name="subtribe_name" type="xs:NCName"/>
+  <xs:element name="tribe_authority" type="xs:string"/>
+  <xs:element name="tribe_name" type="xs:NCName"/>
+  <xs:element name="unranked_epithet_authority" type="xs:string"/>
+  <xs:element name="unranked_epithet_name" type="xs:NCName"/>
+  <xs:element name="variety_authority" type="xs:string"/>
+  <xs:element name="variety_name" type="xs:string"/>
+  <xs:element name="author" type="xs:string"/>
+  <xs:element name="ca_distribution" type="xs:string"/>
+  <xs:element name="common_name" type="xs:string"/>
+  <xs:element name="conservation" type="xs:string"/>
+  <xs:element name="conserved_name" type="xs:string"/>
+  
+  <xs:element name="description" type="xs:string"/>
+  <xs:element name="discussion" type="xs:string"/>
+  <xs:element name="elevation" type="xs:string"/>
+  <xs:element name="endemic" type="xs:NCName"/>
+  <xs:element name="etymology" type="xs:string"/>
+  <xs:element name="introduced" type="xs:string"/>
+  <xs:element name="invalid_name" type="xs:string"/>
+  <xs:element name="key">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" ref="key_heading"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="key_author"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="key_discussion"/>
+          <xs:element ref="key_head"/>
+          <xs:element ref="key_statement"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="key_heading" type="xs:string"/>
+  <xs:element name="key_author" type="xs:string"/>
+  <xs:element name="key_discussion" type="xs:string"/>
+  <xs:element name="key_head" type="xs:string"/>
+  <xs:element name="key_statement">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="statement_id"/>
+        <xs:element ref="statement"/>
+        <xs:choice minOccurs="0">
+          <xs:element ref="determination"/>
+          <xs:element ref="next_statement_id"/>
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="statement_id" type="xs:string"/>
+  <xs:element name="statement" type="xs:string"/>
+  <xs:element name="determination" type="xs:string"/>
+  <xs:element name="next_statement_id" type="xs:string"/>
+  <xs:element name="past_name" type="xs:string"/>
+  <xs:element name="phenology" type="xs:string"/>
+  <xs:element name="phenology_fruiting" type="xs:string"/>
+  
+  <xs:element name="references">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="reference_discussion"/>
+        <xs:element maxOccurs="unbounded" ref="reference"/>
+      </xs:sequence>
+      <xs:attribute name="heading"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="reference_discussion" type="xs:string"/>
+  <xs:element name="reference" type="xs:string"/>
+  <xs:element name="us_distribution" type="xs:string"/>
+  <xs:element name="global_distribution" type="xs:string"/>
+  <xs:element name="other_info" type="xs:string"/>
+  <xs:element name="illustrated" type="xs:NCName"/>
+  <xs:element name="subgenus_name" type="xs:NCName"/>
+  <xs:element name="number_of_infrataxa" type="xs:string"/>
+  <xs:element name="species_name" type="xs:string"/>
+  <xs:element name="genus_name" type="xs:NCName"/>
+  <xs:element name="habitat" type="xs:string"/>
+  <xs:element name="weedy" type="xs:NCName"/>
+</xs:schema>
