@@ -4,6 +4,34 @@ Charaparser is a nlp tool which processes morphological descriptions of the biod
 The output of Charaparser is a structured description of structures, their characters and relations between structures
 in XML format.
 
+
+Relevant Publications 
+---------------------
+
+1. Cui, H., Boufford, D., & Selden, P. (2010). Semantic annotation of biosystematics literature without training examples. Journal of American Society of Information Science and Technology. 61 (3): 522-542.http://onlinelibrary.wiley.com/doi/10.1002/asi.21246/full
+
+2. Cui, H. (2012). CharaParser for fine-grained semantic annotation of organism morphological descriptions. Journal of American Society of Information Science and Technology. 63(4) DOI: 10.1002/asi.22618 http://onlinelibrary.wiley.com/doi/10.1002/asi.22618/pdf
+
+If you use CharaParser in your research/work, please cite the above publications.
+
+License
+-------
+
+   Copyright 2013 CharaParser Authors
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
 Project Page
 ----------
 More information is available on the <a href="http://etc-project.org/">project page</a>.
