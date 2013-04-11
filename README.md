@@ -36,7 +36,7 @@ Project Page
 ----------
 More information is available on the <a href="http://etc-project.org/">project page</a>.
 
-Constribution
+Contribution
 ----------
 If you want to contribute, the source is built using Maven and AspectJ.
 In Eclipse you can therefore use 
