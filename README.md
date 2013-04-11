@@ -1,4 +1,4 @@
-Charaparser
+CharaParser
 ===========
 Charaparser is a nlp tool which processes morphological descriptions of the biodiversity domain.
 The output of Charaparser is a structured description of structures, their characters and relations between structures
