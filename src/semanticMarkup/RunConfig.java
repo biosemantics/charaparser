@@ -66,10 +66,10 @@ public class RunConfig extends BasicConfig {
 		
 		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_SourceDirectory")).toInstance("." + File.separator + "out" + File.separator);
 		
-		bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance("evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + 
-				"source" + File.separator + "8538_pyr_mad_tx1.xml");
-		//bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance("evaluationData" + File.separator + "perlTest" + File.separator + "source" +
-		//		File.separator);
+		//bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance("evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + 
+		//		"source" + File.separator + "8538_pyr_mad_tx1.xml");
+		bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance("evaluationData" + File.separator + "perlTest" + File.separator + "source" +
+				File.separator);
 		//bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance("evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
 		//		"source" + File.separator + "FNA19 Excerpt-source.docx");
 		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance("." + File.separator + "resources" + File.separator + "io" + File.separator + 
