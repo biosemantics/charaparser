@@ -6,6 +6,10 @@ import java.util.Set;
 
 import semanticMarkup.log.LogLevel;
 
+/**
+ * ValidationRun can be passed to a thread to run an IVolumeValidator
+ * @author rodenhausen
+ */
 public class ValidationRun implements Runnable {
 
 	private boolean result = false;
@@ -13,6 +17,10 @@ public class ValidationRun implements Runnable {
 	private File file;
 	private Set<IValidationRunListener> validationRunListeners = new HashSet<IValidationRunListener>();
 	
+	/**
+	 * @param volumeValidator
+	 * @param file
+	 */
 	public ValidationRun(IVolumeValidator volumeValidator, File file) {
 		this.volumeValidator = volumeValidator;
 		this.file = file;

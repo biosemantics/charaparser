@@ -9,6 +9,10 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import semanticMarkup.io.input.validate.IVolumeValidator;
 import semanticMarkup.log.LogLevel;
 
+/**
+ * WordVolumeValidator validates input against Microsoft Word format
+ * @author rodenhausen
+ */
 public class WordVolumeValidator implements IVolumeValidator {
 
 	@Override

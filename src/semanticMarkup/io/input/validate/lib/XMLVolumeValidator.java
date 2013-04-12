@@ -5,10 +5,17 @@ import java.io.File;
 import semanticMarkup.io.input.validate.AbstractXMLVolumeValidator;
 import semanticMarkup.log.LogLevel;
 
+/**
+ * XMLVolumeValidator validates input against a specified XML format
+ * @author rodenhausen
+ */
 public class XMLVolumeValidator extends AbstractXMLVolumeValidator {
 
 	private File xmlSchemaFile;
 
+	/**
+	 * @param xmlSchemaFile
+	 */
 	public XMLVolumeValidator(File xmlSchemaFile) {
 		this.xmlSchemaFile = xmlSchemaFile;
 	}

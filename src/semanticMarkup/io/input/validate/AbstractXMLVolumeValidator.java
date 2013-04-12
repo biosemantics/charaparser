@@ -12,6 +12,10 @@ import javax.xml.validation.Validator;
 
 import semanticMarkup.log.LogLevel;
 
+/**
+ * AbstractXMLVolumeValidator provides functionality required by IVolumeValidators that validate XML format input
+ * @author rodenhausen
+ */
 public abstract class AbstractXMLVolumeValidator implements IVolumeValidator {
 
 	public abstract boolean validate(File file);
