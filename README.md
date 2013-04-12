@@ -1,9 +1,8 @@
 CharaParser
 ===========
-Charaparser is a nlp tool which processes morphological descriptions of the biodiversity domain.
-The output of Charaparser is a structured description of structures, their characters and relations between structures
+CharaParser is a NLP tool which processes morphological descriptions of the biodiversity domain.
+The output of CharaParser is a structured description of structures, their characters and relations between structures
 in XML format.
-
 
 Relevant Publications 
 ---------------------
@@ -51,11 +50,12 @@ Sources are built for Java compiler compliance level 1.7.
 
 JavaDoc
 ----------
-The javadoc can be found  <a href="http://biosemantics.github.com/charaparser/javadoc">here</a>.
+The JavaDoc has been generated with <a href="https://code.google.com/p/apiviz/">APIviz</a> and can be found 
+<a href="http://biosemantics.github.com/charaparser/javadoc">here</a>.
 
 Class Diagrams
 ----------
-The following class diagrams given an overview on charaparsers architecture:
+The following class diagrams give an overview on CharapParser's architecture:
 
 <a href="http://biosemantics.github.com/charaparser/images/classDiagrams/01IRun.png">
 <img src="http://biosemantics.github.com/charaparser/images/classDiagrams/01IRun.png">
