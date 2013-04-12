@@ -10,6 +10,7 @@ import semanticMarkup.eval.AdvancedPrecisionRecallEvaluator;
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
+import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.AbstractWordVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
 import semanticMarkup.io.input.lib.word.XMLWordVolumeReader;
@@ -49,7 +50,7 @@ public class RunConfig extends BasicConfig {
 		
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(AfterPerlBlackBox.class);
 		//CharaParser.class //AfterPerlBlackBox
-		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(DocWordVolumeReader.class);
+		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(TaxonxVolumeReader.class);
 		//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Sourcefile")).toInstance("evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
 				"source" + File.separator + "FNA19 Excerpt-source.docx");//"document.xml");//"FNA19 Excerpt-source.docx");
@@ -63,6 +64,9 @@ public class RunConfig extends BasicConfig {
 				File.separator);
 		
 		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_SourceDirectory")).toInstance("." + File.separator + "out" + File.separator);
+		
+		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance("evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + 
+				"source" + File.separator + "8538_pyr_mad_tx1.xml");
 		
 		bind(TreatmentTransformerChain.class).to(CharaparserTreatmentTransformerChain.class);
 		bind(MarkupDescriptionTreatmentTransformer.class).to(OldPerlTreatmentTransformer.class);

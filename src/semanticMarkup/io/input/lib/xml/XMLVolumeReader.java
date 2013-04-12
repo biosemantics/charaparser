@@ -17,7 +17,7 @@ import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 
 /**
- * Type2VolumeReader reads a list of treatments of type 2 that are valid against the XML Schema Y
+ * XMLVolumeReader reads a list of treatments of type 2 that are valid against the XML Schema resources/io/FNAXMLSchemaInput.xml
  * @author rodenhausen
  */
 public class XMLVolumeReader extends AbstractFileVolumeReader {
