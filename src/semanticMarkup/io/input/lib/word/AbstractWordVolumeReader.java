@@ -28,6 +28,7 @@ import com.google.inject.name.Named;
 /**
  * AbstractWordVolumeReader reads a list of treatments from a by the previous charaparser version termed Type 1 input format. This is a
  * description in Microsoft Word format.
+ * TODO: Look into http://poi.apache.org/ to see if it can be used to produce a better solution 
  * @author rodenhausen
  */
 public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader {
