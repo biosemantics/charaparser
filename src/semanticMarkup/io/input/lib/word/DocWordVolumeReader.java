@@ -29,7 +29,6 @@ public class DocWordVolumeReader extends AbstractWordVolumeReader {
 	 * @param styleMappingFile
 	 * @param distributionTreatmentRefiner
 	 * @param floweringTimeTreatmentRefiner
-	 * @param temporaryPath
 	 */
 	@Inject
 	public DocWordVolumeReader(@Named("WordVolumeReader_Sourcefile") String filepath,
@@ -39,11 +38,10 @@ public class DocWordVolumeReader extends AbstractWordVolumeReader {
 			@Named("WordVolumeReader_Tribegennamestyle") String tribegennamestyle, 
 			@Named("WordVolumeReader_StyleMappingFile") String styleMappingFile, 
 			DistributionTreatmentRefiner distributionTreatmentRefiner, 
-			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner,
-			@Named("temporaryPath")String temporaryPath) {
+			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner) {
 		super(filepath, styleStartPattern, styleNamePattern, styleKeyPattern,
 				tribegennamestyle, styleMappingFile, distributionTreatmentRefiner,
-				floweringTimeTreatmentRefiner, temporaryPath);
+				floweringTimeTreatmentRefiner);
 	}
 
 	@Override

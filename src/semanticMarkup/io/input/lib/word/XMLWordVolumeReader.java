@@ -27,7 +27,6 @@ public class XMLWordVolumeReader extends AbstractWordVolumeReader {
 	 * @param styleMappingFile
 	 * @param distributionTreatmentRefiner
 	 * @param floweringTimeTreatmentRefiner
-	 * @param temporaryPath
 	 */
 	@Inject
 	public XMLWordVolumeReader(@Named("WordVolumeReader_Sourcefile") String filepath,
@@ -37,11 +36,10 @@ public class XMLWordVolumeReader extends AbstractWordVolumeReader {
 			@Named("WordVolumeReader_Tribegennamestyle") String tribegennamestyle, 
 			@Named("WordVolumeReader_StyleMappingFile") String styleMappingFile, 
 			DistributionTreatmentRefiner distributionTreatmentRefiner, 
-			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner,
-			@Named("temporaryPath")String temporaryPath) {
+			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner) {
 		super(filepath, styleStartPattern, styleNamePattern, styleKeyPattern,
 				tribegennamestyle, styleMappingFile, distributionTreatmentRefiner,
-				floweringTimeTreatmentRefiner, temporaryPath);
+				floweringTimeTreatmentRefiner);
 		// TODO Auto-generated constructor stub
 	}
 

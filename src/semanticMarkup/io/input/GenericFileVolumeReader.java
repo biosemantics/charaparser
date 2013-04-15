@@ -36,7 +36,6 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader implements
 	private String styleMappingFile;
 	private DistributionTreatmentRefiner distributionTreatmentRefiner;
 	private FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner;
-	private String temporaryPath;
 	private String taxonxSchemaFile;
 	private String xmlSchemaFile;
 	private IVolumeReader reader = null;
@@ -51,7 +50,6 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader implements
 	 * @param styleMappingFile
 	 * @param distributionTreatmentRefiner
 	 * @param floweringTimeTreatmentRefiner
-	 * @param temporaryPath
 	 * @param taxonxSchemaFile
 	 * @param xmlSchemaFile
 	 */
@@ -64,7 +62,6 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader implements
 			@Named("WordVolumeReader_StyleMappingFile") String styleMappingFile, 
 			DistributionTreatmentRefiner distributionTreatmentRefiner, 
 			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner,
-			@Named("temporaryPath")String temporaryPath,
 			@Named("Taxonx_SchemaFile")String taxonxSchemaFile,
 			@Named("XML_SchemaFile")String xmlSchemaFile) {
 		super(filePath);
@@ -75,7 +72,6 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader implements
 		this.styleMappingFile = styleMappingFile;
 		this.distributionTreatmentRefiner = distributionTreatmentRefiner;
 		this.floweringTimeTreatmentRefiner = floweringTimeTreatmentRefiner;
-		this.temporaryPath = temporaryPath;
 		this.taxonxSchemaFile = taxonxSchemaFile;
 		this.xmlSchemaFile = xmlSchemaFile;
 	}
@@ -122,8 +118,7 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader implements
 			
 			if(volumeValidator instanceof WordVolumeValidator) {
 				this.reader = new DocWordVolumeReader(filePath, styleStartPattern, styleNamePattern,
-						styleKeyPattern, tribegennamestyle, styleMappingFile, distributionTreatmentRefiner, floweringTimeTreatmentRefiner, 
-						temporaryPath);
+						styleKeyPattern, tribegennamestyle, styleMappingFile, distributionTreatmentRefiner, floweringTimeTreatmentRefiner);
 			}
 			latch.countDown();
 		}

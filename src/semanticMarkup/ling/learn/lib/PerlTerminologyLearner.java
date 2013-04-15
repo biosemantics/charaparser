@@ -12,7 +12,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -67,6 +69,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private Set<String> stopWords;
 	private Set<String> selectedSources;
 	private String glossaryTable;
+	private Map<String, Treatment> fileTreatments = new HashMap<String, Treatment>();
 
 	/**
 	 * @param temporaryPath
@@ -335,7 +338,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("select source, tag from " + this.databasePrefix + "_sentence order by sentid");
 			String previousTag = null;
-			int listId = -1;
+			//int listId = -1;
 			String previousSourceId = "-1";
 			while(resultSet.next()) {
 				String source = resultSet.getString("source");
@@ -344,15 +347,15 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					String sourceId = sourceIds[0];//String.valueOf(Integer.valueOf(sourceIds[0])-1);
 					if(!sourceId.equals(previousSourceId)) {
 						previousSourceId = sourceId;
-						listId++;
+						//listId++;
 					}
 					
 					String tag = resultSet.getString("tag");
 					if(tag == null)
 						tag = "";
 					tag = tag.replaceAll("\\W", "");
-					Treatment treatment = treatments.get(listId);
 					
+					Treatment treatment = fileTreatments.get(sourceId);
 					if(!tags.containsKey(treatment)) 
 						tags.put(treatment, new LinkedHashMap<String, String>());
 					if(!tag.equals("ditto")) {
@@ -404,7 +407,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
 						text = rs.getString("modifier")+"##"+tag+"##"+text;
 						
-						Treatment treatment = treatments.get(Integer.valueOf(sourceId));
+						Treatment treatment = fileTreatments.get(sourceId);
 						if(!sentences.containsKey(treatment))
 							sentences.put(treatment, new LinkedHashMap<String, String>());
 						sentences.get(treatment).put(source, text);
@@ -412,6 +415,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			log(LogLevel.ERROR, e);
 		}
 		
@@ -573,12 +577,24 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		}
 	}
 	
-	private void writeTreatmentsToFiles(List<Treatment> treatments, File file) throws IOException {
+	private String intToString(int num, int digits) {
+		// create variable length array of zeros
+	    char[] zeros = new char[digits];
+	    Arrays.fill(zeros, '0');
+	    // format number as String
+	    DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
+
+	    return df.format(num);
+	}
+	
+	private void writeTreatmentsToFiles(List<Treatment> treatments, File directory) throws IOException {
 		int i = 0;
 		for(Treatment treatment : treatments) {
-			File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
+			String prefix = intToString(i++, Math.max(String.valueOf(treatments.size()).length(), 3)) + ".";			
+			File treatmentFile = File.createTempFile(prefix, ".txt", directory);
+			treatmentFile.deleteOnExit();
+			//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 			log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
-			treatmentFile.createNewFile();
 			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(treatmentFile));
 			
 			List<ValueTreatmentElement> descriptions = treatment.getValueTreatmentElements("description");	
@@ -587,6 +603,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	            fileWriter.write(this.descriptionSeparator + "\n");
 	            fileWriter.close();
 			}
+
+			fileTreatments.put(treatmentFile.getName().split(".txt")[0], treatment);
 		}
 	}
 

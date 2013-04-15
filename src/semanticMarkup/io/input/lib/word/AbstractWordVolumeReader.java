@@ -79,7 +79,6 @@ public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader 
 	
 	private String lastTextType;
 	private int textcount;
-	private String temporaryPath;
 	private String styleKeyPattern;
 	private String tribegennamestyle;
 	
@@ -105,8 +104,7 @@ public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader 
 			//@Named("caprovinces") String caProvinces, 
 			@Named("WordVolumeReader_StyleMappingFile") String styleMappingFile, 
 			DistributionTreatmentRefiner distributionTreatmentRefiner, 
-			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner,
-			@Named("temporaryPath")String temporaryPath) {
+			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner) {
 		super(filepath);
 		
 		this.taxonExtractor = new WordTaxonExtractor();
@@ -121,7 +119,6 @@ public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader 
 		this.styleMappingFile = styleMappingFile;
 		this.distributionTreatmentRefiner = distributionTreatmentRefiner;
 		this.floweringTimeTreatmentRefiner = floweringTimeTreatmentRefiner;
-		this.temporaryPath = temporaryPath;
 	}
 	
 	@Override
