@@ -106,6 +106,7 @@ import com.google.inject.name.Names;
 
 /**
  * Guice config file for basic parameters
+ * TODO: arrange similar class layout as RunConfig
  * @author rodenhausen
  */
 public class BasicConfig extends AbstractModule {

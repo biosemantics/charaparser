@@ -32,15 +32,8 @@ public abstract class AbstractRun implements IRun {
 	protected void appendConfigFile(BufferedWriter bwSetup) throws IOException {
 		bwSetup.append("GuiceModule configuration of EvaluationRun \n" +
 		  "---------------------\n");
-		BufferedReader br = new BufferedReader(new FileReader(guiceModuleFile));
-		String line;
-		boolean recordGuiceModule = true;//false;
-		while((line = br.readLine()) != null) {
-			if(recordGuiceModule)
-				bwSetup.append(line + "\n");
-		}
+		bwSetup.append(this.guiceModuleFile);
 		bwSetup.append("---------------------\n\n");
-		br.close();
 	}
 	
 	protected String getTimeString(long milliseconds) {
