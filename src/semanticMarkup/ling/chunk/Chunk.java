@@ -583,8 +583,9 @@ public class Chunk implements Cloneable {
 	/**
 	 * @param toReplaceChunk is removed
 	 * @param replaceChunk is inserted
+	 * @return if a chunk has been replaced
 	 */
-	public void replaceChunk(Chunk toReplaceChunk, Chunk replaceChunk) {
+	public boolean replaceChunk(Chunk toReplaceChunk, Chunk replaceChunk) {
 		for(Chunk chunk : this.chunks) {
 			if(chunk.equals(toReplaceChunk)) {
 				LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
@@ -595,10 +596,14 @@ public class Chunk implements Cloneable {
 						newChunks.add(oldChunk);
 				}
 				this.chunks = newChunks;
-				break;
+				return true;
 			}
-			else
-				chunk.replaceChunk(toReplaceChunk, replaceChunk);
+			else {
+				boolean result = chunk.replaceChunk(toReplaceChunk, replaceChunk);
+				if(result)
+					return true;
+			}
 		}
+		return false;
 	}
 }
