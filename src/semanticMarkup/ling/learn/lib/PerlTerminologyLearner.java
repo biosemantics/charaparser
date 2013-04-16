@@ -24,6 +24,7 @@ import java.util.Set;
 
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.ValueTreatmentElement;
+import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.learn.ITerminologyLearner;
@@ -69,7 +70,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private Set<String> stopWords;
 	private Set<String> selectedSources;
 	private String glossaryTable;
-	private Map<String, Treatment> fileTreatments = new HashMap<String, Treatment>();
+	protected Map<String, Treatment> fileTreatments = new HashMap<String, Treatment>();
+	private ParentTagProvider parentTagProvider;
 
 	/**
 	 * @param temporaryPath
@@ -98,7 +100,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("StopWords") Set<String> stopWords,
 			@Named("selectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
-			@Named("WordTokenizer") ITokenizer tokenizer) throws Exception {
+			@Named("WordTokenizer") ITokenizer tokenizer,
+			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.descriptionSeparator = descriptionSeparator;
 		this.markupMode = markupMode;
@@ -111,6 +114,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.stopWords = stopWords;
 		this.selectedSources = selectedSources;
 		this.glossaryTable = glossaryTable;
+		this.parentTagProvider = parentTagProvider;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
@@ -668,5 +672,34 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.categoryTerms = readCategoryTerms();
 		this.tags = readTags();
 		this.modifiers = readModifiers();
+		initParentTagProvider(parentTagProvider);
+	}
+
+
+	private void initParentTagProvider(ParentTagProvider parentTagProvider2) {
+		HashMap<String, String> parentTags = new HashMap<String, String>();
+		HashMap<String, String> grandParentTags = new HashMap<String, String>();
+		
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("select source, tag from " + this.databasePrefix + "_sentence order by sentid");
+			String parentTag = "";
+			String grandParentTag = "";
+			while(resultSet.next()) {
+				String source = resultSet.getString("source");
+				String tag = resultSet.getString("tag");
+				parentTags.put(source, parentTag);
+				grandParentTags.put(source, grandParentTag);
+				
+				grandParentTag = parentTag;
+				if(tag != null && !tag.equals("ditto"))
+					parentTag = tag;
+				else if(tag == null)
+					parentTag = null;
+			}
+		} catch(Exception e) {
+			log(LogLevel.ERROR, e);
+		}
+		this.parentTagProvider.init(parentTags, grandParentTags);
 	}
 }

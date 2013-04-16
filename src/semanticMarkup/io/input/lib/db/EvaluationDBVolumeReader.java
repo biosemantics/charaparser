@@ -20,7 +20,6 @@ import com.google.inject.name.Named;
 /**
  * EvaluationDBVolumeReader reads a list of 'dummy' treatments given treatment informations (from previous charaparser version 
  * generated from perl part) in a database 
- * and initializes ParentTagProvider
  * This EvaluationDBVolumeReader is likely only used in transition and testing phase between the two charaparser version
  * @author rodenhausen
  */
@@ -29,7 +28,6 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 	private String databasePrefix;
 	private Connection connection;
 	private Set<String> evaluationSources;
-	private ParentTagProvider parentTagProvider;
 
 	/**
 	 * @param databaseName
@@ -37,7 +35,6 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 	 * @param databaseUser
 	 * @param databasePassword
 	 * @param selectedSources
-	 * @param parentTagProvider
 	 * @throws Exception
 	 */
 	@Inject
@@ -46,11 +43,9 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 			@Named("databasePrefix") String databasePrefix, 
 			@Named("databaseUser") String databaseUser, 
 			@Named("databasePassword") String databasePassword,
-			@Named("selectedSources") Set<String> selectedSources,
-			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
+			@Named("selectedSources") Set<String> selectedSources) throws Exception {
 		this.databasePrefix = databasePrefix;
 		this.evaluationSources = selectedSources;
-		this.parentTagProvider = parentTagProvider;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
@@ -62,22 +57,11 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 	public List<Treatment> read() throws Exception {
 		List<Treatment> treatments = new ArrayList<Treatment>();
 		Set<String> addedTreatments = new HashSet<String>();
-		HashMap<String, String> parentTags = new HashMap<String, String>();
-		HashMap<String, String> grandParentTags = new HashMap<String, String>();
 		
 		Statement statement = connection.createStatement();
 		ResultSet resultSet = statement.executeQuery("select source, tag from " + this.databasePrefix + "_sentence order by sentid");
-		String parentTag = "";
-		String grandParentTag = "";
 		while(resultSet.next()) {
 			String source = resultSet.getString("source");
-			String tag = resultSet.getString("tag");
-			parentTags.put(source, parentTag);
-			grandParentTags.put(source, grandParentTag);
-			
-			grandParentTag = parentTag;
-			if(!tag.equals("ditto"))
-				parentTag = tag;
 			
 			if(evaluationSources.isEmpty() || evaluationSources.contains(source)) {
 				String[] sourceIds = source.split(".txt-");
@@ -91,7 +75,6 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 				}
 			}
 		}
-		this.parentTagProvider.init(parentTags, grandParentTags);
 		
 		return treatments;
 	}

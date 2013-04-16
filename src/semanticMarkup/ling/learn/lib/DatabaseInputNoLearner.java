@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.core.Treatment;
+import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.transform.ITokenizer;
 
@@ -44,28 +45,15 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 			@Named("StopWords") Set<String> stopWords,
 			@Named("selectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
-			@Named("WordTokenizer") ITokenizer tokenizer) throws Exception {
+			@Named("WordTokenizer") ITokenizer tokenizer, 
+			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
 		super(temporaryPath, descriptionSeparator, markupMode, databaseName, glossaryTable,
-				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer);
+				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer, parentTagProvider);
 	}
 	
 	@Override
-	public void readResults(List<Treatment> treatments) {
-		this.sentences = readSentences();
-		this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(treatments);
-		this.adjnouns = readAdjNouns();
-		this.adjnounsent = readAdjNounSent();
-		this.sentenceTags = readSentenceTags(treatments);
-		this.bracketTags = readBracketTags(treatments);
-		this.wordRoleTags = readWordRoleTags(); 
-		this.wordSources = readWordToSourcesMap();
-		this.roleToWords = readRoleToWords();
-		this.wordsToRoles = readWordsToRoles();
-		this.heuristicNouns = readHeuristicNouns();
-		this.termCategories = readTermCategories();
-		this.tags = readTags();
-		this.modifiers = readModifiers();
-		this.categoryTerms = readCategoryTerms();
+	public void learn(List<Treatment> treatments) { 
+		for(Treatment treatment : treatments) 
+			fileTreatments.put(treatment.getName(), treatment);
 	}
-
 }

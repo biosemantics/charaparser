@@ -13,12 +13,7 @@ import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
-import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
-import semanticMarkup.io.input.lib.word.AbstractWordVolumeReader;
-import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
-import semanticMarkup.io.input.lib.word.XMLWordVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.input.lib.xmlOutput.OutputVolumeReader;
 import semanticMarkup.io.output.IVolumeWriter;
 import semanticMarkup.io.output.lib.xml.XMLVolumeWriter;
 import semanticMarkup.ling.normalize.INormalizer;
@@ -26,7 +21,6 @@ import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
 import semanticMarkup.markup.AfterPerlBlackBox;
 import semanticMarkup.markup.IMarkupCreator;
 import semanticMarkup.run.IRun;
-import semanticMarkup.run.MarkupEvaluationRun;
 import semanticMarkup.run.MarkupRun;
 
 import com.google.inject.TypeLiteral;
@@ -48,7 +42,7 @@ public class RunConfig extends BasicConfig {
 	//OutputVolumeReader, EvaluationDBVolumeReader, PerlDBVolumeReader
 	private Class markupCreator = AfterPerlBlackBox.class;
 	//CharaParser.class //AfterPerlBlackBox
-	private Class markupCreatorVolumeReader = GenericFileVolumeReader.class;
+	private Class markupCreatorVolumeReader = EvaluationDBVolumeReader.class;
 	//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader
 	private String wordVolumeReaderSourceFile = "evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
 			"source" + File.separator + "FNA19 Excerpt-source.docx";
@@ -71,13 +65,13 @@ public class RunConfig extends BasicConfig {
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 30;
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = Integer.MAX_VALUE;
-	private String databaseName = "testNewCode";
+	private String databaseName = "foc";
 	private String databaseUser = "termsuser";
 	private String databasePassword = "termspassword";
 	private Class volumeWriter = XMLVolumeWriter.class;
 	//ToStringVolumeWriter, JSONVolumeWriter, XMLVolumeWriter XML2VolumeWriter
 	
-	private String evaluationDataPath = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
+	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
 	private String databaseTablePrefix = "type2";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
@@ -116,8 +110,8 @@ public class RunConfig extends BasicConfig {
 		bind(IVolumeWriter.class).annotatedWith(Names.named("MarkupCreator_VolumeWriter")).to(volumeWriter);
 		
 		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
-		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(evaluationDataPath);
-		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(evaluationDataPath));
+		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(standardVolumeReaderSourcefiles);
+		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance(databaseTablePrefix); 
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
@@ -249,8 +243,8 @@ public class RunConfig extends BasicConfig {
 		this.volumeWriter = volumeWriter;
 	}
 
-	public void setEvaluationDataPath(String evaluationDataPath) {
-		this.evaluationDataPath = evaluationDataPath;
+	public void setStandardVolumeReaderSourcefiles(String standardVolumeReaderSourcefiles) {
+		this.standardVolumeReaderSourcefiles =standardVolumeReaderSourcefiles;
 	}
 
 	public void setDatabaseTablePrefix(String databaseTablePrefix) {
@@ -426,8 +420,8 @@ public class RunConfig extends BasicConfig {
 		return volumeWriter;
 	}
 
-	public String getEvaluationDataPath() {
-		return evaluationDataPath;
+	public String getStandardVolumeReaderSourcefiles() {
+		return standardVolumeReaderSourcefiles;
 	}
 
 	public String getDatabaseTablePrefix() {
