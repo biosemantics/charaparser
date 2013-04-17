@@ -26,6 +26,9 @@ import edu.mit.jwi.morph.WordnetStemmer;
 
 /**
  * WordNetPOSKnowledgeBase poses an IPOSKnowledgeBase by relying on WordNet
+ * Access to dictionary is to be synchronized as the dictionary is cached. Hence the underlying data structures constatnly subject to change.
+ * Because of this parallel access to the dictionary may cause conflicts 
+ * (e.g. first thread causes cached dictionary to change its content while second iterates over dictionary content)
  * @author rodenhausen
  */
 public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
@@ -48,30 +51,41 @@ public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 
 	@Override
 	public boolean isNoun(String word) {
-		return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.NOUN) != null;
+		synchronized(dictionary) {
+			return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.NOUN) != null;
+		}
 	}
 
 	@Override
 	public boolean isAdjective(String word) {
-		return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.ADJECTIVE) != null;
+		synchronized(dictionary) {
+			return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.ADJECTIVE) != null;
+		}
 	}
 
 	@Override
 	public boolean isAdverb(String word) {
-		return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.ADVERB) != null;
+		synchronized(dictionary) {
+			return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.ADVERB) != null;
+		}
 	}
 
 	@Override
 	public boolean isVerb(String word) {
-		return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.VERB) != null;
+		synchronized(dictionary) {
+			return dictionary.getIndexWord(word, edu.mit.jwi.item.POS.VERB) != null;
+		}
 	}
 	
 	/**
 	 * Needs to be synchronized, otherwise not thread safe. Underlying linkedHashMap throws ConcurrentModificationException
 	 */
 	@Override
-	public synchronized POS getMostLikleyPOS(String word) {
-		WordnetStemmer stemmer = new WordnetStemmer(dictionary);
+	public POS getMostLikleyPOS(String word) {
+		WordnetStemmer stemmer = null;
+		synchronized(dictionary) {
+			stemmer = new WordnetStemmer(dictionary);
+		}
 		
 		int maxCount = -1;
 		edu.mit.jwi.item.POS mostLikelyPOS = null;
@@ -79,26 +93,31 @@ public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 			
 			//From JavaDoc: The surface form may or may not contain whitespace or underscores, and may be in mixed case.
 			word = word.replaceAll("\\s", "").replaceAll("_", "");
-			List<String> stems = stemmer.findStems(word, pos);
+			
+			List<String> stems = null;
+			synchronized(dictionary) {
+				stems = stemmer.findStems(word, pos);
+			}
 			for(String stem : stems) {
-				
-				IIndexWord indexWord = dictionary.getIndexWord(stem, pos);
-				if(indexWord!=null) {
-					int count = 0;
-					for(IWordID wordId : indexWord.getWordIDs()) {
-						IWord aWord = dictionary.getWord(wordId);
-						//ISynset synset = aWord.getSynset();
-						//log(LogLevel.DEBUG, synset.getGloss());
-						ISenseEntry senseEntry = dictionary.getSenseEntry(aWord.getSenseKey());
-						//log(LogLevel.DEBUG, senseEntry.getSenseNumber());
-						count += senseEntry.getTagCount();
-					}
-					
-					//int tagSenseCount = indexWord.getTagSenseCount();
-					//int wordIdCount = indexWord.getWordIDs().size();
-					if(count > maxCount) {
-						maxCount = count;
-						mostLikelyPOS = pos;
+				synchronized(dictionary) {
+					IIndexWord indexWord = dictionary.getIndexWord(stem, pos);
+					if(indexWord!=null) {
+						int count = 0;
+						for(IWordID wordId : indexWord.getWordIDs()) {
+							IWord aWord = dictionary.getWord(wordId);
+							//ISynset synset = aWord.getSynset();
+							//log(LogLevel.DEBUG, synset.getGloss());
+							ISenseEntry senseEntry = dictionary.getSenseEntry(aWord.getSenseKey());
+							//log(LogLevel.DEBUG, senseEntry.getSenseNumber());
+							count += senseEntry.getTagCount();
+						}
+						
+						//int tagSenseCount = indexWord.getTagSenseCount();
+						//int wordIdCount = indexWord.getWordIDs().size();
+						if(count > maxCount) {
+							maxCount = count;
+							mostLikelyPOS = pos;
+						}
 					}
 				}
 			}
@@ -127,11 +146,13 @@ public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 	@Override
 	public boolean contains(String word) {
 		for(edu.mit.jwi.item.POS pos : edu.mit.jwi.item.POS.values()) {
-			WordnetStemmer stemmer = new WordnetStemmer(dictionary);
-			for(String stem : stemmer.findStems(word, pos)) {
-				IIndexWord indexWord = dictionary.getIndexWord(stem, pos);
-				if(indexWord!=null)
-					return true;
+			synchronized(dictionary) {
+				WordnetStemmer stemmer = new WordnetStemmer(dictionary);
+				for(String stem : stemmer.findStems(word, pos)) {
+					IIndexWord indexWord = dictionary.getIndexWord(stem, pos);
+					if(indexWord!=null)
+						return true;
+				}
 			}
 		}
 		return false;
@@ -139,19 +160,24 @@ public class WordNetPOSKnowledgeBase implements IPOSKnowledgeBase {
 	
 	@Override
 	public List<String> getSingulars(String word) {
-		WordnetStemmer stemmer = new WordnetStemmer(dictionary);
-		List<String> singulars = stemmer.findStems(word, edu.mit.jwi.item.POS.NOUN);
+		List<String> singulars = null;
+		synchronized(dictionary) {
+			WordnetStemmer stemmer = new WordnetStemmer(dictionary);
+			singulars = stemmer.findStems(word, edu.mit.jwi.item.POS.NOUN);
+		}
 		List<String> result = new ArrayList<String>();
 		
 		TreeMap<Integer, List<String>> singularFrequencies = new TreeMap<Integer, List<String>>();
 		for(String singular : singulars) {
-			IIndexWord indexWord = dictionary.getIndexWord(singular, edu.mit.jwi.item.POS.NOUN);
-			if(indexWord!=null) {
-				//int tagSenseCount = indexWord.getTagSenseCount();
-				int wordIdCount = indexWord.getWordIDs().size();
-				if(!singularFrequencies.containsKey(wordIdCount))
-					singularFrequencies.put(wordIdCount, new ArrayList<String>());
-				singularFrequencies.get(wordIdCount).add(singular);
+			synchronized(dictionary) {
+				IIndexWord indexWord = dictionary.getIndexWord(singular, edu.mit.jwi.item.POS.NOUN);
+				if(indexWord!=null) {
+					//int tagSenseCount = indexWord.getTagSenseCount();
+					int wordIdCount = indexWord.getWordIDs().size();
+					if(!singularFrequencies.containsKey(wordIdCount))
+						singularFrequencies.put(wordIdCount, new ArrayList<String>());
+					singularFrequencies.get(wordIdCount).add(singular);
+				}
 			}
 		}
 		Map<Integer, List<String>> reverseMap = singularFrequencies.descendingMap();
