@@ -606,4 +606,15 @@ public class Chunk implements Cloneable {
 		}
 		return false;
 	}
+
+	public boolean hasCircularReference() {
+		if(this.contains(this)) 
+			return true;
+		for(Chunk childChunk : this.getChunks()) {
+			boolean result = childChunk.hasCircularReference();
+			if(result)
+				return true;
+		}
+		return false;
+	}
 }

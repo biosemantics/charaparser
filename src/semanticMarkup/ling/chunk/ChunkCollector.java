@@ -17,6 +17,7 @@ import semanticMarkup.log.LogLevel;
  * Note: 
  * Always use ChunkCollectors interface to modify a Chunk. 
  * Or modify chunk and call chunkCollector.add(chunk) afterwards to register the changes.
+ * ChunkCollector checks for ill-formed chunks.
  * @author rodenhausen
  */
 public class ChunkCollector implements Iterable<Chunk> {
@@ -105,6 +106,10 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 * @param chunk to add
 	 */
 	public void addChunk(Chunk chunk) {
+		if(chunk.hasCircularReference()) {
+			log(LogLevel.ERROR, "A Chunk was about to be added with a circular chunk-chunk reference");
+			return;
+		}
 		if(!(chunk instanceof AbstractParseTree))
 			log(LogLevel.DEBUG, "add chunk " + chunk);
 				
@@ -142,7 +147,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 		this.hasChanged = true;
 	}
-	
+
 	/**
 	 * @param parseTree
 	 * @return the terminal id of the parseTree
