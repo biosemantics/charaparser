@@ -168,7 +168,7 @@ public class MyCleanupChunker extends AbstractChunker {
 				Chunk modifierChunkParent = chunkCollector.getChunk(terminal);
 				List<Chunk> modifierChunks = modifierChunkParent.getChunks(ChunkType.MODIFIER);
 				for(Chunk modifierChunk : modifierChunks) {
-					if(modifierChunk.contains(terminal)) {
+					if(modifierChunk.containsOrEquals(terminal)) {
 						modifierChunk.setChunkType(ChunkType.CONSTRAINT);
 					}
 				}
@@ -184,7 +184,7 @@ public class MyCleanupChunker extends AbstractChunker {
 				Chunk constraintChunkParent = chunkCollector.getChunk(terminal);
 				List<Chunk> constraintChunks = constraintChunkParent.getChunks(ChunkType.CONSTRAINT);
 				for(Chunk constraintChunk : constraintChunks) {
-					if(constraintChunk.contains(terminal)) {
+					if(constraintChunk.containsOrEquals(terminal)) {
 						constraintChunk.setChunkType(ChunkType.MODIFIER);
 					}
 				}
@@ -257,7 +257,7 @@ public class MyCleanupChunker extends AbstractChunker {
 						 * and instead stick them into the modifier chunk of next terminal
 						 */
 						for(Chunk modifierChunk : modifierChunks) {
-							if(modifierChunk.contains(nextTerminal)) {
+							if(modifierChunk.containsOrEquals(nextTerminal)) {
 								chunkParent.removeChunk(previousTerminal);
 								chunkParent.removeChunk(terminal);
 								
@@ -275,7 +275,7 @@ public class MyCleanupChunker extends AbstractChunker {
 						 */
 						List<Chunk> constraintChunks = chunkParent.getChunks(ChunkType.CONSTRAINT);
 						for(Chunk constraintChunk : constraintChunks) {
-							if(constraintChunk.contains(nextTerminal)) {
+							if(constraintChunk.containsOrEquals(nextTerminal)) {
 								chunkParent.removeChunk(previousTerminal);
 								chunkParent.removeChunk(terminal);
 								
@@ -304,7 +304,7 @@ public class MyCleanupChunker extends AbstractChunker {
 							List<Chunk> constraintChunks = chunkParent.getChunks(ChunkType.CONSTRAINT);
 							
 							for(Chunk constraintChunk : constraintChunks) {
-								if(constraintChunk.contains(nextTerminal)) {
+								if(constraintChunk.containsOrEquals(nextTerminal)) {
 									/**
 									 * get the previous and next organ chunk from there on
 									 */

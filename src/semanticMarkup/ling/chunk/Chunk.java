@@ -328,9 +328,25 @@ public class Chunk implements Cloneable {
 	 * @param chunk
 	 * @return if chunk is contained as a descendant
 	 */
-	public boolean contains(Chunk chunk) {
+	public boolean containsOrEquals(Chunk chunk) {
 		if(this.equals(chunk))
 			return true;
+		if(chunks.contains(chunk))
+			return true;
+		else {
+			for(Chunk childChunk : chunks) {
+				if(childChunk.containsOrEquals(chunk))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * @param chunk
+	 * @return if chunk is contained as a descendant
+	 */
+	public boolean contains(Chunk chunk) {
 		if(chunks.contains(chunk))
 			return true;
 		else {
@@ -386,7 +402,7 @@ public class Chunk implements Cloneable {
 	public boolean containsAll(Collection<AbstractParseTree> terminals) {
 		boolean result = true;
 		for(AbstractParseTree terminal : terminals) {
-			result &= this.contains(terminal);
+			result &= this.containsOrEquals(terminal);
 			if(!result)
 				return result;
 		}
@@ -400,7 +416,7 @@ public class Chunk implements Cloneable {
 	public boolean containsAny(Collection<AbstractParseTree> terminals) {
 		boolean result = false;
 		for(AbstractParseTree terminal : terminals) {
-			result |= this.contains(terminal);
+			result |= this.containsOrEquals(terminal);
 			if(result)
 				return result;
 		}
@@ -429,10 +445,10 @@ public class Chunk implements Cloneable {
 	 * @return the common ancestor of maximal depth, which contains both chunkA and chunkB 
 	 */
 	public Chunk getCommonAncestor(Chunk chunkA, Chunk chunkB) {
-		if(chunkA.contains(chunkB)) {
+		if(chunkA.containsOrEquals(chunkB)) {
 			return chunkA;
 		}
-		if(chunkB.contains(chunkA)) {
+		if(chunkB.containsOrEquals(chunkA)) {
 			return chunkB;
 		}
 		Chunk parentA = this.getParentChunk(chunkA);
@@ -479,7 +495,7 @@ public class Chunk implements Cloneable {
 	public List<Chunk> getChunksIncludingAfterTerminal(AbstractParseTree terminal) {
 		List<Chunk> result = new LinkedList<Chunk>();
 		for(Chunk chunk : this.getChunks()) {
-			if(chunk.contains(terminal)) {
+			if(chunk.containsOrEquals(terminal)) {
 				result.addAll(chunk.getChunksIncludingAfterTerminal(terminal));
 			} else if(chunk.equals(terminal)) {
 				result.add(terminal);
@@ -496,7 +512,7 @@ public class Chunk implements Cloneable {
 	 */
 	public Chunk getChunkOfTypeAndTerminal(ChunkType chunkType, AbstractParseTree ofTerminal) {
 		Chunk result = null;
-		if(this.getChunkType().equals(chunkType) && this.contains(ofTerminal)) {
+		if(this.getChunkType().equals(chunkType) && this.containsOrEquals(ofTerminal)) {
 			result = this;
 		} else {
 			for(Chunk chunk : chunks) {
@@ -514,7 +530,7 @@ public class Chunk implements Cloneable {
 	 */
 	public Chunk getChildChunkOfTerminal(AbstractParseTree ofTerminal) {
 		for(Chunk chunk : chunks) {
-			if(chunk.contains(ofTerminal))
+			if(chunk.containsOrEquals(ofTerminal))
 				return chunk;
 		}
 		return null;
@@ -527,14 +543,14 @@ public class Chunk implements Cloneable {
 	public void addAndReplaceChunks(Chunk chunk) {
 		AbstractParseTree firstTerminal = chunk.getTerminals().get(0);
 		for(Chunk child : chunks) {
-			if(child.contains(firstTerminal)) {
+			if(child.containsOrEquals(firstTerminal)) {
 				child.addAndReplaceChunks(chunk);
 				break;
 			}
 			if(child.equals(firstTerminal)) {
 				LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
 				for(Chunk childChunk : chunks) {
-					if(chunk.contains(childChunk))
+					if(chunk.containsOrEquals(childChunk))
 						newChunks.add(chunk);
 					else 
 						newChunks.add(childChunk);
@@ -552,7 +568,7 @@ public class Chunk implements Cloneable {
 	public List<Chunk> getChunksWithoutTerminal(AbstractParseTree terminal) {
 		List<Chunk> result = new LinkedList<Chunk>();
 		for(Chunk chunk : this.getChunks()) {
-			if(chunk.contains(terminal) || chunk.equals(terminal)) {
+			if(chunk.containsOrEquals(terminal) || chunk.equals(terminal)) {
 				result.addAll(chunk.getChunksWithoutTerminal(terminal));
 			} else
 				result.add(chunk);

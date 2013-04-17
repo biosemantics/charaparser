@@ -203,7 +203,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				
 				List<AbstractParseTree> terminals = subjectChunk.getTerminals();
 				for(int i=0; i<terminals.size(); i++) {
-					if(organChunk.contains(terminals.get(i))) {
+					if(organChunk.containsOrEquals(terminals.get(i))) {
 						if(i-1>=0 && (terminals.get(i-1).getTerminalsText().equals("a") || terminals.get(i-1).getTerminalsText().equals("an"))) {
 							this.createCharacterElement(parents, null, "1", "count", "", processingContextState);
 						}
@@ -325,7 +325,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				Chunk modifier = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.MODIFIER, terminal);
 				if(modifier!=null)
 					modifiers.add(modifier);
-			} else if(characterStateChunk.contains(terminal)) {
+			} else if(characterStateChunk.containsOrEquals(terminal)) {
 				modifiers.addAll(characterStateChunk.getChunks(ChunkType.MODIFIER));
 				return modifiers;
 			} else {
@@ -357,7 +357,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				if(characterState!=null)
 					characterStates.add(characterState);
 			}
-			if(organChunk.contains(terminal) && !isLastOrgan) {
+			if(organChunk.containsOrEquals(terminal) && !isLastOrgan) {
 				return characterStates;
 			} 
 		}
@@ -373,7 +373,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				if(constraintChunk!=null)
 					constraints.add(constraintChunk);
 			}
-			if(organChunk.contains(terminal)) {
+			if(organChunk.containsOrEquals(terminal)) {
 				return constraints;
 			}
 		}
@@ -1228,7 +1228,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			Chunk afterPPChunk = null;
 			for(int i=0; i<chunks.size(); i++) { 
 				Chunk chunk = chunks.get(i);
-				if(chunk.contains(object) && i+1 < chunks.size()) {
+				if(chunk.containsOrEquals(object) && i+1 < chunks.size()) {
 					afterPPChunk = chunks.get(i+1);
 					break;
 				}

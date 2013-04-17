@@ -128,7 +128,7 @@ public class OrganRecoverChunker extends AbstractChunker {
 					} else 
 						connectChunks = false;
 				}
-			} else if(previousChunk!=null && !previousChunk.contains(terminal) && !terminal.equals(connector)){
+			} else if(previousChunk!=null && !previousChunk.containsOrEquals(terminal) && !terminal.equals(connector)){
 				connectChunks = false;
 			}
 		}	

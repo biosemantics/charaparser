@@ -129,7 +129,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		if(chunks.containsKey(firstTerminalId - 1)) {
 			Chunk previousChunk = chunks.get(firstTerminalId - 1);
 			for(AbstractParseTree terminal : chunk.getTerminals()) {
-				if(previousChunk.contains(terminal))
+				if(previousChunk.containsOrEquals(terminal))
 					log(LogLevel.DEBUG, "This is not a valid chunk. Terminal was already included in previous chunk");
 			}
 		}
@@ -137,7 +137,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		if(chunks.containsKey(lastTerminalId + 1)) {
 			Chunk nextChunk = chunks.get(lastTerminalId + 1);
 			for(AbstractParseTree terminal : chunk.getTerminals()) {
-				if(nextChunk.contains(terminal))
+				if(nextChunk.containsOrEquals(terminal))
 					log(LogLevel.DEBUG, "This is not a valid chunk. Terminal was already included in next chunk");
 			}
 		}

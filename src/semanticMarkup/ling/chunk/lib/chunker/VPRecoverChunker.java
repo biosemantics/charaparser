@@ -184,7 +184,7 @@ public class VPRecoverChunker extends AbstractChunker {
 					Chunk vpChunk = chunkCollector.getChunkOfChunkType(collectedTerminals, ChunkType.VP);
 					LinkedHashSet<Chunk> childChunks = (LinkedHashSet<Chunk>)vpChunk.getChunks().clone();
 					for(AbstractParseTree terminal : collectedTerminals) {
-						if(!vpChunk.contains(terminal)) {
+						if(!vpChunk.containsOrEquals(terminal)) {
 							List<Chunk> childChunksList = new ArrayList<Chunk>(childChunks);
 							childChunks.clear();
 							Chunk terminalChunk = chunkCollector.getChunk(terminal);
