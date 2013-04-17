@@ -96,7 +96,7 @@ public abstract class AbstractChunker implements IChunker {
 		List<AbstractParseTree> objectTerminals = new ArrayList<AbstractParseTree>();
 		ChunkType functionChunkType = null;
 		for(AbstractParseTree child : root.getChildren()) {
-			if(!child.getTerminalsText().equals("S")) {
+			if(!child.getTerminalsText().equals("S") && child.getPOS()!=null) {
 				if(child.getPOS().equals(POS.PREPOSITION)) {
 					functionTerminals.addAll(child.getTerminals());
 					functionChunkType = ChunkType.PREPOSITION;
@@ -143,18 +143,20 @@ public abstract class AbstractChunker implements IChunker {
 			Chunk twoValuedChunk = new Chunk(chunkType);
 			Chunk parentChunk = possibleParentChunk.getParentChunk(oldFunctionChunk);
 			LinkedHashSet<Chunk> parentChunkChildren = new LinkedHashSet<Chunk>();
-			for(Chunk chunk : parentChunk.getChunks()) {
-				if(!chunk.equals(oldFunctionChunk) && !chunk.containsAny(objectTerminals))
-					parentChunkChildren.add(chunk);
-				else if(chunk.equals(oldFunctionChunk))
-					parentChunkChildren.add(twoValuedChunk);
+			if(parentChunk!=null) {
+				for(Chunk chunk : parentChunk.getChunks()) {
+					if(!chunk.equals(oldFunctionChunk) && !chunk.containsAny(objectTerminals))
+						parentChunkChildren.add(chunk);
+					else if(chunk.equals(oldFunctionChunk))
+						parentChunkChildren.add(twoValuedChunk);
+				}
+				parentChunk.setChunks(parentChunkChildren);
+				LinkedHashSet<Chunk> twoValuedChildChunks = new LinkedHashSet<Chunk>();
+				twoValuedChildChunks.add(functionChunk);
+				twoValuedChildChunks.add(objectChunk);
+				twoValuedChunk.setChunks(twoValuedChildChunks);
+				chunkCollector.addChunk(possibleParentChunk);
 			}
-			parentChunk.setChunks(parentChunkChildren);
-			LinkedHashSet<Chunk> twoValuedChildChunks = new LinkedHashSet<Chunk>();
-			twoValuedChildChunks.add(functionChunk);
-			twoValuedChildChunks.add(objectChunk);
-			twoValuedChunk.setChunks(twoValuedChildChunks);
-			chunkCollector.addChunk(possibleParentChunk);
 			
 		} else {
 			LinkedHashSet<Chunk> functionChunks = new LinkedHashSet<Chunk>();
