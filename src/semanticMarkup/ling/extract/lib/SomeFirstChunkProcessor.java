@@ -69,7 +69,6 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
 		List<Chunk> chunks = processingContext.getChunkCollector().getChunks();
-		Chunk secondChunk = chunks.get(1);
 		
 		//starts with a organ (subject)
 		if(firstChunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN)) {

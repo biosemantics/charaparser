@@ -112,10 +112,14 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				//c: {loosely} {arachnoid} : should be m[loosly] architecture[arachnoid]
 				//String[] tokens = c.replaceAll("[{}]", "").split("\\s+");
 				//ArrayList<Element> charas = this.processCharacterText(tokens, this.subjects);
-	
+
 				Chunk tempChunk = new Chunk(ChunkType.UNASSIGNED, nonModifiers);			
-				IChunkProcessor characterStateProcessor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
-				result.addAll(characterStateProcessor.process(tempChunk, processingContext));
+				for(Chunk specifierChunk : specifierChunks) {
+					if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
+						IChunkProcessor characterStateProcessor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
+						result.addAll(characterStateProcessor.process(specifierChunk, processingContext));
+					}
+				}
 				IChunkProcessor ppProcessor = processingContext.getChunkProcessor(ChunkType.PP);
 				result.addAll(ppProcessor.process(pp, processingContext)); //not as a relation
 			}

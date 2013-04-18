@@ -695,7 +695,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				if(tag != null && !tag.equals("ditto"))
 					parentTag = tag;
 				else if(tag == null)
-					parentTag = null;
+					parentTag = "";
 			}
 		} catch(Exception e) {
 			log(LogLevel.ERROR, e);

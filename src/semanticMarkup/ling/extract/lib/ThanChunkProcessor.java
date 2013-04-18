@@ -119,8 +119,11 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					//second case
 					for(Chunk child : thanObject.getChunks()) {
 						log(LogLevel.DEBUG, "child " + child);
-						List<DescriptionTreatmentElement> characters = processingContext.getChunkProcessor(child.getChunkType()).process(child, processingContext);
-						result.addAll(characters);
+						IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(child.getChunkType());
+						if(chunkProcessor != null) {
+							List<DescriptionTreatmentElement> characters = chunkProcessor.process(child, processingContext);
+							result.addAll(characters);
+						}
 					}
 					if(!beforeThan.isEmpty()) {
 						for(DescriptionTreatmentElement element : result) {

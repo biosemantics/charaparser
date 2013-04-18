@@ -101,8 +101,11 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		Chunk nextChunk = iterator.next();
 		int i=1;
 		while(nextChunk.isOfChunkType(ChunkType.UNASSIGNED)) {
-			nextChunk = iterator.next();
-			i++;
+			if(iterator.hasNext()) {
+				nextChunk = iterator.next();
+				i++;
+			} else
+				return false;
 		}
 		
 		for(int j=0; j<i; j++) 

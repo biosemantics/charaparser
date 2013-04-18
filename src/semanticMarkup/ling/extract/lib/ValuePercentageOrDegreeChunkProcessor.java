@@ -56,11 +56,12 @@ public class ValuePercentageOrDegreeChunkProcessor extends AbstractChunkProcesso
 		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		String content = chunk.getTerminalsText();
-		DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-		if(lastElement != null && lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
+		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+		if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
+			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			lastElement.setAttribute("modifier", content);
 			result.add(lastElement);
-		}else{
+		} else {
 			processingContextState.getUnassignedModifiers().add(chunk);
 		}	
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

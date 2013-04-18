@@ -95,19 +95,21 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					
 					if(!previousResult.isEmpty()) {
 						DescriptionTreatmentElement structure = processingContext.getParent(previousResult.get(0));				
-						DescriptionTreatmentElement newElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
-						structure.addTreatmentElement(newElement);
-						newElement.setAttribute("name", characterName);
-						String chunkText = nextChunk.getTerminalsText();
-						if(chunkText.contains("~list~")) {
-							chunkText = chunkText.replaceFirst("\\w{2,}.*?~list~","").replaceAll("punct", ",").replaceAll("~", " ");
+						if(structure != null) {
+							DescriptionTreatmentElement newElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
+							structure.addTreatmentElement(newElement);
+							newElement.setAttribute("name", characterName);
+							String chunkText = nextChunk.getTerminalsText();
+							if(chunkText.contains("~list~")) {
+								chunkText = chunkText.replaceFirst("\\w{2,}.*?~list~","").replaceAll("punct", ",").replaceAll("~", " ");
+							}
+							newElement.setAttribute("value", chunkText);
+							addClauseModifierConstraint(newElement, processingContextState); 
+							result.add(newElement);
+							
+							//TODO this is just the quick and dirty fix of the above issue
+							removeResults(previousResult, processingContext.getResult());
 						}
-						newElement.setAttribute("value", chunkText);
-						addClauseModifierConstraint(newElement, processingContextState); 
-						result.add(newElement);
-						
-						//TODO this is just the quick and dirty fix of the above issue
-						removeResults(previousResult, processingContext.getResult());
 					} 
 					chunkListIterator.previous();
 					//if(!result.isEmpty())
