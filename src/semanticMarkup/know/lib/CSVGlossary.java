@@ -17,10 +17,7 @@ import com.google.inject.name.Named;
  * A CSVGlossary creates an IGlossary from a CSV file; expected CSV file format: word;category
  * @author rodenhausen
  */
-public class CSVGlossary implements IGlossary {
-
-	private HashMap<String, Set<String>> glossary = new HashMap<String, Set<String>>();
-	private HashMap<String, Set<String>> reverseGlossary = new HashMap<String, Set<String>>();
+public class CSVGlossary extends InMemoryGlossary {
 	
 	/**
 	 * @param filePath
@@ -52,40 +49,5 @@ public class CSVGlossary implements IGlossary {
 		}
 		
 		reader.close();
-	}
-	
-	@Override
-	public Set<String> getWords(String category) {
-		category = category.toLowerCase();
-		if(reverseGlossary.containsKey(category))
-			return reverseGlossary.get(category);
-		else
-			return new HashSet<String>();
-	}
-
-	@Override
-	public boolean contains(String word) {
-		word = word.toLowerCase();
-		return glossary.containsKey(word);
-	}
-
-	@Override
-	public Set<String> getCategories(String word) {
-		word = word.toLowerCase();
-		if(glossary.containsKey(word))
-			return glossary.get(word);
-		else
-			return new HashSet<String>();
-	}
-
-	@Override
-	public Set<String> getWordsNotInCategories(Set<String> categories) {
-		Set<String> result = new HashSet<String>();
-		for(String category : this.reverseGlossary.keySet()) {
-			category = category.toLowerCase();
-			if(!categories.contains(category))
-				result.addAll(reverseGlossary.get(category));
-		}
-		return result;
 	}
 }

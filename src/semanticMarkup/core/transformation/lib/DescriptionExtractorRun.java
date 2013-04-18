@@ -118,6 +118,8 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 				log(LogLevel.ERROR, e);
 			}
 		}
+		
+		log(LogLevel.DEBUG, "extract for treatment " + treatment.getName());
 		TreatmentElement newDescriptionElement = descriptionExtractor.extract(treatmentChunkCollectors);
 		
 		descriptionExtractorsLatch.countDown();

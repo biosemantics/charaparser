@@ -33,4 +33,10 @@ public interface IGlossary {
 	 */
 	public Set<String> getWordsNotInCategories(Set<String> categories);
 	
+	/**
+	 * @param word
+	 * @param category
+	 */
+	public void addEntry(String word, String category);
+	
 }
