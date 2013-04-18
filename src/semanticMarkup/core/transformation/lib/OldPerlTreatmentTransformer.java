@@ -1,25 +1,22 @@
 package semanticMarkup.core.transformation.lib;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.gui.MainForm;
-import semanticMarkup.ling.Token;
-import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
-import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
@@ -48,6 +45,7 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	private int descriptionExtractorRunMaximum;
 	private int sentenceChunkerRunMaximum;
 	private MainForm mainForm;
+	private Map<Treatment, Future<TreatmentElement>> futureNewDescriptions = new HashMap<Treatment, Future<TreatmentElement>>();
 	
 	/**
 	 * @param wordTokenizer
@@ -118,43 +116,46 @@ public class OldPerlTreatmentTransformer extends MarkupDescriptionTreatmentTrans
 	 * @param sentencesForOrganStateMarker
 	 */
 	private void markupDescriptions(List<Treatment> treatments, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
-		int threadId = 0;
+		//configure exectuorService to only allow a number of threads to run at a time
+		ExecutorService executorService = null;
+		if(!this.parallelProcessing)
+			executorService = Executors.newSingleThreadExecutor();
+		if(this.parallelProcessing && this.descriptionExtractorRunMaximum < Integer.MAX_VALUE)
+			executorService = Executors.newFixedThreadPool(descriptionExtractorRunMaximum);
+		if(this.parallelProcessing && this.descriptionExtractorRunMaximum == Integer.MAX_VALUE)
+			executorService = Executors.newCachedThreadPool();
+		
+		CountDownLatch descriptionExtractorsLatch = new CountDownLatch(treatments.size());
 		
 		// process each treatment separately
 		for(Treatment treatment : treatments) {
-			
-			//only maximally start a descriptionExtractorRunMaximum number of threads to process treatments, hence wait if already processing this many
-			if(threadId % descriptionExtractorRunMaximum == 0)
-				waitForThreadsToFinish();
-			
-			threadId++;
-			
 			// start a DescriptionExtractorRun for the treatment to process as a separate thread
-			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, terminologyLearner, normalizer, wordTokenizer, 
-					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum);
-			Thread thread = new Thread(descriptionExtractorRun);
-			descriptionExtractorRuns.put(thread, descriptionExtractorRun);
-			//if parallel processing is to be used fork here
-			if(this.parallelProcessing)
-				thread.start();
-			else 
-				thread.run();
+			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, normalizer, wordTokenizer, 
+					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum, 
+					descriptionExtractorsLatch);
+			Future<TreatmentElement> futureNewDescription = executorService.submit(descriptionExtractorRun);
+			this.futureNewDescriptions.put(treatment, futureNewDescription);
 		}
+		
 		//only continue when all threads are done
-		waitForThreadsToFinish();
-	}
-
-	/**
-	 * holds this executing thread until all the descriptionExtractorRun threads are done processing
-	 */
-	private void waitForThreadsToFinish() {
-		for(Thread thread : descriptionExtractorRuns.keySet()) {
-			try {
-				thread.join();
-			} catch (InterruptedException e) {
-				log(LogLevel.ERROR, e);
-			}
+		try {
+			descriptionExtractorsLatch.await();
+			executorService.shutdown();
+		} catch (InterruptedException e) {
+			log(LogLevel.ERROR, e);
 		}
-		descriptionExtractorRuns.clear();
+		
+		for(Treatment treatment : treatments) {
+			Future<TreatmentElement> futureNewDescription = futureNewDescriptions.get(treatment);
+			ValueTreatmentElement description = treatment.getValueTreatmentElement("description");
+			treatment.removeTreatmentElement(description);
+			try {
+				treatment.addTreatmentElement(futureNewDescription.get());
+			} catch (Exception e) {
+				log(LogLevel.DEBUG, e);
+			}
+			log(LogLevel.DEBUG, " -> JAXB: ");
+			log(LogLevel.DEBUG, treatment.toString());
+		}
 	}
 }

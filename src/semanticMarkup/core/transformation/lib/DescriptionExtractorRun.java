@@ -1,19 +1,21 @@
 package semanticMarkup.core.transformation.lib;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
-import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
@@ -24,12 +26,10 @@ import semanticMarkup.log.LogLevel;
  * A DescriptionExtractorRun creates a new description for a given treatment by semantically marking up the old description
  * @author rodenhausen
  */
-public class DescriptionExtractorRun implements Runnable {
+public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 
 	private Treatment treatment;
-	private Map<Thread, SentenceChunkerRun> sentenceChunkerRuns = new LinkedHashMap<Thread, SentenceChunkerRun>();
-	private List<ChunkCollector> treatmentChunkCollectors = new ArrayList<ChunkCollector>();
-	private ITerminologyLearner terminologyLearner;
+	private List<Future<ChunkCollector>> futureChunkCollectors = new ArrayList<Future<ChunkCollector>>();
 	private INormalizer normalizer;
 	private ITokenizer wordTokenizer;
 	private IPOSTagger posTagger;
@@ -39,10 +39,10 @@ public class DescriptionExtractorRun implements Runnable {
 	private Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
 	private boolean parallelProcessing;
 	private int sentenceChunkerRunMaximum;
+	private CountDownLatch descriptionExtractorsLatch;
 
 	/**
 	 * @param treatment
-	 * @param terminologyLearner
 	 * @param normalizer
 	 * @param wordTokenizer
 	 * @param posTagger
@@ -52,13 +52,13 @@ public class DescriptionExtractorRun implements Runnable {
 	 * @param sentencesForOrganStateMarker
 	 * @param parallelProcessing
 	 * @param sentenceChunkerRunMaximum
+	 * @param latch 
 	 */
-	public DescriptionExtractorRun(Treatment treatment, ITerminologyLearner terminologyLearner, 
+	public DescriptionExtractorRun(Treatment treatment, 
 			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
 			IDescriptionExtractor descriptionExtractor, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing,
-			int sentenceChunkerRunMaximum) {
+			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch) {
 		this.treatment = treatment;
-		this.terminologyLearner = terminologyLearner;
 		this.normalizer = normalizer;
 		this.wordTokenizer = wordTokenizer;
 		this.posTagger = posTagger;
@@ -68,81 +68,59 @@ public class DescriptionExtractorRun implements Runnable {
 		this.sentencesForOrganStateMarker = sentencesForOrganStateMarker;
 		this.parallelProcessing = parallelProcessing;
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
+		this.descriptionExtractorsLatch = descriptionExtractorsLatch;
 	}
-	
+
 	@Override
-	public void run() {
+	public TreatmentElement call() throws Exception {
 		log(LogLevel.DEBUG, "Create description for treatment: " + treatment.getName());
-		if(sentencesForOrganStateMarker.containsKey(treatment))
-			createNewDescription(treatment, sentencesForOrganStateMarker.get(treatment));
-	}
+		Map<String, String> sentences = sentencesForOrganStateMarker.get(treatment);
 	
-	/**
-	 * @param treatment
-	 * @param sentences
-	 */
-	private void createNewDescription(Treatment treatment, //List<Token> sentences, 
-			LinkedHashMap<String, String> sentences) {
-		treatmentChunkCollectors.clear();
-		sentenceChunkerRuns.clear();
-		int threadId = 0;
+		//configure exectuorService to only allow a number of threads to run at a time
+		ExecutorService executorService = null;
+		if(!this.parallelProcessing)
+			executorService = Executors.newSingleThreadExecutor();
+		if(this.parallelProcessing && this.sentenceChunkerRunMaximum < Integer.MAX_VALUE)
+			executorService = Executors.newFixedThreadPool(sentenceChunkerRunMaximum);
+		if(this.parallelProcessing && this.sentenceChunkerRunMaximum == Integer.MAX_VALUE)
+			executorService = Executors.newCachedThreadPool();
+		
+		CountDownLatch sentencesLatch = new CountDownLatch(sentences.size());
 		
 		// process each sentence separately
 		for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
-			
-			//only maximally start a sentenceChunkerRunMaximum number of threads to process sentences, hence wait if already processing this many
-			if(threadId % this.sentenceChunkerRunMaximum == 0)
-				waitForThreadsToFinish();
-			
-			threadId++;
 			String sentenceString = sentenceEntry.getValue();
 			String source = sentenceEntry.getKey();
 			
 			// start a SentenceChunkerRun for the treatment to process as a separate thread
-			SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString, treatment, terminologyLearner, normalizer, wordTokenizer, 
-					posTagger, parser, chunkerChain);
-			Thread thread = new Thread(sentenceChunker);
-			sentenceChunkerRuns.put(thread, sentenceChunker);
-			
-			//if parallel processing is to be used fork here
-			if(parallelProcessing)
-				thread.start();
-			else
-				thread.run();
+			SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString, treatment, normalizer, wordTokenizer, 
+					posTagger, parser, chunkerChain, sentencesLatch);
+			Future<ChunkCollector> futureResult = executorService.submit(sentenceChunker);
+			futureChunkCollectors.add(futureResult);
 		}
 		
 		// only continue when all threads are done
-		waitForThreadsToFinish();
+		try {
+			sentencesLatch.await();
+			executorService.shutdown();
+		} catch (InterruptedException e) {
+			log(LogLevel.ERROR, e);
+		}
 		
 		log(LogLevel.DEBUG, "Extract new description using " + descriptionExtractor.getDescription() + "...");
 		
 		// extract the new description from the result of all chunked sentences of the treatment
-		TreatmentElement newDescriptionElement = descriptionExtractor.extract(treatmentChunkCollectors);
-
-		// replace the old description treatment element with the newly created
-		List<ValueTreatmentElement> descriptions = treatment.getValueTreatmentElements("description");
-		for(ValueTreatmentElement description : descriptions) { 
-			treatment.addTreatmentElement(newDescriptionElement);
-			treatment.removeTreatmentElement(description);
-			break;
-		}
-		log(LogLevel.DEBUG, " -> JAXB: ");
-		log(LogLevel.DEBUG, treatment.toString());
-	}
-
-	/**
-	 * holds this executing thread until all the sentenceChunkerRuns threads are done processing
-	 */
-	private void waitForThreadsToFinish() {
-		for(Thread thread : sentenceChunkerRuns.keySet()) {
-			SentenceChunkerRun sentenceChunker = sentenceChunkerRuns.get(thread);
+		List<ChunkCollector> treatmentChunkCollectors = new ArrayList<ChunkCollector>();
+		for(Future<ChunkCollector> futureChunkCollector : this.futureChunkCollectors) {
 			try {
-				thread.join();
-				treatmentChunkCollectors.add(sentenceChunker.getResult());
-			} catch (InterruptedException e) {
+				treatmentChunkCollectors.add(futureChunkCollector.get());
+			} catch (Exception e) {
 				log(LogLevel.ERROR, e);
 			}
 		}
-		sentenceChunkerRuns.clear();
+		TreatmentElement newDescriptionElement = descriptionExtractor.extract(treatmentChunkCollectors);
+		
+		descriptionExtractorsLatch.countDown();
+		return newDescriptionElement;
 	}
 }

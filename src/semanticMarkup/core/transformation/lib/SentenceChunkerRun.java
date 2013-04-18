@@ -1,15 +1,14 @@
 package semanticMarkup.core.transformation.lib;
 
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 import semanticMarkup.core.Treatment;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkerChain;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParser;
@@ -22,7 +21,7 @@ import semanticMarkup.log.Timer;
  * A SentenceChunkerRun chunks the sentence of a given treatment and collects the chunks in a ChunkCollector
  * @author rodenhausen
  */
-public class SentenceChunkerRun implements Runnable {
+public class SentenceChunkerRun implements Callable<ChunkCollector> {
 
 	private String source;
 	private String sentenceString;
@@ -31,36 +30,36 @@ public class SentenceChunkerRun implements Runnable {
 	private IPOSTagger posTagger;
 	private ITokenizer wordTokenizer;
 	private INormalizer normalizer;
-	private ITerminologyLearner terminologyLearner;
 	private ChunkCollector result;
 	private Treatment treatment;
+	private CountDownLatch sentencesLatch;
 
 	/**
 	 * @param source
 	 * @param sentenceString
 	 * @param treatment
-	 * @param terminologyLearner
 	 * @param normalizer
 	 * @param wordTokenizer
 	 * @param posTagger
 	 * @param parser
 	 * @param chunkerChain
+	 * @param sentencesLatch 
 	 */
-	public SentenceChunkerRun(String source, String sentenceString, Treatment treatment, ITerminologyLearner terminologyLearner, INormalizer normalizer, 
-			ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain) {
+	public SentenceChunkerRun(String source, String sentenceString, Treatment treatment, INormalizer normalizer, 
+			ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, CountDownLatch sentencesLatch) {
 		this.source = source;
 		this.sentenceString = sentenceString;
 		this.treatment = treatment;
-		this.terminologyLearner = terminologyLearner;
 		this.normalizer = normalizer;
 		this.wordTokenizer = wordTokenizer;
 		this.posTagger = posTagger;
 		this.parser = parser;
 		this.chunkerChain = chunkerChain;
+		this.sentencesLatch = sentencesLatch;
 	}
 
 	@Override
-	public void run() {
+	public ChunkCollector call() throws Exception {
 		try { 
 			log(LogLevel.DEBUG, "Process sentence: " + sentenceString);
 			
@@ -96,52 +95,12 @@ public class SentenceChunkerRun implements Runnable {
 			// chunk sentence using chunkerChain
 			this.result = chunkerChain.chunk(parseTree, subjectTag, treatment, source, sentenceString);
 			log(LogLevel.DEBUG, "Sentence processing finished.\n");
-			
-			// notify listeners to be done
-			this.notifyListeners();
 		} catch (Exception e) {
 			e.printStackTrace();
 			log(LogLevel.ERROR, e);
-		}
-	}
-	
-	/**
-	 * @return the resulting ChunkCollector
-	 */
-	public ChunkCollector getResult() {
+		} 
+		this.sentencesLatch.countDown();
 		return result;
-	}
-	
-	private Set<ISentenceChunkerRunListener> listeners = new HashSet<ISentenceChunkerRunListener>();
-
-	/**
-	 * @param listener
-	 */
-	public void addListener(ISentenceChunkerRunListener listener) {
-		listeners.add(listener);
-	}
-	
-	/**
-	 * @param listener
-	 */
-	public void removeListener(ISentenceChunkerRunListener listener) {
-		listeners.remove(listener);
-	}
-
-	/**
-	 * notify the ISentenceChunkerRunListeners
-	 */
-	private void notifyListeners() {
-		for(ISentenceChunkerRunListener listener : listeners) {
-			listener.done(this);
-		}
-	}
-
-	/**
-	 * @return the treatment this SentenceChunkerRun is for
-	 */
-	public Treatment getTreatment() {
-		return this.treatment;
 	}
 	
 }
