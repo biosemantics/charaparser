@@ -18,7 +18,7 @@ public class CharaparserTreatmentTransformerChain extends TreatmentTransformerCh
 	 */
 	@Inject
 	public CharaparserTreatmentTransformerChain(HabitatTreatmentTransformer habitatTreatmentTransformer, 
-			DehyphenTreatmentTransformer dehyphenTreatmentTransformer, MarkupDescriptionTreatmentTransformer markupDescriptionTreatmentTransformer) {
+			DehyphenTreatmentTransformer dehyphenTreatmentTransformer, DescriptionTreatmentTransformer markupDescriptionTreatmentTransformer) {
 		treatmentTransformers.add(habitatTreatmentTransformer);
 		treatmentTransformers.add(dehyphenTreatmentTransformer);
 		treatmentTransformers.add(markupDescriptionTreatmentTransformer);
