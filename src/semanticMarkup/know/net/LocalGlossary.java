@@ -2,36 +2,42 @@ package semanticMarkup.know.net;
 
 import java.util.List;
 
-import edu.arizona.sirls.beans.Sentence;
-import edu.arizona.sirls.beans.TermCategory;
+import edu.arizona.sirls.beans.Term;
 
 public class LocalGlossary {
 
-	private List<Sentence> sentences;
-	private List<TermCategory> termCategories;
+	private List<Term> structures;
+	private List<Term> characters;
+	private List<Term> otherTerms;
 	
-	public LocalGlossary(List<Sentence> sentences, List<TermCategory> termCategories) {
-		this.sentences = sentences;
-		this.termCategories = termCategories;
+	public LocalGlossary(List<Term> structures, List<Term> characters,	List<Term> otherTerms) {
+		this.structures = structures;
+		this.characters = characters;
+		this.otherTerms = otherTerms;
 	}
 
-	public List<Sentence> getSentences() {
-		return sentences;
+	public List<Term> getStructures() {
+		return structures;
 	}
 
-	public void setSentences(List<Sentence> sentences) {
-		this.sentences = sentences;
+	public void setStructures(List<Term> structures) {
+		this.structures = structures;
 	}
 
-	public List<TermCategory> getTermCategories() {
-		return termCategories;
+	public List<Term> getCharacters() {
+		return characters;
 	}
 
-	public void setTermCategories(List<TermCategory> termCategories) {
-		this.termCategories = termCategories;
+	public void setCharacters(List<Term> characters) {
+		this.characters = characters;
 	}
-	
-	
-	
+
+	public List<Term> getOtherTerms() {
+		return otherTerms;
+	}
+
+	public void setOtherTerms(List<Term> otherTerms) {
+		this.otherTerms = otherTerms;
+	}
 
 }

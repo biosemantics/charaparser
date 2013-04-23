@@ -6,8 +6,8 @@ import java.util.Set;
 
 import semanticMarkup.core.transformation.TreatmentTransformerChain;
 import semanticMarkup.core.transformation.lib.CharaparserTreatmentTransformerChain;
-import semanticMarkup.core.transformation.lib.MarkupDescriptionTreatmentTransformer;
-import semanticMarkup.core.transformation.lib.OldPerlTreatmentTransformer;
+import semanticMarkup.core.transformation.lib.DescriptionTreatmentTransformer;
+import semanticMarkup.core.transformation.lib.GUIDescriptionTreatmentTransformer;
 import semanticMarkup.eval.AdvancedPrecisionRecallEvaluator;
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.GenericFileVolumeReader;
@@ -16,13 +16,16 @@ import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.io.output.IVolumeWriter;
 import semanticMarkup.io.output.lib.xml.XMLVolumeWriter;
+import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
-import semanticMarkup.markup.AfterPerlBlackBox;
+import semanticMarkup.markup.DescriptionMarkupCreator;
 import semanticMarkup.markup.IMarkupCreator;
 import semanticMarkup.run.IRun;
 import semanticMarkup.run.MarkupRun;
 
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
@@ -32,18 +35,20 @@ import com.google.inject.name.Names;
  */
 public class RunConfig extends BasicConfig {
 
-	private Class run = MarkupRun.class;
+	private Class<? extends IRun> run = MarkupRun.class;
 	//MarkupRun, EvaluationRun, MarkupEvaluationRun
+	private Class<? extends IGlossary> glossary = CSVGlossary.class;
 	private String runOutDirectory = "." + File.separator + "out" + File.separator;
-	private Class evaluationRunEvaluator = AdvancedPrecisionRecallEvaluator.class;
+	private Class<? extends IEvaluator> evaluationRunEvaluator = AdvancedPrecisionRecallEvaluator.class;
 	//SimplePrecisionRecallEvaluator, AdvancedPrecisionRecallEvaluator
-	private Class evaluationGoldStandardReader = XMLVolumeReader.class;
-	private Class evaluationRunCreatedVolumeReader = EvaluationDBVolumeReader.class;
+	private Class<? extends IVolumeReader> evaluationGoldStandardReader = XMLVolumeReader.class;
+	private Class<? extends IVolumeReader> evaluationRunCreatedVolumeReader = EvaluationDBVolumeReader.class;
 	//OutputVolumeReader, EvaluationDBVolumeReader, PerlDBVolumeReader
-	private Class markupCreator = AfterPerlBlackBox.class;
+	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
 	//CharaParser.class //AfterPerlBlackBox
-	private Class markupCreatorVolumeReader = EvaluationDBVolumeReader.class;
-	//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader
+	private Class<? extends IVolumeReader> markupCreatorVolumeReader = EvaluationDBVolumeReader.class;
+	private Class<? extends IVolumeReader> learnerVolumeReader = GenericFileVolumeReader.class;
+	//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader, GenericFileVolumeReaer
 	private String wordVolumeReaderSourceFile = "evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
 			"source" + File.separator + "FNA19 Excerpt-source.docx";
 	private String wordVolumeReaderStyleStartPattern = ".*?(Heading|Name).*";
@@ -60,33 +65,35 @@ public class RunConfig extends BasicConfig {
 	private String taxonxSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd";
 	private String xmlSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd";
 	private String taxonxVolumeReaderSourceFile = "evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml";
-	private Class treatmentTransformerChain = CharaparserTreatmentTransformerChain.class;
-	private Class markupDescriptionTreatmentTransformer = OldPerlTreatmentTransformer.class;
-	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
-	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 30;
-	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = Integer.MAX_VALUE;
+	private Class<? extends TreatmentTransformerChain> treatmentTransformerChain = CharaparserTreatmentTransformerChain.class;
+	private Class<? extends DescriptionTreatmentTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTreatmentTransformer.class;
+	private boolean markupDescriptionTreatmentTransformerParallelProcessing = true;
+	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
+	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
 	private String databaseName = "foc";
 	private String databaseUser = "termsuser";
 	private String databasePassword = "termspassword";
-	private Class volumeWriter = XMLVolumeWriter.class;
+	private Class<? extends IVolumeWriter> volumeWriter = XMLVolumeWriter.class;
 	//ToStringVolumeWriter, JSONVolumeWriter, XMLVolumeWriter XML2VolumeWriter
 	
 	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
 	private String databaseTablePrefix = "type2";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
-	private Class normalizer = FNAv19Normalizer.class;
+	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	
 	@Override 
 	public void configure() {
 		super.configure();
 		bind(IRun.class).to(run);
+		bind(IGlossary.class).to(glossary).in(Singleton.class);
 		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(runOutDirectory);
 		bind(IEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_GoldStandardReader")).to(evaluationGoldStandardReader);
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_CreatedVolumeReader")).to(evaluationRunCreatedVolumeReader);
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator);
 		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(markupCreatorVolumeReader);
+		bind(IVolumeReader.class).annotatedWith(Names.named("Learner_VolumeReader")).to(learnerVolumeReader);
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Sourcefile")).toInstance(wordVolumeReaderSourceFile);
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleStartPattern")).toInstance(wordVolumeReaderStyleStartPattern);
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleNamePattern")).toInstance(wordVolumeReaderStyleNamePattern);
@@ -100,7 +107,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(xmlSchemaFile);
 		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
 		bind(TreatmentTransformerChain.class).to(treatmentTransformerChain);
-		bind(MarkupDescriptionTreatmentTransformer.class).to(markupDescriptionTreatmentTransformer);
+		bind(DescriptionTreatmentTransformer.class).to(markupDescriptionTreatmentTransformer);
 		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
@@ -117,154 +124,13 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
 		bind(INormalizer.class).to(FNAv19Normalizer.class); 
 	}
-
-	public void setRun(Class run) {
-		this.run = run;
-	}
-
-	public void setRunOutDirectory(String runOutDirectory) {
-		this.runOutDirectory = runOutDirectory;
-	}
-
-	public void setEvaluationRunEvaluator(Class evaluationRunEvaluator) {
-		this.evaluationRunEvaluator = evaluationRunEvaluator;
-	}
-
-	public void setEvaluationGoldStandardReader(Class evaluationGoldStandardReader) {
-		this.evaluationGoldStandardReader = evaluationGoldStandardReader;
-	}
-
-	public void setEvaluationRunCreatedVolumeReader(
-			Class evaluationRunCreatedVolumeReader) {
-		this.evaluationRunCreatedVolumeReader = evaluationRunCreatedVolumeReader;
-	}
-
-	public void setMarkupCreator(Class markupCreator) {
-		this.markupCreator = markupCreator;
-	}
-
-	public void setMarkupCreatorVolumeReader(Class markupCreatorVolumeReader) {
-		this.markupCreatorVolumeReader = markupCreatorVolumeReader;
-	}
-
-	public void setWordVolumeReaderSourceFile(String wordVolumeReaderSourceFile) {
-		this.wordVolumeReaderSourceFile = wordVolumeReaderSourceFile;
-	}
-
-	public void setWordVolumeReaderStyleStartPattern(
-			String wordVolumeReaderStyleStartPattern) {
-		this.wordVolumeReaderStyleStartPattern = wordVolumeReaderStyleStartPattern;
-	}
-
-	public void setWordVolumeReaderStyleNamePattern(
-			String wordVolumeReaderStyleNamePattern) {
-		this.wordVolumeReaderStyleNamePattern = wordVolumeReaderStyleNamePattern;
-	}
-
-	public void setWordVolumeReaderStyleKeyPattern(
-			String wordVolumeReaderStyleKeyPattern) {
-		this.wordVolumeReaderStyleKeyPattern = wordVolumeReaderStyleKeyPattern;
-	}
-
-	public void setWordVolumeReaderTribegennamestyle(
-			String wordVolumeReaderTribegennamestyle) {
-		this.wordVolumeReaderTribegennamestyle = wordVolumeReaderTribegennamestyle;
-	}
-
-	public void setWordVolumeReaderStyleMappingFile(
-			String wordVolumeReaderStyleMappingFile) {
-		this.wordVolumeReaderStyleMappingFile = wordVolumeReaderStyleMappingFile;
-	}
-
-	public void setXmlVolumeReaderSourceDirectory(
-			String xmlVolumeReaderSourceDirectory) {
-		this.xmlVolumeReaderSourceDirectory = xmlVolumeReaderSourceDirectory;
-	}
-
-	public void setOutputVolumeReaderSourceDirectory(
-			String outputVolumeReaderSourceDirectory) {
-		this.outputVolumeReaderSourceDirectory = outputVolumeReaderSourceDirectory;
-	}
-
-	public void setGenericFileVolumeReaderSource(
-			String genericFileVolumeReaderSource) {
-		this.genericFileVolumeReaderSource = genericFileVolumeReaderSource;
-	}
-
-	public void setTaxonxSchemaFile(String taxonxSchemaFile) {
-		this.taxonxSchemaFile = taxonxSchemaFile;
-	}
-
-	public void setXmlSchemaFile(String xmlSchemaFile) {
-		this.xmlSchemaFile = xmlSchemaFile;
-	}
-
-	public void setTaxonxVolumeReaderSourceFile(String taxonxVolumeReaderSourceFile) {
-		this.taxonxVolumeReaderSourceFile = taxonxVolumeReaderSourceFile;
-	}
-
-	public void setTreatmentTransformerChain(Class treatmentTransformerChain) {
-		this.treatmentTransformerChain = treatmentTransformerChain;
-	}
-
-	public void setMarkupDescriptionTreatmentTransformer(
-			Class markupDescriptionTreatmentTransformer) {
-		this.markupDescriptionTreatmentTransformer = markupDescriptionTreatmentTransformer;
-	}
-
-	public void setMarkupDescriptionTreatmentTransformerParallelProcessing(
-			boolean markupDescriptionTreatmentTransformerParallelProcessing) {
-		this.markupDescriptionTreatmentTransformerParallelProcessing = markupDescriptionTreatmentTransformerParallelProcessing;
-	}
-
-	public void setMarkupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum(
-			int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum) {
-		this.markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum;
-	}
-
-	public void setMarkupDescriptionTreatmentTransformerSentenceChunkerRunMaximum(
-			int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum) {
-		this.markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum;
-	}
-
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
-	}
-
-	public void setDatabaseUser(String databaseUser) {
-		this.databaseUser = databaseUser;
-	}
-
-	public void setDatabasePassword(String databasePassword) {
-		this.databasePassword = databasePassword;
-	}
-
-	public void setVolumeWriter(Class volumeWriter) {
-		this.volumeWriter = volumeWriter;
-	}
-
-	public void setStandardVolumeReaderSourcefiles(String standardVolumeReaderSourcefiles) {
-		this.standardVolumeReaderSourcefiles =standardVolumeReaderSourcefiles;
-	}
-
-	public void setDatabaseTablePrefix(String databaseTablePrefix) {
-		this.databaseTablePrefix = databaseTablePrefix;
-	}
-
-	public void setDatabaseGlossaryTable(String databaseGlossaryTable) {
-		this.databaseGlossaryTable = databaseGlossaryTable;
-	}
-
-	public void setGlossaryFile(String glossaryFile) {
-		this.glossaryFile = glossaryFile;
-	}
-
-	public void setNormalizer(Class normalizer) {
-		this.normalizer = normalizer;
-	}
 	
 	protected HashSet<String> getSelectedSources(String evaluationDataPath) {
 		HashSet<String> result = new HashSet<String>();
+
+		//result.add("568.txt-8");
+		//result.add("2110.txt-1");
+		//result.add("1196.txt-4");
 		
 		//result.add("3.txt-3");
 		
@@ -308,135 +174,305 @@ public class RunConfig extends BasicConfig {
 		return result;
 	}
 
-	public Class getRun() {
+	public Class<? extends IRun> getRun() {
 		return run;
+	}
+
+	public void setRun(Class<? extends IRun> run) {
+		this.run = run;
 	}
 
 	public String getRunOutDirectory() {
 		return runOutDirectory;
 	}
 
-	public Class getEvaluationRunEvaluator() {
+	public void setRunOutDirectory(String runOutDirectory) {
+		this.runOutDirectory = runOutDirectory;
+	}
+
+	public Class<? extends IEvaluator> getEvaluationRunEvaluator() {
 		return evaluationRunEvaluator;
 	}
 
-	public Class getEvaluationGoldStandardReader() {
+	public void setEvaluationRunEvaluator(
+			Class<? extends IEvaluator> evaluationRunEvaluator) {
+		this.evaluationRunEvaluator = evaluationRunEvaluator;
+	}
+
+	public Class<? extends IVolumeReader> getEvaluationGoldStandardReader() {
 		return evaluationGoldStandardReader;
 	}
 
-	public Class getEvaluationRunCreatedVolumeReader() {
+	public void setEvaluationGoldStandardReader(
+			Class<? extends IVolumeReader> evaluationGoldStandardReader) {
+		this.evaluationGoldStandardReader = evaluationGoldStandardReader;
+	}
+
+	public Class<? extends IVolumeReader> getEvaluationRunCreatedVolumeReader() {
 		return evaluationRunCreatedVolumeReader;
 	}
 
-	public Class getMarkupCreator() {
+	public void setEvaluationRunCreatedVolumeReader(
+			Class<? extends IVolumeReader> evaluationRunCreatedVolumeReader) {
+		this.evaluationRunCreatedVolumeReader = evaluationRunCreatedVolumeReader;
+	}
+
+	public Class<? extends IMarkupCreator> getMarkupCreator() {
 		return markupCreator;
 	}
 
-	public Class getMarkupCreatorVolumeReader() {
+	public void setMarkupCreator(Class<? extends IMarkupCreator> markupCreator) {
+		this.markupCreator = markupCreator;
+	}
+
+	public Class<? extends IVolumeReader> getMarkupCreatorVolumeReader() {
 		return markupCreatorVolumeReader;
+	}
+
+	public void setMarkupCreatorVolumeReader(
+			Class<? extends IVolumeReader> markupCreatorVolumeReader) {
+		this.markupCreatorVolumeReader = markupCreatorVolumeReader;
 	}
 
 	public String getWordVolumeReaderSourceFile() {
 		return wordVolumeReaderSourceFile;
 	}
 
+	public void setWordVolumeReaderSourceFile(String wordVolumeReaderSourceFile) {
+		this.wordVolumeReaderSourceFile = wordVolumeReaderSourceFile;
+	}
+
 	public String getWordVolumeReaderStyleStartPattern() {
 		return wordVolumeReaderStyleStartPattern;
+	}
+
+	public void setWordVolumeReaderStyleStartPattern(
+			String wordVolumeReaderStyleStartPattern) {
+		this.wordVolumeReaderStyleStartPattern = wordVolumeReaderStyleStartPattern;
 	}
 
 	public String getWordVolumeReaderStyleNamePattern() {
 		return wordVolumeReaderStyleNamePattern;
 	}
 
+	public void setWordVolumeReaderStyleNamePattern(
+			String wordVolumeReaderStyleNamePattern) {
+		this.wordVolumeReaderStyleNamePattern = wordVolumeReaderStyleNamePattern;
+	}
+
 	public String getWordVolumeReaderStyleKeyPattern() {
 		return wordVolumeReaderStyleKeyPattern;
+	}
+
+	public void setWordVolumeReaderStyleKeyPattern(
+			String wordVolumeReaderStyleKeyPattern) {
+		this.wordVolumeReaderStyleKeyPattern = wordVolumeReaderStyleKeyPattern;
 	}
 
 	public String getWordVolumeReaderTribegennamestyle() {
 		return wordVolumeReaderTribegennamestyle;
 	}
 
+	public void setWordVolumeReaderTribegennamestyle(
+			String wordVolumeReaderTribegennamestyle) {
+		this.wordVolumeReaderTribegennamestyle = wordVolumeReaderTribegennamestyle;
+	}
+
 	public String getWordVolumeReaderStyleMappingFile() {
 		return wordVolumeReaderStyleMappingFile;
+	}
+
+	public void setWordVolumeReaderStyleMappingFile(
+			String wordVolumeReaderStyleMappingFile) {
+		this.wordVolumeReaderStyleMappingFile = wordVolumeReaderStyleMappingFile;
 	}
 
 	public String getXmlVolumeReaderSourceDirectory() {
 		return xmlVolumeReaderSourceDirectory;
 	}
 
+	public void setXmlVolumeReaderSourceDirectory(
+			String xmlVolumeReaderSourceDirectory) {
+		this.xmlVolumeReaderSourceDirectory = xmlVolumeReaderSourceDirectory;
+	}
+
 	public String getOutputVolumeReaderSourceDirectory() {
 		return outputVolumeReaderSourceDirectory;
+	}
+
+	public void setOutputVolumeReaderSourceDirectory(
+			String outputVolumeReaderSourceDirectory) {
+		this.outputVolumeReaderSourceDirectory = outputVolumeReaderSourceDirectory;
 	}
 
 	public String getGenericFileVolumeReaderSource() {
 		return genericFileVolumeReaderSource;
 	}
 
+	public void setGenericFileVolumeReaderSource(
+			String genericFileVolumeReaderSource) {
+		this.genericFileVolumeReaderSource = genericFileVolumeReaderSource;
+	}
+
 	public String getTaxonxSchemaFile() {
 		return taxonxSchemaFile;
+	}
+
+	public void setTaxonxSchemaFile(String taxonxSchemaFile) {
+		this.taxonxSchemaFile = taxonxSchemaFile;
 	}
 
 	public String getXmlSchemaFile() {
 		return xmlSchemaFile;
 	}
 
+	public void setXmlSchemaFile(String xmlSchemaFile) {
+		this.xmlSchemaFile = xmlSchemaFile;
+	}
+
 	public String getTaxonxVolumeReaderSourceFile() {
 		return taxonxVolumeReaderSourceFile;
 	}
 
-	public Class getTreatmentTransformerChain() {
+	public void setTaxonxVolumeReaderSourceFile(String taxonxVolumeReaderSourceFile) {
+		this.taxonxVolumeReaderSourceFile = taxonxVolumeReaderSourceFile;
+	}
+
+	public Class<? extends TreatmentTransformerChain> getTreatmentTransformerChain() {
 		return treatmentTransformerChain;
 	}
 
-	public Class getMarkupDescriptionTreatmentTransformer() {
+	public void setTreatmentTransformerChain(
+			Class<? extends TreatmentTransformerChain> treatmentTransformerChain) {
+		this.treatmentTransformerChain = treatmentTransformerChain;
+	}
+
+	public Class<? extends DescriptionTreatmentTransformer> getMarkupDescriptionTreatmentTransformer() {
 		return markupDescriptionTreatmentTransformer;
+	}
+
+	public void setMarkupDescriptionTreatmentTransformer(
+			Class<? extends DescriptionTreatmentTransformer> markupDescriptionTreatmentTransformer) {
+		this.markupDescriptionTreatmentTransformer = markupDescriptionTreatmentTransformer;
 	}
 
 	public boolean isMarkupDescriptionTreatmentTransformerParallelProcessing() {
 		return markupDescriptionTreatmentTransformerParallelProcessing;
 	}
 
+	public void setMarkupDescriptionTreatmentTransformerParallelProcessing(
+			boolean markupDescriptionTreatmentTransformerParallelProcessing) {
+		this.markupDescriptionTreatmentTransformerParallelProcessing = markupDescriptionTreatmentTransformerParallelProcessing;
+	}
+
 	public int getMarkupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum() {
 		return markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum;
+	}
+
+	public void setMarkupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum(
+			int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum) {
+		this.markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum;
 	}
 
 	public int getMarkupDescriptionTreatmentTransformerSentenceChunkerRunMaximum() {
 		return markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum;
 	}
 
+	public void setMarkupDescriptionTreatmentTransformerSentenceChunkerRunMaximum(
+			int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum) {
+		this.markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum;
+	}
+
 	public String getDatabaseName() {
 		return databaseName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
 	}
 
 	public String getDatabaseUser() {
 		return databaseUser;
 	}
 
+	public void setDatabaseUser(String databaseUser) {
+		this.databaseUser = databaseUser;
+	}
+
 	public String getDatabasePassword() {
 		return databasePassword;
 	}
 
-	public Class getVolumeWriter() {
+	public void setDatabasePassword(String databasePassword) {
+		this.databasePassword = databasePassword;
+	}
+
+	public Class<? extends IVolumeWriter> getVolumeWriter() {
 		return volumeWriter;
+	}
+
+	public void setVolumeWriter(Class<? extends IVolumeWriter> volumeWriter) {
+		this.volumeWriter = volumeWriter;
 	}
 
 	public String getStandardVolumeReaderSourcefiles() {
 		return standardVolumeReaderSourcefiles;
 	}
 
+	public void setStandardVolumeReaderSourcefiles(
+			String standardVolumeReaderSourcefiles) {
+		this.standardVolumeReaderSourcefiles = standardVolumeReaderSourcefiles;
+	}
+
 	public String getDatabaseTablePrefix() {
 		return databaseTablePrefix;
+	}
+
+	public void setDatabaseTablePrefix(String databaseTablePrefix) {
+		this.databaseTablePrefix = databaseTablePrefix;
 	}
 
 	public String getDatabaseGlossaryTable() {
 		return databaseGlossaryTable;
 	}
 
+	public void setDatabaseGlossaryTable(String databaseGlossaryTable) {
+		this.databaseGlossaryTable = databaseGlossaryTable;
+	}
+
 	public String getGlossaryFile() {
 		return glossaryFile;
 	}
 
-	public Class getNormalizer() {
+	public void setGlossaryFile(String glossaryFile) {
+		this.glossaryFile = glossaryFile;
+	}
+
+	public Class<? extends INormalizer> getNormalizer() {
 		return normalizer;
 	}
+
+	public void setNormalizer(Class<? extends INormalizer> normalizer) {
+		this.normalizer = normalizer;
+	}
+
+	public Class<? extends IVolumeReader> getLearnerVolumeReader() {
+		return learnerVolumeReader;
+	}
+
+	public void setLearnerVolumeReader(
+			Class<? extends IVolumeReader> learnerVolumeReader) {
+		this.learnerVolumeReader = learnerVolumeReader;
+	}
+
+	public Class<? extends IGlossary> getGlossary() {
+		return glossary;
+	}
+
+	public void setGlossary(Class<? extends IGlossary> glossary) {
+		this.glossary = glossary;
+	}
+
+	
 }
+

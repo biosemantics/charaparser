@@ -1,4 +1,4 @@
-package semanticMarkup;
+package semanticMarkup.iPlant;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -7,23 +7,16 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import semanticMarkup.CLIMain;
+import semanticMarkup.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
-import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.IRun;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
- * CLI Entry point into the processing of the charaparser framework
+ * Markup CLI Entry point into the processing of the charaparser framework
  * @author thomas rodenhausen
  */
-public class CLIMain {
-
-	protected RunConfig config;
+public class MarkupMain extends CLIMain {
 	
 	/**
 	 * @param args
@@ -31,31 +24,12 @@ public class CLIMain {
 	public static void main(String[] args) {
 		for(String arg : args)
 			System.out.println(arg);
-		CLIMain cliMain = new CLIMain();
+		CLIMain cliMain = new MarkupMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
 
-	/**
-	 * Run the Main
-	 */
-	public void run() {
-		log(LogLevel.DEBUG, "run using config:");
-		log(LogLevel.DEBUG, config.toString());
-		Injector injector = Guice.createInjector(config);
-		IRun run = injector.getInstance(IRun.class);
-		
-		log(LogLevel.INFO, "running " + run.getDescription() + "...");
-		try {
-			run.run();
-		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
-		}
-	}
-
-	/**
-	 * @param args to parse to set config appropriately
-	 */
+	@Override
 	public void parse(String[] args) {
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
@@ -154,34 +128,5 @@ public class CLIMain {
 		catch( ParseException exp ) {
 		    System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
-	}
-
-	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) {
-		if(volumeReader.equals("Word")) {
-			config.setMarkupCreatorVolumeReader(DocWordVolumeReader.class);
-			config.setWordVolumeReaderSourceFile(input);
-		}
-		if(volumeReader.equals("XML")) {
-			config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
-			config.setXmlVolumeReaderSourceDirectory(input);
-		}
-		if(volumeReader.equals("Taxonx")) {
-			config.setMarkupCreatorVolumeReader(TaxonxVolumeReader.class);
-			config.setTaxonxVolumeReaderSourceFile(input);
-		}
-		log(LogLevel.ERROR, "VolumeReader unknown");
-		System.exit(0);
-	}
-
-	protected RunConfig getConfig(String config) {
-		if(config.equals("FNA")) {
-			return new FNAv19Config();
-		}
-		if(config.equals("Treatise")) {
-			return new TreatiseConfig();
-		}
-		log(LogLevel.ERROR, "Config unknown");
-		System.exit(0);
-		return null;
 	}
 }

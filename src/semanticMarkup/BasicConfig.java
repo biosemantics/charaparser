@@ -8,15 +8,15 @@ import java.util.Set;
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.ICorpus;
-import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.know.lib.CSVCorpus;
-import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.know.lib.LearnedCharacterKnowledgeBase;
 import semanticMarkup.know.lib.LearnedOrganStateKnowledgeBase;
 import semanticMarkup.know.lib.LearnedPOSKnowledgeBase;
 import semanticMarkup.know.lib.WordNetPOSKnowledgeBase;
+import semanticMarkup.know.net.IOTOClient;
+import semanticMarkup.know.net.OTOClient;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.chunk.IChunker;
 import semanticMarkup.ling.chunk.lib.CharaparserChunkerChain;
@@ -24,7 +24,6 @@ import semanticMarkup.ling.chunk.lib.chunker.AndChunker;
 import semanticMarkup.ling.chunk.lib.chunker.CharacterListChunker;
 import semanticMarkup.ling.chunk.lib.chunker.CharacterNameChunker;
 import semanticMarkup.ling.chunk.lib.chunker.ConjunctedOrgansRecoverChunker;
-import semanticMarkup.ling.chunk.lib.chunker.MyCleanupChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyModifierChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyNewCleanupChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyStateChunker;
@@ -81,8 +80,11 @@ import semanticMarkup.ling.extract.lib.ToChunkProcessor;
 import semanticMarkup.ling.extract.lib.VPChunkProcessor;
 import semanticMarkup.ling.extract.lib.ValuePercentageOrDegreeChunkProcessor;
 import semanticMarkup.ling.extract.lib.WhereChunkProcessor;
+import semanticMarkup.ling.learn.ILearner;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
+import semanticMarkup.ling.learn.lib.Learner;
+import semanticMarkup.ling.learn.lib.OTOLearner;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.parse.IParseTreeFactory;
@@ -120,7 +122,6 @@ public class BasicConfig extends AbstractModule {
 		bind(ITokenizer.class).annotatedWith(Names.named("WordTokenizer")).to(WhitespaceTokenizer.class);
 		bind(ITokenCombiner.class).annotatedWith(Names.named("WordCombiner")).to(WhitespaceTokenCombiner.class);
 		
-		bind(IGlossary.class).to(CSVGlossary.class).in(Singleton.class);
 		bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
 		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance("resources" + File.separator + "brown.csv");
 		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
@@ -131,6 +132,9 @@ public class BasicConfig extends AbstractModule {
 		bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
 		
 		bind(ITerminologyLearner.class).to(PerlTerminologyLearner.class).in(Singleton.class); //PerlTerminologyLearner //DatabaseInputNoLearner
+		bind(IOTOClient.class).to(OTOClient.class).in(Singleton.class);
+		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance("http://localhost:8080/GlossaryWebservice/");
+		bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 		
 		bind(String.class).annotatedWith(Names.named("temporaryPath")).toInstance("temp");
 		bind(String.class).annotatedWith(Names.named("descriptionSeparator")).toInstance("-------------");

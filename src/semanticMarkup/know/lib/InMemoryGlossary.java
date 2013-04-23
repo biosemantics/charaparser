@@ -48,7 +48,11 @@ public class InMemoryGlossary implements IGlossary {
 
 	@Override
 	public void addEntry(String word, String category) {
+		if(!glossary.containsKey(word))
+			glossary.put(word, new HashSet<String>());
 		glossary.get(word).add(category);
+		if(!reverseGlossary.containsKey(category))
+			reverseGlossary.put(category, new HashSet<String>());
 		reverseGlossary.get(category).add(word);
 	}
 }

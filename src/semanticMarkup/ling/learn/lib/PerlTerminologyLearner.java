@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -33,7 +31,6 @@ import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.mysql.jdbc.log.Log;
 
 /**
  * PerlTerminologyLearner learns using the previous charaparser perl part
@@ -526,6 +523,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private void runPerl(File inDirectory) throws Exception {
 		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "//"
 				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix + " " + this.glossaryTable;
+		log(LogLevel.DEBUG, command);
 		createTablesNeededForPerl();
 		runCommand(command);
 	}

@@ -1,4 +1,4 @@
-package semanticMarkup;
+package semanticMarkup.iPlant;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -7,59 +7,35 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import semanticMarkup.CLIMain;
+import semanticMarkup.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
-import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
+import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.IRun;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import semanticMarkup.run.LearnRun;
 
 /**
- * CLI Entry point into the processing of the charaparser framework
+ * Learn CLI Entry point into the processing of the charaparser framework
  * @author thomas rodenhausen
  */
-public class CLIMain {
+public class LearnMain extends CLIMain {
 
-	protected RunConfig config;
-	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		for(String arg : args)
 			System.out.println(arg);
-		CLIMain cliMain = new CLIMain();
+		CLIMain cliMain = new LearnMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
 
-	/**
-	 * Run the Main
-	 */
-	public void run() {
-		log(LogLevel.DEBUG, "run using config:");
-		log(LogLevel.DEBUG, config.toString());
-		Injector injector = Guice.createInjector(config);
-		IRun run = injector.getInstance(IRun.class);
-		
-		log(LogLevel.INFO, "running " + run.getDescription() + "...");
-		try {
-			run.run();
-		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
-		}
-	}
-
-	/**
-	 * @param args to parse to set config appropriately
-	 */
-	public void parse(String[] args) {
+	@Override
+	public void parse(String[] args) {		
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
-		options.addOption("c", "config", true, "config to use");
+		options.addOption("c", "config", true, "config to use"); 
 		options.addOption("o", "output", true, "output directory");
 		options.addOption("i", "input", true, "input file or directory");
 		options.addOption("r", "reader", true, "force an input reader. If the option is not provided input format will be detected");
@@ -73,6 +49,7 @@ public class CLIMain {
 		options.addOption("h", "help", false, "shows the help");
 		
 		config = new RunConfig();
+		
 		try {
 		    CommandLine commandLine = parser.parse( options, args );
 		    if(commandLine.hasOption("h")) {
@@ -144,44 +121,13 @@ public class CLIMain {
 		    } else {
 		    	//use standard value from RunConfig
 		    }
-		    if(commandLine.hasOption("g")) {
-		    	config.setGlossaryFile(commandLine.getOptionValue("g"));
-		    } else {
-		    	log(LogLevel.ERROR, "You have to specify a glossary file");
-		    	System.exit(0);
-		    }
 		}
 		catch( ParseException exp ) {
 		    System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
-	}
 
-	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) {
-		if(volumeReader.equals("Word")) {
-			config.setMarkupCreatorVolumeReader(DocWordVolumeReader.class);
-			config.setWordVolumeReaderSourceFile(input);
-		}
-		if(volumeReader.equals("XML")) {
-			config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
-			config.setXmlVolumeReaderSourceDirectory(input);
-		}
-		if(volumeReader.equals("Taxonx")) {
-			config.setMarkupCreatorVolumeReader(TaxonxVolumeReader.class);
-			config.setTaxonxVolumeReaderSourceFile(input);
-		}
-		log(LogLevel.ERROR, "VolumeReader unknown");
-		System.exit(0);
-	}
-
-	protected RunConfig getConfig(String config) {
-		if(config.equals("FNA")) {
-			return new FNAv19Config();
-		}
-		if(config.equals("Treatise")) {
-			return new TreatiseConfig();
-		}
-		log(LogLevel.ERROR, "Config unknown");
-		System.exit(0);
-		return null;
+		config.setRun(LearnRun.class);
+		config.setGlossary(InMemoryGlossary.class);
+		config.setDatabaseTablePrefix("ant_agosti");
 	}
 }

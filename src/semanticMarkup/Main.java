@@ -22,12 +22,12 @@ public class Main {
 	}
 
 	private void run() throws Exception {
+		System.out.println(java.lang.Runtime.getRuntime().maxMemory()); 
 		//TreatiseConfig //FNAv19Config
 		Injector injector = Guice.createInjector(new FNAv19Config());
 		IRun run = injector.getInstance(IRun.class);
 		
 		log(LogLevel.INFO, "running " + run.getDescription() + "...");
 		run.run();
-	}
-	
+	}	
 }

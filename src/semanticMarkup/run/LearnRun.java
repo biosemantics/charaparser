@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Calendar;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import semanticMarkup.ling.learn.ILearner;
@@ -25,9 +26,10 @@ public class LearnRun extends AbstractRun {
 	 * @param guiceModuleFile
 	 * @param learner
 	 */
+	@Inject
 	public LearnRun(@Named("Run_OutDirectory")String outDirectory,
 			@Named("GuiceModuleFile")String guiceModuleFile, 
-			@Named("Learner") ILearner learner) {
+			ILearner learner) {
 		super(guiceModuleFile);
 		this.outDirectory = outDirectory;
 		this.learner = learner;

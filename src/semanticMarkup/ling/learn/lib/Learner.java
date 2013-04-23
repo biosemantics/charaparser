@@ -2,6 +2,7 @@ package semanticMarkup.ling.learn.lib;
 
 import java.util.List;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import semanticMarkup.core.Treatment;
@@ -22,6 +23,7 @@ public class Learner implements ILearner {
 	 * @param volumeReader
 	 * @param terminologyLearner
 	 */
+	@Inject
 	public Learner(@Named("Learner_VolumeReader")IVolumeReader volumeReader, 
 			ITerminologyLearner terminologyLearner) {	
 		this.volumeReader = volumeReader;
