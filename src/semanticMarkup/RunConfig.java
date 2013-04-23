@@ -18,6 +18,9 @@ import semanticMarkup.io.output.IVolumeWriter;
 import semanticMarkup.io.output.lib.xml.XMLVolumeWriter;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.lib.CSVGlossary;
+import semanticMarkup.ling.learn.ITerminologyLearner;
+import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
+import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
 import semanticMarkup.markup.DescriptionMarkupCreator;
@@ -70,7 +73,7 @@ public class RunConfig extends BasicConfig {
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = true;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
-	private String databaseName = "foc";
+	private String databaseName = "local";
 	private String databaseUser = "termsuser";
 	private String databasePassword = "termspassword";
 	private Class<? extends IVolumeWriter> volumeWriter = XMLVolumeWriter.class;
@@ -81,6 +84,8 @@ public class RunConfig extends BasicConfig {
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
+	private Class<? extends ITerminologyLearner> terminologyLearner = DatabaseInputNoLearner.class;
+	//PerlTerminologyLearner //DatabaseInputNoLearner;
 	
 	@Override 
 	public void configure() {
@@ -106,6 +111,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(taxonxSchemaFile);
 		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(xmlSchemaFile);
 		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
+		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
 		bind(TreatmentTransformerChain.class).to(treatmentTransformerChain);
 		bind(DescriptionTreatmentTransformer.class).to(markupDescriptionTreatmentTransformer);
 		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
@@ -471,6 +477,15 @@ public class RunConfig extends BasicConfig {
 
 	public void setGlossary(Class<? extends IGlossary> glossary) {
 		this.glossary = glossary;
+	}
+
+	public Class<? extends ITerminologyLearner> getTerminologyLearner() {
+		return terminologyLearner;
+	}
+
+	public void setTerminologyLearner(
+			Class<? extends ITerminologyLearner> terminologyLearner) {
+		this.terminologyLearner = terminologyLearner;
 	}
 
 	

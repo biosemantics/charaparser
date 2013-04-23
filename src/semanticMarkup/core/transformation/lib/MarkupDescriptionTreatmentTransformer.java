@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.ValueTreatmentElement;
-import semanticMarkup.gui.MainForm;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.net.IOTOClient;
 import semanticMarkup.know.net.OTOGlossary;
@@ -67,7 +66,6 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	 * @param parallelProcessing
 	 * @param descriptionExtractorRunMaximum
 	 * @param sentenceChunkerRunMaximum
-	 * @param mainForm
 	 * @param otoClient
 	 * @param databaseName
 	 * @param databaseUser
@@ -87,8 +85,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			ITerminologyLearner terminologyLearner,
 			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
-			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
-			MainForm mainForm, 
+			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
 			IOTOClient otoClient, 
 			@Named("databaseName")String databaseName,
 			@Named("databaseUser")String databaseUser,
@@ -119,7 +116,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		OTOGlossary otoGlossary = otoClient.read(databasePrefix);
 		storeInLocalDB(otoGlossary);
 		initGlossary(otoGlossary);
-		
+	
+		terminologyLearner.readResults(treatments);
 		Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker = terminologyLearner.getSentencesForOrganStateMarker();
 		// do the actual markup
 		markupDescriptions(treatments, sentencesForOrganStateMarker);		

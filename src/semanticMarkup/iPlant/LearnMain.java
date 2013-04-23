@@ -125,9 +125,13 @@ public class LearnMain extends CLIMain {
 		catch( ParseException exp ) {
 		    System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
-
+		
+		
 		config.setRun(LearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
+		//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
+		//since we have no user information to be able to generate an ID that allows to know
+		//at least whos data to pull
 		config.setDatabaseTablePrefix("ant_agosti");
 	}
 }

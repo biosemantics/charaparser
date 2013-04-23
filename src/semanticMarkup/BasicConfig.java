@@ -131,7 +131,6 @@ public class BasicConfig extends AbstractModule {
 		bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);;
 		bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
 		
-		bind(ITerminologyLearner.class).to(PerlTerminologyLearner.class).in(Singleton.class); //PerlTerminologyLearner //DatabaseInputNoLearner
 		bind(IOTOClient.class).to(OTOClient.class).in(Singleton.class);
 		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance("http://localhost:8080/GlossaryWebservice/");
 		bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);

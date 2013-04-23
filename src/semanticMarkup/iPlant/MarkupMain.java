@@ -9,8 +9,13 @@ import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
+import semanticMarkup.core.transformation.lib.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.GenericFileVolumeReader;
+import semanticMarkup.know.lib.InMemoryGlossary;
+import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.run.LearnRun;
+import semanticMarkup.run.MarkupRun;
 
 /**
  * Markup CLI Entry point into the processing of the charaparser framework
@@ -128,5 +133,14 @@ public class MarkupMain extends CLIMain {
 		catch( ParseException exp ) {
 		    System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
+		
+		config.setTerminologyLearner(DatabaseInputNoLearner.class);
+		config.setRun(MarkupRun.class);
+		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionTreatmentTransformer.class);
+		config.setGlossary(InMemoryGlossary.class);
+		//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
+		//since we have no user information to be able to generate an ID that allows to know
+		//at least whos data to pull
+		config.setDatabaseTablePrefix("ant_agosti");
 	}
 }
