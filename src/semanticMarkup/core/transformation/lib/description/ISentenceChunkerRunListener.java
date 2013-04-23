@@ -1,4 +1,4 @@
-package semanticMarkup.core.transformation.lib;
+package semanticMarkup.core.transformation.lib.description;
 
 /**
  * ISentenceChunkerRunListener listens to when SentenceChunkerRuns are done processing

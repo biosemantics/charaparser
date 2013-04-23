@@ -53,7 +53,10 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	
 	@Override
 	public void learn(List<Treatment> treatments) { 
-		for(Treatment treatment : treatments) 
-			fileTreatments.put(treatment.getName(), treatment);
+		int i = 0;
+		for(Treatment treatment : treatments) {
+			String prefix = intToString(i++, Math.max(String.valueOf(treatments.size()).length(), 3));
+			fileTreatments.put(prefix, treatment);
+		}
 	}
 }

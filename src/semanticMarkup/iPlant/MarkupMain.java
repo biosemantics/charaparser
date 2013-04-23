@@ -9,7 +9,7 @@ import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
-import semanticMarkup.core.transformation.lib.MarkupDescriptionTreatmentTransformer;
+import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
@@ -122,12 +122,6 @@ public class MarkupMain extends CLIMain {
 		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("dbgt"));
 		    } else {
 		    	//use standard value from RunConfig
-		    }
-		    if(commandLine.hasOption("g")) {
-		    	config.setGlossaryFile(commandLine.getOptionValue("g"));
-		    } else {
-		    	log(LogLevel.ERROR, "You have to specify a glossary file");
-		    	System.exit(0);
 		    }
 		}
 		catch( ParseException exp ) {

@@ -3,7 +3,8 @@ package semanticMarkup.markup;
 import java.util.List;
 
 import semanticMarkup.core.Treatment;
-import semanticMarkup.core.transformation.lib.GUIDescriptionTreatmentTransformer;
+import semanticMarkup.core.transformation.lib.description.DescriptionTreatmentTransformer;
+import semanticMarkup.core.transformation.lib.description.GUIDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.output.IVolumeWriter;
 import semanticMarkup.log.LogLevel;
@@ -17,7 +18,7 @@ import com.google.inject.name.Named;
  */
 public class DescriptionMarkupCreator implements IMarkupCreator {
 
-	private GUIDescriptionTreatmentTransformer inputTransformer;
+	private DescriptionTreatmentTransformer inputTransformer;
 	private IVolumeWriter volumeWriter;
 	private IVolumeReader volumeReader;
 	private List<Treatment> treatments;
@@ -29,7 +30,7 @@ public class DescriptionMarkupCreator implements IMarkupCreator {
 	 */
 	@Inject
 	public DescriptionMarkupCreator(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
-			GUIDescriptionTreatmentTransformer inputTransformer, 
+			DescriptionTreatmentTransformer inputTransformer, 
 			@Named("MarkupCreator_VolumeWriter")IVolumeWriter volumeWriter) {	
 		this.volumeReader = volumeReader;
 		this.inputTransformer = inputTransformer;

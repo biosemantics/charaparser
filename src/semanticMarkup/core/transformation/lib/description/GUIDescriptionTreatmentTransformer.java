@@ -1,8 +1,5 @@
-package semanticMarkup.core.transformation.lib;
+package semanticMarkup.core.transformation.lib.description;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,9 +12,9 @@ import java.util.concurrent.Future;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.ValueTreatmentElement;
+import semanticMarkup.gui.MainForm;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.net.IOTOClient;
-import semanticMarkup.know.net.OTOGlossary;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.learn.ITerminologyLearner;
@@ -30,15 +27,14 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.sirls.beans.TermCategory;
-import edu.arizona.sirls.beans.TermSynonym;
-
 /**
  * Transforms the treatments by semantically marking up the description treatment element of a treatment
- * This can be used for the second and hence the 'markup' application for the iPlant integration
+ * Uses MainForm from previous Charaparser (all classes in semanticMarkup.gui are of the previous version and 
+ * coupled with MainForm but nothing outside of the package) and hence requires e.g. certain database tables 
+ * to process the results of the perl learning part.
  * @author rodenhausen
  */
-public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentTransformer {
+public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTransformer {
 
 	private IParser parser;
 	private IPOSTagger posTagger;
@@ -49,12 +45,9 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	private ChunkerChain chunkerChain;
 	private int descriptionExtractorRunMaximum;
 	private int sentenceChunkerRunMaximum;
+	private MainForm mainForm;
 	private Map<Treatment, Future<TreatmentElement>> futureNewDescriptions = new HashMap<Treatment, Future<TreatmentElement>>();
-	private IOTOClient otoClient;
-	private String databasePrefix;
-	private IGlossary glossary;
-	private Connection connection;
-	
+
 	/**
 	 * @param wordTokenizer
 	 * @param parser
@@ -66,6 +59,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	 * @param parallelProcessing
 	 * @param descriptionExtractorRunMaximum
 	 * @param sentenceChunkerRunMaximum
+	 * @param mainForm
 	 * @param otoClient
 	 * @param databaseName
 	 * @param databaseUser
@@ -75,7 +69,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	 * @throws Exception
 	 */
 	@Inject
-	public MarkupDescriptionTreatmentTransformer(
+	public GUIDescriptionTreatmentTransformer(
 			@Named("WordTokenizer")ITokenizer wordTokenizer, 
 			IParser parser,
 			@Named("ChunkerChain")ChunkerChain chunkerChain,
@@ -85,13 +79,13 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			ITerminologyLearner terminologyLearner,
 			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
-			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
+			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
+			MainForm mainForm, 
 			IOTOClient otoClient, 
 			@Named("databaseName")String databaseName,
 			@Named("databaseUser")String databaseUser,
 			@Named("databasePassword")String databasePassword,
 			@Named("databasePrefix")String databasePrefix, 
-			
 			IGlossary glossary) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
@@ -103,62 +97,32 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.wordTokenizer = wordTokenizer;
 		this.descriptionExtractorRunMaximum = descriptionExtractorRunMaximum;
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
-		this.otoClient = otoClient;
-		this.databasePrefix = databasePrefix;
-		this.glossary = glossary;
-		
-		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
+		this.mainForm = mainForm;
 	}
 
 	@Override
 	public List<Treatment> transform(List<Treatment> treatments) {
-		OTOGlossary otoGlossary = otoClient.read(databasePrefix);
-		storeInLocalDB(otoGlossary);
-		initGlossary(otoGlossary);
-	
+		// prepare main form (e.g. needs to create certain database tables) 
+		mainForm.startMarkup(treatments);
+		
+		// learn terminology
+		terminologyLearner.learn(treatments);
+		
+		// show main form to correct/extend learned terminology
+		try {
+			mainForm.open();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		// MainForm expects datatable structure of perl learning part and hence if PerlTerminologyLearner is
+		// used terminology has to be re-read from database 
 		terminologyLearner.readResults(treatments);
+		
 		Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker = terminologyLearner.getSentencesForOrganStateMarker();
 		// do the actual markup
 		markupDescriptions(treatments, sentencesForOrganStateMarker);		
 		return treatments;
-	}
-
-	/**
-	 * TODO: OTO Webservice should probably only return one term category list.
-	 * No need to return an extra term synonym list just because it might make sense to have them seperate in a relational database schema
-	 * @param otoGlossary
-	 */
-	private void initGlossary(OTOGlossary otoGlossary) {
-		for(TermCategory termCategory : otoGlossary.getTermCategories()) {
-			glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
-		}
-	}
-
-	
-	private void storeInLocalDB(OTOGlossary otoGlossary) {
-		try {
-			Statement stmt = connection.createStatement();
-	        String cleanupQuery = "DROP TABLE IF EXISTS " + 
-									this.databasePrefix + "_term_category, " + 
-									this.databasePrefix + "_syns;";
-	        stmt.execute(cleanupQuery);
-	        stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
-					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
-			
-			for(TermCategory termCategory : otoGlossary.getTermCategories()) {
-				 stmt.execute("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES " +
-				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.getHasSyn() +"');");
-					
-			}
-			for(TermSynonym termSynonym : otoGlossary.getTermSynonyms()) {
-				 stmt.execute("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES " +
-					 		"('" + termSynonym.getTerm() +"', '" + termSynonym.getSynonym() + "');");
-			}
-		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
-		}
 	}
 
 	/**

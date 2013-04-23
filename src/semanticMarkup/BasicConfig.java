@@ -132,7 +132,6 @@ public class BasicConfig extends AbstractModule {
 		bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
 		
 		bind(IOTOClient.class).to(OTOClient.class).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance("http://localhost:8080/GlossaryWebservice/");
 		bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 		
 		bind(String.class).annotatedWith(Names.named("temporaryPath")).toInstance("temp");

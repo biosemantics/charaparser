@@ -47,6 +47,7 @@ public class OTOLearner implements ILearner {
 	private Connection connection;
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
+	private String permanentGlossaryPrefix;
 	
 	/**
 	 * @param volumeReader
@@ -67,12 +68,14 @@ public class OTOLearner implements ILearner {
 			@Named("databaseUser")String databaseUser,
 			@Named("databasePassword")String databasePassword,
 			@Named("databasePrefix")String databasePrefix, 
+			@Named("permanentGlossaryPrefix")String permanentGlossaryPrefix,
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
 			IPOSKnowledgeBase posKnowledgeBase) throws Exception {	
 		this.volumeReader = volumeReader;
 		this.terminologyLearner = terminologyLearner;
 		this.otoClient = otoClient;
+		this.permanentGlossaryPrefix = permanentGlossaryPrefix;
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
 		this.glossaryTable = glossaryTable;
@@ -86,7 +89,8 @@ public class OTOLearner implements ILearner {
 	public void learn() throws Exception {
 		List<Treatment> treatments = volumeReader.read();
 		
-		OTOGlossary otoGlossary = otoClient.read(databasePrefix);
+		//no prefix, simply use the glossary 
+		OTOGlossary otoGlossary = otoClient.read(permanentGlossaryPrefix);
 		storeInLocalDB(otoGlossary);
 
 		//not really needed for learning part the in-memory glossary, not before markup step
@@ -116,14 +120,14 @@ public class OTOLearner implements ILearner {
 									this.databasePrefix + "_term_category, " + 
 									this.databasePrefix + "_syns, " +
 									this.databasePrefix + "_wordroles, " +
-									this.databasePrefix + "_" + this.glossaryTable + ";";
+									this.glossaryTable + ";";
 	        stmt.execute(cleanupQuery);
 	        stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
 					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`));");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_" + this.glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
 			
 			for(TermCategory termCategory : otoGlossary.getTermCategories()) {
@@ -131,7 +135,7 @@ public class OTOLearner implements ILearner {
 				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.getHasSyn() +"');");
 			}
 			for(TermCategory termCategory : otoGlossary.getTermCategories()) {
-				 stmt.execute("INSERT INTO " + this.databasePrefix + "_" + this.glossaryTable + " (`term`, `category`, `hasSyn`) VALUES " +
+				 stmt.execute("INSERT INTO " + this.glossaryTable + " (`term`, `category`, `hasSyn`) VALUES " +
 				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.getHasSyn() +"');");		
 			}
 			for(TermSynonym termSynonym : otoGlossary.getTermSynonyms()) {

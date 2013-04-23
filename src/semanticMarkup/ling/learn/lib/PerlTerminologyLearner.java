@@ -271,7 +271,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("select source, sentence from " + this.databasePrefix + "_sentence");
 			while(resultSet.next()) {
-				String source = resultSet.getString("source");
+				String[] sourceParts = resultSet.getString("source").split("\\.");
+				String source = sourceParts[0] + "." + sourceParts[2];
 				String sentence = resultSet.getString("sentence");
 				List<Token> tokens = tokenizer.tokenize(sentence);
 				for(Token token : tokens) {
@@ -340,14 +341,15 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			ResultSet resultSet = statement.executeQuery("select source, tag from " + this.databasePrefix + "_sentence order by sentid");
 			String previousTag = null;
 			//int listId = -1;
-			String previousSourceId = "-1";
+			String previousTreatmentId = "-1";
 			while(resultSet.next()) {
-				String source = resultSet.getString("source");
+				String[] sourceParts = resultSet.getString("source").split("\\.");
+				String source = sourceParts[0] + "." + sourceParts[2];
+				
 				if(selectedSources.isEmpty() || selectedSources.contains(source)) {
-					String[] sourceIds = source.split(".txt-");
-					String sourceId = sourceIds[0];//String.valueOf(Integer.valueOf(sourceIds[0])-1);
-					if(!sourceId.equals(previousSourceId)) {
-						previousSourceId = sourceId;
+					String treatmentId = sourceParts[0];
+					if(!treatmentId.equals(previousTreatmentId)) {
+						previousTreatmentId = treatmentId;
 						//listId++;
 					}
 					
@@ -356,7 +358,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						tag = "";
 					tag = tag.replaceAll("\\W", "");
 					
-					Treatment treatment = fileTreatments.get(sourceId);
+					Treatment treatment = fileTreatments.get(treatmentId);
 					if(!tags.containsKey(treatment)) 
 						tags.put(treatment, new LinkedHashMap<String, String>());
 					if(!tag.equals("ditto")) {
@@ -383,7 +385,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			// order by sentid desc");
 			
 			//int listId = -1;
-			String previousSourceId = "-1";
+			String previousTreatmentId = "-1";
 			
 			//leave ditto as it is
 			while(rs.next()){ //read sent in in reversed order
@@ -391,13 +393,12 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				String sent = rs.getString("sentence").trim();
 				
 				if(sent.length()!=0){
-					String source = rs.getString("source");
+					String[] sourceParts = rs.getString("source").split("\\.");
+					String source = sourceParts[0] + "." + sourceParts[2];
 					if(selectedSources.isEmpty() || selectedSources.contains(source)) {
-						String[] sourceIds = source.split(".txt-");
-						
-						String sourceId = sourceIds[0]; //String.valueOf(Integer.valueOf(sourceIds[0])-1);
-						if(!sourceId.equals(previousSourceId)) {
-							previousSourceId = sourceId;
+						String treatmentId = sourceParts[0];
+						if(!treatmentId.equals(previousTreatmentId)) {
+							previousTreatmentId = treatmentId;
 							//listId++; // in the db 1 is followed by 10 by 11 and not 2
 						}
 						
@@ -408,7 +409,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
 						text = rs.getString("modifier")+"##"+tag+"##"+text;
 						
-						Treatment treatment = fileTreatments.get(sourceId);
+						Treatment treatment = fileTreatments.get(treatmentId);
 						if(!sentences.containsKey(treatment))
 							sentences.put(treatment, new LinkedHashMap<String, String>());
 						sentences.get(treatment).put(source, text);
@@ -579,7 +580,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		}
 	}
 	
-	private String intToString(int num, int digits) {
+	protected String intToString(int num, int digits) {
 		// create variable length array of zeros
 	    char[] zeros = new char[digits];
 	    Arrays.fill(zeros, '0');
@@ -591,9 +592,9 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	
 	private void writeTreatmentsToFiles(List<Treatment> treatments, File directory) throws IOException {
 		int i = 0;
-		for(Treatment treatment : treatments) {
-			String prefix = intToString(i++, Math.max(String.valueOf(treatments.size()).length(), 3)) + ".";			
-			File treatmentFile = File.createTempFile(prefix, ".txt", directory);
+ 		for(Treatment treatment : treatments) {
+			String prefix = intToString(i++, Math.max(String.valueOf(treatments.size()).length(), 3));			
+			File treatmentFile = File.createTempFile(prefix  + ".", ".txt", directory);
 			treatmentFile.deleteOnExit();
 			//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 			log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
@@ -605,8 +606,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	            fileWriter.write(this.descriptionSeparator + "\n");
 	            fileWriter.close();
 			}
-
-			fileTreatments.put(treatmentFile.getName().split(".txt")[0], treatment);
+			
+			fileTreatments.put(prefix, treatment);
 		}
 	}
 
@@ -684,7 +685,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			String parentTag = "";
 			String grandParentTag = "";
 			while(resultSet.next()) {
-				String source = resultSet.getString("source");
+				String[] sourceParts = resultSet.getString("source").split("\\.");
+				String source = sourceParts[0] + "." + sourceParts[2];
 				String tag = resultSet.getString("tag");
 				parentTags.put(source, parentTag);
 				grandParentTags.put(source, grandParentTag);

@@ -6,8 +6,8 @@ import java.util.Set;
 
 import semanticMarkup.core.transformation.TreatmentTransformerChain;
 import semanticMarkup.core.transformation.lib.CharaparserTreatmentTransformerChain;
-import semanticMarkup.core.transformation.lib.DescriptionTreatmentTransformer;
-import semanticMarkup.core.transformation.lib.GUIDescriptionTreatmentTransformer;
+import semanticMarkup.core.transformation.lib.description.DescriptionTreatmentTransformer;
+import semanticMarkup.core.transformation.lib.description.GUIDescriptionTreatmentTransformer;
 import semanticMarkup.eval.AdvancedPrecisionRecallEvaluator;
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.io.input.GenericFileVolumeReader;
@@ -68,9 +68,10 @@ public class RunConfig extends BasicConfig {
 	private String taxonxSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd";
 	private String xmlSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd";
 	private String taxonxVolumeReaderSourceFile = "evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml";
+	private String otoClientUrl = "http://localhost:8080/webservice/";
 	private Class<? extends TreatmentTransformerChain> treatmentTransformerChain = CharaparserTreatmentTransformerChain.class;
 	private Class<? extends DescriptionTreatmentTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTreatmentTransformer.class;
-	private boolean markupDescriptionTreatmentTransformerParallelProcessing = true;
+	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
 	private String databaseName = "local";
@@ -81,10 +82,11 @@ public class RunConfig extends BasicConfig {
 	
 	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
 	private String databaseTablePrefix = "type2";
+	private String permanentGlossaryPrefix = "fna";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
-	private Class<? extends ITerminologyLearner> terminologyLearner = DatabaseInputNoLearner.class;
+	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
 	//PerlTerminologyLearner //DatabaseInputNoLearner;
 	
 	@Override 
@@ -111,6 +113,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(taxonxSchemaFile);
 		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(xmlSchemaFile);
 		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
+		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
 		bind(TreatmentTransformerChain.class).to(treatmentTransformerChain);
 		bind(DescriptionTreatmentTransformer.class).to(markupDescriptionTreatmentTransformer);
@@ -126,6 +129,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(standardVolumeReaderSourcefiles);
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance(databaseTablePrefix); 
+		bind(String.class).annotatedWith(Names.named("permanentGlossaryPrefix")).toInstance(permanentGlossaryPrefix); 
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
 		bind(INormalizer.class).to(FNAv19Normalizer.class); 
@@ -488,6 +492,21 @@ public class RunConfig extends BasicConfig {
 		this.terminologyLearner = terminologyLearner;
 	}
 
+	public String getOtoClientUrl() {
+		return otoClientUrl;
+	}
+
+	public void setOtoClientUrl(String otoClientUrl) {
+		this.otoClientUrl = otoClientUrl;
+	}
+
+	public String getPermanentGlossaryPrefix() {
+		return permanentGlossaryPrefix;
+	}
+
+	public void setPermanentGlossaryPrefix(String permanentGlossaryPrefix) {
+		this.permanentGlossaryPrefix = permanentGlossaryPrefix;
+	}
 	
 }
 

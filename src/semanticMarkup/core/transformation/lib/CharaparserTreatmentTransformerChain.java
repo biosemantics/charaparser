@@ -1,6 +1,7 @@
 package semanticMarkup.core.transformation.lib;
 
 import semanticMarkup.core.transformation.TreatmentTransformerChain;
+import semanticMarkup.core.transformation.lib.description.DescriptionTreatmentTransformer;
 
 import com.google.inject.Inject;
 

@@ -83,7 +83,7 @@ public class OTOClient implements IOTOClient {
 	
 	@Override
 	public void put(LocalGlossary localGlossary, String tablePrefix) {
-		this.putPossibleOtherTerms(localGlossary.getStructures(), tablePrefix);
+		this.putPossibleStructures(localGlossary.getStructures(), tablePrefix);
 		this.putPossibleCharacters(localGlossary.getCharacters(), tablePrefix);
 		this.putPossibleOtherTerms(localGlossary.getOtherTerms(), tablePrefix);
 	}
@@ -113,7 +113,7 @@ public class OTOClient implements IOTOClient {
 	}
 	
 	private void putPossibleCharacters(List<Term> characters, String tablePrefix) {
-		String url = this.url + "rest/glossary/possibleStructure";
+		String url = this.url + "rest/glossary/possibleCharacter";
 		WebResource webResource = client.resource(url); 
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 	    queryParams.add("tablePrefix", tablePrefix);
@@ -121,7 +121,7 @@ public class OTOClient implements IOTOClient {
 	}
 	
 	private void putPossibleOtherTerms(List<Term> otherTerms, String tablePrefix) {
-		String url = this.url + "rest/glossary/possibleStructure";
+		String url = this.url + "rest/glossary/possibleOtherTerm";
 		WebResource webResource = client.resource(url); 
 		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
 	    queryParams.add("tablePrefix", tablePrefix);

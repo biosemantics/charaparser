@@ -11,6 +11,7 @@ import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
+import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.run.LearnRun;
 
@@ -129,9 +130,12 @@ public class LearnMain extends CLIMain {
 		
 		config.setRun(LearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
+		config.setTerminologyLearner(PerlTerminologyLearner.class);
 		//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
 		//since we have no user information to be able to generate an ID that allows to know
 		//at least whos data to pull
 		config.setDatabaseTablePrefix("ant_agosti");
+		config.setPermanentGlossaryPrefix("fna");
+		config.setDatabaseGlossaryTable("permanentGlossary");
 	}
 }
