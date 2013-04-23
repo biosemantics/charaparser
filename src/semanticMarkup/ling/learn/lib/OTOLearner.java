@@ -493,7 +493,7 @@ public class OTOLearner implements ILearner {
 			}	
 		}
 		words = deduplicateSort(words);
-		return words;	
+		return words;
 	}
 	
 	/**

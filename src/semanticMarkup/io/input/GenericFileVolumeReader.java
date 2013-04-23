@@ -1,9 +1,14 @@
 package semanticMarkup.io.input;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -11,14 +16,10 @@ import com.google.inject.name.Named;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.io.input.extract.lib.DistributionTreatmentRefiner;
 import semanticMarkup.io.input.extract.lib.FloweringTimeTreatmentRefiner;
-import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.input.validate.IValidationRunListener;
-import semanticMarkup.io.input.validate.IVolumeValidator;
 import semanticMarkup.io.input.validate.ValidationRun;
 import semanticMarkup.io.input.validate.lib.TaxonxVolumeValidator;
-import semanticMarkup.io.input.validate.lib.WordVolumeValidator;
 import semanticMarkup.io.input.validate.lib.XMLVolumeValidator;
 import semanticMarkup.log.LogLevel;
 
@@ -27,7 +28,7 @@ import semanticMarkup.log.LogLevel;
  * for any of XMLVolumeReader, TaxonxVolumeReader or DocWordVolumeReader. If there is it delegates the actual reading to the appropriate reader
  * @author rodenhausen
  */
-public class GenericFileVolumeReader extends AbstractFileVolumeReader implements IValidationRunListener {
+public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 
 	private String styleStartPattern;
 	private String styleNamePattern;
@@ -39,7 +40,7 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader implements
 	private String taxonxSchemaFile;
 	private String xmlSchemaFile;
 	private IVolumeReader reader = null;
-	private CountDownLatch latch = new CountDownLatch(1);
+	private Map<Future<Boolean>, IVolumeReader> futureValidationResults = new HashMap<Future<Boolean>, IVolumeReader>();
 
 	/**
 	 * @param filePath
@@ -78,49 +79,40 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader implements
 
 	@Override
 	public List<Treatment> read() throws Exception {
-		ValidationRun xmlValidationRun = new ValidationRun(new XMLVolumeValidator(new File(xmlSchemaFile)), new File(filePath));
-		ValidationRun taxonxValidationRun = new ValidationRun(new TaxonxVolumeValidator(new File(taxonxSchemaFile)), new File(filePath));
-		ValidationRun wordValidationRun = new ValidationRun(new WordVolumeValidator(), new File(filePath));
-		xmlValidationRun.addValidationRunListener(this);
-		taxonxValidationRun.addValidationRunListener(this);
-		wordValidationRun.addValidationRunListener(this);
+		Map<ValidationRun, IVolumeReader> validationRuns = new HashMap<ValidationRun, IVolumeReader>();
+		validationRuns.put(new ValidationRun(new XMLVolumeValidator(new File(xmlSchemaFile)), new File(filePath)), 
+				new XMLVolumeReader(filePath));
+		validationRuns.put(new ValidationRun(new TaxonxVolumeValidator(new File(taxonxSchemaFile)), new File(filePath)), 
+				new XMLVolumeReader(filePath));
+		validationRuns.put(new ValidationRun(new XMLVolumeValidator(new File(xmlSchemaFile)), new File(filePath)), 
+				new DocWordVolumeReader(filePath, styleStartPattern, styleNamePattern,
+						styleKeyPattern, tribegennamestyle, styleMappingFile, distributionTreatmentRefiner, floweringTimeTreatmentRefiner));
 		
-		Thread xmlValidationThread = new Thread(xmlValidationRun);
-		Thread taxonxValidationThread = new Thread(taxonxValidationRun);
-		Thread wordValidationThread = new Thread(wordValidationRun);
-
-		xmlValidationThread.start();
-		taxonxValidationThread.start();
-		wordValidationThread.start();
+		ExecutorService executorService = Executors.newFixedThreadPool(validationRuns.size());
+		CountDownLatch latch = new CountDownLatch(validationRuns.size());
+		
+		for(ValidationRun validationRun : validationRuns.keySet()) {
+			validationRun.setLatch(latch);
+			Future<Boolean> futureResult = executorService.submit(validationRun);
+			futureValidationResults.put(futureResult, validationRuns.get(validationRun));
+		}
 		
 		latch.await();
+		executorService.shutdown();
 
-		if(reader != null) {
-			log(LogLevel.DEBUG, "delegate reading treatments to " + reader.getClass());
-			return reader.read();
+		IVolumeReader volumeReader = null;
+		for(Entry<Future<Boolean>, IVolumeReader> entry : futureValidationResults.entrySet()) {
+			Boolean result = false;
+			result = entry.getKey().get();
+			if(result) 
+				volumeReader = entry.getValue();
 		}
-		log(LogLevel.ERROR, "no valid reader available for the input given");
-		return new ArrayList<Treatment>();
-	}
-
-	@Override
-	public synchronized void validationDone(boolean result, IVolumeValidator volumeValidator) {
-		if(reader != null) 
-			return;
-		if(result) {
-			if(volumeValidator instanceof XMLVolumeValidator) {
-				this.reader = new XMLVolumeReader(filePath);
-			}
-			
-			if(volumeValidator instanceof TaxonxVolumeValidator) { 
-				this.reader = new TaxonxVolumeReader(filePath);
-			}
-			
-			if(volumeValidator instanceof WordVolumeValidator) {
-				this.reader = new DocWordVolumeReader(filePath, styleStartPattern, styleNamePattern,
-						styleKeyPattern, tribegennamestyle, styleMappingFile, distributionTreatmentRefiner, floweringTimeTreatmentRefiner);
-			}
-			latch.countDown();
+		if(volumeReader == null) {
+			log(LogLevel.ERROR, "No valid format for any of the volume readers found. Will exit");
+			System.exit(0);
 		}
+		
+		log(LogLevel.DEBUG, "delegate reading treatments to " + reader.getClass());
+		return reader.read();
 	}
 }
