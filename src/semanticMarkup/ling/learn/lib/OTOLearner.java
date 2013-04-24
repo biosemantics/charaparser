@@ -61,7 +61,7 @@ public class OTOLearner implements ILearner {
 	 * @throws Exception
 	 */
 	@Inject
-	public OTOLearner(@Named("Learner_VolumeReader")IVolumeReader volumeReader, 
+	public OTOLearner(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
 			ITerminologyLearner terminologyLearner, 
 			IOTOClient otoClient, 
 			@Named("databaseName")String databaseName,

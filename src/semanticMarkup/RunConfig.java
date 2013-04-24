@@ -50,7 +50,6 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
 	//CharaParser.class //AfterPerlBlackBox
 	private Class<? extends IVolumeReader> markupCreatorVolumeReader = EvaluationDBVolumeReader.class;
-	private Class<? extends IVolumeReader> learnerVolumeReader = GenericFileVolumeReader.class;
 	//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader, GenericFileVolumeReaer
 	private String wordVolumeReaderSourceFile = "evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
 			"source" + File.separator + "FNA19 Excerpt-source.docx";
@@ -100,7 +99,6 @@ public class RunConfig extends BasicConfig {
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_CreatedVolumeReader")).to(evaluationRunCreatedVolumeReader);
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator);
 		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(markupCreatorVolumeReader);
-		bind(IVolumeReader.class).annotatedWith(Names.named("Learner_VolumeReader")).to(learnerVolumeReader);
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Sourcefile")).toInstance(wordVolumeReaderSourceFile);
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleStartPattern")).toInstance(wordVolumeReaderStyleStartPattern);
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleNamePattern")).toInstance(wordVolumeReaderStyleNamePattern);
@@ -464,15 +462,6 @@ public class RunConfig extends BasicConfig {
 
 	public void setNormalizer(Class<? extends INormalizer> normalizer) {
 		this.normalizer = normalizer;
-	}
-
-	public Class<? extends IVolumeReader> getLearnerVolumeReader() {
-		return learnerVolumeReader;
-	}
-
-	public void setLearnerVolumeReader(
-			Class<? extends IVolumeReader> learnerVolumeReader) {
-		this.learnerVolumeReader = learnerVolumeReader;
 	}
 
 	public Class<? extends IGlossary> getGlossary() {

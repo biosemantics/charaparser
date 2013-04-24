@@ -160,14 +160,17 @@ public class CLIMain {
 		if(volumeReader.equals("Word")) {
 			config.setMarkupCreatorVolumeReader(DocWordVolumeReader.class);
 			config.setWordVolumeReaderSourceFile(input);
+			return;
 		}
 		if(volumeReader.equals("XML")) {
 			config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
 			config.setXmlVolumeReaderSourceDirectory(input);
+			return;
 		}
 		if(volumeReader.equals("Taxonx")) {
 			config.setMarkupCreatorVolumeReader(TaxonxVolumeReader.class);
 			config.setTaxonxVolumeReaderSourceFile(input);
+			return;
 		}
 		log(LogLevel.ERROR, "VolumeReader unknown");
 		System.exit(0);

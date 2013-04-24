@@ -24,7 +24,7 @@ public class Learner implements ILearner {
 	 * @param terminologyLearner
 	 */
 	@Inject
-	public Learner(@Named("Learner_VolumeReader")IVolumeReader volumeReader, 
+	public Learner(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
 			ITerminologyLearner terminologyLearner) {	
 		this.volumeReader = volumeReader;
 		this.terminologyLearner = terminologyLearner;

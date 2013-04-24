@@ -10,6 +10,7 @@ import org.apache.commons.cli.ParseException;
 import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
+import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
@@ -135,7 +136,7 @@ public class LearnMain extends CLIMain {
 		//since we have no user information to be able to generate an ID that allows to know
 		//at least whos data to pull
 		config.setDatabaseTablePrefix("ant_agosti");
-		config.setPermanentGlossaryPrefix("fna");
+		config.setPermanentGlossaryPrefix("ant");
 		config.setDatabaseGlossaryTable("permanentGlossary");
 	}
 }
