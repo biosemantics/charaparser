@@ -135,8 +135,8 @@ public class LearnMain extends CLIMain {
 		//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
 		//since we have no user information to be able to generate an ID that allows to know
 		//at least whos data to pull
-		config.setDatabaseTablePrefix("ant_agosti");
-		config.setPermanentGlossaryPrefix("ant");
+		config.setDatabaseTablePrefix("myrun");
+		config.setPermanentGlossaryPrefix("fna");
 		config.setDatabaseGlossaryTable("permanentGlossary");
 	}
 }

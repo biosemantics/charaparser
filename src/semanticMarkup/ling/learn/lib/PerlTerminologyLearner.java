@@ -130,7 +130,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			writeTreatmentsToFiles(treatments, inDirectory);
 			
 			//run the perl script	
-			runPerl(inDirectory);
+			runPerl(inDirectory, treatments);
 			
 			this.readResults(treatments);
 			
@@ -417,7 +417,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
 			log(LogLevel.ERROR, e);
 		}
 		
@@ -521,15 +520,15 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return this.heuristicNouns;
 	}
 	
-	private void runPerl(File inDirectory) throws Exception {
+	private void runPerl(File inDirectory, List<Treatment> treatments) throws Exception {
 		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "//"
 				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix + " " + this.glossaryTable;
 		log(LogLevel.DEBUG, command);
-		createTablesNeededForPerl();
+		createTablesNeededForPerl(treatments);
 		runCommand(command);
 	}
 	
-	private void createTablesNeededForPerl() {
+	private void createTablesNeededForPerl(List<Treatment> treatments) {
         try {
             Statement stmt = connection.createStatement();
             String cleanupQuery = "DROP TABLE IF EXISTS " + 
@@ -547,12 +546,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 									this.databasePrefix + "_wordroles;";
             stmt.execute(cleanupQuery);
             stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)");
+    		AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, this.databaseName, this.databasePrefix, this.databaseUser, this.databasePassword);
+    		allWordsLearner.learn(treatments);
     		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");			
         } catch(Exception e) {
         	log(LogLevel.ERROR, e);
+        	e.printStackTrace();
 	    }
 	}
-
 
 	private void runCommand(String command) throws Exception {
 		long time = System.currentTimeMillis();
