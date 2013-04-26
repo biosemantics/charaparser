@@ -70,13 +70,14 @@ public abstract class AbstractRun implements IRun {
 	
 	protected boolean isValidRun(String runRootDirectory) {
 		File file = new File(runRootDirectory);
-		
+		file.mkdirs();
 		//createNewFile is atomic operation of existance check and creation if doesnt exist yet.
 		//it guarantees to finish the operation before other processes can access the file.
 		//hence it is a sufficient check for concurrently running Runs
+		File synchronizationFile = new File(runRootDirectory + File.separator + "learnStart");
 		boolean result = false;
 		try {
-			result = file.createNewFile();
+			result = synchronizationFile.createNewFile();
 		} catch(Exception e) {
 			log(LogLevel.ERROR, e);
 		}
