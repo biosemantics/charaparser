@@ -16,6 +16,7 @@ import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.run.IPlantMarkupRun;
 import semanticMarkup.run.MarkupRun;
 
 /**
@@ -28,8 +29,6 @@ public class MarkupMain extends CLIMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		for(String arg : args)
-			System.out.println(arg);
 		CLIMain cliMain = new MarkupMain();
 		cliMain.parse(args);
 		cliMain.run();
@@ -68,11 +67,6 @@ public class MarkupMain extends CLIMain {
 		    	config = getConfig(commandLine.getOptionValue("c"));
 		    } else {
 		    	//use standard config RunConfig
-		    }
-		    if(commandLine.hasOption("o")) {
-		    	config.setRunOutDirectory(commandLine.getOptionValue("o"));
-		    } else {
-		    	config.setRunOutDirectory("." + File.pathSeparator);
 		    }
 		    
 		    config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
@@ -137,12 +131,11 @@ public class MarkupMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
 		    }
-		}
-		catch( ParseException exp ) {
-		    System.out.println( "Unexpected exception:" + exp.getMessage() );
+		} catch(ParseException e) {
+			log(LogLevel.ERROR, e);
 		}
 		
-		config.setRun(MarkupRun.class);
+		config.setRun(IPlantMarkupRun.class);
 		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionTreatmentTransformer.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);

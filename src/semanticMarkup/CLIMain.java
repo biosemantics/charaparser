@@ -29,8 +29,6 @@ public class CLIMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		for(String arg : args)
-			System.out.println(arg);
 		CLIMain cliMain = new CLIMain();
 		cliMain.parse(args);
 		cliMain.run();
@@ -84,11 +82,6 @@ public class CLIMain {
 		    	config = getConfig(commandLine.getOptionValue("c"));
 		    } else {
 		    	//use standard config RunConfig
-		    }
-		    if(commandLine.hasOption("o")) {
-		    	config.setRunOutDirectory(commandLine.getOptionValue("o"));
-		    } else {
-		    	//use standard value specified in RunConfig
 		    }
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
@@ -150,9 +143,8 @@ public class CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify a glossary file");
 		    	System.exit(0);
 		    }
-		}
-		catch( ParseException exp ) {
-		    System.out.println( "Unexpected exception:" + exp.getMessage() );
+		} catch(ParseException e) {
+			log(LogLevel.ERROR, e);
 		}
 	}
 

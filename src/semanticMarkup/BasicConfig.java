@@ -134,7 +134,6 @@ public class BasicConfig extends AbstractModule {
 		bind(IOTOClient.class).to(OTOClient.class).in(Singleton.class);
 		bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 		
-		bind(String.class).annotatedWith(Names.named("temporaryPath")).toInstance("temp");
 		bind(String.class).annotatedWith(Names.named("descriptionSeparator")).toInstance("-------------");
 		bind(String.class).annotatedWith(Names.named("markupMode")).toInstance("plain");
 		

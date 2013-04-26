@@ -1,7 +1,5 @@
 package semanticMarkup.iPlant;
 
-import java.io.File;
-
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -12,11 +10,10 @@ import org.apache.commons.cli.ParseException;
 import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.LearnRun;
+import semanticMarkup.run.IPlantLearnRun;
 
 /**
  * Learn CLI Entry point into the processing of the charaparser framework
@@ -28,8 +25,6 @@ public class LearnMain extends CLIMain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		for(String arg : args)
-			System.out.println(arg);
 		CLIMain cliMain = new LearnMain();
 		cliMain.parse(args);
 		cliMain.run();
@@ -68,11 +63,6 @@ public class LearnMain extends CLIMain {
 		    	config = getConfig(commandLine.getOptionValue("c"));
 		    } else {
 		    	//use standard config RunConfig
-		    }
-		    if(commandLine.hasOption("o")) {
-		    	config.setRunOutDirectory(commandLine.getOptionValue("o"));
-		    } else {
-		    	config.setRunOutDirectory("." + File.pathSeparator);
 		    }
 		    
 		    config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
@@ -137,12 +127,11 @@ public class LearnMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
 		    }
-		}
-		catch( ParseException exp ) {
-		    System.out.println( "Unexpected exception:" + exp.getMessage() );
+		} catch (ParseException e) {
+			log(LogLevel.ERROR, e);
 		}
 		
-		config.setRun(LearnRun.class);
+		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
 		config.setDatabaseGlossaryTable("permanentGlossary");

@@ -41,7 +41,6 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IRun> run = MarkupRun.class;
 	//MarkupRun, EvaluationRun, MarkupEvaluationRun
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
-	private String runOutDirectory = "." + File.separator + "out" + File.separator;
 	private Class<? extends IEvaluator> evaluationRunEvaluator = AdvancedPrecisionRecallEvaluator.class;
 	//SimplePrecisionRecallEvaluator, AdvancedPrecisionRecallEvaluator
 	private Class<? extends IVolumeReader> evaluationGoldStandardReader = XMLVolumeReader.class;
@@ -95,7 +94,9 @@ public class RunConfig extends BasicConfig {
 		super.configure();
 		bind(IRun.class).to(run);
 		bind(IGlossary.class).to(glossary).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(runOutDirectory);
+		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance("workspace" + File.separator + this.databaseTablePrefix);
+		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance("workspace" + File.separator + this.databaseTablePrefix + File.separator + "out");
+		bind(String.class).annotatedWith(Names.named("Run_TemporaryPath")).toInstance("workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp");
 		bind(IEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_GoldStandardReader")).to(evaluationGoldStandardReader);
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_CreatedVolumeReader")).to(evaluationRunCreatedVolumeReader);
@@ -192,14 +193,6 @@ public class RunConfig extends BasicConfig {
 
 	public void setRun(Class<? extends IRun> run) {
 		this.run = run;
-	}
-
-	public String getRunOutDirectory() {
-		return runOutDirectory;
-	}
-
-	public void setRunOutDirectory(String runOutDirectory) {
-		this.runOutDirectory = runOutDirectory;
 	}
 
 	public Class<? extends IEvaluator> getEvaluationRunEvaluator() {

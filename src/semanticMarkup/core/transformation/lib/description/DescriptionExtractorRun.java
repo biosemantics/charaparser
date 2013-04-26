@@ -75,9 +75,6 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 	public TreatmentElement call() throws Exception {
 		log(LogLevel.DEBUG, "Create description for treatment: " + treatment.getName());
 		Map<String, String> sentences = sentencesForOrganStateMarker.get(treatment);
-		for(String key : sentences.keySet()) {
-			System.out.println(key);
-		}
 	
 		//configure exectuorService to only allow a number of threads to run at a time
 		ExecutorService executorService = null;

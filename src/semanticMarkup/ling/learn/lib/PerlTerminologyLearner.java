@@ -88,7 +88,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	 * @throws Exception
 	 */
 	@Inject
-	public PerlTerminologyLearner(@Named("temporaryPath") String temporaryPath, 
+	public PerlTerminologyLearner(@Named("Run_TemporaryPath") String temporaryPath, 
 			@Named("descriptionSeparator") String descriptionSeparator, 
 			@Named("markupMode") String markupMode,
 			@Named("databaseHost") String databaseHost,
