@@ -20,6 +20,7 @@ import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.io.input.validate.ValidationRun;
 import semanticMarkup.io.input.validate.lib.TaxonxVolumeValidator;
+import semanticMarkup.io.input.validate.lib.WordVolumeValidator;
 import semanticMarkup.io.input.validate.lib.XMLVolumeValidator;
 import semanticMarkup.log.LogLevel;
 
@@ -83,7 +84,7 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 				new XMLVolumeReader(filePath));
 		validationRuns.put(new ValidationRun(new TaxonxVolumeValidator(new File(taxonxSchemaFile)), new File(filePath)), 
 				new XMLVolumeReader(filePath));
-		validationRuns.put(new ValidationRun(new XMLVolumeValidator(new File(xmlSchemaFile)), new File(filePath)), 
+		validationRuns.put(new ValidationRun(new WordVolumeValidator(), new File(filePath)),
 				new DocWordVolumeReader(filePath, styleStartPattern, styleNamePattern,
 						styleKeyPattern, tribegennamestyle, styleMappingFile, distributionTreatmentRefiner, floweringTimeTreatmentRefiner));
 		

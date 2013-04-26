@@ -59,7 +59,9 @@ public class MainFormDbAccessor {
 	private String databaseUser;
 
 	@Inject
-	public MainFormDbAccessor(@Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
+	public MainFormDbAccessor(@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
+			@Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
 			@Named("databasePassword")String databasePassword, @Named("databasePrefix")String databasePrefix) {
 		this.databaseName = databaseName;
 		this.databaseUser = databaseUser;
@@ -68,7 +70,7 @@ public class MainFormDbAccessor {
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
+			String URL = "jdbc:mysql://" + databaseHost + ":" + databasePort + "/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
 					this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
 			connection = DriverManager.getConnection(URL);
 		} catch (Exception e) {

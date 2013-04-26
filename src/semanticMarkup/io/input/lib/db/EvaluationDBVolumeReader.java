@@ -39,6 +39,8 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 	 */
 	@Inject
 	public EvaluationDBVolumeReader(
+			@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
 			@Named("databaseName") String databaseName,
 			@Named("databasePrefix") String databasePrefix, 
 			@Named("databaseUser") String databaseUser, 
@@ -48,7 +50,7 @@ public class EvaluationDBVolumeReader implements IVolumeReader {
 		this.evaluationSources = selectedSources;
 		
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
 	}
 	
 

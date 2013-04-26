@@ -13,8 +13,6 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.gui.MainForm;
-import semanticMarkup.know.IGlossary;
-import semanticMarkup.know.net.IOTOClient;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.learn.ITerminologyLearner;
@@ -60,12 +58,6 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 	 * @param descriptionExtractorRunMaximum
 	 * @param sentenceChunkerRunMaximum
 	 * @param mainForm
-	 * @param otoClient
-	 * @param databaseName
-	 * @param databaseUser
-	 * @param databasePassword
-	 * @param databasePrefix
-	 * @param glossary
 	 * @throws Exception
 	 */
 	@Inject
@@ -80,13 +72,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
-			MainForm mainForm, 
-			IOTOClient otoClient, 
-			@Named("databaseName")String databaseName,
-			@Named("databaseUser")String databaseUser,
-			@Named("databasePassword")String databasePassword,
-			@Named("databasePrefix")String databasePrefix, 
-			IGlossary glossary) throws Exception {
+			MainForm mainForm) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;

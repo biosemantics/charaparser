@@ -37,6 +37,8 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	public DatabaseInputNoLearner(@Named("temporaryPath") String temporaryPath, 
 			@Named("descriptionSeparator") String descriptionSeparator, 
 			@Named("markupMode") String markupMode,
+			@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
 			@Named("databaseName") String databaseName,
 			@Named("GlossaryTable") String glossaryTable,
 			@Named("databasePrefix") String databasePrefix, 
@@ -47,7 +49,7 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer, 
 			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
-		super(temporaryPath, descriptionSeparator, markupMode, databaseName, glossaryTable,
+		super(temporaryPath, descriptionSeparator, markupMode, databaseHost, databasePort, databaseName, glossaryTable,
 				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer, parentTagProvider);
 	}
 	

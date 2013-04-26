@@ -73,6 +73,8 @@ public class RunConfig extends BasicConfig {
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
+	private String databaseHost = "localhost";
+	private String databasePort = "3306";
 	private String databaseName = "local";
 	private String databaseUser = "termsuser";
 	private String databasePassword = "termspassword";
@@ -118,6 +120,8 @@ public class RunConfig extends BasicConfig {
 		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
+		bind(String.class).annotatedWith(Names.named("databaseHost")).toInstance(databaseHost);
+		bind(String.class).annotatedWith(Names.named("databasePort")).toInstance(databasePort);
 		bind(String.class).annotatedWith(Names.named("databaseName")).toInstance(databaseName);
 		bind(String.class).annotatedWith(Names.named("databaseUser")).toInstance(databaseUser);
 		bind(String.class).annotatedWith(Names.named("databasePassword")).toInstance(databasePassword);
@@ -496,6 +500,24 @@ public class RunConfig extends BasicConfig {
 	public void setPermanentGlossaryPrefix(String permanentGlossaryPrefix) {
 		this.permanentGlossaryPrefix = permanentGlossaryPrefix;
 	}
+
+	public String getDatabaseHost() {
+		return databaseHost;
+	}
+
+	public void setDatabaseHost(String databaseHost) {
+		this.databaseHost = databaseHost;
+	}
+
+	public String getDatabasePort() {
+		return databasePort;
+	}
+
+	public void setDatabasePort(String databasePort) {
+		this.databasePort = databasePort;
+	}
+	
+	
 	
 }
 

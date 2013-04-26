@@ -69,6 +69,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private String glossaryTable;
 	protected Map<String, Treatment> fileTreatments = new HashMap<String, Treatment>();
 	private ParentTagProvider parentTagProvider;
+	private String databaseHost;
+	private String databasePort;
 
 	/**
 	 * @param temporaryPath
@@ -89,6 +91,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	public PerlTerminologyLearner(@Named("temporaryPath") String temporaryPath, 
 			@Named("descriptionSeparator") String descriptionSeparator, 
 			@Named("markupMode") String markupMode,
+			@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
 			@Named("databaseName") String databaseName,
 			@Named("GlossaryTable") String glossaryTable,
 			@Named("databasePrefix") String databasePrefix, 
@@ -102,19 +106,21 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.temporaryPath = temporaryPath;
 		this.descriptionSeparator = descriptionSeparator;
 		this.markupMode = markupMode;
-		this.databaseName = databaseName;
 		this.databasePrefix = databasePrefix;
-		this.databaseUser = databaseUser;
-		this.databasePassword = databasePassword;
 		this.glossary = glossary;
 		this.tokenizer = tokenizer;
 		this.stopWords = stopWords;
 		this.selectedSources = selectedSources;
 		this.glossaryTable = glossaryTable;
 		this.parentTagProvider = parentTagProvider;
+		this.databaseHost = databaseHost;
+		this.databasePort = databasePort;
+		this.databaseName = databaseName;
+		this.databaseUser = databaseUser;
+		this.databasePassword = databasePassword;
 		
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
 	}
 	
 	
@@ -546,7 +552,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 									this.databasePrefix + "_wordroles;";
             stmt.execute(cleanupQuery);
             stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)");
-    		AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, this.databaseName, this.databasePrefix, this.databaseUser, this.databasePassword);
+    		AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, this.databaseHost, this.databasePort, this.databaseName, this.databasePrefix, this.databaseUser, this.databasePassword);
     		allWordsLearner.learn(treatments);
     		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");			
         } catch(Exception e) {

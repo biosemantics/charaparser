@@ -87,6 +87,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
 			IOTOClient otoClient, 
+			@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
 			@Named("databaseName")String databaseName,
 			@Named("databaseUser")String databaseUser,
 			@Named("databasePassword")String databasePassword,
@@ -108,7 +110,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.glossary = glossary;
 		
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
 	}
 
 	@Override

@@ -48,6 +48,8 @@ public class OTOLearner implements ILearner {
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
 	private String permanentGlossaryPrefix;
+	private String databaseHost;
+	private String databasePort;
 	
 	/**
 	 * @param volumeReader
@@ -64,6 +66,8 @@ public class OTOLearner implements ILearner {
 	public OTOLearner(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
 			ITerminologyLearner terminologyLearner, 
 			IOTOClient otoClient, 
+			@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
 			@Named("databaseName")String databaseName,
 			@Named("databaseUser")String databaseUser,
 			@Named("databasePassword")String databasePassword,
@@ -82,7 +86,7 @@ public class OTOLearner implements ILearner {
 		this.posKnowledgeBase = posKnowledgeBase;
 		
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
 	}
 	
 	@Override

@@ -31,6 +31,8 @@ public class AllWordsLearner {
 	@Inject
 	public AllWordsLearner(@Named("WordTokenizer")ITokenizer tokenizer,
 			IGlossary glossary,
+			@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
 			@Named("databaseName") String databaseName,
 			@Named("databasePrefix") String databasePrefix,
 			@Named("databaseUser") String databaseUser,
@@ -42,9 +44,7 @@ public class AllWordsLearner {
 
 		// TODO removable once OldPerlTreatmentTransformer is no longer used.
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/" + databaseName, databaseUser,
-				databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
 	}
 	
 	public void learn(List<Treatment> treatments) throws Exception {

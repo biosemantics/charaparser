@@ -183,6 +183,9 @@ public class CLIMain {
 		if(config.equals("Treatise")) {
 			return new TreatiseConfig();
 		}
+		if(config.equals("Ant")) {
+			return new AntConfig();
+		}
 		log(LogLevel.ERROR, "Config unknown");
 		System.exit(0);
 		return null;

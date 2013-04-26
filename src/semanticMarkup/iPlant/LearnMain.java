@@ -37,21 +37,24 @@ public class LearnMain extends CLIMain {
 	public void parse(String[] args) {		
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
-		options.addOption("c", "config", true, "config to use"); 
-		options.addOption("o", "output", true, "output directory");
+		
+		//for iplant user shown configuration options
 		options.addOption("i", "input", true, "input file or directory");
-		options.addOption("r", "reader", true, "force an input reader. If the option is not provided input format will be detected");
-		options.addOption("p", "multi-threading", true, "use multi-threading to compute the result");
-		options.addOption("db", "database", true, "database to use");
+		options.addOption("c", "config", true, "config to use"); 
+		options.addOption("dbtp", "database-table-prefix", true, "database table prefix to use");
+		options.addOption("style", "style mapping", true, "Optional style mapping to use for Word file input");
+		
+		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
+		options.addOption("dbh", "database-host", true, "dbms host");
+		options.addOption("dbp", "database-port", true, "dbms port");
+		options.addOption("dbn", "database-name", true, "name of database to use");
 		options.addOption("dbu", "database-user", true, "database user to use");
 		options.addOption("dbp", "database-password", true, "database password to use");
-		options.addOption("dbtp", "database-table-prefix", true, "database table prefix to use");
-		options.addOption("dbgt", "database-glossary-table", true, "database glossary table to use");
-		options.addOption("g", "glossary", true, "csv glossary to use");
+		options.addOption("p", "multi-threading", true, "use multi-threading to compute the result");
+		options.addOption("o", "output", true, "output directory");
 		options.addOption("h", "help", false, "shows the help");
 		
 		config = new RunConfig();
-		
 		try {
 		    CommandLine commandLine = parser.parse( options, args );
 		    if(commandLine.hasOption("h")) {
@@ -67,18 +70,18 @@ public class LearnMain extends CLIMain {
 		    if(commandLine.hasOption("o")) {
 		    	config.setRunOutDirectory(commandLine.getOptionValue("o"));
 		    } else {
-		    	//use standard value specified in RunConfig
+		    	config.setRunOutDirectory("");
 		    }
+		    
+		    config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
-		    }
-		    if(commandLine.hasOption("r")) {
-		    	setReaderSpecificConfigValues(config, commandLine.getOptionValue("r"), commandLine.getOptionValue("i"));
 		    } else {
-		    	//use GenericFileVolumeReader
-		    	config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
 		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
+		    }
+		    if(commandLine.hasOption("style")) {
+		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("style"));
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -98,8 +101,18 @@ public class LearnMain extends CLIMain {
 		    		}
 		    	}
 		    }
-		    if(commandLine.hasOption("db")) {
-		    	config.setDatabaseName(commandLine.getOptionValue("db"));
+		    if(commandLine.hasOption("dbh")) {
+		    	config.setDatabaseHost(commandLine.getOptionValue("dbh"));
+		    } else {
+		    	//use standard value from RunConfig
+		    }
+		    if(commandLine.hasOption("dbp")) {
+		    	config.setDatabasePort(commandLine.getOptionValue("dbp"));
+		    } else {
+		    	//use standard value from RunConfig
+		    }
+		    if(commandLine.hasOption("dbn")) {
+		    	config.setDatabaseName(commandLine.getOptionValue("dbn"));
 		    } else {
 		    	//use standard value from RunConfig
 		    }
@@ -113,30 +126,23 @@ public class LearnMain extends CLIMain {
 		    } else {
 		    	//use standard value from RunConfig
 		    }
+			//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
+			//since we have no user information to be able to generate an ID that allows to know
+			//at least whos data to pull
 		    if(commandLine.hasOption("dbtp")) {
 		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("dbtp"));
 		    } else {
-		    	//use standard value from RunConfig
-		    }
-		    if(commandLine.hasOption("dbgt")) {
-		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("dbgt"));
-		    } else {
-		    	//use standard value from RunConfig
+		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
+		    	System.exit(0);
 		    }
 		}
 		catch( ParseException exp ) {
 		    System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
 		
-		
 		config.setRun(LearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
-		//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
-		//since we have no user information to be able to generate an ID that allows to know
-		//at least whos data to pull
-		config.setDatabaseTablePrefix("myrun");
-		config.setPermanentGlossaryPrefix("fna");
 		config.setDatabaseGlossaryTable("permanentGlossary");
 	}
 }
