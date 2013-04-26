@@ -1,5 +1,7 @@
 package semanticMarkup.iPlant;
 
+import java.io.File;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -70,7 +72,7 @@ public class MarkupMain extends CLIMain {
 		    if(commandLine.hasOption("o")) {
 		    	config.setRunOutDirectory(commandLine.getOptionValue("o"));
 		    } else {
-		    	config.setRunOutDirectory("");
+		    	config.setRunOutDirectory("." + File.pathSeparator);
 		    }
 		    
 		    config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
