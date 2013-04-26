@@ -123,7 +123,7 @@ public class LearnMain extends CLIMain {
 			//at least whos data to pull
 		    if(commandLine.hasOption("dbtp")) {
 		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("dbtp"));
-		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("dbt") + "_permanentGlossary");
+		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("dbtp") + "_permanentGlossary");
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
