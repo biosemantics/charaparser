@@ -43,13 +43,10 @@ public class OTOLearner implements ILearner {
 	private ITerminologyLearner terminologyLearner;
 	private IOTOClient otoClient;
 	private String databasePrefix;
-	private IGlossary glossary;
 	private Connection connection;
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
-	private String permanentGlossaryPrefix;
-	private String databaseHost;
-	private String databasePort;
+	private String permanentGlossaryPrefixAtWebService;
 	
 	/**
 	 * @param volumeReader
@@ -72,16 +69,15 @@ public class OTOLearner implements ILearner {
 			@Named("databaseUser")String databaseUser,
 			@Named("databasePassword")String databasePassword,
 			@Named("databasePrefix")String databasePrefix, 
-			@Named("permanentGlossaryPrefix")String permanentGlossaryPrefix,
+			@Named("permanentGlossaryPrefixAtWebService")String permanentGlossaryPrefixAtWebService,
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
 			IPOSKnowledgeBase posKnowledgeBase) throws Exception {	
 		this.volumeReader = volumeReader;
 		this.terminologyLearner = terminologyLearner;
 		this.otoClient = otoClient;
-		this.permanentGlossaryPrefix = permanentGlossaryPrefix;
+		this.permanentGlossaryPrefixAtWebService = permanentGlossaryPrefixAtWebService;
 		this.databasePrefix = databasePrefix;
-		this.glossary = glossary;
 		this.glossaryTable = glossaryTable;
 		this.posKnowledgeBase = posKnowledgeBase;
 		
@@ -94,7 +90,7 @@ public class OTOLearner implements ILearner {
 		List<Treatment> treatments = volumeReader.read();
 		
 		//no prefix, simply use the glossary 
-		OTOGlossary otoGlossary = otoClient.read(permanentGlossaryPrefix);
+		OTOGlossary otoGlossary = otoClient.read(permanentGlossaryPrefixAtWebService);
 		storeInLocalDB(otoGlossary);
 
 		//not really needed for learning part the in-memory glossary, not before markup step

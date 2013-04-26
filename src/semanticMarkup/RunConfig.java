@@ -82,7 +82,7 @@ public class RunConfig extends BasicConfig {
 	
 	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
 	private String databaseTablePrefix = "myrun";
-	private String permanentGlossaryPrefix = "fna";
+	private String permanentGlossaryPrefixAtWebService = "fna";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
@@ -132,7 +132,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(standardVolumeReaderSourcefiles);
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance(databaseTablePrefix); 
-		bind(String.class).annotatedWith(Names.named("permanentGlossaryPrefix")).toInstance(permanentGlossaryPrefix); 
+		bind(String.class).annotatedWith(Names.named("permanentGlossaryPrefixAtWebService")).toInstance(permanentGlossaryPrefixAtWebService); 
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
 		bind(INormalizer.class).to(FNAv19Normalizer.class); 
@@ -486,12 +486,12 @@ public class RunConfig extends BasicConfig {
 		this.otoClientUrl = otoClientUrl;
 	}
 
-	public String getPermanentGlossaryPrefix() {
-		return permanentGlossaryPrefix;
+	public String getPermanentGlossaryPrefixAtWebService() {
+		return permanentGlossaryPrefixAtWebService;
 	}
 
-	public void setPermanentGlossaryPrefix(String permanentGlossaryPrefix) {
-		this.permanentGlossaryPrefix = permanentGlossaryPrefix;
+	public void setPermanentGlossaryPrefixAtWebService(String permanentGlossaryPrefixAtWebService) {
+		this.permanentGlossaryPrefixAtWebService = permanentGlossaryPrefixAtWebService;
 	}
 
 	public String getDatabaseHost() {

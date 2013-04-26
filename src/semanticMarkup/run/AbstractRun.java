@@ -70,7 +70,17 @@ public abstract class AbstractRun implements IRun {
 	
 	protected boolean isValidRun(String runRootDirectory) {
 		File file = new File(runRootDirectory);
-		if(file.exists()) {
+		
+		//createNewFile is atomic operation of existance check and creation if doesnt exist yet.
+		//it guarantees to finish the operation before other processes can access the file.
+		//hence it is a sufficient check for concurrently running Runs
+		boolean result = false;
+		try {
+			result = file.createNewFile();
+		} catch(Exception e) {
+			log(LogLevel.ERROR, e);
+		}
+		if(!result) {
 			log(LogLevel.ERROR, "databasePrefix has already been used.");
 			return false;
 		}

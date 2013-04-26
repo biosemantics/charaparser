@@ -123,6 +123,7 @@ public class LearnMain extends CLIMain {
 			//at least whos data to pull
 		    if(commandLine.hasOption("dbtp")) {
 		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("dbtp"));
+		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("dbt") + "_permanentGlossary");
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
@@ -134,6 +135,5 @@ public class LearnMain extends CLIMain {
 		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
-		config.setDatabaseGlossaryTable("permanentGlossary");
 	}
 }
