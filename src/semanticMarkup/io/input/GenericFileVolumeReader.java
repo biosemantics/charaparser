@@ -39,7 +39,6 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 	private FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner;
 	private String taxonxSchemaFile;
 	private String xmlSchemaFile;
-	private IVolumeReader reader = null;
 	private Map<Future<Boolean>, IVolumeReader> futureValidationResults = new HashMap<Future<Boolean>, IVolumeReader>();
 
 	/**
@@ -112,7 +111,7 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 			System.exit(0);
 		}
 		
-		log(LogLevel.DEBUG, "delegate reading treatments to " + reader.getClass());
-		return reader.read();
+		log(LogLevel.DEBUG, "delegate reading treatments to " + volumeReader.getClass());
+		return volumeReader.read();
 	}
 }
