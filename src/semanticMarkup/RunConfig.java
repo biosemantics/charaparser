@@ -82,7 +82,7 @@ public class RunConfig extends BasicConfig {
 	//ToStringVolumeWriter, JSONVolumeWriter, XMLVolumeWriter XML2VolumeWriter
 	
 	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
-	private String databaseTablePrefix = "type2";
+	private String databaseTablePrefix = "myrun";
 	private String permanentGlossaryPrefix = "fna";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
