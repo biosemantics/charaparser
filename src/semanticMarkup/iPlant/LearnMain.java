@@ -48,7 +48,6 @@ public class LearnMain extends CLIMain {
 		options.addOption("dbu", "database-user", true, "database user to use");
 		options.addOption("dbp", "database-password", true, "database password to use");
 		options.addOption("p", "multi-threading", true, "use multi-threading to compute the result");
-		options.addOption("o", "output", true, "output directory");
 		options.addOption("h", "help", false, "shows the help");
 		
 		config = new RunConfig();
