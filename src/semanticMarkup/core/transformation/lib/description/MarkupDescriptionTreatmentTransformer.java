@@ -1,9 +1,13 @@
 package semanticMarkup.core.transformation.lib.description;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +16,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import oto.beans.TermCategory;
+import oto.beans.TermSynonym;
+import oto.beans.WordRole;
+import oto.full.IOTOClient;
+import oto.full.beans.GlossaryDownload;
+import oto.lite.IOTOLiteClient;
+import oto.lite.beans.Decision;
+import oto.lite.beans.Download;
+import oto.lite.beans.Synonym;
+
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.know.IGlossary;
-import semanticMarkup.know.net.IOTOClient;
-import semanticMarkup.know.net.OTOGlossary;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.learn.ITerminologyLearner;
@@ -30,8 +42,6 @@ import semanticMarkup.log.LogLevel;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.sirls.beans.TermCategory;
-import edu.arizona.sirls.beans.TermSynonym;
 
 /**
  * Transforms the treatments by semantically marking up the description treatment element of a treatment
@@ -54,6 +64,10 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	private String databasePrefix;
 	private IGlossary glossary;
 	private Connection connection;
+	private String glossaryType;
+	private IOTOLiteClient otoLiteClient;
+	private String otoLiteReviewFile;
+	private String otoLiteTermReviewURL;
 	
 	/**
 	 * @param wordTokenizer
@@ -87,13 +101,16 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
 			IOTOClient otoClient, 
+			IOTOLiteClient otoLiteClient, 
+			@Named("otoLiteTermReviewURL") String otoLiteTermReviewURL,
+			@Named("otoLiteReviewFile") String otoLiteReviewFile,
 			@Named("databaseHost") String databaseHost,
 			@Named("databasePort") String databasePort,
 			@Named("databaseName")String databaseName,
 			@Named("databaseUser")String databaseUser,
 			@Named("databasePassword")String databasePassword,
 			@Named("databasePrefix")String databasePrefix, 
-			
+			@Named("glossaryType")String glossaryType,
 			IGlossary glossary) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
@@ -106,8 +123,12 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.descriptionExtractorRunMaximum = descriptionExtractorRunMaximum;
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
 		this.otoClient = otoClient;
+		this.otoLiteClient = otoLiteClient;
+		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
+		this.otoLiteReviewFile = otoLiteReviewFile;
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
+		this.glossaryType = glossaryType;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
@@ -115,9 +136,11 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 
 	@Override
 	public List<Treatment> transform(List<Treatment> treatments) {
-		OTOGlossary otoGlossary = otoClient.read(databasePrefix);
-		storeInLocalDB(otoGlossary);
-		initGlossary(otoGlossary);
+		GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
+		int uploadId = readUploadId();
+		Download download = otoLiteClient.download(uploadId);
+		storeInLocalDB(glossaryDownload, download);
+		initGlossary(glossaryDownload, download);
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place
@@ -129,37 +152,109 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		return treatments;
 	}
 
+	private int readUploadId() {
+		int uploadIdInt = -1;
+		
+		try {
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(otoLiteReviewFile));
+			String line;
+			String uploadId = null;
+			while ((line = bufferedReader.readLine()) != null) {
+				if(line.startsWith(otoLiteTermReviewURL)) {
+					uploadId = line.split("?uploadId=")[1];
+					break;
+				}
+			}
+			bufferedReader.close();
+			
+			if(uploadId != null && !uploadId.isEmpty())
+				uploadIdInt = Integer.valueOf(uploadId);
+			
+		} catch(Exception e) {
+			this.log(LogLevel.ERROR, e);
+		}
+		return uploadIdInt;
+	}
+
 	/**
 	 * TODO: OTO Webservice should probably only return one term category list.
 	 * No need to return an extra term synonym list just because it might make sense to have them seperate in a relational database schema
 	 * @param otoGlossary
 	 */
-	private void initGlossary(OTOGlossary otoGlossary) {
-		for(TermCategory termCategory : otoGlossary.getTermCategories()) {
+	private void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
 		}
+		for(Decision decision : download.getDecisions()) {
+			glossary.addEntry(decision.getTerm(), decision.getCategory());
+		}
 	}
-
 	
-	private void storeInLocalDB(OTOGlossary otoGlossary) {
+	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download) {
+		List<TermCategory> termCategories = new ArrayList<TermCategory>();
+		List<WordRole> wordRoles = new ArrayList<WordRole>();
+		List<TermSynonym> termSynonyms = new ArrayList<TermSynonym>();
+		
+		termCategories.addAll(glossaryDownload.getTermCategories());
+		termSynonyms.addAll(glossaryDownload.getTermSynonyms());
+		
+		List<Decision> decisions = download.getDecisions();
+		List<Synonym> synonyms = download.getSynonyms();
+
+		HashSet<String> hasSynSet = new HashSet<String>();
+		for(Synonym synonym : synonyms) {
+			TermSynonym termSynonym = new TermSynonym();
+			termSynonym.setTerm(synonym.getTerm());
+			termSynonym.setSynonym(synonym.getSynonym());
+			termSynonyms.add(termSynonym);
+			hasSynSet.add(synonym.getTerm());
+		}
+		
+		for(Decision decision : decisions) {
+			TermCategory termCategory = new TermCategory();
+			termCategory.setTerm(decision.getTerm());
+			termCategory.setCategory(decision.getCategory());
+			termCategory.setHasSyn(hasSynSet.contains(decision.getTerm()));
+			termCategories.add(termCategory);
+		}
+		
+		/** generate the wordroles from termcategories **/
+		for(TermCategory termCategory : termCategories) {
+			WordRole wordRole = new WordRole();
+			wordRole.setWord(termCategory.getTerm());
+			String semanticRole = "c";
+			if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+				semanticRole = "op";
+			}
+			wordRole.setSemanticRole(semanticRole);
+			wordRole.setSavedid(""); //not really needed, is a left over from earlier charaparser times
+			wordRoles.add(wordRole);
+		}
+		
 		try {
 			Statement stmt = connection.createStatement();
 	        String cleanupQuery = "DROP TABLE IF EXISTS " + 
 									this.databasePrefix + "_term_category, " + 
-									this.databasePrefix + "_syns;";
+									this.databasePrefix + "_syns, " +
+									this.databasePrefix + "_wordroles;";
 	        stmt.execute(cleanupQuery);
 	        stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
+			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
+					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`));");
 			
-			for(TermCategory termCategory : otoGlossary.getTermCategories()) {
+			for(TermCategory termCategory : termCategories) {
 				 stmt.execute("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES " +
-				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.getHasSyn() +"');");
-					
+				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.isHasSyn() +"');");
 			}
-			for(TermSynonym termSynonym : otoGlossary.getTermSynonyms()) {
+			for(TermSynonym termSynonym : termSynonyms) {
 				 stmt.execute("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES " +
 					 		"('" + termSynonym.getTerm() +"', '" + termSynonym.getSynonym() + "');");
+			}
+			for(WordRole wordRole : wordRoles) {
+				stmt.execute("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES ('" +
+						wordRole.getWord() + "','" + wordRole.getSemanticRole() + "','" + wordRole.getSavedid() + "')");
 			}
 		} catch(Exception e) {
 			log(LogLevel.ERROR, e);

@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import oto.full.IOTOClient;
+import oto.full.OTOClient;
+
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.ICorpus;
@@ -15,8 +18,6 @@ import semanticMarkup.know.lib.LearnedCharacterKnowledgeBase;
 import semanticMarkup.know.lib.LearnedOrganStateKnowledgeBase;
 import semanticMarkup.know.lib.LearnedPOSKnowledgeBase;
 import semanticMarkup.know.lib.WordNetPOSKnowledgeBase;
-import semanticMarkup.know.net.IOTOClient;
-import semanticMarkup.know.net.OTOClient;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.chunk.IChunker;
 import semanticMarkup.ling.chunk.lib.CharaparserChunkerChain;

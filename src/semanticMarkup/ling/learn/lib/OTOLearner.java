@@ -1,5 +1,6 @@
 package semanticMarkup.ling.learn.lib;
 
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,23 +10,26 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+
+import oto.beans.TermCategory;
+import oto.beans.TermSynonym;
+import oto.beans.WordRole;
+import oto.full.IOTOClient;
+import oto.full.beans.GlossaryDownload;
+import oto.lite.IOTOLiteClient;
+import oto.lite.beans.Sentence;
+import oto.lite.beans.Term;
+import oto.lite.beans.Upload;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-
-import edu.arizona.sirls.beans.Term;
-import edu.arizona.sirls.beans.TermCategory;
-import edu.arizona.sirls.beans.TermSynonym;
-import edu.arizona.sirls.beans.WordRole;
 
 import semanticMarkup.core.Treatment;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
-import semanticMarkup.know.net.IOTOClient;
-import semanticMarkup.know.net.LocalGlossary;
-import semanticMarkup.know.net.OTOGlossary;
 import semanticMarkup.ling.learn.ILearner;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.log.LogLevel;
@@ -46,7 +50,10 @@ public class OTOLearner implements ILearner {
 	private Connection connection;
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
-	private String permanentGlossaryPrefixAtWebService;
+	private String glossaryType;
+	private IOTOLiteClient otoLiteClient;
+	private String otoLiteTermReviewURL;
+	private String otoLiteReviewFile;
 	
 	/**
 	 * @param volumeReader
@@ -63,20 +70,26 @@ public class OTOLearner implements ILearner {
 	public OTOLearner(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
 			ITerminologyLearner terminologyLearner, 
 			IOTOClient otoClient, 
+			IOTOLiteClient otoLiteClient,
+			@Named("otoLiteTermReviewURL") String otoLiteTermReviewURL,
+			@Named("otoLiteReviewFile") String otoLiteReviewFile,
 			@Named("databaseHost") String databaseHost,
 			@Named("databasePort") String databasePort,
 			@Named("databaseName")String databaseName,
 			@Named("databaseUser")String databaseUser,
 			@Named("databasePassword")String databasePassword,
 			@Named("databasePrefix")String databasePrefix, 
-			@Named("permanentGlossaryPrefixAtWebService")String permanentGlossaryPrefixAtWebService,
+			@Named("glossaryType")String glossaryType,
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
 			IPOSKnowledgeBase posKnowledgeBase) throws Exception {	
 		this.volumeReader = volumeReader;
 		this.terminologyLearner = terminologyLearner;
 		this.otoClient = otoClient;
-		this.permanentGlossaryPrefixAtWebService = permanentGlossaryPrefixAtWebService;
+		this.otoLiteClient = otoLiteClient;
+		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
+		this.otoLiteReviewFile = otoLiteReviewFile;
+		this.glossaryType = glossaryType;
 		this.databasePrefix = databasePrefix;
 		this.glossaryTable = glossaryTable;
 		this.posKnowledgeBase = posKnowledgeBase;
@@ -90,16 +103,25 @@ public class OTOLearner implements ILearner {
 		List<Treatment> treatments = volumeReader.read();
 		
 		//no prefix, simply use the glossary 
-		OTOGlossary otoGlossary = otoClient.read(permanentGlossaryPrefixAtWebService);
-		storeInLocalDB(otoGlossary);
+		GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
+		//initialize the glossary table that the actual learn part needs
+		storeInLocalDB(glossaryDownload);
 
 		//not really needed for learning part the in-memory glossary, not before markup step
 		//initGlossary(otoGlossary);
 		
 		terminologyLearner.learn(treatments);
-		otoClient.put(readLocalGlossary(), databasePrefix);		
+		
+		//upload to OTO lite
+		int uploadId = otoLiteClient.upload(readUpload());
+
+		//store URL that uses upload id in a local file so that user can look it up
+		FileWriter fw = new FileWriter(otoLiteReviewFile);  
+		fw.write(this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
+		fw.close();  
 	}
-	
+
+
 	/**
 	 * Initialize the glossary passed to the learner, so that classes who share the glossary have access to an up-to-date version
 	 * TODO: OTO Webservice should probably only return one term category list.
@@ -113,7 +135,20 @@ public class OTOLearner implements ILearner {
 	}
 */
 	
-	private void storeInLocalDB(OTOGlossary otoGlossary) {
+	private void storeInLocalDB(GlossaryDownload glossaryDownload) {
+		List<WordRole> wordRoles = new LinkedList<WordRole>();
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+			WordRole wordRole = new WordRole();
+			wordRole.setWord(termCategory.getTerm());
+			String semanticRole = "c";
+			if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+				semanticRole = "op";
+			}
+			wordRole.setSemanticRole(semanticRole);
+			wordRole.setSavedid(""); //not really needed, is a left over from earlier charaparser times
+			wordRoles.add(wordRole);
+		}
+		
 		try {
 			Statement stmt = connection.createStatement();
 	        String cleanupQuery = "DROP TABLE IF EXISTS " + 
@@ -130,19 +165,19 @@ public class OTOLearner implements ILearner {
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
 			
-			for(TermCategory termCategory : otoGlossary.getTermCategories()) {
+			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 				 stmt.execute("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES " +
-				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.getHasSyn() +"');");
+				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.isHasSyn() +"');");
 			}
-			for(TermCategory termCategory : otoGlossary.getTermCategories()) {
+			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 				 stmt.execute("INSERT INTO " + this.glossaryTable + " (`term`, `category`, `hasSyn`) VALUES " +
-				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.getHasSyn() +"');");		
+				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.isHasSyn() +"');");		
 			}
-			for(TermSynonym termSynonym : otoGlossary.getTermSynonyms()) {
+			for(TermSynonym termSynonym : glossaryDownload.getTermSynonyms()) {
 				 stmt.execute("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES " +
 					 		"('" + termSynonym.getTerm() +"', '" + termSynonym.getSynonym() + "');");
 			}
-			for(WordRole wordRole : otoGlossary.getWordRoles()) {
+			for(WordRole wordRole : wordRoles) {
 				stmt.execute("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES ('" +
 						wordRole.getWord() + "','" +
 						wordRole.getSemanticRole() + "','" +
@@ -153,31 +188,31 @@ public class OTOLearner implements ILearner {
 		}
 	}
 
-	private LocalGlossary readLocalGlossary() {
-		//List<TermCategory> termCategories = new ArrayList<TermCategory>();
-		//List<Sentence> sentences = new ArrayList<Sentence>();
+	private Upload readUpload() {
+		Upload upload = new Upload();
 
-		/*
+		upload.setPossibleStructures(getStructures());
+		upload.setPossibleCharacters(getCharacters());
+		upload.setPossibleOtherTerms(getOtherTerms());
+		upload.setSentences(getSentences());
+		upload.setGlossaryType(glossaryType);
+		
+		return upload;
+	}
+
+	private List<Sentence> getSentences() {
+		List<Sentence> sentences = new LinkedList<Sentence>();
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("select * from " + this.databasePrefix + "_sentence order by sentid");
 			while(resultSet.next()) {
 				sentences.add(new Sentence(resultSet.getInt("sentid"), resultSet.getString("source"), resultSet.getString("sentence"),
-						resultSet.getString("originalsent"), resultSet.getString("lead"), resultSet.getString("status"), resultSet.getString("tag"),
-						resultSet.getString("modifier"), resultSet.getString("charsegment")));
-			}
-			
-			ResultSet resultSet = statement.executeQuery("select * from " + this.databasePrefix + "_term_category");
-			while(resultSet.next()) {
-				termCategories.add(new TermCategory(resultSet.getString("term"), resultSet.getString("category"), resultSet.getString("hasSyn")));
-			}
-		
+						resultSet.getString("originalsent")));
+			}		
 		} catch(Exception e) {
 			log(LogLevel.ERROR, e);
-		}*/
-		
-		LocalGlossary localGlossary = new LocalGlossary(getStructures(), getCharacters(), getOtherTerms());
-		return localGlossary;
+		}
+		return sentences;
 	}
 
 	private List<Term> getOtherTerms() {
