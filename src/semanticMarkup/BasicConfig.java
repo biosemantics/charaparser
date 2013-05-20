@@ -7,6 +7,8 @@ import java.util.Set;
 
 import oto.full.IOTOClient;
 import oto.full.OTOClient;
+import oto.lite.IOTOLiteClient;
+import oto.lite.OTOLiteClient;
 
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
@@ -133,6 +135,7 @@ public class BasicConfig extends AbstractModule {
 		bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
 		
 		bind(IOTOClient.class).to(OTOClient.class).in(Singleton.class);
+		bind(IOTOLiteClient.class).to(OTOLiteClient.class).in(Singleton.class);
 		bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 		
 		bind(String.class).annotatedWith(Names.named("descriptionSeparator")).toInstance("-------------");

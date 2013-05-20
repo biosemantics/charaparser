@@ -1,5 +1,6 @@
 package semanticMarkup.ling.learn.lib;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -54,6 +55,7 @@ public class OTOLearner implements ILearner {
 	private IOTOLiteClient otoLiteClient;
 	private String otoLiteTermReviewURL;
 	private String otoLiteReviewFile;
+	private String runRootDirectory;
 	
 	/**
 	 * @param volumeReader
@@ -82,7 +84,8 @@ public class OTOLearner implements ILearner {
 			@Named("glossaryType")String glossaryType,
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
-			IPOSKnowledgeBase posKnowledgeBase) throws Exception {	
+			IPOSKnowledgeBase posKnowledgeBase, 
+			@Named("Run_RootDirectory")String runRootDirectory) throws Exception {	
 		this.volumeReader = volumeReader;
 		this.terminologyLearner = terminologyLearner;
 		this.otoClient = otoClient;
@@ -93,6 +96,7 @@ public class OTOLearner implements ILearner {
 		this.databasePrefix = databasePrefix;
 		this.glossaryTable = glossaryTable;
 		this.posKnowledgeBase = posKnowledgeBase;
+		this.runRootDirectory = runRootDirectory;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
@@ -116,9 +120,9 @@ public class OTOLearner implements ILearner {
 		int uploadId = otoLiteClient.upload(readUpload());
 
 		//store URL that uses upload id in a local file so that user can look it up
-		FileWriter fw = new FileWriter(otoLiteReviewFile);  
+		FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
 		fw.write(this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
-		fw.close();  
+		fw.close();
 	}
 
 
@@ -137,7 +141,13 @@ public class OTOLearner implements ILearner {
 	
 	private void storeInLocalDB(GlossaryDownload glossaryDownload) {
 		List<WordRole> wordRoles = new LinkedList<WordRole>();
+		HashSet<String> wordSet = new HashSet<String>();
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+			//remove duplicates, term is primary key in the table
+			if(wordSet.contains(termCategory.getTerm()))
+				continue;
+			wordSet.add(termCategory.getTerm());
+			
 			WordRole wordRole = new WordRole();
 			wordRole.setWord(termCategory.getTerm());
 			String semanticRole = "c";
@@ -165,25 +175,37 @@ public class OTOLearner implements ILearner {
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
 			
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
+			
 			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-				 stmt.execute("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES " +
-				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.isHasSyn() +"');");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
+				preparedStatement.setString(1, termCategory.getTerm());
+				preparedStatement.setString(2, termCategory.getCategory());
+				preparedStatement.setBoolean(3, termCategory.isHasSyn());
+				preparedStatement.executeUpdate();
 			}
 			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-				 stmt.execute("INSERT INTO " + this.glossaryTable + " (`term`, `category`, `hasSyn`) VALUES " +
-				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.isHasSyn() +"');");		
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.glossaryTable + " (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");	
+				preparedStatement.setString(1, termCategory.getTerm());
+				preparedStatement.setString(2, termCategory.getCategory());
+				preparedStatement.setBoolean(3, termCategory.isHasSyn());
+				preparedStatement.executeUpdate();
 			}
 			for(TermSynonym termSynonym : glossaryDownload.getTermSynonyms()) {
-				 stmt.execute("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES " +
-					 		"('" + termSynonym.getTerm() +"', '" + termSynonym.getSynonym() + "');");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
+				preparedStatement.setString(1, termSynonym.getTerm());
+				preparedStatement.setString(2, termSynonym.getSynonym());
+				preparedStatement.executeUpdate();
 			}
 			for(WordRole wordRole : wordRoles) {
-				stmt.execute("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES ('" +
-						wordRole.getWord() + "','" +
-						wordRole.getSemanticRole() + "','" +
-						wordRole.getSavedid() + "')");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES (?, ?, ?)");
+				preparedStatement.setString(1, wordRole.getWord());
+				preparedStatement.setString(2, wordRole.getSemanticRole());
+				preparedStatement.setString(3, wordRole.getSavedid());
+				preparedStatement.executeUpdate();
 			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			log(LogLevel.ERROR, e);
 		}
 	}

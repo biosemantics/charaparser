@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -161,7 +162,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			String uploadId = null;
 			while ((line = bufferedReader.readLine()) != null) {
 				if(line.startsWith(otoLiteTermReviewURL)) {
-					uploadId = line.split("?uploadId=")[1];
+					uploadId = line.split("\\?uploadID=")[1];
 					break;
 				}
 			}
@@ -219,7 +220,12 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		}
 		
 		/** generate the wordroles from termcategories **/
+		//remove duplicates, term is primary key in the table
+		HashSet<String> wordSet = new HashSet<String>();
 		for(TermCategory termCategory : termCategories) {
+			if(wordSet.contains(termCategory.getTerm()))
+				continue;
+			wordSet.add(termCategory.getTerm());
 			WordRole wordRole = new WordRole();
 			wordRole.setWord(termCategory.getTerm());
 			String semanticRole = "c";
@@ -245,16 +251,24 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`));");
 			
 			for(TermCategory termCategory : termCategories) {
-				 stmt.execute("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES " +
-				 		"('" + termCategory.getTerm() +"', '" + termCategory.getCategory() + "', '" + termCategory.isHasSyn() +"');");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
+				preparedStatement.setString(1, termCategory.getTerm());
+				preparedStatement.setString(2, termCategory.getCategory());
+				preparedStatement.setBoolean(3, termCategory.isHasSyn());
+				preparedStatement.executeUpdate();
 			}
 			for(TermSynonym termSynonym : termSynonyms) {
-				 stmt.execute("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES " +
-					 		"('" + termSynonym.getTerm() +"', '" + termSynonym.getSynonym() + "');");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
+				preparedStatement.setString(1, termSynonym.getTerm());
+				preparedStatement.setString(2, termSynonym.getSynonym());
+				preparedStatement.executeUpdate();
 			}
 			for(WordRole wordRole : wordRoles) {
-				stmt.execute("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES ('" +
-						wordRole.getWord() + "','" + wordRole.getSemanticRole() + "','" + wordRole.getSavedid() + "')");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES (?, ?, ?)");
+				preparedStatement.setString(1, wordRole.getWord());
+				preparedStatement.setString(2, wordRole.getSemanticRole());
+				preparedStatement.setString(3, wordRole.getSavedid());
+				preparedStatement.executeUpdate();
 			}
 		} catch(Exception e) {
 			log(LogLevel.ERROR, e);

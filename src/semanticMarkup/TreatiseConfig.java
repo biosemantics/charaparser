@@ -13,9 +13,9 @@ public class TreatiseConfig extends RunConfig {
 	public TreatiseConfig() {
 		this.setStandardVolumeReaderSourcefiles("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
 		//this.setDatabaseTablePrefix("treatise");
-		this.setPermanentGlossaryPrefixAtWebService("treatise");
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
 		this.setGlossaryFile("resources" + File.separator + "treatisehglossaryfixed.csv");
 		this.setNormalizer(TreatisehNormalizer.class);	
+		this.setGlossaryType("fossils");
 	}
 }

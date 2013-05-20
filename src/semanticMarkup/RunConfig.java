@@ -66,7 +66,6 @@ public class RunConfig extends BasicConfig {
 	private String taxonxSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd";
 	private String xmlSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd";
 	private String taxonxVolumeReaderSourceFile = "evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml";
-	private String otoClientUrl = "http://localhost:8080/webservice/";
 	private Class<? extends TreatmentTransformerChain> treatmentTransformerChain = CharaparserTreatmentTransformerChain.class;
 	private Class<? extends DescriptionTreatmentTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTreatmentTransformer.class;
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
@@ -82,9 +81,13 @@ public class RunConfig extends BasicConfig {
 	
 	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
 	private String databaseTablePrefix = "myrun";
-	private String permanentGlossaryPrefixAtWebService = "fna";
+	private String glossaryType = "plants";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
+	private String otoLiteReviewFile = "TermReview.txt";
+	private String otoLiteTermReviewURL = "http://localhost:8080/OTOLite/";
+	private String otoLiteClientURL = "http://localhost:8080/OTOLite/";
+	private String otoClientUrl = "http://localhost:8080/OTO5/";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
 	//PerlTerminologyLearner //DatabaseInputNoLearner;
@@ -132,7 +135,10 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(standardVolumeReaderSourcefiles);
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance(databaseTablePrefix); 
-		bind(String.class).annotatedWith(Names.named("permanentGlossaryPrefixAtWebService")).toInstance(permanentGlossaryPrefixAtWebService); 
+		bind(String.class).annotatedWith(Names.named("glossaryType")).toInstance(glossaryType);
+		bind(String.class).annotatedWith(Names.named("otoLiteReviewFile")).toInstance(otoLiteReviewFile);
+		bind(String.class).annotatedWith(Names.named("otoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
+		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
 		bind(INormalizer.class).to(FNAv19Normalizer.class); 
@@ -486,14 +492,6 @@ public class RunConfig extends BasicConfig {
 		this.otoClientUrl = otoClientUrl;
 	}
 
-	public String getPermanentGlossaryPrefixAtWebService() {
-		return permanentGlossaryPrefixAtWebService;
-	}
-
-	public void setPermanentGlossaryPrefixAtWebService(String permanentGlossaryPrefixAtWebService) {
-		this.permanentGlossaryPrefixAtWebService = permanentGlossaryPrefixAtWebService;
-	}
-
 	public String getDatabaseHost() {
 		return databaseHost;
 	}
@@ -509,8 +507,14 @@ public class RunConfig extends BasicConfig {
 	public void setDatabasePort(String databasePort) {
 		this.databasePort = databasePort;
 	}
-	
-	
+
+	public String getGlossaryType() {
+		return glossaryType;
+	}
+
+	public void setGlossaryType(String glossaryType) {
+		this.glossaryType = glossaryType;
+	}
 	
 }
 
