@@ -515,6 +515,30 @@ public class RunConfig extends BasicConfig {
 	public void setGlossaryType(String glossaryType) {
 		this.glossaryType = glossaryType;
 	}
+
+	public String getOtoLiteReviewFile() {
+		return otoLiteReviewFile;
+	}
+
+	public void setOtoLiteReviewFile(String otoLiteReviewFile) {
+		this.otoLiteReviewFile = otoLiteReviewFile;
+	}
+
+	public String getOtoLiteTermReviewURL() {
+		return otoLiteTermReviewURL;
+	}
+
+	public void setOtoLiteTermReviewURL(String otoLiteTermReviewURL) {
+		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
+	}
+
+	public String getOtoLiteClientURL() {
+		return otoLiteClientURL;
+	}
+
+	public void setOtoLiteClientURL(String otoLiteClientURL) {
+		this.otoLiteClientURL = otoLiteClientURL;
+	}
 	
 }
 
