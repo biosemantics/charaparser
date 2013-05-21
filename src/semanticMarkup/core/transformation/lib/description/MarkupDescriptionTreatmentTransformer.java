@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +69,6 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	private Connection connection;
 	private String glossaryType;
 	private IOTOLiteClient otoLiteClient;
-	private String otoLiteReviewFile;
 	private String otoLiteTermReviewURL;
 	
 	/**
@@ -104,7 +105,6 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			IOTOClient otoClient, 
 			IOTOLiteClient otoLiteClient, 
 			@Named("otoLiteTermReviewURL") String otoLiteTermReviewURL,
-			@Named("otoLiteReviewFile") String otoLiteReviewFile,
 			@Named("databaseHost") String databaseHost,
 			@Named("databasePort") String databasePort,
 			@Named("databaseName")String databaseName,
@@ -126,7 +126,6 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.otoClient = otoClient;
 		this.otoLiteClient = otoLiteClient;
 		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
-		this.otoLiteReviewFile = otoLiteReviewFile;
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
 		this.glossaryType = glossaryType;
@@ -138,8 +137,15 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	@Override
 	public List<Treatment> transform(List<Treatment> treatments) {
 		GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
-		int uploadId = readUploadId();
-		Download download = otoLiteClient.download(uploadId);
+		int uploadId;
+		Download download;
+		try {
+			uploadId = readUploadId();		
+			download = otoLiteClient.download(uploadId);
+		} catch (SQLException e) {
+			this.log(LogLevel.ERROR, e);
+			download = new Download();
+		}
 		storeInLocalDB(glossaryDownload, download);
 		initGlossary(glossaryDownload, download);
 		
@@ -153,28 +159,17 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		return treatments;
 	}
 
-	private int readUploadId() {
-		int uploadIdInt = -1;
-		
-		try {
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(otoLiteReviewFile));
-			String line;
-			String uploadId = null;
-			while ((line = bufferedReader.readLine()) != null) {
-				if(line.startsWith(otoLiteTermReviewURL)) {
-					uploadId = line.split("\\?uploadID=")[1];
-					break;
-				}
-			}
-			bufferedReader.close();
-			
-			if(uploadId != null && !uploadId.isEmpty())
-				uploadIdInt = Integer.valueOf(uploadId);
-			
-		} catch(Exception e) {
-			this.log(LogLevel.ERROR, e);
+	private int readUploadId() throws SQLException {
+		int uploadId = -1;
+		String sql = "SELECT uploadid FROM datasetprefixes WHERE prefix = ?";
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		preparedStatement.setString(1, databasePrefix);
+		preparedStatement.execute();
+		ResultSet resultSet = preparedStatement.getResultSet();
+		while(resultSet.next()) {
+			uploadId = resultSet.getInt("uploadid");
 		}
-		return uploadIdInt;
+		return uploadId;
 	}
 
 	/**
