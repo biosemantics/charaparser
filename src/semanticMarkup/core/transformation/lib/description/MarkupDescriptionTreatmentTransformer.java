@@ -161,13 +161,13 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 
 	private int readUploadId() throws SQLException {
 		int uploadId = -1;
-		String sql = "SELECT uploadid FROM datasetprefixes WHERE prefix = ?";
+		String sql = "SELECT oto_uploadid FROM datasetprefixes WHERE prefix = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.setString(1, databasePrefix);
 		preparedStatement.execute();
 		ResultSet resultSet = preparedStatement.getResultSet();
 		while(resultSet.next()) {
-			uploadId = resultSet.getInt("uploadid");
+			uploadId = resultSet.getInt("oto_uploadid");
 		}
 		return uploadId;
 	}
