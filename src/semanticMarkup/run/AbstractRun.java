@@ -33,12 +33,7 @@ public abstract class AbstractRun implements IRun {
 		this.runOutDirectory = runOutDirectory;
 	}
 	
-	public void run() throws Exception {
-		if(!isValidRun(runRootDirectory)) {
-			log(LogLevel.ERROR, "Not a valid run. Stop.");
-			return;
-		}
-		
+	public void run() throws Exception {		
 		new File(runOutDirectory + File.separator + "config.txt").getParentFile().mkdirs();
 		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(runOutDirectory + File.separator + "config.txt"));
 		appendConfigFile(bwSetup);
@@ -67,27 +62,6 @@ public abstract class AbstractRun implements IRun {
 	}
 
 	protected abstract void doRun() throws Exception;
-	
-	protected boolean isValidRun(String runRootDirectory) {
-		File file = new File(runRootDirectory);
-		file.mkdirs();
-		//createNewFile is atomic operation of existance check and creation if doesnt exist yet.
-		//it guarantees to finish the operation before other processes can access the file.
-		//hence it is a sufficient check for concurrently running Runs
-		File synchronizationFile = new File(runRootDirectory + File.separator + "learnStart");
-		boolean result = false;
-		try {
-			result = synchronizationFile.createNewFile();
-		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
-		}
-		if(!result) {
-			log(LogLevel.ERROR, "databasePrefix has already been used.");
-			return false;
-		}
-		return true;
-	}
-
 
 	public String getDescription() {
 		return this.getClass().toString();

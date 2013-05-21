@@ -38,7 +38,7 @@ import semanticMarkup.log.LogLevel;
 /**
  * OTOLearner learns by reading from an IVolumeReader and learning using an ITerminologyLearner
  * For learning, additional input is read from an IOTOClient
- * Moreover, learned results are handed to an IOTOClient
+ * Moreover, learned results are handed to an IOTOLiteClient
  * This can be used for the first and hence the 'learn' application for the iPlant integration
  * @author rodenhausen
  */
@@ -118,7 +118,15 @@ public class OTOLearner implements ILearner {
 		
 		//upload to OTO lite
 		int uploadId = otoLiteClient.upload(readUpload());
-
+		
+		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
+		//iplant environment, hence the dependency on mysql can for iplant not completely be removed
+		String sql = "UPDATE datasetprefixes SET oto_uploadid = ? WHERE prefix = ?";
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		preparedStatement.setInt(1, uploadId);
+		preparedStatement.setString(2, databasePrefix);
+		preparedStatement.execute();
+		
 		//store URL that uses upload id in a local file so that user can look it up
 		FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
 		fw.write(this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
