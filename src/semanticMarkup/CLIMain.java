@@ -169,14 +169,20 @@ public class CLIMain {
 	}
 
 	protected RunConfig getConfig(String config) {
-		if(config.equals("FNA")) {
-			return new FNAv19Config();
+		if(config.equals("Plant")) {
+			return new PlantConfig();
+		}
+		if(config.equals("Hymenoptera")) {
+			return new HymenopteraConfig();
+		}
+		if(config.equals("Algea")) {
+			return new AlgeaConfig();
+		}
+		if(config.equals("Porifera")) {
+			return new PoriferaConfig();
 		}
 		if(config.equals("Treatise")) {
 			return new TreatiseConfig();
-		}
-		if(config.equals("Ant")) {
-			return new AntConfig();
 		}
 		log(LogLevel.ERROR, "Config unknown");
 		System.exit(0);
