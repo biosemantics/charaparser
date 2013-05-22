@@ -81,7 +81,7 @@ public class RunConfig extends BasicConfig {
 	
 	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
 	private String databaseTablePrefix = "myrun";
-	private String glossaryType = "plants";
+	private String glossaryType = "plant";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
 	private String otoLiteReviewFile = "TermReview.txt";

@@ -11,6 +11,7 @@ import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
+import semanticMarkup.know.Glossary;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.run.IRun;
 
@@ -169,19 +170,19 @@ public class CLIMain {
 	}
 
 	protected RunConfig getConfig(String config) {
-		if(config.equals("Plant")) {
+		if(config.equals(Glossary.Plant)) {
 			return new PlantConfig();
 		}
-		if(config.equals("Hymenoptera")) {
+		if(config.equals(Glossary.Hymenoptera)) {
 			return new HymenopteraConfig();
 		}
-		if(config.equals("Algea")) {
+		if(config.equals(Glossary.Algea)) {
 			return new AlgeaConfig();
 		}
-		if(config.equals("Porifera")) {
+		if(config.equals(Glossary.Porifera)) {
 			return new PoriferaConfig();
 		}
-		if(config.equals("Treatise")) {
+		if(config.equals(Glossary.Treatise)) {
 			return new TreatiseConfig();
 		}
 		log(LogLevel.ERROR, "Config unknown");

@@ -2,6 +2,7 @@ package semanticMarkup;
 
 import java.io.File;
 
+import semanticMarkup.know.Glossary;
 import semanticMarkup.ling.normalize.lib.TreatisehNormalizer;
 
 /**
@@ -16,6 +17,6 @@ public class TreatiseConfig extends RunConfig {
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
 		this.setGlossaryFile("resources" + File.separator + "treatisehglossaryfixed.csv");
 		this.setNormalizer(TreatisehNormalizer.class);	
-		this.setGlossaryType("fossils");
+		this.setGlossaryType(Glossary.Treatise.toString());
 	}
 }

@@ -2,6 +2,7 @@ package semanticMarkup;
 
 import java.io.File;
 
+import semanticMarkup.know.Glossary;
 import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
 
 public class PoriferaConfig extends RunConfig {
@@ -12,7 +13,7 @@ public class PoriferaConfig extends RunConfig {
 		//this.setDatabaseGlossaryTable("antglossaryfixed");
 		//this.setGlossaryFile("resources" + File.separator + "antglossaryfixed.csv");
 		//this.setNormalizer(FNAv19Normalizer.class);
-		this.setGlossaryType("porifera");
+		this.setGlossaryType(Glossary.Porifera.toString());
 	}
 
 }
