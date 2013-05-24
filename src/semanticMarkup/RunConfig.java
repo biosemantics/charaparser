@@ -85,9 +85,9 @@ public class RunConfig extends BasicConfig {
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
 	private String otoLiteReviewFile = "TermReview.txt";
-	private String otoLiteTermReviewURL = "http://localhost:8080/OTOLite/";
-	private String otoLiteClientURL = "http://localhost:8080/OTOLite/";
-	private String otoClientUrl = "http://localhost:8080/OTO5/";
+	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	private String otoClientUrl = "http://biosemantics.arizona.edu/ONTNEW/";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
 	//PerlTerminologyLearner //DatabaseInputNoLearner;

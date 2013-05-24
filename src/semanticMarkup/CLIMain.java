@@ -170,19 +170,19 @@ public class CLIMain {
 	}
 
 	protected RunConfig getConfig(String config) {
-		if(config.equals(Glossary.Plant)) {
+		if(config.equals(Glossary.Plant.toString())) {
 			return new PlantConfig();
 		}
-		if(config.equals(Glossary.Hymenoptera)) {
+		if(config.equals(Glossary.Hymenoptera.toString())) {
 			return new HymenopteraConfig();
 		}
-		if(config.equals(Glossary.Algea)) {
+		if(config.equals(Glossary.Algea.toString())) {
 			return new AlgeaConfig();
 		}
-		if(config.equals(Glossary.Porifera)) {
+		if(config.equals(Glossary.Porifera.toString())) {
 			return new PoriferaConfig();
 		}
-		if(config.equals(Glossary.Treatise)) {
+		if(config.equals(Glossary.Treatise.toString())) {
 			return new TreatiseConfig();
 		}
 		log(LogLevel.ERROR, "Config unknown");
