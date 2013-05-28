@@ -591,7 +591,7 @@ public class Chunk implements Cloneable {
 			}
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem cloning Chunk", e);
 		}
 		return null;
 	}

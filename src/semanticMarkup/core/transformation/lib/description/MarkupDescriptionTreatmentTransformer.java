@@ -143,7 +143,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			uploadId = readUploadId();		
 			download = otoLiteClient.download(uploadId);
 		} catch (SQLException e) {
-			this.log(LogLevel.ERROR, e);
+			this.log(LogLevel.ERROR, "Problem reading uploadId", e);
 			download = new Download();
 		}
 		storeInLocalDB(glossaryDownload, download);
@@ -266,7 +266,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 				preparedStatement.executeUpdate();
 			}
 		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
 		}
 	}
 
@@ -301,7 +301,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			descriptionExtractorsLatch.await();
 			executorService.shutdown();
 		} catch (InterruptedException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem with descriptionExtractorsLatch or executorService", e);
 		}
 		
 		for(Treatment treatment : treatments) {
@@ -311,7 +311,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			try {
 				treatment.addTreatmentElement(futureNewDescription.get());
 			} catch (Exception e) {
-				log(LogLevel.DEBUG, e);
+				log(LogLevel.ERROR, "Problem getting Future from new description", e);
 			}
 			log(LogLevel.DEBUG, " -> JAXB: ");
 			log(LogLevel.DEBUG, treatment.toString());

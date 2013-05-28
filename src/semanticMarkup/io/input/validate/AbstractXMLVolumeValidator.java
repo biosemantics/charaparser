@@ -29,7 +29,7 @@ public abstract class AbstractXMLVolumeValidator implements IVolumeValidator {
 			validator.validate(new StreamSource(new FileReader(xmlFile)));
 			return true;
 		} catch (Exception e) {
-			log(LogLevel.DEBUG, e);
+			log(LogLevel.ERROR, "Problem validating XML against schema", e);
 			return false;
 		}
 	}

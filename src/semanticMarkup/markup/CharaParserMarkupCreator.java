@@ -49,7 +49,7 @@ public class CharaParserMarkupCreator implements IMarkupCreator {
 			volumeWriter.write(treatments);
 				
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem reading, transforming or writing treatments", e);
 		}
 	}
 

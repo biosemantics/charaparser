@@ -35,48 +35,90 @@ public class Logger {
 	/**
 	 * @param message to display
 	 */
-	public void trace(Object message) {
-		//System.out.println(clazz.getSimpleName() + ": " + message.toString());
-		logger.trace(message.toString());
+	public void trace(String message) {
+		logger.trace(message);
+	}
+	
+	/**
+	 * @param message
+	 * @param throwable
+	 */
+	public void trace(String message, Throwable throwable) {
+		logger.trace(message, throwable);
 	}
 	
 	/**
 	 * @param message to display
 	 */
-	public void debug(Object message) {
-		//System.out.println(clazz.getSimpleName() + ": " + message.toString());
-		logger.debug(message.toString());
+	public void debug(String message) {
+		logger.debug(message);
+	}
+	
+	/**
+	 * @param message
+	 * @param throwable
+	 */
+	public void debug(String message, Throwable throwable) {
+		logger.debug(message, throwable);
 	}
 	
 	/**
 	 * @param message to display
 	 */
-	public void info(Object message) {
-		//System.out.println(clazz.getSimpleName() + ": " + message.toString());
-		logger.info(message.toString());
+	public void info(String message) {
+		logger.info(message);
+	}
+	
+	/**
+	 * @param message
+	 * @param throwable
+	 */
+	public void info(String message, Throwable throwable) {
+		logger.info(message, throwable);
 	}
 	
 	/**
 	 * @param message to display
 	 */
-	public void warn(Object message) {
-		//System.out.println(clazz.getSimpleName() + ": " + message.toString());
-		logger.warn(message.toString());
+	public void warn(String message) {
+		logger.warn(message);
+	}
+	
+	/**
+	 * @param message
+	 * @param throwable
+	 */
+	public void warn(String message, Throwable throwable) {
+		logger.warn(message);
 	}
 	
 	/**
 	 * @param message to display
 	 */
-	public void error(Object message) {
-		//System.out.println(clazz.getSimpleName() + ": " + message.toString());
-		logger.error(message.toString());
+	public void error(String message) {
+		logger.error(message);
+	}
+	
+	/**
+	 * @param message
+	 * @param throwable
+	 */
+	public void error(String message, Throwable throwable) {
+		logger.error(message);
 	}
 	
 	/**
 	 * @param message to display
 	 */
-	public void fatal(Object message) {
-		//System.out.println(clazz.getSimpleName() + ": " + message.toString());
-		logger.error(message.toString());
+	public void fatal(String message) {
+		logger.error(message);
+	}
+	
+	/**
+	 * @param message
+	 * @param throwable
+	 */
+	public void fatal(String message, Throwable throwable) {
+		logger.error(message, throwable);
 	}
 }

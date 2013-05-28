@@ -48,7 +48,7 @@ public class CLIMain {
 		try {
 			run.run();
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem to execute the run", e);
 		}
 	}
 
@@ -108,7 +108,7 @@ public class CLIMain {
 		    			config.setMarkupDescriptionTreatmentTransformerSentenceChunkerRunMaximum(threadsPerSentenceChunking);
 		    			config.setMarkupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum(threadsPerDescriptionExtractor);
 		    		} catch(Exception e) {
-		    			log(LogLevel.ERROR, e);
+		    			log(LogLevel.ERROR, "Problem to convert parameter to Integer", e);
 		    			System.exit(0);
 		    		}
 		    	}
@@ -145,7 +145,7 @@ public class CLIMain {
 		    	System.exit(0);
 		    }
 		} catch(ParseException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 	}
 

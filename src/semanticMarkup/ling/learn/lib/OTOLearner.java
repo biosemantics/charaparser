@@ -213,8 +213,7 @@ public class OTOLearner implements ILearner {
 				preparedStatement.executeUpdate();
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
 		}
 	}
 
@@ -240,7 +239,7 @@ public class OTOLearner implements ILearner {
 						resultSet.getString("originalsent")));
 			}		
 		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem accessing sentence table", e);
 		}
 		return sentences;
 	}
@@ -252,7 +251,7 @@ public class OTOLearner implements ILearner {
 			for(String otherTerm : otherTerms) 
 				result.add(new Term(otherTerm));
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem fetching content terms", e);
 		}
 		return result;
 	}
@@ -264,7 +263,7 @@ public class OTOLearner implements ILearner {
 			for(String characterTerm : characterTerms) 
 				result.add(new Term(characterTerm));
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem fetching character terms", e);
 		}
 		return result;
 	}
@@ -276,7 +275,7 @@ public class OTOLearner implements ILearner {
 			for(String structureTerm : structureTerms) 
 				result.add(new Term(structureTerm));
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem fetching structure terms", e);
 		}
 		return result;
 	}

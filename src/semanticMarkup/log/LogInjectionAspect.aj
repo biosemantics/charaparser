@@ -11,7 +11,7 @@ public aspect LogInjectionAspect {
 	 * @param logLevel
 	 * @param message
 	 */
-	public void ILoggable.log(LogLevel logLevel, Object message) {
+	public void ILoggable.log(LogLevel logLevel, String message) {
 		Logger logger = Logger.getLogger(this.getClass());
 		switch(logLevel) {
 		case TRACE:
@@ -31,6 +31,35 @@ public aspect LogInjectionAspect {
 			break;
 		case WARN:
 			logger.warn(message);
+			break;
+		}
+	}
+	
+	/**
+	 * log method is defined for ILoggables
+	 * @param logLevel
+	 * @param message
+	 */
+	public void ILoggable.log(LogLevel logLevel, String message, Throwable throwable) {
+		Logger logger = Logger.getLogger(this.getClass());
+		switch(logLevel) {
+		case TRACE:
+			logger.trace(message, throwable);
+			break;
+		case DEBUG:
+			logger.debug(message, throwable);
+			break;
+		case INFO:
+			logger.info(message, throwable);
+			break;
+		case ERROR:
+			logger.error(message, throwable);
+			break;
+		case FATAL:
+			logger.fatal(message, throwable);
+			break;
+		case WARN:
+			logger.warn(message, throwable);
 			break;
 		}
 	}

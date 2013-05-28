@@ -32,7 +32,7 @@ public class ChunkerChain {
 			try {
 				chunker.chunk(chunkCollector);	
 			} catch (Exception e) {
-				e.printStackTrace();
+				log(LogLevel.ERROR, "Problem executing chunkerChain", e);
 				System.exit(0);
 			}
 			if(chunkCollector.hasChanged()) 

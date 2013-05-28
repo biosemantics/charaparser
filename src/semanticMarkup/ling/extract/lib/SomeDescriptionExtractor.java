@@ -84,9 +84,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 					statement.addTreatmentElement(descriptiveTreatmentElement);
 				}
 			} catch (Exception e) {
-				log(LogLevel.ERROR, e);
-				e.printStackTrace();
-				System.out.println(chunkCollector);
+				log(LogLevel.ERROR, "Problem extracting markup elements from sentence: " + chunkCollector.getSentence() + "\n" +
+						"Sentence is contained in file: " + chunkCollector.getSource(),
+						e);
 			}
 		}
 		return descriptionTreatmentElement;

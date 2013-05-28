@@ -98,7 +98,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 		try {
 			mainForm.open();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log(LogLevel.ERROR, "Problem opening MainForm", e);
 		}
 		
 		// MainForm expects datatable structure of perl learning part and hence if PerlTerminologyLearner is
@@ -142,7 +142,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			descriptionExtractorsLatch.await();
 			executorService.shutdown();
 		} catch (InterruptedException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem with descriptionExtractorsLatch or executorService", e);
 		}
 		
 		for(Treatment treatment : treatments) {
@@ -152,7 +152,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			try {
 				treatment.addTreatmentElement(futureNewDescription.get());
 			} catch (Exception e) {
-				log(LogLevel.DEBUG, e);
+				log(LogLevel.DEBUG, "Problem getting Future from new description", e);
 			}
 			log(LogLevel.DEBUG, " -> JAXB: ");
 			log(LogLevel.DEBUG, treatment.toString());

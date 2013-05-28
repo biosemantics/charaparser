@@ -93,7 +93,7 @@ public class MarkupMain extends CLIMain {
 		    			config.setMarkupDescriptionTreatmentTransformerSentenceChunkerRunMaximum(threadsPerSentenceChunking);
 		    			config.setMarkupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum(threadsPerDescriptionExtractor);
 		    		} catch(Exception e) {
-		    			log(LogLevel.ERROR, e);
+		    			log(LogLevel.ERROR, "Problem to convert parameter to Integer", e);
 		    			System.exit(0);
 		    		}
 		    	}
@@ -143,7 +143,7 @@ public class MarkupMain extends CLIMain {
 		    	System.exit(0);
 		    }
 		} catch(ParseException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
 		config.setRun(IPlantMarkupRun.class);

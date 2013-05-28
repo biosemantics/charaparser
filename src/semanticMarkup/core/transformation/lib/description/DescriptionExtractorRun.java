@@ -104,7 +104,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 			sentencesLatch.await();
 			executorService.shutdown();
 		} catch (InterruptedException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem with sentencesLatch or executorService", e);
 		}
 		
 		log(LogLevel.DEBUG, "Extract new description using " + descriptionExtractor.getDescription() + "...");
@@ -115,7 +115,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 			try {
 				treatmentChunkCollectors.add(futureChunkCollector.get());
 			} catch (Exception e) {
-				log(LogLevel.ERROR, e);
+				log(LogLevel.ERROR, "Problem getting Future from chunkCollector", e);
 			}
 		}
 		

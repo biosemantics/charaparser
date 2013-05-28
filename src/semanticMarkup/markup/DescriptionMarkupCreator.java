@@ -50,7 +50,7 @@ public class DescriptionMarkupCreator implements IMarkupCreator {
 				
 		} catch (Exception e) {
 			e.printStackTrace();
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem reading, transforming or writing treatments", e);
 		}
 	}
 

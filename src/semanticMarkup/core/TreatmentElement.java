@@ -110,7 +110,7 @@ public class TreatmentElement implements Cloneable {
 			}
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem to clone the treatment element", e);
 		}
 		return null;
 	}

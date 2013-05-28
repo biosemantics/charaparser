@@ -141,7 +141,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			this.readResults(treatments);
 			
 		}catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem with output/input or calling of perl", e);
 		}
 	}
 
@@ -156,7 +156,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				modifiers.add(modifier);
 			}
 		} catch(Exception e) {
-			log(LogLevel.ERROR, "sentence table not found");
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return modifiers;
 	}
@@ -172,7 +172,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				tags.add(tag);
 			}
 		} catch(Exception e) {
-			log(LogLevel.ERROR, "sentence table not found");
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return tags;
 	}
@@ -191,7 +191,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				termCategories.get(term).add(category);
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, "term_category table not found");
+			log(LogLevel.ERROR, "problem accessing term_category table", e);
 		}
 		return termCategories;
 	}
@@ -209,7 +209,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				categoryNames.get(category).add(term);
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, "term_category table not found");
+			log(LogLevel.ERROR, "problem accessing term_category table", e);
 		}
 		return categoryNames;
 	}
@@ -230,7 +230,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				wordsToRoles.get(word).add(semanticRole);
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing wordroles table", e);
 		}
 		return wordsToRoles;
 	}
@@ -244,7 +244,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				heuristicNouns.put(resultSet.getString("word"), resultSet.getString("type"));
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, "heuristicnouns table not found");
+			log(LogLevel.ERROR, "problem accessing heuristicnouns table", e);
 		}
 		return heuristicNouns;
 	}
@@ -266,7 +266,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				roleToWords.get(semanticRole).add(word);
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing wordroles table", e);
 		}
 		return roleToWords;
 	}
@@ -289,7 +289,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return wordToSources;
 	}
@@ -308,7 +308,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					tags.add(tag);
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing wordrole table", e);
 		}
 		return tags;
 	}
@@ -335,7 +335,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return tags;
 	}
@@ -378,7 +378,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			resultSet.close();
 			statement.close();
 		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return tags;
 	}
@@ -423,7 +423,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				}
 			}
 		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		
 		return sentences;
@@ -444,7 +444,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				result.put(tag, modifier);
 			}
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return result;
 	}
@@ -459,7 +459,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				result.add(modifier);
 			}
 		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return result;
 	}
@@ -475,7 +475,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				result.add(sentence);
 			}
 		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return result;
 	}
@@ -556,8 +556,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
     		allWordsLearner.learn(treatments);
     		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");			
         } catch(Exception e) {
-        	log(LogLevel.ERROR, e);
-        	e.printStackTrace();
+        	log(LogLevel.ERROR, "problem initalizign tables", e);
 	    }
 	}
 
@@ -705,7 +704,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					parentTag = "";
 			}
 		} catch(Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		this.parentTagProvider.init(parentTags, grandParentTags);
 	}

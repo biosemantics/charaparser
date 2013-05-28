@@ -41,7 +41,7 @@ public class ObjectStringifier {
 		try {
 			return writer.writeValueAsString(object);
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem writing object as String", e);
 			return null;
 		}
 	}

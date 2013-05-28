@@ -71,7 +71,7 @@ public class DehyphenTreatmentTransformer implements ITreatmentTransformer {
 		try {
 			fillInWords();
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem to fill dehyphenized words to DB", e);
 		}
 			
 		normalizeTreatments(treatments);

@@ -63,7 +63,7 @@ public class AllWordsLearner {
 		try {
 			fillInWords();
 		} catch (Exception e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem to feed dehyphenized words to DB", e);
 		}
 	}
 

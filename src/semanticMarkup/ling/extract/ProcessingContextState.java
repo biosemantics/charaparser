@@ -418,7 +418,7 @@ public class ProcessingContextState implements Cloneable {
 			//clone.result = this.result;
 			return clone;
 		} catch (CloneNotSupportedException e) {
-			log(LogLevel.ERROR, e);
+			log(LogLevel.ERROR, "Problem cloning ProcessingContext", e);
 		}
 		return null;
 	}
