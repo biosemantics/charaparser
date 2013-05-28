@@ -152,7 +152,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 				"Number of term synonym relations " + glossaryDownload.getTermSynonyms().size());
 		log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
 				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
-				"Number of term synonym relatiosn " + download.getSynonyms().size());
+				"Number of term synonym relations " + download.getSynonyms().size());
 		storeInLocalDB(glossaryDownload, download);
 		initGlossary(glossaryDownload, download);
 		
