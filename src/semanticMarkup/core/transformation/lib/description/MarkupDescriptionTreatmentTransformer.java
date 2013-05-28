@@ -146,6 +146,13 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			this.log(LogLevel.ERROR, "Problem reading uploadId", e);
 			download = new Download();
 		}
+		
+		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
+				"Number of term categoy relations " + glossaryDownload.getTermCategories().size() + "\n" +
+				"Number of term synonym relations " + glossaryDownload.getTermSynonyms().size());
+		log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
+				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
+				"Number of term synonym relatiosn " + download.getSynonyms().size());
 		storeInLocalDB(glossaryDownload, download);
 		initGlossary(glossaryDownload, download);
 		
@@ -180,7 +187,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	private void initGlossary(GlossaryDownload glossaryDownload, Download download) {
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
-		}
+		}	
 		for(Decision decision : download.getDecisions()) {
 			glossary.addEntry(decision.getTerm(), decision.getCategory());
 		}
