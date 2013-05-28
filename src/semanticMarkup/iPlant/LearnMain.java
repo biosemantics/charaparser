@@ -46,7 +46,7 @@ public class LearnMain extends CLIMain {
 		options.addOption("dbp", "database-port", true, "dbms port");
 		options.addOption("dbn", "database-name", true, "name of database to use");
 		options.addOption("dbu", "database-user", true, "database user to use");
-		options.addOption("dbp", "database-password", true, "database password to use");
+		options.addOption("dbpw", "database-password", true, "database password to use");
 		options.addOption("p", "multi-threading", true, "use multi-threading to compute the result");
 		options.addOption("h", "help", false, "shows the help");
 		
@@ -112,8 +112,8 @@ public class LearnMain extends CLIMain {
 		    } else {
 		    	//use standard value from RunConfig
 		    }
-		    if(commandLine.hasOption("dbp")) {
-		    	config.setDatabasePassword(commandLine.getOptionValue("dbp"));
+		    if(commandLine.hasOption("dbpw")) {
+		    	config.setDatabasePassword(commandLine.getOptionValue("dbpw"));
 		    } else {
 		    	//use standard value from RunConfig
 		    }
