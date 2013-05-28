@@ -65,6 +65,8 @@ public class MarkupMain extends CLIMain {
 		    if(commandLine.hasOption("c")) {
 		    	config = getConfig(commandLine.getOptionValue("c"));
 		    } else {
+		    	log(LogLevel.ERROR, "You have to specify a configuration to use");
+		    	System.exit(0);
 		    	//use standard config RunConfig
 		    }
 		    
@@ -99,26 +101,36 @@ public class MarkupMain extends CLIMain {
 		    if(commandLine.hasOption("dbh")) {
 		    	config.setDatabaseHost(commandLine.getOptionValue("dbh"));
 		    } else {
+		    	log(LogLevel.ERROR, "You have to specify a MySQL server hostname");
+		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("dbp")) {
 		    	config.setDatabasePort(commandLine.getOptionValue("dbp"));
 		    } else {
+		    	log(LogLevel.ERROR, "You have to specify a MySQL server port");
+		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("dbn")) {
 		    	config.setDatabaseName(commandLine.getOptionValue("dbn"));
 		    } else {
+		    	log(LogLevel.ERROR, "You have to specify a database name");
+		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("dbu")) {
 		    	config.setDatabaseUser(commandLine.getOptionValue("dbu"));
 		    } else {
+		    	log(LogLevel.ERROR, "You have to specify a database user");
+		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("dbpw")) {
 		    	config.setDatabasePassword(commandLine.getOptionValue("dbpw"));
 		    } else {
+		    	log(LogLevel.ERROR, "You have to specify a database password");
+		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 			//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
