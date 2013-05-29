@@ -38,16 +38,16 @@ public class LearnMain extends CLIMain {
 		//for iplant user shown configuration options
 		options.addOption("i", "input", true, "input file or directory");
 		options.addOption("c", "config", true, "config to use"); 
-		options.addOption("dbtp", "database-table-prefix", true, "database table prefix to use");
-		options.addOption("style", "style mapping", true, "Optional style mapping to use for Word file input");
+		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
+		options.addOption("w", "style mapping", true, "Optional style mapping to use for Word file input");
 		
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
-		options.addOption("dbh", "database-host", true, "dbms host");
-		options.addOption("dbp", "database-port", true, "dbms port");
-		options.addOption("dbn", "database-name", true, "name of database to use");
-		options.addOption("dbu", "database-user", true, "database user to use");
-		options.addOption("dbpw", "database-password", true, "database password to use");
-		options.addOption("p", "multi-threading", true, "use multi-threading to compute the result");
+		options.addOption("n", "database-host", true, "dbms host");
+		options.addOption("p", "database-port", true, "dbms port");
+		options.addOption("d", "database-name", true, "name of database to use");
+		options.addOption("u", "database-user", true, "database user to use");
+		options.addOption("s", "database-password", true, "database password to use");
+		options.addOption("t", "multi-threading", true, "use multi-threading to compute the result");
 		options.addOption("h", "help", false, "shows the help");
 		
 		config = new RunConfig();
@@ -73,10 +73,10 @@ public class LearnMain extends CLIMain {
 		    } else {
 		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
-		    if(commandLine.hasOption("style")) {
+		    if(commandLine.hasOption("w")) {
 		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("style"));
 		    }
-		    if(commandLine.hasOption("p")) {
+		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
 		    	String[] parallelParameters = commandLine.getOptionValues("p");
 		    	if(parallelParameters.length != 2) {
@@ -94,35 +94,35 @@ public class LearnMain extends CLIMain {
 		    		}
 		    	}
 		    }
-		    if(commandLine.hasOption("dbh")) {
+		    if(commandLine.hasOption("n")) {
 		    	config.setDatabaseHost(commandLine.getOptionValue("dbh"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server hostname");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
-		    if(commandLine.hasOption("dbp")) {
+		    if(commandLine.hasOption("p")) {
 		    	config.setDatabasePort(commandLine.getOptionValue("dbp"));
 		    } else { 
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server port");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
-		    if(commandLine.hasOption("dbn")) {
+		    if(commandLine.hasOption("d")) {
 		    	config.setDatabaseName(commandLine.getOptionValue("dbn"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database name");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
-		    if(commandLine.hasOption("dbu")) {
+		    if(commandLine.hasOption("u")) {
 		    	config.setDatabaseUser(commandLine.getOptionValue("dbu"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database user");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
-		    if(commandLine.hasOption("dbpw")) {
+		    if(commandLine.hasOption("s")) {
 		    	config.setDatabasePassword(commandLine.getOptionValue("dbpw"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database password");
@@ -132,7 +132,7 @@ public class LearnMain extends CLIMain {
 			//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
 			//since we have no user information to be able to generate an ID that allows to know
 			//at least whos data to pull
-		    if(commandLine.hasOption("dbtp")) {
+		    if(commandLine.hasOption("z")) {
 		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("dbtp"));
 		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("dbtp") + "_permanentGlossary");
 		    } else {
