@@ -78,13 +78,13 @@ public class MarkupMain extends CLIMain {
 		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
-		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("style"));
+		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
-		    	String[] parallelParameters = commandLine.getOptionValues("p");
+		    	String[] parallelParameters = commandLine.getOptionValues("t");
 		    	if(parallelParameters.length != 2) {
-		    		log(LogLevel.ERROR, "You have to specify 2 values for parameter p");
+		    		log(LogLevel.ERROR, "You have to specify 2 values for parameter t");
 		    		System.exit(0);
 		    	} else {
 		    		try {
@@ -99,35 +99,35 @@ public class MarkupMain extends CLIMain {
 		    	}
 		    }
 		    if(commandLine.hasOption("n")) {
-		    	config.setDatabaseHost(commandLine.getOptionValue("dbh"));
+		    	config.setDatabaseHost(commandLine.getOptionValue("n"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server hostname");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("p")) {
-		    	config.setDatabasePort(commandLine.getOptionValue("dbp"));
+		    	config.setDatabasePort(commandLine.getOptionValue("p"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server port");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("d")) {
-		    	config.setDatabaseName(commandLine.getOptionValue("dbn"));
+		    	config.setDatabaseName(commandLine.getOptionValue("d"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database name");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("u")) {
-		    	config.setDatabaseUser(commandLine.getOptionValue("dbu"));
+		    	config.setDatabaseUser(commandLine.getOptionValue("u"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database user");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("s")) {
-		    	config.setDatabasePassword(commandLine.getOptionValue("dbpw"));
+		    	config.setDatabasePassword(commandLine.getOptionValue("s"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database password");
 		    	System.exit(0);
@@ -137,7 +137,7 @@ public class MarkupMain extends CLIMain {
 			//since we have no user information to be able to generate an ID that allows to know
 			//at least whos data to pull
 		    if(commandLine.hasOption("z")) {
-		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("dbtp"));
+		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("z"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
