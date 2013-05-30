@@ -319,7 +319,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		for(Treatment treatment : treatments) {
 			Future<TreatmentElement> futureNewDescription = futureNewDescriptions.get(treatment);
 			ValueTreatmentElement description = treatment.getValueTreatmentElement("description");
-			treatment.removeTreatmentElement(description);
+			if(description!=null) 
+				treatment.removeTreatmentElement(description);
 			try {
 				treatment.addTreatmentElement(futureNewDescription.get());
 			} catch (Exception e) {

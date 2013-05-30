@@ -81,7 +81,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 	public TreatmentElement call() throws Exception {
 		log(LogLevel.DEBUG, "Create description for treatment: " + treatment.getName());
 		Map<String, String> sentences = sentencesForOrganStateMarker.get(treatment);
-	
+		
 		//configure exectuorService to only allow a number of threads to run at a time
 		ExecutorService executorService = null;
 		if(!this.parallelProcessing)
@@ -92,10 +92,12 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 			executorService = Executors.newCachedThreadPool();
 		
 		List<Entry<String, String>> selectedSentences = new LinkedList<Entry<String, String>>();
-		for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
-			String source = sentenceEntry.getKey();
-			if(selectedSources.isEmpty() || selectedSources.contains(source)) {
-				selectedSentences.add(sentenceEntry);
+		if(sentences != null) {
+			for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
+				String source = sentenceEntry.getKey();
+				if(selectedSources.isEmpty() || selectedSources.contains(source)) {
+					selectedSentences.add(sentenceEntry);
+				}
 			}
 		}
 		CountDownLatch sentencesLatch = new CountDownLatch(selectedSentences.size());
