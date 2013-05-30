@@ -41,7 +41,7 @@ public class DeHyphenizer {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
 				conn = DriverManager.getConnection(URL);
 			}
 		}catch(Exception e){

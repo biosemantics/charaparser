@@ -623,7 +623,7 @@ public class MainForm {
 						if(conn == null){
 							Class.forName("com.mysql.jdbc.Driver");
 							String URL = "jdbc:mysql://localhost/" + MainForm.databaseName + "?user=" + MainForm.databaseUser + "&password=" + 
-									MainForm.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+									MainForm.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
 							conn = DriverManager.getConnection(URL);
 						}
 						Statement stmt = conn.createStatement();
@@ -3048,7 +3048,7 @@ public class MainForm {
 					Class.forName("com.mysql.jdbc.Driver");
 					conn = DriverManager.getConnection(
 							"jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-									this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true");
+									this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
 				}
 				stmt = conn.createStatement();
 				//update dataprefix_term_category dataprefix_syns
@@ -4100,7 +4100,7 @@ public class MainForm {
 					if(conn == null){
 						Class.forName("com.mysql.jdbc.Driver");
 						String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-								this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+								this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
 						conn = DriverManager.getConnection(URL);
 					}
 				}catch(Exception e){
@@ -4570,7 +4570,7 @@ public class MainForm {
 								if(conn == null){
 									Class.forName("com.mysql.jdbc.Driver");
 									String URL = "jdbc:mysql://localhost/" + MainForm.databaseName + "?user=" + MainForm.databaseUser + "&password=" + 
-											MainForm.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+											MainForm.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
 									conn = DriverManager.getConnection(URL);
 								}								
 								
@@ -4829,7 +4829,7 @@ public class MainForm {
 								if(conn == null){
 									Class.forName("com.mysql.jdbc.Driver");
 									String URL = "jdbc:mysql://localhost/" + MainForm.databaseName + "?user=" + MainForm.databaseUser + "&password=" + 
-											MainForm.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+											MainForm.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
 									conn = DriverManager.getConnection(URL);
 								}								
 								
@@ -5130,7 +5130,7 @@ public class MainForm {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true");
+						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
 			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(this.databaseName, this.databaseUser, this.databasePassword, 
@@ -5179,7 +5179,7 @@ public class MainForm {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true");
+						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
 			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(this.databaseName, this.databaseUser, this.databasePassword, 
@@ -5223,7 +5223,7 @@ public class MainForm {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true");
+						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
 			WordUtilities utilities = new WordUtilities(posKnowledgeBase);

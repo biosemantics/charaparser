@@ -47,7 +47,8 @@ public class DehyphenTreatmentTransformer implements ITreatmentTransformer {
 
 		// TODO removable once OldPerlTreatmentTransformer is no longer used.
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true", 
+				databaseUser, databasePassword);
 		createAllWordsTable();
 	}
 

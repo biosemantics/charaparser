@@ -71,7 +71,7 @@ public class MainFormDbAccessor {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			String URL = "jdbc:mysql://" + databaseHost + ":" + databasePort + "/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-					this.databasePassword + "&connectTimeout=0&socketTimeout=0&autoReconnect=true";
+					this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
 			connection = DriverManager.getConnection(URL);
 		} catch (Exception e) {
 			e.printStackTrace();

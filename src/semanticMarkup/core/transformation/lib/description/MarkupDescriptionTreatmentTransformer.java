@@ -131,7 +131,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.glossaryType = glossaryType;
 		
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
+				databaseUser, databasePassword);
 	}
 
 	@Override

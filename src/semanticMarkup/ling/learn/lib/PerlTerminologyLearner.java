@@ -120,7 +120,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.databasePassword = databasePassword;
 		
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
+				databaseUser, databasePassword);
 	}
 	
 	

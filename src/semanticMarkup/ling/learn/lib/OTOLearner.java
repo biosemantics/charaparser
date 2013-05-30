@@ -99,7 +99,8 @@ public class OTOLearner implements ILearner {
 		this.runRootDirectory = runRootDirectory;
 		
 		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
+		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
+				databaseUser, databasePassword);
 	}
 	
 	@Override
@@ -263,6 +264,7 @@ public class OTOLearner implements ILearner {
 			for(String characterTerm : characterTerms) 
 				result.add(new Term(characterTerm));
 		} catch (Exception e) {
+			e.printStackTrace();
 			log(LogLevel.ERROR, "Problem fetching character terms", e);
 		}
 		return result;

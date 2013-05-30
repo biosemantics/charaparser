@@ -56,7 +56,8 @@ public class IPlantMarkupRun extends AbstractRun {
 	
 	private boolean isValidRun(String runRootDirectory) throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
-		Connection connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName, databaseUser, databasePassword);
+		Connection connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
+				databaseUser, databasePassword);
 		
 		String sql = "CREATE TABLE IF NOT EXISTS datasetprefixes (prefix varchar(100) NOT NULL, oto_uploadid int(11) NOT NULL DEFAULT '-1', " +
 				"PRIMARY KEY (prefix))";
