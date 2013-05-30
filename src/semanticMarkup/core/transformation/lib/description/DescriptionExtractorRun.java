@@ -94,7 +94,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 		List<Entry<String, String>> selectedSentences = new LinkedList<Entry<String, String>>();
 		for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
 			String source = sentenceEntry.getKey();
-			if(selectedSources.contains(source)) {
+			if(selectedSources.isEmpty() || selectedSources.contains(source)) {
 				selectedSentences.add(sentenceEntry);
 			}
 		}
