@@ -1,6 +1,7 @@
 package semanticMarkup.core.transformation.lib.description;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 	private int sentenceChunkerRunMaximum;
 	private MainForm mainForm;
 	private Map<Treatment, Future<TreatmentElement>> futureNewDescriptions = new HashMap<Treatment, Future<TreatmentElement>>();
+	private HashSet<String> selectedSources;
 
 	/**
 	 * @param wordTokenizer
@@ -72,7 +74,8 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
-			MainForm mainForm) throws Exception {
+			MainForm mainForm, 
+			@Named("selectedSources")HashSet<String> selectedSources) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -84,6 +87,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 		this.descriptionExtractorRunMaximum = descriptionExtractorRunMaximum;
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
 		this.mainForm = mainForm;
+		this.selectedSources = selectedSources;
 	}
 
 	@Override
@@ -132,7 +136,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			// start a DescriptionExtractorRun for the treatment to process as a separate thread
 			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, normalizer, wordTokenizer, 
 					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum, 
-					descriptionExtractorsLatch);
+					descriptionExtractorsLatch, selectedSources);
 			Future<TreatmentElement> futureNewDescription = executorService.submit(descriptionExtractorRun);
 			this.futureNewDescriptions.put(treatment, futureNewDescription);
 		}

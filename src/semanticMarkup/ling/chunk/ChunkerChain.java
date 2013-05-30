@@ -32,8 +32,8 @@ public class ChunkerChain {
 			try {
 				chunker.chunk(chunkCollector);	
 			} catch (Exception e) {
-				log(LogLevel.ERROR, "Problem executing chunkerChain", e);
-				System.exit(0);
+				log(LogLevel.ERROR, "Problem executing chunkerChain for sentence: " + chunkCollector.getSentence() + "\n" +
+						"Sentence is contained in file: " + chunkCollector.getSource(), e);
 			}
 			if(chunkCollector.hasChanged()) 
 				log(LogLevel.DEBUG, chunkCollector.toString());

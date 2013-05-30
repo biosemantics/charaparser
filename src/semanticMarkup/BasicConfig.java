@@ -146,7 +146,6 @@ public class BasicConfig extends AbstractModule {
 		bind(IOTOLiteClient.class).to(OTOLiteClient.class).in(Singleton.class);
 		bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 		
-		bind(String.class).annotatedWith(Names.named("descriptionSeparator")).toInstance("-------------");
 		bind(String.class).annotatedWith(Names.named("markupMode")).toInstance("plain");
 		
 		bind(IPOSTagger.class).to(OrganCharacterPOSTagger.class); //NewOrganCharacterPOSTagger , OrganCharacterPOSTagger

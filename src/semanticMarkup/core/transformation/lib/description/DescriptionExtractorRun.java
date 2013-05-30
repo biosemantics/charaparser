@@ -1,7 +1,9 @@
 package semanticMarkup.core.transformation.lib.description;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,6 +42,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 	private boolean parallelProcessing;
 	private int sentenceChunkerRunMaximum;
 	private CountDownLatch descriptionExtractorsLatch;
+	private HashSet<String> selectedSources;
 
 	/**
 	 * @param treatment
@@ -52,12 +55,13 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 	 * @param sentencesForOrganStateMarker
 	 * @param parallelProcessing
 	 * @param sentenceChunkerRunMaximum
+	 * @param selectedSources 
 	 * @param latch 
 	 */
 	public DescriptionExtractorRun(Treatment treatment, 
 			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
 			IDescriptionExtractor descriptionExtractor, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing,
-			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch) {
+			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch, HashSet<String> selectedSources) {
 		this.treatment = treatment;
 		this.normalizer = normalizer;
 		this.wordTokenizer = wordTokenizer;
@@ -69,6 +73,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 		this.parallelProcessing = parallelProcessing;
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
 		this.descriptionExtractorsLatch = descriptionExtractorsLatch;
+		this.selectedSources = selectedSources;
 	}
 
 	@Override
@@ -85,10 +90,17 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 		if(this.parallelProcessing && this.sentenceChunkerRunMaximum == Integer.MAX_VALUE)
 			executorService = Executors.newCachedThreadPool();
 		
-		CountDownLatch sentencesLatch = new CountDownLatch(sentences.size());
+		List<Entry<String, String>> selectedSentences = new LinkedList<Entry<String, String>>();
+		for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
+			String source = sentenceEntry.getKey();
+			if(selectedSources.contains(source)) {
+				selectedSentences.add(sentenceEntry);
+			}
+		}
+		CountDownLatch sentencesLatch = new CountDownLatch(selectedSentences.size());
 		
 		// process each sentence separately
-		for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
+		for(Entry<String, String> sentenceEntry : selectedSentences) {
 			String sentenceString = sentenceEntry.getValue();
 			String source = sentenceEntry.getKey();
 			

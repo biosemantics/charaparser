@@ -70,6 +70,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	private String glossaryType;
 	private IOTOLiteClient otoLiteClient;
 	private String otoLiteTermReviewURL;
+	private HashSet<String> selectedSources;
 	
 	/**
 	 * @param wordTokenizer
@@ -112,7 +113,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			@Named("databasePassword")String databasePassword,
 			@Named("databasePrefix")String databasePrefix, 
 			@Named("glossaryType")String glossaryType,
-			IGlossary glossary) throws Exception {
+			IGlossary glossary, 
+			@Named("selectedSources")HashSet<String> selectedSources) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -129,6 +131,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
 		this.glossaryType = glossaryType;
+		this.selectedSources = selectedSources;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
@@ -299,7 +302,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			// start a DescriptionExtractorRun for the treatment to process as a separate thread
 			DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(treatment, normalizer, wordTokenizer, 
 					posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum, 
-					descriptionExtractorsLatch);
+					descriptionExtractorsLatch, selectedSources);
 			Future<TreatmentElement> futureNewDescription = executorService.submit(descriptionExtractorRun);
 			this.futureNewDescriptions.put(treatment, futureNewDescription);
 		}

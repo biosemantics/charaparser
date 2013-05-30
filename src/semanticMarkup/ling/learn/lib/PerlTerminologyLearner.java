@@ -63,7 +63,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private String databaseUser;
 	private IGlossary glossary;
 	private ITokenizer tokenizer;
-	private String descriptionSeparator;
 	private Set<String> stopWords;
 	private Set<String> selectedSources;
 	private String glossaryTable;
@@ -74,7 +73,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	/**
 	 * @param temporaryPath
-	 * @param descriptionSeparator
 	 * @param markupMode
 	 * @param databaseName
 	 * @param glossaryTable
@@ -88,8 +86,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	 * @throws Exception
 	 */
 	@Inject
-	public PerlTerminologyLearner(@Named("Run_TemporaryPath") String temporaryPath, 
-			@Named("descriptionSeparator") String descriptionSeparator, 
+	public PerlTerminologyLearner(@Named("Run_TemporaryPath") String temporaryPath,
 			@Named("markupMode") String markupMode,
 			@Named("databaseHost") String databaseHost,
 			@Named("databasePort") String databasePort,
@@ -104,7 +101,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("WordTokenizer") ITokenizer tokenizer,
 			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
 		this.temporaryPath = temporaryPath;
-		this.descriptionSeparator = descriptionSeparator;
 		this.markupMode = markupMode;
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
@@ -611,7 +607,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			List<ValueTreatmentElement> descriptions = treatment.getValueTreatmentElements("description");	
 			for(ValueTreatmentElement description : descriptions) {		           
 	            fileWriter.write(description.getValue() + "\n");
-	            fileWriter.write(this.descriptionSeparator + "\n");
 	            fileWriter.close();
 			}
 			
