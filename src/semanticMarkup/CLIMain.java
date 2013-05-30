@@ -176,14 +176,14 @@ public class CLIMain {
 		if(config.equals(Glossary.Hymenoptera.toString())) {
 			return new HymenopteraConfig();
 		}
-		if(config.equals(Glossary.Algea.toString())) {
-			return new AlgeaConfig();
+		if(config.equals(Glossary.Algae.toString())) {
+			return new AlgaeConfig();
 		}
 		if(config.equals(Glossary.Porifera.toString())) {
 			return new PoriferaConfig();
 		}
-		if(config.equals(Glossary.Treatise.toString())) {
-			return new TreatiseConfig();
+		if(config.equals(Glossary.Fossil.toString())) {
+			return new FossilConfig();
 		}
 		log(LogLevel.ERROR, "Config unknown");
 		System.exit(0);

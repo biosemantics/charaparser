@@ -9,14 +9,14 @@ import semanticMarkup.ling.normalize.lib.TreatisehNormalizer;
  * Guice config file for treatise dataset specific parameters
  * @author rodenhausen
  */
-public class TreatiseConfig extends RunConfig {
+public class FossilConfig extends RunConfig {
 	
-	public TreatiseConfig() {
+	public FossilConfig() {
 		this.setStandardVolumeReaderSourcefiles("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
 		//this.setDatabaseTablePrefix("treatise");
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
 		this.setGlossaryFile("resources" + File.separator + "treatisehglossaryfixed.csv");
 		this.setNormalizer(TreatisehNormalizer.class);	
-		this.setGlossaryType(Glossary.Treatise.toString());
+		this.setGlossaryType(Glossary.Fossil.toString());
 	}
 }

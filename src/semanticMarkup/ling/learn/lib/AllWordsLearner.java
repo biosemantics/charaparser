@@ -1,5 +1,8 @@
 package semanticMarkup.ling.learn.lib;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -103,47 +106,47 @@ public class AllWordsLearner {
      */
 	private void countWords(List<Treatment> treatments) {
 		for(Treatment treatment : treatments) {
-			List<ValueTreatmentElement> elements = treatment.getValueTreatmentElementsRecursively();
-			for(ValueTreatmentElement element : elements) {
+			ValueTreatmentElement element = treatment.getValueTreatmentElement("description");
+			if(element != null) {
 				String text = element.getValue();
 				if(text != null) {
 					List<Token> tokens = tokenizer.tokenize(text);
 									
 					int lround = 0;
-	                int lsquare = 0;
-	                int lcurly = 0;
-	                int inbracket = 0;
-	                for(Token token : tokens){
-	                	String word = token.getContent().trim().toLowerCase();
-	                    if(word.equals("(")) lround++;
-	                    else if(word.equals(")")) lround--;
-	                    else if(word.equals("[")) lsquare++;
-	                    else if(word.equals("]")) lsquare--;
-	                    else if(word.equals("{")) lcurly++;
-	                    else if(word.equals("}")) lcurly--;
-	                    else{
-	                    	word = word.replaceAll("[^-a-z]", " ").trim();
-	                        if(word.matches(".*?\\w.*")) {
-	                        	if(lround+lsquare+lcurly > 0)
-	                        		inbracket = 1;
-	                        	else 
-	                        		inbracket = 0;
-	                            
-	                        	int count = 1;
-	                        	if(wordCounts.containsKey(word))
-	                        		count += wordCounts.get(word);
-	                            wordCounts.put(word, count);
-	                            
-	                            if(wordInBracketsCounts.containsKey(word)) 
-	                            	inbracket *= wordInBracketsCounts.get(word);
-	                            wordInBracketsCounts.put(word, inbracket);
-	                        }
-	                    }
-	                }
+		            int lsquare = 0;
+		            int lcurly = 0;
+		            int inbracket = 0;
+		            for(Token token : tokens){
+		            	String word = token.getContent().trim().toLowerCase();
+		                if(word.equals("(")) lround++;
+		                else if(word.equals(")")) lround--;
+		                else if(word.equals("[")) lsquare++;
+		                else if(word.equals("]")) lsquare--;
+		                else if(word.equals("{")) lcurly++;
+		                else if(word.equals("}")) lcurly--;
+		                else{
+		                	word = word.replaceAll("[^-a-z]", " ").trim();
+		                    if(word.matches(".*?\\w.*")) {
+		                    	if(lround+lsquare+lcurly > 0)
+		                    		inbracket = 1;
+		                    	else 
+		                    		inbracket = 0;
+		                        
+		                    	int count = 1;
+		                    	if(wordCounts.containsKey(word))
+		                    		count += wordCounts.get(word);
+		                        wordCounts.put(word, count);
+		                        
+		                        if(wordInBracketsCounts.containsKey(word)) 
+		                        	inbracket *= wordInBracketsCounts.get(word);
+		                        wordInBracketsCounts.put(word, inbracket);
+		                    }
+		                }
+		            }
 				}
 			}
 		}
-	}    
+	}
     
 	public String normalFormat(String hyphened){
 		/*if(hyphened.startsWith("NUM-")){

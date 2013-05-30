@@ -557,7 +557,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
     		allWordsLearner.learn(treatments);
     		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");			
         } catch(Exception e) {
-        	log(LogLevel.ERROR, "problem initalizign tables", e);
+        	e.printStackTrace();
+        	log(LogLevel.ERROR, "problem initalizing tables", e);
 	    }
 	}
 
