@@ -89,7 +89,7 @@ public class Logger {
 	 * @param throwable
 	 */
 	public void warn(String message, Throwable throwable) {
-		logger.warn(message);
+		logger.warn(message, throwable);
 	}
 	
 	/**
@@ -104,7 +104,7 @@ public class Logger {
 	 * @param throwable
 	 */
 	public void error(String message, Throwable throwable) {
-		logger.error(message);
+		logger.error(message, throwable);
 	}
 	
 	/**
