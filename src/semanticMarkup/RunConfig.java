@@ -63,8 +63,6 @@ public class RunConfig extends BasicConfig {
 	private String genericFileVolumeReaderSource = "evaluationData" + File.separator + "perlTest" + File.separator + "source" + File.separator;
 	//"evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml"
 	//"evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + "source" + File.separator + "FNA19 Excerpt-source.docx"
-	private String taxonxSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd";
-	private String xmlSchemaFile = "." + File.separator + "resources" + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd";
 	private String taxonxVolumeReaderSourceFile = "evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml";
 	private Class<? extends TreatmentTransformerChain> treatmentTransformerChain = CharaparserTreatmentTransformerChain.class;
 	private Class<? extends DescriptionTreatmentTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTreatmentTransformer.class;
@@ -114,8 +112,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("XMLVolumeReader_SourceDirectory")).toInstance(xmlVolumeReaderSourceDirectory);
 		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_SourceDirectory")).toInstance(outputVolumeReaderSourceDirectory);
 		bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance(genericFileVolumeReaderSource);
-		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(taxonxSchemaFile);
-		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(xmlSchemaFile);
+
 		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
 		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
@@ -323,22 +320,6 @@ public class RunConfig extends BasicConfig {
 	public void setGenericFileVolumeReaderSource(
 			String genericFileVolumeReaderSource) {
 		this.genericFileVolumeReaderSource = genericFileVolumeReaderSource;
-	}
-
-	public String getTaxonxSchemaFile() {
-		return taxonxSchemaFile;
-	}
-
-	public void setTaxonxSchemaFile(String taxonxSchemaFile) {
-		this.taxonxSchemaFile = taxonxSchemaFile;
-	}
-
-	public String getXmlSchemaFile() {
-		return xmlSchemaFile;
-	}
-
-	public void setXmlSchemaFile(String xmlSchemaFile) {
-		this.xmlSchemaFile = xmlSchemaFile;
 	}
 
 	public String getTaxonxVolumeReaderSourceFile() {
