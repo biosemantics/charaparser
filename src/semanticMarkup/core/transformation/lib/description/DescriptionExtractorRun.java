@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -42,7 +43,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 	private boolean parallelProcessing;
 	private int sentenceChunkerRunMaximum;
 	private CountDownLatch descriptionExtractorsLatch;
-	private HashSet<String> selectedSources;
+	private Set<String> selectedSources;
 
 	/**
 	 * @param treatment
@@ -61,7 +62,7 @@ public class DescriptionExtractorRun implements Callable<TreatmentElement> {
 	public DescriptionExtractorRun(Treatment treatment, 
 			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
 			IDescriptionExtractor descriptionExtractor, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing,
-			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch, HashSet<String> selectedSources) {
+			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch, Set<String> selectedSources) {
 		this.treatment = treatment;
 		this.normalizer = normalizer;
 		this.wordTokenizer = wordTokenizer;

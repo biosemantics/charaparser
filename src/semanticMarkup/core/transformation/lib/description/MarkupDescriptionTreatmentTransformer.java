@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -70,7 +71,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	private String glossaryType;
 	private IOTOLiteClient otoLiteClient;
 	private String otoLiteTermReviewURL;
-	private HashSet<String> selectedSources;
+	private Set<String> selectedSources;
 	
 	/**
 	 * @param wordTokenizer
@@ -114,7 +115,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			@Named("databasePrefix")String databasePrefix, 
 			@Named("glossaryType")String glossaryType,
 			IGlossary glossary, 
-			@Named("selectedSources")HashSet<String> selectedSources) throws Exception {
+			@Named("selectedSources")Set<String> selectedSources) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;

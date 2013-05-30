@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,7 +47,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 	private int sentenceChunkerRunMaximum;
 	private MainForm mainForm;
 	private Map<Treatment, Future<TreatmentElement>> futureNewDescriptions = new HashMap<Treatment, Future<TreatmentElement>>();
-	private HashSet<String> selectedSources;
+	private Set<String> selectedSources;
 
 	/**
 	 * @param wordTokenizer
@@ -75,7 +76,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
 			MainForm mainForm, 
-			@Named("selectedSources")HashSet<String> selectedSources) throws Exception {
+			@Named("selectedSources")Set<String> selectedSources) throws Exception {
 		super(parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
