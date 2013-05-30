@@ -16,9 +16,12 @@ import com.google.inject.name.Named;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.io.input.extract.lib.DistributionTreatmentRefiner;
 import semanticMarkup.io.input.extract.lib.FloweringTimeTreatmentRefiner;
+import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
+import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.io.input.validate.ValidationRun;
+import semanticMarkup.io.input.validate.lib.IPlantXmlVolumeValidator;
 import semanticMarkup.io.input.validate.lib.TaxonxVolumeValidator;
 import semanticMarkup.io.input.validate.lib.WordVolumeValidator;
 import semanticMarkup.io.input.validate.lib.XMLVolumeValidator;
@@ -41,6 +44,7 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 	private String taxonxSchemaFile;
 	private String xmlSchemaFile;
 	private Map<Future<Boolean>, IVolumeReader> futureValidationResults = new HashMap<Future<Boolean>, IVolumeReader>();
+	private String iplantXmlSchemaFile;
 
 	/**
 	 * @param filePath
@@ -64,7 +68,8 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 			DistributionTreatmentRefiner distributionTreatmentRefiner, 
 			FloweringTimeTreatmentRefiner floweringTimeTreatmentRefiner,
 			@Named("Taxonx_SchemaFile")String taxonxSchemaFile,
-			@Named("XML_SchemaFile")String xmlSchemaFile) {
+			@Named("XML_SchemaFile")String xmlSchemaFile, 
+			@Named("iPlantXML_SchemaFile")String iplantXmlSchemaFile) {
 		super(filePath);
 		this.styleStartPattern = styleStartPattern;
 		this.styleNamePattern = styleNamePattern;
@@ -75,6 +80,7 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 		this.floweringTimeTreatmentRefiner = floweringTimeTreatmentRefiner;
 		this.taxonxSchemaFile = taxonxSchemaFile;
 		this.xmlSchemaFile = xmlSchemaFile;
+		this.iplantXmlSchemaFile = iplantXmlSchemaFile;
 	}
 
 	@Override
@@ -83,7 +89,9 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 		validationRuns.put(new ValidationRun(new XMLVolumeValidator(new File(xmlSchemaFile)), new File(filePath)), 
 				new XMLVolumeReader(filePath));
 		validationRuns.put(new ValidationRun(new TaxonxVolumeValidator(new File(taxonxSchemaFile)), new File(filePath)), 
-				new XMLVolumeReader(filePath));
+				new TaxonxVolumeReader(filePath));
+		validationRuns.put(new ValidationRun(new IPlantXmlVolumeValidator(new File(iplantXmlSchemaFile)), new File(filePath)),
+				new IPlantXMLVolumeReader(filePath));
 		validationRuns.put(new ValidationRun(new WordVolumeValidator(), new File(filePath)),
 				new DocWordVolumeReader(filePath, styleStartPattern, styleNamePattern,
 						styleKeyPattern, tribegennamestyle, styleMappingFile, distributionTreatmentRefiner, floweringTimeTreatmentRefiner));
