@@ -149,6 +149,7 @@ public class MarkupMain extends CLIMain {
 		config.setRun(IPlantMarkupRun.class);
 		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionTreatmentTransformer.class);
 		config.setGlossary(InMemoryGlossary.class);
+		//no learning required, already passed learning and reviewed terms in OTO Lite 
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
 	}
 }
