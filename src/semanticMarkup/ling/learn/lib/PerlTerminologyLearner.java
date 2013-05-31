@@ -274,8 +274,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("select source, sentence from " + this.databasePrefix + "_sentence");
 			while(resultSet.next()) {
-				String[] sourceParts = resultSet.getString("source").split("\\.");
-				String source = sourceParts[0] + "." + sourceParts[2];
+				String source = getSource(resultSet.getString("source"));
 				String sentence = resultSet.getString("sentence");
 				List<Token> tokens = tokenizer.tokenize(sentence);
 				for(Token token : tokens) {
@@ -346,11 +345,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			//int listId = -1;
 			String previousTreatmentId = "-1";
 			while(resultSet.next()) {
-				String[] sourceParts = resultSet.getString("source").split("\\.");
-				String source = sourceParts[0] + "." + sourceParts[2];
-				
+				String source = getSource(resultSet.getString("source"));
+				String treatmentId = getTreatmentId(resultSet.getString("source"));
 				if(selectedSources.isEmpty() || selectedSources.contains(source)) {
-					String treatmentId = sourceParts[0];
+					
 					if(!treatmentId.equals(previousTreatmentId)) {
 						previousTreatmentId = treatmentId;
 						//listId++;
@@ -396,10 +394,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				String sent = rs.getString("sentence").trim();
 				
 				if(sent.length()!=0){
-					String[] sourceParts = rs.getString("source").split("\\.");
-					String source = sourceParts[0] + "." + sourceParts[2];
+					String treatmentId = getTreatmentId(rs.getString("source"));
+					String source = getSource(rs.getString("source"));
+					
 					if(selectedSources.isEmpty() || selectedSources.contains(source)) {
-						String treatmentId = sourceParts[0];
 						if(!treatmentId.equals(previousTreatmentId)) {
 							previousTreatmentId = treatmentId;
 							//listId++; // in the db 1 is followed by 10 by 11 and not 2
@@ -426,6 +424,18 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return sentences;
 	}
 	
+	protected String getTreatmentId(String sourceString) {
+		String[] sourceParts = sourceString.split("\\.");
+		return sourceParts[0];
+	}
+
+
+	protected String getSource(String sourceString) {
+		String[] sourceParts = sourceString.split("\\.");
+		return sourceParts[0] + "." + sourceParts[2];
+	}
+
+
 	protected Map<String, String> readAdjNounSent() {
 		Map<String, String> result = new HashMap<String, String>();
 		try {
@@ -688,8 +698,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			String parentTag = "";
 			String grandParentTag = "";
 			while(resultSet.next()) {
-				String[] sourceParts = resultSet.getString("source").split("\\.");
-				String source = sourceParts[0] + "." + sourceParts[2];
+				String source = getSource(resultSet.getString("source"));
 				String tag = resultSet.getString("tag");
 				parentTags.put(source, parentTag);
 				grandParentTags.put(source, grandParentTag);

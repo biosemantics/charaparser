@@ -54,24 +54,24 @@ import com.google.inject.name.Named;
  */
 public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentTransformer {
 
-	private IParser parser;
-	private IPOSTagger posTagger;
-	private IDescriptionExtractor descriptionExtractor;
-	private INormalizer normalizer;
-	private ITerminologyLearner terminologyLearner;
-	private ITokenizer wordTokenizer;
-	private ChunkerChain chunkerChain;
-	private int descriptionExtractorRunMaximum;
-	private int sentenceChunkerRunMaximum;
-	private Map<Treatment, Future<TreatmentElement>> futureNewDescriptions = new HashMap<Treatment, Future<TreatmentElement>>();
-	private IOTOClient otoClient;
-	private String databasePrefix;
-	private IGlossary glossary;
-	private Connection connection;
-	private String glossaryType;
-	private IOTOLiteClient otoLiteClient;
-	private String otoLiteTermReviewURL;
-	private Set<String> selectedSources;
+	protected IParser parser;
+	protected IPOSTagger posTagger;
+	protected IDescriptionExtractor descriptionExtractor;
+	protected INormalizer normalizer;
+	protected ITerminologyLearner terminologyLearner;
+	protected ITokenizer wordTokenizer;
+	protected ChunkerChain chunkerChain;
+	protected int descriptionExtractorRunMaximum;
+	protected int sentenceChunkerRunMaximum;
+	protected Map<Treatment, Future<TreatmentElement>> futureNewDescriptions = new HashMap<Treatment, Future<TreatmentElement>>();
+	protected IOTOClient otoClient;
+	protected String databasePrefix;
+	protected IGlossary glossary;
+	protected Connection connection;
+	protected String glossaryType;
+	protected IOTOLiteClient otoLiteClient;
+	protected String otoLiteTermReviewURL;
+	protected Set<String> selectedSources;
 	
 	/**
 	 * @param wordTokenizer
@@ -189,7 +189,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	 * No need to return an extra term synonym list just because it might make sense to have them seperate in a relational database schema
 	 * @param otoGlossary
 	 */
-	private void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
 		}	
@@ -286,7 +286,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	 * @param treatments
 	 * @param sentencesForOrganStateMarker
 	 */
-	private void markupDescriptions(List<Treatment> treatments, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
+	protected void markupDescriptions(List<Treatment> treatments, Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
 		//configure exectuorService to only allow a number of threads to run at a time
 		ExecutorService executorService = null;
 		if(!this.parallelProcessing)
