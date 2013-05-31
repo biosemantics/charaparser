@@ -6,6 +6,9 @@ import semanticMarkup.markup.IMarkupCreator;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * This will eventually not be needed anymore
+ **/
 public class MarkupDBSentencesForEvalautionRun extends AbstractRun {
 	
 	private IMarkupCreator creator;
