@@ -144,6 +144,37 @@ public class RunConfig extends BasicConfig {
 	protected HashSet<String> getSelectedSources(String evaluationDataPath) {
 		HashSet<String> result = new HashSet<String>();
 
+		/*result.add("1297.txt-1");
+		result.add("1297.txt-2");
+		result.add("1297.txt-3");
+		result.add("1297.txt-4");
+		result.add("1297.txt-5");
+		result.add("1297.txt-6");
+		result.add("1297.txt-7");
+		result.add("1297.txt-8");
+		result.add("1297.txt-9");
+		result.add("1297.txt-10");
+		result.add("1297.txt-11");
+		result.add("1297.txt-12");
+		result.add("1297.txt-13");
+		result.add("1297.txt-14");
+		result.add("1297.txt-15");
+		result.add("1297.txt-16");
+		result.add("1297.txt-17");
+		result.add("1297.txt-18");
+		result.add("1297.txt-19");
+		result.add("1297.txt-20");
+		result.add("1297.txt-21");
+		result.add("1297.txt-22");
+		result.add("1297.txt-23");
+		result.add("1297.txt-24");
+		result.add("1297.txt-25");
+		result.add("1297.txt-26");
+		result.add("1297.txt-27");
+		result.add("1297.txt-28");
+		result.add("1297.txt-29");
+		result.add("1297.txt-30");*/
+		
 		//result.add("568.txt-8");
 		//result.add("2110.txt-1");
 		//result.add("1196.txt-4");
@@ -154,7 +185,7 @@ public class RunConfig extends BasicConfig {
 		//result.add("121.txt-3");
 		//result.add("765.txt-6");
 		
-		/*String file;
+		String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
 			File[] listOfFiles = folder.listFiles();
@@ -186,7 +217,7 @@ public class RunConfig extends BasicConfig {
 					// break; //TODO remove. only for test
 				}
 			}
-		}*/
+		}
 		return result;
 	}
 

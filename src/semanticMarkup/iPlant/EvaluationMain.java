@@ -11,12 +11,10 @@ import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
 import semanticMarkup.core.transformation.lib.description.MarkupDescriptionFromDBForEvaluationTransformer;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
-import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.MarkupDBSentencesForEvalautionRun;
+import semanticMarkup.run.MarkupRun;
 
 public class EvaluationMain extends CLIMain {
 	
@@ -141,7 +139,7 @@ public class EvaluationMain extends CLIMain {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
-		config.setRun(MarkupDBSentencesForEvalautionRun.class);
+		config.setRun(MarkupRun.class);
 		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionFromDBForEvaluationTransformer.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(DatabaseInputFromEvaluationNoLearner.class);
