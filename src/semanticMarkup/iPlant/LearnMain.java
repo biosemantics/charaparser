@@ -10,7 +10,10 @@ import org.apache.commons.cli.ParseException;
 import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
+import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
+import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
+import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.run.IPlantLearnRun;
@@ -66,12 +69,13 @@ public class LearnMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
+		    config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setXmlVolumeReaderSourceDirectory(commandLine.getOptionValue("i"));
+		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
 		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
