@@ -65,7 +65,7 @@ public aspect LogInjectionAspect {
 	}
 	
 	/**
-	 * ILoggables are specified
+	 * ILoggable classes are specified below
 	 */
 	declare parents : semanticMarkup..* implements ILoggable;
 }
