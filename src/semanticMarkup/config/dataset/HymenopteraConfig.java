@@ -1,7 +1,8 @@
-package semanticMarkup;
+package semanticMarkup.config.dataset;
 
 import java.io.File;
 
+import semanticMarkup.config.RunConfig;
 import semanticMarkup.know.Glossary;
 import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
 

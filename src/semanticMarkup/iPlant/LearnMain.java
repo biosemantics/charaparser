@@ -8,7 +8,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.CLIMain;
-import semanticMarkup.RunConfig;
+import semanticMarkup.config.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;

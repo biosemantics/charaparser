@@ -1,4 +1,4 @@
-package semanticMarkup;
+package semanticMarkup.config;
 
 import java.io.File;
 import java.util.HashSet;
@@ -23,6 +23,7 @@ import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
+import semanticMarkup.ling.normalize.lib.TreatisehNormalizer;
 import semanticMarkup.markup.DescriptionMarkupCreator;
 import semanticMarkup.markup.IMarkupCreator;
 import semanticMarkup.run.IRun;
@@ -138,7 +139,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
-		bind(INormalizer.class).to(FNAv19Normalizer.class); 
+		bind(INormalizer.class).to(normalizer); 
 	}
 	
 	protected HashSet<String> getSelectedSources(String evaluationDataPath) {

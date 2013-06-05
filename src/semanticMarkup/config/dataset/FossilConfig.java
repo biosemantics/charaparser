@@ -1,7 +1,8 @@
-package semanticMarkup;
+package semanticMarkup.config.dataset;
 
 import java.io.File;
 
+import semanticMarkup.config.RunConfig;
 import semanticMarkup.know.Glossary;
 import semanticMarkup.ling.normalize.lib.TreatisehNormalizer;
 
@@ -16,7 +17,7 @@ public class FossilConfig extends RunConfig {
 		//this.setDatabaseTablePrefix("treatise");
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
 		this.setGlossaryFile("resources" + File.separator + "treatisehglossaryfixed.csv");
-		this.setNormalizer(TreatisehNormalizer.class);	
+		this.setNormalizer(TreatisehNormalizer.class);
 		this.setGlossaryType(Glossary.Fossil.toString());
 	}
 }

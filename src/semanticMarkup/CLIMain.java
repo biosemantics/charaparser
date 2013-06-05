@@ -7,6 +7,12 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import semanticMarkup.config.RunConfig;
+import semanticMarkup.config.dataset.AlgaeConfig;
+import semanticMarkup.config.dataset.FossilConfig;
+import semanticMarkup.config.dataset.HymenopteraConfig;
+import semanticMarkup.config.dataset.PlantConfig;
+import semanticMarkup.config.dataset.PoriferaConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;

@@ -1,4 +1,4 @@
-package semanticMarkup;
+package semanticMarkup.config;
 
 import java.io.File;
 import java.util.HashMap;
