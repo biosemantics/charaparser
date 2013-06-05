@@ -1,4 +1,4 @@
-package semanticMarkup.iPlant;
+package semanticMarkup;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -7,29 +7,33 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import semanticMarkup.CLIMain;
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionFromDBForEvaluationTransformer;
+import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
-import semanticMarkup.know.lib.CSVGlossary;
+import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
-import semanticMarkup.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
+import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
+import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.MarkupRun;
+import semanticMarkup.run.IPlantLearnRun;
 
-public class EvaluationMain extends CLIMain {
-	
+/**
+ * Learn CLI Entry point into the processing of the charaparser framework
+ * @author thomas rodenhausen
+ */
+public class LearnMain extends CLIMain {
+
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CLIMain cliMain = new EvaluationMain();
+		CLIMain cliMain = new LearnMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parse(String[] args) {		
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
 		
@@ -64,12 +68,13 @@ public class EvaluationMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(EvaluationDBVolumeReader.class);
+		    config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setXmlVolumeReaderSourceDirectory(commandLine.getOptionValue("i"));
+		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
 		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
@@ -101,7 +106,7 @@ public class EvaluationMain extends CLIMain {
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setDatabasePort(commandLine.getOptionValue("p"));
-		    } else {
+		    } else { 
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server port");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
@@ -132,17 +137,17 @@ public class EvaluationMain extends CLIMain {
 			//at least whos data to pull
 		    if(commandLine.hasOption("z")) {
 		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("z"));
+		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("z") + "_permanentGlossary");
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
 		    }
-		} catch(ParseException e) {
+		} catch (ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
-		config.setRun(MarkupRun.class);
-		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionFromDBForEvaluationTransformer.class);
-		config.setGlossary(CSVGlossary.class);
-		config.setTerminologyLearner(DatabaseInputFromEvaluationNoLearner.class);
+		config.setRun(IPlantLearnRun.class);
+		config.setGlossary(InMemoryGlossary.class);
+		config.setTerminologyLearner(PerlTerminologyLearner.class);
 	}
 }

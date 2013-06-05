@@ -1,6 +1,4 @@
-package semanticMarkup.iPlant;
-
-import java.io.File;
+package semanticMarkup;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -9,28 +7,22 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import semanticMarkup.CLIMain;
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
-import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
+import semanticMarkup.core.transformation.lib.description.MarkupDescriptionFromDBForEvaluationTransformer;
+import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
+import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.know.lib.InMemoryGlossary;
-import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
+import semanticMarkup.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.IPlantMarkupRun;
 import semanticMarkup.run.MarkupRun;
 
-/**
- * Markup CLI Entry point into the processing of the charaparser framework
- * @author thomas rodenhausen
- */
-public class MarkupMain extends CLIMain {
+public class EvaluationMain extends CLIMain {
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CLIMain cliMain = new MarkupMain();
+		CLIMain cliMain = new EvaluationMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
@@ -71,12 +63,11 @@ public class MarkupMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
+		    config.setMarkupCreatorVolumeReader(EvaluationDBVolumeReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setXmlVolumeReaderSourceDirectory(commandLine.getOptionValue("i"));
 		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
@@ -148,10 +139,9 @@ public class MarkupMain extends CLIMain {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
-		config.setRun(IPlantMarkupRun.class);
-		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionTreatmentTransformer.class);
-		config.setGlossary(InMemoryGlossary.class);
-		//no learning required, already passed learning and reviewed terms in OTO Lite 
-		config.setTerminologyLearner(DatabaseInputNoLearner.class);
+		config.setRun(MarkupRun.class);
+		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionFromDBForEvaluationTransformer.class);
+		config.setGlossary(CSVGlossary.class);
+		config.setTerminologyLearner(DatabaseInputFromEvaluationNoLearner.class);
 	}
 }

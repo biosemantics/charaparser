@@ -2035,19 +2035,21 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String lastWord = terminals.get(terminals.size()-1).getTerminalsText();
 		if(characters.contains(lastWord)) {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
-			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {//shell oval in outline
-				for(DescriptionTreatmentElement element : lastElements)
-					element.setAttribute("name", lastWord);
-				done = true;
-			}else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {//shell in oval outline
-				//String cvalue = ..
-				Chunk characterValue = chunk.getChunkDFS(ChunkType.PREPOSITION);
-						//ckstring.replaceFirst(".*?\\]", "").replaceAll("\\w+\\[","").replaceAll(lastword, "").replaceAll("[{}\\]\\[]", "");
-				for(DescriptionTreatmentElement element : lastElements) {
-					element.setAttribute("name", lastWord);
-					element.setAttribute("value", characterValue.getTerminalsText());
+			if(lastElement != null) {
+				if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {//shell oval in outline
+					for(DescriptionTreatmentElement element : lastElements)
+						element.setAttribute("name", lastWord);
+					done = true;
+				}else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {//shell in oval outline
+					//String cvalue = ..
+					Chunk characterValue = chunk.getChunkDFS(ChunkType.PREPOSITION);
+							//ckstring.replaceFirst(".*?\\]", "").replaceAll("\\w+\\[","").replaceAll(lastword, "").replaceAll("[{}\\]\\[]", "");
+					for(DescriptionTreatmentElement element : lastElements) {
+						element.setAttribute("name", lastWord);
+						element.setAttribute("value", characterValue.getTerminalsText());
+					}
+					done = true;
 				}
-				done = true;
 			}
 		}
 		return done;

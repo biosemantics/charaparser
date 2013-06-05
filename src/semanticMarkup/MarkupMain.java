@@ -1,4 +1,6 @@
-package semanticMarkup.iPlant;
+package semanticMarkup;
+
+import java.io.File;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -7,34 +9,33 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import semanticMarkup.CLIMain;
 import semanticMarkup.config.RunConfig;
+import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
-import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.IPlantLearnRun;
+import semanticMarkup.run.IPlantMarkupRun;
+import semanticMarkup.run.MarkupRun;
 
 /**
- * Learn CLI Entry point into the processing of the charaparser framework
+ * Markup CLI Entry point into the processing of the charaparser framework
  * @author thomas rodenhausen
  */
-public class LearnMain extends CLIMain {
-
+public class MarkupMain extends CLIMain {
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CLIMain cliMain = new LearnMain();
+		CLIMain cliMain = new MarkupMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
 
 	@Override
-	public void parse(String[] args) {		
+	public void parse(String[] args) {
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
 		
@@ -75,7 +76,7 @@ public class LearnMain extends CLIMain {
 		    	System.exit(0);
 		    } else {
 		    	config.setXmlVolumeReaderSourceDirectory(commandLine.getOptionValue("i"));
-		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
 		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
@@ -107,7 +108,7 @@ public class LearnMain extends CLIMain {
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setDatabasePort(commandLine.getOptionValue("p"));
-		    } else { 
+		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server port");
 		    	System.exit(0);
 		    	//use standard value from RunConfig
@@ -138,17 +139,18 @@ public class LearnMain extends CLIMain {
 			//at least whos data to pull
 		    if(commandLine.hasOption("z")) {
 		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("z"));
-		    	config.setDatabaseGlossaryTable(commandLine.getOptionValue("z") + "_permanentGlossary");
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
 		    }
-		} catch (ParseException e) {
+		} catch(ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
-		config.setRun(IPlantLearnRun.class);
+		config.setRun(IPlantMarkupRun.class);
+		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionTreatmentTransformer.class);
 		config.setGlossary(InMemoryGlossary.class);
-		config.setTerminologyLearner(PerlTerminologyLearner.class);
+		//no learning required, already passed learning and reviewed terms in OTO Lite 
+		config.setTerminologyLearner(DatabaseInputNoLearner.class);
 	}
 }
