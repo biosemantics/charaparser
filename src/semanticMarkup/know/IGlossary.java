@@ -39,4 +39,36 @@ public interface IGlossary {
 	 */
 	public void addEntry(String word, String category);
 	
+	
+	
+	/*
+	public void addStructure(String structure);
+	
+	public void addCharacterCategory(String category);
+	
+	*//**
+	 * Adds the category if it didn't exist yet as well
+	 * @param state
+	 * @param category
+	 *//*
+	public void addCharacterState(String state, String category);
+	
+	public boolean isStructure(String structure);
+	
+	public boolean isCharacterCategory(String category);
+	
+	public boolean isCharacterState(String state);
+	
+	public boolean isCharacterStateCategoryPair(String state, String category);
+	
+	public Set<String> getCharacterStateCategories(String state);
+	
+	public Set<String> getCharacterCategoryStates(String category);
+	
+	public Set<String> getStructures();
+	
+	public Set<String> getCharacterCategories();
+	
+	public Set<String> getCharacterStatesNotInCharacterCategories(Set<String> categories);
+	*/
 }

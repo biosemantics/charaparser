@@ -11,6 +11,7 @@ import semanticMarkup.CLIMain;
 import semanticMarkup.RunConfig;
 import semanticMarkup.core.transformation.lib.description.MarkupDescriptionFromDBForEvaluationTransformer;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
+import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
 import semanticMarkup.log.LogLevel;
@@ -141,7 +142,7 @@ public class EvaluationMain extends CLIMain {
 		
 		config.setRun(MarkupRun.class);
 		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionFromDBForEvaluationTransformer.class);
-		config.setGlossary(InMemoryGlossary.class);
+		config.setGlossary(CSVGlossary.class);
 		config.setTerminologyLearner(DatabaseInputFromEvaluationNoLearner.class);
 	}
 }

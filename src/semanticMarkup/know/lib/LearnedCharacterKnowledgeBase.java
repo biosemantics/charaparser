@@ -78,8 +78,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		if(this.glossary.contains(word)) {
 			Set<String> glossaryCategories = this.glossary.getCategories(word);
 			glossaryCategories.addAll(this.glossary.getCategories("_" + word));
-		
-	
+			
 			// check _term_category table
 			Set<String> categories = new HashSet<String>();
 

@@ -30,19 +30,13 @@ public class CSVGlossary extends InMemoryGlossary {
 		List<String[]> lines = reader.readAll();
 		for(String[] line : lines) {
 			
-			String term = line[1].toLowerCase();
-			String category = line[2].toLowerCase();
+			String term = line[1];
+			String category = line[2];
 			
 			//if(term.equals("rhizome")) 
 			//	System.out.println("here");
 			
-			if(!glossary.containsKey(term))
-				glossary.put(term, new HashSet<String>());
-			glossary.get(term).add(category);
-			
-			if(!reverseGlossary.containsKey(category))
-				reverseGlossary.put(category, new HashSet<String>());
-			reverseGlossary.get(category).add(term);
+			this.addEntry(term, category);
 			
 			//if(category.equalsIgnoreCase("structure")) 
 			//	System.out.println(reverseGlossary.get(category));

@@ -68,7 +68,11 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 
 	@Override
 	public List<Treatment> transform(List<Treatment> treatments) {
-		GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
+		//evaluation runs with .csv glossaries as gold standard uses the
+		//character categories used in the csvs.
+		//OTOs character categories varies at times, which makes evaluation difficult.
+		
+		/*GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
 		Download download = new Download();
 		
 		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
@@ -79,7 +83,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 				"Number of term synonym relations " + download.getSynonyms().size());
 		//storeInLocalDB(glossaryDownload, download);
 		initGlossary(glossaryDownload, download);
-		
+		*/
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place
 		terminologyLearner.learn(treatments);

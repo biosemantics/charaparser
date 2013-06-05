@@ -45,12 +45,11 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 
 	private void getOrgans() {
 		String[] categories = { "STRUCTURE", "FEATURE", "SUBSTANCE", "PLANT",
-				"nominative", "structure" };
+				"nominative" };
 		for (String category : categories) {
 			Set<String> words = this.glossary.getWords(category);
 			if(words != null) {
 				for(String word : words) {
-					word = word.trim();
 					this.organs.add(word);
 				}
 			}

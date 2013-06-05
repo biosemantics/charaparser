@@ -2027,7 +2027,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		boolean done = false;
 		
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-		Set<String> characters = glossary.getWords("characterName");
+		Set<String> characters = glossary.getWords("character");
 		
 		List<AbstractParseTree> terminals = chunk.getTerminals();
 		if(terminals.size() < 2)

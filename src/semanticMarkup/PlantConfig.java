@@ -15,7 +15,7 @@ public class PlantConfig extends RunConfig {
 		this.setStandardVolumeReaderSourcefiles("evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation");
 		//this.setDatabaseTablePrefix("foc_v10_jing");
 		this.setDatabaseGlossaryTable("fnaglossaryfixed");
-		this.setGlossaryFile("resources" + File.separator + "fnaglossaryfixed_foc.csv");
+		this.setGlossaryFile("resources" + File.separator + "fnaglossaryfixed.csv");
 		this.setNormalizer(FNAv19Normalizer.class);
 		this.setGlossaryType(Glossary.plant_gloss_for_iplant.toString());
 	}
