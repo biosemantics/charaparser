@@ -2034,8 +2034,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			return done;
 		String lastWord = terminals.get(terminals.size()-1).getTerminalsText();
 		if(characters.contains(lastWord)) {
-			DescriptionTreatmentElement lastElement = lastElements.getLast();
-			if(lastElement != null) {
+			if(!lastElements.isEmpty()) {
+				DescriptionTreatmentElement lastElement = lastElements.getLast();
 				if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {//shell oval in outline
 					for(DescriptionTreatmentElement element : lastElements)
 						element.setAttribute("name", lastWord);

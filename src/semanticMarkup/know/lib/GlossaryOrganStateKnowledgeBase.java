@@ -59,6 +59,7 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 	private void getStates() {
 		Set<String> notCategories = new HashSet<String>();
 		notCategories.add("STRUCTURE");
+		notCategories.add("CHARACTER");
 		notCategories.add("FEATURE");
 		notCategories.add("SUBSTANCE");
 		notCategories.add("PLANT");

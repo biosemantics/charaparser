@@ -76,7 +76,17 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			skipFirstChunk = true;
 		} else {
 			DescriptionTreatmentElement structureElement;
-			if(processingContext.getChunkCollector().getSubjectTag().equals("ditto")) {
+			
+			if(processingContext.getChunkCollector().getSubjectTag().equals("general")) {
+				structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
+				structureElement.setAttribute("name", "whole_organism");
+				LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+				structureElements.add(structureElement);
+				result.addAll(establishSubject(structureElements, processingContextState));
+				skipFirstChunk = false;
+			} else if(processingContext.getChunkCollector().getSubjectTag().equals("ditto")) {
 				String previousMainSubjectOrgan = parentTagProvider.getParentTag(processingContext.getChunkCollector().getSource());
 				previousMainSubjectOrgan = previousMainSubjectOrgan.equals("general")? "whole_organism" : previousMainSubjectOrgan;
 				structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
