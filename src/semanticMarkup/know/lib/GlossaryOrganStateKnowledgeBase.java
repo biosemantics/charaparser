@@ -32,9 +32,12 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 
 	@Override
 	public boolean isOrgan(String word) {
-		word = word.toLowerCase();
+		boolean result = false;
+		word = word.toLowerCase().trim();
+		result = organs.contains(word);
 		word = inflector.getSingular(word);
-		return organs.contains(word);
+		result |= organs.contains(word);
+		return result;
 	}
 
 	@Override
