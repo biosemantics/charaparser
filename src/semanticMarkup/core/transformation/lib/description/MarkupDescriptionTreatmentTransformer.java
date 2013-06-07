@@ -141,7 +141,10 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 
 	@Override
 	public List<Treatment> transform(List<Treatment> treatments) {
-		GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
+		//download gloss again from real OTO because the loast download is no longer in memory
+		//it is possible for gloss o change from last run
+		//when remove MYSQL, take care of this issu.e
+		GlossaryDownload glossaryDownload = otoClient.download(glossaryType); 
 		int uploadId;
 		Download download;
 		try {
