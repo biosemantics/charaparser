@@ -88,10 +88,18 @@ public class VPRecoverChunker extends AbstractChunker {
 					 posKnowledgeBase.addVerb(terminal.getTerminalsText().replaceAll("\\W", ""));
 					 recoverVPChunk(terminals, i, chunkCollector);
 				 }
+			} else if(i+1 < terminals.size()) {
+				AbstractParseTree nextTerminal = terminals.get(i+1);
+				if(!chunkCollector.isOfChunkType(terminal, ChunkType.VP) && 
+						chunkCollector.isOfChunkType(terminal, ChunkType.CHARACTER_STATE) &&
+						chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.PP) && posKnowledgeBase.isVerb(terminal.getTerminalsText())) {
+					recoverVPChunkFromVerbAndPP(terminals, i, chunkCollector);
+				}
 			}
 		}
 	}
 	
+
 
 	private boolean connectsTwoOrgans(List<AbstractParseTree> terminals, int i, ChunkCollector chunkCollector) {
 		boolean organ1 = false;
@@ -115,6 +123,25 @@ public class VPRecoverChunker extends AbstractChunker {
 		return organ1 && organ2;
 	}
 	
+	private void recoverVPChunkFromVerbAndPP(List<AbstractParseTree> terminals,
+			int i, ChunkCollector chunkCollector) {
+		AbstractParseTree verbTerminal = terminals.get(i);
+		AbstractParseTree ppTerminal = terminals.get(i+1);
+		Chunk verbChunk = chunkCollector.getChunk(verbTerminal);
+		verbChunk.setChunkType(ChunkType.VERB);
+		Chunk ppChunk = chunkCollector.getChunk(ppTerminal);
+		Chunk prepositionChunk = ppChunk.getChildChunk(ChunkType.PREPOSITION);
+		LinkedHashSet<Chunk> verbChildChunks = verbChunk.getChunks();
+		verbChildChunks.addAll(prepositionChunk.getChunks());
+		Chunk organChunk = ppChunk.getChildChunk(ChunkType.OBJECT);
+		
+		LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
+		childChunks.add(verbChunk);
+		childChunks.add(organChunk);
+		Chunk vpChunk = new Chunk(ChunkType.VP, childChunks);
+		chunkCollector.addChunk(vpChunk);
+	}
+
 	
 	/**
 	 * 

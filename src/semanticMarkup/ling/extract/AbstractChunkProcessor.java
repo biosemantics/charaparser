@@ -1225,13 +1225,22 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			
 			List<Chunk> chunks = chunkCollector.getChunks();
 			
+			boolean foundChunk = false;
+			Chunk beforePPChunk = null;
 			Chunk afterPPChunk = null;
 			for(int i=0; i<chunks.size(); i++) { 
 				Chunk chunk = chunks.get(i);
-				if(chunk.containsOrEquals(object) && i+1 < chunks.size()) {
-					afterPPChunk = chunks.get(i+1);
-					break;
-				}
+				if(chunk.containsOrEquals(object)) {
+					if(i+1 < chunks.size()) {
+						afterPPChunk = chunks.get(i+1);
+						break;
+					}
+					foundChunk = true;
+				} else if(!foundChunk)
+					beforePPChunk = chunk;
+			}
+			if(beforePPChunk.getChunkType().equals(ChunkType.PP)) {
+				return "part_of";
 			}
 			if(afterPPChunk!=null && (afterPPChunk.isOfChunkType(ChunkType.END_OF_LINE) || afterPPChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE) ||
 					afterPPChunk.isOfChunkType(ChunkType.COUNT) || 
