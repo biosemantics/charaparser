@@ -94,7 +94,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				LinkedList<DescriptionTreatmentElement> structures = extractStructuresFromObject(object, processingContext, 
 						processingContextState);
 				
-				if(!processingContextState.getLastElements().isEmpty() && structures.isEmpty()) {
+				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) {
 					List<DescriptionTreatmentElement> entity1 = null;
 					DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
 					if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER) || processingContextState.isCommaAndOrEosEolAfterLastElements()) {

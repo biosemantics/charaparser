@@ -92,6 +92,8 @@ public class VPRecoverChunker extends AbstractChunker {
 				AbstractParseTree nextTerminal = terminals.get(i+1);
 				if(!chunkCollector.isOfChunkType(terminal, ChunkType.VP) && 
 						chunkCollector.isOfChunkType(terminal, ChunkType.CHARACTER_STATE) &&
+						(chunkCollector.getChunk(terminal).getProperty("characterName").equals("position") ||
+								chunkCollector.getChunk(terminal).getProperty("characterName").equals("size")) && 
 						chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.PP) && posKnowledgeBase.isVerb(terminal.getTerminalsText())) {
 					recoverVPChunkFromVerbAndPP(terminals, i, chunkCollector);
 				}
