@@ -119,7 +119,9 @@ public class BasicConfig extends AbstractModule {
 	
 	  @Override 
 	  protected void configure() {	 
-		/* TODO: turn regex word lists into hashsets where appropriate */			
+		bind(String.class).annotatedWith(Names.named("Version")).toInstance("0.1a");
+		  
+		 /* TODO: turn regex word lists into hashsets where appropriate */			
 		
 		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(
 				"." + File.separator + "resources" + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd");

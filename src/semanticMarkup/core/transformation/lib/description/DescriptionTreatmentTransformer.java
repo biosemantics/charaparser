@@ -15,12 +15,15 @@ import com.google.inject.name.Named;
 public abstract class DescriptionTreatmentTransformer implements ITreatmentTransformer {
 
 	protected boolean parallelProcessing;
+	protected String version;
 
 	/**
 	 * @param parallelProcessing to use or not
 	 */
 	@Inject
-	public DescriptionTreatmentTransformer(@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing) {
+	public DescriptionTreatmentTransformer(@Named("Version")String version, 
+			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing) {
+		this.version = version;
 		this.parallelProcessing = parallelProcessing;
 	}
 

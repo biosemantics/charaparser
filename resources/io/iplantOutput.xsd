@@ -13,11 +13,17 @@
   <xs:element name="meta">
     <xs:complexType>
       <xs:sequence>
+       	<xs:element ref="charaparser_version"/>
+       	<xs:element ref="glossary_name"/>
+       	<xs:element ref="glossary_version"/>
         <xs:element ref="source"/>
         <xs:element maxOccurs="unbounded" ref="other_info"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+  <xs:element name="charaparser_version" type="xs:string"/>
+  <xs:element name="glossary_name" type="xs:string"/>
+  <xs:element name="glossary_version" type="xs:string"/>
   <xs:element name="source" type="xs:string"/>
   <xs:element name="TaxonIdentification">
     <xs:complexType>

@@ -30,6 +30,7 @@ import oto.lite.beans.Decision;
 import oto.lite.beans.Download;
 import oto.lite.beans.Synonym;
 
+import semanticMarkup.core.ContainerTreatmentElement;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.core.ValueTreatmentElement;
@@ -94,6 +95,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	 */
 	@Inject
 	public MarkupDescriptionTreatmentTransformer(
+			@Named("Version") String version,
 			@Named("WordTokenizer")ITokenizer wordTokenizer, 
 			IParser parser,
 			@Named("ChunkerChain")ChunkerChain chunkerChain,
@@ -116,7 +118,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			@Named("glossaryType")String glossaryType,
 			IGlossary glossary, 
 			@Named("selectedSources")Set<String> selectedSources) throws Exception {
-		super(parallelProcessing);
+		super(version, parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
 		this.chunkerChain = chunkerChain;
@@ -145,6 +147,16 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		//it is possible for gloss o change from last run, make sure to grab the correct version.
 		//when remove MYSQL, take care of this issue
 		GlossaryDownload glossaryDownload = otoClient.download(glossaryType); 
+		String glossaryVersion = glossaryDownload.getVersion();
+		for(Treatment treatment : treatments) {
+			if(!treatment.containsContainerTreatmentElement("meta"))
+				treatment.addTreatmentElement(new ContainerTreatmentElement("meta"));
+			ContainerTreatmentElement metaElement = treatment.getContainerTreatmentElement("meta");
+			metaElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", version));
+			metaElement.addTreatmentElement(new ValueTreatmentElement("glossary_name", glossaryType));
+			metaElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", glossaryVersion));
+		}
+		
 		int uploadId;
 		Download download;
 		try {
