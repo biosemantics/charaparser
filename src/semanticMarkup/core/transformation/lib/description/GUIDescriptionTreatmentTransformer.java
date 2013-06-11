@@ -65,6 +65,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 	 */
 	@Inject
 	public GUIDescriptionTreatmentTransformer(
+			@Named("Version") String version,
 			@Named("WordTokenizer")ITokenizer wordTokenizer, 
 			IParser parser,
 			@Named("ChunkerChain")ChunkerChain chunkerChain,
@@ -77,7 +78,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
 			MainForm mainForm, 
 			@Named("selectedSources")Set<String> selectedSources) throws Exception {
-		super(parallelProcessing);
+		super(version, parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
 		this.chunkerChain = chunkerChain;

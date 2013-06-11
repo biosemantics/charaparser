@@ -51,6 +51,8 @@ public class RunConfig extends BasicConfig {
 	//CharaParser.class //AfterPerlBlackBox
 	private Class<? extends IVolumeReader> markupCreatorVolumeReader = EvaluationDBVolumeReader.class;
 	//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader, GenericFileVolumeReaer
+	private String iPlantXMLVolumeReaderSource = "";
+	
 	private String wordVolumeReaderSourceFile = "evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
 			"source" + File.separator + "FNA19 Excerpt-source.docx";
 	private String wordVolumeReaderStyleStartPattern = ".*?(Heading|Name).*";
@@ -111,6 +113,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Tribegennamestyle")).toInstance(wordVolumeReaderTribegennamestyle);
 		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleMappingFile")).toInstance(wordVolumeReaderStyleMappingFile);
 		bind(String.class).annotatedWith(Names.named("XMLVolumeReader_SourceDirectory")).toInstance(xmlVolumeReaderSourceDirectory);
+		bind(String.class).annotatedWith(Names.named("IPlantXMLVolumeReader_Source")).toInstance(iPlantXMLVolumeReaderSource);
 		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_SourceDirectory")).toInstance(outputVolumeReaderSourceDirectory);
 		bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance(genericFileVolumeReaderSource);
 
@@ -186,7 +189,7 @@ public class RunConfig extends BasicConfig {
 		//result.add("121.txt-3");
 		//result.add("765.txt-6");
 		
-		String file;
+		/*String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
 			File[] listOfFiles = folder.listFiles();
@@ -218,7 +221,7 @@ public class RunConfig extends BasicConfig {
 					// break; //TODO remove. only for test
 				}
 			}
-		}
+		}*/
 		return result;
 	}
 
@@ -551,6 +554,14 @@ public class RunConfig extends BasicConfig {
 
 	public void setOtoLiteClientURL(String otoLiteClientURL) {
 		this.otoLiteClientURL = otoLiteClientURL;
+	}
+
+	public String getiPlantXMLVolumeReaderSource() {
+		return iPlantXMLVolumeReaderSource;
+	}
+
+	public void setiPlantXMLVolumeReaderSource(String iPlantXMLVolumeReaderSource) {
+		this.iPlantXMLVolumeReaderSource = iPlantXMLVolumeReaderSource;
 	}
 	
 }

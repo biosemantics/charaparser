@@ -119,7 +119,7 @@ public class BasicConfig extends AbstractModule {
 	
 	  @Override 
 	  protected void configure() {	 
-		bind(String.class).annotatedWith(Names.named("Version")).toInstance("0.1a");
+		bind(String.class).annotatedWith(Names.named("Version")).toInstance("0.1");
 		  
 		 /* TODO: turn regex word lists into hashsets where appropriate */			
 		

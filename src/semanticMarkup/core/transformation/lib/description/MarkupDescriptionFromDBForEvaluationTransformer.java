@@ -34,6 +34,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 
 	@Inject
 	public MarkupDescriptionFromDBForEvaluationTransformer(
+			@Named("Version") String version,
 			@Named("WordTokenizer")ITokenizer wordTokenizer, 
 			IParser parser,
 			@Named("ChunkerChain")ChunkerChain chunkerChain,
@@ -57,7 +58,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 			IGlossary glossary, 
 			@Named("selectedSources")Set<String> selectedSources)
 			throws Exception {
-		super(wordTokenizer, parser, chunkerChain, posTagger, descriptionExtractor,
+		super(version, wordTokenizer, parser, chunkerChain, posTagger, descriptionExtractor,
 				normalizer, terminologyLearner, parallelProcessing,
 				descriptionExtractorRunMaximum, sentenceChunkerRunMaximum, otoClient,
 				otoLiteClient, otoLiteTermReviewURL, databaseHost, databasePort,

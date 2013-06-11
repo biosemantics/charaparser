@@ -7,6 +7,9 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
 import semanticMarkup.core.ContainerTreatmentElement;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.ValueTreatmentElement;
@@ -14,7 +17,8 @@ import semanticMarkup.io.input.AbstractFileVolumeReader;
 
 public class IPlantXMLVolumeReader extends AbstractFileVolumeReader  {
 
-	public IPlantXMLVolumeReader(String filePath) {
+	@Inject
+	public IPlantXMLVolumeReader(@Named("IPlantXMLVolumeReader_Source") String filePath) {
 		super(filePath);
 	}
 

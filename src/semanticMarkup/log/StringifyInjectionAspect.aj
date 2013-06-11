@@ -41,6 +41,7 @@ public aspect StringifyInjectionAspect {
 	declare parents : semanticMarkup.core..* implements IPrintable;
 	
 	declare parents : semanticMarkup.eval..* implements IPrintable;
+	declare parents : semanticMarkup.config.* implements IPrintable;
 	
 	// JAXB container classes may not implement an interface, JAXB can't handle interface, will throw exception
 	declare parents : semanticMarkup.io.* implements IPrintable;

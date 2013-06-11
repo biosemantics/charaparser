@@ -172,9 +172,12 @@ public class IPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 		ValueTreatmentElement charaparserVersionElement = metaElement.getValueTreatmentElement("charaparser_version");
 		ValueTreatmentElement glossaryNameElement = metaElement.getValueTreatmentElement("glossary_name");
 		ValueTreatmentElement glossaryVersionElement = metaElement.getValueTreatmentElement("glossary_version");
-		meta.setCharaparserVersion(charaparserVersionElement.getValue());
-		meta.setGlossaryName(glossaryNameElement.getValue());
-		meta.setGlossaryVersion(glossaryVersionElement.getValue());
+		if(charaparserVersionElement != null)
+			meta.setCharaparserVersion(charaparserVersionElement.getValue());
+		if(glossaryNameElement != null)
+			meta.setGlossaryName(glossaryNameElement.getValue());
+		if(glossaryVersionElement != null)
+			meta.setGlossaryVersion(glossaryVersionElement.getValue());
 		ValueTreatmentElement sourceElement = metaElement.getValueTreatmentElement("source");
 		meta.setSource(sourceElement.getValue());
 		for(ValueTreatmentElement otherInfoElement : metaElement.getValueTreatmentElements("other_info")) {
