@@ -4,6 +4,7 @@ import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -68,7 +69,9 @@ public class CLIMain {
 		options.addOption("o", "output", true, "output directory");
 		options.addOption("i", "input", true, "input file or directory");
 		options.addOption("r", "reader", true, "force an input reader. If the option is not provided input format will be detected");
-		options.addOption("p", "multi-threading", true, "use multi-threading to compute the result");
+		Option threadingOption = new Option("p", "multi-threading", true, "use multi-threading to compute the result");
+		//threadingOption.setValueSeparator(',');
+		options.addOption(threadingOption);
 		options.addOption("db", "database", true, "database to use");
 		options.addOption("dbu", "database-user", true, "database user to use");
 		options.addOption("dbp", "database-password", true, "database password to use");
@@ -103,7 +106,8 @@ public class CLIMain {
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
-		    	String[] parallelParameters = commandLine.getOptionValues("p");
+		    	String parallelParameter = commandLine.getOptionValue("p");
+		    	String[] parallelParameters = parallelParameter.split(",");
 		    	if(parallelParameters.length != 2) {
 		    		log(LogLevel.ERROR, "You have to specify 2 values for parameter p");
 		    		System.exit(0);

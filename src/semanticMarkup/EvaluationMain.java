@@ -4,11 +4,13 @@ import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
 import semanticMarkup.core.transformation.lib.description.MarkupDescriptionFromDBForEvaluationTransformer;
+import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.know.lib.InMemoryGlossary;
@@ -44,7 +46,9 @@ public class EvaluationMain extends CLIMain {
 		options.addOption("d", "database-name", true, "name of database to use");
 		options.addOption("u", "database-user", true, "database user to use");
 		options.addOption("s", "database-password", true, "database password to use");
-		options.addOption("t", "multi-threading", true, "use multi-threading to compute the result");
+		Option threadingOption = new Option("t", "multi-threading", true, "use multi-threading to compute the result");
+		//threadingOption.setValueSeparator(',');
+		options.addOption(threadingOption);
 		options.addOption("h", "help", false, "shows the help");
 		
 		config = new RunConfig();
@@ -75,7 +79,8 @@ public class EvaluationMain extends CLIMain {
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
-		    	String[] parallelParameters = commandLine.getOptionValues("t");
+		    	String parallelParameter = commandLine.getOptionValue("t");
+		    	String[] parallelParameters = parallelParameter.split(",");
 		    	if(parallelParameters.length != 2) {
 		    		log(LogLevel.ERROR, "You have to specify 2 values for parameter t");
 		    		System.exit(0);

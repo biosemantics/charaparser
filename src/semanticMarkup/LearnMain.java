@@ -4,13 +4,16 @@ import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
+import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
+import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
@@ -49,7 +52,9 @@ public class LearnMain extends CLIMain {
 		options.addOption("d", "database-name", true, "name of database to use");
 		options.addOption("u", "database-user", true, "database user to use");
 		options.addOption("s", "database-password", true, "database password to use");
-		options.addOption("t", "multi-threading", true, "use multi-threading to compute the result");
+		Option threadingOption = new Option("t", "multi-threading", true, "use multi-threading to compute the result");
+		//threadingOption.setValueSeparator(',');
+		options.addOption(threadingOption);
 		options.addOption("h", "help", false, "shows the help");
 		
 		config = new RunConfig();
@@ -68,12 +73,12 @@ public class LearnMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
+		    config.setMarkupCreatorVolumeReader(IPlantXMLVolumeReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setXmlVolumeReaderSourceDirectory(commandLine.getOptionValue("i"));
+		    	config.setiPlantXMLVolumeReaderSource(commandLine.getOptionValue("i"));
 		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
@@ -81,7 +86,8 @@ public class LearnMain extends CLIMain {
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
-		    	String[] parallelParameters = commandLine.getOptionValues("t");
+		    	String parallelParameter = commandLine.getOptionValue("t");
+		    	String[] parallelParameters = parallelParameter.split(",");
 		    	if(parallelParameters.length != 2) {
 		    		log(LogLevel.ERROR, "You have to specify 2 values for parameter t");
 		    		System.exit(0);
@@ -149,5 +155,6 @@ public class LearnMain extends CLIMain {
 		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
+		config.setVolumeWriter(IPlantXMLVolumeWriter.class);
 	}
 }
