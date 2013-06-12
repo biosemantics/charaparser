@@ -95,13 +95,13 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		
 		if(parents.isEmpty()) {
 			processingContextState.getUnassignedCharacters().addAll(characters);
-		} else {
+		}/* else {
 			for(DescriptionTreatmentElement parent : parents) {
 				for(DescriptionTreatmentElement characterElement : characters) {
 					parent.addTreatmentElement(characterElement);
 				}
 			}
-		}
+		}*/
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
 	}
