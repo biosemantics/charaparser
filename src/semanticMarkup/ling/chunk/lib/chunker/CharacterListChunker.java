@@ -291,6 +291,7 @@ public class CharacterListChunker extends AbstractChunker {
 					statesTree.addChild(stateTerminal);
 					Chunk stateChildChunk = stateTerminal;
 					stateChildChunks.add(stateChildChunk);
+					newState = true;
 				}
 			}
 		}
