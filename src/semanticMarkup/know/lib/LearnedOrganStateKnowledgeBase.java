@@ -55,8 +55,16 @@ public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeB
 		boolean result = states.contains(word);
 		if(!result && word.contains("-")) {
 			String[] parts = word.split("-");
-			if(parts.length == 2 && parts[0].matches("\\d+"))
-				result = states.contains(parts[1]);
+			result = states.contains(parts[parts.length-1]);
+			//if(parts.length == 2 && parts[0].matches("\\d+"))
+			//	result = states.contains(parts[1]);
+			
+			if(!result)
+				for(String state : states) 
+					if(word.endsWith(state)) {
+						result = true;
+						break;
+					}
 		}
 		return result;
 	}

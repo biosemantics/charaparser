@@ -53,7 +53,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	
 		String ch = "";
 		if (word.endsWith("shaped")) {
-			return "shape";
+			//return "shape";
+			word = word.replaceFirst("shaped", "-shaped");
 		}
 		String[] ws = { word };
 		if (word.indexOf('-') > 0) {
