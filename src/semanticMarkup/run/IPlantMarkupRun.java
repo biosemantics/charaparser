@@ -46,7 +46,7 @@ public class IPlantMarkupRun extends AbstractRun {
 	@Override
 	protected void doRun() throws Exception {
 		if(!isValidRun(runRootDirectory)) {
-			log(LogLevel.ERROR, "Not a valid run. Stop.");
+			log(LogLevel.ERROR, "Not a valid run. The specified ID has not been found as having successfully completed learning.");
 			return;
 		}
 		
