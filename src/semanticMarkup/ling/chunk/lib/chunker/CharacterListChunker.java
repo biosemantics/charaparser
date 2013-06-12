@@ -148,6 +148,8 @@ public class CharacterListChunker extends AbstractChunker {
 		//terminalsText = terminalsText.replaceAll("ttt", "");
 		String[] characterListParts = terminalsText.split("~list~");
 		String character = characterListParts[0];
+		if(character.equals("colorationttt"))
+			character = character.replaceAll("ttt", "");
 		String stateList = characterListParts[1];
 		stateList = stateList.replaceAll("~", " ");
 		stateList = stateList.replaceAll(" punct ", " , ");
@@ -170,6 +172,10 @@ public class CharacterListChunker extends AbstractChunker {
 		LinkedHashSet<Chunk> toChunks = new LinkedHashSet<Chunk>();
 		boolean collectToChunks = false;
 		for(String modifierStateToken : modifierStateTokens) {
+			if(character.equals("coloration") && modifierStateToken.equals("with")) {
+				newState = false;
+			}
+			
 			if(newState) {
 				if(!stateChildChunks.isEmpty()) {
 					Chunk stateChunk = new Chunk(ChunkType.STATE, stateChildChunks);
@@ -285,7 +291,8 @@ public class CharacterListChunker extends AbstractChunker {
 					statesTree.addChild(stateTerminal);
 					Chunk stateChildChunk = stateTerminal;
 					stateChildChunks.add(stateChildChunk);
-					newState = true;
+					if(!modifierStateToken.equals("with"))
+						newState = true;
 				}
 			}
 		}
