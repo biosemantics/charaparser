@@ -755,7 +755,7 @@ sub addNouns{
 	}
 }
 
-###lateral/laterals terminal/terminals: blades of mid cauline spatulate or oblong to obovate or lanceolate , 6 Ã‚â€“ 35 Ãƒâ€” 1 Ã‚â€“ 15 cm , bases auriculate , auricles deltate to lanceolate , Ã‚Â± straight , acute , margins usually pinnately lobed , lobes Ã‚Â± deltate to lanceolate , not constricted at bases , terminals usually larger than laterals , entire or dentate .
+###lateral/laterals terminal/terminals: blades of mid cauline spatulate or oblong to obovate or lanceolate , 6 Ãƒâ€šÃ¢â‚¬â€œ 35 ÃƒÆ’Ã¢â‚¬â€� 1 Ãƒâ€šÃ¢â‚¬â€œ 15 cm , bases auriculate , auricles deltate to lanceolate , Ãƒâ€šÃ‚Â± straight , acute , margins usually pinnately lobed , lobes Ãƒâ€šÃ‚Â± deltate to lanceolate , not constricted at bases , terminals usually larger than laterals , entire or dentate .
 sub addheuristicsnouns{
 	my @nouns = NounHeuristics::heurnouns($dir, "");
 	#EOL:@nouns = ("angle[s]", "angles[p]", "base[s]", "bases[p]", "cell[s]", "cells[p]", "depression[s]", "depressions[p]", "ellipsoid[s]", "ellipsoids[p]", "eyespot[s]", "eyespots[p]", "face[s]", "faces[p]", "flagellum[s]", "flagella[p]", "flange[s]", "flanges[p]", "globule[s]", "globules[p]", "groove[s]", "grooves[p]", "line[s]", "lines[p]", "lobe[s]", "lobes[p]", "margin[s]", "margins[p]", "membrane[s]", "membranes[p]", "notch[s]", "notches[p]", "plastid[s]", "plastids[p]", "pore[s]", "pores[p]", "pyrenoid[s]", "pyrenoids[p]", "quarter[s]", "quarters[p]", "ridge[s]", "ridges[p]", "rod[s]", "rods[p]", "row[s]", "rows[p]", "sample[s]", "samples[p]", "sediment[s]", "sediments[p]", "side[s]", "sides[p]", "vacuole[s]", "vacuoles[p]", "valve[s]", "valves[p]");
@@ -1759,13 +1759,13 @@ sub getpartsfromparenttag{
 ############################################################################################
 #deal with "herbs or lianas" cases
 #examples:
-#<cypsela_or_palea_unit> cypsela / palea unit Ã‚Â± obovate, 2 . 5 Ã‚â€“ 4 mm</cypsela_or_palea_unit>
-#<biennial_or_short_lived_perennial> biennials or short_lived , usually monocarpic perennials , 10 Ã‚â€“ 100 cm ; cf:
-#<biennial_or_monocarpic_perennial> biennials or monocarpic perennials , 100 Ã‚â€“ 220 cm ;
-#<(leaf) blade_or_lobe> leaf blades or lobes orbiculate to linear , 1 Ã‚â€“ 5 Ãƒâ€” 1 Ã‚â€“ 5 mm .
+#<cypsela_or_palea_unit> cypsela / palea unit Ãƒâ€šÃ‚Â± obovate, 2 . 5 Ãƒâ€šÃ¢â‚¬â€œ 4 mm</cypsela_or_palea_unit>
+#<biennial_or_short_lived_perennial> biennials or short_lived , usually monocarpic perennials , 10 Ãƒâ€šÃ¢â‚¬â€œ 100 cm ; cf:
+#<biennial_or_monocarpic_perennial> biennials or monocarpic perennials , 100 Ãƒâ€šÃ¢â‚¬â€œ 220 cm ;
+#<(leaf) blade_or_lobe> leaf blades or lobes orbiculate to linear , 1 Ãƒâ€šÃ¢â‚¬â€œ 5 ÃƒÆ’Ã¢â‚¬â€� 1 Ãƒâ€šÃ¢â‚¬â€œ 5 mm .
 #<(outer)floret> and (3) outer florets pistillate, ???
-#staminate or bisexual paleae readily falling , ( 1 Ã‚â€“ ) 3 Ã‚â€“ 5 , erect to apically somewhat spreading or incurved in fruit , slightly surpassing pistillate paleae ;
-#annuals , biennials , or short_lived perennials , 20 Ã‚â€“ 100 cm .
+#staminate or bisexual paleae readily falling , ( 1 Ãƒâ€šÃ¢â‚¬â€œ ) 3 Ãƒâ€šÃ¢â‚¬â€œ 5 , erect to apically somewhat spreading or incurved in fruit , slightly surpassing pistillate paleae ;
+#annuals , biennials , or short_lived perennials , 20 Ãƒâ€šÃ¢â‚¬â€œ 100 cm .
 #deep_seated woody tap_roots and caudices .
 
 #patterns: b: boundary; n:structures; m:modifier; &:and/or//; u:unknown words
@@ -2470,12 +2470,12 @@ sub ditto{
 	#before 3/24/09
 	#my ($sth, $sentid, $sentence, $bptn, $wptn, $ptn, $conj, $sth2);
 
-	##$conj = "(?:[^a-z0-9<_]|\\b(?\:and|or|/|to)\\b)"; #Ã‚Â± <b>distalmost</b> <b>reduced</b> , Ã‚Â± <b>bractlike</b> .
+	##$conj = "(?:[^a-z0-9<_]|\\b(?\:and|or|/|to)\\b)"; #Ãƒâ€šÃ‚Â± <b>distalmost</b> <b>reduced</b> , Ãƒâ€šÃ‚Â± <b>bractlike</b> .
 	##$bptn = "\\s*(?:</?B>)\\s*";  #boundary pattern
 	##$wptn = "(?:.*?)"; #text pattern
 	##$ptn = "^".$conj."?".$bptn.$wptn.$bptn.$conj."+"; #sentence starts with at least 3 boundary words
 
-	#$conj = "(?:\\b(?\:and|or|/|to)\\b)"; #Ã‚Â± <B>distalmost</B> <B>reduced</B> <B>,</B> <B>Ã‚Â±</B> <b>bractlike</b> <B>.</B>
+	#$conj = "(?:\\b(?\:and|or|/|to)\\b)"; #Ãƒâ€šÃ‚Â± <B>distalmost</B> <B>reduced</B> <B>,</B> <B>Ãƒâ€šÃ‚Â±</B> <b>bractlike</b> <B>.</B>
 	#$bptn = "\\s*(?:</?B>)\\s*";  #boundary pattern
 	#$wptn = "(?:.*?)"; #text pattern
 	#$ptn = "^".$conj."?".$bptn.$wptn.$bptn.$conj."*"; #sentence starts with at least 3 boundary words
@@ -2561,22 +2561,22 @@ sub phraseclause{
 ############################################################################################
 
 #dealing with x of y cases:
-#1.	Ã‚â€œsub-structure of structureÃ‚â€� pattern: sub-structure string = "part|parts|area|areas|portion|portions"
+#1.	Ãƒâ€šÃ¢â‚¬Å“sub-structure of structureÃƒâ€šÃ¢â‚¬ï¿½ pattern: sub-structure string = "part|parts|area|areas|portion|portions"
 #Example: blades of undivided cauline leaves oblong , ovate.
-#Example: <(sterile [floret] corolla) lobe>corolla lobes of sterile 10 Ã‚â€“ 15 mm , spreading ;
+#Example: <(sterile [floret] corolla) lobe>corolla lobes of sterile 10 Ãƒâ€šÃ¢â‚¬â€œ 15 mm , spreading ;
 #Example: <(bisexual floret) [corolla]> of bisexual florets pinkish. </(bisexual floret) [corolla]>
 
-#2.	 Ã‚â€œstructure of sub-structureÃ‚â€� pattern:
+#2.	 Ãƒâ€šÃ¢â‚¬Å“structure of sub-structureÃƒâ€šÃ¢â‚¬ï¿½ pattern:
 #Example: <calyculus>Calyculi of appressed bractlets.
 
-#3.	Ã‚â€œstructure of countÃ‚â€� pattern:
+#3.	Ãƒâ€šÃ¢â‚¬Å“structure of countÃƒâ€šÃ¢â‚¬ï¿½ pattern:
 #Example: <calyculus>Calyculi of ca . 18 , reflexed to recurved
 # <floret>Florets of 1 , 2 , or 3 + kinds in a head :</floret>
 
-#4.	Ã‚â€œclusters of structureÃ‚â€� pattern
+#4.	Ãƒâ€šÃ¢â‚¬Å“clusters of structureÃƒâ€šÃ¢â‚¬ï¿½ pattern
 #Example: <root> clusters of fibrous root.</root>
 #outer series of bristlelike scales , inner of plumose bristles . (made up of, case 2)
-#Note: other Ã‚â€œclusterÃ‚â€� terms include Ã‚â€œarraysÃ‚â€� (as in Ã‚â€œarrays of headsÃ‚â€�. Cf: Ã‚â€�heads in corymbiform arrays.Ã‚â€�), Ã‚â€œseriesÃ‚â€�, etc.
+#Note: other Ãƒâ€šÃ¢â‚¬Å“clusterÃƒâ€šÃ¢â‚¬ï¿½ terms include Ãƒâ€šÃ¢â‚¬Å“arraysÃƒâ€šÃ¢â‚¬ï¿½ (as in Ãƒâ€šÃ¢â‚¬Å“arrays of headsÃƒâ€šÃ¢â‚¬ï¿½. Cf: Ãƒâ€šÃ¢â‚¬ï¿½heads in corymbiform arrays.Ãƒâ€šÃ¢â‚¬ï¿½), Ãƒâ€šÃ¢â‚¬Å“seriesÃƒâ€šÃ¢â‚¬ï¿½, etc.
 
 #in order to distinct case 1 and 2, need knowledge about the hierarchy of structures.
 #need records of adjectivesubjects (e.g. inner) to deal with cases such as  "apices of inner": modifiers table istypemodifier=1
@@ -2821,8 +2821,8 @@ sub choosesubstructure{
 	}
 
 	#check evidence 2: struct with substruct: blades <b>with</b> [bm?] margin
-	#e.g. <n>phyllaries</n> <b>many</b> <b>in</b>  <b>4 Ã‚â€“ 6 </b> series , unequal , <m>outer</m> and <m>mid </m><b>with</b> appressed <n>bases</n> and <b>spreading</b> , <b>lanceolate</b> to <b>ovate</b> , spiny_fringed , <n>terminal</n> appendages , <b>at</b> least <m>mid </m>spine_tipped , <m><b>innermost</b></m> <b>with</b> <b>erect</b> , <b>flat</b> , <b>entire</b> , <b>spineless</b> <n>apices</n> .
-	#<n>pappi</n> <b>fuscous</b> to <b>purplish</b> , <m>outer</m> scales  <b>25 Ã‚â€“ 30 , <</b> b> <b>0</</b> b> .  <b>2 Ã‚â€“ <</b> b> <b>1</</b> b> mm , contrasting <b>with</b>  <b>35 Ã‚â€“ 40 + , 5 Ã‚â€“ 7 + </b> mm <m>inner</m> <b>bristles</b> .
+	#e.g. <n>phyllaries</n> <b>many</b> <b>in</b>  <b>4 Ãƒâ€šÃ¢â‚¬â€œ 6 </b> series , unequal , <m>outer</m> and <m>mid </m><b>with</b> appressed <n>bases</n> and <b>spreading</b> , <b>lanceolate</b> to <b>ovate</b> , spiny_fringed , <n>terminal</n> appendages , <b>at</b> least <m>mid </m>spine_tipped , <m><b>innermost</b></m> <b>with</b> <b>erect</b> , <b>flat</b> , <b>entire</b> , <b>spineless</b> <n>apices</n> .
+	#<n>pappi</n> <b>fuscous</b> to <b>purplish</b> , <m>outer</m> scales  <b>25 Ãƒâ€šÃ¢â‚¬â€œ 30 , <</b> b> <b>0</</b> b> .  <b>2 Ãƒâ€šÃ¢â‚¬â€œ <</b> b> <b>1</</b> b> mm , contrasting <b>with</b>  <b>35 Ãƒâ€šÃ¢â‚¬â€œ 40 + , 5 Ãƒâ€šÃ¢â‚¬â€œ 7 + </b> mm <m>inner</m> <b>bristles</b> .
 	#
 	my $ptn = "(<[A-Z]>)*".$struct1."(</[A-Z]>)* <B>with</B> .* ?(<[A-Z]>)*".$struct2."(</[A-Z]>)*";
 	$sth = $dbh->prepare("select sentence from ".$prefix."_sentence where  (tag != 'ignore' or isnull(tag)) and  sentence rlike '$ptn' ");
@@ -3142,7 +3142,7 @@ sub pronouncharactersubject{
 	#	tagsentwmt($sentid, $sentence, $modifier, $tag, "pronouncharactersubject[pronoun subject]");
 	#}
 
-	#errous noun cases : ligules surpassing phyllaries by 15 Ã‚â€“ 20 mm
+	#errous noun cases : ligules surpassing phyllaries by 15 Ãƒâ€šÃ¢â‚¬â€œ 20 mm
 
 	$sth = $dbh->prepare("select sentid, sentence, tag from ".$prefix."_sentence where (tag != 'ignore' or isnull(tag)) and tag not rlike ' (and|nor|or) ' and tag not like '%[%' and sentence collate utf8_bin not rlike concat('^[^N]*<N>',tag) ");
 	$sth->execute() or print STDOUT "$sth->errstr\n";
@@ -6014,9 +6014,9 @@ while(defined ($file=readdir(IN))){
 		#remove bracketed text from sentence (keep those in originalsent);
 		#this step will not be able to remove nested brackets, such as (petioles (2-)4-8 cm).
 		#nested brackets will be removed after threedsent step in POSTagger4StanfordParser.java
-  		#s#\([^()]*?[a-zA-Z][^()]*?\)# #g;  #remove (.a.)
-  		#s#\[[^\]\[]*?[a-zA-Z][^\]\[]*?\]# #g;  #remove [.a.]
-  		#s#{[^{}]*?[a-zA-Z][^{}]*?}# #g; #remove {.a.}
+  		s#\([^()]*?[a-zA-Z][^()]*?\)# #g;  #remove (.a.)
+  		s#\[[^\]\[]*?[a-zA-Z][^\]\[]*?\]# #g;  #remove [.a.]
+  		s#{[^{}]*?[a-zA-Z][^{}]*?}# #g; #remove {.a.}
 
     	#s#([^\d])\s*-\s*([^\d])#\1_\2#g;         #hyphened words: - =>_ to avoid space padding in the next step
 		s#\s*[-]+\s*([a-z])#_\1#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+
@@ -6179,9 +6179,9 @@ sub getfirstnwords{
 }
 
 #extract the segment matching $line from $original, mainly to get original case and parentheses
-#$line: pappi , 20 ÃƒÂ¯Ã‚Â¿Ã…â€œ 40 mm , usually noticeably shorter than corolla .
-#$orginal:... Pappi (white or tawny), 20ÃƒÂ¯Ã‚Â¿Ã…â€œ40mm, usually noticeably shorter than corolla. ...
-#Pollen 70Ã‚â€“100% 3-porate, mean 25 Ã‚Âµm
+#$line: pappi , 20 ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€¦Ã¢â‚¬Å“ 40 mm , usually noticeably shorter than corolla .
+#$orginal:... Pappi (white or tawny), 20ÃƒÆ’Ã‚Â¯Ãƒâ€šÃ‚Â¿Ãƒâ€¦Ã¢â‚¬Å“40mm, usually noticeably shorter than corolla. ...
+#Pollen 70Ãƒâ€šÃ¢â‚¬â€œ100% 3-porate, mean 25 Ãƒâ€šÃ‚Âµm
 sub getOriginal{
 	my ($line, $original, $file) = @_;
 
