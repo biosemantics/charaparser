@@ -32,7 +32,7 @@ public class IPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 	}
 	
 	@Override
-	public void write(List<Treatment> treatments) throws Exception {
+	public void write(List<Treatment> treatments) throws Exception {		
 		JAXBContext jc = JAXBContext.newInstance("semanticMarkup.io.output.lib.iplant");
 		Marshaller m = jc.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);

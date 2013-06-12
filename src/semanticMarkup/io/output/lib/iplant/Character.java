@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import semanticMarkup.io.output.BooleanAdapter;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -77,6 +79,7 @@ public class Character {
     @XmlSchemaType(name = "anySimpleType")
     protected String from;
     @XmlAttribute(name = "from_inclusive")
+    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean fromInclusive;
     @XmlAttribute(name = "from_unit")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -86,6 +89,7 @@ public class Character {
     @XmlSchemaType(name = "anySimpleType")
     protected String geographicalConstraint;
     @XmlAttribute(name = "in_brackets")
+    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean inBrackets;
     @XmlAttribute(name = "modifier")
     @XmlSchemaType(name = "anySimpleType")
@@ -110,6 +114,7 @@ public class Character {
     @XmlSchemaType(name = "anySimpleType")
     protected String to;
     @XmlAttribute(name = "to_inclusive")
+    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean toInclusive;
     @XmlAttribute(name = "to_unit")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -122,6 +127,7 @@ public class Character {
     @XmlSchemaType(name = "anySimpleType")
     protected String unit;
     @XmlAttribute(name = "upper_restricted")
+    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean upperRestricted;
     @XmlAttribute(name = "value")
     @XmlSchemaType(name = "anySimpleType")
