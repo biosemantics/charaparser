@@ -1,7 +1,9 @@
 package semanticMarkup.ling.chunk.lib.chunker;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.know.IGlossary;
@@ -155,9 +157,11 @@ public class CharacterListChunker extends AbstractChunker {
 		stateList = stateList.replaceAll(" punct ", " , ");
 		
 		String[] modifierStateTokens = stateList.split("\\s");
+		List<String> modifierStateTokensList = Arrays.asList(modifierStateTokens);
 		//List<Chunk> modifierChunks = new LinkedList<Chunk>();
 		
 		terminal.setPOS(POS.ADJP);
+		
 		
 		AbstractParseTree modifiersTree = null;
 		AbstractParseTree statesTree = null;
@@ -171,11 +175,7 @@ public class CharacterListChunker extends AbstractChunker {
 		Chunk characterChunk = null;
 		LinkedHashSet<Chunk> toChunks = new LinkedHashSet<Chunk>();
 		boolean collectToChunks = false;
-		for(String modifierStateToken : modifierStateTokens) {
-			if(character.equals("coloration") && modifierStateToken.equals("with")) {
-				newState = false;
-			}
-			
+		for(String modifierStateToken : modifierStateTokensList) {			
 			if(newState) {
 				if(!stateChildChunks.isEmpty()) {
 					Chunk stateChunk = new Chunk(ChunkType.STATE, stateChildChunks);
@@ -291,8 +291,6 @@ public class CharacterListChunker extends AbstractChunker {
 					statesTree.addChild(stateTerminal);
 					Chunk stateChildChunk = stateTerminal;
 					stateChildChunks.add(stateChildChunk);
-					if(!modifierStateToken.equals("with"))
-						newState = true;
 				}
 			}
 		}

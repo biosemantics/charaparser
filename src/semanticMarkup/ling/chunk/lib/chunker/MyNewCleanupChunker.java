@@ -114,7 +114,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 					(constraintOrgan[i+1] || translateCharacterToConstraint[i+1]) && ((i-1 >= 0 && !modifier[i-1]) || i==0);
 				changedCharacterToConstraint |= translateCharacterToConstraint[i] != before;
 			}
-			log(LogLevel.DEBUG, "changedCharacterToConstraint " + changedCharacterToConstraint);
+			//log(LogLevel.DEBUG, "changedCharacterToConstraint " + changedCharacterToConstraint);
 			changed |= changedCharacterToConstraint;
 			
 			boolean changedStateToX = false;
