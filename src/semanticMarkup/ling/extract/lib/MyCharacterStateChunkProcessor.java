@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.core.description.DescriptionTreatmentElementType;
@@ -17,6 +20,7 @@ import semanticMarkup.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
+import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.transform.IInflector;
 
 import com.google.inject.Inject;
@@ -29,6 +33,7 @@ import com.google.inject.name.Named;
 public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 
 	private boolean attachToLast;
+	private Pattern hyphenedCharacterPattern = Pattern.compile("\\w+-(\\w+)");
 
 	/**
 	 * @param inflector
@@ -85,6 +90,17 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		String character = content.getPropertyBFS("characterName");
 		Chunk characterState = content.getChunkDFS(ChunkType.STATE);
 		String characterStateString = characterState.getTerminalsText();
+		
+		String characterStateText = characterState.getTerminalsText();
+		Matcher matcher = hyphenedCharacterPattern.matcher(characterStateText);
+		if(matcher.matches()) {
+			ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
+			int backupNextIndex = chunkListIterator.nextIndex();
+			String suffix = matcher.group(1);
+			results.addAll(findPreviousCharacterList(processingContext, character, suffix));
+			while(chunkListIterator.nextIndex() < backupNextIndex)
+				chunkListIterator.next();
+		}
 		
 		List<Chunk> characters = new ArrayList<Chunk>();
 		characters.add(content);
@@ -147,5 +163,61 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		unassignedModifiers.clear();
 		
 		return results;
+	}
+	
+
+	private List<DescriptionTreatmentElement> findPreviousCharacterList(ProcessingContext processingContext, String characterName, String suffix) {
+		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+		ListIterator<Chunk> listIterator = processingContext.getChunkListIterator();
+		listIterator.previous();
+		
+		while(true) {
+			if(listIterator.hasPrevious()) {
+				Chunk previousChunk = listIterator.previous();
+
+				if(previousChunk.isOfChunkType(ChunkType.OR) || previousChunk.isOfChunkType(ChunkType.AND) || 
+					previousChunk.isOfChunkType(ChunkType.COMMA)) {
+					continue;
+				} else if((previousChunk instanceof AbstractParseTree) && previousChunk.getTerminalsText().endsWith("-") && previousChunk.getTerminalsText().length() > 1) {
+					AbstractParseTree previousTerminal = (AbstractParseTree)previousChunk;
+					previousTerminal.setTerminalsText(previousTerminal.getTerminalsText() + suffix);
+					Chunk stateChunk = new Chunk(ChunkType.STATE, previousChunk);
+					Chunk characterStateChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
+					characterStateChunk.setProperty("characterName", characterName);
+					result.addAll(processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE).process(characterStateChunk, processingContext));
+				}
+			}
+			break;
+		}
+		
+		
+		//String previousElement = ""; //modifier, character, connector, hyphen
+		
+		
+		
+/*		while(true) {
+			if(listIterator.hasPrevious()) {
+				Chunk previousChunk = listIterator.previous();
+
+				if(previousChunk.isOfChunkType(ChunkType.OR) || previousChunk.isOfChunkType(ChunkType.AND) || 
+					previousChunk.isOfChunkType(ChunkType.COMMA)) {
+					previousElement = "connector";
+				} else if(previousChunk.getTerminalsText().equals("-")) {
+					previousElement = "hyphen";
+				} else if(previousChunk.getTerminalsText().endsWith("-")) {
+					Chunk characterChunk = new Chunk(ChunkType.CHARACTER_STATE, previousChunk);
+					characterChunk.setProperty("characterName", characterName);
+					result.addAll(processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE).process(characterChunk, processingContext));
+				} else if(previousChunk.isOfChunkType(ChunkType.UNASSIGNED) && previousElement.equals("hyphen")) {
+					
+					
+				} else {
+					break;
+				}
+			} else {
+				break;
+			}
+		}*/
+		return result;
 	}
 }
