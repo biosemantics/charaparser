@@ -6,7 +6,10 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.core.description.DescriptionTreatmentElementType;
@@ -30,6 +33,8 @@ import com.google.inject.name.Named;
  * @author rodenhausen
  */
 public class PPChunkProcessor extends AbstractChunkProcessor {
+
+	private Pattern hyphenedCharacterPattern = Pattern.compile("\\w+-(\\w+)");
 
 	/**
 	 * @param inflector
@@ -116,21 +121,24 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				lastChunkIsOrgan = afterOrganChunks.isEmpty() && foundOrgan;
 				
 				/*for(Chunk objectChunk : object.getChunks()) {
-					if(objectChunk.isOfChunkType(ChunkType.ORGAN)) {
-						lastChunkIsOrgan = true;
-						foundOrgan = true;
-						
-						organChunks.add(objectChunk);
-					} else {
-						lastChunkIsOrgan = false;
-						
-						if(foundOrgan)
-							afterOrganChunks.add(objectChunk);
-						else
-							beforeOrganChunks.add(objectChunk);
-					}
-				}*/
-				if(lastChunkIsOrgan) {
+				if(objectChunk.isOfChunkType(ChunkType.ORGAN)) {
+					lastChunkIsOrgan = true;
+					foundOrgan = true;
+					
+					organChunks.add(objectChunk);
+				} else {
+					lastChunkIsOrgan = false;
+					
+					if(foundOrgan)
+						afterOrganChunks.add(objectChunk);
+					else
+						beforeOrganChunks.add(objectChunk);
+				}
+			}*/
+				
+				if(preposition.getTerminalsText().equals("to") && !foundOrgan && containsCharacter(beforeOrganChunks)) {
+					result.addAll(connectCharacters(subjectStructures, unassignedModifiers, preposition, beforeOrganChunks, processingContext));
+				} else if(lastChunkIsOrgan) {
 					result.addAll(linkObjects(subjectStructures, modifier, preposition, aObject, lastIsStructure, lastIsCharacter, processingContext, processingContextState));
 				} else if(foundOrgan) {
 					LinkedHashSet<Chunk> objectChunks = new LinkedHashSet<Chunk>();
@@ -159,6 +167,56 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		}
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
+	}
+
+	private List<DescriptionTreatmentElement> connectCharacters(
+			LinkedList<DescriptionTreatmentElement> subjectStructures, List<Chunk> modifiers, 
+			Chunk preposition, LinkedHashSet<Chunk> beforeOrganChunks,
+			ProcessingContext processingContext) {
+		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
+		chunkListIterator.previous();
+		Chunk beforePPChunk = chunkListIterator.previous();
+	
+		Chunk characterStateChunk = null;
+		for(Chunk chunk : beforeOrganChunks) {
+			if(chunk.containsChunkType(ChunkType.CHARACTER_STATE)) {
+				characterStateChunk = chunk.getChunkDFS(ChunkType.CHARACTER_STATE);
+				break;
+			}
+		}
+		if(characterStateChunk != null) {
+			Matcher matcher = hyphenedCharacterPattern.matcher(characterStateChunk.getTerminalsText());
+			String characterSuffix = "";
+			if(matcher.matches()) {
+				characterSuffix = matcher.group(1);
+			}
+			
+			String beforePPChunkText = beforePPChunk.getTerminalsText();
+			matcher = hyphenedCharacterPattern.matcher(beforePPChunkText);
+			if(!matcher.matches()) {
+				if(beforePPChunkText.endsWith("-")) {
+					beforePPChunkText = beforePPChunkText + characterSuffix;
+				} else {
+					beforePPChunkText = beforePPChunkText + "-" + characterSuffix;
+				}
+			}
+			
+			String character = beforePPChunkText + " " + preposition.getTerminalsText() + " " + characterStateChunk.getTerminalsText();
+			String characterName = characterStateChunk.getProperty("characterName");
+			result.addAll(createRangeCharacterElement(subjectStructures, modifiers, character, characterName, processingContext.getCurrentState()));
+		}
+		chunkListIterator.next();
+		chunkListIterator.next();
+		return result;
+	}
+
+	private boolean containsCharacter(LinkedHashSet<Chunk> beforeOrganChunks) {
+		for(Chunk chunk : beforeOrganChunks) {
+			if(chunk.containsChunkType(ChunkType.CHARACTER_STATE))
+				return true;
+		}
+		return false;
 	}
 
 	private Set<Chunk> splitObject(Chunk object) {
