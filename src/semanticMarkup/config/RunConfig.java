@@ -81,6 +81,7 @@ public class RunConfig extends BasicConfig {
 	//ToStringVolumeWriter, JSONVolumeWriter, XMLVolumeWriter XML2VolumeWriter
 	
 	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
+	//FNAV19_AnsKey_CharaParser_Evaluation , TIP_AnsKey_CharaParser_Evaluation
 	private String databaseTablePrefix = "myrun";
 	private String glossaryType = "plant";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
@@ -217,13 +218,15 @@ public class RunConfig extends BasicConfig {
 					// if(file.equals("51.txt-13"))
 					//if(file.equals("15.txt-7") || file.equals("15.txt-11") || file.equals("148.txt-12"))
 					//if(file.equals("148.txt-12"))
+					//if(file.equals("132.txt-18"))
 						result.add(file);
 					// break; //TODO remove. only for test
 				}
 			}
 		}*/
+		//result.add("002.txt-4");
 		//result.add("006.txt-2");
-		result.add("005.txt-6");
+		//result.add("005.txt-4");
 		//result.add("005.txt-0");
 		//result.add("004.txt-4");
 		return result;

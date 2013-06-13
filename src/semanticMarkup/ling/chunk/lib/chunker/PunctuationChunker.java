@@ -56,12 +56,12 @@ public class PunctuationChunker extends AbstractChunker {
 				if(terminal.getTerminalsText().matches("\\.")) {
 					chunkCollector.addChunk(new Chunk(ChunkType.END_OF_SUBCLAUSE, terminal));
 				}
-				if(terminal.getTerminalsText().matches("\\W")) {
+				if(terminal.getTerminalsText().equals(";") || terminal.getTerminalsText().equals(".") || terminal.getTerminalsText().equals(",")) {
 					if(i==terminals.size()-1) 
 						chunkCollector.addChunk(new Chunk(ChunkType.END_OF_LINE, terminal));
 					else if(lastWasMainSubjectOrgan)
 						chunkCollector.addChunk(new Chunk(ChunkType.END_OF_SUBCLAUSE, terminal));
-					else
+					else if(terminal.getTerminalsText().equals(","))
 						chunkCollector.addChunk(new Chunk(ChunkType.COMMA, terminal));
 				}
 			}

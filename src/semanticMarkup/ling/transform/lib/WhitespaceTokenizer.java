@@ -14,7 +14,7 @@ import semanticMarkup.ling.transform.ITokenizer;
  */
 public class WhitespaceTokenizer implements ITokenizer {
 
-	private Pattern wordPunctuationPattern = Pattern.compile("(.+)(\\W+)");
+	private Pattern wordPunctuationPattern = Pattern.compile("(.+)([\\!,\\.:;\\?])");
 	
 	@Override
 	public List<Token> tokenize(String text) {

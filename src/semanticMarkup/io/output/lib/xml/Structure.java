@@ -19,6 +19,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import semanticMarkup.io.output.BooleanAdapter;
+
 
 /**
  * <p>Java class for anonymous complex type.
@@ -78,8 +80,10 @@ public class Structure {
     @XmlSchemaType(name = "NCName")
     protected String id;
     @XmlAttribute(name = "in_bracket")
+    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean inBracket;
     @XmlAttribute(name = "in_brackets")
+    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean inBrackets;
     @XmlAttribute(name = "name", required = true)
     @XmlSchemaType(name = "anySimpleType")

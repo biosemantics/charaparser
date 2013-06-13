@@ -29,18 +29,27 @@ import semanticMarkup.io.output.BooleanAdapter;
  * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="alter_name" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
- *       &lt;attribute name="from" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
+ *       &lt;attribute name="char_type" type="{http://www.w3.org/2001/XMLSchema}NCName" />
+ *       &lt;attribute name="constraint" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="constraintid" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="from" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="from_inclusive" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="from_unit" type="{http://www.w3.org/2001/XMLSchema}NCName" />
  *       &lt;attribute name="geographical_constraint" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
  *       &lt;attribute name="in_brackets" type="{http://www.w3.org/2001/XMLSchema}boolean" />
  *       &lt;attribute name="modifier" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
- *       &lt;attribute name="negation" use="required" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
  *       &lt;attribute name="organ_constraint" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="other_constraint" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
  *       &lt;attribute name="parallelism_constraint" type="{http://www.w3.org/2001/XMLSchema}NCName" />
  *       &lt;attribute name="taxon_constraint" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
- *       &lt;attribute name="to" use="required" type="{http://www.w3.org/2001/XMLSchema}NCName" />
+ *       &lt;attribute name="to" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="to_inclusive" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="to_unit" type="{http://www.w3.org/2001/XMLSchema}NCName" />
+ *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="unit" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="upper_restricted" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
  *       &lt;attribute name="ontologyid" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="provenance" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="notes" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -53,37 +62,45 @@ import semanticMarkup.io.output.BooleanAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "relation")
-public class Relation {
+@XmlRootElement(name = "character")
+public class RangeValueCharacter {
 
-    @XmlAttribute(name = "alter_name")
-    @XmlSchemaType(name = "anySimpleType")
-    protected String alterName;
-    @XmlAttribute(name = "from", required = true)
+    @XmlAttribute(name = "char_type")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "NCName")
+    protected String charType;
+    @XmlAttribute(name = "constraint")
+    @XmlSchemaType(name = "anySimpleType")
+    protected String constraint;
+    @XmlAttribute(name = "constraintid")
+    @XmlSchemaType(name = "anySimpleType")
+    protected String constraintid;
+    @XmlAttribute(name = "from")
+    @XmlSchemaType(name = "anySimpleType")
     protected String from;
+    @XmlAttribute(name = "from_inclusive")
+    protected Boolean fromInclusive;
+    @XmlAttribute(name = "from_unit")
+    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    @XmlSchemaType(name = "NCName")
+    protected String fromUnit;
     @XmlAttribute(name = "geographical_constraint")
     @XmlSchemaType(name = "anySimpleType")
     protected String geographicalConstraint;
-    @XmlAttribute(name = "id", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "NCName")
-    protected String id;
     @XmlAttribute(name = "in_brackets")
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean inBrackets;
     @XmlAttribute(name = "modifier")
     @XmlSchemaType(name = "anySimpleType")
     protected String modifier;
-    @XmlAttribute(name = "name", required = true)
+    @XmlAttribute(name = "name")
     @XmlSchemaType(name = "anySimpleType")
     protected String name;
-    @XmlAttribute(name = "negation", required = true)
-    protected boolean negation;
     @XmlAttribute(name = "organ_constraint")
     @XmlSchemaType(name = "anySimpleType")
     protected String organConstraint;
+    @XmlAttribute(name = "other_constraint")
+    @XmlSchemaType(name = "anySimpleType")
+    protected String otherConstraint;
     @XmlAttribute(name = "parallelism_constraint")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "NCName")
@@ -91,10 +108,26 @@ public class Relation {
     @XmlAttribute(name = "taxon_constraint")
     @XmlSchemaType(name = "anySimpleType")
     protected String taxonConstraint;
-    @XmlAttribute(name = "to", required = true)
+    @XmlAttribute(name = "to")
+    @XmlSchemaType(name = "anySimpleType")
+    protected String to;
+    @XmlAttribute(name = "to_inclusive")
+    protected Boolean toInclusive;
+    @XmlAttribute(name = "to_unit")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "NCName")
-    protected String to;
+    protected String toUnit;
+    @XmlAttribute(name = "type")
+    @XmlSchemaType(name = "anySimpleType")
+    protected String type;
+    @XmlAttribute(name = "unit")
+    @XmlSchemaType(name = "anySimpleType")
+    protected String unit;
+    @XmlAttribute(name = "upper_restricted")
+    protected Boolean upperRestricted;
+    @XmlAttribute(name = "value")
+    @XmlSchemaType(name = "anySimpleType")
+    protected String value;
     @XmlAttribute(name = "ontologyid")
     protected String ontologyid;
     @XmlAttribute(name = "provenance")
@@ -103,27 +136,75 @@ public class Relation {
     protected String notes;
 
     /**
-     * Gets the value of the alterName property.
+     * Gets the value of the charType property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getAlterName() {
-        return alterName;
+    public String getCharType() {
+        return charType;
     }
 
     /**
-     * Sets the value of the alterName property.
+     * Sets the value of the charType property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setAlterName(String value) {
-        this.alterName = value;
+    public void setCharType(String value) {
+        this.charType = value;
+    }
+
+    /**
+     * Gets the value of the constraint property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * Sets the value of the constraint property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setConstraint(String value) {
+        this.constraint = value;
+    }
+
+    /**
+     * Gets the value of the constraintid property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getConstraintid() {
+        return constraintid;
+    }
+
+    /**
+     * Sets the value of the constraintid property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setConstraintid(String value) {
+        this.constraintid = value;
     }
 
     /**
@@ -151,6 +232,54 @@ public class Relation {
     }
 
     /**
+     * Gets the value of the fromInclusive property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isFromInclusive() {
+        return fromInclusive;
+    }
+
+    /**
+     * Sets the value of the fromInclusive property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setFromInclusive(Boolean value) {
+        this.fromInclusive = value;
+    }
+
+    /**
+     * Gets the value of the fromUnit property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFromUnit() {
+        return fromUnit;
+    }
+
+    /**
+     * Sets the value of the fromUnit property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFromUnit(String value) {
+        this.fromUnit = value;
+    }
+
+    /**
      * Gets the value of the geographicalConstraint property.
      * 
      * @return
@@ -172,30 +301,6 @@ public class Relation {
      */
     public void setGeographicalConstraint(String value) {
         this.geographicalConstraint = value;
-    }
-
-    /**
-     * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setId(String value) {
-        this.id = value;
     }
 
     /**
@@ -271,22 +376,6 @@ public class Relation {
     }
 
     /**
-     * Gets the value of the negation property.
-     * 
-     */
-    public boolean isNegation() {
-        return negation;
-    }
-
-    /**
-     * Sets the value of the negation property.
-     * 
-     */
-    public void setNegation(boolean value) {
-        this.negation = value;
-    }
-
-    /**
      * Gets the value of the organConstraint property.
      * 
      * @return
@@ -308,6 +397,30 @@ public class Relation {
      */
     public void setOrganConstraint(String value) {
         this.organConstraint = value;
+    }
+
+    /**
+     * Gets the value of the otherConstraint property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOtherConstraint() {
+        return otherConstraint;
+    }
+
+    /**
+     * Sets the value of the otherConstraint property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOtherConstraint(String value) {
+        this.otherConstraint = value;
     }
 
     /**
@@ -380,6 +493,150 @@ public class Relation {
      */
     public void setTo(String value) {
         this.to = value;
+    }
+
+    /**
+     * Gets the value of the toInclusive property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isToInclusive() {
+        return toInclusive;
+    }
+
+    /**
+     * Sets the value of the toInclusive property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setToInclusive(Boolean value) {
+        this.toInclusive = value;
+    }
+
+    /**
+     * Gets the value of the toUnit property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getToUnit() {
+        return toUnit;
+    }
+
+    /**
+     * Sets the value of the toUnit property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setToUnit(String value) {
+        this.toUnit = value;
+    }
+
+    /**
+     * Gets the value of the type property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setType(String value) {
+        this.type = value;
+    }
+
+    /**
+     * Gets the value of the unit property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUnit() {
+        return unit;
+    }
+
+    /**
+     * Sets the value of the unit property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUnit(String value) {
+        this.unit = value;
+    }
+
+    /**
+     * Gets the value of the upperRestricted property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isUpperRestricted() {
+        return upperRestricted;
+    }
+
+    /**
+     * Sets the value of the upperRestricted property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setUpperRestricted(Boolean value) {
+        this.upperRestricted = value;
+    }
+
+    /**
+     * Gets the value of the value property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Sets the value of the value property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**

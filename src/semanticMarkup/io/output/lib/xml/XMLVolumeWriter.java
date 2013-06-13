@@ -163,6 +163,8 @@ public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 				List<Character> newCharacterList = newStructure.getCharacter();
 				for(TreatmentElement character : structureElement.getTreatmentElements(DescriptionTreatmentElementType.CHARACTER.toString())) {
 					DescriptionTreatmentElement characterElement = (DescriptionTreatmentElement)character;
+					//if(character.getCh
+					
 					Character newCharacter = new Character();
 					newCharacter.setCharType(characterElement.getAttribute("char_type"));
 					newCharacter.setConstraint(characterElement.getAttribute("constraint"));
