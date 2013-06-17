@@ -152,8 +152,8 @@ public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 				newStructure.setAlterName(structureElement.getAttribute("alter_name"));
 				newStructure.setConstraintid(structureElement.getAttribute("constraintid"));
 				newStructure.setGeographicalConstraint(structureElement.getAttribute("geographical_constraint"));
-				newStructure.setInBracket(Boolean.valueOf(structureElement.getAttribute("in_bracket")));
-				newStructure.setInBrackets(Boolean.valueOf(structureElement.getAttribute("in_brackets")));
+				newStructure.setInBracket(getBooleanFromString(structureElement.getAttribute("in_bracket")));
+				newStructure.setInBrackets(getBooleanFromString(structureElement.getAttribute("in_brackets")));
 				newStructure.setNotes(structureElement.getAttribute("notes"));
 				newStructure.setOntologyid(structureElement.getAttribute("ontologyid"));
 				newStructure.setParallelismConstraint(structureElement.getAttribute("parallelism_constraint"));
@@ -170,10 +170,10 @@ public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 					newCharacter.setConstraint(characterElement.getAttribute("constraint"));
 					newCharacter.setConstraintid(characterElement.getAttribute("constraintid"));
 					newCharacter.setFrom(characterElement.getAttribute("from"));
-					newCharacter.setFromInclusive(Boolean.valueOf(characterElement.getAttribute("from_inclusive")));
+					newCharacter.setFromInclusive(getBooleanFromString(characterElement.getAttribute("from_inclusive")));
 					newCharacter.setFromUnit(characterElement.getAttribute("from_unit"));
 					newCharacter.setGeographicalConstraint(characterElement.getAttribute("geographical_constraint"));
-					newCharacter.setInBrackets(Boolean.valueOf(characterElement.getAttribute("in_brackets")));
+					newCharacter.setInBrackets(getBooleanFromString(characterElement.getAttribute("in_brackets")));
 					newCharacter.setModifier(characterElement.getAttribute("modifier"));
 					newCharacter.setName(characterElement.getAttribute("name"));
 					newCharacter.setNotes(characterElement.getAttribute("notes"));
@@ -184,11 +184,11 @@ public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 					newCharacter.setProvenance(characterElement.getAttribute("provenance"));
 					newCharacter.setTaxonConstraint(characterElement.getAttribute("taxon_constraint"));
 					newCharacter.setTo(characterElement.getAttribute("to"));
-					newCharacter.setToInclusive(Boolean.valueOf(characterElement.getAttribute("to_inclusive")));
+					newCharacter.setToInclusive(getBooleanFromString(characterElement.getAttribute("to_inclusive")));
 					newCharacter.setToUnit(characterElement.getAttribute("to_unit"));
 					newCharacter.setType(characterElement.getAttribute("type"));
 					newCharacter.setUnit(characterElement.getAttribute("unit"));
-					newCharacter.setUpperRestricted(Boolean.valueOf(characterElement.getAttribute("upper_restricted")));
+					newCharacter.setUpperRestricted(getBooleanFromString(characterElement.getAttribute("upper_restricted")));
 					newCharacter.setValue(characterElement.getAttribute("value"));    
 					newCharacterList.add(newCharacter);
 				}
@@ -203,10 +203,10 @@ public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 				newRelation.setFrom(relationElement.getAttribute("from"));
 				newRelation.setGeographicalConstraint(relationElement.getAttribute("geographical_constraint"));
 				newRelation.setId(relationElement.getAttribute("id"));
-				newRelation.setInBrackets(Boolean.valueOf(relationElement.getAttribute("in_brackets")));
+				newRelation.setInBrackets(getBooleanFromString(relationElement.getAttribute("in_brackets")));
 				newRelation.setModifier(relationElement.getAttribute("modifier"));
 				newRelation.setName(relationElement.getAttribute("name"));
-				newRelation.setNegation(Boolean.valueOf(relationElement.getAttribute("negation")));
+				newRelation.setNegation(getBooleanFromString(relationElement.getAttribute("negation")));
 				newRelation.setNotes(relationElement.getAttribute("notes"));
 				newRelation.setOntologyid(relationElement.getAttribute("ontologyid"));
 				newRelation.setOrganConstraint(relationElement.getAttribute("organ_constraint"));
@@ -220,5 +220,14 @@ public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 			newStatements.add(newStatement);
 		}
 		xmlTreatmentContent.add(newDescription);
+	}
+	
+	private Boolean getBooleanFromString(String string) {
+		Boolean result = null;
+		if(string == null)
+			return result;
+		if(string.equals("true") || string.equals("false"))
+			result = Boolean.valueOf(string);
+		return result;
 	}
 }

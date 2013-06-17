@@ -71,7 +71,6 @@ public class Relation {
     @XmlSchemaType(name = "NCName")
     protected String id;
     @XmlAttribute(name = "in_brackets")
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected Boolean inBrackets;
     @XmlAttribute(name = "modifier")
     @XmlSchemaType(name = "anySimpleType")
@@ -80,7 +79,6 @@ public class Relation {
     @XmlSchemaType(name = "anySimpleType")
     protected String name;
     @XmlAttribute(name = "negation", required = true)
-    @XmlJavaTypeAdapter(BooleanAdapter.class)
     protected boolean negation;
     @XmlAttribute(name = "organ_constraint")
     @XmlSchemaType(name = "anySimpleType")
