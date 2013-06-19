@@ -157,8 +157,12 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		//String glossaryTable = tablePrefix + "_glossary";
 		//if(!glossaryExistsLocally(tablePrefix)) {
 		
-		GlossaryDownload glossaryDownload = otoClient.download(glossaryType); 
-		String glossaryVersion = glossaryDownload.getVersion();
+		String glossaryVersion = getGlossaryVersionOfLearn();
+		if(glossaryVersion == null)
+			glossaryVersion = "latest";
+		
+		GlossaryDownload glossaryDownload = otoClient.download(glossaryType, glossaryVersion); 
+		glossaryVersion = glossaryDownload.getVersion();
 		for(Treatment treatment : treatments) {
 			if(!treatment.containsContainerTreatmentElement("meta"))
 				treatment.addTreatmentElement(new ContainerTreatmentElement("meta"));
@@ -195,6 +199,24 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		// do the actual markup
 		markupDescriptions(treatments, sentencesForOrganStateMarker);		
 		return treatments;
+	}
+
+	private String getGlossaryVersionOfLearn() {
+		String glossaryVersion = null;
+		try {
+			String sql = "SELECT glossary_version FROM datasetprefixes WHERE prefix = ?";
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, databasePrefix);
+			preparedStatement.execute();
+			ResultSet resultSet = preparedStatement.getResultSet();
+			
+			while(resultSet.next()) {
+				glossaryVersion = resultSet.getString("glossary_version");
+			}
+		} catch (SQLException e) {
+			log(LogLevel.ERROR, "Could not read glossary version used for learning", e);
+		}
+		return glossaryVersion;
 	}
 
 	private int readUploadId() throws SQLException {

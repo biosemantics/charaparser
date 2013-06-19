@@ -127,10 +127,11 @@ public class OTOLearner implements ILearner {
 		
 		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
 		//iplant environment, hence the dependency on mysql can for iplant not completely be removed
-		String sql = "UPDATE datasetprefixes SET oto_uploadid = ? WHERE prefix = ?";
+		String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, glossary_version = ? WHERE prefix = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.setInt(1, uploadId);
-		preparedStatement.setString(2, databasePrefix);
+		preparedStatement.setString(2, glossaryDownload.getVersion());
+		preparedStatement.setString(3, databasePrefix);
 		preparedStatement.execute();
 		
 		//store URL that uses upload id in a local file so that user can look it up
