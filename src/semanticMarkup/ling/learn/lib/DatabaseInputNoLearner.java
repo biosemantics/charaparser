@@ -38,7 +38,6 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 			@Named("databaseHost") String databaseHost,
 			@Named("databasePort") String databasePort,
 			@Named("databaseName") String databaseName,
-			@Named("GlossaryTable") String glossaryTable,
 			@Named("databasePrefix") String databasePrefix, 
 			@Named("databaseUser") String databaseUser, 
 			@Named("databasePassword") String databasePassword, 
@@ -47,12 +46,12 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer, 
 			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
-		super(temporaryPath, markupMode, databaseHost, databasePort, databaseName, glossaryTable,
+		super(temporaryPath, markupMode, databaseHost, databasePort, databaseName,
 				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer, parentTagProvider);
 	}
 	
 	@Override
-	public void learn(List<Treatment> treatments) { 
+	public void learn(List<Treatment> treatments, String glossaryTable) { 
 		int i = 0;
 		for(Treatment treatment : treatments) {
 			String prefix = intToString(i++, Math.max(String.valueOf(treatments.size()).length(), 3));

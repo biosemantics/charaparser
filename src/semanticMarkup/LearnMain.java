@@ -9,6 +9,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
+import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
@@ -152,6 +153,7 @@ public class LearnMain extends CLIMain {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
+		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionTreatmentTransformer.class);
 		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);

@@ -65,7 +65,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private ITokenizer tokenizer;
 	private Set<String> stopWords;
 	private Set<String> selectedSources;
-	private String glossaryTable;
 	protected Map<String, Treatment> fileTreatments = new HashMap<String, Treatment>();
 	private ParentTagProvider parentTagProvider;
 	private String databaseHost;
@@ -91,7 +90,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("databaseHost") String databaseHost,
 			@Named("databasePort") String databasePort,
 			@Named("databaseName") String databaseName,
-			@Named("GlossaryTable") String glossaryTable,
 			@Named("databasePrefix") String databasePrefix, 
 			@Named("databaseUser") String databaseUser, 
 			@Named("databasePassword") String databasePassword, 
@@ -107,7 +105,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.tokenizer = tokenizer;
 		this.stopWords = stopWords;
 		this.selectedSources = selectedSources;
-		this.glossaryTable = glossaryTable;
 		this.parentTagProvider = parentTagProvider;
 		this.databaseHost = databaseHost;
 		this.databasePort = databasePort;
@@ -122,7 +119,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	
 	
 	@Override
-	public void learn(List<Treatment> treatments) {
+	public void learn(List<Treatment> treatments, String glossaryTable) {
 		File directory = new File(temporaryPath);
 		
 		try {
@@ -133,7 +130,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			writeTreatmentsToFiles(treatments, inDirectory);
 			
 			//run the perl script	
-			runPerl(inDirectory, treatments);
+			runPerl(inDirectory, treatments, glossaryTable);
 			
 			this.readResults(treatments);
 			
@@ -533,9 +530,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return this.heuristicNouns;
 	}
 	
-	private void runPerl(File inDirectory, List<Treatment> treatments) throws Exception {
+	private void runPerl(File inDirectory, List<Treatment> treatments, String glossaryTable) throws Exception {
 		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "//"
-				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix + " " + this.glossaryTable;
+				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix
+				+ " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
 		createTablesNeededForPerl(treatments);
 		runCommand(command);

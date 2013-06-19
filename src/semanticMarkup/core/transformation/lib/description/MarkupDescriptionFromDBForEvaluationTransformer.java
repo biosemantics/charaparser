@@ -32,6 +32,9 @@ import com.google.inject.name.Named;
  */
 public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescriptionTreatmentTransformer {
 
+	private String glossaryTable;
+
+
 	@Inject
 	public MarkupDescriptionFromDBForEvaluationTransformer(
 			@Named("Version") String version,
@@ -56,14 +59,16 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 			@Named("databasePrefix")String databasePrefix, 
 			@Named("glossaryType")String glossaryType,
 			IGlossary glossary, 
-			@Named("selectedSources")Set<String> selectedSources)
+			@Named("selectedSources")Set<String> selectedSources, 
+			@Named("GlossaryTable")String glossaryTable)
 			throws Exception {
 		super(version, wordTokenizer, parser, chunkerChain, posTagger, descriptionExtractor,
 				normalizer, terminologyLearner, parallelProcessing,
 				descriptionExtractorRunMaximum, sentenceChunkerRunMaximum, otoClient,
 				otoLiteClient, otoLiteTermReviewURL, databaseHost, databasePort,
 				databaseName, databaseUser, databasePassword, databasePrefix,
-				glossaryType, glossary, selectedSources);
+				glossaryType, glossary, selectedSources, glossaryTable);
+		this.glossaryTable = glossaryTable;
 	}
 
 
@@ -87,7 +92,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 		*/
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place
-		terminologyLearner.learn(treatments);
+		terminologyLearner.learn(treatments, glossaryTable);
 		terminologyLearner.readResults(treatments);
 		Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker = terminologyLearner.getSentencesForOrganStateMarker();
 		// do the actual markup

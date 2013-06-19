@@ -3,6 +3,7 @@ package semanticMarkup.ling.learn.lib;
 import java.io.File;
 import java.io.FileWriter;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -107,15 +108,19 @@ public class OTOLearner implements ILearner {
 	public void learn() throws Exception {
 		List<Treatment> treatments = volumeReader.read();
 		
-		//no prefix, simply use the glossary 
-		GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
-		//initialize the glossary table that the actual learn part needs
-		storeInLocalDB(glossaryDownload);
-
+		//TODO: String version = otoClient.getLatestVersion();
+		//String tablePrefix = glossaryType + "_" + glossaryDownload.getVersion();
+		//String glossaryTable = tablePrefix + "_glossary";
+		//if(!glossaryExistsLocally(tablePrefix)) {
+			GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
+			//initialize the glossary table that the actual learn part needs
+			storeInLocalDB(glossaryDownload, this.databasePrefix);
+		//}
+		
 		//not really needed for learning part the in-memory glossary, not before markup step
 		//initGlossary(otoGlossary);
 		
-		terminologyLearner.learn(treatments);
+		terminologyLearner.learn(treatments, glossaryTable);
 		
 		//upload to OTO lite
 		int uploadId = otoLiteClient.upload(readUpload());
@@ -148,7 +153,7 @@ public class OTOLearner implements ILearner {
 	}
 */
 	
-	private void storeInLocalDB(GlossaryDownload glossaryDownload) {
+	private void storeInLocalDB(GlossaryDownload glossaryDownload, String tablePrefix) {
 		List<WordRole> wordRoles = new LinkedList<WordRole>();
 		HashSet<String> wordSet = new HashSet<String>();
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
@@ -168,46 +173,47 @@ public class OTOLearner implements ILearner {
 			wordRoles.add(wordRole);
 		}
 		
+
 		try {
 			Statement stmt = connection.createStatement();
 	        String cleanupQuery = "DROP TABLE IF EXISTS " + 
-									this.databasePrefix + "_term_category, " + 
-									this.databasePrefix + "_syns, " +
-									this.databasePrefix + "_wordroles, " +
+									tablePrefix + "_term_category, " + 
+									tablePrefix + "_syns, " +
+									tablePrefix + "_wordroles, " +
 									this.glossaryTable + ";";
 	        stmt.execute(cleanupQuery);
-	        stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+	        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
+			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
+			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
 					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`));");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+			stmt.execute("CREATE TABLE IF NOT EXISTS " + glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
 			
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
+			PreparedStatement statement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
 			
 			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
 				preparedStatement.setString(1, termCategory.getTerm());
 				preparedStatement.setString(2, termCategory.getCategory());
 				preparedStatement.setBoolean(3, termCategory.isHasSyn());
 				preparedStatement.executeUpdate();
 			}
 			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.glossaryTable + " (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");	
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + glossaryTable + " (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");	
 				preparedStatement.setString(1, termCategory.getTerm());
 				preparedStatement.setString(2, termCategory.getCategory());
 				preparedStatement.setBoolean(3, termCategory.isHasSyn());
 				preparedStatement.executeUpdate();
 			}
 			for(TermSynonym termSynonym : glossaryDownload.getTermSynonyms()) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
 				preparedStatement.setString(1, termSynonym.getTerm());
 				preparedStatement.setString(2, termSynonym.getSynonym());
 				preparedStatement.executeUpdate();
 			}
 			for(WordRole wordRole : wordRoles) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES (?, ?, ?)");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)");
 				preparedStatement.setString(1, wordRole.getWord());
 				preparedStatement.setString(2, wordRole.getSemanticRole());
 				preparedStatement.setString(3, wordRole.getSavedid());
@@ -216,6 +222,18 @@ public class OTOLearner implements ILearner {
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
 		}
+	}
+
+	private boolean glossaryExistsLocally(String tablePrefix) throws SQLException {
+		DatabaseMetaData metadata = connection.getMetaData();
+		boolean result = true;
+		ResultSet resultSet = metadata.getTables(null, null, tablePrefix + "_term_category", null);
+		result &= resultSet.next();
+		resultSet = metadata.getTables(null, null, tablePrefix + "_syns", null);
+		result &= resultSet.next();
+		resultSet = metadata.getTables(null, null, tablePrefix + "_wordroles", null);
+		result &= resultSet.next();
+		return result;
 	}
 
 	private Upload readUpload() {

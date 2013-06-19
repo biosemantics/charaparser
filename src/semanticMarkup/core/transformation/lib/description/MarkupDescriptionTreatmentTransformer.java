@@ -73,6 +73,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	protected IOTOLiteClient otoLiteClient;
 	protected String otoLiteTermReviewURL;
 	protected Set<String> selectedSources;
+	private String glossaryTable;
 	
 	/**
 	 * @param wordTokenizer
@@ -117,7 +118,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			@Named("databasePrefix")String databasePrefix, 
 			@Named("glossaryType")String glossaryType,
 			IGlossary glossary, 
-			@Named("selectedSources")Set<String> selectedSources) throws Exception {
+			@Named("selectedSources")Set<String> selectedSources, 
+			@Named("GlossaryTable")String glossaryTable) throws Exception {
 		super(version, parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -135,6 +137,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.glossary = glossary;
 		this.glossaryType = glossaryType;
 		this.selectedSources = selectedSources;
+		this.glossaryTable = glossaryTable;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
@@ -143,9 +146,17 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 
 	@Override
 	public List<Treatment> transform(List<Treatment> treatments) {
+		
+		
 		//download gloss again from real OTO because the last download is no longer in memory
 		//it is possible for gloss o change from last run, make sure to grab the correct version.
 		//when remove MYSQL, take care of this issue
+		
+		//TODO: String version = otoClient.getLatestVersion();
+		//String tablePrefix = glossaryType + "_" + glossaryDownload.getVersion();
+		//String glossaryTable = tablePrefix + "_glossary";
+		//if(!glossaryExistsLocally(tablePrefix)) {
+		
 		GlossaryDownload glossaryDownload = otoClient.download(glossaryType); 
 		String glossaryVersion = glossaryDownload.getVersion();
 		for(Treatment treatment : treatments) {
@@ -173,12 +184,12 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
 				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
 				"Number of term synonym relations " + download.getSynonyms().size());
-		storeInLocalDB(glossaryDownload, download);
+		storeInLocalDB(glossaryDownload, download, this.databasePrefix);
 		initGlossary(glossaryDownload, download);
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place
-		terminologyLearner.learn(treatments);
+		terminologyLearner.learn(treatments, glossaryTable);
 		terminologyLearner.readResults(treatments);
 		Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker = terminologyLearner.getSentencesForOrganStateMarker();
 		// do the actual markup
@@ -213,7 +224,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		}
 	}
 	
-	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download) {
+	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 
+			String tablePrefix) {
 		List<TermCategory> termCategories = new ArrayList<TermCategory>();
 		List<WordRole> wordRoles = new ArrayList<WordRole>();
 		List<TermSynonym> termSynonyms = new ArrayList<TermSynonym>();
@@ -262,31 +274,31 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		try {
 			Statement stmt = connection.createStatement();
 	        String cleanupQuery = "DROP TABLE IF EXISTS " + 
-									this.databasePrefix + "_term_category, " + 
-									this.databasePrefix + "_syns, " +
-									this.databasePrefix + "_wordroles;";
+									tablePrefix + "_term_category, " + 
+									tablePrefix + "_syns, " +
+									tablePrefix + "_wordroles;";
 	        stmt.execute(cleanupQuery);
-	        stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+	        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
+			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + this.databasePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
+			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
 					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`));");
 			
 			for(TermCategory termCategory : termCategories) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
 				preparedStatement.setString(1, termCategory.getTerm());
 				preparedStatement.setString(2, termCategory.getCategory());
 				preparedStatement.setBoolean(3, termCategory.isHasSyn());
 				preparedStatement.executeUpdate();
 			}
 			for(TermSynonym termSynonym : termSynonyms) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
 				preparedStatement.setString(1, termSynonym.getTerm());
 				preparedStatement.setString(2, termSynonym.getSynonym());
 				preparedStatement.executeUpdate();
 			}
 			for(WordRole wordRole : wordRoles) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + this.databasePrefix + "_wordroles" + " VALUES (?, ?, ?)");
+				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)");
 				preparedStatement.setString(1, wordRole.getWord());
 				preparedStatement.setString(2, wordRole.getSemanticRole());
 				preparedStatement.setString(3, wordRole.getSavedid());

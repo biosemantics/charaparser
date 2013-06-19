@@ -18,6 +18,7 @@ public class Learner implements ILearner {
 
 	private IVolumeReader volumeReader;
 	private ITerminologyLearner terminologyLearner;
+	private String glossaryTable;
 
 	/**
 	 * @param volumeReader
@@ -25,15 +26,17 @@ public class Learner implements ILearner {
 	 */
 	@Inject
 	public Learner(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
-			ITerminologyLearner terminologyLearner) {	
+			ITerminologyLearner terminologyLearner, 
+			@Named("GlossaryTable") String glossaryTable) {	
 		this.volumeReader = volumeReader;
 		this.terminologyLearner = terminologyLearner;
+		this.glossaryTable = glossaryTable;
 	}
 
 	@Override
 	public void learn() throws Exception {
 		List<Treatment> treatments = this.volumeReader.read();
-		this.terminologyLearner.learn(treatments);
+		this.terminologyLearner.learn(treatments, glossaryTable);
 	}
 
 	@Override

@@ -48,6 +48,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 	private MainForm mainForm;
 	private Map<Treatment, Future<TreatmentElement>> futureNewDescriptions = new HashMap<Treatment, Future<TreatmentElement>>();
 	private Set<String> selectedSources;
+	private String glossaryTable;
 
 	/**
 	 * @param wordTokenizer
@@ -77,7 +78,8 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
 			MainForm mainForm, 
-			@Named("selectedSources")Set<String> selectedSources) throws Exception {
+			@Named("selectedSources")Set<String> selectedSources, 
+			@Named("GlossaryTable")String glossaryTable) throws Exception {
 		super(version, parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -90,6 +92,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
 		this.mainForm = mainForm;
 		this.selectedSources = selectedSources;
+		this.glossaryTable = glossaryTable;
 	}
 
 	@Override
@@ -98,7 +101,7 @@ public class GUIDescriptionTreatmentTransformer extends DescriptionTreatmentTran
 		mainForm.startMarkup(treatments);
 		
 		// learn terminology
-		terminologyLearner.learn(treatments);
+		terminologyLearner.learn(treatments, glossaryTable);
 		
 		// show main form to correct/extend learned terminology
 		try {

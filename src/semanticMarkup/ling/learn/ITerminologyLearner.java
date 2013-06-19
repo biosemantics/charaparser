@@ -17,7 +17,7 @@ public interface ITerminologyLearner {
 	 * Learns the terminology used in the treatments
 	 * @param treatments
 	 */
-	public void learn(List<Treatment> treatments);
+	public void learn(List<Treatment> treatments, String glossaryTable);
 	
 	/**
 	 * Reads the results for the treatments, so that any other function returns the 'freshest' results
