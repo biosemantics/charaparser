@@ -47,6 +47,12 @@ and configure your Eclipse project to be a Maven and AspectJ Project.
 
 Sources are built for Java compiler compliance level 1.7.
 
+Software Dependencies
+----------
+In its current version, CharaParser dependes on the following additional Software.
+* MySQL
+* Perl
+* WordNet<
 
 JavaDoc
 ----------
