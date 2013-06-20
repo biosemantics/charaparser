@@ -188,7 +188,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
 				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
 				"Number of term synonym relations " + download.getSynonyms().size());
-		storeInLocalDB(glossaryDownload, download, this.databasePrefix);
+		//storeInLocalDB(glossaryDownload, download, this.databasePrefix);
 		initGlossary(glossaryDownload, download);
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)

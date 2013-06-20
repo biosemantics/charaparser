@@ -387,7 +387,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if (clauseModifierConstraint != null)
 			descriptionElement.setAttribute("constraint", clauseModifierConstraint);
 		if (clauseModifierConstraintId != null)
-			descriptionElement.setAttribute("constraintId", clauseModifierConstraintId);
+			descriptionElement.setAttribute("constraintid", clauseModifierConstraintId);
 	}
 	
 	protected LinkedList<DescriptionTreatmentElement> lastStructures(ProcessingContext processingContext, 
@@ -1199,7 +1199,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				lastElement.setAttribute("name", "location");
 			}
 			lastElement.setAttribute("constraint", preposition.getTerminalsText() + " " + listStructureNames(object));
-			lastElement.setAttribute("constraintId", listStructureIds(structures));
+			lastElement.setAttribute("constraintid", listStructureIds(structures));
 			if(!modifiers.isEmpty()) {
 				for(Chunk modifier : modifiers) {
 					lastElement.appendAttribute("modifier", modifier.getTerminalsText());

@@ -89,7 +89,7 @@ public class RunConfig extends BasicConfig {
 	private String otoLiteReviewFile = "TermReview.txt";
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
-	private String otoClientUrl = "http://biosemantics.arizona.edu/ONTNEW/";
+	private String otoClientUrl = "http://localhost:8080/OTO/";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
 	//PerlTerminologyLearner //DatabaseInputNoLearner;
@@ -190,6 +190,7 @@ public class RunConfig extends BasicConfig {
 		//result.add("121.txt-3");
 		//result.add("765.txt-6");
 		
+		/*
 		String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
@@ -223,7 +224,8 @@ public class RunConfig extends BasicConfig {
 					// break; //TODO remove. only for test
 				}
 			}
-		}
+		}*/
+		result.add("000.txt-6");
 		//result.add("002.txt-4");
 		//result.add("006.txt-2");
 		//result.add("005.txt-4");

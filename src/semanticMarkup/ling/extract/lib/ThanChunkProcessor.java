@@ -243,7 +243,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 			/*for(DescriptionTreatmentElement element : characters) {
 				element.setProperty("constraint", part1);
 				if(object!=null) {
-					element.setProperty("constraintId", listStructureIds(structures));
+					element.setProperty("constraintid", listStructureIds(structures));
 					//TODO: check: some constraints are without constraintid
 				}
 			}*/
@@ -277,13 +277,21 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		
 		for(DescriptionTreatmentElement element : characters) {
 			ProcessingContextState processingContextState = processingContext.getCurrentState();
-			String constraint = processingContextState.getClauseModifierContraint() + "; " + 
-					content.getChildChunk(ChunkType.THAN).getTerminalsText();
-			String structureIds = processingContextState.getClauseModifierContraintId() + " " + 
-					listStructureIds(structures);
+			String clauseModifierConstraint = processingContextState.getClauseModifierContraint();
+			String constraint = "";
+			if(clauseModifierConstraint != null) {
+				constraint += clauseModifierConstraint + "; ";
+			}
+			constraint += content.getChildChunk(ChunkType.THAN).getTerminalsText();
+			String clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
+			String structureIds = "";
+			if(clauseModifierConstraintId != null) {
+				structureIds += clauseModifierConstraintId + " ";
+			}
+			structureIds += listStructureIds(structures);
 			element.setAttribute("constraint", constraint);
 			//if(thanObject!=null) {
-				element.setAttribute("constraintId", structureIds);
+				element.setAttribute("constraintid", structureIds);
 				//TODO: check: some constraints are without constraintid
 			//}
 		}
