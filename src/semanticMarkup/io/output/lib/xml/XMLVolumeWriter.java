@@ -224,9 +224,7 @@ public class XMLVolumeWriter extends AbstractFileVolumeWriter {
 	
 	private Boolean getBooleanFromString(String string) {
 		Boolean result = null;
-		if(string == null)
-			return result;
-		if(string.equals("true") || string.equals("false"))
+		if(string != null && (string.equals("true") || string.equals("false")))
 			result = Boolean.valueOf(string);
 		return result;
 	}

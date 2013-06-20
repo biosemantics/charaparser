@@ -144,10 +144,10 @@ public class IPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 		}
 		xmlTreatment.setDescription(newDescription);
 	}
-
+	
 	private Boolean getBooleanFromString(String string) {
 		Boolean result = null;
-		if(string.equals("true") || string.equals("false"))
+		if(string != null && (string.equals("true") || string.equals("false")))
 			result = Boolean.valueOf(string);
 		return result;
 	}
