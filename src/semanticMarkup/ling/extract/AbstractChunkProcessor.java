@@ -615,7 +615,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 			
 			//String[] expectedFormatTokens = convertChunksToTokens(twoParts.get(0));
-			processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
+			//processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
 			processCharacterText(twoParts.get(0), structures, null, processingContextState, processingContext);
 			// 7-12-02 add cs //process part 1, which applies to all lateststructures, invisible
 			structures = structuresCopy;
@@ -1188,7 +1188,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if(baseCountWords.contains(object.getTerminalsText())) {
 			base = "each";
 		}
-		if(lastIsChara && !lastElements.isEmpty()) {
+		if(lastIsChara && !lastElements.isEmpty() && !processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			//if last character is size, change to location: <margins> r[p[with] o[3–6 (spines)]] 1–3 {mm} r[p[{near}] o[(bases)]]. 
 			//1-3 mm is not a size, but a location of spines

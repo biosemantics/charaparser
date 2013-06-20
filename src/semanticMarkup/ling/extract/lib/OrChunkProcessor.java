@@ -79,7 +79,8 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 						!nextChunk.isOfChunkType(ChunkType.ORGAN) && 
 						!nextChunk.isOfChunkType(ChunkType.NON_SUBJECT_ORGAN) &&
 						!nextChunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN) && 
-						!nextChunk.isOfChunkType(ChunkType.THAN_PHRASE)) {
+						!nextChunk.isOfChunkType(ChunkType.THAN_PHRASE) && 
+						!nextChunk.isOfChunkType(ChunkType.PP)) {
 					IChunkProcessor previousChunkProcessor = processingContext.getChunkProcessor(previousChunk.getChunkType());
 					ProcessingContextState currentState = processingContext.getCurrentState();
 					processingContext.setCurrentState(previousChunk);
