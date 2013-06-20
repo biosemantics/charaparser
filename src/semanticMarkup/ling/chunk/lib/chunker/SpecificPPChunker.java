@@ -41,7 +41,7 @@ public class SpecificPPChunker extends AbstractChunker {
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,
-				glossary, terminologyLearner, inflector);
+				glossary, terminologyLearner, inflector, organStateKnowledgeBase);
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
@@ -44,8 +45,10 @@ public class OtherINsChunker extends AbstractChunker {
 	public OtherINsChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary, terminologyLearner, inflector);
+			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
+				inflector, organStateKnowledgeBase);
 		this.posKnowledgeBase = posKnowledgeBase;
 	}
 

@@ -26,8 +26,6 @@ import com.google.inject.name.Named;
  */
 public class MyCleanupChunker extends AbstractChunker {
 
-	private IOrganStateKnowledgeBase organStateKnowledgeBase;
-
 	/**
 	 * @param parseTreeFactory
 	 * @param prepositionWords
@@ -43,8 +41,8 @@ public class MyCleanupChunker extends AbstractChunker {
 	public MyCleanupChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, inflector);
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
+				inflector, organStateKnowledgeBase);
 	}
 
 	/**

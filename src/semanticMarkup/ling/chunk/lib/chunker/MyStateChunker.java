@@ -31,7 +31,6 @@ import com.google.inject.name.Named;
  */
 public class MyStateChunker extends AbstractChunker {
 
-	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
 	private String or = "_or_";
 	private IPOSKnowledgeBase posKnowledgeBase;
@@ -54,7 +53,8 @@ public class MyStateChunker extends AbstractChunker {
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase, 
 			ICharacterKnowledgeBase characterKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, inflector);
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
+				terminologyLearner, inflector, organStateKnowledgeBase);
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.characterKnowledgeBase = characterKnowledgeBase;
 		this.posKnowledgeBase = posKnowledgeBase;
@@ -85,7 +85,9 @@ public class MyStateChunker extends AbstractChunker {
 			AbstractParseTree terminal = terminals.get(i);
 			Chunk chunk = chunkCollector.getChunk(terminal);
 			
-			if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE) || chunk.isOfChunkType(ChunkType.TO_PHRASE) || chunk.isOfChunkType(ChunkType.CONSTRAINT)) 
+			if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE) || 
+					chunk.isOfChunkType(ChunkType.TO_PHRASE) || 
+					chunk.isOfChunkType(ChunkType.CONSTRAINT)) 
 				continue;
 			
 			if(chunk.isOfChunkType(ChunkType.MODIFIER) && !stateNotModifier[i]) {

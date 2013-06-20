@@ -23,8 +23,6 @@ import com.google.inject.name.Named;
  */
 public class OrganChunker extends AbstractChunker {
 
-	private IOrganStateKnowledgeBase organStateKnowledgeBase;
-
 	/**
 	 * @param parseTreeFactory
 	 * @param prepositionWords
@@ -40,8 +38,8 @@ public class OrganChunker extends AbstractChunker {
 	public OrganChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary, terminologyLearner, inflector);
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
+				inflector, organStateKnowledgeBase);
 	}
 	
 	@Override

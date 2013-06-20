@@ -568,7 +568,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				LinkedHashSet<Chunk> firstOrgans = beforePlus;
 				Chunk lastOrgan = getLastOrgan(twoParts.get(1));
 				for(int i = structures.size()-1; i>=0;  i--){
-					if(!structures.get(i).getProperty("characterName").equals(inflector.getSingular(lastOrgan.getTerminalsText()))){
+					if(!structures.get(i).getProperty("characterName").contains(inflector.getSingular(lastOrgan.getTerminalsText()))){
 						structures.remove(i);
 					}
 				}
@@ -1244,11 +1244,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 			if(afterPPChunk!=null && (afterPPChunk.isOfChunkType(ChunkType.END_OF_LINE) || afterPPChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE) ||
 					afterPPChunk.isOfChunkType(ChunkType.COUNT) || 
-					(afterPPChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && afterPPChunk.getProperty("characterName").equals("count"))))
+					(afterPPChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && afterPPChunk.getProperty("characterName").contains("count"))))
 				return "consist_of";
 			
 			for(Chunk chunk : object.getChunks()) {
-				if(chunk.isOfChunkType(ChunkType.COUNT) || (chunk.isOfChunkType(ChunkType.CHARACTER_STATE) && chunk.getProperty("characterName").equals("count"))) { 
+				if(chunk.isOfChunkType(ChunkType.COUNT) || (chunk.isOfChunkType(ChunkType.CHARACTER_STATE) && chunk.getProperty("characterName").contains("count"))) { 
 					return "consist_of";
 				}
 			}

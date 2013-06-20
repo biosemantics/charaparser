@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
@@ -56,9 +57,10 @@ public class NumericalChunker extends AbstractChunker {
 			@Named("DegreeWords") String degreeWords, 
 			@Named("CountWords") String countWords, 
 			@Named("TimesWords") String timesWords, 
-			@Named("NumberPattern") String numberPattern) {
+			@Named("NumberPattern") String numberPattern, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,
-				glossary, terminologyLearner, inflector);
+				glossary, terminologyLearner, inflector, organStateKnowledgeBase);
 		this.percentageWords = percentageWords;
 		this.degreeWords = degreeWords;
 		this.countWords = countWords;

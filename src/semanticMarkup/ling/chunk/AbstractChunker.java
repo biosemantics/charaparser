@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
@@ -35,6 +36,7 @@ public abstract class AbstractChunker implements IChunker {
 	protected ITerminologyLearner terminologyLearner;
 	protected Set<String> stopWords;
 	protected IInflector inflector;
+	protected IOrganStateKnowledgeBase organStateKnowledgeBase;
 	
 	/**
 	 * @param parseTreeFactory
@@ -49,7 +51,8 @@ public abstract class AbstractChunker implements IChunker {
 	@Inject
 	public AbstractChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector) {		
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase) {		
 		this.parseTreeFactory = parseTreeFactory;
 		this.stopWords = stopWords;
 		this.prepositionWords = prepositionWords;
@@ -58,6 +61,7 @@ public abstract class AbstractChunker implements IChunker {
 		this.glossary = glossary;
 		this.terminologyLearner = terminologyLearner;
 		this.inflector = inflector;
+		this.organStateKnowledgeBase = organStateKnowledgeBase;
 	}
 		
 	protected void collapseSubtree(IParseTree parseTree, IParseTree collapseRoot, POS pos) {
@@ -187,11 +191,18 @@ public abstract class AbstractChunker implements IChunker {
 			IParseTree firstNPTree = this.getFirstTree(nounPOS, child, chunkCollector);
 			if(firstNPTree!=null) {
 				List<AbstractParseTree> terminals = firstNPTree.getTerminals();
-				boolean alreadyAssignedToChunk = false;
+				boolean alreadyAssignedToValidChunk = false;
 				for(AbstractParseTree terminal : terminals) {
-					alreadyAssignedToChunk |= chunkCollector.isPartOfANonTerminalChunk(terminal);
+					alreadyAssignedToValidChunk |= chunkCollector.isPartOfANonTerminalChunk(terminal);
 				}
-				if(!alreadyAssignedToChunk) {
+				if(terminals.size() == 1 && 
+						organStateKnowledgeBase.isOrgan(terminals.get(0).getTerminalsText()) && 
+						organStateKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
+						chunkCollector.isPartOfChunkType(terminals.get(0), ChunkType.STATE)) {
+					alreadyAssignedToValidChunk = false;
+				}
+
+				if(!alreadyAssignedToValidChunk) {
 					List<Chunk> children = new ArrayList<Chunk>(firstNPTree.getTerminals());
 					chunkCollector.addChunk(new Chunk(ChunkType.ORGAN, children));
 				}

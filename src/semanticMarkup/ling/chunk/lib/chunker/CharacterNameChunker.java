@@ -9,6 +9,7 @@ import com.google.inject.name.Named;
 
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
@@ -42,8 +43,10 @@ public class CharacterNameChunker extends AbstractChunker {
 	public CharacterNameChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-			ICharacterKnowledgeBase characterKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, inflector);
+			ICharacterKnowledgeBase characterKnowledgeBase, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
+				terminologyLearner, inflector, organStateKnowledgeBase);
 		this.characterKnowledgeBase = characterKnowledgeBase;
 	}
 

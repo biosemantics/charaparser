@@ -187,7 +187,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		if(!firstIsThan) {
 			if(beforeThanText.matches(".*?\\d.*") && 
 					beforeChunk.containsChunkType(ChunkType.CHARACTER_STATE) && 
-					beforeChunk.getChunkDFS(ChunkType.CHARACTER_STATE).getProperty("characterName").equals("size")) {
+					beforeChunk.getChunkDFS(ChunkType.CHARACTER_STATE).getProperty("characterName").contains("size")) {
 				//size[m[mostly] [0.5-]1.5-4.5] ;// often wider than 2 cm.
 				
 				Pattern p = Pattern.compile(numberPattern+" ?[{<(]?[cdm]?m?[)>}]?");

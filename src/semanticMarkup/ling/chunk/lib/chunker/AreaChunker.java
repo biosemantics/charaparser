@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 
 import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
@@ -35,9 +36,10 @@ public class AreaChunker extends AbstractChunker {
 	public AreaChunker(IParseTreeFactory parseTreeFactory,
 			String prepositionWords, Set<String> stopWords, String units,
 			HashMap<String, String> equalCharacters, IGlossary glossary,
-			ITerminologyLearner terminologyLearner, IInflector inflector) {
+			ITerminologyLearner terminologyLearner, IInflector inflector, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,
-				glossary, terminologyLearner, inflector);
+				glossary, terminologyLearner, inflector, organStateKnowledgeBase);
 	}
 
 

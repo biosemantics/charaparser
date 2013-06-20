@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
@@ -43,8 +44,10 @@ public class VPRecoverChunker extends AbstractChunker {
 	public VPRecoverChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary, terminologyLearner, inflector);
+			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, 
+				glossary, terminologyLearner, inflector, organStateKnowledgeBase);
 		this.posKnowledgeBase = posKnowledgeBase;
 	}
 
@@ -92,16 +95,38 @@ public class VPRecoverChunker extends AbstractChunker {
 				AbstractParseTree nextTerminal = terminals.get(i+1);
 				if(!chunkCollector.isOfChunkType(terminal, ChunkType.VP) && 
 						chunkCollector.isOfChunkType(terminal, ChunkType.CHARACTER_STATE) &&
-						(chunkCollector.getChunk(terminal).getProperty("characterName").equals("position") ||
-								chunkCollector.getChunk(terminal).getProperty("characterName").equals("size")) && 
-						chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.PP) && posKnowledgeBase.isVerb(terminal.getTerminalsText())) {
-					recoverVPChunkFromVerbAndPP(terminals, i, chunkCollector);
+						(chunkCollector.getChunk(terminal).getProperty("characterName").contains("position") ||
+								chunkCollector.getChunk(terminal).getProperty("characterName").contains("size")) && 
+								posKnowledgeBase.isVerb(terminal.getTerminalsText())) {
+					if(chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.PP)) {
+						recoverVPChunkFromVerbAndPP(terminals, i, chunkCollector);
+					} else if(chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.ORGAN)) {
+						recoverVPChunkFromVerbAndOrgan(terminals, i, chunkCollector);
+					}
 				}
 			}
 		}
 	}
-	
 
+	private void recoverVPChunkFromVerbAndOrgan(
+			List<AbstractParseTree> terminals, int i,
+			ChunkCollector chunkCollector) {
+		AbstractParseTree verbTerminal = terminals.get(i);
+		AbstractParseTree organTerminal = terminals.get(i+1);
+		Chunk verbChunk = chunkCollector.getChunk(verbTerminal);
+		Chunk newVerbChunk = new Chunk(ChunkType.VERB);
+		LinkedHashSet<Chunk> newVerbChunkChildren = new LinkedHashSet<Chunk>();
+		newVerbChunkChildren.addAll(verbChunk.getTerminals());
+		newVerbChunk.setChunks(newVerbChunkChildren);
+		Chunk organChunk = chunkCollector.getChunk(organTerminal);
+		Chunk objectChunk = new Chunk(ChunkType.OBJECT, organChunk);
+		
+		LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
+		childChunks.add(newVerbChunk);
+		childChunks.add(objectChunk);
+		Chunk vpChunk = new Chunk(ChunkType.VP, childChunks);
+		chunkCollector.addChunk(vpChunk);
+	}
 
 	private boolean connectsTwoOrgans(List<AbstractParseTree> terminals, int i, ChunkCollector chunkCollector) {
 		boolean organ1 = false;

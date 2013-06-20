@@ -8,6 +8,7 @@ import java.util.Set;
 
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
+import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
@@ -67,8 +68,10 @@ public class CleanupChunker extends AbstractChunker {
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, @Named("SkipWords")String skipWords, 
 			@Named("MoreWords")String moreWords, @Named("NumberPattern") String numberPattern, IPOSKnowledgeBase posKnowledgeBase, 
 			@Named("PercentageWords")String percentage, @Named("DegreeWords") String degree, @Named("CountWords")String counts, 
-			@Named("TimesWords") String times, ICharacterKnowledgeBase characterKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, inflector);
+			@Named("TimesWords") String times, ICharacterKnowledgeBase characterKnowledgeBase, 
+			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
+				terminologyLearner, inflector, organStateKnowledgeBase);
 		this.skipWords = skipWords;
 		this.moreWords = moreWords;
 		this.numberPattern = numberPattern;

@@ -26,14 +26,12 @@ import com.google.inject.name.Named;
  */
 public class OrganRecoverChunker extends AbstractChunker {
 
-	private IOrganStateKnowledgeBase organStateKnowledgeBase;
-
 	@Inject
 	public OrganRecoverChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary, terminologyLearner, inflector);
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
+				terminologyLearner, inflector, organStateKnowledgeBase);
 	}
 
 	/**
