@@ -93,6 +93,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 
 					processingContext.setCurrentState(currentState);
 					
+					boolean processedNextChunk = false;
 					if(!previousResult.isEmpty()) {
 						DescriptionTreatmentElement structure = processingContext.getParent(previousResult.get(0));				
 						if(structure != null) {
@@ -109,9 +110,11 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 							
 							//TODO this is just the quick and dirty fix of the above issue
 							removeResults(previousResult, processingContext.getResult());
+							processedNextChunk = true;
 						}
 					} 
-					chunkListIterator.previous();
+					if(!processedNextChunk)
+						chunkListIterator.previous();
 					//if(!result.isEmpty())
 					//	processingContextState.setLastElements(result);
 					

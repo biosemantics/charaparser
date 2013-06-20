@@ -225,7 +225,9 @@ public class RunConfig extends BasicConfig {
 				}
 			}
 		}*/
-		result.add("000.txt-6");
+		//result.add("000.txt-9");
+		//result.add("000.txt-8");
+		//result.add("000.txt-6");
 		//result.add("002.txt-4");
 		//result.add("006.txt-2");
 		//result.add("005.txt-4");
