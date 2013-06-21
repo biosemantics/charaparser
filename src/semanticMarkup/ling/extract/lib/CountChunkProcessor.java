@@ -57,8 +57,16 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		List<Chunk> modifiers = processingContextState.getUnassignedModifiers();
 		
-		LinkedList<DescriptionTreatmentElement> parents = processingContextState.getLastElements();
-
+		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+		LinkedList<DescriptionTreatmentElement> subjects = processingContextState.getSubjects();
+		LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
+		if(!lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
+			if(!subjects.isEmpty())
+				parents.add(subjects.getLast());
+		} else {
+			parents.add(lastElements.getLast()); 
+		}
+		
 		if(!parents.isEmpty() && parents.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
 			List<DescriptionTreatmentElement> characterElement = 
 					this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
