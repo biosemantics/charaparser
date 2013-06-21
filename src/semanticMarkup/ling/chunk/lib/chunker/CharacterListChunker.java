@@ -191,6 +191,7 @@ public class CharacterListChunker extends AbstractChunker {
 					stateChildChunks.clear();
 					characterStateChildChunks.clear();
 					statesTree = null;
+					modifiersTree = null;
 					
 					if(collectToChunks) {
 						toChunks.add(characterChunk);
