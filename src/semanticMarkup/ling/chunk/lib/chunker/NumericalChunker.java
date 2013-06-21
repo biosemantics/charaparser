@@ -81,7 +81,7 @@ public class NumericalChunker extends AbstractChunker {
 			AbstractParseTree terminal = terminals.get(i);
 			String terminalsText = terminal.getTerminalsText();
 			
-			if(terminalsText.matches(".*?" + numberPattern + "$") || terminalsText.matches("\\d+\\+?") || terminalsText.matches("^to~\\d.*")) { 
+			if(terminalsText.matches(".*?" + numberPattern + "$") || terminalsText.matches("\\(\\d+\\)") || terminalsText.matches("\\d+\\+?") || terminalsText.matches("^to~\\d.*")) { 
 				terminalsText = originalNumForm(terminalsText).replaceAll("\\?", "");		
 				if(terminalsText.matches("^to~\\d.*")){
 					terminal.setTerminalsText(terminalsText.replaceAll("~",  " "));

@@ -75,6 +75,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 				
 				String characterName = lastElements.getLast().getAttribute("name");
 				if(!nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && 
+						!nextChunk.isOfChunkType(ChunkType.COUNT) && 
 						!nextChunk.isOfChunkType(ChunkType.NUMERICALS) && 
 						!nextChunk.isOfChunkType(ChunkType.ORGAN) && 
 						!nextChunk.isOfChunkType(ChunkType.NON_SUBJECT_ORGAN) &&
