@@ -58,10 +58,7 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		processingContextState.setCommaAndOrEosEolAfterLastElements(true);
-		String modifierString = "";
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
-		for(Chunk modifier : unassignedModifiers)
-			modifierString += modifier.getTerminalsText() + " ";
 		
 		if(!unassignedModifiers.isEmpty()) {
 			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
@@ -81,7 +78,8 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 					}
 					
 					if(latestRelation != null) {
-						latestRelation.appendAttribute("modifier", modifierString);
+						for(Chunk modifier : unassignedModifiers) 
+							latestRelation.appendAttribute("modifier", modifier.getTerminalsText());
 						result.add(latestRelation);
 					}
 					//TODO: otherwise, categorize modifier and create a character for the structure e.g.{thin} {dorsal} {median} <septum> {centrally} only ;
@@ -89,7 +87,8 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 				
 			} else if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 				for(DescriptionTreatmentElement element : lastElements) {
-					element.appendAttribute("modifier", modifierString);
+					for(Chunk modifier : unassignedModifiers) 
+						element.appendAttribute("modifier", modifier.getTerminalsText());
 					result.add(element);
 				}
 			}

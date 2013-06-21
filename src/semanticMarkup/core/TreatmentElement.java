@@ -84,7 +84,7 @@ public class TreatmentElement implements Cloneable {
 	public void appendAttribute(String name, String value) {
 		String newValue = "";
 		if(this.attributes.containsKey(name)) {
-			newValue = this.attributes.get(name) + ", " + value;
+			newValue = this.attributes.get(name) + "; " + value;
 		} else {
 			newValue = value;
 		}

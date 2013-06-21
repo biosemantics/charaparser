@@ -169,8 +169,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 							List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 							String modifierString = "";
 							for(Chunk modifier : unassignedModifiers) 
-								modifierString += modifier + " ";
-							element.setAttribute("modifier", modifierString);
+								element.appendAttribute("modifier", modifier.getTerminalsText());
 							processingContextState.clearUnassignedModifiers();
 						}
 						lastElement.setAttribute("constraint", content.getTerminalsText());

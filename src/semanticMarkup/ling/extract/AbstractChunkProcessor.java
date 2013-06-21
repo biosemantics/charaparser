@@ -1042,9 +1042,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected LinkedList<DescriptionTreatmentElement> createRangeCharacterElement(LinkedList<DescriptionTreatmentElement> parents,
 			List<Chunk> modifiers, String characterValue, String characterName, ProcessingContextState processingContextState) {
 		LinkedList<DescriptionTreatmentElement> results = new  LinkedList<DescriptionTreatmentElement>();
-		String modifiersString = "";
-		for(Chunk modifier : modifiers)
-			modifiersString += modifier.getTerminalsText() + " ";
 		
 		DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
 		//if(this.inbrackets){character.setAttribute("in_bracket", "true");}
@@ -1058,8 +1055,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String to = getFirstCharacter(tokens[0]);
 		character.setAttribute("from", from.replaceAll("-c-", " ")); //a or b to c => b to c
 		character.setAttribute("to", to.replaceAll("-c-", " "));
-		if(!modifiersString.isEmpty())
-			character.setAttribute("modifier", modifiersString);
+
+		for(Chunk modifier : modifiers)
+			character.appendAttribute("modifier", modifier.getTerminalsText());
 		
 		if(parents.isEmpty())
 			processingContextState.getUnassignedCharacters().add(character);
@@ -1091,10 +1089,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			String characterValue, String characterName, String char_type, ProcessingContextState processingContextState) {
 		log(LogLevel.DEBUG, "create character element " + characterName + ": " +  characterValue + " for parent "  + parents);
 		String modifierString = "";
-		if(modifiers != null)
+		if(modifiers != null) {
 			for(Chunk modifier : modifiers)
-				modifierString += modifier.getTerminalsText() + " ";
-		modifierString = modifierString.trim();
+				modifierString += modifier.getTerminalsText() + "; ";
+			if(modifierString.length() >= 2)
+				modifierString = modifierString.substring(0, modifierString.length() - 2);
+		}
 			
 		String parenthetical = null;
 		DescriptionTreatmentElement character = null;
@@ -1135,7 +1135,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					String color = characterValue.substring(characterValue.lastIndexOf("_c_")+3); //pale-blue
 					String m = characterValue.substring(0, characterValue.lastIndexOf("_c_")); //color = blue m=pale
 					
-					modifierString = modifierString.length()>0 ? modifierString + ";"+ m : m;
+					modifierString = modifierString.length()>0 ? modifierString + "; "+ m : m;
 					characterValue = color;
 				}
 				if(char_type.length() > 0){
@@ -1334,14 +1334,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		relationElement.setAttribute("to", o2id);
 		relationElement.setAttribute("negation", String.valueOf(negation));
 		relationElement.setAttribute("id", "r" + String.valueOf(processingContextState.fetchAndIncrementRelationId(relationElement)));	
-		if(modifiers.size() > 0){
-			String modifierString = "";
-			for(Chunk modifier : modifiers) {
-				modifierString += modifier.getTerminalsText() + ", ";
-			}
-			
-			relationElement.appendAttribute("modifier", modifierString.substring(0, modifierString.length() - 2));
+		
+		for(Chunk modifier : modifiers) {
+			relationElement.appendAttribute("modifier", modifier.getTerminalsText());
 		}
+		
 		addClauseModifierConstraint(relationElement, processingContextState);
 		return relationElement;
 	}
@@ -1351,8 +1348,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 	
 	
-	protected LinkedList<DescriptionTreatmentElement> annotateNumericals(String text, String character, String modifierString, 
-			LinkedList<DescriptionTreatmentElement> parents, boolean resetFrom, ProcessingContextState processingContextState) {
+
+	
+	
+	protected LinkedList<DescriptionTreatmentElement> annotateNumericals(String text, String character, List<Chunk> modifiers, 
+		LinkedList<DescriptionTreatmentElement> parents, boolean resetFrom, ProcessingContextState processingContextState) {
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 			
 		LinkedList<DescriptionTreatmentElement> characters = parseNumericals(text, character);
@@ -1368,8 +1368,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					element.removeAttribute("from_unit");
 				}
 			}
-			if(modifierString !=null && modifierString.compareTo("")!=0) {
-				element.setAttribute("modifier", modifierString);
+			for(Chunk modifier : modifiers) {
+				element.appendAttribute("modifier", modifier.getTerminalsText());
 			}
 
 			addClauseModifierConstraint(element, processingContextState);
@@ -1379,15 +1379,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			result.add(element);
 		}
 		return result;
-	}
-	
-	
-	protected LinkedList<DescriptionTreatmentElement> annotateNumericals(String text, String character, List<Chunk> modifiers, 
-			LinkedList<DescriptionTreatmentElement> parents, boolean resetFrom, ProcessingContextState processingContextState) {
-		String modifierString = "";
-		for(Chunk modifier : modifiers)
-			modifierString += modifier.getTerminalsText() + " ";
-		return annotateNumericals(text, character, modifierString.trim(), parents, resetFrom, processingContextState);
 	}
 
 
