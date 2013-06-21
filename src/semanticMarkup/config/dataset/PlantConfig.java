@@ -18,6 +18,6 @@ public class PlantConfig extends RunConfig {
 		this.setDatabaseGlossaryTable("fnaglossaryfixed");
 		this.setGlossaryFile("resources" + File.separator + "fnaglossaryfixed.csv");
 		this.setNormalizer(FNAv19Normalizer.class);
-		this.setGlossaryType(Glossary.plant_gloss_for_iplant.toString());
+		this.setGlossaryType(Glossary.Plant.toString());
 	}
 }
