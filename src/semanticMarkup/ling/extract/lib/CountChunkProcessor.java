@@ -60,7 +60,7 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
 		LinkedList<DescriptionTreatmentElement> subjects = processingContextState.getSubjects();
 		LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
-		if(!lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
+		if(lastElements.isEmpty() || !lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
 			if(!subjects.isEmpty())
 				parents.add(subjects.getLast());
 		} else {
