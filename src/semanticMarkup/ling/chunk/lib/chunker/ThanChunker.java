@@ -65,10 +65,10 @@ public class ThanChunker extends AbstractChunker {
 			for(int i=0; i<terminals.size(); i++) {
 				AbstractParseTree terminal = terminals.get(i);
 				if(more.isEmpty() && 
-						(terminal.getTerminalsText().matches("\\w+er|more|less") && !chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN) 
+						(terminal.getTerminalsText().matches("\\w+er|more|less") && !chunkCollector.isPartOfChunkType(terminal, ChunkType.ORGAN)//)) {
 						|| (i<terminals.size()-1 && terminals.get(i+1).getTerminalsText().equals("than")))) {
 					comparisonTerminal = terminal;
-					if(terminal.getTerminalsText().equals("more"))
+					if(terminal.getTerminalsText().equals("more") || terminal.getTerminalsText().equals("less"))
 						more = "more";
 					else if(terminal.getTerminalsText().matches("\\w+er"))
 						more = "er";
@@ -76,6 +76,11 @@ public class ThanChunker extends AbstractChunker {
 				} else if(more.equals("er") && !terminal.getTerminalsText().matches("\\w+er|more|less|and|or|than")){
 					more = "";
 					comparisonTerminal = null;//this.chunkedtokens.size();; (index out of bounds?)
+				} else if(chunkCollector.isOfChunkType(terminal, ChunkType.COMMA) || 
+							chunkCollector.isOfChunkType(terminal, ChunkType.END_OF_LINE) || 
+							chunkCollector.isOfChunkType(terminal, ChunkType.END_OF_SUBCLAUSE)) {
+					more = "";
+					comparisonTerminal = null;
 				}
 				
 				if(terminal.getTerminalsText().matches("than")) {
@@ -94,35 +99,42 @@ public class ThanChunker extends AbstractChunker {
 					chunkCollector.addChunk(than);
 					collectedTerminals.add(than);
 					
-					//do the collapsing			
-					//scan for the object of "than"
-					for(i=i+1; i<terminals.size(); i++) {
-						AbstractParseTree possibleObjectTerminal = terminals.get(i);
-						if(possibleObjectTerminal.getTerminalsText().matches(prepositionWords + "|and|that|which|but") ||
-								possibleObjectTerminal.getTerminalsText().matches(".*?\\p{Punct}.*")) {
-							//should allow ±, n[{shorter} than] ± {campanulate} <throats>
-							
-							//create the collapse chunk
-							/*StringBuilder collapsedTextBuilder = new StringBuilder();
-							for(IParseTree collectedTerminal : collectedTerminals) 
-								collapsedTextBuilder.append(collectedTerminal.getTerminalsText()).append(" ");
-							IParseTree collapseRoot = comparisonTerminal.getAncestor(2, parseTree);
-							IParseTree posTree = parseTreeFactory.create();
-							posTree.setPOS(POS.COLLAPSED_THAN);
-							IParseTree terminalTree = parseTreeFactory.create();
-							terminalTree.setTerminalsText(collapsedTextBuilder.toString().trim());
-							posTree.addChild(terminalTree);
-							collapseRoot.addChild(posTree);*/
-							Chunk thanChunk = new Chunk(ChunkType.THAN_PHRASE, collectedTerminals);
-							chunkCollector.addChunk(thanChunk);
-							break;
-						} else {
-							Chunk possibleObjectChunk = chunkCollector.getChunk(possibleObjectTerminal);
-							Chunk chunkToAdd = new Chunk(ChunkType.OBJECT, possibleObjectChunk);
-							than.getChunks().add(chunkToAdd);
+					//could already contain object from PP Chunk
+					if(!than.containsChunkType(ChunkType.OBJECT)) {
+						//do the collapsing			
+						//scan for the object of "than"
+						Chunk objectChunk = new Chunk(ChunkType.OBJECT);
+						for(i=i+1; i<terminals.size(); i++) {
+							AbstractParseTree possibleObjectTerminal = terminals.get(i);
+							if(possibleObjectTerminal.getTerminalsText().matches(prepositionWords + "|and|that|which|but") ||
+									possibleObjectTerminal.getTerminalsText().matches(".*?\\p{Punct}.*")) {
+								//should allow ±, n[{shorter} than] ± {campanulate} <throats>
+								
+								//create the collapse chunk
+								/*StringBuilder collapsedTextBuilder = new StringBuilder();
+								for(IParseTree collectedTerminal : collectedTerminals) 
+									collapsedTextBuilder.append(collectedTerminal.getTerminalsText()).append(" ");
+								IParseTree collapseRoot = comparisonTerminal.getAncestor(2, parseTree);
+								IParseTree posTree = parseTreeFactory.create();
+								posTree.setPOS(POS.COLLAPSED_THAN);
+								IParseTree terminalTree = parseTreeFactory.create();
+								terminalTree.setTerminalsText(collapsedTextBuilder.toString().trim());
+								posTree.addChild(terminalTree);
+								collapseRoot.addChild(posTree);*/
+								than.getChunks().add(objectChunk);
+								Chunk thanChunk = new Chunk(ChunkType.THAN_PHRASE, collectedTerminals);
+								chunkCollector.addChunk(thanChunk);
+								break;
+							} else {
+								Chunk possibleObjectChunk = chunkCollector.getChunk(possibleObjectTerminal);
+								objectChunk.getChunks().add(possibleObjectChunk);
+							}
 						}
+					} else {
+						Chunk thanChunk = new Chunk(ChunkType.THAN_PHRASE, collectedTerminals);
+						chunkCollector.addChunk(thanChunk);
 					}
-					
+						
 					//reset
 					collectedTerminals.clear();
 					comparisonTerminal = null;

@@ -131,8 +131,10 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					}
 				} else {
 					//third case
+					boolean foundCharacter = false;
 					for(Chunk child : thanObject.getChunks()) {
 						if(child.isOfChunkType(ChunkType.CHARACTER_STATE)) {
+							foundCharacter = true;
 							if(characterName != null)
 								child.setProperty("characterName", characterName);
 							LinkedHashSet<Chunk> characterTerminals = new LinkedHashSet<Chunk>();
@@ -142,6 +144,10 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 							result.addAll(characters);
 							break;
 						}
+					}
+					if(!foundCharacter && !thanObject.getChunks().isEmpty()) {
+						result.addAll(this.createConstraintedCharacters(content, beforeChunk, 
+									 	new LinkedList<DescriptionTreatmentElement>(), processingContext));
 					}
 				}
 			}
@@ -260,17 +266,20 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		} */
 	}
 	
-	private List<DescriptionTreatmentElement> createConstraintedCharacters(Chunk content, Chunk beforeChunk, /*Chunk thanObject,*/ List<DescriptionTreatmentElement> structures, 
+	private List<DescriptionTreatmentElement> createConstraintedCharacters(Chunk content, Chunk beforeChunk, 
+			/*Chunk thanObject,*/ List<DescriptionTreatmentElement> structures, 
 			ProcessingContext processingContext) {
 		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 		List<DescriptionTreatmentElement> characters = new LinkedList<DescriptionTreatmentElement>();
 		for(Chunk child : beforeChunk.getChunks()) {
-			log(LogLevel.DEBUG, "child " + child);
 			IChunkProcessor processor = processingContext.getChunkProcessor(child.getChunkType());
 			if(processor != null) {
 				characters = processor.process(child, processingContext);
 				result.addAll(characters);
 			}
+		}
+		for(DescriptionTreatmentElement character : characters) {
+			character.setAttribute("value", beforeChunk.getTerminalsText());
 		}
 		
 		for(DescriptionTreatmentElement element : characters) {
@@ -286,7 +295,8 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 			if(clauseModifierConstraintId != null) {
 				structureIds += clauseModifierConstraintId + " ";
 			}
-			structureIds += listStructureIds(structures);
+			if(!structures.isEmpty())
+				structureIds += listStructureIds(structures);
 			element.setAttribute("constraint", constraint);
 			//if(thanObject!=null) {
 				element.setAttribute("constraintid", structureIds);
