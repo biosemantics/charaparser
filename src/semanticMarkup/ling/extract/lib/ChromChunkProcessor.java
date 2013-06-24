@@ -53,19 +53,23 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		String content = chunk.getTerminalsText().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
-		//Element structure = new Element("chromosome");
-		DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-		structure.setAttribute("name", "chromosome");
-		structure.setAttribute("id", "o" + String.valueOf(processingContextState.fetchAndIncrementStructureId(structure)));
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
-		result.add(structure);
-		
-		List<Chunk> modifiers = new LinkedList<Chunk>();
-		this.annotateNumericals(content, "count", modifiers, result, false, processingContextState);
-		addClauseModifierConstraint(structure, processingContextState);
-		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
+		ProcessingContextState processingContextState = processingContext.getCurrentState();
+		String[] parts = chunk.getTerminalsText().split("=");
+		if(parts.length==2) {
+			String value = parts[1];
+			//String content = chunk.getTerminalsText().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
+			//Element structure = new Element("chromosome");
+			DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+			structure.setAttribute("name", "chromosome");
+			structure.setAttribute("id", "o" + String.valueOf(processingContextState.fetchAndIncrementStructureId(structure)));
+			result.add(structure);
+			
+			List<Chunk> modifiers = new LinkedList<Chunk>();
+			this.annotateNumericals(value, "count", modifiers, result, false, processingContextState);
+			addClauseModifierConstraint(structure, processingContextState);
+			processingContextState.setCommaAndOrEosEolAfterLastElements(false);
+		}
 		return result;
 	}
 

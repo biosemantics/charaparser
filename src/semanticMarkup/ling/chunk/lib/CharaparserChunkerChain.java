@@ -63,10 +63,12 @@ public class CharaparserChunkerChain extends ChunkerChain {
 			@Named("OrChunker") IChunker orChunker,
 			@Named("AndChunker") IChunker andChunker,
 			@Named("PunctuationChunker") IChunker punctuationChunker,
-			@Named("SpecificPPChunker") IChunker specificPPChunker
+			@Named("SpecificPPChunker") IChunker specificPPChunker,
+			@Named("ChromosomeChunker") IChunker chromosomeChunker
 			) {
 		this.add(characterListChunker);
 		this.add(punctuationChunker);
+		this.add(chromosomeChunker);
 		this.add(modifierChunker);
 		this.add(organChunker);
 		this.add(stateChunker);
