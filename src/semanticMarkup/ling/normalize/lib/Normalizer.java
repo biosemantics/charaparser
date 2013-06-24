@@ -16,6 +16,7 @@ import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
+import semanticMarkup.ling.learn.AjectiveReplacementForNoun;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.transform.IInflector;
@@ -153,7 +154,10 @@ public abstract class Normalizer implements INormalizer {
 		
 		str = str.replaceAll("_", "-");
 		
+		String backupStr = str;
 		str = normalizeInner(str, tag, source);
+		if(str.equals(backupStr))
+			str = normalizeInnerNew(str, tag, source);
 		//if(!modifier.trim().isEmpty())
 		//	str = addModifier(str, modifier, tag);
 		
@@ -302,6 +306,40 @@ public abstract class Normalizer implements INormalizer {
 		return str;
 	}
 	
+	private String normalizeInnerNew(String str, String tag, String source) {
+		Map<String, AjectiveReplacementForNoun> replacements = 
+				terminologyLearner.getAdjectiveReplacementsForNouns();
+		if(replacements.containsKey(source)) {
+			AjectiveReplacementForNoun replacement = replacements.get(source);
+			str = str.replaceAll(replacement.getAdjective(), replacement.getNoun());
+		}
+		/*Map<String, String> tagAdjectiveMap = terminologyLearner.getAdjNounSent();
+		List<String> adjectiveList = terminologyLearner.getAdjNouns();
+		
+		for(String adjective : adjectiveList) {
+			if(str.contains(adjective)) {
+				//check that no other adjective contains the adjective and is 
+				//additionally contained in string, e.g. adjective=principal, 
+				//otherAdjective=principal cauline, tag=leaf
+				boolean foundOther = false;
+				for(String otherAdjective : adjectiveList) {
+					if(!otherAdjective.equals(adjective) && 
+							otherAdjective.contains(adjective) &&
+							str.contains(otherAdjective)) {
+						foundOther = true;
+						break;
+					}
+				}
+				if(foundOther)
+					continue;
+				else {
+					str = str.replaceAll(adjective, parentTagProvider.getParentTag(source));
+				}
+			}
+		}*/
+		return str;
+	}
+
 	/**
 	 * @param sentence
 	 * @return dataset specific normalization result
@@ -310,13 +348,13 @@ public abstract class Normalizer implements INormalizer {
 
 
 	private String addModifier(String str, String modifier, String tag) {
-		//String singularTag = inflector.getSingular(tag);
-		//String pluralTag = inflector.getSingular(tag);
+		String singularTag = inflector.getSingular(tag);
+		String pluralTag = inflector.getPlural(tag);
 		
 		//log(LogLevel.DEBUG, "modifier " + modifier + " tag " + tag);
-		//Set<Integer> tagPositions = new HashSet<Integer>();
+		Set<Integer> tagPositions = new HashSet<Integer>();
 		
-		/*int index = str.indexOf(singularTag);
+		int index = str.indexOf(singularTag);
 		while (index >= 0) {
 			tagPositions.add(index);
 		    index = str.indexOf(singularTag, index + 1);
@@ -326,16 +364,17 @@ public abstract class Normalizer implements INormalizer {
 		while (index >= 0) {
 			tagPositions.add(index);
 		    index = str.indexOf(singularTag, index + 1);
-		}*/
+		}
 		
-		int index = str.indexOf(tag);
-		if(index >= 0) {
+		//int index = str.indexOf(tag);
+		for(Integer position : tagPositions) {
+		//if(!tagPositions.isEmpty()) {
 		//while (index >= 0) {
 			//log(LogLevel.DEBUG, "index " + index);
 			//tagPositions.add(index);
 				
-			String prefixStr = str.substring(0, index).trim();
-			String postfixStr = str.substring(index).trim();
+			String prefixStr = str.substring(0, position).trim();
+			String postfixStr = str.substring(position).trim();
 			
 			String[] prefixTokens = prefixStr.split("\\b");
 			//int searchIndex = index + 1;
