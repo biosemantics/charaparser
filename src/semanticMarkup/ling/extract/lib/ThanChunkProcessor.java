@@ -86,14 +86,13 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 			characterName = beforeChunk.getChunkDFS(ChunkType.CHARACTER_STATE).getProperty("characterName");
 		
 		Chunk thanChunk = content.getChildChunk(ChunkType.THAN);
-		if(!thanChunk.containsChunkType(ChunkType.PP)) {
+		//if(!thanChunk.containsChunkType(ChunkType.PP)) {
 			if(thanChunk.containsChunkType(ChunkType.CONSTRAINT) && !thanChunk.containsChunkType(ChunkType.ORGAN)) {
 				Chunk constraint = thanChunk.getChunks(ChunkType.CONSTRAINT).get(0);
 				IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(ChunkType.CONSTRAINT);
 				List<DescriptionTreatmentElement> structures = chunkProcessor.process(constraint, processingContext);
 				result.addAll(structures);
 				this.createConstraintedCharacters(content, beforeChunk, structures, processingContext);
-			}
 		} else {
 			Chunk thanObject = thanChunk.getChunkDFS(ChunkType.OBJECT);
 			//Chunk thanObject = thanChunk.getChildChunk(ChunkType.PP).getChildChunk(ChunkType.OBJECT);
@@ -133,7 +132,6 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				} else {
 					//third case
 					for(Chunk child : thanObject.getChunks()) {
-						log(LogLevel.DEBUG, "child " + child);
 						if(child.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 							if(characterName != null)
 								child.setProperty("characterName", characterName);

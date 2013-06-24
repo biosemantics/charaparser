@@ -117,8 +117,9 @@ public class ThanChunker extends AbstractChunker {
 							chunkCollector.addChunk(thanChunk);
 							break;
 						} else {
-							Chunk chunkToAdd = chunkCollector.getChunk(possibleObjectTerminal);
-							collectedTerminals.add(chunkToAdd);
+							Chunk possibleObjectChunk = chunkCollector.getChunk(possibleObjectTerminal);
+							Chunk chunkToAdd = new Chunk(ChunkType.OBJECT, possibleObjectChunk);
+							than.getChunks().add(chunkToAdd);
 						}
 					}
 					
