@@ -25,6 +25,7 @@ import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.Token;
+import semanticMarkup.ling.learn.AjectiveReplacementForNoun;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
@@ -69,6 +70,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private ParentTagProvider parentTagProvider;
 	private String databaseHost;
 	private String databasePort;
+	private Map<String, AjectiveReplacementForNoun> adjectiveReplacementsForNouns;
 
 	/**
 	 * @param temporaryPath
@@ -682,7 +684,30 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.categoryTerms = readCategoryTerms();
 		this.tags = readTags();
 		this.modifiers = readModifiers();
+		this.adjectiveReplacementsForNouns = readAdjectiveReplacementsForNouns();
 		initParentTagProvider(parentTagProvider);
+	}
+
+
+	private Map<String, AjectiveReplacementForNoun> readAdjectiveReplacementsForNouns() {
+		Map<String, AjectiveReplacementForNoun> result = new HashMap<String, AjectiveReplacementForNoun>();
+		try {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery("SELECT source, tag, modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"");
+			while(resultSet.next()){
+				String source = resultSet.getString(1);
+				String modifier = resultSet.getString(3);
+				String tag = resultSet.getString(2);
+						
+				modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
+				tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
+				
+				result.put(source, new AjectiveReplacementForNoun(modifier, tag, source));
+			}
+		} catch (Exception e) {
+			log(LogLevel.ERROR, "problem accessing sentence table", e);
+		}
+		return result;
 	}
 
 
@@ -711,5 +736,11 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		this.parentTagProvider.init(parentTags, grandParentTags);
+	}
+
+
+	@Override
+	public Map<String, AjectiveReplacementForNoun> getAdjectiveReplacementsForNouns() {
+		return this.adjectiveReplacementsForNouns;
 	}
 }

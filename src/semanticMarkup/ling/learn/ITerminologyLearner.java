@@ -100,4 +100,9 @@ public interface ITerminologyLearner {
 	 */
 	public Map<String, Set<String>> getCategoryTerms();
 	
+	/**
+	 * @return <source, AjectiveReplacementForNoun> map used in sentence table
+	 */
+	public Map<String, AjectiveReplacementForNoun> getAdjectiveReplacementsForNouns();
+	
 }
