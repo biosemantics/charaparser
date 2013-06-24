@@ -128,8 +128,9 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 																		// ii/NNS
 				word = word.replaceAll("\\{|\\}", "");
 				posedSentence.add(new POSedToken(word, POS.NNS));
+			} else if(word.matches("\\d*.{0,1}\\d+")) {
+				posedSentence.add(new POSedToken(word, POS.CD));
 			}
-			// end mohan code
 			else if (p.contains("c") || isState) {
 				int wordFrequency = corpus.getFrequency(word);
 				if (wordFrequency > 79) {

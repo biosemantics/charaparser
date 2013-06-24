@@ -26,6 +26,7 @@ import semanticMarkup.ling.chunk.lib.CharaparserChunkerChain;
 import semanticMarkup.ling.chunk.lib.chunker.AndChunker;
 import semanticMarkup.ling.chunk.lib.chunker.CharacterListChunker;
 import semanticMarkup.ling.chunk.lib.chunker.CharacterNameChunker;
+import semanticMarkup.ling.chunk.lib.chunker.ChromosomeChunker;
 import semanticMarkup.ling.chunk.lib.chunker.ConjunctedOrgansRecoverChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyModifierChunker;
 import semanticMarkup.ling.chunk.lib.chunker.MyNewCleanupChunker;
@@ -183,6 +184,7 @@ public class BasicConfig extends AbstractModule {
 		bind(IChunker.class).annotatedWith(Names.named("CharacterListChunker")).to(CharacterListChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("SpecificPPChunker")).to(SpecificPPChunker.class).in(Singleton.class);
 		bind(IChunker.class).annotatedWith(Names.named("CharacterNameChunker")).to(CharacterNameChunker.class).in(Singleton.class);
+		bind(IChunker.class).annotatedWith(Names.named("ChromosomeChunker")).to(ChromosomeChunker.class).in(Singleton.class);
 		
 		bind(IPOSKnowledgeBase.class).to(WordNetPOSKnowledgeBase.class).in(Singleton.class);
 		bind(IPOSKnowledgeBase.class).annotatedWith(Names.named("LearnedPOSKnowledgeBase")).to(LearnedPOSKnowledgeBase.class).in(Singleton.class);

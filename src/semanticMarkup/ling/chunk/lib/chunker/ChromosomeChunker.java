@@ -1,7 +1,12 @@
 package semanticMarkup.ling.chunk.lib.chunker;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
@@ -29,22 +34,34 @@ public class ChromosomeChunker extends AbstractChunker {
 	 * @param glossary
 	 * @param terminologyLearner
 	 * @param inflector
+	 * @param organStateKnowledgeBase
 	 */
-	public ChromosomeChunker(IParseTreeFactory parseTreeFactory,
-			String prepositionWords, Set<String> stopWords, String units,
-			HashMap<String, String> equalCharacters, IGlossary glossary,
-			ITerminologyLearner terminologyLearner, IInflector inflector, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,
-				glossary, terminologyLearner, inflector, organStateKnowledgeBase);
-		// TODO Auto-generated constructor stub
+	@Inject
+	public ChromosomeChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
+				inflector, organStateKnowledgeBase);
 	}
 	
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
-		for(AbstractParseTree terminal : chunkCollector.getTerminals())  
-			if(terminal.getTerminalsText().contains("=")) //chromosome count 2n=, FNA specific
-				chunkCollector.addChunk(new Chunk(ChunkType.CHROM, terminal));
+		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
+		for(int i=0; i<terminals.size()-1; i++) {
+			AbstractParseTree terminal = terminals.get(i);
+			AbstractParseTree nextTerminal = terminals.get(i+1);
+			
+			if(terminal.getTerminalsText().matches("\\d{0,1}[xn]=") && 
+					nextTerminal.getTerminalsText().matches("\\d+")) {
+				//chromosome count 2n=, FNA specific
+				Chunk chromosomeChunk = new Chunk(ChunkType.CHROM);
+				LinkedHashSet<Chunk> chromosomeChunkChildren = new LinkedHashSet<Chunk>();
+				chromosomeChunkChildren.add(terminal);
+				chromosomeChunkChildren.add(nextTerminal);
+				chromosomeChunk.setChunks(chromosomeChunkChildren);
+				chunkCollector.addChunk(chromosomeChunk);
+			}
+		}
 	}
 	//TODO
 			/*String l = "";

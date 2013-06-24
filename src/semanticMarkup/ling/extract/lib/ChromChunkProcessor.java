@@ -54,7 +54,7 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		String content = chunk.toString().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
+		String content = chunk.getTerminalsText().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
 		//Element structure = new Element("chromosome");
 		DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 		structure.setAttribute("name", "chromosome");
@@ -62,7 +62,7 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 		result.add(structure);
 		
-		List<Chunk> modifiers = null;
+		List<Chunk> modifiers = new LinkedList<Chunk>();
 		this.annotateNumericals(content, "count", modifiers, result, false, processingContextState);
 		addClauseModifierConstraint(structure, processingContextState);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
