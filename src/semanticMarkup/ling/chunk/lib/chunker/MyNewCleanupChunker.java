@@ -125,7 +125,8 @@ public class MyNewCleanupChunker extends AbstractChunker {
 					translateStateToConstraint[i] = i+1 < terminals.size() && (constraintOrgan[i+1] || translateCharacterToConstraint[i+1]);
 					changedStateToX |= translateStateToConstraint[i] != before;
 					before = translateStateToModifier[i];
-					translateStateToModifier[i] =  i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1];
+					translateStateToModifier[i] =  i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1] && 
+							!terminals.get(i).getTerminalsText().equals("borne");
 					changedStateToX |= translateStateToModifier[i] != before;
 				}
 			//log(LogLevel.DEBUG, "changedStateToX " + changedStateToX);
