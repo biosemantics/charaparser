@@ -3,11 +3,13 @@ package semanticMarkup.ling.chunk;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.log.LogLevel;
@@ -624,10 +626,17 @@ public class Chunk implements Cloneable {
 	}
 
 	public boolean hasCircularReference() {
-		if(this.contains(this)) 
+		return this.hasCircularReference(new HashSet<Chunk>());
+	}
+	
+	private boolean hasCircularReference(Set<Chunk> visitedChunks) {
+		if(visitedChunks.contains(this))
 			return true;
+		visitedChunks.add(this);
 		for(Chunk childChunk : this.getChunks()) {
-			boolean result = childChunk.hasCircularReference();
+			HashSet<Chunk> newVisitedChunks = new HashSet<Chunk>();
+			newVisitedChunks.addAll(visitedChunks);
+			boolean result = childChunk.hasCircularReference(newVisitedChunks);
 			if(result)
 				return true;
 		}
