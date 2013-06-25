@@ -155,18 +155,20 @@ public class VPRecoverChunker extends AbstractChunker {
 		AbstractParseTree verbTerminal = terminals.get(i);
 		AbstractParseTree ppTerminal = terminals.get(i+1);
 		Chunk verbChunk = chunkCollector.getChunk(verbTerminal);
-		verbChunk.setChunkType(ChunkType.VERB);
+		
 		Chunk ppChunk = chunkCollector.getChunk(ppTerminal);
 		Chunk prepositionChunk = ppChunk.getChildChunk(ChunkType.PREPOSITION);
-		LinkedHashSet<Chunk> verbChildChunks = verbChunk.getChunks();
-		verbChildChunks.addAll(prepositionChunk.getChunks());
-		Chunk organChunk = ppChunk.getChildChunk(ChunkType.OBJECT);
-		
-		LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
-		childChunks.add(verbChunk);
-		childChunks.add(organChunk);
-		Chunk vpChunk = new Chunk(ChunkType.VP, childChunks);
-		chunkCollector.addChunk(vpChunk);
+		Chunk objectChunk = ppChunk.getChildChunk(ChunkType.OBJECT);
+		if(objectChunk.containsChunkType(ChunkType.ORGAN)) {
+			verbChunk.setChunkType(ChunkType.VERB);
+			LinkedHashSet<Chunk> verbChildChunks = verbChunk.getChunks();
+			verbChildChunks.addAll(prepositionChunk.getChunks());
+			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
+			childChunks.add(verbChunk);
+			childChunks.add(objectChunk);
+			Chunk vpChunk = new Chunk(ChunkType.VP, childChunks);
+			chunkCollector.addChunk(vpChunk);
+		}
 	}
 
 	
