@@ -57,8 +57,8 @@ public class RatioChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<DescriptionTreatmentElement> parents = this.attachToLast? lastStructures(processingContext, processingContextState) 
 				: processingContextState.getSubjects();
-		List<Chunk> modifiers = null;
-		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "lwratio", modifiers, 
+		List<Chunk> modifiers = new LinkedList<Chunk>();
+		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "l_w_ratio", modifiers, 
 				lastStructures(processingContext, processingContextState), false, processingContextState);
 		processingContextState.setLastElements(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

@@ -160,17 +160,39 @@ public class NumericalChunker extends AbstractChunker {
 						Chunk count = new Chunk(ChunkType.COUNT,  chunkCollector.getChunk(terminal));
 						chunkCollector.addChunk(count);
 					}
-					
-					if(terminalsText.matches("l\\s*\\W\\s*w")){
-						while(!terminalsText.matches(".*?\\d.*")) {
-							i++;
-							terminal = terminals.get(i);
-							terminalsText = terminal.getTerminalsText();
-						}
-						terminal.setTerminalsText(originalNumForm(terminalsText).trim());
-						Chunk ratio = new Chunk(ChunkType.RATIO,  chunkCollector.getChunk(terminal));
-						chunkCollector.addChunk(ratio);
+				}
+			}
+		}
+		
+		// l/w = X 
+		// ratio chunking
+		for(int i=0; i<terminals.size(); i++) {
+			AbstractParseTree terminal = terminals.get(i);
+			String terminalsText = terminal.getTerminalsText();
+			
+			if(terminalsText.matches("l\\s*\\W\\s*w")){
+				int j = i+1;
+				boolean foundRatio = false;
+				while(j < terminals.size()) {
+					AbstractParseTree lookAheadTerminal = terminals.get(j);
+					String lookAheadTerminalText = lookAheadTerminal.getTerminalsText();
+					if(lookAheadTerminalText.equals("=")) {
+						j++;
+					} else if(lookAheadTerminalText.matches(".*?\\d.*")) {
+						foundRatio = true;
+						j++;
+					} else {
+						break;
 					}
+				}
+				if(foundRatio) {
+					LinkedHashSet<Chunk> ratioChildren = new LinkedHashSet<Chunk>();
+					for(;i<j;i++) {
+						/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
+						ratioChildren.add(chunkCollector.getChunk(terminals.get(i)));
+					}
+					Chunk ratioChunk = new Chunk(ChunkType.RATIO, ratioChildren);
+					chunkCollector.addChunk(ratioChunk);
 				}
 			}
 		}
