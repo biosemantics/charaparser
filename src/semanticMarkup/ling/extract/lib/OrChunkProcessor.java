@@ -128,7 +128,10 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					}
 					
 					return result;
-				} 
+				} else if(nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && previousChunk.containsChunkType(ChunkType.MODIFIER)) {
+					//List<Chunk> modifierChunks = previousChunk.getChunks(ChunkType.MODIFIER);
+					//processingContextState.getUnassignedModifiers().addAll(modifierChunks);
+				}
 			} else if(previousChunk.isOfChunkType(ChunkType.PP) && nextChunk.isOfChunkType(ChunkType.PP)) {
 				IChunkProcessor ppChunkProcessor = processingContext.getChunkProcessor(ChunkType.PP);
 				//save actual current state to reset to correct current state after replay of chunk processing of previous chunk
