@@ -2,6 +2,7 @@ package semanticMarkup.ling.chunk.lib.chunker;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -80,6 +81,36 @@ public class MyNewCleanupChunker extends AbstractChunker {
 				translate(ChunkType.CONSTRAINT, ChunkType.MODIFIER, i, chunkCollector);
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
 			}
+		}
+		
+		//capture multiple modifiers following each other into one chunk
+		Chunk previousModifierChunk = null;
+		for(int i=0; i<terminals.size(); i++) {
+			AbstractParseTree terminal = terminals.get(i);
+			Chunk terminalChunk = chunkCollector.getChunk(terminal);
+			
+			//terminal could be a modifier chunk or a modifier chunk stuck into another chunk (e.g. character_state)
+			if(previousModifierChunk != null && terminalChunk.isPartOfChunkType(terminal, ChunkType.MODIFIER) &&
+					!terminalChunk.getChunkOfTypeAndTerminal(ChunkType.MODIFIER, terminal).equals(previousModifierChunk)) {
+				Chunk modifierChunk = terminalChunk.getChunkOfTypeAndTerminal(ChunkType.MODIFIER, terminal);
+				LinkedHashSet<Chunk> previousChildChunks = previousModifierChunk.getChunks();
+				LinkedHashSet<Chunk> modifierChildChunks = modifierChunk.getChunks();
+				previousChildChunks.addAll(modifierChildChunks);
+				Chunk newModifierChunk = new Chunk(ChunkType.MODIFIER, previousChildChunks);
+				terminalChunk.replaceChunk(modifierChunk, newModifierChunk);
+				terminalChunk.removeChunk(previousModifierChunk);
+				chunkCollector.addChunk(terminalChunk);
+			}
+			
+			//special case: to connection two modifiers e.g. broadly to narrowly ovoid
+			if(terminal.getTerminalsText().equals("to") && 
+					!chunkCollector.isPartOfANonTerminalChunk(terminal) &&
+					previousModifierChunk != null && 
+					i+1 < terminals.size() && 
+					chunkCollector.isPartOfChunkType(terminals.get(i+1), ChunkType.MODIFIER)) {
+				previousModifierChunk.getChunks().add(terminal);
+			} else 
+				previousModifierChunk = terminalChunk.getChunkOfTypeAndTerminal(ChunkType.MODIFIER, terminal);
 		}
 
 		//moveChunksForAndOrLists(terminals, chunkCollector);		
