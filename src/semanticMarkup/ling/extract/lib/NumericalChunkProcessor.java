@@ -92,6 +92,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(content, character,
 				modifiers, lastStructures(processingContext, processingContextState), resetFrom, processingContextState);
 		processingContextState.setLastElements(characters);
+		processingContextState.clearUnassignedModifiers();
 		
 		if(parents.isEmpty()) {
 			processingContextState.getUnassignedCharacters().addAll(characters);

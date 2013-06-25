@@ -29,8 +29,6 @@ import com.google.inject.name.Named;
  */
 public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	
-	private String times;
-	
 	/**
 	 * @param inflector
 	 * @param glossary
@@ -87,7 +85,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> onAndAfterTimes = new ArrayList<Chunk>();
 		boolean afterTimes = false;
 		for(Chunk chunk : content.getChunks()) {
-			if(chunk.getTerminalsText().contains("(" + times + ")")) 
+			if(chunk.getTerminalsText().matches("(" + times + ")")) 
 				afterTimes = true;
 			if(afterTimes)
 				onAndAfterTimes.add(chunk);
@@ -109,9 +107,8 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			}
 			if(chunk.isOfChunkType(ChunkType.TYPE)) 
 				containsType = true;
-			if(chunk.isOfChunkType(ChunkType.OBJECT) || 
-					chunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN) ||
-					chunk.isOfChunkType(ChunkType.NP_LIST)) 
+			if(chunk.containsChunkType(ChunkType.ORGAN) || chunk.containsChunkType(ChunkType.OBJECT) || 
+					chunk.containsChunkType(ChunkType.NP_LIST)) 
 				containsObjectMainSubjectNPList = true;
 			if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE))
 				containsCharacterState = true;
@@ -140,13 +137,21 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			//ca .3.5 times length r[p[of] o[(throat)]]
 			Chunk comparisonChunk = new Chunk(ChunkType.CONSTRAINT, onAndAfterTimes);
 			//times o[(bodies)] => constraint[times (bodies)]
-			Chunk sizeChunk = new Chunk(ChunkType.CHARACTER_STATE, beforeTimes);
-			sizeChunk.setProperty("characterName",  "size");
-			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
-			childChunks.add(sizeChunk);
-			childChunks.add(comparisonChunk);
-			content.setChunks(childChunks);
-			 processingContext.getChunkProcessor(thanType).process(content, processingContext);	
+			Chunk valueChunk = new Chunk(ChunkType.VALUE, beforeTimes);
+			//Chunk sizeChunk = new Chunk(ChunkType.CHARACTER_STATE, beforeTimes);
+			//sizeChunk.setProperty("characterName",  "size");
+			//LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
+			//childChunks.add(sizeChunk);
+			//childChunks.add(comparisonChunk);
+			//content.setChunks(childChunks);
+			processingContextState.setClauseModifierContraint(comparisonChunk.getTerminalsText());
+			List<DescriptionTreatmentElement> structures = 
+					this.extractStructuresFromObject(comparisonChunk, processingContext, processingContextState);
+			processingContextState.setClauseModifierContraintId(this.listStructureIds(structures));
+			LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>(
+					processingContext.getChunkProcessor(ChunkType.VALUE).process(valueChunk, processingContext));
+			processingContext.getCurrentState().clearUnassignedModifiers();
+			return result;
 		}else if(containsCharacterState) { 
 			//characters:1–3 times {pinnately} {lobed}
 			Chunk modifierChunk = new Chunk(ChunkType.MODIFIER, beforeTimes);

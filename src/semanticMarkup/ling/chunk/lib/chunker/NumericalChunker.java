@@ -144,6 +144,13 @@ public class NumericalChunker extends AbstractChunker {
 								Chunk value = new Chunk(ChunkType.VALUE, childChunks);
 								chunkCollector.addChunk(value);
 							} else {
+								i++;
+								AbstractParseTree lookAheadTerminal = terminals.get(i);
+								while(chunkCollector.isOfChunkType(lookAheadTerminal, ChunkType.UNASSIGNED)) {
+									childChunks.add(chunkCollector.getChunk(lookAheadTerminal));
+									i++;
+									lookAheadTerminal = terminals.get(i);
+								}
 								Chunk comparativeValue = new Chunk(ChunkType.COMPARATIVE_VALUE, childChunks);
 								chunkCollector.addChunk(comparativeValue);
 							}
