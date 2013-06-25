@@ -238,6 +238,8 @@ public class CharacterListChunker extends AbstractChunker {
 					newState = false;
 				}*/
 				AbstractParseTree modifierTerminal = parseTreeFactory.create();
+				if(modifierStateToken.equals("moreorless"))
+					modifierStateToken = "more or less";
 				modifierTerminal.setTerminalsText(modifierStateToken);
 				modifiersTree.addChild(modifierTerminal);
 				Chunk characterStateChildChunk = new Chunk(ChunkType.MODIFIER, modifierTerminal);
