@@ -144,9 +144,11 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			//childChunks.add(sizeChunk);
 			//childChunks.add(comparisonChunk);
 			//content.setChunks(childChunks);
-			processingContextState.setClauseModifierContraint(comparisonChunk.getTerminalsText());
 			List<DescriptionTreatmentElement> structures = 
 					this.extractStructuresFromObject(comparisonChunk, processingContext, processingContextState);
+			processingContextState = processingContext.getCurrentState();
+			processingContextState.setClauseModifierContraint(comparisonChunk.getTerminalsText());
+			processingContextState.setLastElements(new LinkedList<DescriptionTreatmentElement>(parents));
 			processingContextState.setClauseModifierContraintId(this.listStructureIds(structures));
 			LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>(
 					processingContext.getChunkProcessor(ChunkType.VALUE).process(valueChunk, processingContext));
