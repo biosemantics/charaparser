@@ -172,25 +172,27 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			notAllowedCharacterStates.add("low");
 			
 			//split character name by "_" ?
-			if(characterName != null && !characterName.contains("_or_")) {
-				if(allowedCharacterNames.contains(characterName) && !notAllowedCharacterStates.contains(characterState))
-					return true;
-				//String[] singleCharacterNames = characterName.split("_or_");
-				//for(String singleCharacterName : singleCharacterNames) {
-				//	if(allowedCharacterNames.contains(singleCharacterName) && !notAllowedCharacterStates.contains(characterState))
-				//		return true;
-				//}
-			}
-				
-			//split character name with "_" instead of string contains
-			if(characterName != null && !characterName.contains("_or_")) {
-				if(characterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
-					return true;
+			
+			if(characterName != null) {
 				/*String[] singleCharacterNames = characterName.split("_or_");
 				for(String singleCharacterName : singleCharacterNames) {
 					if(singleCharacterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
 						return true;
 				}*/
+				if(characterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
+					return true;
+				
+				String[] characterNames = characterName.split("_or_");
+				boolean result = !notAllowedCharacterStates.contains(characterState);
+				for(String singleCharacterName : characterNames)
+				//&& !characterName.contains("_or_")) {
+					result &= allowedCharacterNames.contains(singleCharacterName);
+				//String[] singleCharacterNames = characterName.split("_or_");
+				//for(String singleCharacterName : singleCharacterNames) {
+				//	if(allowedCharacterNames.contains(singleCharacterName) && !notAllowedCharacterStates.contains(characterState))
+				//		return true;
+				//}
+				return result;
 			}
 		}
 		return false;
