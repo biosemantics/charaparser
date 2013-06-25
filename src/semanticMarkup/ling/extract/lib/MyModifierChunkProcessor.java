@@ -3,6 +3,7 @@ package semanticMarkup.ling.extract.lib;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Set;
 
 import semanticMarkup.core.description.DescriptionTreatmentElement;
@@ -11,6 +12,7 @@ import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.Chunk;
+import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
@@ -54,14 +56,20 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected ArrayList<DescriptionTreatmentElement> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
-		//probably want to put the modifier somewhere to the processingContext
+		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
+		Chunk nextChunk = chunkListIterator.next();
+		chunkListIterator.previous();
+		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
 		if(!lastElements.isEmpty()) {
 			DescriptionTreatmentElement lastElement = lastElements.getLast();
 			
-			if(!processingContextState.isCommaAndOrEosEolAfterLastElements() && !processingContextState.isUnassignedChunkAfterLastElements() && 
-					(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.RELATION) || lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER))) {
+			if(!processingContextState.isCommaAndOrEosEolAfterLastElements() 
+					&& !processingContextState.isUnassignedChunkAfterLastElements() && 
+					(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.RELATION) 	|| 
+							(!nextChunk.isOfChunkType(ChunkType.PP) && 
+									lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)))) {
 				lastElement.appendAttribute("modifier", chunk.getTerminalsText());
 			} else 
 				processingContextState.getUnassignedModifiers().add(chunk);

@@ -1198,13 +1198,19 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				&& locationPrepositions.contains(preposition.getTerminalsText())) {
 				lastElement.setAttribute("name", "location");
 			}
-			lastElement.setAttribute("constraint", preposition.getTerminalsText() + " " + listStructureNames(object));
+			
+			String modifierString = "";
+			for(Chunk modifier : modifiers) {
+				modifierString += modifier.getTerminalsText() + " ";
+			}
+			
+			lastElement.setAttribute("constraint", modifierString + preposition.getTerminalsText() + " " + listStructureNames(object));
 			lastElement.setAttribute("constraintid", listStructureIds(structures));
-			if(!modifiers.isEmpty()) {
+			/*if(!modifiers.isEmpty()) {
 				for(Chunk modifier : modifiers) {
 					lastElement.appendAttribute("modifier", modifier.getTerminalsText());
 				}
-			}
+			}*/
 		} else {			
 			String relation = relationLabel(preposition, subjectStructures, structures, object, chunkCollector);//determine the relation
 			if(relation != null){
@@ -2005,6 +2011,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected String listStructureNames(Chunk object){
 		String organString = "";
 		for(Chunk objectChunk : object.getChunks()) {
+			if(objectChunk.isOfChunkType(ChunkType.CONSTRAINT))
+				organString += objectChunk.getTerminalsText() + " ";
 			if(objectChunk.isOfChunkType(ChunkType.ORGAN))
 				organString += objectChunk.getTerminalsText() + ", ";
 		}
