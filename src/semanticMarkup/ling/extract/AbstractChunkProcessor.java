@@ -668,9 +668,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> results = new LinkedList<DescriptionTreatmentElement>();
 		//determine characters and modifiers
 		List<Chunk> modifiers = new ArrayList<Chunk>();
+		
 		for(Chunk token : tokens) {
+			processingContextState = processingContext.getCurrentState();
 			if(token.isOfChunkType(ChunkType.TO_PHRASE)) {
 				processingContextState.setLastElements(parents);
+				processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 				IChunkProcessor processor = processingContext.getChunkProcessor(ChunkType.TO_PHRASE);
 				List<DescriptionTreatmentElement> result = processor.process(token, processingContext);
 				results.addAll(result);
@@ -722,6 +725,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 							//default type "" = individual vaues
 							modifiers.clear();
 						}
+					} else {
+						processingContextState.setLastElements(parents);
+						processingContextState.setCommaAndOrEosEolAfterLastElements(false);
+						IChunkProcessor processor = processingContext.getChunkProcessor(token.getChunkType());
+						List<DescriptionTreatmentElement> result = processor.process(token, processingContext);
+						results.addAll(result);
 					}
 				}
 			}
