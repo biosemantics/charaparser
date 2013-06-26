@@ -70,9 +70,18 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 			
 			if(nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE)) 
 				return result;
+			
 			if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
 				
 				String characterName = lastElements.getLast().getAttribute("name");
+				if(nextChunk.isOfChunkType(ChunkType.PP)){
+					DescriptionTreatmentElement parent = processingContext.getParent(lastElements.getLast());
+					LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
+					parents.add(parent);
+					this.createCharacterElement(parents, new LinkedList<Chunk>(), nextChunk.getTerminalsText(), 
+							characterName, "", processingContextState);
+				}
+				
 				if(!nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && 
 						!nextChunk.isOfChunkType(ChunkType.COUNT) && 
 						!nextChunk.isOfChunkType(ChunkType.NUMERICALS) && 
@@ -128,8 +137,12 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					
 					return result;
 				} else if(nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && previousChunk.containsChunkType(ChunkType.MODIFIER)) {
-					//List<Chunk> modifierChunks = previousChunk.getChunks(ChunkType.MODIFIER);
-					//processingContextState.getUnassignedModifiers().addAll(modifierChunks);
+					List<Chunk> modifiers = new LinkedList<Chunk>();
+					modifiers.addAll(processingContext.getState(previousChunk).getUnassignedModifiers());
+					modifiers.addAll(nextChunk.getChunks(ChunkType.MODIFIER));
+					
+					processingContext.getCurrentState().getUnassignedModifiers().clear();
+					processingContext.getCurrentState().getUnassignedModifiers().addAll(modifiers);
 				}
 			} else if(previousChunk.isOfChunkType(ChunkType.PP) && nextChunk.isOfChunkType(ChunkType.PP)) {
 				IChunkProcessor ppChunkProcessor = processingContext.getChunkProcessor(ChunkType.PP);
