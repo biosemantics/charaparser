@@ -19,6 +19,7 @@ import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.extract.AbstractChunkProcessor;
+import semanticMarkup.ling.extract.IChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
@@ -48,7 +49,6 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 	 * @param units
 	 * @param equalCharacters
 	 * @param numberPattern
-	 * @param attachToLast
 	 * @param times
 	 */
 	@Inject
@@ -56,16 +56,24 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
 			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositionWords")Set<String> locationPrepositions, 
 			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			@Named("NumberPattern")String numberPattern, @Named("AttachToLast")boolean attachToLast, @Named("TimesWords")String times) {
+			@Named("NumberPattern")String numberPattern, @Named("TimesWords")String times) {
 		super(inflector, glossary, terminologyLearner, characterKnowledgeBase, posKnowledgeBase, baseCountWords, locationPrepositions, clusters, units, equalCharacters, 
-				numberPattern, attachToLast, times);
+				numberPattern, times);
 	}
 
 	@Override
 	protected ArrayList<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ArrayList<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
-		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
+		
+		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
+		Chunk nextChunk = chunkListIterator.next();
+		chunkListIterator.previous();
+		if(!chunk.containsChunkType(ChunkType.ORGAN) && nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
+			processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
+			return result;
+		}
+		
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		
@@ -162,6 +170,20 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 							lastElement.setAttribute("constraintId", listStructureIds(objectStructures));
 						}
 					}
+				}
+				
+				for(DescriptionTreatmentElement resultElement : result) {
+					if(resultElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
+						LinkedList<DescriptionTreatmentElement> newLastElements = 
+								new LinkedList<DescriptionTreatmentElement>();
+						newLastElements.add(resultElement);
+						processingContext.getCurrentState().setLastElements(newLastElements);
+
+					}
+				}
+				for(Chunk afterOrganChunk : afterOrganChunks) {
+					IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(afterOrganChunk.getChunkType());
+					result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
 				}
 			}
 		}

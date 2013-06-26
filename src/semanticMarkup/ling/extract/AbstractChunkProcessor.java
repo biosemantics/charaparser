@@ -43,7 +43,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected String units;
 	protected HashMap<String, String> equalCharacters;
 	protected String numberPattern;
-	protected boolean attachToLast;
 	protected String times;
 	
 	/**
@@ -58,7 +57,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param units
 	 * @param equalCharacters
 	 * @param numberPattern
-	 * @param attachToLast
 	 * @param times
 	 */
 	@Inject
@@ -66,7 +64,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
 			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositions")Set<String> locationPrepositions, 
 			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			@Named("NumberPattern")String numberPattern, @Named("AttachToLast")boolean attachToLast, @Named("Times")String times) {
+			@Named("NumberPattern")String numberPattern, @Named("Times")String times) {
 		this.inflector = inflector;
 		this.glossary = glossary;
 		this.characterKnowledgeBase = characterKnowledgeBase;
@@ -78,7 +76,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		this.units = units;
 		this.equalCharacters = equalCharacters;
 		this.numberPattern = numberPattern;
-		this.attachToLast = attachToLast;
 		this.times = times;
 	}
 	
@@ -388,6 +385,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			descriptionElement.setAttribute("constraint", clauseModifierConstraint);
 		if (clauseModifierConstraintId != null)
 			descriptionElement.setAttribute("constraintid", clauseModifierConstraintId);
+		processingContextState.setClauseModifierContraint(null);
+		processingContextState.setClauseModifierContraintId(null);
 	}
 	
 	protected LinkedList<DescriptionTreatmentElement> lastStructures(ProcessingContext processingContext, 

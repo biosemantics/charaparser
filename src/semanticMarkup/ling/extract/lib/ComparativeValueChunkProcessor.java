@@ -41,7 +41,6 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	 * @param units
 	 * @param equalCharacters
 	 * @param numberPattern
-	 * @param attachToLast
 	 * @param times
 	 */
 	@Inject
@@ -49,16 +48,15 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
 			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositionWords")Set<String> locationPrepositions, 
 			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			@Named("NumberPattern")String numberPattern, @Named("AttachToLast")boolean attachToLast, @Named("TimesWords")String times) {
+			@Named("NumberPattern")String numberPattern,  @Named("TimesWords")String times) {
 		super(inflector, glossary, terminologyLearner, characterKnowledgeBase, posKnowledgeBase, baseCountWords, locationPrepositions, clusters, units, equalCharacters, 
-				numberPattern, attachToLast, times);
+				numberPattern, times);
 	}
 
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = this.attachToLast? lastStructures(processingContext, processingContextState) 
-				: processingContextState.getSubjects();
+		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
 		LinkedList<DescriptionTreatmentElement> characters = processComparativeValue(chunk, 
 				parents, processingContext, processingContextState);
 		

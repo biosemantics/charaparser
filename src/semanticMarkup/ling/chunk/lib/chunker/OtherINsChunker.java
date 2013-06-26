@@ -1,7 +1,9 @@
 package semanticMarkup.ling.chunk.lib.chunker;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -77,8 +79,13 @@ public class OtherINsChunker extends AbstractChunker {
 				}
 			}
 			
+			
 			boolean isFunctionOfPPPhraseWithoutOrgan = isFunctionOfPPPhraseWithoutOrgan(terminal, chunkCollector);
-			if(isFunctionOfPPPhraseWithoutOrgan || (!chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().matches(prepositionWords))) { 
+			boolean isRangePreposition = isRangePrepositionPhrase(terminal, chunkCollector);
+			
+			if((isFunctionOfPPPhraseWithoutOrgan || 
+					(!chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().matches(prepositionWords)))
+					&& !isRangePreposition) { 
 				//[of] ...onto]]
 				// a prep is identified, needs normalization
 				boolean startNoun = false;
@@ -232,6 +239,24 @@ public class OtherINsChunker extends AbstractChunker {
 				}
 			}
 		}
+	}
+
+	private boolean isRangePrepositionPhrase(AbstractParseTree terminal, ChunkCollector chunkCollector) {
+		Chunk chunk = chunkCollector.getChunk(terminal);
+		
+		if(terminal.getTerminalsText().equals("to")) {
+			boolean foundCount = false;
+			for(AbstractParseTree chunkTerminal : chunk.getTerminals()) {
+				if(chunkCollector.isPartOfChunkType(chunkTerminal, ChunkType.COUNT) || 
+						chunkCollector.isPartOfChunkType(chunkTerminal, ChunkType.VALUE))
+					foundCount = true;
+				//e.g. to 1 cm think, to 1 cm in width
+				if(foundCount && (chunkCollector.isPartOfChunkType(chunkTerminal, ChunkType.STATE) || 
+						(chunkCollector.isPartOfChunkType(chunkTerminal, ChunkType.CHARACTER_NAME)))) 
+					return true;
+			}
+		}
+		return false;
 	}
 
 	private boolean isFunctionOfPPPhraseWithoutOrgan(

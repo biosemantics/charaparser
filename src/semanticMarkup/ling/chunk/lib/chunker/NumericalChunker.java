@@ -100,6 +100,7 @@ public class NumericalChunker extends AbstractChunker {
 						chunkCollector.addChunk(valueDegree);
 						continue;
 					}
+					
 					if(terminalsText.matches(".*?[()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*(-\\s*(" + countWords + ")\\b|$)")) {
 						
 						//ends with a number

@@ -255,8 +255,6 @@ public class BasicConfig extends AbstractModule {
 		bind(IChunkProcessor.class).annotatedWith(Names.named("Where")).to(WhereChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("To")).to(ToChunkProcessor.class).in(Singleton.class);
 		bind(IChunkProcessor.class).annotatedWith(Names.named("CharacterName")).to(CharacterNameChunkProcessor.class).in(Singleton.class);
-		
-		bind(Boolean.class).annotatedWith(Names.named("AttachToLast")).toInstance(false);
 	
 		// create a Automata for these?
 		Set<String> locationPPWords = getLocationPPWords();
