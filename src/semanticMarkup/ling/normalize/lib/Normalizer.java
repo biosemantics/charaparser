@@ -311,7 +311,22 @@ public abstract class Normalizer implements INormalizer {
 				terminologyLearner.getAdjectiveReplacementsForNouns();
 		if(replacements.containsKey(source)) {
 			AjectiveReplacementForNoun replacement = replacements.get(source);
-			str = str.replaceAll(replacement.getAdjective(), replacement.getNoun());
+			
+			String newString = "";
+			String remainder = str;
+			while(!remainder.isEmpty()) {
+				int j = remainder.indexOf(replacement.getAdjective());
+				if(j == -1) {
+					newString += remainder;
+					remainder = "";
+				} else {
+					newString += remainder.substring(0, j + replacement.getAdjective().length()) + " " + replacement.getNoun();
+					remainder = remainder.substring(j + replacement.getAdjective().length());
+				}
+			}
+			
+			str = newString;
+			//str = str.replaceAll(replacement.getAdjective(), replacement.getNoun());
 		}
 		/*Map<String, String> tagAdjectiveMap = terminologyLearner.getAdjNounSent();
 		List<String> adjectiveList = terminologyLearner.getAdjNouns();

@@ -190,7 +190,7 @@ public class RunConfig extends BasicConfig {
 		//result.add("121.txt-3");
 		//result.add("765.txt-6");
 		
-		/*
+		
 		String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
@@ -220,11 +220,25 @@ public class RunConfig extends BasicConfig {
 					//if(file.equals("15.txt-7") || file.equals("15.txt-11") || file.equals("148.txt-12"))
 					//if(file.equals("148.txt-12"))
 					//if(file.equals("132.txt-18"))
+					//if(file.equals("165.txt-2"))
+					
+					//if(file.equals("462.txt-6"))
+					//if(file.equals("474.txt-7"))
+					//if(file.equals("108.txt-9"))
+					//if(file.equals("174.txt-6"))
+					//if(file.equals("578.txt-7"))
+					//if(file.equals("111.txt-8"))
+					//if(file.equals("516.txt-7"))
+					//if(file.equals("754.txt-11"))
+					//if(file.equals("765.txt-2"))
+					//if(file.equals("264.txt-3"))
+					//if(file.equals("878.txt-3"))
+					//if(file.equals("100.txt-12"))
 						result.add(file);
 					// break; //TODO remove. only for test
 				}
 			}
-		}*/
+		}
 		//result.add("000.txt-9");
 		//result.add("000.txt-8");
 		//result.add("000.txt-6");
@@ -236,6 +250,9 @@ public class RunConfig extends BasicConfig {
 		//result.add("004.txt-0");
 		//result.add("004.txt-5");
 		//result.add("020.txt-8");
+		//result.add("000.txt-11");
+		//result.add("002.txt-11");
+		//result.add("022.txt-6");
 		return result;
 	}
 

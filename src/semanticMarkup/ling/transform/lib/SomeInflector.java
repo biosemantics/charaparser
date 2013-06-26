@@ -54,6 +54,7 @@ public class SomeInflector implements IInflector {
 		singulars.put("species", "species");
 		singulars.put("teeth", "tooth");
 		singulars.put("valves", "valve");
+		singulars.put("apices", "apex");
 		
 		plurals.put("axis", "axes");
 		plurals.put("base", "bases");
@@ -71,6 +72,7 @@ public class SomeInflector implements IInflector {
 		plurals.put("process", "processes");
 		plurals.put("series", "series");
 		plurals.put("species", "species");
+		plurals.put("apex", "apices");
 	}
 	
 	@Override
@@ -160,6 +162,9 @@ public class SomeInflector implements IInflector {
 	@Override
 	public String getPlural(String word) {
 		word = word.trim().toLowerCase();
+
+		if(plurals.containsKey(word))
+			return plurals.get(word);
 		if(word.endsWith("s"))
 			return word + "es";
 		else
