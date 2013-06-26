@@ -172,6 +172,8 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					}
 				}
 				
+				LinkedList<DescriptionTreatmentElement> lastElementsBackup = 
+						processingContext.getCurrentState().getLastElements();
 				for(DescriptionTreatmentElement resultElement : result) {
 					if(resultElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
 						LinkedList<DescriptionTreatmentElement> newLastElements = 
@@ -185,6 +187,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(afterOrganChunk.getChunkType());
 					result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
 				}
+				processingContext.getCurrentState().setLastElements(lastElementsBackup);
 			}
 		}
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

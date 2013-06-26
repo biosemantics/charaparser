@@ -81,6 +81,8 @@ public class CharacterListChunker extends AbstractChunker {
 		String[] modifierTokens = terminal.getTerminalsText().split("~");
 		terminal.setPOS(POS.ADVP);
 		for(String modifierToken : modifierTokens) {
+			//disconnect connected colors
+			modifierToken = modifierToken.replaceAll("_c_", " ");
 			if(posKnowledgeBase.isAdverb(modifierToken)) {
 				AbstractParseTree modifierTerminal = parseTreeFactory.create();
 				modifierTerminal.setTerminalsText(modifierToken);
@@ -178,7 +180,10 @@ public class CharacterListChunker extends AbstractChunker {
 		Chunk characterChunk = null;
 		LinkedHashSet<Chunk> toChunks = new LinkedHashSet<Chunk>();
 		boolean collectToChunks = false;
-		for(String modifierStateToken : modifierStateTokensList) {			
+		for(String modifierStateToken : modifierStateTokensList) {
+			//disconnect connected color strings
+			modifierStateToken = modifierStateToken.replaceAll("_c_", " ");
+			
 			if(newState) {
 				if(!stateChildChunks.isEmpty()) {
 					Chunk stateChunk = new Chunk(ChunkType.STATE, stateChildChunks);
