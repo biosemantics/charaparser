@@ -320,7 +320,17 @@ public abstract class Normalizer implements INormalizer {
 					newString += remainder;
 					remainder = "";
 				} else {
-					newString += remainder.substring(0, j + replacement.getAdjective().length()) + " " + replacement.getNoun();
+					String[] wordTokens = remainder.split("\\b");
+					String possibleNoun = wordTokens[0];
+					String singular = this.inflector.getSingular(possibleNoun);
+					String plural = this.inflector.getPlural(possibleNoun);
+					if(!possibleNoun.equals(replacement.getNoun()) &&
+						!singular.equals(replacement.getNoun()) &&
+						!plural.equals(replacement.getNoun())) {
+						newString += remainder.substring(0, j + replacement.getAdjective().length()) + " " + replacement.getNoun();
+					} else {
+						newString += remainder.substring(0, j + replacement.getAdjective().length());
+					}					
 					remainder = remainder.substring(j + replacement.getAdjective().length());
 				}
 			}
