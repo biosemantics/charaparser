@@ -63,6 +63,7 @@ public class CharacterListChunker extends AbstractChunker {
 		for(AbstractParseTree terminal : chunkCollector.getTerminals())  { 
 			String terminalsText = terminal.getTerminalsText();
 			
+
 			if(terminalsText.contains("~list~")) {
 				normalizeCharacterList(terminal, chunkCollector);
 			}
@@ -71,11 +72,24 @@ public class CharacterListChunker extends AbstractChunker {
 			}
 			else if(terminalsText.contains("~")) {
 				normalizeModifiers(terminal, chunkCollector);
+			} 
+			else if(terminalsText.contains("_c_")) {
+				normalizeConnectedColors(terminal, chunkCollector);
 			}
 		}
 		//System.out.println(chunkCollector.getParseTree().prettyPrint());
 	}
 	
+	private void normalizeConnectedColors(AbstractParseTree terminal,
+			ChunkCollector chunkCollector) {
+		terminal.setTerminalsText(terminal.getTerminalsText().replaceAll("_c_", " "));
+		Chunk colorStateChunk = new Chunk(ChunkType.STATE, terminal);
+		Chunk colorChunk = new Chunk(ChunkType.CHARACTER_STATE, colorStateChunk);
+		colorChunk.setProperty("characterName", "coloration");
+		chunkCollector.addChunk(colorChunk);
+		return; 
+	}
+
 	private void normalizeModifiers(AbstractParseTree terminal,
 			ChunkCollector chunkCollector) {
 		String[] modifierTokens = terminal.getTerminalsText().split("~");

@@ -1211,7 +1211,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected LinkedList<DescriptionTreatmentElement> linkObjects(LinkedList<DescriptionTreatmentElement> subjectStructures, List<Chunk> modifiers, 
 			Chunk preposition, Chunk object, boolean lastIsStruct, boolean lastIsChara, 
-			ProcessingContext processingContext, ProcessingContextState processingContextState) {
+			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation) {
 		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
 		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
@@ -1252,7 +1252,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				}
 			}*/
 		} else {			
-			String relation = relationLabel(preposition, subjectStructures, structures, object, chunkCollector);//determine the relation
+			if(relation == null)
+				relation = relationLabel(preposition, subjectStructures, structures, object, chunkCollector);//determine the relation
 			if(relation != null){
 				result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
 			}
@@ -1260,7 +1261,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				structures = subjectStructures; //part_of holds: make the organbeforeof/entity1 the return value, all subsequent characters should be refering to organbeforeOf/entity1
 		}
 		
-		processingContextState.setLastElements(structures);
+		processingContext.getCurrentState().setLastElements(structures);
 		return result;
 	}
 	
@@ -1276,7 +1277,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			Chunk afterPPChunk = null;
 			for(int i=0; i<chunks.size(); i++) { 
 				Chunk chunk = chunks.get(i);
-				if(chunk.containsOrEquals(object)) {
+				if(chunk.containsAll(object.getTerminals())) {
 					if(i+1 < chunks.size()) {
 						afterPPChunk = chunks.get(i+1);
 						break;

@@ -69,6 +69,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
 		Chunk nextChunk = chunkListIterator.next();
 		chunkListIterator.previous();
+		
 		if(!chunk.containsChunkType(ChunkType.ORGAN) && nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 			processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
 			return result;
@@ -106,7 +107,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				return result;
 			}
 			
-			Set<Chunk> objects = new HashSet<Chunk>();
+			Set<Chunk> objects = new LinkedHashSet<Chunk>();
 			if(object.containsChildOfChunkType(ChunkType.OR) || object.containsChildOfChunkType(ChunkType.AND) || object.containsChildOfChunkType(ChunkType.NP_LIST)) {
 				objects = splitObject(object);
 			} else {
@@ -117,6 +118,8 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			if(!lastIsStructure || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 				subjectStructures = processingContextState.getSubjects();
 			}
+			
+			String usedRelation = null;
 			for(Chunk aObject : objects) {
 				boolean lastChunkIsOrgan = true;
 				boolean foundOrgan = false;
@@ -147,7 +150,9 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				if(preposition.getTerminalsText().equals("to") && !foundOrgan && containsCharacter(beforeOrganChunks)) {
 					result.addAll(connectCharacters(subjectStructures, unassignedModifiers, preposition, beforeOrganChunks, processingContext));
 				} else if(lastChunkIsOrgan) {
-					result.addAll(linkObjects(subjectStructures, modifier, preposition, aObject, lastIsStructure, lastIsCharacter, processingContext, processingContextState));
+					LinkedList<DescriptionTreatmentElement> linkedResult = linkObjects(subjectStructures, modifier, preposition, aObject, lastIsStructure, lastIsCharacter, processingContext, processingContextState, usedRelation);
+					usedRelation = getRelation(linkedResult);
+					result.addAll(linkedResult);
 				} else if(foundOrgan) {
 					LinkedHashSet<Chunk> objectChunks = new LinkedHashSet<Chunk>();
 					objectChunks.addAll(beforeOrganChunks);
@@ -156,7 +161,9 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					//modi = afterOrganChunks;
 					
 					Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
-					result.addAll(linkObjects(subjectStructures, modifier, preposition, objectChunk, lastIsStructure, lastIsCharacter, processingContext, processingContextState)); 
+					LinkedList<DescriptionTreatmentElement> linkedResult = linkObjects(subjectStructures, modifier, preposition, objectChunk, lastIsStructure, lastIsCharacter, processingContext, processingContextState, usedRelation);
+					usedRelation = getRelation(linkedResult);
+					result.addAll(linkedResult); 
 					//result.addAll(structures);
 				} else {
 					if(lastIsStructure)
@@ -174,24 +181,32 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				
 				LinkedList<DescriptionTreatmentElement> lastElementsBackup = 
 						processingContext.getCurrentState().getLastElements();
+				LinkedList<DescriptionTreatmentElement> newLastElements = 
+						new LinkedList<DescriptionTreatmentElement>();
 				for(DescriptionTreatmentElement resultElement : result) {
-					if(resultElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
-						LinkedList<DescriptionTreatmentElement> newLastElements = 
-								new LinkedList<DescriptionTreatmentElement>();
+					if(resultElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
 						newLastElements.add(resultElement);
-						processingContext.getCurrentState().setLastElements(newLastElements);
-
-					}
 				}
+				processingContext.getCurrentState().setLastElements(newLastElements);
 				for(Chunk afterOrganChunk : afterOrganChunks) {
 					IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(afterOrganChunk.getChunkType());
 					result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
 				}
+				
 				processingContext.getCurrentState().setLastElements(lastElementsBackup);
 			}
 		}
+		
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
+	}
+
+	private String getRelation(LinkedList<DescriptionTreatmentElement> elements) {
+		for(DescriptionTreatmentElement element : elements) {
+			if(element.isOfDescriptionType(DescriptionTreatmentElementType.RELATION))
+				return element.getAttribute("name");
+		}
+		return null;
 	}
 
 	private List<DescriptionTreatmentElement> connectCharacters(
@@ -245,7 +260,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	private Set<Chunk> splitObject(Chunk object) {
-		Set<Chunk> objectChunks = new HashSet<Chunk>();
+		Set<Chunk> objectChunks = new LinkedHashSet<Chunk>();
 		LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 		boolean collectedOrgan = false;
 		

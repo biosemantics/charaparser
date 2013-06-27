@@ -74,7 +74,7 @@ public class AndChunker extends AbstractChunker {
 				collectedChunks.add(lookAheadTerminal);
 			} else {
 				Chunk lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
-				if(lookAheadChunk.isOfChunkType(ChunkType.COMMA)) {
+				/*if(lookAheadChunk.isOfChunkType(ChunkType.COMMA)) {
 					collectedChunks.add(lookAheadChunk);
 				}
 				if(lookAheadChunk.isOfChunkType(ChunkType.AND)) {
@@ -91,9 +91,10 @@ public class AndChunker extends AbstractChunker {
 				}
 				if(lookAheadChunk.isOfChunkType(ChunkType.CONSTRAINT)) {
 					collectedChunks.add(lookAheadChunk);
-				}
+				}*/
+				collectedChunks.add(lookAheadChunk);
 				if(lookAheadChunk.isPartOfChunkType(lookAheadTerminal, ChunkType.ORGAN)) {
-					collectedChunks.add(lookAheadChunk);
+					//collectedChunks.add(lookAheadChunk);
 					foundOrgan = true;
 					break;
 				}

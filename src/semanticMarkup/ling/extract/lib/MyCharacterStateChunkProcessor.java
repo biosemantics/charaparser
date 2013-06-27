@@ -32,7 +32,6 @@ import com.google.inject.name.Named;
  */
 public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 
-	private boolean attachToLast;
 	private Pattern hyphenedCharacterPattern = Pattern.compile("\\w+-(\\w+)");
 
 	/**

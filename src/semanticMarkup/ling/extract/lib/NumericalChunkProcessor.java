@@ -26,8 +26,6 @@ import com.google.inject.name.Named;
  */
 public class NumericalChunkProcessor extends AbstractChunkProcessor {
 
-	private boolean attachToLast;
-
 	/**
 	 * @param inflector
 	 * @param glossary
@@ -65,8 +63,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			resetFrom = true;
 		}
 		
-		LinkedList<DescriptionTreatmentElement> parents = this.attachToLast? lastStructures(processingContext, processingContextState
-				) : processingContextState.getSubjects();
+		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
 		
 		/*String modifier1 = "";
 		//m[mostly] [4-]8–12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint

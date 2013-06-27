@@ -24,8 +24,6 @@ import com.google.inject.name.Named;
  * @author rodenhausen
  */
 public class RatioChunkProcessor extends AbstractChunkProcessor {
-
-	private boolean attachToLast;
 	
 	/**
 	 * @param inflector
@@ -54,8 +52,7 @@ public class RatioChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = this.attachToLast? lastStructures(processingContext, processingContextState) 
-				: processingContextState.getSubjects();
+		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "l_w_ratio", modifiers, 
 				lastStructures(processingContext, processingContextState), false, processingContextState);

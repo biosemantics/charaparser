@@ -27,8 +27,6 @@ import com.google.inject.name.Named;
  */
 public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 
-	private boolean attachToLast;
-
 	/**
 	 * @param inflector
 	 * @param glossary
@@ -56,8 +54,7 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = this.attachToLast? lastStructures(processingContext, processingContextState) 
-				: processingContextState.getSubjects();
+		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState) : processingContextState.getSubjects();
 		LinkedList<DescriptionTreatmentElement> characters = processCharacterState(chunk, parents, 
 				processingContextState);//apices of basal leaves spread 
 		

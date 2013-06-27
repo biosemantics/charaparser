@@ -26,8 +26,6 @@ import com.google.inject.name.Named;
  */
 public class VPChunkProcessor extends AbstractChunkProcessor {
 
-	private boolean attachToLast;
-
 	/**
 	 * @param inflector
 	 * @param glossary
@@ -55,8 +53,7 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = this.attachToLast? lastStructures(processingContext, processingContextState) : 
-			processingContextState.getSubjects();
+		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
 		LinkedList<DescriptionTreatmentElement> es = processVP(chunk, parents, processingContext, processingContextState); //apices of basal leaves spread 
 		
 		processingContextState.setLastElements(es);
