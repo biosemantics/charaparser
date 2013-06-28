@@ -19,18 +19,22 @@ import semanticMarkup.log.LogLevel;
  * Or modify chunk and call chunkCollector.add(chunk) afterwards to register the changes.
  * ChunkCollector checks for ill-formed chunks.
  * @author rodenhausen
+ * 
+ * 
+ * holdes the parse tree
+ * then aslo the chunks created by all kinds of chunkers.
  */
 public class ChunkCollector implements Iterable<Chunk> {
 
 	private boolean hasChanged = false;
 	private String sentence;
 	private AbstractParseTree parseTree;
-	private String subjectTag;
-	private Treatment treatment;
+	private String subjectTag; //tag field in the sentence table
+	private Treatment treatment; //the entire xml input for a treatment
 	//terminalID to Chunk. 
 	//IParseTree as key doesn't work as hashcodes created have to depend on parent (otherwise same words in a sentence are assigned same hash)
 	//, but IParseTree doesnt know its parent in the current implementation
-	private HashMap<Integer, Chunk> chunks = new HashMap<Integer, Chunk>();
+	private HashMap<Integer, Chunk> chunks = new HashMap<Integer, Chunk>(); //integer is the index of ther terminal nodes in the parse tree
 	private String source;
 	
 	/**
