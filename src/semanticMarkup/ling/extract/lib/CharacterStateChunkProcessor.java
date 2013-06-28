@@ -54,7 +54,7 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState) : processingContextState.getSubjects();
+		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
 		LinkedList<DescriptionTreatmentElement> characters = processCharacterState(chunk, parents, 
 				processingContextState);//apices of basal leaves spread 
 		
