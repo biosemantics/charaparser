@@ -53,20 +53,21 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 
 	@Override
 	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+		//List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+		//LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
 		
-		ArrayList<Chunk> chunks = new ArrayList<Chunk>();
-		chunks.add(chunk);
-		LinkedList<DescriptionTreatmentElement> structures = this.createStructureElements(chunks, processingContextState);
-		result.addAll(structures);
-		DescriptionTreatmentElement lastElement = lastElements.isEmpty() ? null : lastElements.getLast();
+		//ArrayList<Chunk> chunks = new ArrayList<Chunk>();
+		//chunks.add(chunk);
+		ArrayList<DescriptionTreatmentElement> result = this.establishSubject(chunk, processingContextState);
+		//LinkedList<DescriptionTreatmentElement> structures = this.createStructureElements(chunks, processingContextState);
+		//result.addAll(structures);
+		//DescriptionTreatmentElement lastElement = lastElements.isEmpty() ? null : lastElements.getLast();
 		//if(lastElement != null && lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
 		//	annotateType(chunk, lastElement);
 		//else 
-			processingContextState.setLastElements(structures);
+		//	processingContextState.setLastElements(structures);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}

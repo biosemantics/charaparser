@@ -426,7 +426,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
 		
 		boolean newSegment = processingContext.getCurrentState().isCommaAndOrEosEolAfterLastElements();
-		if(!newSegment & (processingContextState.getLastElements().size()> 0 && 
+		if(!newSegment && (processingContextState.getLastElements().size()> 0 && 
 				processingContextState.getLastElements().getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))) {
 			parents.addAll(processingContextState.getLastElements());
 		}else{
@@ -760,8 +760,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						processingContextState.setLastElements(parents);
 						processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 						IChunkProcessor processor = processingContext.getChunkProcessor(token.getChunkType());
-						List<DescriptionTreatmentElement> result = processor.process(token, processingContext);
-						results.addAll(result);
+						
+						if(processor != null) {
+							List<DescriptionTreatmentElement> result = processor.process(token, processingContext);
+							results.addAll(result);
+						}
 					}
 				}
 			}
