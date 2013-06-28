@@ -63,9 +63,9 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> structures = this.createStructureElements(chunks, processingContextState);
 		result.addAll(structures);
 		DescriptionTreatmentElement lastElement = lastElements.isEmpty() ? null : lastElements.getLast();
-		if(lastElement != null && lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
-			annotateType(chunk, lastElement);
-		else 
+		//if(lastElement != null && lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
+		//	annotateType(chunk, lastElement);
+		//else 
 			processingContextState.setLastElements(structures);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
