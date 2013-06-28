@@ -22,7 +22,7 @@ import semanticMarkup.log.LogLevel;
  * 
  * 
  * holdes the parse tree
- * then aslo the chunks created by all kinds of chunkers.
+ * then aslo the chunks created by ChunkerChain.
  */
 public class ChunkCollector implements Iterable<Chunk> {
 
