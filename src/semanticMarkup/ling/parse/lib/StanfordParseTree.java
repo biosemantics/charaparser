@@ -41,6 +41,7 @@ public class StanfordParseTree extends AbstractParseTree {
 
 	@Override
 	public POS getPOS() {
+		//POS is any non-trminal labels, such as NNS, NP, S, Frag, etc..
 		if(this.isTerminal()) 
 			return null;
 		POS result;
