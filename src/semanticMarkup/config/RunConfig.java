@@ -234,6 +234,8 @@ public class RunConfig extends BasicConfig {
 					//if(file.equals("264.txt-3"))
 					//if(file.equals("878.txt-3"))
 					//if(file.equals("100.txt-12"))
+					//if(file.equals("491.txt-4"))
+					if(file.equals("797.txt-2"))
 						result.add(file);
 					// break; //TODO remove. only for test
 				}

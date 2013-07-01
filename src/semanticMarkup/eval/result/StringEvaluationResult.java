@@ -1,4 +1,5 @@
-package semanticMarkup.eval;
+package semanticMarkup.eval.result;
+
 
 /**
  * A String representation of a IEvaluationResult

@@ -1,4 +1,4 @@
-package semanticMarkup.eval;
+package semanticMarkup.eval.result;
 
 /**
  * A IEvaluationResult represents a result generated from an IEvaluator
