@@ -25,7 +25,7 @@ public class PerfectPartialPrecisionRecallEvaluationResult implements IEvaluatio
 		StringBuilder stringBuilder = new StringBuilder();
 		for(String name : results.keySet()) {
 			stringBuilder.append(name + ":\n" + results.get(name).toString() + "\n");
-			stringBuilder.append("---");
+			stringBuilder.append("---\n");
 		}
 		return stringBuilder.toString();
 	}

@@ -1,5 +1,6 @@
 package semanticMarkup.eval.model;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,9 +56,9 @@ public class Structure extends Element {
 	@XmlPath("@notes")
 	private String notes;	
 	@XmlPath("character")
-	private List<Character> characters = new LinkedList<Character>();
-	private List<Relation> fromRelations;
-	private List<Relation> toRelations;
+	private LinkedHashSet<Character> characters = new LinkedHashSet<Character>();
+	private LinkedHashSet<Relation> fromRelations = new LinkedHashSet<Relation>();
+	private LinkedHashSet<Relation> toRelations = new LinkedHashSet<Relation>();
 
 	public Structure() { }
 
@@ -70,14 +71,11 @@ public class Structure extends Element {
 		this.constraint = constraint;
 	}
 
-	public List<Character> getCharacters() {
+	public LinkedHashSet<Character> getCharacters() {
 		return characters;
 	}
 
-	public void setCharacters(List<Character> characters) {
-		for(Character character : characters) {
-			character.setStructure(this);
-		}
+	public void setCharacters(LinkedHashSet<Character> characters) {
 		this.characters = characters;
 	}
 
@@ -180,11 +178,11 @@ public class Structure extends Element {
 	}
 
 
-	public List<Relation> getFromRelations() {
+	public LinkedHashSet<Relation> getFromRelations() {
 		return fromRelations;
 	}
 
-	public List<Relation> getToRelations() {
+	public LinkedHashSet<Relation> getToRelations() {
 		return toRelations;
 	}
 	

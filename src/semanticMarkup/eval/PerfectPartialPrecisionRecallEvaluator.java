@@ -170,5 +170,11 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	public String getDescription() {
 		return this.getClass().toString();
 	}
+	
+	public static void main(String[] args) {
+		PerfectPartialPrecisionRecallEvaluator evaluator = new PerfectPartialPrecisionRecallEvaluator();
+		PerfectPartialPrecisionRecallEvaluationResult result = evaluator.evaluate("test", "correct");
+		System.out.println(result.toString());
+	}
 
 }

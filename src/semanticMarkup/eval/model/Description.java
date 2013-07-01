@@ -28,44 +28,47 @@ public class Description {
 	public Description() { } 
 	
 	public List<Structure> getStructures() {
+		initializeModel();
 		return structures;
 	}
 	public void setStructures(List<Structure> structures) {
-		for(Structure structure : structures) {
-			this.idStructureMap.put(structure.getId(), structure);
-			this.characters.addAll(structure.getCharacters());
-		}
-		for(Relation relation : this.relations) {
-			if(idStructureMap.containsKey(relation.getFrom()))
-				idStructureMap.get(relation.getFrom()).addFromRelation(relation);
-				relation.setFromStructure(idStructureMap.get(relation.getFrom()));
-			if(idStructureMap.containsKey(relation.getTo())) {
-				idStructureMap.get(relation.getFrom()).addToRelation(relation);
-				relation.setToStructure(idStructureMap.get(relation.getFrom()));
-			}
-		}
+		initializeModel();
 		this.structures = structures;
 	}
+
 	public List<Relation> getRelations() {
+		initializeModel();
 		return relations;
 	}
+	
 	public void setRelations(List<Relation> relations) {
-		for(Relation relation : relations)
-			this.idRelationMap.put(relation.getId(), relation);
-		for(Relation relation : this.relations) {
-			if(idStructureMap.containsKey(relation.getFrom()))
-				idStructureMap.get(relation.getFrom()).addFromRelation(relation);
-				relation.setFromStructure(idStructureMap.get(relation.getFrom()));
-			if(idStructureMap.containsKey(relation.getTo())) {
-				idStructureMap.get(relation.getFrom()).addToRelation(relation);
-				relation.setToStructure(idStructureMap.get(relation.getFrom()));
-			}
-		}
+		initializeModel();
 		this.relations = relations;
 	}
 
 	public List<Character> getCharacters() {
+		initializeModel();
 		return this.characters;
+	}
+	
+	private void initializeModel() {
+		this.characters = new LinkedList<Character>();
+		for(Structure structure : structures) {
+			this.idStructureMap.put(structure.getId(), structure);
+			for(Character character : structure.getCharacters()) 
+				character.setStructure(structure);
+			this.characters.addAll(structure.getCharacters());	
+		}
+		
+		for(Relation relation : this.relations) {
+			if(idStructureMap.containsKey(relation.getFrom()))
+				idStructureMap.get(relation.getFrom()).addFromRelation(relation);
+				relation.setFromStructure(idStructureMap.get(relation.getFrom()));
+			if(idStructureMap.containsKey(relation.getTo())) {
+				idStructureMap.get(relation.getFrom()).addToRelation(relation);
+				relation.setToStructure(idStructureMap.get(relation.getFrom()));
+			}
+		}
 	}
 
 }
