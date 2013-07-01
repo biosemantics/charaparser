@@ -2,7 +2,6 @@ package semanticMarkup.eval;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,22 +42,10 @@ public class PrecisionRecallEvaluator implements IEvaluator {
 		result.put("Perfect Relation", perfectRelationResult);
 		result.put("Partial Relation", partialRelationResult);
 		
-		Unmarshaller testUnmarshaller;
-		Unmarshaller correctUnmarshaller;
-		try {
-			Map<String, Object> properties = new HashMap<String, Object>(1);
-			properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , "resources" + File.separator + "eval" + File.separator + "testBindings.xml");
-			JAXBContext testJaxbContext = JAXBContext.newInstance(new Class[] {Description.class}, properties);
-			testUnmarshaller = testJaxbContext.createUnmarshaller(); 
-			
-			properties = new HashMap<String, Object>(1);
-			properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , "resources" + File.separator + "eval" + File.separator + "correctBindings.xml");
-			JAXBContext correctJaxbContext = JAXBContext.newInstance(new Class[] {Description.class}, properties);
-			correctUnmarshaller = correctJaxbContext.createUnmarshaller(); 
-		} catch(JAXBException e) {
-			log(LogLevel.ERROR, "Could not create JAXBContext or Unmarshaller for evaluation", e);
+		Unmarshaller testUnmarshaller = getTestUnmarshaller();
+		Unmarshaller correctUnmarshaller = getCorrectUnmarshaller();
+		if(testUnmarshaller == null || correctUnmarshaller == null)
 			return result;
-		}
 		
 		File testDirectory = new File(testDirectoryPath);
 		for(File testFile : testDirectory.listFiles()) {
@@ -77,17 +64,17 @@ public class PrecisionRecallEvaluator implements IEvaluator {
 				}
 				
 				String source = testFile.getName();
-				PrecisionRecallResult precisionRecallResult = evaluatePerfectStructure(testDescription, correctDescription);
+				PrecisionRecallResult precisionRecallResult = evaluatePerfectStructure(testDescription.getStructures(), correctDescription.getStructures());
 				perfectStructureResult.put(source, precisionRecallResult);
-				precisionRecallResult = evaluatePartialStructure(testDescription, correctDescription);
+				precisionRecallResult = evaluatePartialStructure(testDescription.getStructures(), correctDescription.getStructures());
 				partialStructureResult.put(source, precisionRecallResult);
-				precisionRecallResult = evaluatePerfectCharacter(testDescription, correctDescription);
+				precisionRecallResult = evaluatePerfectCharacter(testDescription.getCharacters(), correctDescription.getCharacters());
 				perfectCharacterResult.put(source, precisionRecallResult);
-				precisionRecallResult = evaluatePartialCharacter(testDescription, correctDescription);
+				precisionRecallResult = evaluatePartialCharacter(testDescription.getCharacters(), correctDescription.getCharacters());
 				partialCharacterResult.put(source, precisionRecallResult);
-				precisionRecallResult = evaluatePerfectRelation(testDescription, correctDescription);
+				precisionRecallResult = evaluatePerfectRelation(testDescription.getRelations(), correctDescription.getRelations());
 				perfectRelationResult.put(source, precisionRecallResult);
-				precisionRecallResult = evaluatePartialRelation(testDescription, correctDescription);
+				precisionRecallResult = evaluatePartialRelation(testDescription.getRelations(), correctDescription.getRelations());
 				partialRelationResult.put(source, precisionRecallResult);
 			}
 		}
@@ -95,58 +82,86 @@ public class PrecisionRecallEvaluator implements IEvaluator {
 		return result;
 	}
 
-	private PrecisionRecallResult evaluatePartialRelation(Description testDescription, Description correctDescription) {
+	private Unmarshaller getCorrectUnmarshaller() {
+		Unmarshaller correctUnmarshaller = null;
+		try {
+			Map<String, Object> properties = new HashMap<String, Object>(1);
+			properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , "resources" + File.separator + "eval" + File.separator + "correctBindings.xml");
+			JAXBContext correctJaxbContext = JAXBContext.newInstance(new Class[] {Description.class}, properties);
+			correctUnmarshaller = correctJaxbContext.createUnmarshaller(); 
+
+		} catch(JAXBException e) {
+			log(LogLevel.ERROR, "Could not create JAXBContext or Unmarshaller for evaluation", e);
+		}
+		return correctUnmarshaller;
+	}
+
+	private Unmarshaller getTestUnmarshaller() {
+		Unmarshaller testUnmarshaller = null;
+		try {
+			Map<String, Object> properties = new HashMap<String, Object>(1);
+			properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , "resources" + File.separator + "eval" + File.separator + "testBindings.xml");
+			JAXBContext testJaxbContext = JAXBContext.newInstance(new Class[] {Description.class}, properties);
+			testUnmarshaller = testJaxbContext.createUnmarshaller(); 
+
+		} catch(JAXBException e) {
+			log(LogLevel.ERROR, "Could not create JAXBContext or Unmarshaller for evaluation", e);
+		}
+		return testUnmarshaller;
+	}
+
+	private PrecisionRecallResult evaluatePartialRelation(List<Relation> testRelations, List<Relation> correctRelations) {
 		IMatcher<Relation> partialRelationMatcher = new semanticMarkup.eval.matcher.partial.RelationMatcher();
 		PrecisionCalculator<Relation> precisionCalculator = new PrecisionCalculator<Relation>(partialRelationMatcher);
 		RecallCalculator<Relation> recallCalculator = new RecallCalculator<Relation>(partialRelationMatcher);
-		double precision = precisionCalculator.getResult(testDescription.getRelations(), correctDescription.getRelations());
-		double recall = recallCalculator.getResult(testDescription.getRelations(), correctDescription.getRelations());
+		double precision = precisionCalculator.getResult(testRelations, correctRelations);
+		double recall = recallCalculator.getResult(testRelations, correctRelations);
 		return new PrecisionRecallResult(precision, recall);
 	}
 
-	private PrecisionRecallResult evaluatePerfectRelation(Description testDescription, Description correctDescription) {
+	private PrecisionRecallResult evaluatePerfectRelation(List<Relation> testRelations, List<Relation> correctRelations) {
 		//perfect relation evaluation
 		IMatcher<Relation> perfectRelationMatcher = new semanticMarkup.eval.matcher.perfect.RelationMatcher();
 		PrecisionCalculator<Relation> precisionCalculator = new PrecisionCalculator<Relation>(perfectRelationMatcher);
 		RecallCalculator<Relation> recallCalculator = new RecallCalculator<Relation>(perfectRelationMatcher);
-		double precision = precisionCalculator.getResult(testDescription.getRelations(), correctDescription.getRelations());
-		double recall = recallCalculator.getResult(testDescription.getRelations(), correctDescription.getRelations());
+		double precision = precisionCalculator.getResult(testRelations, correctRelations);
+		double recall = recallCalculator.getResult(testRelations, correctRelations);
 		return new PrecisionRecallResult(precision, recall);
 	}
 
-	private PrecisionRecallResult evaluatePartialCharacter(Description testDescription, Description correctDescription) {
+	private PrecisionRecallResult evaluatePartialCharacter(List<Character> testCharacters, List<Character> correctCharacters) {
 		IMatcher<Character> partialCharacterMatcher = new semanticMarkup.eval.matcher.partial.CharacterMatcher();		
 		PrecisionCalculator<Character> precisionCalculator = new PrecisionCalculator<Character>(partialCharacterMatcher);
 		RecallCalculator<Character> recallCalculator = new RecallCalculator<Character>(partialCharacterMatcher);
-		double precision = precisionCalculator.getResult(testDescription.getCharacters(), correctDescription.getCharacters());
-		double recall = recallCalculator.getResult(testDescription.getCharacters(), correctDescription.getCharacters());
+		double precision = precisionCalculator.getResult(testCharacters, correctCharacters);
+		double recall = recallCalculator.getResult(testCharacters, correctCharacters);
 		return new PrecisionRecallResult(precision, recall);
 	}
 
-	private PrecisionRecallResult evaluatePerfectCharacter(Description testDescription, Description correctDescription) {
+	private PrecisionRecallResult evaluatePerfectCharacter(List<Character> testCharacters, List<Character> correctCharacters) {
 		IMatcher<Character> perfectCharacterMatcher = new semanticMarkup.eval.matcher.perfect.CharacterMatcher();		
-		PrecisionCalculator<Character> characterprecisionCalculator = new PrecisionCalculator<Character>(perfectCharacterMatcher);
-		RecallCalculator<Character> characterrecallCalculator = new RecallCalculator<Character>(perfectCharacterMatcher);
-		double precision = characterprecisionCalculator.getResult(testDescription.getCharacters(), correctDescription.getCharacters());
-		double recall = characterrecallCalculator.getResult(testDescription.getCharacters(), correctDescription.getCharacters());
+		PrecisionCalculator<Character> precisionCalculator = new PrecisionCalculator<Character>(perfectCharacterMatcher);
+		RecallCalculator<Character> recallCalculator = new RecallCalculator<Character>(perfectCharacterMatcher);
+		double precision = precisionCalculator.getResult(testCharacters, correctCharacters);
+		double recall = recallCalculator.getResult(testCharacters, correctCharacters);
 		return new PrecisionRecallResult(precision, recall);
 	}
 
-	private PrecisionRecallResult evaluatePartialStructure(Description testDescription, Description correctDescription) {
+	private PrecisionRecallResult evaluatePartialStructure(List<Structure> testStructures, List<Structure> correctStructures) {
 		IMatcher<Structure> partialStructureMatcher = new semanticMarkup.eval.matcher.partial.StructureMatcher();
 		PrecisionCalculator<Structure> precisionCalculator = new PrecisionCalculator<Structure>(partialStructureMatcher);
 		RecallCalculator<Structure> recallCalculator = new RecallCalculator<Structure>(partialStructureMatcher);
-		double precision = precisionCalculator.getResult(testDescription.getStructures(), correctDescription.getStructures());
-		double recall = recallCalculator.getResult(testDescription.getStructures(), correctDescription.getStructures());
+		double precision = precisionCalculator.getResult(testStructures, correctStructures);
+		double recall = recallCalculator.getResult(testStructures, correctStructures);
 		return new PrecisionRecallResult(precision, recall);	
 	}
 
-	private PrecisionRecallResult evaluatePerfectStructure(Description testDescription, Description correctDescription) {
+	private PrecisionRecallResult evaluatePerfectStructure(List<Structure> testStructures, List<Structure> correctStructures) {
 		IMatcher<Structure> perfectStructureMatcher = new semanticMarkup.eval.matcher.perfect.StructureMatcher();
 		PrecisionCalculator<Structure> precisionCalculator = new PrecisionCalculator<Structure>(perfectStructureMatcher);
 		RecallCalculator<Structure> recallCalculator = new RecallCalculator<Structure>(perfectStructureMatcher);
-		double precision = precisionCalculator.getResult(testDescription.getStructures(), correctDescription.getStructures());
-		double recall = recallCalculator.getResult(testDescription.getStructures(), correctDescription.getStructures());
+		double precision = precisionCalculator.getResult(testStructures, correctStructures);
+		double recall = recallCalculator.getResult(testStructures, correctStructures);
 		return new PrecisionRecallResult(precision, recall);
 	}
 

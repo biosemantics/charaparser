@@ -8,8 +8,8 @@ import semanticMarkup.core.transformation.TreatmentTransformerChain;
 import semanticMarkup.core.transformation.lib.CharaparserTreatmentTransformerChain;
 import semanticMarkup.core.transformation.lib.description.DescriptionTreatmentTransformer;
 import semanticMarkup.core.transformation.lib.description.GUIDescriptionTreatmentTransformer;
-import semanticMarkup.eval.AdvancedPrecisionRecallEvaluator;
 import semanticMarkup.eval.IEvaluator;
+import semanticMarkup.eval.PrecisionRecallEvaluator;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
@@ -42,7 +42,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IRun> run = MarkupRun.class;
 	//MarkupRun, EvaluationRun, MarkupEvaluationRun
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
-	private Class<? extends IEvaluator> evaluationRunEvaluator = AdvancedPrecisionRecallEvaluator.class;
+	private Class<? extends IEvaluator> evaluationRunEvaluator = PrecisionRecallEvaluator.class;
 	//SimplePrecisionRecallEvaluator, AdvancedPrecisionRecallEvaluator
 	private Class<? extends IVolumeReader> evaluationGoldStandardReader = XMLVolumeReader.class;
 	private Class<? extends IVolumeReader> evaluationRunCreatedVolumeReader = EvaluationDBVolumeReader.class;
