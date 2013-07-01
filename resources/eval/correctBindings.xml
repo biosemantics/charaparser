@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
-    package-name="elements">
+    package-name="semanticMarkup.eval.model">
     <java-types>
-        <java-type name="elements.Description">
+        <java-type name="semanticMarkup.eval.model.Description">
             <xml-root-element name="description"/>
             <java-attributes>
-                <xml-element java-attribute="structures" xml-path="statement/structure/" type="elements.Structure" container-type="java.util.List"/>
-				<xml-element java-attribute="relations" xml-path="statement/relation/" type="elements.Relation" container-type="java.util.List"/>
+                <xml-element java-attribute="structures" xml-path="statement/structure/" type="semanticMarkup.eval.model.Structure" container-type="java.util.List"/>
+				<xml-element java-attribute="relations" xml-path="statement/relation/" type="semanticMarkup.eval.model.Relation" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
-        <java-type name="elements.Character">
+        <java-type name="semanticMarkup.eval.model.Character">
             <java-attributes>			
                 <xml-element java-attribute="charType" xml-path="@char_type"/>
 				<xml-element java-attribute="constraint" xml-path="@constraint"/>
@@ -37,9 +37,8 @@
 				<xml-element java-attribute="notes" xml-path="@notes"/>
             </java-attributes>
         </java-type>
-		<java-type name="elements.Structure">
+		<java-type name="semanticMarkup.eval.model.Structure">
             <java-attributes>
-				<!--<xml-element java-attribute="characters" xml-path="characters" type="elements.Character" container-type="java.util.List"/>-->
 				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
 				<xml-element java-attribute="constraint" xml-path="@constraint"/>
 				<xml-element java-attribute="constraintId" xml-path="@constraintid"/>
@@ -55,7 +54,7 @@
 				<xml-element java-attribute="notes" xml-path="@notes"/>
             </java-attributes>
         </java-type>
-		<java-type name="elements.Relation">
+		<java-type name="semanticMarkup.eval.model.Relation">
             <java-attributes>
 				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
 				<xml-element java-attribute="from" xml-path="@from"/>

@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
 @XmlRootElement(name="description")
-@XmlType(propOrder={"source", "structures", "relations"})
+//@XmlType(propOrder={"source", "structures", "relations"})
 public class Description {
 
 	private Map<String, Relation> idRelationMap = new HashMap<String, Relation>();

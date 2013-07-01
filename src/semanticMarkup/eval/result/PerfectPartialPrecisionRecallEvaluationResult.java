@@ -1,12 +1,12 @@
 package semanticMarkup.eval.result;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
 public class PerfectPartialPrecisionRecallEvaluationResult implements IEvaluationResult {
 
-	private Map<String, PrecisionRecallEvaluationResult> results = new HashMap<String, PrecisionRecallEvaluationResult>();
+	private Map<String, PrecisionRecallEvaluationResult> results = new LinkedHashMap<String, PrecisionRecallEvaluationResult>();
 
 	public PrecisionRecallEvaluationResult put(String name, PrecisionRecallEvaluationResult result) {
 		return results.put(name, result);
@@ -18,6 +18,16 @@ public class PerfectPartialPrecisionRecallEvaluationResult implements IEvaluatio
 
 	public PrecisionRecallEvaluationResult get(String name) {
 		return results.get(name);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder();
+		for(String name : results.keySet()) {
+			stringBuilder.append(name + ":\n" + results.get(name).toString() + "\n");
+			stringBuilder.append("---");
+		}
+		return stringBuilder.toString();
 	}
 
 }

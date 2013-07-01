@@ -23,5 +23,10 @@ public class PrecisionRecallResult {
 	public void setRecall(double recall) {
 		this.recall = recall;
 	}
+	
+	@Override
+	public String toString() {
+		return "Precision: " + precision + " Recall: " + recall;
+	}
 
 }

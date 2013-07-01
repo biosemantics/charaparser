@@ -24,10 +24,10 @@ import semanticMarkup.eval.result.PrecisionRecallEvaluationResult;
 import semanticMarkup.eval.result.PrecisionRecallResult;
 import semanticMarkup.log.LogLevel;
 
-public class PrecisionRecallEvaluator implements IEvaluator {
+public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 
 	@Override
-	public IEvaluationResult evaluate(String testDirectoryPath, String correctDirectoryPath) {		
+	public PerfectPartialPrecisionRecallEvaluationResult evaluate(String testDirectoryPath, String correctDirectoryPath) {		
 		PerfectPartialPrecisionRecallEvaluationResult result = new PerfectPartialPrecisionRecallEvaluationResult();
 		PrecisionRecallEvaluationResult perfectStructureResult = new PrecisionRecallEvaluationResult();
 		PrecisionRecallEvaluationResult partialStructureResult = new PrecisionRecallEvaluationResult();
