@@ -9,6 +9,7 @@ import semanticMarkup.log.LogLevel;
 
 /**
  * ChunkChain allows to chain a number of IChunkers and execute them consecutively
+ * populates chunkCollector
  * @author rodenhausen
  */
 public class ChunkerChain {
