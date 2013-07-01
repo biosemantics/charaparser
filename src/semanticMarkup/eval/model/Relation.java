@@ -187,5 +187,8 @@ public class Relation extends Element {
 		return fromStructure;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
 }

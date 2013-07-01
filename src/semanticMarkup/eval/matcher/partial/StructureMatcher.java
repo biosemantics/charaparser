@@ -2,15 +2,13 @@ package semanticMarkup.eval.matcher.partial;
 
 import semanticMarkup.eval.matcher.IMatcher;
 import semanticMarkup.eval.model.Structure;
+import semanticMarkup.eval.matcher.AbstractMatcher;
 
-public class StructureMatcher implements IMatcher<Structure> {
+public class StructureMatcher extends AbstractMatcher implements IMatcher<Structure> {
 
 	@Override
 	public boolean isMatch(Structure structureA, Structure structureB) {
-		return (structureA.getName() == null && structureB.getName() == null) || 
-				((structureA.getName() != null && structureB.getName() != null) && 
-				(structureA.getName().contains(structureB.getName()) ||
-				structureB.getName().contains(structureA.getName())));
+		boolean result = this.valuesNullOrContainedEitherWay("name", structureA.getName(), structureB.getName());
+		return result;
 	}
-
 }

@@ -276,5 +276,8 @@ public class Character extends Element {
 		return this.structure;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return this.getName() + " = " + this.getValue();
+	}
 }

@@ -1,50 +1,32 @@
 package semanticMarkup.eval.matcher.partial;
 
-import java.util.Objects;
-
+import semanticMarkup.eval.matcher.AbstractMatcher;
 import semanticMarkup.eval.matcher.IMatcher;
 import semanticMarkup.eval.model.Character;
 
 
-public class CharacterMatcher implements IMatcher<Character> {
+public class CharacterMatcher extends AbstractMatcher implements IMatcher<Character> {
 	
 	private StructureMatcher structureMatcher = new StructureMatcher();
 	
 	@Override
 	public boolean isMatch(Character characterA, Character characterB) {
-		return characterA.getStructure() != null && characterB.getStructure() != null && 
+		boolean result = this.areNotNull("character structure", characterA.getStructure(), characterB.getStructure()) && 
 				structureMatcher.isMatch(characterA.getStructure(), characterB.getStructure()) && 
-				Objects.equals(characterA.getCharType(), characterB.getCharType()) && 
-				((characterA.getConstraint() == null && characterB.getConstraint() == null) ||
-						((characterA.getConstraint() != null && characterB.getConstraint() != null) && 
-								(characterA.getConstraint().contains(characterB.getConstraint()) ||
-										characterB.getConstraint().contains(characterA.getConstraint())))) && 
-				((characterA.getName() == null && characterB.getName() == null) || 
-						((characterA.getName() != null && characterB.getName() != null) && 
-								(characterA.getName().contains(characterB.getName()) ||
-										characterB.getName().contains(characterA.getName())))) && 
-				((characterA.getValue() == null && characterB.getValue() == null) || 
-						((characterA.getValue() != null && characterB.getValue() != null) && 
-								(characterA.getValue().contains(characterB.getValue()) ||
-										characterB.getValue().contains(characterA.getValue())))) && 
-				((characterA.getModifier() == null && characterB.getModifier() == null) || 
-						((characterA.getModifier() != null && characterB.getModifier() != null) && 
-								(characterA.getModifier().contains(characterB.getModifier()) ||
-									characterB.getModifier().contains(characterA.getModifier())))) && 
-				((characterA.getFrom() == null && characterB.getFrom() == null) || 
-						((characterA.getFrom() != null && characterB.getFrom() != null) && 
-								(characterA.getFrom().contains(characterB.getFrom()) ||
-									characterB.getFrom().contains(characterA.getFrom())))) && 
-				((characterA.getTo() == null && characterB.getTo() == null) || 
-						((characterA.getTo() != null && characterB.getTo() != null) && 
-								(characterA.getTo().contains(characterB.getTo()) ||
-									characterB.getTo().contains(characterA.getTo())))) &&  
-				Objects.equals(characterA.getFromUnit(), characterB.getFromUnit()) && 
-				Objects.equals(characterA.getToUnit(), characterB.getToUnit()) && 
-				Objects.equals(characterA.getUnit(), characterB.getUnit()) &&
-				Objects.equals(characterA.getUpperRestricted(), characterB.getUpperRestricted()) && 
-				Objects.equals(characterA.getFromInclusive(), characterB.getFromInclusive()) && 
-				Objects.equals(characterA.getToInclusive(), characterB.getToInclusive());
+				this.equalsOrNull("character char_type", characterA.getCharType(), characterB.getCharType()) && 
+				this.valuesNullOrContainedEitherWay("character constraint", characterA.getConstraint(), characterB.getConstraint()) &&
+				this.valuesNullOrContainedEitherWay("character name", characterA.getName(), characterB.getName()) &&
+				this.valuesNullOrContainedEitherWay("character value", characterA.getValue(), characterB.getValue()) &&
+				this.valuesNullOrContainedEitherWay("character modifier", characterA.getModifier(), characterB.getModifier()) &&
+				this.valuesNullOrContainedEitherWay("character from", characterA.getFrom(), characterB.getFrom()) &&
+				this.valuesNullOrContainedEitherWay("character to", characterA.getTo(), characterB.getTo()) &&
+				this.equalsOrNull("character fromUnit", characterA.getFromUnit(), characterB.getFromUnit()) && 
+				this.equalsOrNull("character toUnit", characterA.getToUnit(), characterB.getToUnit()) && 
+				this.equalsOrNull("character unit", characterA.getUnit(), characterB.getUnit()) &&
+				this.equalsOrNull("character upperRestricted", characterA.getUpperRestricted(), characterB.getUpperRestricted()) && 
+				this.equalsOrNull("character fromInclusive", characterA.getFromInclusive(), characterB.getFromInclusive()) && 
+				this.equalsOrNull("character toInclusive", characterA.getToInclusive(), characterB.getToInclusive());
+		return result;
 	}
 	
 }

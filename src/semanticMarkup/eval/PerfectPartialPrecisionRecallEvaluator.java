@@ -28,6 +28,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 
 	@Override
 	public PerfectPartialPrecisionRecallEvaluationResult evaluate(String testDirectoryPath, String correctDirectoryPath) {		
+		log(LogLevel.DEBUG, "evaluate using " + this.getDescription());
 		PerfectPartialPrecisionRecallEvaluationResult result = new PerfectPartialPrecisionRecallEvaluationResult();
 		PrecisionRecallEvaluationResult perfectStructureResult = new PrecisionRecallEvaluationResult();
 		PrecisionRecallEvaluationResult partialStructureResult = new PrecisionRecallEvaluationResult();
@@ -49,6 +50,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 		
 		File testDirectory = new File(testDirectoryPath);
 		for(File testFile : testDirectory.listFiles()) {
+			log(LogLevel.DEBUG, "evaluate testfile " + testFile.getAbsolutePath());
 			File correctFile = new File(correctDirectoryPath + File.separator + testFile.getName());
 			if(!correctFile.exists()) {
 				log(LogLevel.INFO, testFile.getName() + " does not have a matching correct file");
@@ -79,6 +81,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 			}
 		}
 
+		log(LogLevel.DEBUG, result.toString());
 		return result;
 	}
 
@@ -111,6 +114,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	}
 
 	private PrecisionRecallResult evaluatePartialRelation(List<Relation> testRelations, List<Relation> correctRelations) {
+		log(LogLevel.DEBUG, "evaluate partial relations");
 		IMatcher<Relation> partialRelationMatcher = new semanticMarkup.eval.matcher.partial.RelationMatcher();
 		PrecisionCalculator<Relation> precisionCalculator = new PrecisionCalculator<Relation>(partialRelationMatcher);
 		RecallCalculator<Relation> recallCalculator = new RecallCalculator<Relation>(partialRelationMatcher);
@@ -120,7 +124,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	}
 
 	private PrecisionRecallResult evaluatePerfectRelation(List<Relation> testRelations, List<Relation> correctRelations) {
-		//perfect relation evaluation
+		log(LogLevel.DEBUG, "evaluate perfect relations");
 		IMatcher<Relation> perfectRelationMatcher = new semanticMarkup.eval.matcher.perfect.RelationMatcher();
 		PrecisionCalculator<Relation> precisionCalculator = new PrecisionCalculator<Relation>(perfectRelationMatcher);
 		RecallCalculator<Relation> recallCalculator = new RecallCalculator<Relation>(perfectRelationMatcher);
@@ -130,6 +134,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	}
 
 	private PrecisionRecallResult evaluatePartialCharacter(List<Character> testCharacters, List<Character> correctCharacters) {
+		log(LogLevel.DEBUG, "evaluate partial characters");
 		IMatcher<Character> partialCharacterMatcher = new semanticMarkup.eval.matcher.partial.CharacterMatcher();		
 		PrecisionCalculator<Character> precisionCalculator = new PrecisionCalculator<Character>(partialCharacterMatcher);
 		RecallCalculator<Character> recallCalculator = new RecallCalculator<Character>(partialCharacterMatcher);
@@ -139,6 +144,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	}
 
 	private PrecisionRecallResult evaluatePerfectCharacter(List<Character> testCharacters, List<Character> correctCharacters) {
+		log(LogLevel.DEBUG, "evaluate perfect characters");
 		IMatcher<Character> perfectCharacterMatcher = new semanticMarkup.eval.matcher.perfect.CharacterMatcher();		
 		PrecisionCalculator<Character> precisionCalculator = new PrecisionCalculator<Character>(perfectCharacterMatcher);
 		RecallCalculator<Character> recallCalculator = new RecallCalculator<Character>(perfectCharacterMatcher);
@@ -148,6 +154,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	}
 
 	private PrecisionRecallResult evaluatePartialStructure(List<Structure> testStructures, List<Structure> correctStructures) {
+		log(LogLevel.DEBUG, "evaluate partial structures");
 		IMatcher<Structure> partialStructureMatcher = new semanticMarkup.eval.matcher.partial.StructureMatcher();
 		PrecisionCalculator<Structure> precisionCalculator = new PrecisionCalculator<Structure>(partialStructureMatcher);
 		RecallCalculator<Structure> recallCalculator = new RecallCalculator<Structure>(partialStructureMatcher);
@@ -157,6 +164,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	}
 
 	private PrecisionRecallResult evaluatePerfectStructure(List<Structure> testStructures, List<Structure> correctStructures) {
+		log(LogLevel.DEBUG, "evaluate perfect structures");
 		IMatcher<Structure> perfectStructureMatcher = new semanticMarkup.eval.matcher.perfect.StructureMatcher();
 		PrecisionCalculator<Structure> precisionCalculator = new PrecisionCalculator<Structure>(perfectStructureMatcher);
 		RecallCalculator<Structure> recallCalculator = new RecallCalculator<Structure>(perfectStructureMatcher);
@@ -174,7 +182,6 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 	public static void main(String[] args) {
 		PerfectPartialPrecisionRecallEvaluator evaluator = new PerfectPartialPrecisionRecallEvaluator();
 		PerfectPartialPrecisionRecallEvaluationResult result = evaluator.evaluate("test", "correct");
-		System.out.println(result.toString());
 	}
 
 }

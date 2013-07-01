@@ -186,4 +186,8 @@ public class Structure extends Element {
 		return toRelations;
 	}
 	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
 }

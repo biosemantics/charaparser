@@ -25,10 +25,21 @@ public class PrecisionRecallEvaluationResult implements IEvaluationResult {
 		StringBuilder stringBuilder = new StringBuilder();
 		double averagePrecision = 0.0;
 		double averageRecall = 0.0;
+		
+		//if precision or recall = NaN is returned there was a division by 0 (due to the fact that no correct results existed at all for recall
+		// or no retrieved results existed at all for precision)
+		int precisionValues = 0;
+		int recallValues = 0;
+		
 		for(String source : results.keySet()) {
 			stringBuilder.append(source + ": " + results.get(source).toString() + "\n");
-			averagePrecision += results.get(source).getPrecision();
-			averageRecall += results.get(source).getRecall();
+			double precision = results.get(source).getPrecision();
+			double recall = results.get(source).getRecall();
+			
+			if (!Double.isNaN(precision))
+				averagePrecision += precision;
+			if (!Double.isNaN(recall))
+				averageRecall += recall;
 		}
 		averagePrecision = averagePrecision / results.size();
 		averageRecall = averageRecall / results.size();

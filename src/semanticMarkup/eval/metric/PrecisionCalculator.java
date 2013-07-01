@@ -5,6 +5,7 @@ import java.util.List;
 
 import semanticMarkup.eval.matcher.IMatcher;
 import semanticMarkup.eval.model.Element;
+import semanticMarkup.log.LogLevel;
 
 
 
@@ -18,20 +19,38 @@ public class PrecisionCalculator<T extends Element> {
 	
 	public double getResult(List<T> testElements, List<T> correctElements) {
 		List<T> correctElementsLeft = new LinkedList<T>(correctElements);
+		
+		int i=1;
 		for(T testElement : testElements) {
+			log(LogLevel.DEBUG, i++ + " of " + testElements.size());
 			Iterator<T> correctElementsLeftIterator = correctElementsLeft.iterator();
 			while(correctElementsLeftIterator.hasNext()) {
 				T correctElementLeft = correctElementsLeftIterator.next();
-				if(matcher.isMatch(testElement, correctElementLeft))
+				
+				log(LogLevel.DEBUG, "correct elemetns left " + correctElementsLeft.size());
+				log(LogLevel.DEBUG, testElement.toString() + " " + correctElementLeft.toString());
+				
+				if(matcher.isMatch(testElement, correctElementLeft)) {
+					log(LogLevel.DEBUG, "match found");
 					correctElementsLeftIterator.remove();
+					break;
+				} else {
+					log(LogLevel.DEBUG, "not a match");
+				}
 			}
 		}
 		
-		int matches = correctElements.size() - correctElementsLeft.size();
 		
-		return (float)matches / testElements.size();
+		int matches = correctElements.size() - correctElementsLeft.size();
+		log(LogLevel.DEBUG, matches + " Matches from " + testElements.size() + " given ones");
+		
+		double result;
+		if(testElements.size() == 0)
+			result = 1.0;
+		else 
+			result = (float)matches / testElements.size();
+		
+		return result;
 	}
-
-
 
 }
