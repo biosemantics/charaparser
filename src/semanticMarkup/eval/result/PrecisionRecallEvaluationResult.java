@@ -36,13 +36,17 @@ public class PrecisionRecallEvaluationResult implements IEvaluationResult {
 			double precision = results.get(source).getPrecision();
 			double recall = results.get(source).getRecall();
 			
-			if (!Double.isNaN(precision))
+			if (!Double.isNaN(precision)) {
 				averagePrecision += precision;
-			if (!Double.isNaN(recall))
+				precisionValues++;
+			}
+			if (!Double.isNaN(recall)) {
 				averageRecall += recall;
+				recallValues++;
+			}
 		}
-		averagePrecision = averagePrecision / results.size();
-		averageRecall = averageRecall / results.size();
+		averagePrecision = averagePrecision / precisionValues;
+		averageRecall = averageRecall / recallValues;
 		stringBuilder.append("Average Precision: " + averagePrecision + " Average Recall: " + averageRecall);
 		return stringBuilder.toString();
 	}

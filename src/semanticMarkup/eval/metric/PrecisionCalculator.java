@@ -46,7 +46,11 @@ public class PrecisionCalculator<T extends Element> {
 		
 		double result;
 		if(testElements.size() == 0)
-			result = 1.0;
+			//one may want to treat the precisin calculation different in this case..
+			//if(correctElements.size() > 0)
+				result = 1.0;
+			//else
+			//	result = Double.NaN;
 		else 
 			result = (float)matches / testElements.size();
 		

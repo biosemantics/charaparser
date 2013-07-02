@@ -45,7 +45,9 @@ public class RecallCalculator<T extends Element> {
 		
 		double result;
 		if(correctElements.size() == 0) 
+			//one may want to treat the precisin calculation different in this case..
 			result = 1.0;
+			//result = Double.NaN;
 		else 
 			result = (float)matches / correctElements.size();
 		
