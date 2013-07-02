@@ -1,4 +1,4 @@
-Version 0.1
+Version 0.1 (July, 2nd 2013)
 -----------
 * Refactored code throughout the project
 * Chunking not in a single string anymore but using a set of classes
