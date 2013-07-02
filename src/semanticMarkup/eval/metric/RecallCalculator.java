@@ -27,7 +27,7 @@ public class RecallCalculator<T extends Element> {
 			while(correctElementsLeftIterator.hasNext()) {
 				T correctElementLeft = correctElementsLeftIterator.next();
 				
-				log(LogLevel.DEBUG, "correct elemetns left " + correctElementsLeft.size());
+				log(LogLevel.DEBUG, "correct elements left " + correctElementsLeft.size());
 				log(LogLevel.DEBUG, testElement.toString() + " " + correctElementLeft.toString());
 				
 				if(matcher.isMatch(testElement, correctElementLeft)) {

@@ -1,0 +1,12 @@
+Version 0.1
+-----------
+* Refactored code throughout the project
+* Chunking not in a single string anymore but using a set of classes
+* Introduced parallel processing on the treatment and sentence level
+* Introduced a configuration system
+* Introduced an iPlant flavor
+* Prepared the elimination of a previous part of code written in perl
+* Minimized database usage
+* Integrated a set of evaluation classes
+* Added input validation of various formats
+
