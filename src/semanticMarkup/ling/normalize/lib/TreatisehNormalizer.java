@@ -3,12 +3,12 @@ package semanticMarkup.ling.normalize.lib;
 import java.util.HashMap;
 import java.util.Set;
 
-import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;

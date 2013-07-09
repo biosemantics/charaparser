@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.Token;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.ling.learn.AdjectiveReplacementForNoun;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 import semanticMarkup.markupElement.description.model.Description;

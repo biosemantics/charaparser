@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -13,6 +12,7 @@ import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkType;
 import semanticMarkup.ling.extract.IFirstChunkProcessor;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.markupElement.description.ling.extract.ProcessingContext;
 import semanticMarkup.markupElement.description.ling.extract.ProcessingContextState;

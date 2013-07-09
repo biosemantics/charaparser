@@ -3,9 +3,9 @@ package semanticMarkup.markupElement.description.ling.learn.lib;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.transform.ITokenizer;
+import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 

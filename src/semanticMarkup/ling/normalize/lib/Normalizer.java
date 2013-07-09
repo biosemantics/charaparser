@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
@@ -19,6 +18,7 @@ import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.ling.learn.AdjectiveReplacementForNoun;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 

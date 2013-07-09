@@ -10,7 +10,6 @@ import oto.full.OTOClient;
 import oto.lite.IOTOLiteClient;
 import oto.lite.OTOLiteClient;
 
-import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.ICorpus;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
@@ -66,6 +65,7 @@ import semanticMarkup.ling.transform.lib.SomeInflector;
 import semanticMarkup.ling.transform.lib.WhitespaceTokenCombiner;
 import semanticMarkup.ling.transform.lib.WhitespaceTokenizer;
 import semanticMarkup.ling.transform.lib.WordStanfordParserTokenTransformer;
+import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
 import semanticMarkup.markupElement.description.ling.extract.lib.AndChunkProcessor;
 import semanticMarkup.markupElement.description.ling.extract.lib.AreaChunkProcessor;
