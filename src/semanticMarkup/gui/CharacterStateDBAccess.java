@@ -1,15 +1,11 @@
 package semanticMarkup.gui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import org.apache.log4j.Logger;
 
 @SuppressWarnings({ "unused" })
 public class CharacterStateDBAccess {

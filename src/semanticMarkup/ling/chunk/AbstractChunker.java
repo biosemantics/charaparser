@@ -10,13 +10,13 @@ import java.util.Set;
 
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
 import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

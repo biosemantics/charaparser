@@ -22,7 +22,6 @@ import org.jdom2.xpath.XPathFactory;
 import semanticMarkup.model.Treatment;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 
 public class WordDocumentElementsExtractor {

@@ -6,12 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.markup.IDescriptionMarkupCreator;
 import semanticMarkup.run.AbstractRun;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 public class IPlantMarkupRun extends AbstractRun {
 

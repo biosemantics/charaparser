@@ -1,6 +1,5 @@
 package semanticMarkup.io.input.lib.word;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import java.util.regex.Pattern;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 import semanticMarkup.io.input.lib.word.refiner.DistributionTreatmentRefiner;
 import semanticMarkup.io.input.lib.word.refiner.FloweringTimeTreatmentRefiner;
-import semanticMarkup.log.LogLevel;
 import semanticMarkup.model.ContainerTreatmentElement;
 import semanticMarkup.model.Treatment;
 import semanticMarkup.model.TreatmentElement;

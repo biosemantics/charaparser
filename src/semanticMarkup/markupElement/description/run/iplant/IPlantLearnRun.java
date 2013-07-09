@@ -6,8 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import semanticMarkup.ling.learn.ILearner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.learn.ILearner;
 import semanticMarkup.run.AbstractRun;
 
 import com.google.inject.Inject;

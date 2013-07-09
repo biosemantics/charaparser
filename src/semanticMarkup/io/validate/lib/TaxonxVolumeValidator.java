@@ -3,7 +3,6 @@ package semanticMarkup.io.validate.lib;
 import java.io.File;
 
 import semanticMarkup.io.validate.AbstractXMLVolumeValidator;
-import semanticMarkup.log.LogLevel;
 
 /**
  * TaxonxVolumeValidator validates input against taxonx format

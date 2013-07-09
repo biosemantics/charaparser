@@ -9,13 +9,13 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import semanticMarkup.io.input.lib.iplant.Meta;
+import semanticMarkup.io.input.lib.iplant.Treatment;
 import semanticMarkup.io.input.lib.xml.Key;
 import semanticMarkup.io.input.lib.xml.KeyStatement;
 import semanticMarkup.io.input.lib.xml.PlaceOfPublication;
 import semanticMarkup.io.input.lib.xml.References;
 import semanticMarkup.io.input.lib.xml.TaxonIdentification;
-import semanticMarkup.io.input.lib.iplant.Meta;
-import semanticMarkup.io.input.lib.iplant.Treatment;
 
 public class FNAXMLToIPlantXMLTransformer {
 

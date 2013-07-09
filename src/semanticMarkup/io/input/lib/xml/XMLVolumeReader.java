@@ -8,13 +8,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 import semanticMarkup.model.ContainerTreatmentElement;
 import semanticMarkup.model.Treatment;
 import semanticMarkup.model.ValueTreatmentElement;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * XMLVolumeReader reads a list of treatments of type 2 that are valid against the XML Schema resources/io/FNAXMLSchemaInput.xml

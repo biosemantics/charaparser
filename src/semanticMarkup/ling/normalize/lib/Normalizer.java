@@ -16,11 +16,11 @@ import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
-import semanticMarkup.ling.learn.AdjectiveReplacementForNoun;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.learn.AdjectiveReplacementForNoun;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

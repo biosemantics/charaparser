@@ -6,13 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
+import semanticMarkup.markupElement.description.model.Character;
 import semanticMarkup.markupElement.description.model.Relation;
 import semanticMarkup.markupElement.description.model.Structure;
-import semanticMarkup.markupElement.description.model.Character;
 
 @XmlRootElement(name="description")
 //@XmlType(propOrder={"source", "structures", "relations"})

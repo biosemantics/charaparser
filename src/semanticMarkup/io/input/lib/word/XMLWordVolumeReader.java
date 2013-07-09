@@ -1,14 +1,13 @@
 package semanticMarkup.io.input.lib.word;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import semanticMarkup.io.input.lib.word.refiner.DistributionTreatmentRefiner;
 import semanticMarkup.io.input.lib.word.refiner.FloweringTimeTreatmentRefiner;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * XMLWordVolumeReader reads a list of treatments from a by the previous charaparser version termed Type 1 input format. This is a

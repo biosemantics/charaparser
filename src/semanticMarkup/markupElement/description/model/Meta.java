@@ -1,8 +1,6 @@
 package semanticMarkup.markupElement.description.model;
 
 
-import org.eclipse.persistence.oxm.annotations.XmlPath;
-
 import semanticMarkup.model.Element;
 
 public class Meta extends Element {

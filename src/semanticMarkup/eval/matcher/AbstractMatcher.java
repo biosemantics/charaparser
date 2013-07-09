@@ -2,8 +2,8 @@ package semanticMarkup.eval.matcher;
 
 import java.util.Objects;
 
-import semanticMarkup.model.Element;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.model.Element;
 
 public abstract class AbstractMatcher {
 

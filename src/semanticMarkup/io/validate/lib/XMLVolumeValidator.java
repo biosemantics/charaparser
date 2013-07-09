@@ -3,7 +3,6 @@ package semanticMarkup.io.validate.lib;
 import java.io.File;
 
 import semanticMarkup.io.validate.AbstractXMLVolumeValidator;
-import semanticMarkup.log.LogLevel;
 
 /**
  * XMLVolumeValidator validates input against a specified XML format

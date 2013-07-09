@@ -1,8 +1,6 @@
 package semanticMarkup.markupElement.habitat.model;
 
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 public class HabitatsFileList {

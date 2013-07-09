@@ -65,7 +65,7 @@ public aspect StringifyInjectionAspect {
 	//declare parents : semanticMarkup.ling..* implements IPrintable;	
 	//declare parents : semanticMarkup.ling.* implements IPrintable;
 	declare parents : semanticMarkup.ling.extract..* implements IPrintable;
-	declare parents : semanticMarkup.ling.learn..* implements IPrintable;
+	declare parents : semanticMarkup.markupElement.description.ling.learn..* implements IPrintable;
 	//declare parents : semanticMarkup.ling.mark..* implements IPrintable;
 	declare parents : semanticMarkup.ling.normalize..* implements IPrintable;
 	//declare parents : semanticMarkup.ling.pos..* implements IPrintable;

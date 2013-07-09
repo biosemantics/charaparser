@@ -10,10 +10,10 @@ import java.util.regex.Pattern;
 import semanticMarkup.know.ICorpus;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.Token;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.pos.POSedToken;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

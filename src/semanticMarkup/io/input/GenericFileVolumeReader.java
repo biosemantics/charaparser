@@ -10,9 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
 import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
@@ -26,6 +23,9 @@ import semanticMarkup.io.validate.lib.WordVolumeValidator;
 import semanticMarkup.io.validate.lib.XMLVolumeValidator;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.model.Treatment;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * GenericFileVolumeReader reads takes a filePath to check whether there is input available at the given format 

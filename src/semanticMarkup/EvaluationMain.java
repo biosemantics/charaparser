@@ -12,10 +12,10 @@ import semanticMarkup.config.RunConfig;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.know.lib.InMemoryGlossary;
-import semanticMarkup.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.transform.MarkupDescriptionFromDBForEvaluationTransformer;
 import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
+import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
 import semanticMarkup.markupElement.description.run.DescriptionMarkupRun;
 
 public class EvaluationMain extends CLIMain {

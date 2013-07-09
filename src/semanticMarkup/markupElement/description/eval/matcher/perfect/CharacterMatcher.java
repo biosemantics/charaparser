@@ -1,7 +1,5 @@
 package semanticMarkup.markupElement.description.eval.matcher.perfect;
 
-import java.util.Objects;
-
 import semanticMarkup.eval.matcher.AbstractMatcher;
 import semanticMarkup.eval.matcher.IMatcher;
 import semanticMarkup.markupElement.description.model.Character;

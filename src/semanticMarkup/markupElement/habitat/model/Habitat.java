@@ -3,10 +3,6 @@ package semanticMarkup.markupElement.habitat.model;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jdom2.Content;
-import org.jdom2.DefaultJDOMFactory;
-import org.jdom2.JDOMFactory;
-
 import semanticMarkup.model.Element;
 
 public class Habitat extends Element {

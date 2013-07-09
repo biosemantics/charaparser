@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.transform.IInflector;
-import semanticMarkup.log.LogLevel;
 
 import com.google.inject.Inject;
 

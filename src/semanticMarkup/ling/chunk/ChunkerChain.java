@@ -7,7 +7,6 @@ import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
-import semanticMarkup.model.Treatment;
 
 /**
  * ChunkChain allows to chain a number of IChunkers and execute them consecutively

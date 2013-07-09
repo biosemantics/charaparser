@@ -10,8 +10,6 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
 
 /**
  * A ContainerTreatmentElement contains a number of children TreatmentElements and are associated with a name

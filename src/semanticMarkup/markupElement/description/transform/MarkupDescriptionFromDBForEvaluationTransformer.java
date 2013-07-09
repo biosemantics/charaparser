@@ -1,25 +1,20 @@
 package semanticMarkup.markupElement.description.transform;
 
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import oto.full.IOTOClient;
-import oto.full.beans.GlossaryDownload;
 import oto.lite.IOTOLiteClient;
-import oto.lite.beans.Download;
-
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.chunk.ChunkerChain;
-import semanticMarkup.ling.extract.IDescriptionExtractor;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
-import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 

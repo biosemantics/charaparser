@@ -10,6 +10,7 @@ package semanticMarkup.io.input.lib.taxonx;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;

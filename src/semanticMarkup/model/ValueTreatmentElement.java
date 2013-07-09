@@ -2,9 +2,6 @@ package semanticMarkup.model;
 
 import javax.xml.bind.annotation.XmlElement;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
-
 /**
  * A ValueTreatmentElement has a name and a value
  * @author rodenhausen

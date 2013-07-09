@@ -4,11 +4,11 @@ import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 import semanticMarkup.model.Treatment;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * SerializedVolumeReader reads a list of treatments from the output of a SerializedVolumeWriter

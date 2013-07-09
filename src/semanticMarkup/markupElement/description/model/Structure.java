@@ -2,8 +2,6 @@ package semanticMarkup.markupElement.description.model;
 
 
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 

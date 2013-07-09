@@ -1,6 +1,6 @@
 package semanticMarkup.markupElement.habitat.io;
 
-import semanticMarkup.markupElement.habitat.model.HabitatsFileList;;
+import semanticMarkup.markupElement.habitat.model.HabitatsFileList;
 
 public interface IHabitatReader {
 

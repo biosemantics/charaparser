@@ -1,7 +1,5 @@
 package semanticMarkup.gui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -17,7 +15,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import semanticMarkup.know.IOrganStateKnowledgeBase;
-
 import edu.uci.ics.jung.algorithms.cluster.VoltageClusterer;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;

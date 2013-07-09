@@ -1,11 +1,6 @@
 package semanticMarkup.model.description;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
 
 import semanticMarkup.model.ContainerTreatmentElement;
 

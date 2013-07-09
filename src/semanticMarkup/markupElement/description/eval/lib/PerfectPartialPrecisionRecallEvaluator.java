@@ -15,15 +15,14 @@ import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.eval.matcher.IMatcher;
 import semanticMarkup.eval.metric.PrecisionCalculator;
 import semanticMarkup.eval.metric.RecallCalculator;
-import semanticMarkup.markupElement.description.eval.model.Description;
-import semanticMarkup.markupElement.description.model.Structure;
-import semanticMarkup.markupElement.description.model.Character;
-import semanticMarkup.markupElement.description.model.Relation;
-import semanticMarkup.eval.result.IEvaluationResult;
 import semanticMarkup.eval.result.PerfectPartialPrecisionRecallEvaluationResult;
 import semanticMarkup.eval.result.PrecisionRecallEvaluationResult;
 import semanticMarkup.eval.result.PrecisionRecallResult;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.eval.model.Description;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Relation;
+import semanticMarkup.markupElement.description.model.Structure;
 
 public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 

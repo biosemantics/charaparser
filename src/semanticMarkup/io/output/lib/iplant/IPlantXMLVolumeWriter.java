@@ -8,12 +8,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import semanticMarkup.io.output.AbstractFileVolumeWriter;
-import semanticMarkup.io.output.lib.iplant.Character;
-import semanticMarkup.io.output.lib.iplant.Description;
-import semanticMarkup.io.output.lib.iplant.DescriptionStatement;
-import semanticMarkup.io.output.lib.iplant.Relation;
-import semanticMarkup.io.output.lib.iplant.Structure;
-import semanticMarkup.io.output.lib.iplant.TaxonIdentification;
 import semanticMarkup.model.ContainerTreatmentElement;
 import semanticMarkup.model.Treatment;
 import semanticMarkup.model.TreatmentElement;

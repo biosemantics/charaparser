@@ -1,9 +1,6 @@
 package semanticMarkup.markupElement.habitat.io.lib;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +8,6 @@ import org.jdom2.Content;
 import org.jdom2.DefaultJDOMFactory;
 import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
 import org.jdom2.JDOMFactory;
 import org.jdom2.Parent;
 import org.jdom2.filter.ElementFilter;

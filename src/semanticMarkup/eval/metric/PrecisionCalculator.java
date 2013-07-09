@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import semanticMarkup.eval.matcher.IMatcher;
-import semanticMarkup.model.Element;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.model.Element;
 
 
 

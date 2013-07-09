@@ -1,7 +1,5 @@
 package semanticMarkup.markupElement.description.transform;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -30,16 +27,15 @@ import oto.lite.IOTOLiteClient;
 import oto.lite.beans.Decision;
 import oto.lite.beans.Download;
 import oto.lite.beans.Synonym;
-
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.chunk.ChunkerChain;
-import semanticMarkup.ling.extract.IDescriptionExtractor;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 

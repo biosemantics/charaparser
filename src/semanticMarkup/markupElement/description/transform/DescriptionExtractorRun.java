@@ -1,7 +1,6 @@
 package semanticMarkup.markupElement.description.transform;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,12 +15,12 @@ import java.util.concurrent.Future;
 
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkerChain;
-import semanticMarkup.ling.extract.IDescriptionExtractor;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.parse.IParser;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 

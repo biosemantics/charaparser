@@ -1,9 +1,5 @@
 package semanticMarkup.markupElement.description.io;
 
-import java.io.IOException;
-
-import javax.xml.bind.JAXBException;
-
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 
 

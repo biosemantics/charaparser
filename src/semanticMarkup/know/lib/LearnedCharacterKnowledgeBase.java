@@ -8,8 +8,8 @@ import java.util.Set;
 
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 

@@ -9,14 +9,14 @@ import org.jdom2.Element;
 import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.SAXBuilder;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 import semanticMarkup.markupElement.habitat.io.IHabitatReader;
 import semanticMarkup.markupElement.habitat.model.Habitat;
 import semanticMarkup.markupElement.habitat.model.HabitatsFile;
 import semanticMarkup.markupElement.habitat.model.HabitatsFileList;
 import semanticMarkup.markupElement.habitat.model.Treatment;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 public class JDOMHabitatReader implements IHabitatReader {
 	

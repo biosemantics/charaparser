@@ -16,8 +16,8 @@ import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
-import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.markupElement.description.run.iplant.IPlantMarkupRun;
 import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
 

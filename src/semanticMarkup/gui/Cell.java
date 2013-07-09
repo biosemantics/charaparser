@@ -1,6 +1,6 @@
 package semanticMarkup.gui;
 
-import java.util.*;
+import java.util.Comparator;
 
 public class Cell implements Comparator<Object>{
 	private int r = -1; //row index

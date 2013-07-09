@@ -2,6 +2,7 @@ package semanticMarkup.ling.extract;
 
 import java.util.List;
 
+import semanticMarkup.markupElement.description.ling.extract.ProcessingContext;
 import semanticMarkup.model.Element;
 
 /**

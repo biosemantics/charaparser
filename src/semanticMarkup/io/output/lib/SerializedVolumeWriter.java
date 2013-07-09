@@ -4,11 +4,11 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
 import semanticMarkup.io.output.AbstractFileVolumeWriter;
 import semanticMarkup.model.Treatment;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * SerializedVolumeWriter java serializes treatments and writes them out

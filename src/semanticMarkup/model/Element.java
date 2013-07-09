@@ -1,11 +1,11 @@
 package semanticMarkup.model;
 
+import semanticMarkup.markupElement.description.model.Character;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.Meta;
 import semanticMarkup.markupElement.description.model.Relation;
 import semanticMarkup.markupElement.description.model.Statement;
 import semanticMarkup.markupElement.description.model.Structure;
-import semanticMarkup.markupElement.description.model.Character;
 import semanticMarkup.markupElement.habitat.model.Habitat;
 
 public abstract class Element {

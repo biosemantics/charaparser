@@ -2,12 +2,8 @@ package semanticMarkup.know.lib;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import semanticMarkup.know.IGlossary;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.inject.Inject;

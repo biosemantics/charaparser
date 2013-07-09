@@ -10,10 +10,10 @@ import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
