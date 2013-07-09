@@ -17,6 +17,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,7 +37,7 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 	public MOXyBinderDescriptionReaderWriter(String bindingsFile) throws JAXBException {
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
 		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFile);
-		JAXBContext jaxbContext = JAXBContext.newInstance(new Class[] { Description.class }, jaxbContextProperties);
+		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);
 		this.binder = jaxbContext.createBinder();
 	}
 
@@ -47,6 +48,9 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {
 			
 			for(File inputFile : inputDirectoryFile.listFiles()) {
+				
+				
+
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		        DocumentBuilder db = dbf.newDocumentBuilder();
 		        Document document = db.parse(inputFile);

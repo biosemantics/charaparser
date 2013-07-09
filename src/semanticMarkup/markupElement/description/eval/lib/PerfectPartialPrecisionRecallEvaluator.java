@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
 import semanticMarkup.eval.IEvaluator;
@@ -90,7 +91,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 		try {
 			Map<String, Object> properties = new HashMap<String, Object>(1);
 			properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , "resources" + File.separator + "eval" + File.separator + "correctBindings.xml");
-			JAXBContext correctJaxbContext = JAXBContext.newInstance(new Class[] {Description.class}, properties);
+			JAXBContext correctJaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, properties);
 			correctUnmarshaller = correctJaxbContext.createUnmarshaller(); 
 
 		} catch(JAXBException e) {
@@ -104,7 +105,7 @@ public class PerfectPartialPrecisionRecallEvaluator implements IEvaluator {
 		try {
 			Map<String, Object> properties = new HashMap<String, Object>(1);
 			properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , "resources" + File.separator + "eval" + File.separator + "testBindings.xml");
-			JAXBContext testJaxbContext = JAXBContext.newInstance(new Class[] {Description.class}, properties);
+			JAXBContext testJaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, properties);
 			testUnmarshaller = testJaxbContext.createUnmarshaller(); 
 
 		} catch(JAXBException e) {
