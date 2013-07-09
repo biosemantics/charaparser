@@ -29,4 +29,8 @@ public class Meta extends Element {
 	public void setGlossaryVersion(String glossaryVersion) {
 		this.glossaryVersion = glossaryVersion;
 	}
+	@Override
+	public void removeElementRecursively(Element element) {
+		return;
+	}
 }

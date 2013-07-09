@@ -54,4 +54,13 @@ public class Description extends Element {
 	public void addStatement(Statement statement) {
 		this.statements.add(statement);
 	}
+
+	@Override
+	public void removeElementRecursively(Element element) {
+		for(Statement statement : this.statements)
+			if(statement.equals(element))
+				this.statements.remove(element);
+			else
+				statement.removeElementRecursively(element);
+	}
 }

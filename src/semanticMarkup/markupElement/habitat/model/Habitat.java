@@ -32,5 +32,10 @@ public class Habitat extends Element {
 
 	public void setHabitatParts(List<String> habitatParts) {
 		this.habitatParts = habitatParts;
-	}	
+	}
+
+	@Override
+	public void removeElementRecursively(Element element) {
+		return;
+	}
 }
