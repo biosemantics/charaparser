@@ -99,7 +99,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("selectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer,
-			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
+			ParentTagProvider parentTagProvider) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.markupMode = markupMode;
 		this.databasePrefix = databasePrefix;

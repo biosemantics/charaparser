@@ -67,7 +67,7 @@ public class TreatisehNormalizer extends Normalizer {
 			@Named("StopWords") Set<String> stopWords, 
 			@Named("PrepositionWords") String prepositionWords,
 			@Named("modifierList") String modifierList, 
-			@Named("parentTagProvider") ParentTagProvider parentTagProvider,
+			ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, 
 			IInflector inflector) {

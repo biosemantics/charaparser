@@ -125,21 +125,20 @@ public class BasicConfig extends AbstractModule {
 		 /* TODO: turn regex word lists into hashsets where appropriate */			
 		
 		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd");
+				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "taxonx" + File.separator + "taxonx1.xsd");
 		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd");
+				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "FNAXMLSchemaInput.xsd");
 		bind(String.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "iplant.xsd");
+				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "iplant.xsd");
 		  
-		bind(ParentTagProvider.class).annotatedWith(Names.named("parentTagProvider")).to(ParentTagProvider.class).in(Singleton.class);
+		bind(ParentTagProvider.class).to(ParentTagProvider.class).in(Singleton.class);
 		
 		bind(ITokenizer.class).annotatedWith(Names.named("WordTokenizer")).to(WhitespaceTokenizer.class);
 		bind(ITokenCombiner.class).annotatedWith(Names.named("WordCombiner")).to(WhitespaceTokenCombiner.class);
 		
 		bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance("resources" + File.separator + "brown.csv");
+		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance("resources" + File.separator + "corpora" + File.separator + "brown.csv");
 		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
-		//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 		bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 		bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);
 		bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);;

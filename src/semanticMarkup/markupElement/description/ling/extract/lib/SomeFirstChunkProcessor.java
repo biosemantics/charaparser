@@ -53,7 +53,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositionWords")Set<String> locationPrepositions, 
 			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			@Named("NumberPattern")String numberPattern, @Named("TimesWords")String times,
-			@Named("parentTagProvider") ParentTagProvider parentTagProvider) {
+			ParentTagProvider parentTagProvider) {
 		super(inflector, glossary, terminologyLearner, characterKnowledgeBase, posKnowledgeBase, baseCountWords, locationPrepositions, clusters, units, equalCharacters, 
 				numberPattern, times);
 		this.parentTagProvider = parentTagProvider;
