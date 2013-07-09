@@ -2,7 +2,7 @@ package semanticMarkup.io.input;
 
 import java.util.List;
 
-import semanticMarkup.core.Treatment;
+import semanticMarkup.model.Treatment;
 
 /**
  * IVolumeReader reads a list of treatments given treatment descriptions

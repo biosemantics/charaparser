@@ -1,11 +1,10 @@
 package semanticMarkup.ling.extract.lib;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -17,6 +16,7 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -52,8 +52,8 @@ public class BracketedChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<Element> result = new LinkedList<Element>();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		processingContextState.increaseInBrackets();
@@ -65,8 +65,8 @@ public class BracketedChunkProcessor extends AbstractChunkProcessor {
 		return result;
 	}
 
-	private List<DescriptionTreatmentElement> describeChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+	private List<Element> describeChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<Element> result = new LinkedList<Element>();
 		
 		ChunkType chunkType = chunk.getChunkType();
 		IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(chunkType);

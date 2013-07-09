@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -18,6 +16,10 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Relation;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -53,59 +55,63 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<Element> result = new ArrayList<Element>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		processingContextState.setCommaAndOrEosEolAfterLastElements(true);
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		
 		if(!unassignedModifiers.isEmpty()) {
-			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-			if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
-				for(DescriptionTreatmentElement element : lastElements) {
-					int structureId = Integer.valueOf(element.getAttribute("id").substring(1));
-					
-					Set<DescriptionTreatmentElement> relations = processingContextState.getRelationsTo(structureId);
-					int greatestId = 0;
-					DescriptionTreatmentElement latestRelation = null;
-					for(DescriptionTreatmentElement relation : relations) {
-						int id = Integer.valueOf(relation.getAttribute("id").substring(1));
-						if(id > greatestId) {
-							greatestId = id;
-							latestRelation = relation;
+			LinkedList<Element> lastElements = processingContextState.getLastElements();
+			if(!lastElements.isEmpty() && lastElements.getLast().isStructure()) {
+				for(Element element : lastElements) {
+					if(element.isStructure()) {
+						int structureId = Integer.valueOf(((Structure)element).getId().substring(1));
+						
+						Set<Relation> relations = processingContextState.getRelationsTo(structureId);
+						int greatestId = 0;
+						Relation latestRelation = null;
+						for(Relation relation : relations) {
+							int id = Integer.valueOf(relation.getId().substring(1));
+							if(id > greatestId) {
+								greatestId = id;
+								latestRelation = relation;
+							}
 						}
+						
+						if(latestRelation != null) {
+							for(Chunk modifier : unassignedModifiers) 
+								latestRelation.appendModifier(modifier.getTerminalsText());
+							result.add(latestRelation);
+						}
+						//TODO: otherwise, categorize modifier and create a character for the structure e.g.{thin} {dorsal} {median} <septum> {centrally} only ;
 					}
-					
-					if(latestRelation != null) {
-						for(Chunk modifier : unassignedModifiers) 
-							latestRelation.appendAttribute("modifier", modifier.getTerminalsText());
-						result.add(latestRelation);
-					}
-					//TODO: otherwise, categorize modifier and create a character for the structure e.g.{thin} {dorsal} {median} <septum> {centrally} only ;
 				}
 				
-			} else if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
-				for(DescriptionTreatmentElement element : lastElements) {
-					for(Chunk modifier : unassignedModifiers) 
-						element.appendAttribute("modifier", modifier.getTerminalsText());
-					result.add(element);
+			} else if(!lastElements.isEmpty() && lastElements.getLast().isCharacter()) {
+				for(Element element : lastElements) {
+					if(element.isCharacter()) {
+						for(Chunk modifier : unassignedModifiers) 
+							((Character)element).appendModifier(modifier.getTerminalsText());
+						result.add(element);
+					}
 				}
 			}
 		}
 		
-		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
+		List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters();
 		if(!unassignedCharacters.isEmpty()) {
-			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+			Structure structureElement = new Structure();
 			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-			structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
-			structureElement.setAttribute("name", "whole_organism"); 
-			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+			structureElement.setId("o" + String.valueOf(structureIdString));	
+			structureElement.setName("whole_organism"); 
+			List<Structure> structureElements = new LinkedList<Structure>();
 			structureElements.add(structureElement);
 			result.addAll(establishSubject(structureElements, processingContextState));
 			
-			for(DescriptionTreatmentElement character : unassignedCharacters) {
-				for(DescriptionTreatmentElement parent : structureElements) {
-					parent.addTreatmentElement(character);
+			for(Character character : unassignedCharacters) {
+				for(Structure parent : structureElements) {
+					parent.addCharacter(character);
 				}
 			}
 		}
@@ -117,7 +123,7 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 	}
 
 	@Override
-	public List<DescriptionTreatmentElement> process(ProcessingContext processingContext) {
+	public List<? extends Element> process(ProcessingContext processingContext) {
 		return this.process(null, processingContext);
 	}
 }

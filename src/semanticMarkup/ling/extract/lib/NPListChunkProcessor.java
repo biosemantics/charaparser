@@ -2,9 +2,10 @@ package semanticMarkup.ling.extract.lib;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -14,6 +15,8 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -49,9 +52,9 @@ public class NPListChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected ArrayList<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Structure> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		ArrayList<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+		List<Structure> result = new LinkedList<Structure>();
 		result.addAll(establishSubject(chunk, processingContextState));		
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;

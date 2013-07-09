@@ -8,7 +8,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -17,6 +16,8 @@ import semanticMarkup.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
 
 /**
  * AndChunkProcessor processes chunks of ChunkType.AND
@@ -48,10 +49,11 @@ public class AndChunkProcessor extends AbstractChunkProcessor {
 				numberPattern, times);
 	}
 
+
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(true);
-		return new LinkedList<DescriptionTreatmentElement>();
+		return new LinkedList<Element>();
 	}
 
 }

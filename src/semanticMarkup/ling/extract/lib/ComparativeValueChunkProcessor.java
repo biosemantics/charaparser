@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -19,6 +17,9 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.markupElement.description.model.Character;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -54,10 +55,10 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
-		LinkedList<DescriptionTreatmentElement> characters = processComparativeValue(chunk, 
+		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		LinkedList<Element> characters = processComparativeValue(chunk, 
 				parents, processingContext, processingContextState);
 		
 		processingContextState.setLastElements(characters);
@@ -76,8 +77,8 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	 	content: 0.5–0.6+ times a[type[bodies]]
 	 	subjects2
 	 */
-	private LinkedList<DescriptionTreatmentElement> processComparativeValue(Chunk content,
-			List<DescriptionTreatmentElement> parents, ProcessingContext processingContext, 
+	private LinkedList<Element> processComparativeValue(Chunk content,
+			List<Structure> parents, ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		List<Chunk> beforeTimes = new ArrayList<Chunk>();
 		List<Chunk> onAndAfterTimes = new ArrayList<Chunk>();
@@ -142,13 +143,13 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			//childChunks.add(sizeChunk);
 			//childChunks.add(comparisonChunk);
 			//content.setChunks(childChunks);
-			List<DescriptionTreatmentElement> structures = 
+			List<Structure> structures = 
 					this.extractStructuresFromObject(comparisonChunk, processingContext, processingContextState);
 			processingContextState = processingContext.getCurrentState();
 			processingContextState.setClauseModifierContraint(comparisonChunk.getTerminalsText());
-			processingContextState.setLastElements(new LinkedList<DescriptionTreatmentElement>(parents));
+			processingContextState.setLastElements(parents);
 			processingContextState.setClauseModifierContraintId(this.listStructureIds(structures));
-			LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>(
+			LinkedList<Element> result = new LinkedList<Element>(
 					processingContext.getChunkProcessor(ChunkType.VALUE).process(valueChunk, processingContext));
 			processingContext.getCurrentState().clearUnassignedModifiers();
 			return result;
@@ -165,26 +166,28 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		}else { //if(content.indexOf("[")<0){ //{forked} {moreorless} unevenly ca . 3-4 times , 
 			//content = 3-4 times; v = 3-4; n=times
 			//marked as a constraint to the last character "forked". "ca." should be removed from sentences in SentenceOrganStateMarker.java
-			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+			LinkedList<Element> lastElements = processingContextState.getLastElements();
 			if(!lastElements.isEmpty()) {
-				DescriptionTreatmentElement lastElement = lastElements.getLast();
-				if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
-					for(DescriptionTreatmentElement element : processingContextState.getLastElements()) {
-						if(!processingContextState.getUnassignedModifiers().isEmpty()){
-							List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
-							String modifierString = "";
-							for(Chunk modifier : unassignedModifiers) 
-								element.appendAttribute("modifier", modifier.getTerminalsText());
-							processingContextState.clearUnassignedModifiers();
+				Element lastElement = lastElements.getLast();
+				if(lastElement.isCharacter()) {
+					for(Element element : processingContextState.getLastElements()) {
+						if(element.isCharacter()) {
+							if(!processingContextState.getUnassignedModifiers().isEmpty()){
+								List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
+								String modifierString = "";
+								for(Chunk modifier : unassignedModifiers) 
+									((Character)element).appendModifier(modifier.getTerminalsText());
+								processingContextState.clearUnassignedModifiers();
+							}
 						}
-						lastElement.setAttribute("constraint", content.getTerminalsText());
+						((Character)lastElement).setConstraint(content.getTerminalsText());
 					}
-				} else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)){
-					return new LinkedList<DescriptionTreatmentElement>(); //parsing failure
+				} else if(lastElement.isStructure()){
+					return new LinkedList<Element>(); //parsing failure
 				}
 				return processingContextState.getLastElements();
 			}
 		}
-		return new LinkedList<DescriptionTreatmentElement>();
+		return new LinkedList<Element>();
 	}
 }

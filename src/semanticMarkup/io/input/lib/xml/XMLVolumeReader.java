@@ -11,10 +11,10 @@ import javax.xml.bind.Unmarshaller;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.core.ContainerTreatmentElement;
-import semanticMarkup.core.Treatment;
-import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
+import semanticMarkup.model.ContainerTreatmentElement;
+import semanticMarkup.model.Treatment;
+import semanticMarkup.model.ValueTreatmentElement;
 
 /**
  * XMLVolumeReader reads a list of treatments of type 2 that are valid against the XML Schema resources/io/FNAXMLSchemaInput.xml

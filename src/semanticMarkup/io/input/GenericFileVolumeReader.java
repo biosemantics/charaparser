@@ -13,19 +13,19 @@ import java.util.concurrent.Future;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.core.Treatment;
-import semanticMarkup.io.input.extract.lib.DistributionTreatmentRefiner;
-import semanticMarkup.io.input.extract.lib.FloweringTimeTreatmentRefiner;
 import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
 import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
+import semanticMarkup.io.input.lib.word.refiner.DistributionTreatmentRefiner;
+import semanticMarkup.io.input.lib.word.refiner.FloweringTimeTreatmentRefiner;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.input.validate.ValidationRun;
-import semanticMarkup.io.input.validate.lib.IPlantXmlVolumeValidator;
-import semanticMarkup.io.input.validate.lib.TaxonxVolumeValidator;
-import semanticMarkup.io.input.validate.lib.WordVolumeValidator;
-import semanticMarkup.io.input.validate.lib.XMLVolumeValidator;
+import semanticMarkup.io.validate.ValidationRun;
+import semanticMarkup.io.validate.lib.IPlantXmlVolumeValidator;
+import semanticMarkup.io.validate.lib.TaxonxVolumeValidator;
+import semanticMarkup.io.validate.lib.WordVolumeValidator;
+import semanticMarkup.io.validate.lib.XMLVolumeValidator;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.model.Treatment;
 
 /**
  * GenericFileVolumeReader reads takes a filePath to check whether there is input available at the given format 

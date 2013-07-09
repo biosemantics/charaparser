@@ -2,7 +2,7 @@ package semanticMarkup.io.output;
 
 import java.util.List;
 
-import semanticMarkup.core.Treatment;
+import semanticMarkup.model.Treatment;
 
 /**
  * IVolumeWriter writes a list of treatments out

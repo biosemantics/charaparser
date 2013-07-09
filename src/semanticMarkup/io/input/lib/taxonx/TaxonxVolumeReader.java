@@ -14,9 +14,9 @@ import javax.xml.bind.Unmarshaller;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.core.Treatment;
-import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
+import semanticMarkup.model.Treatment;
+import semanticMarkup.model.ValueTreatmentElement;
 /**
  * TaxonxVolumeReader reads a list of treatments of type 4 that are valid against the XML Schema resources/io/taxonx/taxonx1.xsd
  * TODO: Which elements are relevant, need to be translated to treatmentElements and present in output?

@@ -1,11 +1,13 @@
 package semanticMarkup.ling.learn;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import semanticMarkup.core.Treatment;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
 /**
  * ITerminologyLearner learns the terminology of a list of treatments
@@ -17,13 +19,13 @@ public interface ITerminologyLearner {
 	 * Learns the terminology used in the treatments
 	 * @param treatments
 	 */
-	public void learn(List<Treatment> treatments, String glossaryTable);
+	public void learn(List<DescriptionsFile> descriptionsFiles, String glossaryTable);
 	
 	/**
 	 * Reads the results for the treatments, so that any other function returns the 'freshest' results
 	 * @param treatments
 	 */
-	public void readResults(List<Treatment> treatments);
+	public void readResults(List<DescriptionsFile> descriptionsFiles);
 	
 	/**
 	 * @return <treatment, <source, sentence>> map
@@ -33,7 +35,7 @@ public interface ITerminologyLearner {
 	/**
 	 * @return <treatment, <source, sentence> map used by OrganStateMarker
 	 */
-	public Map<Treatment, LinkedHashMap<String, String>> getSentencesForOrganStateMarker();
+	public Map<Description, LinkedHashMap<String, String>> getSentencesForOrganStateMarker();
 	
 	/**
 	 * @return modifier list used in the sentence table 
@@ -78,7 +80,7 @@ public interface ITerminologyLearner {
 	/**
 	 * @return <treatment, <source, tag> map used in sentence table
 	 */
-	public Map<Treatment, LinkedHashMap<String, String>> getSentenceTags();
+	public Map<Description, LinkedHashMap<String, String>> getSentenceTags();
 	
 	/**
 	 * @return <term, category set> map used in term_category table
@@ -103,6 +105,6 @@ public interface ITerminologyLearner {
 	/**
 	 * @return <source, AjectiveReplacementForNoun> map used in sentence table
 	 */
-	public Map<String, AjectiveReplacementForNoun> getAdjectiveReplacementsForNouns();
+	public Map<String, AdjectiveReplacementForNoun> getAdjectiveReplacementsForNouns();
 	
 }

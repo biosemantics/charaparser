@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -21,6 +19,9 @@ import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -56,13 +57,13 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<Element> result = new LinkedList<Element>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		//LinkedList<DescriptionTreatmentElement> subjectsCopy = processingContext.getSubjects();
-		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-		if(lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
-			processingContextState.setSubjects(latest(DescriptionTreatmentElementType.STRUCTURE, lastElements));
+		LinkedList<Element> lastElements = processingContextState.getLastElements();
+		if(lastElements.getLast().isStructure()) {
+			processingContextState.setSubjects(latest(Structure.class, lastElements));
 		} else {
 			ListIterator<Chunk> chunkIterator = processingContext.getChunkListIterator();
 			chunkIterator.previous();
@@ -80,8 +81,8 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			int constraintId;
 			if(last.containsChunkType(ChunkType.ORGAN)) {
 				constraintId = processingContextState.getStructureId() - 1;
-				DescriptionTreatmentElement lastStructure = processingContextState.getStructure(constraintId);
-				LinkedList<DescriptionTreatmentElement> newSubjects = new LinkedList<DescriptionTreatmentElement>();
+				Structure lastStructure = processingContextState.getStructure(constraintId);
+				LinkedList<Structure> newSubjects = new LinkedList<Structure>();
 				newSubjects.add(lastStructure);
 				processingContextState.setSubjects(newSubjects);
 			}else{
@@ -130,9 +131,10 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			//Chunk contentChunk = new Chunk(ChunkType.UNASSIGNED, content);
 			
 			//attach modifier to the last characters
-			if(lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
-				for(DescriptionTreatmentElement lastElement : lastElements)
-					lastElement.setAttribute("modifier", modifierChunk.getTerminalsText());
+			if(lastElements.getLast().isCharacter()) {
+				for(Element lastElement : lastElements)
+					if(lastElement.isCharacter())
+						((Character)lastElement).setModifier(modifierChunk.getTerminalsText());
 			} else { 
 				//if(newcs!=null) 
 					//processingContext.getUnassignedModifiers().add(modifierChunk);
@@ -184,8 +186,8 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 		return result;
 	}
 
-	private List<DescriptionTreatmentElement> describeChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+	private List<? extends Element> describeChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<Element> result = new LinkedList<Element>();
 		ChunkType chunkType = chunk.getChunkType();
 		IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(chunkType);
 		result.addAll(chunkProcessor.process(chunk, processingContext));

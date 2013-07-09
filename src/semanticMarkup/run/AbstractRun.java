@@ -18,7 +18,6 @@ import com.google.inject.name.Named;
 public abstract class AbstractRun implements IRun {
 
 	protected String guiceModuleFile;
-	protected String runRootDirectory;
 	protected String runOutDirectory;
 
 	/**
@@ -26,10 +25,8 @@ public abstract class AbstractRun implements IRun {
 	 */
 	@Inject
 	public AbstractRun(@Named("GuiceModuleFile")String guiceModuleFile,
-		@Named("Run_RootDirectory")String runRootDirectory,
 		@Named("Run_OutDirectory")String runOutDirectory) {
 		this.guiceModuleFile = guiceModuleFile;
-		this.runRootDirectory = runRootDirectory;
 		this.runOutDirectory = runOutDirectory;
 	}
 	

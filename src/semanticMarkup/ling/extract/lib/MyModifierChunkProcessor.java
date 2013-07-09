@@ -3,11 +3,10 @@ package semanticMarkup.ling.extract.lib;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -18,6 +17,9 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Relation;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -53,26 +55,29 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected ArrayList<DescriptionTreatmentElement> processChunk(Chunk chunk,
+	protected List<Element> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
 		Chunk nextChunk = chunkListIterator.next();
 		chunkListIterator.previous();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		if(!lastElements.isEmpty()) {
-			DescriptionTreatmentElement lastElement = lastElements.getLast();
+			Element lastElement = lastElements.getLast();
 			
 			if(!processingContextState.isCommaAndOrEosEolAfterLastElements() 
-					&& !processingContextState.isUnassignedChunkAfterLastElements() && 
-					(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.RELATION) 	|| 
-							(!nextChunk.isOfChunkType(ChunkType.PP) && 
-									lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)))) {
-				lastElement.appendAttribute("modifier", chunk.getTerminalsText());
+					&& !processingContextState.isUnassignedChunkAfterLastElements()) {
+				if(lastElement.isRelation()) 
+					((Relation)lastElement).appendModifier(chunk.getTerminalsText());
+				else if((!nextChunk.isOfChunkType(ChunkType.PP) && 
+									lastElement.isCharacter())) {
+					((Character)lastElement).appendModifier(chunk.getTerminalsText());
+				}
+				
 			} else 
 				processingContextState.getUnassignedModifiers().add(chunk);
 		}
-		return new ArrayList<DescriptionTreatmentElement>();
+		return new LinkedList<Element>();
 	}
 }

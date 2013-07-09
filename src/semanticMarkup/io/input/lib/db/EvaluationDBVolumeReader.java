@@ -10,9 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.Treatment;
-import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.IVolumeReader;
+import semanticMarkup.model.Treatment;
+import semanticMarkup.model.ValueTreatmentElement;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

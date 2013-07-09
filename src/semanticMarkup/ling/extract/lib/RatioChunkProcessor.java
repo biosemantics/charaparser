@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -15,6 +14,8 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -50,11 +51,11 @@ public class RatioChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
+		List<Structure> parents = lastStructures(processingContext, processingContextState);
 		List<Chunk> modifiers = new LinkedList<Chunk>();
-		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "l_w_ratio", modifiers, 
+		List<Character> characters = annotateNumericals(chunk.getTerminalsText(), "l_w_ratio", modifiers, 
 				lastStructures(processingContext, processingContextState), false, processingContextState);
 		processingContextState.setLastElements(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

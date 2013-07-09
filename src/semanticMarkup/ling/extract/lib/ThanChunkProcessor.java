@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -19,6 +18,10 @@ import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.model.Element;
+import semanticMarkup.markupElement.description.model.Relation;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -54,9 +57,9 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> result = processTHAN(chunk, processingContextState.getSubjects(), processingContext, 
+		List<Element> result = processTHAN(chunk, processingContextState.getSubjects(), processingContext, 
 				processingContextState);
 		processingContextState.setLastElements(result);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
@@ -67,9 +70,9 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 	 * size[{longer}] constraint[than (object)]";
 	 * shape[{lobed} constraint[than (proximal)]]
 	 */
-	private LinkedList<DescriptionTreatmentElement> processTHAN(Chunk content, LinkedList<DescriptionTreatmentElement> parents, 
+	private List<Element> processTHAN(Chunk content, List<Structure> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
-		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+		List<Element> result = new LinkedList<Element>();
 		
 		LinkedHashSet<Chunk> beforeThan = new LinkedHashSet<Chunk>();
 		for(Chunk chunk : content.getChunks()) {
@@ -89,7 +92,11 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 			if(thanChunk.containsChunkType(ChunkType.CONSTRAINT) && !thanChunk.containsChunkType(ChunkType.ORGAN)) {
 				Chunk constraint = thanChunk.getChunks(ChunkType.CONSTRAINT).get(0);
 				IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(ChunkType.CONSTRAINT);
-				List<DescriptionTreatmentElement> structures = chunkProcessor.process(constraint, processingContext);
+				List<? extends Element> elements = chunkProcessor.process(constraint, processingContext);
+				List<Structure> structures = new LinkedList<Structure>();
+				for(Element element : elements)
+					if(element.isStructure())
+						structures.add((Structure)element);
 				result.addAll(structures);
 				this.createConstraintedCharacters(content, beforeChunk, structures, processingContext);
 		} else {
@@ -106,7 +113,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				objectChunks.addAll(beforeOrganChunks);
 				objectChunks.addAll(organChunks);
 				Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
-				LinkedList<DescriptionTreatmentElement> structures = extractStructuresFromObject(objectChunk, processingContext, processingContextState);
+				List<Structure> structures = extractStructuresFromObject(objectChunk, processingContext, processingContextState);
 				result.addAll(structures);
 				result.addAll(this.createConstraintedCharacters(content, beforeChunk, structures, processingContext));
 			} else {
@@ -119,13 +126,16 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 						log(LogLevel.DEBUG, "child " + child);
 						IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(child.getChunkType());
 						if(chunkProcessor != null) {
-							List<DescriptionTreatmentElement> characters = chunkProcessor.process(child, processingContext);
+							List<? extends Element> characters = chunkProcessor.process(child, processingContext);
 							result.addAll(characters);
 						}
 					}
 					if(!beforeThan.isEmpty()) {
-						for(DescriptionTreatmentElement element : result) {
-							element.setAttribute("modifier", beforeChunk.getTerminalsText() + " than");
+						for(Element element : result) {
+							if(element.isCharacter())
+								((Character)element).setModifier(beforeChunk.getTerminalsText() + " than");
+							if(element.isRelation()) 
+								((Relation)element).setModifier(beforeChunk.getTerminalsText() + " than");
 						}
 					}
 				} else {
@@ -139,14 +149,14 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 							LinkedHashSet<Chunk> characterTerminals = new LinkedHashSet<Chunk>();
 							characterTerminals.addAll(content.getTerminals());
 							child.getChunks(ChunkType.STATE).get(0).setChunks(characterTerminals);
-							List<DescriptionTreatmentElement> characters = processingContext.getChunkProcessor(child.getChunkType()).process(child, processingContext);
-							result.addAll(characters);
+							List<? extends Element> elements = processingContext.getChunkProcessor(child.getChunkType()).process(child, processingContext);
+							result.addAll(elements);
 							break;
 						}
 					}
 					if(!foundCharacter && !thanObject.getChunks().isEmpty()) {
 						result.addAll(this.createConstraintedCharacters(content, beforeChunk, 
-									 	new LinkedList<DescriptionTreatmentElement>(), processingContext));
+									 	new LinkedList<Structure>(), processingContext));
 					}
 				}
 			}
@@ -265,11 +275,11 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		} */
 	}
 	
-	private List<DescriptionTreatmentElement> createConstraintedCharacters(Chunk content, Chunk beforeChunk, 
-			/*Chunk thanObject,*/ List<DescriptionTreatmentElement> structures, 
+	private List<Element> createConstraintedCharacters(Chunk content, Chunk beforeChunk, 
+			/*Chunk thanObject,*/ List<Structure> structures, 
 			ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
-		List<DescriptionTreatmentElement> characters = new LinkedList<DescriptionTreatmentElement>();
+		List<Element> result = new LinkedList<Element>();
+		List<? extends Element> characters = new LinkedList<Character>();
 		for(Chunk child : beforeChunk.getChunks()) {
 			IChunkProcessor processor = processingContext.getChunkProcessor(child.getChunkType());
 			if(processor != null) {
@@ -277,30 +287,33 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				result.addAll(characters);
 			}
 		}
-		for(DescriptionTreatmentElement character : characters) {
-			character.setAttribute("value", beforeChunk.getTerminalsText());
+		for(Element element : characters) {
+			if(element.isCharacter())
+				((Character)element).setValue(beforeChunk.getTerminalsText());
 		}
 		
-		for(DescriptionTreatmentElement element : characters) {
-			ProcessingContextState processingContextState = processingContext.getCurrentState();
-			String clauseModifierConstraint = processingContextState.getClauseModifierContraint();
-			String constraint = "";
-			if(clauseModifierConstraint != null) {
-				constraint += clauseModifierConstraint + "; ";
+		for(Element element : characters) {
+			if(element.isCharacter()) {
+				ProcessingContextState processingContextState = processingContext.getCurrentState();
+				String clauseModifierConstraint = processingContextState.getClauseModifierContraint();
+				String constraint = "";
+				if(clauseModifierConstraint != null) {
+					constraint += clauseModifierConstraint + "; ";
+				}
+				constraint += content.getChildChunk(ChunkType.THAN).getTerminalsText();
+				String clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
+				String structureIds = "";
+				if(clauseModifierConstraintId != null) {
+					structureIds += clauseModifierConstraintId + " ";
+				}
+				if(!structures.isEmpty())
+					structureIds += listStructureIds(structures);
+				((Character)element).setConstraint(constraint);
+				//if(thanObject!=null) {
+					((Character)element).setConstraintId(structureIds);
+					//TODO: check: some constraints are without constraintid
+				//}
 			}
-			constraint += content.getChildChunk(ChunkType.THAN).getTerminalsText();
-			String clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
-			String structureIds = "";
-			if(clauseModifierConstraintId != null) {
-				structureIds += clauseModifierConstraintId + " ";
-			}
-			if(!structures.isEmpty())
-				structureIds += listStructureIds(structures);
-			element.setAttribute("constraint", constraint);
-			//if(thanObject!=null) {
-				element.setAttribute("constraintid", structureIds);
-				//TODO: check: some constraints are without constraintid
-			//}
 		}
 		return result;
 	}

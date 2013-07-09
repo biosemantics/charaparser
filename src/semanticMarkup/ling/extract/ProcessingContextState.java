@@ -5,12 +5,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.model.Relation;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.model.Element;
 
 /**
  * ProcessingContextState provides contextual information for the processing of a single chunk
@@ -21,23 +25,23 @@ public class ProcessingContextState implements Cloneable {
 	private String unassignedCharacter;
 	private List<Chunk> unassignedModifiers = new ArrayList<Chunk>();
 	private List<Chunk> unassignedConstraints = new ArrayList<Chunk>();
-	private List<DescriptionTreatmentElement> unassignedCharacters = new ArrayList<DescriptionTreatmentElement>();
+	private List<Character> unassignedCharacters = new ArrayList<Character>();
 
-	private DescriptionTreatmentElement mainSubjectStructure = null;
-	private DescriptionTreatmentElement previousCharacter = null;
+	private Structure mainSubjectStructure = null;
+	private Character previousCharacter = null;
 	
-	private LinkedList<DescriptionTreatmentElement> subjects = new LinkedList<DescriptionTreatmentElement>();
-	private LinkedList<DescriptionTreatmentElement> lastElements = new LinkedList<DescriptionTreatmentElement>();
+	private LinkedList<Structure> subjects = new LinkedList<Structure>();
+	private LinkedList<Element> lastElements = new LinkedList<Element>();
 	
 	private boolean commaAndOrEosEolAfterLastElements = false; 
 	private boolean unassignedChunkAfterLastElements = false;
 
 	private int structureId;
-	private HashMap<Integer, DescriptionTreatmentElement> structures = new HashMap<Integer, DescriptionTreatmentElement>();
+	private HashMap<Integer, Structure> structures = new HashMap<Integer, Structure>();
 	private int relationId;
-	private HashMap<Integer, DescriptionTreatmentElement> relations = new HashMap<Integer, DescriptionTreatmentElement>();
-	private HashMap<Integer, Set<DescriptionTreatmentElement>> relationsFromStructure = new HashMap<Integer, Set<DescriptionTreatmentElement>>();
-	private HashMap<Integer, Set<DescriptionTreatmentElement>> relationsToStructure = new HashMap<Integer, Set<DescriptionTreatmentElement>>();
+	private Map<Integer, Relation> relations = new HashMap<Integer, Relation>();
+	private Map<Integer, Set<Relation>> relationsFromStructure = new HashMap<Integer, Set<Relation>>();
+	private Map<Integer, Set<Relation>> relationsToStructure = new HashMap<Integer, Set<Relation>>();
 	
 	private String notInModifier;
 
@@ -76,7 +80,7 @@ public class ProcessingContextState implements Cloneable {
 	 * @param structureId
 	 * @return the structure with the structureId
 	 */
-	public DescriptionTreatmentElement getStructure(int structureId) {
+	public Structure getStructure(int structureId) {
 		return structures.get(structureId);
 	}
 	
@@ -84,7 +88,7 @@ public class ProcessingContextState implements Cloneable {
 	 * @param relationId
 	 * @return the relation with the relationId
 	 */
-	public DescriptionTreatmentElement getRelation(int relationId) {
+	public Relation getRelation(int relationId) {
 		return relations.get(relationId);
 	}
 	
@@ -92,8 +96,8 @@ public class ProcessingContextState implements Cloneable {
 	 * @param toStructureId
 	 * @return the set of relations that use toStructureId has target
 	 */
-	public Set<DescriptionTreatmentElement> getRelationsTo(int toStructureId) {
-		Set<DescriptionTreatmentElement> result = new HashSet<DescriptionTreatmentElement>();
+	public Set<Relation> getRelationsTo(int toStructureId) {
+		Set<Relation> result = new HashSet<Relation>();
 		if(relationsToStructure.containsKey(toStructureId))
 			return relationsToStructure.get(toStructureId);
 		return result;
@@ -103,8 +107,8 @@ public class ProcessingContextState implements Cloneable {
 	 * @param fromStructureId
 	 * @return the set of relations that use fromStructureId as source
 	 */
-	public Set<DescriptionTreatmentElement> getRelationsFrom(int fromStructureId) {
-		Set<DescriptionTreatmentElement> result = new HashSet<DescriptionTreatmentElement>();
+	public Set<Relation> getRelationsFrom(int fromStructureId) {
+		Set<Relation> result = new HashSet<Relation>();
 		if(relationsFromStructure.containsKey(fromStructureId))
 			return relationsFromStructure.get(fromStructureId);
 		return result;
@@ -121,15 +125,15 @@ public class ProcessingContextState implements Cloneable {
 	 * @param relation
 	 * @return returns and increases the current relationId
 	 */
-	public int fetchAndIncrementRelationId(DescriptionTreatmentElement relation) {
+	public int fetchAndIncrementRelationId(Relation relation) {
 		relations.put(relationId, relation);
-		int fromId = Integer.parseInt(relation.getAttribute("from").substring(1));
-		int toId = Integer.parseInt(relation.getAttribute("to").substring(1));
+		int fromId = Integer.parseInt(relation.getFrom().substring(1));
+		int toId = Integer.parseInt(relation.getTo().substring(1));
 		
 		if(!relationsFromStructure.containsKey(fromId))
-			relationsFromStructure.put(fromId, new HashSet<DescriptionTreatmentElement>());
+			relationsFromStructure.put(fromId, new HashSet<Relation>());
 		if(!relationsToStructure.containsKey(toId))
-			relationsToStructure.put(toId, new HashSet<DescriptionTreatmentElement>());
+			relationsToStructure.put(toId, new HashSet<Relation>());
 		relationsFromStructure.get(fromId).add(relation);
 		relationsToStructure.get(toId).add(relation);
 		
@@ -203,21 +207,21 @@ public class ProcessingContextState implements Cloneable {
 	/**
 	 * @return the mainSubjectStructure
 	 */
-	public DescriptionTreatmentElement getMainSubjectStructure() {
+	public Structure getMainSubjectStructure() {
 		return mainSubjectStructure;
 	}
 
 	/**
 	 * @return the previousCharacter
 	 */
-	public DescriptionTreatmentElement getPreviousCharacter() {
+	public Character getPreviousCharacter() {
 		return previousCharacter;
 	}
 
 	/**
 	 * @return the subjects
 	 */
-	public LinkedList<DescriptionTreatmentElement> getSubjects() {
+	public LinkedList<Structure> getSubjects() {
 		return subjects;
 	}
 	
@@ -225,25 +229,27 @@ public class ProcessingContextState implements Cloneable {
 	 * set the subjects
 	 * @param subjects
 	 */
-	public void setSubjects(LinkedList<DescriptionTreatmentElement> subjects) {
+	public void setSubjects(LinkedList<Structure> subjects) {
 		this.subjects = subjects;
 	}
 
 	/**
 	 * @return the last elements
 	 */
-	public LinkedList<DescriptionTreatmentElement> getLastElements() {
+	public LinkedList<Element> getLastElements() {
 		return lastElements;
 	}
 
 	/**
 	 * @param lastElements to set
 	 */
-	public void setLastElements(LinkedList<DescriptionTreatmentElement> lastElements) {
+	public void setLastElements(List<? extends Element> lastElements) {
 		if(lastElements==null)
 			this.lastElements.clear();
-		else
-			this.lastElements = lastElements;
+		else {
+			this.lastElements.clear();
+			this.lastElements.addAll(lastElements);
+		}
 	}
 	
 	/**
@@ -257,7 +263,7 @@ public class ProcessingContextState implements Cloneable {
 	 * @param structure
 	 * @return and increase the current structure id
 	 */
-	public int fetchAndIncrementStructureId(DescriptionTreatmentElement structure) {
+	public int fetchAndIncrementStructureId(Structure structure) {
 		structures.put(structureId, structure);
 		return structureId++;
 	}
@@ -286,8 +292,7 @@ public class ProcessingContextState implements Cloneable {
 	/**
 	 * @param previousCharacter to set
 	 */
-	public void setPreviousCharacter(
-			DescriptionTreatmentElement previousCharacter) {
+	public void setPreviousCharacter(Character previousCharacter) {
 		this.previousCharacter = previousCharacter;
 	}
 
@@ -357,14 +362,14 @@ public class ProcessingContextState implements Cloneable {
 	/**
 	 * @return unassigned characters
 	 */
-	public List<DescriptionTreatmentElement> getUnassignedCharacters() {
+	public List<Character> getUnassignedCharacters() {
 		return unassignedCharacters;
 	}
 
 	/**
 	 * @param unassignedCharacters to set
 	 */
-	public void setUnassignedCharacters(List<DescriptionTreatmentElement> unassignedCharacters) {
+	public void setUnassignedCharacters(List<Character> unassignedCharacters) {
 		this.unassignedCharacters = unassignedCharacters;
 	}
 	
@@ -391,19 +396,18 @@ public class ProcessingContextState implements Cloneable {
 			clone.unassignedModifiers.addAll(this.unassignedModifiers);
 			clone.mainSubjectStructure = this.mainSubjectStructure;
 			clone.previousCharacter = this.previousCharacter;
-			clone.subjects = new LinkedList<DescriptionTreatmentElement>();
+			clone.subjects = new LinkedList<Structure>();
 			clone.subjects.addAll(this.subjects);
-			clone.lastElements = new LinkedList<DescriptionTreatmentElement>();
-			clone.lastElements.addAll(this.lastElements);
+			clone.lastElements = new LinkedList<Element>(this.lastElements);
 			clone.structureId = new Integer(this.structureId);
-			clone.structures = new HashMap<Integer, DescriptionTreatmentElement>();
+			clone.structures = new HashMap<Integer, Structure>();
 			clone.structures.putAll(this.structures);
 			clone.relationId = new Integer(this.relationId);
-			clone.relations = new HashMap<Integer, DescriptionTreatmentElement>();
+			clone.relations = new HashMap<Integer, Relation>();
 			clone.relations.putAll(this.relations);
-			clone.relationsFromStructure = new HashMap<Integer, Set<DescriptionTreatmentElement>>();
+			clone.relationsFromStructure = new HashMap<Integer, Set<Relation>>();
 			clone.relationsFromStructure.putAll(this.relationsFromStructure);
-			clone.relationsToStructure = new HashMap<Integer, Set<DescriptionTreatmentElement>>();
+			clone.relationsToStructure = new HashMap<Integer, Set<Relation>>();
 			clone.relationsToStructure.putAll(this.relationsToStructure);
 			clone.notInModifier = this.notInModifier==null ? null : new String(this.notInModifier);
 			//clone.chunkListIterator = chunkCollector.getChunks().listIterator(this.chunkListIterator.nextIndex());

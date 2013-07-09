@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -16,6 +14,10 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElementType;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,17 +53,17 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+	protected List<Structure> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<Structure> result = new LinkedList<Structure>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		String[] parts = chunk.getTerminalsText().split("=");
 		if(parts.length==2) {
 			String value = parts[1];
 			//String content = chunk.getTerminalsText().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
 			//Element structure = new Element("chromosome");
-			DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-			structure.setAttribute("name", "chromosome");
-			structure.setAttribute("id", "o" + String.valueOf(processingContextState.fetchAndIncrementStructureId(structure)));
+			Structure structure = new Structure();
+			structure.setName("chromosome");
+			structure.setId("o" + String.valueOf(processingContextState.fetchAndIncrementStructureId(structure)));
 			result.add(structure);
 			
 			List<Chunk> modifiers = new LinkedList<Chunk>();

@@ -2,7 +2,7 @@ package semanticMarkup.eval.matcher;
 
 import java.util.Objects;
 
-import semanticMarkup.eval.model.Element;
+import semanticMarkup.model.Element;
 import semanticMarkup.log.LogLevel;
 
 public abstract class AbstractMatcher {

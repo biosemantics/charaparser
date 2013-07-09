@@ -9,8 +9,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -22,6 +20,9 @@ import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -59,27 +60,29 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
-		LinkedList<DescriptionTreatmentElement> characters = processCharacterState(chunk, parents, 
+		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<Element> elements = processCharacterState(chunk, parents, 
 				processingContextState, processingContext);//apices of basal leaves spread 
 		if(parents.isEmpty()) {
-			processingContextState.getUnassignedCharacters().addAll(characters);
+			for(Element element : elements)
+				if(element.isCharacter())
+					processingContextState.getUnassignedCharacters().add((Character)element);
 		}
-		processingContextState.setLastElements(characters);
+		processingContextState.setLastElements(elements);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
-		return characters;
+		return elements;
 	}
 	
 	/**
 	 * @param content: m[usually] coloration[dark brown]: there is only one character states and several modifiers
 	 * @param parents: of the character states
 	 */
-	protected LinkedList<DescriptionTreatmentElement> processCharacterState(Chunk content,
-			LinkedList<DescriptionTreatmentElement> parents, ProcessingContextState processingContextState, 
+	protected List<Element> processCharacterState(Chunk content,
+			List<Structure> parents, ProcessingContextState processingContextState, 
 			ProcessingContext processingContext) {
-		LinkedList<DescriptionTreatmentElement> results = new LinkedList<DescriptionTreatmentElement>();
+		List<Element> results = new LinkedList<Element>();
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		modifiers.addAll(unassignedModifiers);
@@ -112,7 +115,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			if(characterStateString.contains(" to "))
 				results.addAll(createRangeCharacterElement(parents, modifiers, characterStateString, character, processingContextState));
 			else {
-				DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
+				Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
 				if(characterElement!=null)
 					results.add(characterElement);
 			}
@@ -126,7 +129,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			}*/
 		} else {
 			if(characterState.size() > 1) {
-				LinkedList<DescriptionTreatmentElement> result = this.processCharacterText(characters, parents, character, processingContextState, 
+				List<Element> result = this.processCharacterText(characters, parents, character, processingContextState, 
 						processingContext);
 				//results = this.processCharacterList(content, parents, processingContextState);
 				return results;
@@ -145,15 +148,16 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			}
 			if(character.equals("character") && modifiers.size() == 0) {
 				//high relief: character=relief, reset the character of "high" to "relief"
-				DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-				if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) 
-					for(DescriptionTreatmentElement element : processingContextState.getLastElements()) 
-						element.setAttribute("name", characterStateString);
-				else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
+				Element lastElement = processingContextState.getLastElements().getLast();
+				if(lastElement.isCharacter()) 
+					for(Element element : processingContextState.getLastElements()) 
+						if(element.isCharacter())
+							((Character)element).setName(characterStateString);
+				else if(lastElement.isStructure())
 					processingContextState.setUnassignedCharacter(characterStateString);
 				results.addAll(processingContextState.getLastElements());
 			} else if(characterStateString.length() > 0) {
-				DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
+				Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
 				if(characterElement!=null)
 					results.add(characterElement);
 			}
@@ -164,8 +168,8 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 	}
 	
 
-	private List<DescriptionTreatmentElement> findPreviousCharacterList(ProcessingContext processingContext, String characterName, String suffix) {
-		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+	private List<Element> findPreviousCharacterList(ProcessingContext processingContext, String characterName, String suffix) {
+		List<Element> result = new LinkedList<Element>();
 		ListIterator<Chunk> listIterator = processingContext.getChunkListIterator();
 		listIterator.previous();
 		

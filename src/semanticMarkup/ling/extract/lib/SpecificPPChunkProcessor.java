@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -20,6 +18,9 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Relation;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -55,9 +56,9 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+		List<Element> result = new LinkedList<Element>();
 		//having oval outline
 		if(characterPrep(chunk, processingContextState))
 			return result;
@@ -90,19 +91,23 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 					relation += nonModifier.getTerminalsText() + " ";
 				relation += preposition.getTerminalsText();
 				
-				LinkedList<DescriptionTreatmentElement> structures = extractStructuresFromObject(object, processingContext, 
+				List<Structure> structures = extractStructuresFromObject(object, processingContext, 
 						processingContextState);
 				
 				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) {
-					List<DescriptionTreatmentElement> entity1 = null;
-					DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-					if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER) || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
+					List<Structure> entity1 = null;
+					Element lastElement = processingContextState.getLastElements().getLast();
+					if(lastElement.isCharacter() || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 						entity1 = processingContextState.getSubjects();
-					}else{
-						entity1 = (LinkedList<DescriptionTreatmentElement>)processingContextState.getLastElements().clone();
+					} else {
+						entity1 = new LinkedList<Structure>();
+						for(Element element : processingContextState.getLastElements()) {
+							if(element.isStructure())
+								entity1.add((Structure)element);
+						}
 					}
 					
-					LinkedList<DescriptionTreatmentElement> relationElement = createRelationElements(relation, entity1, structures, modifiers, false, processingContextState);
+					List<Relation> relationElement = createRelationElements(relation, entity1, structures, modifiers, false, processingContextState);
 					result.addAll(relationElement);
 					processingContextState.setLastElements(relationElement);
 					result.addAll(structures);

@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -17,6 +15,10 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElementType;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -52,7 +54,7 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Structure> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		//List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
@@ -60,7 +62,7 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 		
 		//ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 		//chunks.add(chunk);
-		ArrayList<DescriptionTreatmentElement> result = this.establishSubject(chunk, processingContextState);
+		List<Structure> result = this.establishSubject(chunk, processingContextState);
 		//LinkedList<DescriptionTreatmentElement> structures = this.createStructureElements(chunks, processingContextState);
 		//result.addAll(structures);
 		//DescriptionTreatmentElement lastElement = lastElements.isEmpty() ? null : lastElements.getLast();

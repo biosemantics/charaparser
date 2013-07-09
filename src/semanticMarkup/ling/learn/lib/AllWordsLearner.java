@@ -1,21 +1,17 @@
 package semanticMarkup.ling.learn.lib;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 
-import semanticMarkup.core.Treatment;
-import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.Token;
-import semanticMarkup.ling.transform.ITokenCombiner;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,9 +47,9 @@ public class AllWordsLearner {
 				databaseUser, databasePassword);
 	}
 	
-	public void learn(List<Treatment> treatments) throws Exception {
+	public void learn(List<DescriptionsFile> descriptionsFiles) throws Exception {
 		createAllWordsTable();
-		countWords(treatments);
+		countWords(descriptionsFiles);
 		
 		for(String word : wordCounts.keySet()) {
 			if(word.contains("-")) {
@@ -104,47 +100,45 @@ public class AllWordsLearner {
      * Records the words contained in a volume including how often they appear in general and how often they
      * appear within brackets
      */
-	private void countWords(List<Treatment> treatments) {
-		for(Treatment treatment : treatments) {
-			ValueTreatmentElement element = treatment.getValueTreatmentElement("description");
-			if(element != null) {
-				String text = element.getValue();
-				if(text != null) {
-					List<Token> tokens = tokenizer.tokenize(text);
-									
-					int lround = 0;
-		            int lsquare = 0;
-		            int lcurly = 0;
-		            int inbracket = 0;
-		            for(Token token : tokens){
-		            	String word = token.getContent().trim().toLowerCase();
-		                if(word.equals("(")) lround++;
-		                else if(word.equals(")")) lround--;
-		                else if(word.equals("[")) lsquare++;
-		                else if(word.equals("]")) lsquare--;
-		                else if(word.equals("{")) lcurly++;
-		                else if(word.equals("}")) lcurly--;
-		                else{
-		                	word = word.replaceAll("[^-a-z]", " ").trim();
-		                    if(word.matches(".*?\\w.*")) {
-		                    	if(lround+lsquare+lcurly > 0)
-		                    		inbracket = 1;
-		                    	else 
-		                    		inbracket = 0;
-		                        
-		                    	int count = 1;
-		                    	if(wordCounts.containsKey(word))
-		                    		count += wordCounts.get(word);
-		                        wordCounts.put(word, count);
-		                        
-		                        if(wordInBracketsCounts.containsKey(word)) 
-		                        	inbracket *= wordInBracketsCounts.get(word);
-		                        wordInBracketsCounts.put(word, inbracket);
-		                    }
-		                }
-		            }
-				}
+	private void countWords(List<DescriptionsFile> descriptionsFiles) {
+		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+			String descriptionText = "";
+			for(Description description : descriptionsFile.getDescriptions()) {
+				descriptionText += description.getText() + " ";
 			}
+			List<Token> tokens = tokenizer.tokenize(descriptionText);
+							
+			int lround = 0;
+            int lsquare = 0;
+            int lcurly = 0;
+            int inbracket = 0;
+            for(Token token : tokens){
+            	String word = token.getContent().trim().toLowerCase();
+                if(word.equals("(")) lround++;
+                else if(word.equals(")")) lround--;
+                else if(word.equals("[")) lsquare++;
+                else if(word.equals("]")) lsquare--;
+                else if(word.equals("{")) lcurly++;
+                else if(word.equals("}")) lcurly--;
+                else{
+                	word = word.replaceAll("[^-a-z]", " ").trim();
+                    if(word.matches(".*?\\w.*")) {
+                    	if(lround+lsquare+lcurly > 0)
+                    		inbracket = 1;
+                    	else 
+                    		inbracket = 0;
+                        
+                    	int count = 1;
+                    	if(wordCounts.containsKey(word))
+                    		count += wordCounts.get(word);
+                        wordCounts.put(word, count);
+                        
+                        if(wordInBracketsCounts.containsKey(word)) 
+                        	inbracket *= wordInBracketsCounts.get(word);
+                        wordInBracketsCounts.put(word, inbracket);
+                    }
+                }
+            }
 		}
 	}
     

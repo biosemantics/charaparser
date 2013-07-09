@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -16,6 +14,9 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,23 +52,23 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		LinkedList<Character> result = new LinkedList<Character>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		List<Chunk> modifiers = processingContextState.getUnassignedModifiers();
 		
-		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-		LinkedList<DescriptionTreatmentElement> subjects = processingContextState.getSubjects();
-		LinkedList<DescriptionTreatmentElement> parents = new LinkedList<DescriptionTreatmentElement>();
-		if(lastElements.isEmpty() || !lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
+		LinkedList<Element> lastElements = processingContextState.getLastElements();
+		LinkedList<Structure> subjects = processingContextState.getSubjects();
+		LinkedList<Structure> parents = new LinkedList<Structure>();
+		if(lastElements.isEmpty() || !lastElements.getLast().isStructure()) {
 			if(!subjects.isEmpty())
 				parents.add(subjects.getLast());
 		} else {
-			parents.add(lastElements.getLast()); 
+			parents.add((Structure)lastElements.getLast()); 
 		}
 		
-		if(!parents.isEmpty() && parents.getLast().isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
-			List<DescriptionTreatmentElement> characterElement = 
+		if(!parents.isEmpty() && parents.getLast().isStructure()) {
+			List<Character> characterElement = 
 					this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
 			//DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, chunk.getTerminalsText(), 
 			//		"count", "", processingContextState);
@@ -75,7 +76,7 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 				result.addAll(characterElement);
 			processingContextState.clearUnassignedModifiers();
 		} else {
-			List<DescriptionTreatmentElement> characterElement = 
+			List<Character> characterElement = 
 					this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
 			//DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, chunk.getTerminalsText(), 
 			//		"count", "", processingContextState);

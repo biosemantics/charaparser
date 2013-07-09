@@ -2,8 +2,8 @@ package semanticMarkup.ling.extract;
 
 import java.util.List;
 
-import semanticMarkup.core.TreatmentElement;
 import semanticMarkup.ling.chunk.ChunkCollector;
+import semanticMarkup.markupElement.description.model.Description;
 
 /**
  * An IDescriptionExtractor extracts a TreatmentElement from a list of treatmentChunkCollectors
@@ -12,10 +12,10 @@ import semanticMarkup.ling.chunk.ChunkCollector;
 public interface IDescriptionExtractor {
 
 	/**
+	 * @param description
 	 * @param treatmentChunkCollectors
-	 * @return the treatmentElement constructred from the content of the treatmentChunkCollectors
 	 */
-	public TreatmentElement extract(List<ChunkCollector> treatmentChunkCollectors);
+	public void extract(Description description, List<ChunkCollector> treatmentChunkCollectors);
 
 	/**
 	 * @return a descriptive String of this IDescriptionExtractor

@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -19,6 +17,9 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.model.Element;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -54,39 +55,39 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk,
+	protected List<Element> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+		List<Element> result = new LinkedList<Element>();
 		
 		processingContext.getCurrentState().clearUnassignedModifiers();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		processingContextState.setCommaAndOrEosEolAfterLastElements(true);
 		if(!processingContextState.getLastElements().isEmpty()) {
-			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().get(0);
-			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
-				DescriptionTreatmentElement parent = processingContext.getParent(lastElement);
+			Element lastElement = processingContextState.getLastElements().get(0);
+			if(lastElement.isCharacter()) {
+				Element parent = processingContext.getParent(lastElement);
 				if(parent!=null) {
-					LinkedList<DescriptionTreatmentElement> newLastElements = new LinkedList<DescriptionTreatmentElement>();
+					List<Element> newLastElements = new LinkedList<Element>();
 					newLastElements.add(parent);
 					processingContextState.setLastElements(newLastElements);
 				}
 			}
 		}
 		
-		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
+		List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters();
 		if(!unassignedCharacters.isEmpty() && nextChunkIsOrgan(processingContext)) {
-			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+			Structure structureElement = new Structure();
 			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-			structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
-			structureElement.setAttribute("name", "whole_organism"); 
-			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+			structureElement.setId("o" + String.valueOf(structureIdString));	
+			structureElement.setName("whole_organism"); 
+			List<Structure> structureElements = new LinkedList<Structure>();
 			structureElements.add(structureElement);
 			result.addAll(establishSubject(structureElements, processingContextState));
 			
-			for(DescriptionTreatmentElement character : unassignedCharacters) {
-				for(DescriptionTreatmentElement parent : structureElements) {
-					parent.addTreatmentElement(character);
+			for(Character character : unassignedCharacters) {
+				for(Structure parent : structureElements) {
+					parent.addCharacter(character);
 				}
 			}
 			unassignedCharacters.clear(); 

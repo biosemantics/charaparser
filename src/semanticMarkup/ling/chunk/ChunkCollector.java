@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import semanticMarkup.core.Treatment;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
 /**
  * A ChunkCollector stores the root chunk to which a terminal is assigned to for a single sentence.
@@ -30,7 +31,8 @@ public class ChunkCollector implements Iterable<Chunk> {
 	private String sentence;
 	private AbstractParseTree parseTree;
 	private String subjectTag; //tag field in the sentence table
-	private Treatment treatment; //the entire xml input for a treatment
+	private DescriptionsFile descriptionsFile;
+	private Description description; //the entire xml input for a treatment
 	//terminalID to Chunk. 
 	//IParseTree as key doesn't work as hashcodes created have to depend on parent (otherwise same words in a sentence are assigned same hash)
 	//, but IParseTree doesnt know its parent in the current implementation
@@ -44,14 +46,16 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 * @param source
 	 * @param sentenceString
 	 */
-	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Treatment treatment, String source, String sentenceString) {
+	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Description description, DescriptionsFile descriptionsFile, 
+			String source, String sentenceString) {
 		this.parseTree = parseTree;
 		/*log(LogLevel.DEBUG, "root before " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));
 		for(IParseTree terminal : parseTree.getTerminals()) {
 			log(LogLevel.DEBUG, "terminal before " + terminal.getClass().getName() + "@" + Integer.toHexString(terminal.hashCode()));
 		}*/
 		this.subjectTag = subjectTag;
-		this.treatment = treatment;
+		this.descriptionsFile = descriptionsFile;
+		this.description = description;
 		this.source = source;
 		this.sentence = sentenceString;
 	}
@@ -62,7 +66,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		result.append("parseTree: ").append(parseTree.toString()).append("\n");
 		result.append("subjectTag: ").append(subjectTag).append("\n");
 		result.append("source: ").append(source).append("\n");
-		result.append("treatment: ").append(treatment.getName()).append("\n");
+		result.append("description: ").append(descriptionsFile.getName()).append("\n");
 		result.append("chunks:\n");
 		for(AbstractParseTree terminal : getTerminals()) {
 			Chunk chunk = this.getChunk(terminal);
@@ -88,8 +92,8 @@ public class ChunkCollector implements Iterable<Chunk> {
 	/**
 	 * @return the corresponding treatment
 	 */
-	public Treatment getTreatment() {
-		return this.treatment;
+	public Description getDescription() {
+		return this.description;
 	}
 	
 	/**

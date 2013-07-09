@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -16,6 +15,8 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,7 +52,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		//** find parents, modifiers
 		//TODO: check the use of [ and ( in extreme values
@@ -63,7 +64,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			resetFrom = true;
 		}
 		
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
+		List<Structure> parents = lastStructures(processingContext, processingContextState);
 		
 		/*String modifier1 = "";
 		//m[mostly] [4-]8–12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint
@@ -85,7 +86,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		
 		String character = text.indexOf("size") >= 0 || content.indexOf('/') > 0 || content.indexOf('%') > 0 || content.indexOf('.') > 0 ? "size" : null;
 		character = "size";
-		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(content, character,
+		List<Character> characters = annotateNumericals(content, character,
 				modifiers, lastStructures(processingContext, processingContextState), resetFrom, processingContextState);
 		processingContextState.setLastElements(characters);
 		processingContextState.clearUnassignedModifiers();

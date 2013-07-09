@@ -16,7 +16,7 @@ import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
-import semanticMarkup.ling.learn.AjectiveReplacementForNoun;
+import semanticMarkup.ling.learn.AdjectiveReplacementForNoun;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.transform.IInflector;
@@ -307,10 +307,10 @@ public abstract class Normalizer implements INormalizer {
 	}
 	
 	private String normalizeInnerNew(String str, String tag, String source) {
-		Map<String, AjectiveReplacementForNoun> replacements = 
+		Map<String, AdjectiveReplacementForNoun> replacements = 
 				terminologyLearner.getAdjectiveReplacementsForNouns();
 		if(replacements.containsKey(source)) {
-			AjectiveReplacementForNoun replacement = replacements.get(source);
+			AdjectiveReplacementForNoun replacement = replacements.get(source);
 			
 			String newString = "";
 			String remainder = str;

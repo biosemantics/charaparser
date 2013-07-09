@@ -3,10 +3,11 @@ package semanticMarkup.ling.learn.lib;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.Treatment;
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.transform.ITokenizer;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,11 +52,17 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	}
 	
 	@Override
-	public void learn(List<Treatment> treatments, String glossaryTable) { 
+	public void learn(List<DescriptionsFile> descriptionsFiles, String glossaryTable) { 
 		int i = 0;
-		for(Treatment treatment : treatments) {
-			String prefix = intToString(i++, Math.max(String.valueOf(treatments.size()).length(), 3));
-			fileTreatments.put(prefix, treatment);
+		int descriptionCount = 0;
+		for(DescriptionsFile descriptionsFile : descriptionsFiles) 
+			descriptionCount += descriptionsFile.getDescriptions().size();
+		
+		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+			for(Description description : descriptionsFile.getDescriptions()) {
+				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3));
+				fileTreatments.put(prefix, description);
+			}
 		}
 	}
 }

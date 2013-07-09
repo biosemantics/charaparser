@@ -1,14 +1,12 @@
 package semanticMarkup.ling.learn.lib;
 
-import java.util.List;
+import semanticMarkup.ling.learn.ILearner;
+import semanticMarkup.ling.learn.ITerminologyLearner;
+import semanticMarkup.markupElement.description.io.IDescriptionReader;
+import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-
-import semanticMarkup.core.Treatment;
-import semanticMarkup.io.input.IVolumeReader;
-import semanticMarkup.ling.learn.ILearner;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 
 /**
  * Learner learns by reading from an IVolumeReader and learning using an ITerminologyLearner
@@ -16,27 +14,30 @@ import semanticMarkup.ling.learn.ITerminologyLearner;
  */
 public class Learner implements ILearner {
 
-	private IVolumeReader volumeReader;
+	private IDescriptionReader descriptionReader;
 	private ITerminologyLearner terminologyLearner;
 	private String glossaryTable;
+	private String inputDirectory;
 
 	/**
 	 * @param volumeReader
 	 * @param terminologyLearner
 	 */
 	@Inject
-	public Learner(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
+	public Learner(@Named("MarkupCreator_VolumeReader")IDescriptionReader descriptionReader, 
+			String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			@Named("GlossaryTable") String glossaryTable) {	
-		this.volumeReader = volumeReader;
+		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
 		this.glossaryTable = glossaryTable;
+		this.inputDirectory = inputDirectory;
 	}
 
 	@Override
 	public void learn() throws Exception {
-		List<Treatment> treatments = this.volumeReader.read();
-		this.terminologyLearner.learn(treatments, glossaryTable);
+		DescriptionsFileList descriptionsFileList = this.descriptionReader.read(inputDirectory);
+		this.terminologyLearner.learn(descriptionsFileList.getDescriptionsFiles(), glossaryTable);
 	}
 
 	@Override

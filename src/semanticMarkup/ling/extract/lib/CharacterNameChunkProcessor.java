@@ -8,8 +8,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -20,6 +18,10 @@ import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElementType;
+import semanticMarkup.markupElement.description.model.Character;
 
 /**
  * CharacterNameChunkProcessor processes chunks of ChunkType.CHARACTER_NAME
@@ -52,15 +54,15 @@ public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		if(!processingContextState.getLastElements().isEmpty()) {
-			LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+			List<Element> lastElements = processingContextState.getLastElements();
 			//DescriptionTreatmentElement lastResult = lastElements.getLast();
 			
-			for(DescriptionTreatmentElement element : lastElements){
-				if(element.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
-					element.setAttribute("name", chunk.getTerminalsText());
+			for(Element element : lastElements){
+				if(element.isCharacter()) {
+					((Character)element).setName(chunk.getTerminalsText());
 				}
 			}
 			
@@ -68,7 +70,7 @@ public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 		} else {
 			processingContextState.setUnassignedCharacter(chunk.getTerminalsText().toLowerCase());
 		}
-		return new LinkedList<DescriptionTreatmentElement>();
+		return new LinkedList<Element>();
 	}
 
 }

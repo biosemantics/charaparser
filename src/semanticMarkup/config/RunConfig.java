@@ -4,12 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import semanticMarkup.core.transformation.TreatmentTransformerChain;
-import semanticMarkup.core.transformation.lib.CharaparserTreatmentTransformerChain;
-import semanticMarkup.core.transformation.lib.description.DescriptionTreatmentTransformer;
-import semanticMarkup.core.transformation.lib.description.GUIDescriptionTreatmentTransformer;
 import semanticMarkup.eval.IEvaluator;
-import semanticMarkup.eval.PerfectPartialPrecisionRecallEvaluator;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
@@ -24,10 +19,13 @@ import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
 import semanticMarkup.ling.normalize.lib.TreatisehNormalizer;
-import semanticMarkup.markup.DescriptionMarkupCreator;
 import semanticMarkup.markup.IMarkupCreator;
+import semanticMarkup.markupElement.description.transform.IDescriptionTransformer;
 import semanticMarkup.run.IRun;
-import semanticMarkup.run.MarkupRun;
+import semanticMarkup.markupElement.description.run.DescriptionMarkupRun;
+import semanticMarkup.markupElement.description.markup.DescriptionMarkupCreator;
+import semanticMarkup.markupElement.description.transform.GUIDescriptionTransformer;
+import semanticMarkup.markupElement.description.eval.lib.PerfectPartialPrecisionRecallEvaluator;
 
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -39,7 +37,7 @@ import com.google.inject.name.Names;
  */
 public class RunConfig extends BasicConfig {
 
-	private Class<? extends IRun> run = MarkupRun.class;
+	private Class<? extends IRun> run = DescriptionMarkupRun.class;
 	//MarkupRun, EvaluationRun, MarkupEvaluationRun
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
 	private Class<? extends IEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
@@ -67,8 +65,7 @@ public class RunConfig extends BasicConfig {
 	//"evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml"
 	//"evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + "source" + File.separator + "FNA19 Excerpt-source.docx"
 	private String taxonxVolumeReaderSourceFile = "evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml";
-	private Class<? extends TreatmentTransformerChain> treatmentTransformerChain = CharaparserTreatmentTransformerChain.class;
-	private Class<? extends DescriptionTreatmentTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTreatmentTransformer.class;
+	private Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTransformer.class;
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
@@ -121,8 +118,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
 		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
-		bind(TreatmentTransformerChain.class).to(treatmentTransformerChain);
-		bind(DescriptionTreatmentTransformer.class).to(markupDescriptionTreatmentTransformer);
+		bind(IDescriptionTransformer.class).to(markupDescriptionTreatmentTransformer);
 		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
@@ -398,21 +394,12 @@ public class RunConfig extends BasicConfig {
 		this.taxonxVolumeReaderSourceFile = taxonxVolumeReaderSourceFile;
 	}
 
-	public Class<? extends TreatmentTransformerChain> getTreatmentTransformerChain() {
-		return treatmentTransformerChain;
-	}
-
-	public void setTreatmentTransformerChain(
-			Class<? extends TreatmentTransformerChain> treatmentTransformerChain) {
-		this.treatmentTransformerChain = treatmentTransformerChain;
-	}
-
-	public Class<? extends DescriptionTreatmentTransformer> getMarkupDescriptionTreatmentTransformer() {
+	public Class<? extends IDescriptionTransformer> getMarkupDescriptionTreatmentTransformer() {
 		return markupDescriptionTreatmentTransformer;
 	}
 
 	public void setMarkupDescriptionTreatmentTransformer(
-			Class<? extends DescriptionTreatmentTransformer> markupDescriptionTreatmentTransformer) {
+			Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer) {
 		this.markupDescriptionTreatmentTransformer = markupDescriptionTreatmentTransformer;
 	}
 

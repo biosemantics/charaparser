@@ -6,8 +6,8 @@ import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 
-import semanticMarkup.core.Treatment;
 import semanticMarkup.io.output.AbstractFileVolumeWriter;
+import semanticMarkup.model.Treatment;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

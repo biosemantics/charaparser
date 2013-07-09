@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -16,6 +15,10 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,11 +54,11 @@ public class AreaChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
+		List<Structure> parents = lastStructures(processingContext, processingContextState);
 		List<Chunk> modifiers = new ArrayList<Chunk>();
-		LinkedList<DescriptionTreatmentElement> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
+		List<Character> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
 				parents, false, processingContextState);
 		processingContextState.getLastElements().addAll(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

@@ -7,8 +7,8 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.core.Treatment;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
+import semanticMarkup.model.Treatment;
 
 /**
  * SerializedVolumeReader reads a list of treatments from the output of a SerializedVolumeWriter

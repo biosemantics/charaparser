@@ -9,14 +9,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionFromDBForEvaluationTransformer;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.MarkupRun;
+import semanticMarkup.markupElement.description.transform.MarkupDescriptionFromDBForEvaluationTransformer;
+import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
+import semanticMarkup.markupElement.description.run.DescriptionMarkupRun;
 
 public class EvaluationMain extends CLIMain {
 	
@@ -144,7 +144,7 @@ public class EvaluationMain extends CLIMain {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
-		config.setRun(MarkupRun.class);
+		config.setRun(DescriptionMarkupRun.class);
 		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionFromDBForEvaluationTransformer.class);
 		config.setGlossary(CSVGlossary.class);
 		config.setTerminologyLearner(DatabaseInputFromEvaluationNoLearner.class);

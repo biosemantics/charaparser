@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
-import semanticMarkup.core.Treatment;
 import semanticMarkup.io.output.AbstractFileVolumeWriter;
+import semanticMarkup.model.Treatment;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

@@ -7,8 +7,8 @@ import java.io.InputStream;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.io.input.extract.lib.DistributionTreatmentRefiner;
-import semanticMarkup.io.input.extract.lib.FloweringTimeTreatmentRefiner;
+import semanticMarkup.io.input.lib.word.refiner.DistributionTreatmentRefiner;
+import semanticMarkup.io.input.lib.word.refiner.FloweringTimeTreatmentRefiner;
 
 /**
  * XMLWordVolumeReader reads a list of treatments from a by the previous charaparser version termed Type 1 input format. This is a

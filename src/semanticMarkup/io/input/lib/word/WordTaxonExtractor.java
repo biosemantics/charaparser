@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import semanticMarkup.core.Treatment;
+import semanticMarkup.model.Treatment;
 
 
 public class WordTaxonExtractor {

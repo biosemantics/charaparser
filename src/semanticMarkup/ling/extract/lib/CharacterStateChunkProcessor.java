@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -17,6 +15,12 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.NamedElement;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElementType;
+import semanticMarkup.markupElement.description.model.Character;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -52,10 +56,10 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
-		LinkedList<DescriptionTreatmentElement> characters = processCharacterState(chunk, parents, 
+		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<Element> characters = processCharacterState(chunk, parents, 
 				processingContextState);//apices of basal leaves spread 
 		
 		processingContextState.setLastElements(characters);
@@ -67,9 +71,9 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	 * @param content: m[usually] coloration[dark brown]: there is only one character states and several modifiers
 	 * @param parents: of the character states
 	 */
-	protected LinkedList<DescriptionTreatmentElement> processCharacterState(Chunk content,
-			LinkedList<DescriptionTreatmentElement> parents, ProcessingContextState processingContextState) {
-		LinkedList<DescriptionTreatmentElement> results = new LinkedList<DescriptionTreatmentElement>();
+	protected List<Element> processCharacterState(Chunk content,
+			List<Structure> parents, ProcessingContextState processingContextState) {
+		List<Element> results = new LinkedList<Element>();
 
 		List<Chunk> modifiers = content.getChunks(ChunkType.MODIFIER);
 		Chunk characterChunk = content.getChunkDFS(ChunkType.CHARACTER_STATE);
@@ -90,15 +94,16 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 		}
 		if(character.equals("character") && modifiers.size() == 0) {
 			//high relief: character=relief, reset the character of "high" to "relief"
-			DescriptionTreatmentElement lastElement = processingContextState.getLastElements().getLast();
-			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) 
-				for(DescriptionTreatmentElement element : processingContextState.getLastElements()) 
-					element.setAttribute("name", state);
-			else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))
+			Element lastElement = processingContextState.getLastElements().getLast();
+			if(lastElement.isCharacter()) 
+				for(Element element : processingContextState.getLastElements()) 
+					if(element.isCharacter())
+						((Character)element).setName(state);
+			else if(lastElement.isStructure())
 				processingContextState.setUnassignedCharacter(state);
 			results.addAll(processingContextState.getLastElements());
 		}else if(state.length()>0) {
-			DescriptionTreatmentElement characterElement = this.createCharacterElement(parents, modifiers, state, character, "", processingContextState);
+			Character characterElement = this.createCharacterElement(parents, modifiers, state, character, "", processingContextState);
 			if(characterElement!=null)
 				results.add(characterElement);
 		}

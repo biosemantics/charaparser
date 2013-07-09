@@ -20,15 +20,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import semanticMarkup.core.Treatment;
-import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.Token;
-import semanticMarkup.ling.learn.AjectiveReplacementForNoun;
+import semanticMarkup.ling.learn.AdjectiveReplacementForNoun;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -40,10 +40,10 @@ import com.google.inject.name.Named;
 public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Set<String> sentences;
-	protected Map<Treatment, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
+	protected Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
 	protected List<String> adjnouns;
 	protected Map<String, String> adjnounsent;
-	protected Map<Treatment, LinkedHashMap<String, String>> sentenceTags;
+	protected Map<Description, LinkedHashMap<String, String>> sentenceTags;
 	protected Set<String> bracketTags;
 	protected Set<String> wordRoleTags;
 	protected Map<String, Set<String>> wordSources;
@@ -66,11 +66,11 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private ITokenizer tokenizer;
 	private Set<String> stopWords;
 	private Set<String> selectedSources;
-	protected Map<String, Treatment> fileTreatments = new HashMap<String, Treatment>();
+	protected Map<String, Description> fileTreatments = new HashMap<String, Description>();
 	private ParentTagProvider parentTagProvider;
 	private String databaseHost;
 	private String databasePort;
-	private Map<String, AjectiveReplacementForNoun> adjectiveReplacementsForNouns;
+	private Map<String, AdjectiveReplacementForNoun> adjectiveReplacementsForNouns;
 
 	/**
 	 * @param temporaryPath
@@ -121,7 +121,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	
 	
 	@Override
-	public void learn(List<Treatment> treatments, String glossaryTable) {
+	public void learn(List<DescriptionsFile> descriptionsFiles, String glossaryTable) {
 		File directory = new File(temporaryPath);
 		
 		try {
@@ -129,12 +129,12 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			inDirectory.mkdirs();
 			
 			//create the files
-			writeTreatmentsToFiles(treatments, inDirectory);
+			writeTreatmentsToFiles(descriptionsFiles, inDirectory);
 			
 			//run the perl script	
-			runPerl(inDirectory, treatments, glossaryTable);
+			runPerl(inDirectory, descriptionsFiles, glossaryTable);
 			
-			this.readResults(treatments);
+			this.readResults(descriptionsFiles);
 			
 		}catch(Exception e) {
 			log(LogLevel.ERROR, "Problem with output/input or calling of perl", e);
@@ -308,7 +308,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return tags;
 	}
 
-	protected Set<String> readBracketTags(List<Treatment> treatments) {
+	protected Set<String> readBracketTags(List<DescriptionsFile> descriptionsFiles) {
 		Set<String> tags = new HashSet<String>();
 		try {
 			Statement statement = connection.createStatement();
@@ -335,8 +335,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return tags;
 	}
 
-	protected Map<Treatment, LinkedHashMap<String, String>> readSentenceTags(List<Treatment> treatments) {
-		Map<Treatment, LinkedHashMap<String, String>> tags = new HashMap<Treatment, LinkedHashMap<String, String>>();
+	protected Map<Description, LinkedHashMap<String, String>> readSentenceTags(List<DescriptionsFile> descriptionsFiles) {
+		Map<Description, LinkedHashMap<String, String>> tags = new HashMap<Description, LinkedHashMap<String, String>>();
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("select source, tag from " + this.databasePrefix + "_sentence order by sentid");
@@ -358,14 +358,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						tag = "";
 					tag = tag.replaceAll("\\W", "");
 					
-					Treatment treatment = fileTreatments.get(treatmentId);
-					if(!tags.containsKey(treatment)) 
-						tags.put(treatment, new LinkedHashMap<String, String>());
+					Description description = fileTreatments.get(treatmentId);
+					if(!tags.containsKey(description)) 
+						tags.put(description, new LinkedHashMap<String, String>());
 					if(!tag.equals("ditto")) {
-						tags.get(treatment).put(source, tag);
+						tags.get(description).put(source, tag);
 						previousTag = tag;
 					} else {
-						tags.get(treatment).put(source, previousTag);
+						tags.get(description).put(source, previousTag);
 					}			
 				}
 			}
@@ -377,8 +377,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return tags;
 	}
 
-	protected HashMap<Treatment,  LinkedHashMap<String, String>> readSentencesForOrganStateMarker(List<Treatment> treatments) {
-		HashMap<Treatment, LinkedHashMap<String, String>> sentences = new  HashMap<Treatment, LinkedHashMap<String, String>>();
+	protected HashMap<Description,  LinkedHashMap<String, String>> readSentencesForOrganStateMarker(List<DescriptionsFile> descriptionsFiles) {
+		HashMap<Description, LinkedHashMap<String, String>> sentences = new  HashMap<Description, LinkedHashMap<String, String>>();
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery("select source, modifier, tag, sentence, originalsent from " + this.databasePrefix + "_sentence");
@@ -409,10 +409,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
 						text = rs.getString("modifier")+"##"+tag+"##"+text;
 						
-						Treatment treatment = fileTreatments.get(treatmentId);
-						if(!sentences.containsKey(treatment))
-							sentences.put(treatment, new LinkedHashMap<String, String>());
-						sentences.get(treatment).put(source, text);
+						Description description = fileTreatments.get(treatmentId);
+						if(!sentences.containsKey(description))
+							sentences.put(description, new LinkedHashMap<String, String>());
+						sentences.get(description).put(source, text);
 					}
 				}
 			}
@@ -532,16 +532,16 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return this.heuristicNouns;
 	}
 	
-	private void runPerl(File inDirectory, List<Treatment> treatments, String glossaryTable) throws Exception {
+	private void runPerl(File inDirectory, List<DescriptionsFile> descriptionsFiles, String glossaryTable) throws Exception {
 		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "//"
 				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix
 				+ " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
-		createTablesNeededForPerl(treatments);
+		createTablesNeededForPerl(descriptionsFiles);
 		runCommand(command);
 	}
 	
-	private void createTablesNeededForPerl(List<Treatment> treatments) {
+	private void createTablesNeededForPerl(List<DescriptionsFile> descriptionsFiles) {
         try {
             Statement stmt = connection.createStatement();
             String cleanupQuery = "DROP TABLE IF EXISTS " + 
@@ -560,7 +560,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
             stmt.execute(cleanupQuery);
             stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)");
     		AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, this.databaseHost, this.databasePort, this.databaseName, this.databasePrefix, this.databaseUser, this.databasePassword);
-    		allWordsLearner.learn(treatments);
+    		allWordsLearner.learn(descriptionsFiles);
     		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");			
         } catch(Exception e) {
         	e.printStackTrace();
@@ -604,23 +604,25 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	    return df.format(num);
 	}
 	
-	private void writeTreatmentsToFiles(List<Treatment> treatments, File directory) throws IOException {
+	private void writeTreatmentsToFiles(List<DescriptionsFile> descriptionsFiles, File directory) throws IOException {
 		int i = 0;
- 		for(Treatment treatment : treatments) {
-			String prefix = intToString(i++, Math.max(String.valueOf(treatments.size()).length(), 3));			
-			File treatmentFile = File.createTempFile(prefix  + ".", ".txt", directory);
-			treatmentFile.deleteOnExit();
-			//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
-			log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
-			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(treatmentFile));
-			
-			List<ValueTreatmentElement> descriptions = treatment.getValueTreatmentElements("description");	
-			for(ValueTreatmentElement description : descriptions) {		           
-	            fileWriter.write(description.getValue() + "\n");
+		int descriptionCount = 0;
+		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+			descriptionCount += descriptionsFile.getDescriptions().size();
+		}
+		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+			for(Description description : descriptionsFile.getDescriptions()) {
+				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3));			
+				File treatmentFile = File.createTempFile(prefix  + ".", ".txt", directory);
+				treatmentFile.deleteOnExit();
+				//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
+				log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
+				BufferedWriter fileWriter = new BufferedWriter(new FileWriter(treatmentFile)); 
+	            fileWriter.write(description.getText() + "\n");
 	            fileWriter.close();
+				
+				fileTreatments.put(prefix, description);
 			}
-			
-			fileTreatments.put(prefix, treatment);
 		}
 	}
 
@@ -632,13 +634,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 
 	@Override
-	public Map<Treatment, LinkedHashMap<String, String>> getSentencesForOrganStateMarker() {
+	public Map<Description, LinkedHashMap<String, String>> getSentencesForOrganStateMarker() {
 		return this.sentencesForOrganStateMarker;
 	}
 
 
 	@Override
-	public Map<Treatment, LinkedHashMap<String, String>> getSentenceTags() {
+	public Map<Description, LinkedHashMap<String, String>> getSentenceTags() {
 		return this.sentenceTags;
 	}
 
@@ -668,13 +670,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 
 	@Override
-	public void readResults(List<Treatment> treatments) {
+	public void readResults(List<DescriptionsFile> descriptionsFiles) {
 		this.sentences = readSentences();
-		this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(treatments);
+		this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(descriptionsFiles);
 		this.adjnouns = readAdjNouns();
 		this.adjnounsent = readAdjNounSent();
-		this.sentenceTags = readSentenceTags(treatments);
-		this.bracketTags = readBracketTags(treatments);
+		this.sentenceTags = readSentenceTags(descriptionsFiles);
+		this.bracketTags = readBracketTags(descriptionsFiles);
 		this.wordRoleTags = readWordRoleTags(); 
 		this.wordSources = readWordToSourcesMap();
 		this.roleToWords = readRoleToWords();
@@ -689,8 +691,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 
 
-	private Map<String, AjectiveReplacementForNoun> readAdjectiveReplacementsForNouns() {
-		Map<String, AjectiveReplacementForNoun> result = new HashMap<String, AjectiveReplacementForNoun>();
+	private Map<String, AdjectiveReplacementForNoun> readAdjectiveReplacementsForNouns() {
+		Map<String, AdjectiveReplacementForNoun> result = new HashMap<String, AdjectiveReplacementForNoun>();
 		try {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery("SELECT source, tag, modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"");
@@ -702,7 +704,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
 				tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
 				
-				result.put(source, new AjectiveReplacementForNoun(modifier, tag, source));
+				result.put(source, new AdjectiveReplacementForNoun(modifier, tag, source));
 			}
 		} catch (Exception e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
@@ -740,7 +742,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 
 	@Override
-	public Map<String, AjectiveReplacementForNoun> getAdjectiveReplacementsForNouns() {
+	public Map<String, AdjectiveReplacementForNoun> getAdjectiveReplacementsForNouns() {
 		return this.adjectiveReplacementsForNouns;
 	}
 }

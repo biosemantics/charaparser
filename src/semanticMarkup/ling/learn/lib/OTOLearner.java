@@ -24,17 +24,16 @@ import oto.lite.IOTOLiteClient;
 import oto.lite.beans.Sentence;
 import oto.lite.beans.Term;
 import oto.lite.beans.Upload;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import semanticMarkup.core.Treatment;
-import semanticMarkup.io.input.IVolumeReader;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.learn.ILearner;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.IDescriptionReader;
+import semanticMarkup.markupElement.description.model.DescriptionsFileList;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * OTOLearner learns by reading from an IVolumeReader and learning using an ITerminologyLearner
@@ -45,7 +44,6 @@ import semanticMarkup.log.LogLevel;
  */
 public class OTOLearner implements ILearner {
 
-	private IVolumeReader volumeReader;
 	private ITerminologyLearner terminologyLearner;
 	private IOTOClient otoClient;
 	private String databasePrefix;
@@ -57,6 +55,8 @@ public class OTOLearner implements ILearner {
 	private String otoLiteTermReviewURL;
 	private String otoLiteReviewFile;
 	private String runRootDirectory;
+	private IDescriptionReader descriptionReader;
+	private String inputDirectory;
 	
 	/**
 	 * @param volumeReader
@@ -70,7 +70,8 @@ public class OTOLearner implements ILearner {
 	 * @throws Exception
 	 */
 	@Inject
-	public OTOLearner(@Named("MarkupCreator_VolumeReader")IVolumeReader volumeReader, 
+	public OTOLearner(@Named("MarkupCreator_VolumeReader")IDescriptionReader descriptionReader, 
+			String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			IOTOClient otoClient, 
 			IOTOLiteClient otoLiteClient,
@@ -87,7 +88,8 @@ public class OTOLearner implements ILearner {
 			@Named("GlossaryTable")String glossaryTable, 
 			IPOSKnowledgeBase posKnowledgeBase, 
 			@Named("Run_RootDirectory")String runRootDirectory) throws Exception {	
-		this.volumeReader = volumeReader;
+		this.inputDirectory = inputDirectory;
+		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
 		this.otoClient = otoClient;
 		this.otoLiteClient = otoLiteClient;
@@ -106,7 +108,7 @@ public class OTOLearner implements ILearner {
 	
 	@Override
 	public void learn() throws Exception {
-		List<Treatment> treatments = volumeReader.read();
+		DescriptionsFileList descriptionsFileList = descriptionReader.read(inputDirectory);
 		
 		//TODO: String version = otoClient.getLatestVersion();
 		//String tablePrefix = glossaryType + "_" + glossaryDownload.getVersion();
@@ -120,7 +122,7 @@ public class OTOLearner implements ILearner {
 		//not really needed for learning part the in-memory glossary, not before markup step
 		//initGlossary(otoGlossary);
 		
-		terminologyLearner.learn(treatments, glossaryTable);
+		terminologyLearner.learn(descriptionsFileList.getDescriptionsFiles(), glossaryTable);
 		
 		//upload to OTO lite
 		int uploadId = otoLiteClient.upload(readUpload());

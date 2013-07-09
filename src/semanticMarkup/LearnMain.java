@@ -9,7 +9,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
@@ -19,7 +18,8 @@ import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.IPlantLearnRun;
+import semanticMarkup.markupElement.description.run.iplant.IPlantLearnRun;
+import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
 
 /**
  * Learn CLI Entry point into the processing of the charaparser framework

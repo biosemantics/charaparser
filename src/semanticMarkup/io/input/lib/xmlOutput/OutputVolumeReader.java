@@ -8,11 +8,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
-import semanticMarkup.core.ContainerTreatmentElement;
-import semanticMarkup.core.Treatment;
-import semanticMarkup.core.ValueTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
 import semanticMarkup.io.output.lib.xml.Character;
 import semanticMarkup.io.output.lib.xml.Description;
@@ -24,6 +19,15 @@ import semanticMarkup.io.output.lib.xml.References;
 import semanticMarkup.io.output.lib.xml.Relation;
 import semanticMarkup.io.output.lib.xml.Structure;
 import semanticMarkup.io.output.lib.xml.TaxonIdentification;
+import semanticMarkup.model.ContainerTreatmentElement;
+import semanticMarkup.model.Treatment;
+import semanticMarkup.model.ValueTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElementType;
+import semanticMarkup.model.description.attributes.CharacterAttribute;
+import semanticMarkup.model.description.attributes.RelationAttribute;
+import semanticMarkup.model.description.attributes.StatementAttribute;
+import semanticMarkup.model.description.attributes.StructureAttribute;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -160,10 +164,10 @@ public class OutputVolumeReader extends AbstractFileVolumeReader {
 		
 		for(DescriptionStatement descriptionStatement : description.getDescriptionStatement()) {
 			DescriptionTreatmentElement statementElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STATEMENT);
-			statementElement.setAttribute("text", descriptionStatement.getText());
-			statementElement.setAttribute("id", descriptionStatement.getId());
-			statementElement.setAttribute("notes", descriptionStatement.getNotes());
-			statementElement.setAttribute("provenance", descriptionStatement.getProvenance());	
+			statementElement.setAttribute(StatementAttribute.text, descriptionStatement.getText());
+			statementElement.setAttribute(StatementAttribute.id, descriptionStatement.getId());
+			statementElement.setAttribute(StatementAttribute.notes, descriptionStatement.getNotes());
+			statementElement.setAttribute(StatementAttribute.provenance, descriptionStatement.getProvenance());	
 			
 			for(Object relationOrStructure : descriptionStatement.getRelationOrStructure()) {
 				if(relationOrStructure instanceof Structure) {
@@ -171,48 +175,48 @@ public class OutputVolumeReader extends AbstractFileVolumeReader {
 					DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 					statementElement.addTreatmentElement(structureElement);
 					
-					structureElement.setAttribute("alter_name", structure.getAlterName());
-					structureElement.setAttribute("constraint", structure.getConstraint());
-					structureElement.setAttribute("id", structure.getId());
-					structureElement.setAttribute("name", structure.getName());
-					structureElement.setAttribute("constraintid", structure.getConstraintid());
-					structureElement.setAttribute("geographical_constraint", structure.getGeographicalConstraint());
-					structureElement.setAttribute("in_bracket", String.valueOf(structure.isInBracket()));
-					structureElement.setAttribute("in_brackets", String.valueOf(structure.getAlterName()));
-					structureElement.setAttribute("notes", structure.getNotes());
-					structureElement.setAttribute("ontologyid", structure.getOntologyid());
-					structureElement.setAttribute("parallelism_constraint", structure.getParallelismConstraint());
-					structureElement.setAttribute("provenance", structure.getProvenance());
-					structureElement.setAttribute("taxon_constraint", structure.getTaxonConstraint());
+					structureElement.setAttribute(StructureAttribute.alter_name, structure.getAlterName());
+					structureElement.setAttribute(StructureAttribute.constraint, structure.getConstraint());
+					structureElement.setAttribute(StructureAttribute.id, structure.getId());
+					structureElement.setAttribute(StructureAttribute.name, structure.getName());
+					structureElement.setAttribute(StructureAttribute.constraintid, structure.getConstraintid());
+					structureElement.setAttribute(StructureAttribute.geographical_constraint, structure.getGeographicalConstraint());
+					structureElement.setAttribute(StructureAttribute.in_bracket, String.valueOf(structure.isInBracket()));
+					structureElement.setAttribute(StructureAttribute.in_brackets, String.valueOf(structure.getAlterName()));
+					structureElement.setAttribute(StructureAttribute.notes, structure.getNotes());
+					structureElement.setAttribute(StructureAttribute.ontologyid, structure.getOntologyid());
+					structureElement.setAttribute(StructureAttribute.parallelism_constraint, structure.getParallelismConstraint());
+					structureElement.setAttribute(StructureAttribute.provenance, structure.getProvenance());
+					structureElement.setAttribute(StructureAttribute.taxon_constraint, structure.getTaxonConstraint());
 	
 					for(Character character : structure.getCharacter()) {
 						DescriptionTreatmentElement characterElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
 						structureElement.addTreatmentElement(characterElement);
 						
-						characterElement.setAttribute("char_type", character.getCharType());
-						characterElement.setAttribute("constraint", character.getConstraint());
-						characterElement.setAttribute("constraintid", character.getConstraintid());
-						characterElement.setAttribute("from", character.getFrom());
-						characterElement.setAttribute("from_inclusive", String.valueOf(character.isFromInclusive()));
-						characterElement.setAttribute("from_unit", character.getFromUnit());
-						characterElement.setAttribute("geographical_constraint", character.getGeographicalConstraint());
-						characterElement.setAttribute("in_brackets", String.valueOf(character.isInBrackets()));
-						characterElement.setAttribute("modifier", character.getModifier());
-						characterElement.setAttribute("name", character.getName());
-						characterElement.setAttribute("notes", character.getNotes());
-						characterElement.setAttribute("ontologyid", character.getOntologyid());
-						characterElement.setAttribute("organ_constraint", character.getOrganConstraint());
-						characterElement.setAttribute("other_constraint", character.getOtherConstraint());
-						characterElement.setAttribute("parallelism_constraint", character.getParallelismConstraint());
-						characterElement.setAttribute("provenance", character.getProvenance());
-						characterElement.setAttribute("taxon_constraint", character.getTaxonConstraint());
-						characterElement.setAttribute("to", character.getTo());
-						characterElement.setAttribute("to_inclusive", String.valueOf(character.isToInclusive()));
-						characterElement.setAttribute("to_unit", character.getToUnit());
-						characterElement.setAttribute("type", character.getType());
-						characterElement.setAttribute("unit", character.getUnit());
-						characterElement.setAttribute("upper_restricted", String.valueOf(character.isUpperRestricted()));
-						characterElement.setAttribute("value", character.getValue());
+						characterElement.setAttribute(CharacterAttribute.char_type, character.getCharType());
+						characterElement.setAttribute(CharacterAttribute.constraint, character.getConstraint());
+						characterElement.setAttribute(CharacterAttribute.constraintid, character.getConstraintid());
+						characterElement.setAttribute(CharacterAttribute.from, character.getFrom());
+						characterElement.setAttribute(CharacterAttribute.from_inclusive, String.valueOf(character.isFromInclusive()));
+						characterElement.setAttribute(CharacterAttribute.from_unit, character.getFromUnit());
+						characterElement.setAttribute(CharacterAttribute.geographical_constraint, character.getGeographicalConstraint());
+						characterElement.setAttribute(CharacterAttribute.in_brackets, String.valueOf(character.isInBrackets()));
+						characterElement.setAttribute(CharacterAttribute.modifier, character.getModifier());
+						characterElement.setAttribute(CharacterAttribute.name, character.getName());
+						characterElement.setAttribute(CharacterAttribute.notes, character.getNotes());
+						characterElement.setAttribute(CharacterAttribute.ontologyid, character.getOntologyid());
+						characterElement.setAttribute(CharacterAttribute.organ_constraint, character.getOrganConstraint());
+						characterElement.setAttribute(CharacterAttribute.other_constraint, character.getOtherConstraint());
+						characterElement.setAttribute(CharacterAttribute.parallelism_constraint, character.getParallelismConstraint());
+						characterElement.setAttribute(CharacterAttribute.provenance, character.getProvenance());
+						characterElement.setAttribute(CharacterAttribute.taxon_constraint, character.getTaxonConstraint());
+						characterElement.setAttribute(CharacterAttribute.to, character.getTo());
+						characterElement.setAttribute(CharacterAttribute.to_inclusive, String.valueOf(character.isToInclusive()));
+						characterElement.setAttribute(CharacterAttribute.to_unit, character.getToUnit());
+						characterElement.setAttribute(CharacterAttribute.type, character.getType());
+						characterElement.setAttribute(CharacterAttribute.unit, character.getUnit());
+						characterElement.setAttribute(CharacterAttribute.upper_restricted, String.valueOf(character.isUpperRestricted()));
+						characterElement.setAttribute(CharacterAttribute.value, character.getValue());
 					}
 				}
 				
@@ -220,21 +224,21 @@ public class OutputVolumeReader extends AbstractFileVolumeReader {
 					Relation relation = (Relation)relationOrStructure;
 					DescriptionTreatmentElement relationElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.RELATION);
 					statementElement.addTreatmentElement(relationElement);
-					relationElement.setAttribute("alter_name", relation.getAlterName());
-					relationElement.setAttribute("from", relation.getFrom());
-					relationElement.setAttribute("geographical_constraint", relation.getGeographicalConstraint());
-					relationElement.setAttribute("id", relation.getId());
-					relationElement.setAttribute("in_brackets", String.valueOf(relation.isInBrackets()));
-					relationElement.setAttribute("modifier", relation.getModifier());
-					relationElement.setAttribute("name", relation.getName());
-					relationElement.setAttribute("negation", String.valueOf(relation.isNegation()));
-					relationElement.setAttribute("notes", relation.getNotes());
-					relationElement.setAttribute("ontologyid", relation.getOntologyid());
-					relationElement.setAttribute("organ_constraint", relation.getOrganConstraint());
-					relationElement.setAttribute("parallelism_constraint", relation.getParallelismConstraint());
-					relationElement.setAttribute("provenance", relation.getProvenance());
-					relationElement.setAttribute("taxon_constraint", relation.getTaxonConstraint());
-					relationElement.setAttribute("to", relation.getTo());
+					relationElement.setAttribute(RelationAttribute.alter_name, relation.getAlterName());
+					relationElement.setAttribute(RelationAttribute.from, relation.getFrom());
+					relationElement.setAttribute(RelationAttribute.geographical_constraint, relation.getGeographicalConstraint());
+					relationElement.setAttribute(RelationAttribute.id, relation.getId());
+					relationElement.setAttribute(RelationAttribute.in_brackets, String.valueOf(relation.isInBrackets()));
+					relationElement.setAttribute(RelationAttribute.modifier, relation.getModifier());
+					relationElement.setAttribute(RelationAttribute.name, relation.getName());
+					relationElement.setAttribute(RelationAttribute.negation, String.valueOf(relation.isNegation()));
+					relationElement.setAttribute(RelationAttribute.notes, relation.getNotes());
+					relationElement.setAttribute(RelationAttribute.ontologyid, relation.getOntologyid());
+					relationElement.setAttribute(RelationAttribute.organ_constraint, relation.getOrganConstraint());
+					relationElement.setAttribute(RelationAttribute.parallelism_constraint, relation.getParallelismConstraint());
+					relationElement.setAttribute(RelationAttribute.provenance, relation.getProvenance());
+					relationElement.setAttribute(RelationAttribute.taxon_constraint, relation.getTaxonConstraint());
+					relationElement.setAttribute(RelationAttribute.to, relation.getTo());
 				}
 			}
 		}

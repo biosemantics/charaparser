@@ -1,10 +1,11 @@
 package semanticMarkup.eval.metric;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import semanticMarkup.eval.matcher.IMatcher;
-import semanticMarkup.eval.model.Element;
+import semanticMarkup.model.Element;
 import semanticMarkup.log.LogLevel;
 
 

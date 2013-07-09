@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -16,6 +14,10 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElementType;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,28 +53,27 @@ public class ConstraintChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk,
+	protected List<Element> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
-		LinkedList<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+		List<Element> result = new LinkedList<Element>();
 		ProcessingContextState contextState = processingContext.getCurrentState();
-		List<DescriptionTreatmentElement> lastElements = contextState.getLastElements();
+		List<Element> lastElements = contextState.getLastElements();
 		
 		//for(DescriptionTreatmentElement lastElement : lastElements) {
 		if(!lastElements.isEmpty()) {
-			DescriptionTreatmentElement lastElement = lastElements.get(0);
-			DescriptionTreatmentElement structure = null;
-			if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
+			Element lastElement = lastElements.get(0);
+			Structure structure = null;
+			if(lastElement.isCharacter()) {
 				structure = processingContext.getParent(lastElements.get(0));
-			} else if(lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
-				structure = lastElement;
+			} else if(lastElement.isStructure()) {
+				structure = (Structure)lastElement;
 			}
 			if(structure!=null) {
-				DescriptionTreatmentElement constraintStructure = 
-						new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+				Structure constraintStructure = new Structure();
 				int structureId = contextState.fetchAndIncrementStructureId(constraintStructure);
-				constraintStructure.setAttribute("id", "o" + structureId);
-				constraintStructure.setAttribute("name", structure.getAttribute("name"));
-				constraintStructure.setAttribute("constraint", chunk.getTerminalsText());
+				constraintStructure.setId("o" + structureId);
+				constraintStructure.setName(structure.getName());
+				constraintStructure.setConstraint(chunk.getTerminalsText());
 				result.add(constraintStructure);
 				contextState.setLastElements(result);
 			}

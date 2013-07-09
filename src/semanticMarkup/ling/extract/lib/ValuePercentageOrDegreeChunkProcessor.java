@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -16,6 +14,8 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.model.Element;
+import semanticMarkup.markupElement.description.model.Character;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,14 +51,14 @@ public class ValuePercentageOrDegreeChunkProcessor extends AbstractChunkProcesso
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new LinkedList<DescriptionTreatmentElement>();
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<Element> result = new LinkedList<Element>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		String content = chunk.getTerminalsText();
-		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
-		if(!lastElements.isEmpty() && lastElements.getLast().isOfDescriptionType(DescriptionTreatmentElementType.CHARACTER)) {
-			DescriptionTreatmentElement lastElement = lastElements.getLast();
-			lastElement.setAttribute("modifier", content);
+		LinkedList<Element> lastElements = processingContextState.getLastElements();
+		if(!lastElements.isEmpty() && lastElements.getLast().isCharacter()) {
+			Character lastElement = (Character)lastElements.getLast();
+			lastElement.setModifier(content);
 			result.add(lastElement);
 		} else {
 			processingContextState.getUnassignedModifiers().add(chunk);

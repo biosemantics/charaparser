@@ -94,7 +94,9 @@ import org.eclipse.ui.browser.IWebBrowser;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.transform.IInflector;
-import semanticMarkup.core.Treatment;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.model.Treatment;
 import semanticMarkup.gui.WordUtilities;
 
 import com.google.inject.Inject;
@@ -3959,12 +3961,14 @@ public class MainForm {
 		}
 	}
 	
-	public void startMarkup(List<Treatment> treatments) {
+	public void startMarkup(List<DescriptionsFile> descriptionsFiles) {
 		String workdir = MainForm.targetDirectory;
 		
-		for(Treatment treatment : treatments) {
-			String text = treatment.getValueTreatmentElements("description").get(0).getValue();
-			outputElementText(workdir, treatment.getName(), text);
+		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+			for(Description description : descriptionsFile.getDescriptions()) {
+				String text = description.getText();
+				outputElementText(workdir, descriptionsFile.getName(), text);
+			}
 		}
 		
 		//if(vd == null || !vd.isAlive()){

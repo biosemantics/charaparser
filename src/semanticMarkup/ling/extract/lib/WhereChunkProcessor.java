@@ -9,7 +9,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -20,6 +19,9 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
 
 /**
  * ValuePercentageOrDegreeChunkProcessor processes chunks of ChunkType.WHERE
@@ -52,7 +54,7 @@ public class WhereChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState contextState = processingContext.getCurrentState();
 		ListIterator<Chunk> iterator = processingContext.getChunkListIterator();
 		Chunk a = iterator.previous();
@@ -62,21 +64,18 @@ public class WhereChunkProcessor extends AbstractChunkProcessor {
 		Chunk nextChunk = iterator.next();
 		Chunk d = iterator.previous();
 		if(previousChunk.isOfChunkType(ChunkType.PP) && processingContext.getChunkCollector().isPartOfChunkType(nextChunk.getTerminals().get(0), ChunkType.CHARACTER_STATE)) {
-			LinkedList<DescriptionTreatmentElement> subjects = contextState.getSubjects();
-			if(!subjects.isEmpty()) {
-				LinkedList<DescriptionTreatmentElement> lastElements = contextState.getLastElements();
-				
+			LinkedList<Structure> subjects = contextState.getSubjects();
+			LinkedList<Element> lastElements = contextState.getLastElements();
+			
+			if(!subjects.isEmpty() && lastElements.getLast().isStructure()) {
 				contextState.setClauseModifierContraint(previousChunk.getTerminalsText());
-				contextState.setClauseModifierContraintId(lastElements.getLast().getAttribute("id"));
-				
+				contextState.setClauseModifierContraintId(((Structure)lastElements.getLast()).getId());
 				lastElements.clear();
 				lastElements.add(subjects.getLast());
 			}
 		}
 		
-		//System.out.println(iterator.next());
-		
-		return new LinkedList<DescriptionTreatmentElement>();
+		return new LinkedList<Element>();
 	}
 
 }

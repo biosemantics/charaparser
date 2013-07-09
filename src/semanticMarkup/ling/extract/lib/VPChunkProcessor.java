@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -16,6 +15,10 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -51,10 +54,10 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
-		LinkedList<DescriptionTreatmentElement> es = processVP(chunk, parents, processingContext, processingContextState); //apices of basal leaves spread 
+		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<Element> es = processVP(chunk, parents, processingContext, processingContextState); //apices of basal leaves spread 
 		
 		processingContextState.setLastElements(es);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
@@ -66,9 +69,9 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	 * 
 	 * m[usually] v[comprising] o[a {surrounding} (involucre)]
 	 */
-	private LinkedList<DescriptionTreatmentElement> processVP(Chunk content, LinkedList<DescriptionTreatmentElement> parents, 
+	private List<Element> processVP(Chunk content, List<Structure> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
-		LinkedList<DescriptionTreatmentElement> results = new LinkedList<DescriptionTreatmentElement>();
+		List<Element> results = new LinkedList<Element>();
 		//String object = content.substring(content.indexOf("o["));
 		Chunk object = content.getChunkDFS(ChunkType.OBJECT);
 		Chunk verb = content.getChunkDFS(ChunkType.VERB);
@@ -88,10 +91,10 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 		//String modifier = rest.replace(relation, "").trim().replaceAll("(m\\[|\\])", "");
 		
 		if(object.containsChunkType(ChunkType.ORGAN)) { 
-			LinkedList<DescriptionTreatmentElement> toStructures = this.extractStructuresFromObject(object, processingContext, processingContextState); 
-			for(DescriptionTreatmentElement toStructure : toStructures)
-				for(DescriptionTreatmentElement character : processingContextState.getUnassignedCharacters())
-					toStructure.addTreatmentElement(character);
+			List<Structure> toStructures = this.extractStructuresFromObject(object, processingContext, processingContextState); 
+			for(Structure toStructure : toStructures)
+				for(Character character : processingContextState.getUnassignedCharacters())
+					toStructure.addCharacter(character);
 			processingContextState.getUnassignedCharacters().clear();
 			//TODO: fix content is wrong. i8: o[a] architecture[surrounding (involucre)]
 			results.addAll(toStructures);

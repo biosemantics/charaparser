@@ -4,12 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
-import semanticMarkup.core.TreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
+import semanticMarkup.model.Element;
 
 /**
  * ProcessingContext provides contextual information e.g. chunkListIterator, chunkCollector, ... 
@@ -19,7 +17,7 @@ import semanticMarkup.ling.chunk.ChunkType;
 public class ProcessingContext {
 
 	private IChunkProcessorProvider chunkProcessorProvider;
-	private List<DescriptionTreatmentElement> result;
+	private List<Element> result;
 	private ListIterator<Chunk> chunkListIterator;
 	private ChunkCollector chunkCollector;
 	private ProcessingContextState currentState = new ProcessingContextState();
@@ -119,21 +117,21 @@ public class ProcessingContext {
 	/**
 	 * @param result to set
 	 */
-	public void setResult(List<DescriptionTreatmentElement> result) {
+	public void setResult(List<Element> result) {
 		this.result = result;
 	}
 	
 	/**
 	 * @return result
 	 */
-	public List<DescriptionTreatmentElement> getResult() {
+	public List<Element> getResult() {
 		return this.result;
 	}
 
 	/**
 	 * @return the last DescriptionTreatmentElement of the result
 	 */
-	public DescriptionTreatmentElement getLastResult() {
+	public Element getLastResult() {
 		return result.get(result.size()-1);
 	}
 
@@ -141,11 +139,11 @@ public class ProcessingContext {
 	 * @param descriptionTreatmentElementType
 	 * @return the last DescriptionTreatmentElement of descriptionTreatmentElementType of the result
 	 */
-	public DescriptionTreatmentElement getLastResult(DescriptionTreatmentElementType descriptionTreatmentElementType) {
-		DescriptionTreatmentElement result = null;
+	public Element getLastResult(Class<? extends Element> elementType) {
+		Element result = null;
 		for(int i=this.result.size()-1; i>=0; i--) {
-			DescriptionTreatmentElement element = this.result.get(i);
-			if(element.isOfDescriptionType(descriptionTreatmentElementType)) {
+			Element element = this.result.get(i);
+			if(element.isOfType(elementType)) {
 				result = element;
 				break;
 			}
@@ -158,14 +156,15 @@ public class ProcessingContext {
 	 * @return the parent DescriptionTreatmentElement of the descriptionTreatmentElement given within the result 
 	 * or null if none exists
 	 */
-	public DescriptionTreatmentElement getParent(DescriptionTreatmentElement descriptionTreatmentElement) {
+	///at creation time it should be possible to assign them their parent?
+	/*public DescriptionTreatmentElement getParent(DescriptionTreatmentElement descriptionTreatmentElement) {
 		for(DescriptionTreatmentElement resultElement : result) {
 			TreatmentElement parent = resultElement.getParent(descriptionTreatmentElement);
 			if(parent!=null && parent instanceof DescriptionTreatmentElement)
 				return (DescriptionTreatmentElement)parent;
 		}
 		return null;
-	}
+	}*/
 
 	/**
 	 * Reset the current ProcessingContextState

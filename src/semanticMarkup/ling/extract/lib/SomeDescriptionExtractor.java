@@ -1,18 +1,17 @@
 package semanticMarkup.ling.extract.lib;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import semanticMarkup.core.ContainerTreatmentElement;
-import semanticMarkup.core.TreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
@@ -25,6 +24,12 @@ import semanticMarkup.ling.extract.ILastChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.Relation;
+import semanticMarkup.markupElement.description.model.Statement;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.model.Element;
 
 import com.google.inject.Inject;
 
@@ -60,28 +65,30 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 	
 	@Override
-	public ContainerTreatmentElement extract(List<ChunkCollector> chunkCollectors) {
+	public void extract(Description description, 
+			List<ChunkCollector> chunkCollectors) {
 		ProcessingContext processingContext = new ProcessingContext();
 		processingContext.setChunkProcessorsProvider(chunkProcessorProvider);
 
 		// one chunk collector for one statement / sentence
 		// this method is called per treatment
-		// the treatmentElement returned will be set in the treatment instead of the one that was there before
-		ContainerTreatmentElement descriptionTreatmentElement = new ContainerTreatmentElement("description");
 		
 		//going through all sentences
 		for(ChunkCollector chunkCollector : chunkCollectors) {
 			processingContext.reset();
-			DescriptionTreatmentElement statement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STATEMENT);
-			statement.setAttribute("text", chunkCollector.getSentence());
-			statement.setAttribute("source", chunkCollector.getSource());
-			descriptionTreatmentElement.addTreatmentElement(statement);
+			Statement statement = new Statement();
+			statement.setText(chunkCollector.getSentence());
+			statement.setSource(chunkCollector.getSource());
+			description.addStatement(statement);
 			
 			processingContext.setChunkCollector(chunkCollector);
 			try {
-				List<DescriptionTreatmentElement> descriptiveTreatmentElements = getDescriptiveTreatmentElements(processingContext);
-				for(DescriptionTreatmentElement descriptiveTreatmentElement : descriptiveTreatmentElements) {
-					statement.addTreatmentElement(descriptiveTreatmentElement);
+				List<Element> descriptiveElements = getDescriptiveElements(processingContext);
+				for(Element element : descriptiveElements) {
+					if(element.isRelation())
+						statement.addRelation((Relation)element);
+					if(element.isStructure())
+						statement.addStructure((Structure)element);
 				}
 			} catch (Exception e) {
 				log(LogLevel.ERROR, "Problem extracting markup elements from sentence: " + chunkCollector.getSentence() + "\n" +
@@ -89,11 +96,10 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 						e);
 			}
 		}
-		return descriptionTreatmentElement;
 	}
 
-	private List<DescriptionTreatmentElement> getDescriptiveTreatmentElements(ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+	private List<Element> getDescriptiveElements(ProcessingContext processingContext) {
+		List<Element> result = new LinkedList<Element>();
 		processingContext.setResult(result);
 
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
@@ -129,27 +135,32 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		return result;
 	}
 	
-	private void addToResult(List<DescriptionTreatmentElement> result,
-			List<DescriptionTreatmentElement> toAdd) {
-		for(DescriptionTreatmentElement element : toAdd)
-			if(!result.contains(element) && (element.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE) || element.isOfDescriptionType(DescriptionTreatmentElementType.RELATION)))
+	private void addToResult(List<Element> result,
+			List<? extends Element> toAdd) {
+		for(Element element : toAdd)
+			if(!result.contains(element) && (element.isStructure() || element.isRelation()))
 				result.add(element);
 	}
 
 
-	private void createMayBeSameRelations(List<DescriptionTreatmentElement> result, ProcessingContextState processingContextState) {
+	private void createMayBeSameRelations(List<Element> result, ProcessingContextState processingContextState) {
 		HashMap<String, Set<String>> names = new HashMap<String, Set<String>>();
-		for (DescriptionTreatmentElement element : result) {
-			if (element.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
-				String name = element.getAttribute("name");
-				if (element.containsAttribute("constraintType"))
-					name = element.getAttribute("constraintType") + " " + name;
+		for (Element element : result) {
+			if (element.isStructure()) {
+				Structure structure = (Structure)element;
+				String name = structure.getName();
+				
+				/*if (element.containsAttribute("constraintType"))
+					name = element.getCongetAttribute("constraintType") + " " + name;
 				if (element.containsAttribute("constraintParentOrgan"))
 					name = element.getAttribute("constraintParentOrgan") + " " + name;
 				if (element.containsAttribute("constraint"))
-					name = element.getAttribute("constraint") + " " + name;
+					name = element.getAttribute("constraint") + " " + name;*/
 				
-				String id = element.getAttribute("id");
+				if (structure.getConstraint() != null && !structure.getConstraint().isEmpty())
+					name = structure.getConstraint() + " " + name;
+				
+				String id = structure.getId();
 				if(!names.containsKey(name)) 
 					names.put(name, new HashSet<String>());
 				names.get(name).add(id);
@@ -164,12 +175,12 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 					String idA = idIterator.next();
 					for(String idB : ids) {
 						if(!idA.equals(idB)) {
-							DescriptionTreatmentElement relationElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.RELATION);
-							relationElement.setAttribute("name", "may_be_the_same");
-							relationElement.setAttribute("from", idA);
-							relationElement.setAttribute("to", idB);
-							relationElement.setAttribute("negation", String.valueOf(false));
-							relationElement.setAttribute("id", "r" + String.valueOf(processingContextState.fetchAndIncrementRelationId(relationElement)));	
+							Relation relationElement = new Relation();
+							relationElement.setName("may_be_the_same");
+							relationElement.setFrom(idA);
+							relationElement.setTo(idB);
+							relationElement.setNegation(String.valueOf(false));
+							relationElement.setId("r" + String.valueOf(processingContextState.fetchAndIncrementRelationId(relationElement)));	
 						}
 					}
 					idIterator.remove();
@@ -179,44 +190,53 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	}
 
 
-	private void createWholeOrganismDescription(List<DescriptionTreatmentElement> result) {
-		DescriptionTreatmentElement wholeOrganism = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-		for(DescriptionTreatmentElement element : result) {
-			if(element.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE) && element.getAttribute("name").equals("whole_organism")) {
-				wholeOrganism = element;
+	private void createWholeOrganismDescription(List<Element> result) {
+		Structure wholeOrganism = new Structure();
+		for(Element element : result) {
+			if(element.isStructure() && ((Structure)element).getName().equals("whole_organism")) {
+				wholeOrganism = (Structure)element;
 				break;
 			}
 		}
 		
 		boolean modifiedWholeOrganism = false;
-		Iterator<DescriptionTreatmentElement> resultIterator = result.iterator();
+		Iterator<Element> resultIterator = result.iterator();
 		while(resultIterator.hasNext()) {
-			DescriptionTreatmentElement element = resultIterator.next();
-			if(element.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
-				String name = element.getAttribute("name");
+			Element element = resultIterator.next();
+			if(element.isStructure()) {
+				Structure structure = (Structure)element;
+				String name = structure.getName();
 				if(lifeStyles.contains(name)) {
 					
-					if(element.containsAttribute("constraintType")) {
+					/*if(element.containsAttribute("constraintType")) {
 						name = element.getAttribute("constraintType") + " " + name;
 					}
 					if(element.containsAttribute("constraintParentOrgan")) {
 						name = element.getAttribute("constraintParentOrgan") + " " + name;
-					}
+					}*/
 					
-					HashMap<String, String> properties = element.getAttributes();
-					for(Entry<String, String> property : properties.entrySet()) {
-						wholeOrganism.appendAttribute(property.getKey(), property.getValue());
-					}
+					wholeOrganism.appendAlterName(structure.getAlterName());
+					wholeOrganism.appendConstraint(structure.getConstraint());
+					wholeOrganism.appendConstraintId(structure.getConstraintId());
+					wholeOrganism.appendGeographicalConstraint(structure.getGeographicalConstraint());
+					wholeOrganism.appendId(structure.getId());
+					wholeOrganism.appendInBracket(structure.getInBracket());
+					wholeOrganism.appendInBrackets(structure.getInBrackets());
+					wholeOrganism.appendNotes(structure.getNotes());
+					wholeOrganism.appendOntologyId(structure.getOntologyId());
+					wholeOrganism.appendParallelismConstraint(structure.getParallelismConstraint());
+					wholeOrganism.appendProvenance(structure.getProvenance());
+					wholeOrganism.appendTaxonConstraint(structure.getTaxonConstraint());
 					
-					List<TreatmentElement> childElements = element.getTreatmentElements();
-					wholeOrganism.addTreatmentElements(childElements);
+					LinkedHashSet<Character> characters = structure.getCharacters();
+					wholeOrganism.addCharacters(characters);
 					
-					wholeOrganism.setAttribute("name", "whole_organism");
+					wholeOrganism.setName("whole_organism");
 					
-					DescriptionTreatmentElement character = new DescriptionTreatmentElement(DescriptionTreatmentElementType.CHARACTER);
-					character.setAttribute("name", "life_style");
-					character.setAttribute("value", name);
-					wholeOrganism.addTreatmentElement(character);
+					Character character = new Character();
+					character.setName("life_style");
+					character.setValue(name);
+					wholeOrganism.addCharacter(character);
 					modifiedWholeOrganism = true;
 					
 					resultIterator.remove();
@@ -229,8 +249,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	}
 
 
-	private List<DescriptionTreatmentElement> describeChunk(ProcessingContext processingContext) {
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+	private List<Element> describeChunk(ProcessingContext processingContext) {
+		List<Element> result = new LinkedList<Element>();
 		
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
 		Chunk chunk = chunkListIterator.next();

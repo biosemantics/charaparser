@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
-import semanticMarkup.core.description.DescriptionTreatmentElementType;
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
@@ -20,6 +18,10 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Structure;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
+import semanticMarkup.model.description.DescriptionTreatmentElementType;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -61,12 +63,12 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk firstChunk, ProcessingContext processingContext) {
+	protected List<Structure> processChunk(Chunk firstChunk, ProcessingContext processingContext) {
 		skipFirstChunk = false;
-		List<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
+		List<Structure> result = new LinkedList<Structure>();
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<DescriptionTreatmentElement> lastElements = processingContextState.getLastElements();
+		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		List<Chunk> chunks = processingContext.getChunkCollector().getChunks();
 		
 		//starts with a organ (subject)
@@ -74,26 +76,26 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			result.addAll(establishSubject(firstChunk, processingContextState));
 			skipFirstChunk = true;
 		} else {
-			DescriptionTreatmentElement structureElement;
+			Structure structureElement;
 			
 			if(processingContext.getChunkCollector().getSubjectTag().equals("general")) {
-				structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+				structureElement = new Structure();
 				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
-				structureElement.setAttribute("name", "whole_organism");
-				LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+				structureElement.setId("o" + String.valueOf(structureIdString));	
+				structureElement.setName("whole_organism");
+				List<Structure> structureElements = new LinkedList<Structure>();
 				structureElements.add(structureElement);
 				result.addAll(establishSubject(structureElements, processingContextState));
 				skipFirstChunk = false;
 			} else if(processingContext.getChunkCollector().getSubjectTag().equals("ditto")) {
 				String previousMainSubjectOrgan = parentTagProvider.getParentTag(processingContext.getChunkCollector().getSource());
 				previousMainSubjectOrgan = previousMainSubjectOrgan.equals("general")? "whole_organism" : previousMainSubjectOrgan;
-				structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
+				structureElement = new Structure();
 				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
-				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
-				structureElement.setAttribute("name", previousMainSubjectOrgan);
+				structureElement.setId("o" + String.valueOf(structureIdString));	
+				structureElement.setName(previousMainSubjectOrgan);
 				
-				LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
+				List<Structure> structureElements = new LinkedList<Structure>();
 				structureElements.add(structureElement);
 				result.addAll(establishSubject(structureElements, processingContextState));
 				skipFirstChunk = false;

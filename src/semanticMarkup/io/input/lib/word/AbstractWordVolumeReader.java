@@ -13,14 +13,14 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import semanticMarkup.core.ContainerTreatmentElement;
-import semanticMarkup.core.Treatment;
-import semanticMarkup.core.TreatmentElement;
-import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
-import semanticMarkup.io.input.extract.lib.DistributionTreatmentRefiner;
-import semanticMarkup.io.input.extract.lib.FloweringTimeTreatmentRefiner;
+import semanticMarkup.io.input.lib.word.refiner.DistributionTreatmentRefiner;
+import semanticMarkup.io.input.lib.word.refiner.FloweringTimeTreatmentRefiner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.model.ContainerTreatmentElement;
+import semanticMarkup.model.Treatment;
+import semanticMarkup.model.TreatmentElement;
+import semanticMarkup.model.ValueTreatmentElement;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

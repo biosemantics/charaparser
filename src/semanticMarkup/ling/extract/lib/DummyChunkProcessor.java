@@ -2,10 +2,10 @@ package semanticMarkup.ling.extract.lib;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import semanticMarkup.core.description.DescriptionTreatmentElement;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -14,6 +14,8 @@ import semanticMarkup.ling.extract.AbstractChunkProcessor;
 import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.model.Element;
+import semanticMarkup.model.description.DescriptionTreatmentElement;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -49,9 +51,9 @@ public class DummyChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<DescriptionTreatmentElement> processChunk(Chunk chunk,
+	protected List<Element> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
-		return new ArrayList<DescriptionTreatmentElement>();
+		return new LinkedList<Element>();
 	}
 
 }
