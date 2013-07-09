@@ -206,4 +206,9 @@ public class Relation extends NamedElement {
 		}
 		this.modifier = newValue;
 	}
+
+	@Override
+	public void removeElementRecursively(Element element) {
+		return;
+	}
 }

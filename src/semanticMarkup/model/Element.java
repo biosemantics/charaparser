@@ -8,7 +8,7 @@ import semanticMarkup.markupElement.description.model.Structure;
 import semanticMarkup.markupElement.description.model.Character;
 import semanticMarkup.markupElement.habitat.model.Habitat;
 
-public class Element {
+public abstract class Element {
 	
 	public boolean isRelation() {
 		return this instanceof Relation;
@@ -45,5 +45,7 @@ public class Element {
 	public boolean isNamedElement() {
 		return this instanceof NamedElement;
 	}
-	
+
+	public abstract void removeElementRecursively(Element element);
+
 }

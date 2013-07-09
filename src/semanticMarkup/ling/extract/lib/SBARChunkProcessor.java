@@ -63,7 +63,11 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 		//LinkedList<DescriptionTreatmentElement> subjectsCopy = processingContext.getSubjects();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		if(lastElements.getLast().isStructure()) {
-			processingContextState.setSubjects(latest(Structure.class, lastElements));
+			List<Element> latestStructures = latest(Structure.class, lastElements);
+			LinkedList<Structure> subjects = new LinkedList<Structure>();
+			for(Element structure : latestStructures) 
+				subjects.add((Structure)structure);
+			processingContextState.setSubjects(subjects);
 		} else {
 			ListIterator<Chunk> chunkIterator = processingContext.getChunkListIterator();
 			chunkIterator.previous();

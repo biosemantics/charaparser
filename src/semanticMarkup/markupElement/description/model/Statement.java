@@ -78,5 +78,18 @@ public class Statement extends Element {
 	}
 	public void addStructure(Structure structure) {
 		this.structures.add(structure);
-	}	
+	}
+	@Override
+	public void removeElementRecursively(Element element) {
+		for(Structure structure : this.structures)
+			if(structure.equals(element))
+				this.structures.remove(element);
+			else
+				structure.removeElementRecursively(element);
+		for(Relation relation : this.relations)
+			if(relation.equals(element))
+				this.relations.remove(element);
+			else
+				relation.removeElementRecursively(element);
+	}
 }

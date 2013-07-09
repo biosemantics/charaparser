@@ -7,6 +7,8 @@ import java.util.ListIterator;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
+import semanticMarkup.markupElement.description.model.Character;
+import semanticMarkup.markupElement.description.model.Structure;
 import semanticMarkup.model.Element;
 
 /**
@@ -157,14 +159,17 @@ public class ProcessingContext {
 	 * or null if none exists
 	 */
 	///at creation time it should be possible to assign them their parent?
-	/*public DescriptionTreatmentElement getParent(DescriptionTreatmentElement descriptionTreatmentElement) {
-		for(DescriptionTreatmentElement resultElement : result) {
-			TreatmentElement parent = resultElement.getParent(descriptionTreatmentElement);
-			if(parent!=null && parent instanceof DescriptionTreatmentElement)
-				return (DescriptionTreatmentElement)parent;
+	public Structure getParentStructure(Character character) {
+		for(Element element : result) {
+			if(element.isStructure()) {
+				Structure structure = (Structure)element;
+				if(structure.getCharacters().contains(character)) {
+					return structure;
+				}
+			}
 		}
 		return null;
-	}*/
+	}
 
 	/**
 	 * Reset the current ProcessingContextState

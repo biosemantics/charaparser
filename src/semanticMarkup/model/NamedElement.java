@@ -2,7 +2,7 @@ package semanticMarkup.model;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
-public class NamedElement extends Element {
+public abstract class NamedElement extends Element {
 	
 	@XmlPath("@name")
 	private String name;

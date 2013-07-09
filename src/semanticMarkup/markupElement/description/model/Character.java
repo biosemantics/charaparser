@@ -304,4 +304,9 @@ public class Character extends NamedElement {
 		}
 		this.constraint = newValue;
 	}
+
+	@Override
+	public void removeElementRecursively(Element element) {
+		return;
+	}
 }

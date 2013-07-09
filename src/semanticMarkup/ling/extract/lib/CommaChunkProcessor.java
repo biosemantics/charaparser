@@ -66,7 +66,7 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		if(!processingContextState.getLastElements().isEmpty()) {
 			Element lastElement = processingContextState.getLastElements().get(0);
 			if(lastElement.isCharacter()) {
-				Element parent = processingContext.getParent(lastElement);
+				Structure parent = processingContext.getParentStructure((Character)lastElement);
 				if(parent!=null) {
 					List<Element> newLastElements = new LinkedList<Element>();
 					newLastElements.add(parent);

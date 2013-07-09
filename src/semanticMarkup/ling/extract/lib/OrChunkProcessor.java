@@ -78,7 +78,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 				Character character = (Character)lastElements.getLast();
 				String characterName = character.getName();
 				if(nextChunk.isOfChunkType(ChunkType.PP)){
-					Structure parent = processingContext.getParent(lastElements.getLast());
+					Structure parent = processingContext.getParentStructure(character);
 					List<Structure> parents = new LinkedList<Structure>();
 					parents.add(parent);
 					this.createCharacterElement(parents, new LinkedList<Chunk>(), nextChunk.getTerminalsText(), 
@@ -96,7 +96,8 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					IChunkProcessor previousChunkProcessor = processingContext.getChunkProcessor(previousChunk.getChunkType());
 					ProcessingContextState currentState = processingContext.getCurrentState();
 					processingContext.setCurrentState(previousChunk);
-					List<? extends Element> previousResult = previousChunkProcessor.process(previousChunk, processingContext);
+					List<Element> previousResult = new LinkedList<Element>(
+							previousChunkProcessor.process(previousChunk, processingContext));
 					
 					//TODO need a command construct here that allows the following
 					// chunkprocessor return the command to make changes to the result
@@ -108,22 +109,25 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					
 					boolean processedNextChunk = false;
 					if(!previousResult.isEmpty()) {
-						Structure structure = processingContext.getParent(previousResult.get(0));				
-						if(structure != null) {
-							Character newElement = new Character();
-							structure.addCharacter(newElement);
-							newElement.setName(characterName);
-							String chunkText = nextChunk.getTerminalsText();
-							if(chunkText.contains("~list~")) {
-								chunkText = chunkText.replaceFirst("\\w{2,}.*?~list~","").replaceAll("punct", ",").replaceAll("~", " ");
+						if(previousResult.get(0).isCharacter()) {
+							Character previousCharacter = (Character)previousResult.get(0);
+							Structure structure = processingContext.getParentStructure(previousCharacter);				
+							if(structure != null) {
+								Character newElement = new Character();
+								structure.addCharacter(newElement);
+								newElement.setName(characterName);
+								String chunkText = nextChunk.getTerminalsText();
+								if(chunkText.contains("~list~")) {
+									chunkText = chunkText.replaceFirst("\\w{2,}.*?~list~","").replaceAll("punct", ",").replaceAll("~", " ");
+								}
+								newElement.setValue(chunkText);
+								addClauseModifierConstraint(newElement, processingContextState); 
+								result.add(newElement);
+								
+								//TODO this is just the quick and dirty fix of the above issue
+								removeResults(previousResult, processingContext.getResult());
+								processedNextChunk = true;
 							}
-							newElement.setValue(chunkText);
-							addClauseModifierConstraint(newElement, processingContextState); 
-							result.add(newElement);
-							
-							//TODO this is just the quick and dirty fix of the above issue
-							removeResults(previousResult, processingContext.getResult());
-							processedNextChunk = true;
 						}
 					} 
 					if(!processedNextChunk)
@@ -131,8 +135,8 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					//if(!result.isEmpty())
 					//	processingContextState.setLastElements(result);
 					
-					if(!result.isEmpty()) {
-						Structure parent = processingContext.getParent(result.get(0));
+					if(!result.isEmpty() && result.get(0).isCharacter()) {
+						Structure parent = processingContext.getParentStructure((Character)result.get(0));
 						List<Element> newLastElements = new LinkedList<Element>();
 						newLastElements.add(parent);
 						processingContextState.setLastElements(newLastElements);
@@ -152,13 +156,15 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 				//save actual current state to reset to correct current state after replay of chunk processing of previous chunk
 				ProcessingContextState currentState = processingContext.getCurrentState();
 				processingContext.setCurrentState(previousChunk);
-				List<? extends Element> ppResult = ppChunkProcessor.process(previousChunk, processingContext);
+				List<Element> ppResult = new LinkedList<Element>(
+						ppChunkProcessor.process(previousChunk, processingContext));
 				this.removeResults(ppResult, processingContext.getResult());
-				Relation previousRelation = this.getFirstDescriptionElement(ppResult, Relation.class);
+				Relation previousRelation = (Relation)this.getFirstDescriptionElement(ppResult, Relation.class);
 
 				processingContext.setCurrentState(currentState);
-				List<? extends Element> nextResult = ppChunkProcessor.process(nextChunk, processingContext);
-				Relation newRelation = this.getFirstDescriptionElement(nextResult, Relation.class);
+				List<Element> nextResult = new LinkedList<Element>(
+						ppChunkProcessor.process(nextChunk, processingContext));
+				Relation newRelation = (Relation)this.getFirstDescriptionElement(nextResult, Relation.class);
 				if(previousRelation !=null && newRelation!=null) {
 					newRelation.setFrom(previousRelation.getFrom());
 				}
@@ -185,7 +191,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 	private void removeResults(List<Element> previousResult, List<Element> result) {
 		for(Element element : result) {
 			for(Element toRemove : previousResult) {
-				element.removeTreatmentElementRecursively(toRemove);
+				element.removeElementRecursively(toRemove);
 			}
 		}
 	}

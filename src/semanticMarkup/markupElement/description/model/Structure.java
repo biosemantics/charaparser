@@ -336,4 +336,14 @@ public class Structure extends NamedElement {
 		}
 		this.alterName = newValue;
 	}
+
+
+	@Override
+	public void removeElementRecursively(Element element) {
+		for(Character character : this.characters)
+			if(character.equals(element))
+				this.characters.remove(character);
+			else
+				character.removeElementRecursively(element);
+	}
 }

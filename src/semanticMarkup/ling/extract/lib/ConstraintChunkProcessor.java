@@ -14,10 +14,9 @@ import semanticMarkup.ling.extract.ProcessingContext;
 import semanticMarkup.ling.extract.ProcessingContextState;
 import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.Character;
 import semanticMarkup.markupElement.description.model.Structure;
 import semanticMarkup.model.Element;
-import semanticMarkup.model.description.DescriptionTreatmentElement;
-import semanticMarkup.model.description.DescriptionTreatmentElementType;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -64,7 +63,7 @@ public class ConstraintChunkProcessor extends AbstractChunkProcessor {
 			Element lastElement = lastElements.get(0);
 			Structure structure = null;
 			if(lastElement.isCharacter()) {
-				structure = processingContext.getParent(lastElements.get(0));
+				structure = processingContext.getParentStructure((Character)lastElements.get(0));
 			} else if(lastElement.isStructure()) {
 				structure = (Structure)lastElement;
 			}
