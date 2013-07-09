@@ -41,10 +41,10 @@ public class JDOMDescriptionWriter implements IDescriptionWriter {
 				File sourceFile = descriptionsFile.getFile();
 				File outputFile = new File(writeDirectory + File.separator + descriptionsFile.getFile().getName());
 				List<Description> descriptions = descriptionsFile.getDescriptions();
-	           
+				
 		        Document sourceFileDocument = saxBuilder.build(sourceFile);
 				List<Element> sourceDescriptionElements = getSourceDescriptionElements(sourceFileDocument);
-	            
+				
 	            if(descriptions.size() != sourceDescriptionElements.size()) {
 	            	log(LogLevel.ERROR, "There was obviously a problem somewhere");
 	            	return;

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<xml-bindings
+    xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
+    package-name="semanticMarkup.markupElement.description.model">
+    <java-types>
+   		<java-type name="semanticMarkup.markupElement.description.model.DescriptionsFile">
+			<xml-root-element name="treatments"/>
+            <java-attributes>
+                <xml-element java-attribute="meta" xml-path="meta" type="semanticMarkup.markupElement.description.model.Meta"/>
+				<xml-element java-attribute="treatmentRoots" xml-path="treatment" type="semanticMarkup.markupElement.description.model.TreatmentRoot"
+				    container-type="java.util.List" />
+            </java-attributes>
+        </java-type>
+		<java-type name="semanticMarkup.markupElement.description.model.TreatmentRoot">
+            <java-attributes>
+				<xml-element java-attribute="descriptions" xml-path="description" type="semanticMarkup.markupElement.description.model.Description"
+				    container-type="java.util.List" />
+
+            </java-attributes>
+        </java-type>
+        <java-type name="semanticMarkup.markupElement.description.model.Description">
+            <java-attributes>			
+                <xml-element java-attribute="text" xml-path="text()"/>
+				<xml-element java-attribute="statements" xml-path="statement/" type="semanticMarkup.markupElement.description.model.Statement" 
+					container-type="java.util.List"/>
+            </java-attributes>
+        </java-type>
+		<java-type name="semanticMarkup.markupElement.description.model.Statement">
+            <java-attributes>			
+                <xml-element java-attribute="text" xml-path="@text"/>
+				<xml-element java-attribute="structures" xml-path="structure/" type="semanticMarkup.markupElement.description.model.Structure" 
+					container-type="java.util.List"/>
+					<xml-element java-attribute="relations" xml-path="relation/" type="semanticMarkup.markupElement.description.model.Relation" 
+					container-type="java.util.List"/>
+            </java-attributes>
+        </java-type>
+		<java-type name="semanticMarkup.markupElement.description.model.Structure">
+            <java-attributes>			
+                <xml-element java-attribute="name" xml-path="@name"/>
+            </java-attributes>
+        </java-type>
+		<java-type name="semanticMarkup.markupElement.description.model.Character">
+            <java-attributes>			
+                <xml-element java-attribute="name" xml-path="@name"/>
+            </java-attributes>
+        </java-type>
+		<java-type name="semanticMarkup.markupElement.description.model.Relation">
+            <java-attributes>			
+                <xml-element java-attribute="name" xml-path="@name"/>
+				<xml-element java-attribute="name" xml-path="@value"/>
+            </java-attributes>
+        </java-type>
+    </java-types>
+</xml-bindings>
+

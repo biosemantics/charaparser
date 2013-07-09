@@ -43,12 +43,10 @@ public class MOXyDescriptionWriter implements IDescriptionWriter {
 	
 	private Marshaller getMarshaller() throws JAXBException {
 		Map<String, Object> properties = new HashMap<String, Object>(1);
-		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , "resources" + File.separator + "iplantOutputBindings.xml");
+		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE , this.bindingsFile);
 		JAXBContext jaxbContext = JAXBContext.newInstance(new Class[] {DescriptionsFile.class}, properties);
 		Marshaller marshaller = jaxbContext.createMarshaller(); 
 		return marshaller;
 	}
-
-
 	
 }

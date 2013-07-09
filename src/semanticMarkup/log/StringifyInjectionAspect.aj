@@ -1,5 +1,7 @@
 package semanticMarkup.log;
 
+import javax.persistence.Transient;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -8,6 +10,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  */
 public aspect StringifyInjectionAspect {
 	
+	@Transient
 	@JsonIgnore
 	private IPrintable IPrintable.thisObject;
 	
@@ -36,7 +39,7 @@ public aspect StringifyInjectionAspect {
 	/**
 	 * IPrintables are specified
 	 */
-	declare parents : semanticMarkup.* implements IPrintable;
+	/*declare parents : semanticMarkup.* implements IPrintable;
 	
 	declare parents : semanticMarkup.model..* implements IPrintable;
 	
@@ -73,6 +76,6 @@ public aspect StringifyInjectionAspect {
 	
 	declare parents : semanticMarkup.markup..* implements IPrintable;
 	
-	declare parents : semanticMarkup.run..* implements IPrintable;
+	declare parents : semanticMarkup.run..* implements IPrintable;*/
 	
 }

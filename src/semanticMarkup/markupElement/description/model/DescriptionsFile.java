@@ -9,14 +9,14 @@ public class DescriptionsFile {
 	
 	private File file; // source could later then be filename + descriptionID + sentenceID
 	private Meta meta;
-	private List<Description> descriptions = new LinkedList<Description>();
+	private List<TreatmentRoot> treatmentRoots = new LinkedList<TreatmentRoot>();
 
-	public List<Description> getDescriptions() {
-		return descriptions;
+	public List<TreatmentRoot> getTreatmentRoots() {
+		return treatmentRoots;
 	}
 
-	public void setDescriptions(List<Description> descriptions) {
-		this.descriptions = descriptions;
+	public void setTreatmentRoots(List<TreatmentRoot> treatmentRoots) {
+		this.treatmentRoots = treatmentRoots;
 	}
 
 	public File getFile() {
@@ -38,5 +38,14 @@ public class DescriptionsFile {
 	public String getName() {
 		return this.getFile().getName();
 	}
+	
+	public List<Description> getDescriptions() {
+		List<Description> result = new LinkedList<Description>();
+		for(TreatmentRoot treatmentRoot : treatmentRoots) {
+			result.addAll(treatmentRoot.getDescriptions());
+		}
+		return result;
+	}
 
 }
+

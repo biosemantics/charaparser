@@ -40,9 +40,9 @@ public class MOXyDescriptionReader implements IDescriptionReader {
 		File inputDirectoryFile = new File(inputDirectory);
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {
 			Unmarshaller unmarshaller = getUnmarshaller();
-			
 			for(File inputFile : inputDirectoryFile.listFiles()) {
 				DescriptionsFile descriptionsFile = (DescriptionsFile)unmarshaller.unmarshal(inputFile);
+				descriptionsFile.setFile(inputFile);
 				descriptionsFiles.add(descriptionsFile);
 			}
 		} else {
