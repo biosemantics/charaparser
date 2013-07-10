@@ -120,9 +120,22 @@ import com.google.inject.name.Names;
 public class BasicConfig extends AbstractModule {
 	
 	  @Override 
-	  protected void configure() {	 
+	  protected void configure() {	
+		  
+		  // ENVIRONMENTAL 
+		  bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(
+				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "taxonx" + File.separator + "taxonx1.xsd");
+		  bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(
+				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "FNAXMLSchemaInput.xsd");
+		  bind(String.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(
+				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "iplant.xsd");
+		  bind(String.class).annotatedWith(Names.named("CSVCorpus_FilePath")).toInstance("resources" + File.separator + "corpora" + File.separator + "brown.csv");
+		  bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
+		  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+			 
+		  // IO
+		  
 		  // PROCESSING
-		  bind(ParentTagProvider.class).to(ParentTagProvider.class).in(Singleton.class);
 		  bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
 		  bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 		  bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);
@@ -207,20 +220,7 @@ public class BasicConfig extends AbstractModule {
 		  bind(IChunkProcessor.class).annotatedWith(Names.named("Where")).to(WhereChunkProcessor.class).in(Singleton.class);
 		  bind(IChunkProcessor.class).annotatedWith(Names.named("To")).to(ToChunkProcessor.class).in(Singleton.class);
 		  bind(IChunkProcessor.class).annotatedWith(Names.named("CharacterName")).to(CharacterNameChunkProcessor.class).in(Singleton.class);
-		 
-		  // IO
-			
-		  // ENVIRONMENTAL 
-		  bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "taxonx" + File.separator + "taxonx1.xsd");
-		  bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "FNAXMLSchemaInput.xsd");
-		  bind(String.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "iplant.xsd");
-		  bind(String.class).annotatedWith(Names.named("CSVCorpus_FilePath")).toInstance("resources" + File.separator + "corpora" + File.separator + "brown.csv");
-		  bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
-		  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
-			
+
 		  // MISC
 		  bind(String.class).annotatedWith(Names.named("Version")).toInstance("0.1");
 		  
