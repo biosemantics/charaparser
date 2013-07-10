@@ -7,6 +7,7 @@ import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 import semanticMarkup.markupElement.description.model.Meta;
 import semanticMarkup.markupElement.description.transform.AbstractDescriptionTransformer;
+import semanticMarkup.markupElement.description.transform.IDescriptionTransformer;
 import semanticMarkup.markupElement.description.transform.TransformationReport;
 
 import com.google.inject.Inject;
@@ -19,17 +20,17 @@ import com.google.inject.name.Named;
 public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 
 	private IDescriptionReader reader;
-	private AbstractDescriptionTransformer descriptionTransformer;
+	private IDescriptionTransformer descriptionTransformer;
 	private IDescriptionWriter writer;
 	private String inputDirectory;
 	private String outputDirectory;
 	
 	@Inject
 	public DescriptionMarkupCreator(@Named("DescriptionMarkupCreator_DescriptionReader") IDescriptionReader reader,	
-			AbstractDescriptionTransformer descriptionTransformer,
+			IDescriptionTransformer descriptionTransformer,
 			@Named("DescriptionMarkupCreator_DescriptionWriter") IDescriptionWriter writer, 
-			String inputDirectory, 
-			String outputDirectory) {
+			@Named("DescriptionReader_InputDirectory")String inputDirectory, 
+			@Named("Run_OutDirectory")String outputDirectory) {
 		this.reader = reader;
 		this.descriptionTransformer = descriptionTransformer;
 		this.writer = writer;

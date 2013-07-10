@@ -14,17 +14,17 @@ public class FossilConfig extends RunConfig {
 	
 	public FossilConfig() {
 		
-		// PROCESSING 
-		this.setGlossaryType(Glossary.Fossil.toString());
-		this.setNormalizer(TreatisehNormalizer.class);
-		
-		// IO
-		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
-		
 		// ENVIRONMENTAL 
 		//this.setDatabaseTablePrefix("treatise");
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
 		this.setGlossaryFile("resources" + File.separator + "treatisehglossaryfixed.csv");
+		
+		// IO
+		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
+		
+		// PROCESSING 
+		this.setGlossaryType(Glossary.Fossil.toString());
+		this.setNormalizer(TreatisehNormalizer.class);
 		
 		// MISC
 		

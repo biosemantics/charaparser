@@ -71,12 +71,12 @@ public class OTOLearner implements ILearner {
 	 */
 	@Inject
 	public OTOLearner(@Named("DescriptionMarkupCreator_DescriptionReader")IDescriptionReader descriptionReader, 
-			String inputDirectory,
+			@Named("DescriptionReader_InputDirectory")String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			IOTOClient otoClient, 
 			IOTOLiteClient otoLiteClient,
-			@Named("OtoLiteTermReviewURL") String otoLiteTermReviewURL,
-			@Named("OtoLiteReviewFile") String otoLiteReviewFile,
+			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
+			@Named("OTOLiteReviewFile") String otoLiteReviewFile,
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,
 			@Named("DatabaseName")String databaseName,

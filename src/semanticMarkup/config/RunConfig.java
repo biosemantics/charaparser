@@ -4,12 +4,15 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.JAXBException;
+
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.normalize.lib.FNAv19Normalizer;
 import semanticMarkup.ling.normalize.lib.TreatisehNormalizer;
+import semanticMarkup.log.LogLevel;
 import semanticMarkup.markup.IMarkupCreator;
 import semanticMarkup.markupElement.description.transform.IDescriptionTransformer;
 import semanticMarkup.run.IRun;
@@ -30,6 +33,7 @@ import semanticMarkup.markupElement.description.io.lib.MOXyDescriptionWriter;
 
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
 /**
@@ -38,6 +42,28 @@ import com.google.inject.name.Names;
  */
 public class RunConfig extends BasicConfig {
 
+	// ENVIRONMENTAL
+	private String databaseHost = "localhost";
+	private String databasePort = "3306";
+	private String databaseName = "local";
+	private String databaseUser = "termsuser";
+	private String databasePassword = "termspassword";
+	private String databaseTablePrefix = "myrun";
+	private String databaseGlossaryTable = "fnaglossaryfixed";
+	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
+	private String otoLiteReviewFile = "TermReview.txt";
+	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
+	
+	// IO
+	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
+	private String descriptionReaderInputDirectory = "input";
+	private String descriptionReaderBindingsFile = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "description-bindings.xml";
+	private String evaluationCorrectReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml";
+	private String evaluationTestReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml"; 
+	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyDescriptionWriter.class;
+	
 	// PROCESSING 
 	private String glossaryType = "plant";
 	private Class<? extends IRun> run = DescriptionMarkupRun.class;
@@ -54,28 +80,6 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
 		
-	// IO
-	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
-	private String descriptionReaderInputDirectory = "input";
-	private String descriptionReaderBindingsFile = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "description-bindings.xml";
-	private Class<? extends IDescriptionMarkupResultReader> evaluationCorrectReader = MOXyDescriptionMarkupResultReader.class;
-	private Class<? extends IDescriptionMarkupResultReader> evaluationTestReader = MOXyDescriptionMarkupResultReader.class;
-	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyDescriptionWriter.class;
-	
-	// ENVIRONMENTAL
-	private String databaseHost = "localhost";
-	private String databasePort = "3306";
-	private String databaseName = "local";
-	private String databaseUser = "termsuser";
-	private String databasePassword = "termspassword";
-	private String databaseTablePrefix = "myrun";
-	private String databaseGlossaryTable = "fnaglossaryfixed";
-	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
-	private String otoLiteReviewFile = "TermReview.txt";
-	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
-	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
-	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
-
 	// MISC
 	
 
@@ -98,14 +102,14 @@ public class RunConfig extends BasicConfig {
 		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class); 
 		bind(INormalizer.class).to(normalizer);
 		bind(IDescriptionMarkupEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
-		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).to(evaluationCorrectReader);
-		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).to(evaluationTestReader);
 		
 		//IO
 		bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader);
 		bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(descriptionReaderInputDirectory);
 		bind(String.class).annotatedWith(Names.named("DescriptionReader_BindingsFile")).toInstance(descriptionReaderBindingsFile);
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(descriptionReaderInputDirectory));
+		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).toInstance(constructEvaluationCorrectReader());
+		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).toInstance(constructEvaluationTestReader());
 		bind(IDescriptionWriter.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionWriter")).to(descriptionWriter);
 		
 		//ENVIRONMENTAL
@@ -115,10 +119,10 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance(databaseName);
 		bind(String.class).annotatedWith(Names.named("DatabaseUser")).toInstance(databaseUser);
 		bind(String.class).annotatedWith(Names.named("DatabasePassword")).toInstance(databasePassword);
-		bind(String.class).annotatedWith(Names.named("OtoLiteReviewFile")).toInstance(otoLiteReviewFile);
-		bind(String.class).annotatedWith(Names.named("OtoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
-		bind(String.class).annotatedWith(Names.named("OtoLiteClient_Url")).toInstance(otoLiteClientURL);
-		bind(String.class).annotatedWith(Names.named("OtoClient_Url")).toInstance(otoClientUrl);
+		bind(String.class).annotatedWith(Names.named("OTOLiteReviewFile")).toInstance(otoLiteReviewFile);
+		bind(String.class).annotatedWith(Names.named("OTOLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
+		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
+		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_FilePath")).toInstance(glossaryFile); 
 		
@@ -126,6 +130,26 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
 	}
 	
+	private IDescriptionMarkupResultReader constructEvaluationTestReader() {
+		try {
+			return new MOXyDescriptionMarkupResultReader(this.evaluationTestReaderBindings);
+		} catch(Exception e) {
+			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
+			System.exit(0);
+		}
+		return null;
+	}
+
+	private IDescriptionMarkupResultReader constructEvaluationCorrectReader() {
+		try {
+			return new MOXyDescriptionMarkupResultReader(this.evaluationCorrectReaderBindings);
+		} catch(Exception e) {
+			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
+			System.exit(0);
+		}
+		return null;
+	}
+
 	protected HashSet<String> getSelectedSources(String path) {
 		HashSet<String> result = new HashSet<String>();
 
@@ -454,24 +478,6 @@ public class RunConfig extends BasicConfig {
 	public void setDescriptionReader(
 			Class<? extends IDescriptionReader> descriptionReader) {
 		this.descriptionReader = descriptionReader;
-	}
-
-	public Class<? extends IDescriptionMarkupResultReader> getEvaluationCorrectReader() {
-		return evaluationCorrectReader;
-	}
-
-	public void setEvaluationCorrectReader(
-			Class<? extends IDescriptionMarkupResultReader> evaluationCorrectReader) {
-		this.evaluationCorrectReader = evaluationCorrectReader;
-	}
-
-	public Class<? extends IDescriptionMarkupResultReader> getEvaluationTestReader() {
-		return evaluationTestReader;
-	}
-
-	public void setEvaluationTestReader(
-			Class<? extends IDescriptionMarkupResultReader> evaluationTestReader) {
-		this.evaluationTestReader = evaluationTestReader;
 	}
 
 	public Class<? extends IDescriptionWriter> getDescriptionWriter() {

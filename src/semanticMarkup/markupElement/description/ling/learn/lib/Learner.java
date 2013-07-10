@@ -25,7 +25,7 @@ public class Learner implements ILearner {
 	 */
 	@Inject
 	public Learner(@Named("DescriptionMarkupCreator_DescriptionReader")IDescriptionReader descriptionReader, 
-			String inputDirectory,
+			@Named("DescriptionReader_InputDirectory")String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			@Named("GlossaryTable") String glossaryTable) {	
 		this.descriptionReader = descriptionReader;

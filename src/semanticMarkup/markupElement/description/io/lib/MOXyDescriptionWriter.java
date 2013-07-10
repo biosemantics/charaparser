@@ -21,7 +21,7 @@ public class MOXyDescriptionWriter implements IDescriptionWriter {
 
 	private String bindingsFile;
 	
-	public MOXyDescriptionWriter(@Named("Description_BindingsFile")String bindingsFile) {
+	public MOXyDescriptionWriter(@Named("DescriptionReader_BindingsFile")String bindingsFile) {
 		this.bindingsFile = bindingsFile;
 	}
 		

@@ -105,7 +105,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
 			IOTOClient otoClient, 
 			IOTOLiteClient otoLiteClient, 
-			@Named("OtoLiteTermReviewURL") String otoLiteTermReviewURL,
+			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,
 			@Named("DatabaseName")String databaseName,

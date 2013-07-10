@@ -13,6 +13,7 @@ import semanticMarkup.markupElement.description.model.Character;
 import semanticMarkup.markupElement.description.model.Relation;
 import semanticMarkup.markupElement.description.model.Structure;
 
+
 @XmlRootElement(name="description")
 //@XmlType(propOrder={"source", "structures", "relations"})
 public class Description {

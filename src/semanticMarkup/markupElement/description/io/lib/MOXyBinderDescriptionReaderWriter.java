@@ -22,6 +22,7 @@ import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import semanticMarkup.log.LogLevel;
@@ -36,7 +37,8 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 	private Binder<Node> binder;
 	private Map<File, Document> documents = new HashMap<File, Document>();
 	
-	public MOXyBinderDescriptionReaderWriter(@Named("Description_BindingsFile")String bindingsFile) 
+	@Inject
+	public MOXyBinderDescriptionReaderWriter(@Named("DescriptionReader_BindingsFile")String bindingsFile) 
 			throws JAXBException {
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
 		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFile);
@@ -48,12 +50,8 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 	public DescriptionsFileList read(String inputDirectory) throws Exception {
 		List<DescriptionsFile> descriptionsFiles = new LinkedList<DescriptionsFile>();
 		File inputDirectoryFile = new File(inputDirectory);
-		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {
-			
+		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {			
 			for(File inputFile : inputDirectoryFile.listFiles()) {
-				
-				
-
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		        DocumentBuilder db = dbf.newDocumentBuilder();
 		        Document document = db.parse(inputFile);

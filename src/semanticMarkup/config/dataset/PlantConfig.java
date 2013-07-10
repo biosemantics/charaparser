@@ -14,18 +14,18 @@ public class PlantConfig extends RunConfig {
 
 	public PlantConfig() {
 		
-		// PROCESSING 
-		this.setGlossaryType(Glossary.Plant.toString());
-		this.setNormalizer(FNAv19Normalizer.class);
-		
-		// IO
-		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation");
-		
 		// ENVIRONMENTAL 
 		//this.setDatabaseTablePrefix("foc_v10_jing");
 		this.setDatabaseGlossaryTable("fnaglossaryfixed");
 		this.setGlossaryFile("resources" + File.separator + "glossaries" + File.separator + "fnaglossaryfixed.csv");
 		
+		// IO
+		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation");
+		
+		// PROCESSING 
+		this.setGlossaryType(Glossary.Plant.toString());
+		this.setNormalizer(FNAv19Normalizer.class);
+
 		// MISC
 
 	}
