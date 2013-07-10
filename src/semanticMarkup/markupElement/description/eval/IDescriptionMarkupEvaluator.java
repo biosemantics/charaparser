@@ -1,12 +1,13 @@
 package semanticMarkup.markupElement.description.eval;
 
+import semanticMarkup.eval.IEvaluationResult;
 import semanticMarkup.markupElement.description.markup.DescriptionMarkupResult;
 
 /**
  * Evaluates the quality of a list of treatments given a correct list of treatments
  * @author rodenhausen
  */
-public interface IDescriptionMarkupEvaluator {
+public interface IDescriptionMarkupEvaluator extends IEvaluator {
 
 	/**
 	 * @param result
