@@ -20,7 +20,7 @@ public class CSVGlossary extends InMemoryGlossary {
 	 * @throws IOException
 	 */
 	@Inject
-	public CSVGlossary(@Named("CSVGlossary_filePath") String filePath) throws IOException {
+	public CSVGlossary(@Named("CSVGlossary_FilePath") String filePath) throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(filePath));
 		
 		List<String[]> lines = reader.readAll();

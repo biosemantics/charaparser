@@ -137,7 +137,7 @@ public class BasicConfig extends AbstractModule {
 		bind(ITokenCombiner.class).annotatedWith(Names.named("WordCombiner")).to(WhitespaceTokenCombiner.class);
 		
 		bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance("resources" + File.separator + "corpora" + File.separator + "brown.csv");
+		bind(String.class).annotatedWith(Names.named("CSVCorpus_FilePath")).toInstance("resources" + File.separator + "corpora" + File.separator + "brown.csv");
 		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
 		bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 		bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);
@@ -148,12 +148,12 @@ public class BasicConfig extends AbstractModule {
 		bind(IOTOLiteClient.class).to(OTOLiteClient.class).in(Singleton.class);
 		bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 		
-		bind(String.class).annotatedWith(Names.named("markupMode")).toInstance("plain");
+		bind(String.class).annotatedWith(Names.named("MarkupMode")).toInstance("plain");
 		
 		bind(IPOSTagger.class).to(OrganCharacterPOSTagger.class); //NewOrganCharacterPOSTagger , OrganCharacterPOSTagger
 		bind(IParser.class).to(StanfordParserWrapper.class).in(Singleton.class);
 		bind(IStanfordParserTokenTransformer.class).to(WordStanfordParserTokenTransformer.class).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_modelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+		bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 		bind(IParseTreeFactory.class).to(StanfordParseTreeFactory.class).in(Singleton.class);
 		
 		bind(ChunkerChain.class).annotatedWith(Names.named("ChunkerChain")).to(CharaparserChunkerChain.class).in(Singleton.class);
@@ -289,7 +289,7 @@ public class BasicConfig extends AbstractModule {
 		Set<String> delimiters = getDelimiters();
 		bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("Delimiters")).toInstance(delimiters);
 		String[] romanNumbers= { "i","ii","iii","iv","v","vi","vii","viii","ix","x","xi","xii","xiii","xiv","xv","xvi","xvii","xviii","xix","xx" };
-		bind(String[].class).annotatedWith(Names.named("romanNumbers")).toInstance(romanNumbers);
+		bind(String[].class).annotatedWith(Names.named("RomanNumbers")).toInstance(romanNumbers);
 		bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("EqualCharacters")).toInstance(getEqualCharacters());
 		bind(String.class).annotatedWith(Names.named("NumberPattern")).toInstance(
 						"[()\\[\\]\\-\\–\\d\\.×x\\+°²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+°²½/¼\\*/%\\?]{2,}(?![a-z{}])");
@@ -306,14 +306,14 @@ public class BasicConfig extends AbstractModule {
 		bind(String.class).annotatedWith(Names.named("p75")).toInstance("(.*?)us$");
 		bind(String.class).annotatedWith(Names.named("p8")).toInstance("(.*?)s$");
 		bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("VBWords")).toInstance(getSetOfVBWords());
-		bind(String.class).annotatedWith(Names.named("viewPattern")).toInstance("(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)");	
+		bind(String.class).annotatedWith(Names.named("ViewPattern")).toInstance("(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)");	
 		String count = "more|fewer|less|\\d";
-		bind(String.class).annotatedWith(Names.named("countPattern")).toInstance("((?:^| |\\{)(?:"+count+")\\}? (?:or|to) \\{?(?:"+count+")(?:\\}| |$))");
-		bind(String.class).annotatedWith(Names.named("positionPattern")).toInstance("(<(\\S+?)> \\d+(?:(?: and |_)\\d+)?(?!\\s*(?:/|times)))");
+		bind(String.class).annotatedWith(Names.named("CountPattern")).toInstance("((?:^| |\\{)(?:"+count+")\\}? (?:or|to) \\{?(?:"+count+")(?:\\}| |$))");
+		bind(String.class).annotatedWith(Names.named("PositionPattern")).toInstance("(<(\\S+?)> \\d+(?:(?: and |_)\\d+)?(?!\\s*(?:/|times)))");
 		String roman = "i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX";
-		bind(String.class).annotatedWith(Names.named("romanRangePattern")).toInstance("(\\d+)-<?\\b("+roman+")\\b>?");
-		bind(String.class).annotatedWith(Names.named("romanPattern")).toInstance("(<(\\S+?)> <?\\{?\\b("+roman+")\\b\\}?>?)");
-		bind(String.class).annotatedWith(Names.named("modifierList")).toInstance("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");	
+		bind(String.class).annotatedWith(Names.named("RomanRangePattern")).toInstance("(\\d+)-<?\\b("+roman+")\\b>?");
+		bind(String.class).annotatedWith(Names.named("RomanPattern")).toInstance("(<(\\S+?)> <?\\{?\\b("+roman+")\\b\\}?>?)");
+		bind(String.class).annotatedWith(Names.named("ModifierList")).toInstance("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");	
   	}
 
 	private Set<String> getDelimiters() {

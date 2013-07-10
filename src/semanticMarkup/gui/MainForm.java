@@ -318,8 +318,8 @@ public class MainForm {
 
 	
 	@Inject
-	public MainForm(MainFormDbAccessor mainDb, @Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
-			@Named("databasePassword") String databasePassword, @Named("databasePrefix")String databasePrefix, 
+	public MainForm(MainFormDbAccessor mainDb, @Named("DatabaseName")String databaseName, @Named("DatabaseUser")String databaseUser, 
+			@Named("DatabasePassword") String databasePassword, @Named("DatabasePrefix")String databasePrefix, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase, IInflector inflector) {
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.mainDb = mainDb;

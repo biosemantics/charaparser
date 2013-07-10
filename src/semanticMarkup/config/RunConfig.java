@@ -119,9 +119,9 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
 		bind(IDescriptionTransformer.class).to(markupDescriptionTreatmentTransformer);
-		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_parallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
-		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
-		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
+		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
+		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
+		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
 		bind(String.class).annotatedWith(Names.named("databaseHost")).toInstance(databaseHost);
 		bind(String.class).annotatedWith(Names.named("databasePort")).toInstance(databasePort);
 		bind(String.class).annotatedWith(Names.named("databaseName")).toInstance(databaseName);
@@ -131,14 +131,14 @@ public class RunConfig extends BasicConfig {
 		
 		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
 		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(standardVolumeReaderSourcefiles);
-		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
+		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance(databaseTablePrefix); 
 		bind(String.class).annotatedWith(Names.named("glossaryType")).toInstance(glossaryType);
-		bind(String.class).annotatedWith(Names.named("otoLiteReviewFile")).toInstance(otoLiteReviewFile);
-		bind(String.class).annotatedWith(Names.named("otoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
+		bind(String.class).annotatedWith(Names.named("OtoLiteReviewFile")).toInstance(otoLiteReviewFile);
+		bind(String.class).annotatedWith(Names.named("OtoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
 		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
-		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
+		bind(String.class).annotatedWith(Names.named("CSVGlossary_FilePath")).toInstance(glossaryFile); 
 		bind(INormalizer.class).to(normalizer); 
 	}
 	

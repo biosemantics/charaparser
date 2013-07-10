@@ -11,6 +11,8 @@ import javax.xml.bind.Marshaller;
 
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
+import com.google.inject.name.Named;
+
 import semanticMarkup.markupElement.description.io.IDescriptionWriter;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
@@ -19,7 +21,7 @@ public class MOXyDescriptionWriter implements IDescriptionWriter {
 
 	private String bindingsFile;
 	
-	public MOXyDescriptionWriter(String bindingsFile) {
+	public MOXyDescriptionWriter(@Named("Description_BindingsFile")String bindingsFile) {
 		this.bindingsFile = bindingsFile;
 	}
 		

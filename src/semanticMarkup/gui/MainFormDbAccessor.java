@@ -55,10 +55,10 @@ public class MainFormDbAccessor {
 	private String databaseUser;
 
 	@Inject
-	public MainFormDbAccessor(@Named("databaseHost") String databaseHost,
-			@Named("databasePort") String databasePort,
-			@Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
-			@Named("databasePassword")String databasePassword, @Named("databasePrefix")String databasePrefix) {
+	public MainFormDbAccessor(@Named("DatabaseHost") String databaseHost,
+			@Named("DatabasePort") String databasePort,
+			@Named("DatabaseName")String databaseName, @Named("DatabaseUser")String databaseUser, 
+			@Named("DatabasePassword")String databasePassword, @Named("DatabasePrefix")String databasePrefix) {
 		this.databaseName = databaseName;
 		this.databaseUser = databaseUser;
 		this.databasePassword = databasePassword;

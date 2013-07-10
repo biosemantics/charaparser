@@ -22,6 +22,8 @@ import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import com.google.inject.name.Named;
+
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
 import semanticMarkup.markupElement.description.io.IDescriptionWriter;
@@ -34,7 +36,8 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 	private Binder<Node> binder;
 	private Map<File, Document> documents = new HashMap<File, Document>();
 	
-	public MOXyBinderDescriptionReaderWriter(String bindingsFile) throws JAXBException {
+	public MOXyBinderDescriptionReaderWriter(@Named("Description_BindingsFile")String bindingsFile) 
+			throws JAXBException {
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
 		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFile);
 		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);

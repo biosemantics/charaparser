@@ -21,8 +21,6 @@ import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 import semanticMarkup.markupElement.description.model.Statement;
 
-
-
 public class JDOMDescriptionWriter implements IDescriptionWriter {
 	
 	private SAXBuilder saxBuilder = new SAXBuilder();

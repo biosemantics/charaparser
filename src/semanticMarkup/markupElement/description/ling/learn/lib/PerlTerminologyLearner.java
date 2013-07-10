@@ -88,15 +88,15 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	 */
 	@Inject
 	public PerlTerminologyLearner(@Named("Run_TemporaryPath") String temporaryPath,
-			@Named("markupMode") String markupMode,
-			@Named("databaseHost") String databaseHost,
-			@Named("databasePort") String databasePort,
-			@Named("databaseName") String databaseName,
-			@Named("databasePrefix") String databasePrefix, 
-			@Named("databaseUser") String databaseUser, 
-			@Named("databasePassword") String databasePassword, 
+			@Named("MarkupMode") String markupMode,
+			@Named("DatabaseHost") String databaseHost,
+			@Named("DatabasePort") String databasePort,
+			@Named("DatabaseName") String databaseName,
+			@Named("DatabasePrefix") String databasePrefix, 
+			@Named("DatabaseUser") String databaseUser, 
+			@Named("DatabasePassword") String databasePassword, 
 			@Named("StopWords") Set<String> stopWords,
-			@Named("selectedSources") Set<String> selectedSources,
+			@Named("SelectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer,
 			ParentTagProvider parentTagProvider) throws Exception {

@@ -24,7 +24,7 @@ import com.google.inject.name.Named;
  */
 public class OrganCharacterPOSTagger implements IPOSTagger {
 
-	public static final String roman="i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX";
+	private String roman="i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX";
 	private ICorpus corpus;
 	private String prepositions;
 	private Set<String> stopWords;

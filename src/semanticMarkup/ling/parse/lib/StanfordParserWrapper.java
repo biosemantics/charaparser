@@ -29,7 +29,7 @@ public class StanfordParserWrapper implements IParser {
 	 * @param tokenTransformer
 	 */
 	@Inject
-	public StanfordParserWrapper(@Named("StanfordParserWrapper_modelFile")String modelFile, IStanfordParserTokenTransformer tokenTransformer) {
+	public StanfordParserWrapper(@Named("StanfordParserWrapper_ModelFile")String modelFile, IStanfordParserTokenTransformer tokenTransformer) {
 		this.tokenTransformer = tokenTransformer;
 		parser = LexicalizedParser.loadModel(modelFile);
 	}

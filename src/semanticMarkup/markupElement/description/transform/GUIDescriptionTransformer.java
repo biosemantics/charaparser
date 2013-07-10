@@ -73,11 +73,11 @@ public class GUIDescriptionTransformer extends AbstractDescriptionTransformer {
 			IDescriptionExtractor descriptionExtractor, 
 			INormalizer normalizer,
 			ITerminologyLearner terminologyLearner,
-			@Named("MarkupDescriptionTreatmentTransformer_parallelProcessing")boolean parallelProcessing, 
-			@Named("MarkupDescriptionTreatmentTransformer_descriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
-			@Named("MarkupDescriptionTreatmentTransformer_sentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
+			@Named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")boolean parallelProcessing, 
+			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
+			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum, 
 			MainForm mainForm, 
-			@Named("selectedSources")Set<String> selectedSources, 
+			@Named("SelectedSources")Set<String> selectedSources, 
 			@Named("GlossaryTable")String glossaryTable) throws Exception {
 		super(version, parallelProcessing);
 		this.parser = parser;

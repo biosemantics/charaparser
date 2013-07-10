@@ -46,8 +46,8 @@ public class UploadTerms2OTO{
      * 
      * dataprefix: must the the dataprefix set in the configuration tab of CharaParser
      */
-	public UploadTerms2OTO(@Named("databaseName") String databaseName, @Named("databaseUser") String databaseUser, 
-			@Named("databasePassword") String databasePassword, @Named("databasePrefix") String databasePrefix) {
+	public UploadTerms2OTO(@Named("DatabaseName") String databaseName, @Named("DatabaseUser") String databaseUser, 
+			@Named("DatabasePassword") String databasePassword, @Named("DatabasePrefix") String databasePrefix) {
 		UploadTerms2OTO.databaseName = databaseName;
 		UploadTerms2OTO.databaseUser = databaseUser;
 		UploadTerms2OTO.databasePassword = databasePassword;

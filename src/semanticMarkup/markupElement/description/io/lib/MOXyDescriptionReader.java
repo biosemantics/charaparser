@@ -13,6 +13,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
+import com.google.inject.name.Named;
+
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
@@ -21,7 +23,7 @@ public class MOXyDescriptionReader implements IDescriptionReader {
 
 	private String bindingsFile;
 	
-	public MOXyDescriptionReader(String bindingsFile) {
+	public MOXyDescriptionReader(@Named("Description_BindingsFile")String bindingsFile) {
 		this.bindingsFile = bindingsFile;
 	}
 	

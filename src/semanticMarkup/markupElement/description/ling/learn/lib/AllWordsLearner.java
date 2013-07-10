@@ -30,12 +30,12 @@ public class AllWordsLearner {
 	@Inject
 	public AllWordsLearner(@Named("WordTokenizer")ITokenizer tokenizer,
 			IGlossary glossary,
-			@Named("databaseHost") String databaseHost,
-			@Named("databasePort") String databasePort,
-			@Named("databaseName") String databaseName,
-			@Named("databasePrefix") String databasePrefix,
-			@Named("databaseUser") String databaseUser,
-			@Named("databasePassword") String databasePassword)
+			@Named("DatabaseHost") String databaseHost,
+			@Named("DatabasePort") String databasePort,
+			@Named("DatabaseName") String databaseName,
+			@Named("DatabasePrefix") String databasePrefix,
+			@Named("DatabaseUser") String databaseUser,
+			@Named("DatabasePassword") String databasePassword)
 			throws Exception {
 		this.tokenizer = tokenizer;
 		this.glossary = glossary;
