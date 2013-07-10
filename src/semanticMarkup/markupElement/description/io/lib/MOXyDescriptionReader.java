@@ -21,27 +21,20 @@ import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 
 public class MOXyDescriptionReader implements IDescriptionReader {
 
-	private String bindingsFile;
-	
-	public MOXyDescriptionReader(@Named("DescriptionReader_BindingsFile")String bindingsFile) {
-		this.bindingsFile = bindingsFile;
-	}
-	
-	private Unmarshaller getUnmarshaller() throws JAXBException {
-		Map<String, Object> properties = new HashMap<String, Object>(1);
-		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, bindingsFile);
-		JAXBContext jaxbContext = JAXBContext.newInstance(new Class[] {DescriptionsFile.class}, properties);
-		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller(); 
-		return unmarshaller;
-	}
+	private Unmarshaller unmarshaller;
 
+	public MOXyDescriptionReader(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles) throws JAXBException {
+		Map<String, Object> properties = new HashMap<String, Object>(1);
+		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, bindingsFiles);
+		JAXBContext jaxbContext = JAXBContext.newInstance(new Class[] {DescriptionsFile.class}, properties);
+		this.unmarshaller = jaxbContext.createUnmarshaller(); 
+	}
 
 	@Override
 	public DescriptionsFileList read(@Named("DescriptionReader_InputDirectory")String inputDirectory) throws Exception {
 		List<DescriptionsFile> descriptionsFiles = new LinkedList<DescriptionsFile>();
 		File inputDirectoryFile = new File(inputDirectory);
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {
-			Unmarshaller unmarshaller = getUnmarshaller();
 			for(File inputFile : inputDirectoryFile.listFiles()) {
 				DescriptionsFile descriptionsFile = (DescriptionsFile)unmarshaller.unmarshal(inputFile);
 				descriptionsFile.setFile(inputFile);

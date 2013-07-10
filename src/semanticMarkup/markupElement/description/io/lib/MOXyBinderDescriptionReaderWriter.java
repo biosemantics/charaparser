@@ -38,10 +38,10 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 	private Map<File, Document> documents = new HashMap<File, Document>();
 	
 	@Inject
-	public MOXyBinderDescriptionReaderWriter(@Named("DescriptionReader_BindingsFile")String bindingsFile) 
+	public MOXyBinderDescriptionReaderWriter(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles) 
 			throws JAXBException {
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
-		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFile);
+		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFiles);
 		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);
 		this.binder = jaxbContext.createBinder();
 	}

@@ -1,7 +1,10 @@
 package semanticMarkup.config;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -59,7 +62,8 @@ public class RunConfig extends BasicConfig {
 	// IO
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
 	private String descriptionReaderInputDirectory = "input";
-	private String descriptionReaderBindingsFile = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "description-bindings.xml";
+	private String baseBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "baseBindings.xml";
+	private String descriptionReaderBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "descriptionBindings.xml";
 	private String evaluationCorrectReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml";
 	private String evaluationTestReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml"; 
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyDescriptionWriter.class;
@@ -106,7 +110,7 @@ public class RunConfig extends BasicConfig {
 		//IO
 		bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader);
 		bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(descriptionReaderInputDirectory);
-		bind(String.class).annotatedWith(Names.named("DescriptionReader_BindingsFile")).toInstance(descriptionReaderBindingsFile);
+		bind(new TypeLiteral<List<String>>() {}).annotatedWith(Names.named("DescriptionReader_BindingsFiles")).toInstance(constructDescriptionReaderBindings());
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(descriptionReaderInputDirectory));
 		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).toInstance(constructEvaluationCorrectReader());
 		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).toInstance(constructEvaluationTestReader());
@@ -130,9 +134,19 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
 	}
 	
+	private List<String> constructDescriptionReaderBindings() {
+		List<String> result = new LinkedList<String>();
+		result.add(baseBindings);
+		result.add(descriptionReaderBindings);
+		return result;
+	}
+
 	private IDescriptionMarkupResultReader constructEvaluationTestReader() {
 		try {
-			return new MOXyDescriptionMarkupResultReader(this.evaluationTestReaderBindings);
+			List<String> bindings = new LinkedList<String>();
+			bindings.add(evaluationTestReaderBindings);
+			bindings.add(baseBindings);
+			return new MOXyDescriptionMarkupResultReader(bindings);
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
 			System.exit(0);
@@ -142,7 +156,10 @@ public class RunConfig extends BasicConfig {
 
 	private IDescriptionMarkupResultReader constructEvaluationCorrectReader() {
 		try {
-			return new MOXyDescriptionMarkupResultReader(this.evaluationCorrectReaderBindings);
+			List<String> bindings = new LinkedList<String>();
+			bindings.add(evaluationCorrectReaderBindings);
+			bindings.add(baseBindings);
+			return new MOXyDescriptionMarkupResultReader(bindings);
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
 			System.exit(0);
@@ -502,8 +519,8 @@ public class RunConfig extends BasicConfig {
 		this.descriptionReaderInputDirectory = descriptionReaderInputDirectory;
 	}
 
-	public void setDescriptionReaderBindings(String descriptionReaderBindingsFile) {
-		this.descriptionReaderBindingsFile = descriptionReaderBindingsFile;
+	public void setDescriptionReaderBindings(String descriptionReaderBindings) {
+		this.descriptionReaderBindings = descriptionReaderBindings;
 	}
 
 	

@@ -47,7 +47,7 @@
 		<java-type name="semanticMarkup.markupElement.description.model.Relation">
             <java-attributes>			
                 <xml-element java-attribute="name" xml-path="@name"/>
-				<xml-element java-attribute="name" xml-path="@value"/>
+				<xml-element java-attribute="value" xml-path="@value"/>
             </java-attributes>
         </java-type>
     </java-types>
