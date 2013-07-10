@@ -23,7 +23,7 @@ public class MOXyDescriptionReader implements IDescriptionReader {
 
 	private String bindingsFile;
 	
-	public MOXyDescriptionReader(@Named("Description_BindingsFile")String bindingsFile) {
+	public MOXyDescriptionReader(@Named("DescriptionReader_BindingsFile")String bindingsFile) {
 		this.bindingsFile = bindingsFile;
 	}
 	
@@ -37,7 +37,7 @@ public class MOXyDescriptionReader implements IDescriptionReader {
 
 
 	@Override
-	public DescriptionsFileList read(String inputDirectory) throws Exception {
+	public DescriptionsFileList read(@Named("DescriptionReader_InputDirectory")String inputDirectory) throws Exception {
 		List<DescriptionsFile> descriptionsFiles = new LinkedList<DescriptionsFile>();
 		File inputDirectoryFile = new File(inputDirectory);
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {

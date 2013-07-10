@@ -15,7 +15,7 @@ import com.google.inject.name.Named;
 public class DatabaseInputFromEvaluationNoLearner extends PerlTerminologyLearner {
 
 	@Inject
-	public DatabaseInputFromEvaluationNoLearner(@Named("Run_TemporaryPath") String temporaryPath,
+	public DatabaseInputFromEvaluationNoLearner(@Named("Run_TemporaryDirectory") String temporaryPath,
 			@Named("MarkupMode") String markupMode,
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,

@@ -70,7 +70,7 @@ public class OTOLearner implements ILearner {
 	 * @throws Exception
 	 */
 	@Inject
-	public OTOLearner(@Named("MarkupCreator_VolumeReader")IDescriptionReader descriptionReader, 
+	public OTOLearner(@Named("DescriptionMarkupCreator_DescriptionReader")IDescriptionReader descriptionReader, 
 			String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			IOTOClient otoClient, 

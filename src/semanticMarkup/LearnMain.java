@@ -9,13 +9,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
-import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReaderWriter;
 import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.markupElement.description.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.markupElement.description.run.iplant.IPlantLearnRun;
@@ -74,16 +70,16 @@ public class LearnMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(IPlantXMLVolumeReader.class);
+		    config.setDescriptionReader(MOXyBinderDescriptionReaderWriter.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setiPlantXMLVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
-		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
+		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -157,6 +153,6 @@ public class LearnMain extends CLIMain {
 		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
-		config.setVolumeWriter(IPlantXMLVolumeWriter.class);
+		config.setDescriptionWriter(MOXyBinderDescriptionReaderWriter.class);
 	}
 }

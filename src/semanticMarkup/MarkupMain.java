@@ -11,12 +11,10 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReaderWriter;
+import semanticMarkup.markupElement.description.io.lib.MOXyDescriptionReader;
 import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.markupElement.description.run.iplant.IPlantMarkupRun;
 import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
@@ -74,15 +72,15 @@ public class MarkupMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(IPlantXMLVolumeReader.class);
+		    config.setDescriptionReader(MOXyBinderDescriptionReaderWriter.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setiPlantXMLVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
-		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
+		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -156,6 +154,6 @@ public class MarkupMain extends CLIMain {
 		config.setGlossary(InMemoryGlossary.class);
 		//no learning required, already passed learning and reviewed terms in OTO Lite 
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
-		config.setVolumeWriter(IPlantXMLVolumeWriter.class);
+		config.setDescriptionWriter(MOXyBinderDescriptionReaderWriter.class);
 	}
 }

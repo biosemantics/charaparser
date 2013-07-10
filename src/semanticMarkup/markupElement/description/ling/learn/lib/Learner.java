@@ -24,7 +24,7 @@ public class Learner implements ILearner {
 	 * @param terminologyLearner
 	 */
 	@Inject
-	public Learner(@Named("MarkupCreator_VolumeReader")IDescriptionReader descriptionReader, 
+	public Learner(@Named("DescriptionMarkupCreator_DescriptionReader")IDescriptionReader descriptionReader, 
 			String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			@Named("GlossaryTable") String glossaryTable) {	

@@ -34,7 +34,7 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	 * @throws Exception
 	 */
 	@Inject
-	public DatabaseInputNoLearner(@Named("Run_TemporaryPath") String temporaryPath,
+	public DatabaseInputNoLearner(@Named("Run_TemporaryDirectory") String temporaryPath,
 			@Named("MarkupMode") String markupMode,
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,

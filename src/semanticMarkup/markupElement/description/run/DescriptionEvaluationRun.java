@@ -34,8 +34,8 @@ public class DescriptionEvaluationRun extends AbstractRun {
 	public DescriptionEvaluationRun(@Named("GuiceModuleFile")String guiceModuleFile,
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator, 
-			@Named("EvaluationRun_CreatedVolumeReader")IDescriptionMarkupResultReader testReader,
-			@Named("EvaluationRun_GoldStandardReader")IDescriptionMarkupResultReader correctReader, 
+			@Named("EvaluationRun_TestReader")IDescriptionMarkupResultReader testReader,
+			@Named("EvaluationRun_CorrectReader")IDescriptionMarkupResultReader correctReader, 
 			String testInputDirectory,
 			String correctInputDirectory) {
 		super(guiceModuleFile, runOutDirectory);

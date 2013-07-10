@@ -25,9 +25,9 @@ public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 	private String outputDirectory;
 	
 	@Inject
-	public DescriptionMarkupCreator(@Named("DescriptionMarkupCreator_VolumeReader") IDescriptionReader reader,	
+	public DescriptionMarkupCreator(@Named("DescriptionMarkupCreator_DescriptionReader") IDescriptionReader reader,	
 			AbstractDescriptionTransformer descriptionTransformer,
-			@Named("DescriptionMarkupCreator_VolumeWriter") IDescriptionWriter writer, 
+			@Named("DescriptionMarkupCreator_DescriptionWriter") IDescriptionWriter writer, 
 			String inputDirectory, 
 			String outputDirectory) {
 		this.reader = reader;

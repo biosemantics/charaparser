@@ -16,6 +16,7 @@ import semanticMarkup.config.dataset.PlantConfig;
 import semanticMarkup.config.dataset.PoriferaConfig;
 import semanticMarkup.know.Glossary;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.GenericDescriptionReader;
 import semanticMarkup.run.IRun;
 
 import com.google.inject.Guice;
@@ -97,8 +98,8 @@ public class CLIMain {
 		    	setReaderSpecificConfigValues(config, commandLine.getOptionValue("r"), commandLine.getOptionValue("i"));
 		    } else {
 		    	//use GenericFileVolumeReader
-		    	config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
-		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setDescriptionReader(GenericDescriptionReader.class);
+		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -156,22 +157,19 @@ public class CLIMain {
 	}
 
 	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) {
-		if(volumeReader.equals("Word")) {
-			config.setMarkupCreatorVolumeReader(DocWordVolumeReader.class);
-			config.setWordVolumeReaderSourceFile(input);
-			return;
-		}
 		if(volumeReader.equals("XML")) {
-			config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
-			config.setXmlVolumeReaderSourceDirectory(input);
+			config.setDescriptionReaderBindings("");
 			return;
 		}
 		if(volumeReader.equals("Taxonx")) {
-			config.setMarkupCreatorVolumeReader(TaxonxVolumeReader.class);
-			config.setTaxonxVolumeReaderSourceFile(input);
+			config.setDescriptionReaderBindings("");
 			return;
 		}
-		log(LogLevel.ERROR, "VolumeReader unknown");
+		if(volumeReader.equals("IPlant")) {
+			config.setDescriptionReaderBindings("");
+			return;
+		}
+		log(LogLevel.ERROR, "DescriptionReader unknown");
 		System.exit(0);
 	}
 

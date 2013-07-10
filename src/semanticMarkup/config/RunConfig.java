@@ -5,12 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import semanticMarkup.eval.IEvaluator;
-import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.IVolumeReader;
-import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.output.IVolumeWriter;
-import semanticMarkup.io.output.lib.xml.XMLVolumeWriter;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.ling.normalize.INormalizer;
@@ -20,12 +14,19 @@ import semanticMarkup.markup.IMarkupCreator;
 import semanticMarkup.markupElement.description.transform.IDescriptionTransformer;
 import semanticMarkup.run.IRun;
 import semanticMarkup.markupElement.description.run.DescriptionMarkupRun;
+import semanticMarkup.markupElement.description.io.IDescriptionReader;
+import semanticMarkup.markupElement.description.io.IDescriptionWriter;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.markupElement.description.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.markupElement.description.markup.DescriptionMarkupCreator;
 import semanticMarkup.markupElement.description.transform.GUIDescriptionTransformer;
+import semanticMarkup.markupElement.description.eval.IDescriptionMarkupResultReader;
+import semanticMarkup.markupElement.description.eval.io.IDescriptionMarkupEvaluator;
 import semanticMarkup.markupElement.description.eval.lib.PerfectPartialPrecisionRecallEvaluator;
+import semanticMarkup.markupElement.description.eval.io.lib.MOXyDescriptionMarkupResultReader;
+import semanticMarkup.markupElement.description.io.lib.EvaluationDBDescriptionReader;
+import semanticMarkup.markupElement.description.io.lib.MOXyDescriptionWriter;
 
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -37,112 +38,95 @@ import com.google.inject.name.Names;
  */
 public class RunConfig extends BasicConfig {
 
+	// PROCESSING 
+	private String glossaryType = "plant";
 	private Class<? extends IRun> run = DescriptionMarkupRun.class;
-	//MarkupRun, EvaluationRun, MarkupEvaluationRun
+	private String runRootDirectory = "workspace" + File.separator + this.databaseTablePrefix;
+	private String runOutDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "out";
+	private String runTemporaryDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp";
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
-	private Class<? extends IEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
-	//SimplePrecisionRecallEvaluator, AdvancedPrecisionRecallEvaluator
-	private Class<? extends IVolumeReader> evaluationGoldStandardReader = XMLVolumeReader.class;
-	private Class<? extends IVolumeReader> evaluationRunCreatedVolumeReader = EvaluationDBVolumeReader.class;
-	//OutputVolumeReader, EvaluationDBVolumeReader, PerlDBVolumeReader
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
-	//CharaParser.class //AfterPerlBlackBox
-	private Class<? extends IVolumeReader> markupCreatorVolumeReader = EvaluationDBVolumeReader.class;
-	//WordVolumeReader, XMLVolumeReader, PerlDBVolumeReader, EvaluationDBVolumeReader, GenericFileVolumeReaer
-	private String iPlantXMLVolumeReaderSource = "";
-	
-	private String wordVolumeReaderSourceFile = "evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + 
-			"source" + File.separator + "FNA19 Excerpt-source.docx";
-	private String wordVolumeReaderStyleStartPattern = ".*?(Heading|Name).*";
-	private String wordVolumeReaderStyleNamePattern = ".*?(Syn|Name).*";
-	private String wordVolumeReaderStyleKeyPattern =  ".*?-Key.*";
-	private String wordVolumeReaderTribegennamestyle = "caps";
-	private String wordVolumeReaderStyleMappingFile = "" + "resources" + File.separator + "stylemapping.properties";
-	private String xmlVolumeReaderSourceDirectory = "evaluationData" + File.separator + "perlTest" + File.separator + "source" +
-			File.separator;
-	private String outputVolumeReaderSourceDirectory = "." + File.separator + "out" + File.separator;
-	private String genericFileVolumeReaderSource = "evaluationData" + File.separator + "perlTest" + File.separator + "source" + File.separator;
-	//"evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml"
-	//"evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + "source" + File.separator + "FNA19 Excerpt-source.docx"
-	private String taxonxVolumeReaderSourceFile = "evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml";
 	private Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTransformer.class;
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
+	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
+	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
+	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
+		
+	// IO
+	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
+	private String descriptionReaderInputDirectory = "input";
+	private String descriptionReaderBindingsFile = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "description-bindings.xml";
+	private Class<? extends IDescriptionMarkupResultReader> evaluationCorrectReader = MOXyDescriptionMarkupResultReader.class;
+	private Class<? extends IDescriptionMarkupResultReader> evaluationTestReader = MOXyDescriptionMarkupResultReader.class;
+	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyDescriptionWriter.class;
+	
+	// ENVIRONMENTAL
 	private String databaseHost = "localhost";
 	private String databasePort = "3306";
 	private String databaseName = "local";
 	private String databaseUser = "termsuser";
 	private String databasePassword = "termspassword";
-	private Class<? extends IVolumeWriter> volumeWriter = XMLVolumeWriter.class;
-	//ToStringVolumeWriter, JSONVolumeWriter, XMLVolumeWriter XML2VolumeWriter
-	
-	private String standardVolumeReaderSourcefiles = "evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation";
-	//FNAV19_AnsKey_CharaParser_Evaluation , TIP_AnsKey_CharaParser_Evaluation
 	private String databaseTablePrefix = "myrun";
-	private String glossaryType = "plant";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
 	private String otoLiteReviewFile = "TermReview.txt";
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
-	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
-	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
-	//PerlTerminologyLearner //DatabaseInputNoLearner;
+
+	// MISC
 	
+
 	@Override 
 	public void configure() {
 		super.configure();
+		
+		// PROCESSING 
+		bind(String.class).annotatedWith(Names.named("GlossaryType")).toInstance(glossaryType);
 		bind(IRun.class).to(run);
+		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(runRootDirectory);
+		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(runOutDirectory);
+		bind(String.class).annotatedWith(Names.named("Run_TemporaryDirectory")).toInstance(runTemporaryDirectory);
 		bind(IGlossary.class).to(glossary).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance("workspace" + File.separator + this.databaseTablePrefix);
-		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance("workspace" + File.separator + this.databaseTablePrefix + File.separator + "out");
-		bind(String.class).annotatedWith(Names.named("Run_TemporaryPath")).toInstance("workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp");
-		bind(IEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
-		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_GoldStandardReader")).to(evaluationGoldStandardReader);
-		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_CreatedVolumeReader")).to(evaluationRunCreatedVolumeReader);
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator);
-		bind(IVolumeReader.class).annotatedWith(Names.named("MarkupCreator_VolumeReader")).to(markupCreatorVolumeReader);
-		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Sourcefile")).toInstance(wordVolumeReaderSourceFile);
-		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleStartPattern")).toInstance(wordVolumeReaderStyleStartPattern);
-		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleNamePattern")).toInstance(wordVolumeReaderStyleNamePattern);
-		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleKeyPattern")).toInstance(wordVolumeReaderStyleKeyPattern);
-		bind(String.class).annotatedWith(Names.named("WordVolumeReader_Tribegennamestyle")).toInstance(wordVolumeReaderTribegennamestyle);
-		bind(String.class).annotatedWith(Names.named("WordVolumeReader_StyleMappingFile")).toInstance(wordVolumeReaderStyleMappingFile);
-		bind(String.class).annotatedWith(Names.named("XMLVolumeReader_SourceDirectory")).toInstance(xmlVolumeReaderSourceDirectory);
-		bind(String.class).annotatedWith(Names.named("IPlantXMLVolumeReader_Source")).toInstance(iPlantXMLVolumeReaderSource);
-		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_SourceDirectory")).toInstance(outputVolumeReaderSourceDirectory);
-		bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance(genericFileVolumeReaderSource);
-
-		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
-		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
 		bind(IDescriptionTransformer.class).to(markupDescriptionTreatmentTransformer);
 		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
+		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class); 
+		bind(INormalizer.class).to(normalizer);
+		bind(IDescriptionMarkupEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
+		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).to(evaluationCorrectReader);
+		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).to(evaluationTestReader);
+		
+		//IO
+		bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader);
+		bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(descriptionReaderInputDirectory);
+		bind(String.class).annotatedWith(Names.named("DescriptionReader_BindingsFile")).toInstance(descriptionReaderBindingsFile);
+		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(descriptionReaderInputDirectory));
+		bind(IDescriptionWriter.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionWriter")).to(descriptionWriter);
+		
+		//ENVIRONMENTAL
+		bind(String.class).annotatedWith(Names.named("DatabasePrefix")).toInstance(databaseTablePrefix); 
 		bind(String.class).annotatedWith(Names.named("DatabaseHost")).toInstance(databaseHost);
 		bind(String.class).annotatedWith(Names.named("DatabasePort")).toInstance(databasePort);
 		bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance(databaseName);
 		bind(String.class).annotatedWith(Names.named("DatabaseUser")).toInstance(databaseUser);
 		bind(String.class).annotatedWith(Names.named("DatabasePassword")).toInstance(databasePassword);
-		bind(IVolumeWriter.class).annotatedWith(Names.named("MarkupCreator_VolumeWriter")).to(volumeWriter);
-		
-		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
-		bind(String.class).annotatedWith(Names.named("StandardVolumeReader_Sourcefiles")).toInstance(standardVolumeReaderSourcefiles);
-		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
-		bind(String.class).annotatedWith(Names.named("DatabasePrefix")).toInstance(databaseTablePrefix); 
-		bind(String.class).annotatedWith(Names.named("GlossaryType")).toInstance(glossaryType);
 		bind(String.class).annotatedWith(Names.named("OtoLiteReviewFile")).toInstance(otoLiteReviewFile);
 		bind(String.class).annotatedWith(Names.named("OtoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
 		bind(String.class).annotatedWith(Names.named("OtoLiteClient_Url")).toInstance(otoLiteClientURL);
 		bind(String.class).annotatedWith(Names.named("OtoClient_Url")).toInstance(otoClientUrl);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_FilePath")).toInstance(glossaryFile); 
-		bind(INormalizer.class).to(normalizer); 
+		
+		//MISC
+		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
 	}
 	
-	protected HashSet<String> getSelectedSources(String evaluationDataPath) {
+	protected HashSet<String> getSelectedSources(String path) {
 		HashSet<String> result = new HashSet<String>();
 
 		/*result.add("1297.txt-1");
@@ -188,7 +172,7 @@ public class RunConfig extends BasicConfig {
 		
 		
 		String file;
-		File folder = new File(evaluationDataPath);
+		File folder = new File(path);
 		if (folder.exists()) {
 			File[] listOfFiles = folder.listFiles();
 
@@ -266,132 +250,12 @@ public class RunConfig extends BasicConfig {
 		return evaluationRunEvaluator;
 	}
 
-	public void setEvaluationRunEvaluator(
-			Class<? extends IEvaluator> evaluationRunEvaluator) {
-		this.evaluationRunEvaluator = evaluationRunEvaluator;
-	}
-
-	public Class<? extends IVolumeReader> getEvaluationGoldStandardReader() {
-		return evaluationGoldStandardReader;
-	}
-
-	public void setEvaluationGoldStandardReader(
-			Class<? extends IVolumeReader> evaluationGoldStandardReader) {
-		this.evaluationGoldStandardReader = evaluationGoldStandardReader;
-	}
-
-	public Class<? extends IVolumeReader> getEvaluationRunCreatedVolumeReader() {
-		return evaluationRunCreatedVolumeReader;
-	}
-
-	public void setEvaluationRunCreatedVolumeReader(
-			Class<? extends IVolumeReader> evaluationRunCreatedVolumeReader) {
-		this.evaluationRunCreatedVolumeReader = evaluationRunCreatedVolumeReader;
-	}
-
 	public Class<? extends IMarkupCreator> getMarkupCreator() {
 		return markupCreator;
 	}
 
 	public void setMarkupCreator(Class<? extends IMarkupCreator> markupCreator) {
 		this.markupCreator = markupCreator;
-	}
-
-	public Class<? extends IVolumeReader> getMarkupCreatorVolumeReader() {
-		return markupCreatorVolumeReader;
-	}
-
-	public void setMarkupCreatorVolumeReader(
-			Class<? extends IVolumeReader> markupCreatorVolumeReader) {
-		this.markupCreatorVolumeReader = markupCreatorVolumeReader;
-	}
-
-	public String getWordVolumeReaderSourceFile() {
-		return wordVolumeReaderSourceFile;
-	}
-
-	public void setWordVolumeReaderSourceFile(String wordVolumeReaderSourceFile) {
-		this.wordVolumeReaderSourceFile = wordVolumeReaderSourceFile;
-	}
-
-	public String getWordVolumeReaderStyleStartPattern() {
-		return wordVolumeReaderStyleStartPattern;
-	}
-
-	public void setWordVolumeReaderStyleStartPattern(
-			String wordVolumeReaderStyleStartPattern) {
-		this.wordVolumeReaderStyleStartPattern = wordVolumeReaderStyleStartPattern;
-	}
-
-	public String getWordVolumeReaderStyleNamePattern() {
-		return wordVolumeReaderStyleNamePattern;
-	}
-
-	public void setWordVolumeReaderStyleNamePattern(
-			String wordVolumeReaderStyleNamePattern) {
-		this.wordVolumeReaderStyleNamePattern = wordVolumeReaderStyleNamePattern;
-	}
-
-	public String getWordVolumeReaderStyleKeyPattern() {
-		return wordVolumeReaderStyleKeyPattern;
-	}
-
-	public void setWordVolumeReaderStyleKeyPattern(
-			String wordVolumeReaderStyleKeyPattern) {
-		this.wordVolumeReaderStyleKeyPattern = wordVolumeReaderStyleKeyPattern;
-	}
-
-	public String getWordVolumeReaderTribegennamestyle() {
-		return wordVolumeReaderTribegennamestyle;
-	}
-
-	public void setWordVolumeReaderTribegennamestyle(
-			String wordVolumeReaderTribegennamestyle) {
-		this.wordVolumeReaderTribegennamestyle = wordVolumeReaderTribegennamestyle;
-	}
-
-	public String getWordVolumeReaderStyleMappingFile() {
-		return wordVolumeReaderStyleMappingFile;
-	}
-
-	public void setWordVolumeReaderStyleMappingFile(
-			String wordVolumeReaderStyleMappingFile) {
-		this.wordVolumeReaderStyleMappingFile = wordVolumeReaderStyleMappingFile;
-	}
-
-	public String getXmlVolumeReaderSourceDirectory() {
-		return xmlVolumeReaderSourceDirectory;
-	}
-
-	public void setXmlVolumeReaderSourceDirectory(
-			String xmlVolumeReaderSourceDirectory) {
-		this.xmlVolumeReaderSourceDirectory = xmlVolumeReaderSourceDirectory;
-	}
-
-	public String getOutputVolumeReaderSourceDirectory() {
-		return outputVolumeReaderSourceDirectory;
-	}
-
-	public void setOutputVolumeReaderSourceDirectory(
-			String outputVolumeReaderSourceDirectory) {
-		this.outputVolumeReaderSourceDirectory = outputVolumeReaderSourceDirectory;
-	}
-
-	public String getGenericFileVolumeReaderSource() {
-		return genericFileVolumeReaderSource;
-	}
-
-	public void setGenericFileVolumeReaderSource(
-			String genericFileVolumeReaderSource) {
-		this.genericFileVolumeReaderSource = genericFileVolumeReaderSource;
-	}
-
-	public String getTaxonxVolumeReaderSourceFile() {
-		return taxonxVolumeReaderSourceFile;
-	}
-
-	public void setTaxonxVolumeReaderSourceFile(String taxonxVolumeReaderSourceFile) {
-		this.taxonxVolumeReaderSourceFile = taxonxVolumeReaderSourceFile;
 	}
 
 	public Class<? extends IDescriptionTransformer> getMarkupDescriptionTreatmentTransformer() {
@@ -452,23 +316,6 @@ public class RunConfig extends BasicConfig {
 
 	public void setDatabasePassword(String databasePassword) {
 		this.databasePassword = databasePassword;
-	}
-
-	public Class<? extends IVolumeWriter> getVolumeWriter() {
-		return volumeWriter;
-	}
-
-	public void setVolumeWriter(Class<? extends IVolumeWriter> volumeWriter) {
-		this.volumeWriter = volumeWriter;
-	}
-
-	public String getStandardVolumeReaderSourcefiles() {
-		return standardVolumeReaderSourcefiles;
-	}
-
-	public void setStandardVolumeReaderSourcefiles(
-			String standardVolumeReaderSourcefiles) {
-		this.standardVolumeReaderSourcefiles = standardVolumeReaderSourcefiles;
 	}
 
 	public String getDatabaseTablePrefix() {
@@ -576,13 +423,83 @@ public class RunConfig extends BasicConfig {
 		this.otoLiteClientURL = otoLiteClientURL;
 	}
 
-	public String getiPlantXMLVolumeReaderSource() {
-		return iPlantXMLVolumeReaderSource;
+	public String getRunRootDirectory() {
+		return runRootDirectory;
 	}
 
-	public void setiPlantXMLVolumeReaderSource(String iPlantXMLVolumeReaderSource) {
-		this.iPlantXMLVolumeReaderSource = iPlantXMLVolumeReaderSource;
+	public void setRunRootDirectory(String runRootDirectory) {
+		this.runRootDirectory = runRootDirectory;
 	}
+
+	public String getRunOutDirectory() {
+		return runOutDirectory;
+	}
+
+	public void setRunOutDirectory(String runOutDirectory) {
+		this.runOutDirectory = runOutDirectory;
+	}
+
+	public String getRunTemporaryDirectory() {
+		return runTemporaryDirectory;
+	}
+
+	public void setRunTemporaryDirectory(String runTemporaryDirectory) {
+		this.runTemporaryDirectory = runTemporaryDirectory;
+	}
+
+	public Class<? extends IDescriptionReader> getDescriptionReader() {
+		return descriptionReader;
+	}
+
+	public void setDescriptionReader(
+			Class<? extends IDescriptionReader> descriptionReader) {
+		this.descriptionReader = descriptionReader;
+	}
+
+	public Class<? extends IDescriptionMarkupResultReader> getEvaluationCorrectReader() {
+		return evaluationCorrectReader;
+	}
+
+	public void setEvaluationCorrectReader(
+			Class<? extends IDescriptionMarkupResultReader> evaluationCorrectReader) {
+		this.evaluationCorrectReader = evaluationCorrectReader;
+	}
+
+	public Class<? extends IDescriptionMarkupResultReader> getEvaluationTestReader() {
+		return evaluationTestReader;
+	}
+
+	public void setEvaluationTestReader(
+			Class<? extends IDescriptionMarkupResultReader> evaluationTestReader) {
+		this.evaluationTestReader = evaluationTestReader;
+	}
+
+	public Class<? extends IDescriptionWriter> getDescriptionWriter() {
+		return descriptionWriter;
+	}
+
+	public void setDescriptionWriter(Class<? extends IDescriptionWriter> descriptionWriter) {
+		this.descriptionWriter = descriptionWriter;
+	}
+
+	public void setEvaluationRunEvaluator(
+			Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator) {
+		this.evaluationRunEvaluator = evaluationRunEvaluator;
+	}
+
+	public String getDescriptionReaderInputDirectory() {
+		return descriptionReaderInputDirectory;
+	}
+
+	public void setDescriptionReaderInputDirectory(
+			String descriptionReaderInputDirectory) {
+		this.descriptionReaderInputDirectory = descriptionReaderInputDirectory;
+	}
+
+	public void setDescriptionReaderBindings(String descriptionReaderBindingsFile) {
+		this.descriptionReaderBindingsFile = descriptionReaderBindingsFile;
+	}
+
 	
 }
 
