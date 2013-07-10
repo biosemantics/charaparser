@@ -4,6 +4,6 @@ import semanticMarkup.markupElement.description.markup.DescriptionMarkupResult;
 
 public interface IDescriptionMarkupResultReader {
 
-	DescriptionMarkupResult read();
+	public DescriptionMarkupResult read(String testInputDirectory) throws Exception;
 
 }

@@ -16,6 +16,8 @@ import semanticMarkup.markupElement.description.model.Structure;
 @XmlRootElement(name="description")
 //@XmlType(propOrder={"source", "structures", "relations"})
 public class Description {
+	
+	private String source;
 
 	private Map<String, Relation> idRelationMap = new HashMap<String, Relation>();
 	private Map<String, Structure> idStructureMap = new HashMap<String, Structure>();
@@ -54,6 +56,14 @@ public class Description {
 		return this.characters;
 	}
 	
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
 	private void initializeModel() {
 		this.characters = new LinkedList<Character>();
 		for(Structure structure : structures) {

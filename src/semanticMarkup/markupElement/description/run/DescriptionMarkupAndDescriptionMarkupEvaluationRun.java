@@ -1,8 +1,8 @@
 package semanticMarkup.markupElement.description.run;
 
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.markupElement.description.eval.IDescriptionMarkupEvaluator;
 import semanticMarkup.markupElement.description.eval.IDescriptionMarkupResultReader;
+import semanticMarkup.markupElement.description.eval.io.IDescriptionMarkupEvaluator;
 import semanticMarkup.markupElement.description.markup.DescriptionMarkupResult;
 import semanticMarkup.markupElement.description.markup.IDescriptionMarkupCreator;
 import semanticMarkup.run.AbstractRun;
@@ -20,6 +20,7 @@ public class DescriptionMarkupAndDescriptionMarkupEvaluationRun extends Abstract
 	private IDescriptionMarkupCreator creator;
 	private IDescriptionMarkupEvaluator evaluator;
 	private IDescriptionMarkupResultReader descriptionMarkupResultReader;
+	private String correctInputDirectory;
 
 	/**
 	 * @param outDirectory
@@ -33,11 +34,13 @@ public class DescriptionMarkupAndDescriptionMarkupEvaluationRun extends Abstract
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("MarkupCreator") IDescriptionMarkupCreator creator, 
 			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator, 
-			@Named("EvaluationRun_DescriptionMarkupResultReader")IDescriptionMarkupResultReader descriptionMarkupResultReader) {
+			@Named("EvaluationRun_DescriptionMarkupResultReader")IDescriptionMarkupResultReader descriptionMarkupResultReader, 
+			String correctInputDirectory) {
 		super(guiceModuleFile, runOutDirectory);
 		this.creator = creator;
 		this.descriptionMarkupResultReader = descriptionMarkupResultReader;
 		this.evaluator = evaluator;
+		this.correctInputDirectory = correctInputDirectory;
 	}
 
 	@Override
@@ -48,7 +51,7 @@ public class DescriptionMarkupAndDescriptionMarkupEvaluationRun extends Abstract
 		log(LogLevel.INFO, "Evaluating markup using " + evaluator.getDescription() + "...");
 		
 		log(LogLevel.INFO, "read gold standard using " + descriptionMarkupResultReader.getClass());
-		DescriptionMarkupResult correctResult = descriptionMarkupResultReader.read();
+		DescriptionMarkupResult correctResult = descriptionMarkupResultReader.read(correctInputDirectory);
 		
 		evaluator.evaluate(result, correctResult);
 		log(LogLevel.INFO, "Evaluation result: \n" + evaluator.getResult());
