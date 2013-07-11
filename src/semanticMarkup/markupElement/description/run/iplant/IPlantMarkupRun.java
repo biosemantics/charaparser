@@ -6,16 +6,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import semanticMarkup.log.LogLevel;
-import semanticMarkup.markupElement.description.markup.IDescriptionMarkupCreator;
-import semanticMarkup.run.AbstractRun;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import semanticMarkup.log.LogLevel;
+import semanticMarkup.markup.IMarkupCreator;
+import semanticMarkup.run.AbstractRun;
+
 public class IPlantMarkupRun extends AbstractRun {
 
-	private IDescriptionMarkupCreator creator;
+	private IMarkupCreator creator;
 	private String databaseHost;
 	private String databasePort;
 	private String databaseName;
@@ -26,13 +26,13 @@ public class IPlantMarkupRun extends AbstractRun {
 	@Inject
 	public IPlantMarkupRun(@Named("GuiceModuleFile")String guiceModuleFile,
 			@Named("Run_OutDirectory")String runOutDirectory, 
-			@Named("DescriptionMarkupCreator") IDescriptionMarkupCreator creator, 
-			@Named("DatabaseHost") String databaseHost,
-			@Named("DatabasePort") String databasePort,
-			@Named("DatabaseName") String databaseName,
-			@Named("DatabaseUser") String databaseUser, 
-			@Named("DatabasePassword") String databasePassword,
-			@Named("DatabasePrefix") String databasePrefix) {
+			@Named("MarkupCreator") IMarkupCreator creator, 
+			@Named("databaseHost") String databaseHost,
+			@Named("databasePort") String databasePort,
+			@Named("databaseName") String databaseName,
+			@Named("databaseUser") String databaseUser, 
+			@Named("databasePassword") String databasePassword,
+			@Named("databasePrefix") String databasePrefix) {
 		super(guiceModuleFile, runOutDirectory);
 		this.creator = creator;
 		this.databaseHost = databaseHost;
@@ -46,7 +46,7 @@ public class IPlantMarkupRun extends AbstractRun {
 	@Override
 	protected void doRun() throws Exception {
 		if(!isValidRun()) {
-			log(LogLevel.ERROR, "Not a valid run. Stop.");
+			log(LogLevel.ERROR, "Not a valid run. The specified ID has not been found as having successfully completed learning.");
 			return;
 		}
 		
@@ -59,7 +59,7 @@ public class IPlantMarkupRun extends AbstractRun {
 		Connection connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
 				databaseUser, databasePassword);
 		
-		String sql = "CREATE TABLE IF NOT EXISTS datasetprefixes (prefix varchar(100) NOT NULL, oto_uploadid int(11) NOT NULL DEFAULT '-1', " +
+		String sql = "CREATE TABLE IF NOT EXISTS datasetprefixes (prefix varchar(100) NOT NULL, glossary_version varchar(10), oto_uploadid int(11) NOT NULL DEFAULT '-1', " +
 				"PRIMARY KEY (prefix))";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.execute();
