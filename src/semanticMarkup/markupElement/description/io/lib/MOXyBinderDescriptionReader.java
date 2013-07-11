@@ -28,8 +28,8 @@ import com.google.inject.name.Named;
 
 public class MOXyBinderDescriptionReader implements IDescriptionReader {
 
-	private Binder<Node> binder;
 	private Map<File, Binding> fileDocumentMappings;
+	private JAXBContext jaxbContext;
 	
 	@Inject
 	public MOXyBinderDescriptionReader(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles,
@@ -38,8 +38,7 @@ public class MOXyBinderDescriptionReader implements IDescriptionReader {
 		this.fileDocumentMappings = fileDocumentMappings;
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
 		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFiles);
-		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);
-		this.binder = jaxbContext.createBinder();
+		this.jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);
 	}
 
 	@Override
@@ -51,6 +50,7 @@ public class MOXyBinderDescriptionReader implements IDescriptionReader {
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		        DocumentBuilder db = dbf.newDocumentBuilder();
 		        Document document = db.parse(inputFile);
+		        Binder<Node> binder = jaxbContext.createBinder();
 		        fileDocumentMappings.put(inputFile, new Binding(document, binder));
 		        
 		        DescriptionsFile descriptionsFile = (DescriptionsFile) binder.unmarshal(document);

@@ -46,18 +46,16 @@ public class DescriptionsFile {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Needed for input format where no <treatments><treatment>...</treatment></treatments> is given
 	 * but instead only one level such as <treatment>...</treatment>
-	 * To still maintain the generic model a treatmentroot has to be inserted 
+	 * To still maintain the generic model a treatmentroot has to be added to the list 
 	 * @return
 	 */
-	public void setDescriptions(List<Description> descriptions) {
-		TreatmentRoot treatmentRoot = new TreatmentRoot();
-		treatmentRoot.setDescriptions(descriptions);
+	public void setTreatmentRoot(TreatmentRoot treatmentRoot) {
 		this.treatmentRoots.add(treatmentRoot);
 	}
-
 }
+
 
