@@ -368,6 +368,10 @@ public class RunConfig extends BasicConfig {
 
 	public void setDatabaseTablePrefix(String databaseTablePrefix) {
 		this.databaseTablePrefix = databaseTablePrefix;
+		this.runRootDirectory = "workspace" + File.separator + this.databaseTablePrefix;
+		this.runOutDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "out";
+		this.runTemporaryDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp";
+		
 	}
 
 	public String getDatabaseGlossaryTable() {
