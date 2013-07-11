@@ -12,11 +12,11 @@ import javax.xml.bind.Marshaller;
 
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
-import com.google.inject.name.Named;
-
 import semanticMarkup.markupElement.description.io.IDescriptionWriter;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
+
+import com.google.inject.name.Named;
 
 public class MOXyDescriptionWriter implements IDescriptionWriter {
 

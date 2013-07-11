@@ -12,34 +12,30 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
-
-import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
-import semanticMarkup.markupElement.description.io.IDescriptionWriter;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 
-public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, IDescriptionWriter {
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+public class MOXyBinderDescriptionReader implements IDescriptionReader {
 
 	private Binder<Node> binder;
-	private Map<File, Document> documents = new HashMap<File, Document>();
+	private Map<File, Binding> fileDocumentMappings;
 	
 	@Inject
-	public MOXyBinderDescriptionReaderWriter(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles) 
+	public MOXyBinderDescriptionReader(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles,
+			@Named("MOXyBinderDescriptionReaderWriter_FileDocumentMappings")Map<File, Binding> fileDocumentMappings)
 			throws JAXBException {
+		this.fileDocumentMappings = fileDocumentMappings;
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
 		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFiles);
 		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);
@@ -55,7 +51,7 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		        DocumentBuilder db = dbf.newDocumentBuilder();
 		        Document document = db.parse(inputFile);
-				documents.put(inputFile, document);
+		        fileDocumentMappings.put(inputFile, new Binding(document, binder));
 		        
 		        DescriptionsFile descriptionsFile = (DescriptionsFile) binder.unmarshal(document);
 		        descriptionsFile.setFile(inputFile);
@@ -66,29 +62,6 @@ public class MOXyBinderDescriptionReaderWriter implements IDescriptionReader, ID
 					inputDirectory);
 		}
 		return new DescriptionsFileList(descriptionsFiles);
-	}
-
-	@Override
-	public void write(DescriptionsFileList descriptionsFileList, String writeDirectory) throws Exception {
-		File outDirectoryFile = new File(writeDirectory);
-		if(outDirectoryFile.exists() && outDirectoryFile.isDirectory()) {			
-			for(DescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
-				if(documents.containsKey(descriptionsFile.getFile())) {
-					Document document = documents.get(descriptionsFile.getFile());
-					binder.updateXML(descriptionsFile);
-					
-					File outputFile = new File(writeDirectory + File.separator + descriptionsFile.getFile().getName());
-					TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			        Transformer transformer = transformerFactory.newTransformer();
-			        transformer.transform(new DOMSource(document), new StreamResult(outputFile));
-				} else {
-					this.log(LogLevel.ERROR, "There is a descriptionsFile without a corresponding DOM Document");
-				}
-			}
-		} else {
-			throw new IOException("Output directory does not exist or there is a name conflict with a file: " + 
-					writeDirectory);
-		}
 	}
 
 }

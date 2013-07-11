@@ -3,7 +3,10 @@ package semanticMarkup.config;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import org.w3c.dom.Document;
 
 import oto.full.IOTOClient;
 import oto.full.OTOClient;
@@ -66,6 +69,7 @@ import semanticMarkup.ling.transform.lib.WhitespaceTokenCombiner;
 import semanticMarkup.ling.transform.lib.WhitespaceTokenizer;
 import semanticMarkup.ling.transform.lib.WordStanfordParserTokenTransformer;
 import semanticMarkup.markupElement.description.io.ParentTagProvider;
+import semanticMarkup.markupElement.description.io.lib.Binding;
 import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
 import semanticMarkup.markupElement.description.ling.extract.lib.AndChunkProcessor;
 import semanticMarkup.markupElement.description.ling.extract.lib.AreaChunkProcessor;
@@ -135,6 +139,8 @@ public class BasicConfig extends AbstractModule {
 		  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 			 
 		  // IO
+		  bind(new TypeLiteral<Map<File, Binding>>() {}).annotatedWith(Names.named("MOXyBinderDescriptionReaderWriter_FileDocumentMappings")).to(
+				  new TypeLiteral<HashMap<File, Binding>>() {}).in(Singleton.class);
 		  
 		  // PROCESSING
 		  bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);

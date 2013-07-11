@@ -11,7 +11,8 @@ import org.apache.commons.cli.ParseException;
 import semanticMarkup.config.RunConfig;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReaderWriter;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReader;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionWriter;
 import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.markupElement.description.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.markupElement.description.run.iplant.IPlantLearnRun;
@@ -70,7 +71,7 @@ public class LearnMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setDescriptionReader(MOXyBinderDescriptionReaderWriter.class);
+		    config.setDescriptionReader(MOXyBinderDescriptionReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
@@ -153,6 +154,6 @@ public class LearnMain extends CLIMain {
 		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
-		config.setDescriptionWriter(MOXyBinderDescriptionReaderWriter.class);
+		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 	}
 }

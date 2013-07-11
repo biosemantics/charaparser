@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
+
+import org.w3c.dom.Document;
 
 import semanticMarkup.eval.IEvaluator;
 import semanticMarkup.know.IGlossary;

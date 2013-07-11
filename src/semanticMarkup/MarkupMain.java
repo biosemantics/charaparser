@@ -13,7 +13,8 @@ import org.apache.commons.cli.ParseException;
 import semanticMarkup.config.RunConfig;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReaderWriter;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReader;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionWriter;
 import semanticMarkup.markupElement.description.io.lib.MOXyDescriptionReader;
 import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.markupElement.description.run.iplant.IPlantMarkupRun;
@@ -72,7 +73,7 @@ public class MarkupMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setDescriptionReader(MOXyBinderDescriptionReaderWriter.class);
+		    config.setDescriptionReader(MOXyBinderDescriptionReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
@@ -154,6 +155,6 @@ public class MarkupMain extends CLIMain {
 		config.setGlossary(InMemoryGlossary.class);
 		//no learning required, already passed learning and reviewed terms in OTO Lite 
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
-		config.setDescriptionWriter(MOXyBinderDescriptionReaderWriter.class);
+		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 	}
 }

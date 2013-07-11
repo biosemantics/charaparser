@@ -13,11 +13,11 @@ import javax.xml.bind.Unmarshaller;
 
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
-import com.google.inject.name.Named;
-
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
+
+import com.google.inject.name.Named;
 
 public class MOXyDescriptionReader implements IDescriptionReader {
 
