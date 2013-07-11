@@ -63,7 +63,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
 	private String descriptionReaderInputDirectory = "input";
 	private String baseBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "baseBindings.xml";
-	private String descriptionReaderBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "descriptionBindings.xml";
+	private String descriptionReaderBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "singleTreatmentDescriptionBindings.xml";
 	private String evaluationCorrectReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml";
 	private String evaluationTestReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml"; 
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyDescriptionWriter.class;

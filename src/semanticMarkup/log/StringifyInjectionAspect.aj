@@ -39,6 +39,7 @@ public aspect StringifyInjectionAspect {
 	/**
 	 * IPrintables are specified
 	 */
+	declare parents : semanticMarkup.config.* implements IPrintable;
 	/*declare parents : semanticMarkup.* implements IPrintable;
 	
 	declare parents : semanticMarkup.model..* implements IPrintable;
