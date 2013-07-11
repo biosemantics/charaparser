@@ -1,5 +1,6 @@
 package semanticMarkup.markupElement.description.model;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -81,15 +82,22 @@ public class Statement extends Element {
 	}
 	@Override
 	public void removeElementRecursively(Element element) {
-		for(Structure structure : this.structures)
+		Iterator<Structure> structuresIterator = structures.iterator();
+		while(structuresIterator.hasNext()) {
+			Structure structure = structuresIterator.next();
 			if(structure.equals(element))
-				this.structures.remove(element);
+				structuresIterator.remove();
 			else
 				structure.removeElementRecursively(element);
-		for(Relation relation : this.relations)
+		}
+		
+		Iterator<Relation> relationsIterator = relations.iterator();
+		while(relationsIterator.hasNext()) {
+			Relation relation = relationsIterator.next();
 			if(relation.equals(element))
-				this.relations.remove(element);
+				relationsIterator.remove();
 			else
 				relation.removeElementRecursively(element);
+		}
 	}
 }

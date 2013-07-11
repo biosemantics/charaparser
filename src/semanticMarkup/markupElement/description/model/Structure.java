@@ -1,6 +1,7 @@
 package semanticMarkup.markupElement.description.model;
 
 
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
@@ -338,10 +339,13 @@ public class Structure extends NamedElement {
 
 	@Override
 	public void removeElementRecursively(Element element) {
-		for(Character character : this.characters)
+		Iterator<Character> charactersIterator = characters.iterator();
+		while(charactersIterator.hasNext()) {
+			Character character = charactersIterator.next();
 			if(character.equals(element))
-				this.characters.remove(character);
+				charactersIterator.remove();
 			else
 				character.removeElementRecursively(element);
+		}
 	}
 }

@@ -98,23 +98,23 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(runOutDirectory);
 		bind(String.class).annotatedWith(Names.named("Run_TemporaryDirectory")).toInstance(runTemporaryDirectory);
 		bind(IGlossary.class).to(glossary).in(Singleton.class);
-		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator);
-		bind(IDescriptionTransformer.class).to(markupDescriptionTreatmentTransformer);
+		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator).in(Singleton.class);
+		bind(IDescriptionTransformer.class).to(markupDescriptionTreatmentTransformer).in(Singleton.class);
 		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
 		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class); 
-		bind(INormalizer.class).to(normalizer);
+		bind(INormalizer.class).to(normalizer).in(Singleton.class);
 		bind(IDescriptionMarkupEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
 		
 		//IO
-		bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader);
+		bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader).in(Singleton.class);
 		bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(descriptionReaderInputDirectory);
 		bind(new TypeLiteral<List<String>>() {}).annotatedWith(Names.named("DescriptionReader_BindingsFiles")).toInstance(constructDescriptionReaderBindings());
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(descriptionReaderInputDirectory));
 		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).toInstance(constructEvaluationCorrectReader());
 		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).toInstance(constructEvaluationTestReader());
-		bind(IDescriptionWriter.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionWriter")).to(descriptionWriter);
+		bind(IDescriptionWriter.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionWriter")).to(descriptionWriter).in(Singleton.class);
 		
 		//ENVIRONMENTAL
 		bind(String.class).annotatedWith(Names.named("DatabasePrefix")).toInstance(databaseTablePrefix); 

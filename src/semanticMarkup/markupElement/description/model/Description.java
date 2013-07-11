@@ -1,6 +1,7 @@
 package semanticMarkup.markupElement.description.model;
 
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -57,10 +58,13 @@ public class Description extends Element {
 
 	@Override
 	public void removeElementRecursively(Element element) {
-		for(Statement statement : this.statements)
+		Iterator<Statement> statementsIterator = statements.iterator();
+		while(statementsIterator.hasNext()) {
+			Statement statement = statementsIterator.next();
 			if(statement.equals(element))
-				this.statements.remove(element);
+				statementsIterator.remove();
 			else
 				statement.removeElementRecursively(element);
+		}
 	}
 }

@@ -27,12 +27,12 @@ public class IPlantMarkupRun extends AbstractRun {
 	public IPlantMarkupRun(@Named("GuiceModuleFile")String guiceModuleFile,
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("MarkupCreator") IMarkupCreator creator, 
-			@Named("databaseHost") String databaseHost,
-			@Named("databasePort") String databasePort,
-			@Named("databaseName") String databaseName,
-			@Named("databaseUser") String databaseUser, 
-			@Named("databasePassword") String databasePassword,
-			@Named("databasePrefix") String databasePrefix) {
+			@Named("DatabaseHost") String databaseHost,
+			@Named("DatabasePort") String databasePort,
+			@Named("DatabaseName") String databaseName,
+			@Named("DatabaseUser") String databaseUser, 
+			@Named("DatabasePassword") String databasePassword,
+			@Named("DatabasePrefix") String databasePrefix) {
 		super(guiceModuleFile, runOutDirectory);
 		this.creator = creator;
 		this.databaseHost = databaseHost;

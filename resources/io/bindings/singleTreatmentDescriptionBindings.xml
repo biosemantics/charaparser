@@ -7,7 +7,7 @@
 			<xml-root-element name="treatment"/>
             <java-attributes>
                 <xml-element java-attribute="meta" xml-path="meta" type="semanticMarkup.markupElement.description.model.Meta"/>
-				<xml-element java-attribute="treatmentRoots" xml-path="" type="semanticMarkup.markupElement.description.model.TreatmentRoot" container-type="java.util.List" />
+				<xml-element java-attribute="descriptions" xml-path="description" type="semanticMarkup.markupElement.description.model.Description" container-type="java.util.List" />
             </java-attributes>
         </java-type>
 		<java-type name="semanticMarkup.markupElement.description.model.Meta">
@@ -15,11 +15,6 @@
 				<xml-element java-attribute="glossaryType" xml-path="glossaryType/text()" />
 				<xml-element java-attribute="glossaryVersion" xml-path="glossaryVersion/text()" />
 				<xml-element java-attribute="charaparserVersion" xml-path="charaparserVersion/text()" />
-            </java-attributes>
-        </java-type>
-		<java-type name="TreatmentRoot">
-            <java-attributes>
-				<xml-element java-attribute="descriptions" xml-path="description" type="semanticMarkup.markupElement.description.model.Description" container-type="java.util.List" />
             </java-attributes>
         </java-type>
         <java-type name="semanticMarkup.markupElement.description.model.Description">
