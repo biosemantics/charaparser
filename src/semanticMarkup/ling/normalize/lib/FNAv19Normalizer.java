@@ -67,7 +67,7 @@ public class FNAv19Normalizer extends Normalizer {
 			@Named("StopWords") Set<String> stopWords, 
 			@Named("PrepositionWords") String prepositionWords,
 			@Named("ModifierList") String modifierList, 
-			ParentTagProvider parentTagProvider,
+			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, 
 			IInflector inflector) {

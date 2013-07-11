@@ -111,7 +111,7 @@ public abstract class Normalizer implements INormalizer {
 			@Named("StopWords") Set<String> stopWords, 
 			@Named("PrepositionWords") String prepositionWords,
 			@Named("ModifierList") String modifierList, 
-			ParentTagProvider parentTagProvider,
+			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, 
 			IInflector inflector) {

@@ -108,6 +108,7 @@ import semanticMarkup.markupElement.description.ling.learn.lib.PerlTerminologyLe
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
 /**
@@ -153,6 +154,7 @@ public class BasicConfig extends AbstractModule {
 		  bind(IParser.class).to(StanfordParserWrapper.class).in(Singleton.class);
 		  bind(IStanfordParserTokenTransformer.class).to(WordStanfordParserTokenTransformer.class).in(Singleton.class);
 		  bind(IParseTreeFactory.class).to(StanfordParseTreeFactory.class).in(Singleton.class);
+		  bind(ParentTagProvider.class).annotatedWith(Names.named("ParentTagProvider")).to(ParentTagProvider.class).in(Singleton.class);
 		  
 		  bind(ChunkerChain.class).annotatedWith(Names.named("ChunkerChain")).to(CharaparserChunkerChain.class).in(Singleton.class);
 		  bind(IChunker.class).annotatedWith(Names.named("OrganChunker")).to(OrganChunker.class).in(Singleton.class);

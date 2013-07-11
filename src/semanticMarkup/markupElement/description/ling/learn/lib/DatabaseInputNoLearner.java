@@ -46,7 +46,7 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 			@Named("SelectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer, 
-			ParentTagProvider parentTagProvider) throws Exception {
+			@Named("ParentTagProvider")ParentTagProvider parentTagProvider) throws Exception {
 		super(temporaryPath, markupMode, databaseHost, databasePort, databaseName,
 				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer, parentTagProvider);
 	}
