@@ -12,12 +12,15 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXParseException;
 
+import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
@@ -30,15 +33,18 @@ public class MOXyBinderDescriptionReader implements IDescriptionReader {
 
 	private Map<File, Binding> fileDocumentMappings;
 	private JAXBContext jaxbContext;
+	private DocumentBuilder documentBuilder;
 	
 	@Inject
 	public MOXyBinderDescriptionReader(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles,
 			@Named("MOXyBinderDescriptionReaderWriter_FileDocumentMappings")Map<File, Binding> fileDocumentMappings)
-			throws JAXBException {
+			throws JAXBException, ParserConfigurationException {
 		this.fileDocumentMappings = fileDocumentMappings;
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
 		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFiles);
 		this.jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);
+		
+		this.documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();;
 	}
 
 	@Override
@@ -47,15 +53,17 @@ public class MOXyBinderDescriptionReader implements IDescriptionReader {
 		File inputDirectoryFile = new File(inputDirectory);
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {			
 			for(File inputFile : inputDirectoryFile.listFiles()) {
-				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		        DocumentBuilder db = dbf.newDocumentBuilder();
-		        Document document = db.parse(inputFile);
-		        Binder<Node> binder = jaxbContext.createBinder();
-		        fileDocumentMappings.put(inputFile, new Binding(document, binder));
-		        
-		        DescriptionsFile descriptionsFile = (DescriptionsFile) binder.unmarshal(document);
-		        descriptionsFile.setFile(inputFile);
-				descriptionsFiles.add(descriptionsFile);
+				try {
+			        Document document = documentBuilder.parse(inputFile);
+			        Binder<Node> binder = jaxbContext.createBinder();
+			        DescriptionsFile descriptionsFile = (DescriptionsFile) binder.unmarshal(document);
+			        descriptionsFile.setFile(inputFile);
+					descriptionsFiles.add(descriptionsFile);
+				
+					fileDocumentMappings.put(inputFile, new Binding(document, binder));
+				} catch (Exception e) {
+					log(LogLevel.ERROR, "Could not read input file " + inputFile.getAbsolutePath());
+				} 
 			}
 		} else {
 			throw new IOException("Input directory does not exist or there is a name conflict with a file: " + 
