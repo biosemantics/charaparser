@@ -1,6 +1,6 @@
 package semanticMarkup.markupElement.description.model;
 
-
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
@@ -38,6 +38,7 @@ import semanticMarkup.model.description.attributes.CharacterAttribute;
  * @author rodenhausen
  *
  */
+@XmlRootElement
 public class Character extends NamedElement {
 
 	@XmlPath("@" + CharacterAttribute.value)
@@ -281,11 +282,6 @@ public class Character extends NamedElement {
 	
 	public Structure getStructure() {
 		return this.structure;
-	}
-	
-	@Override
-	public String toString() {
-		return this.getName() + " = " + this.getValue();
 	}
 
 	public void appendModifier(String modifier) {

@@ -1,6 +1,8 @@
 package semanticMarkup.markupElement.description.model;
 
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
 import semanticMarkup.model.Element;
@@ -28,6 +30,7 @@ import semanticMarkup.model.description.attributes.RelationAttribute;
  * @author rodenhausen
  *
  */
+@XmlRootElement
 public class Relation extends NamedElement {
 	@XmlPath("@" + RelationAttribute.alter_name)
 	private String alterName;
@@ -190,11 +193,6 @@ public class Relation extends NamedElement {
 
 	public Structure getFromStructure() {
 		return fromStructure;
-	}
-	
-	@Override
-	public String toString() {
-		return this.getName();
 	}
 	
 	public void appendModifier(String modifier) {

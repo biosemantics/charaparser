@@ -108,7 +108,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
 		addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext));
-		log(LogLevel.DEBUG, "result " + result);
+		log(LogLevel.DEBUG, "result:\n" + result);
 		while(iterator.hasNext()) {
 			if(!iterator.hasPrevious() && firstChunkProcessor.skipFirstChunk()) {
 				iterator.next();
@@ -117,7 +117,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			if(iterator.hasNext()) {
 				addToResult(result, describeChunk(processingContext));
 			}
-			log(LogLevel.DEBUG, "result " + result);
+			log(LogLevel.DEBUG, "result:\n" + result);
 		}
 		
 		addToResult(result, lastChunkProcessor.process(processingContext));

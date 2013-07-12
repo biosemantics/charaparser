@@ -157,7 +157,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected List<Structure> createStructureElements(List<Chunk> subjectChunks, ProcessingContextState processingContextState) {
 		LinkedList<Structure> results = new LinkedList<Structure>();	
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
-		log(LogLevel.DEBUG, "create structure element from subjectChunks " + subjectChunks);
+		log(LogLevel.DEBUG, "create structure element from subjectChunks:\n" + subjectChunks);
 		List<Chunk> organChunks = subjectChunk.getChunks(ChunkType.ORGAN);
 		if(!organChunks.isEmpty()) {
 			for(Chunk organChunk : organChunks) {
@@ -599,7 +599,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected Character createCharacterElement(List<Structure> parents, List<Chunk> modifiers, 
 			String characterValue, String characterName, String char_type, ProcessingContextState processingContextState) {
-		log(LogLevel.DEBUG, "create character element " + characterName + ": " +  characterValue + " for parent "  + parents);
+		log(LogLevel.DEBUG, "create character element " + characterName + ": " +  characterValue + " for parent:\n "  + parents);
 		String modifierString = "";
 		if(modifiers != null) {
 			for(Chunk modifier : modifiers)
@@ -818,7 +818,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			List<Structure> fromStructures, List<Structure> toStructures, 
 			List<Chunk> modifiers, boolean symmetric, 
 			ProcessingContextState processingContextState) {
-		log(LogLevel.DEBUG, "create relation " + relation + " between " + fromStructures + " to " + toStructures);
+		log(LogLevel.DEBUG, "create relation \"" + relation + "\" between: \n" + fromStructures + "\nto\n" + toStructures);
 		//add relation elements
 		LinkedList<Relation> relationElements = new LinkedList<Relation>();
 		for(int i = 0; i < fromStructures.size(); i++) {
