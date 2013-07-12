@@ -45,7 +45,7 @@ In Eclipse you can therefore use:
 
 and configure your Eclipse project to be a Maven and AspectJ Project.
 
-Sources are built for Java compiler compliance level 1.7.
+Sources are built for Java SDK compiler compliance level 1.7.
 
 Software Dependencies
 ----------
