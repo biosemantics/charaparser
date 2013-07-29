@@ -18,7 +18,7 @@ public class DescriptionMarkupRun extends AbstractRun {
 	@Inject
 	public DescriptionMarkupRun(@Named("GuiceModuleFile")String guiceModuleFile,
 			@Named("Run_OutDirectory")String runOutDirectory, 
-			@Named("DescriptionMarkupCreator") IDescriptionMarkupCreator creator) {
+			IDescriptionMarkupCreator creator) {
 		super(guiceModuleFile, runOutDirectory);
 		this.creator = creator;
 	}

@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
@@ -26,7 +27,7 @@ public class MOXyDescriptionReader implements IDescriptionReader {
 	public MOXyDescriptionReader(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles) throws JAXBException {
 		Map<String, Object> properties = new HashMap<String, Object>(1);
 		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, bindingsFiles);
-		JAXBContext jaxbContext = JAXBContext.newInstance(new Class[] {DescriptionsFile.class}, properties);
+		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {DescriptionsFile.class}, properties);
 		this.unmarshaller = jaxbContext.createUnmarshaller(); 
 	}
 

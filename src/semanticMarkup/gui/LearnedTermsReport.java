@@ -60,7 +60,7 @@ public class LearnedTermsReport {
 		try{
 			if(conn == null){
 				String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-									this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+									this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 				conn = DriverManager.getConnection(URL);
 			}
 			Statement stmt = conn.createStatement();

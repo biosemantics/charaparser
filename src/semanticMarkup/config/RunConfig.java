@@ -29,6 +29,7 @@ import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.markupElement.description.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.markupElement.description.markup.DescriptionMarkupCreator;
+import semanticMarkup.markupElement.description.markup.IDescriptionMarkupCreator;
 import semanticMarkup.markupElement.description.transform.GUIDescriptionTransformer;
 import semanticMarkup.markupElement.description.eval.IDescriptionMarkupResultReader;
 import semanticMarkup.markupElement.description.eval.io.IDescriptionMarkupEvaluator;
@@ -36,6 +37,7 @@ import semanticMarkup.markupElement.description.eval.lib.PerfectPartialPrecision
 import semanticMarkup.markupElement.description.eval.io.lib.MOXyDescriptionMarkupResultReader;
 import semanticMarkup.markupElement.description.io.lib.EvaluationDBDescriptionReader;
 import semanticMarkup.markupElement.description.io.lib.MOXyDescriptionWriter;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionWriter;
 
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -69,7 +71,7 @@ public class RunConfig extends BasicConfig {
 	private String descriptionReaderBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "singleTreatmentDescriptionBindings.xml";
 	private String evaluationCorrectReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml";
 	private String evaluationTestReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml"; 
-	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyDescriptionWriter.class;
+	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
 	
 	// PROCESSING 
 	private String glossaryType = "plant";
@@ -79,6 +81,7 @@ public class RunConfig extends BasicConfig {
 	private String runTemporaryDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp";
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
+	private Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTransformer.class;
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
@@ -102,6 +105,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("Run_TemporaryDirectory")).toInstance(runTemporaryDirectory);
 		bind(IGlossary.class).to(glossary).in(Singleton.class);
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator).in(Singleton.class);
+		bind(IDescriptionMarkupCreator.class).to(descriptionMarkupCreator).in(Singleton.class);
 		bind(IDescriptionTransformer.class).to(markupDescriptionTreatmentTransformer).in(Singleton.class);
 		bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 		bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
