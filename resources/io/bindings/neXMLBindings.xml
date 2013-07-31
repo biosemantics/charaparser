@@ -29,6 +29,8 @@
             <java-attributes>
 				<xml-element java-attribute="descriptions" xml-path="/nex:characters/nex:format/nex:states/nex:state" 
 				type="semanticMarkup.markupElement.description.model.Description" container-type="java.util.List" />
+				<xml-element java-attribute="descriptions" xml-path="/nex:characters/nex:format/nex:char" 
+				type="semanticMarkup.markupElement.description.model.Description" container-type="java.util.List" />
             </java-attributes>
         </java-type>
         <java-type name="Description">

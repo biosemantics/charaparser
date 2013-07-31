@@ -10,10 +10,10 @@ import semanticMarkup.run.IRun;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class NexMainTest {
+public class NeXMLMainTest {
 
 	public static void main(String[] args) throws Exception {
-		NexMainTest main = new NexMainTest();
+		NeXMLMainTest main = new NeXMLMainTest();
 		main.run();
 	}
 

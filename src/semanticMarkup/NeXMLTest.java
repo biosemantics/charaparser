@@ -14,7 +14,7 @@ import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
-public class NexTest {
+public class NeXMLTest {
 
 	/**
 	 * @param args
@@ -22,7 +22,7 @@ public class NexTest {
 	 */
 	public static void main(String[] args) throws JAXBException {
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
-		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE, "resources//io//bindings//nexBindings.xml");
+		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE, "resources//io//bindings//neXMLBindings.xml");
 		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {DescriptionsFile.class}, jaxbContextProperties);
 		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 		DescriptionsFile descriptionsFile = (DescriptionsFile)unmarshaller.unmarshal(new File("input//Swartz 2012.xml"));
@@ -30,6 +30,7 @@ public class NexTest {
 		for(Description description : descriptionsFile.getDescriptions()) {
 			System.out.println(description.getText());
 		}
+		System.out.println(descriptionsFile.getDescriptions().size());
 	}
 
 }
