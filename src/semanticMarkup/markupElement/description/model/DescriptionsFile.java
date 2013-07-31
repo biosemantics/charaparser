@@ -1,14 +1,15 @@
 package semanticMarkup.markupElement.description.model;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-
-public class DescriptionsFile {
+/**
+ * Could be split in two subclasses of AbstractDescriptionsFile to accomodate for single/multiple treatmentRoots within a XML file separately 
+ * @author rodenhausen
+ *
+ */
+public class DescriptionsFile extends AbstractDescriptionsFile {
 	
-	private File file; // source could later then be filename + descriptionID + sentenceID
-	private Meta meta;
 	private List<TreatmentRoot> treatmentRoots = new LinkedList<TreatmentRoot>();
 
 	public List<TreatmentRoot> getTreatmentRoots() {
@@ -18,35 +19,7 @@ public class DescriptionsFile {
 	public void setTreatmentRoots(List<TreatmentRoot> treatmentRoots) {
 		this.treatmentRoots = treatmentRoots;
 	}
-
-	public File getFile() {
-		return file;
-	}
 	
-	public void setFile(File file) {
-		this.file = file;
-	}
-	
-	public void setMeta(Meta meta) {
-		this.meta = meta;
-	}
-	
-	public Meta getMeta() {
-		return this.meta;
-	}
-
-	public String getName() {
-		return this.getFile().getName();
-	}
-	
-	public List<Description> getDescriptions() {
-		List<Description> result = new LinkedList<Description>();
-		for(TreatmentRoot treatmentRoot : treatmentRoots) {
-			result.addAll(treatmentRoot.getDescriptions());
-		}
-		return result;
-	}
-
 	/**
 	 * Needed for input format where no <treatments><treatment>...</treatment></treatments> is given
 	 * but instead only one level such as <treatment>...</treatment>
@@ -56,6 +29,16 @@ public class DescriptionsFile {
 	public void setTreatmentRoot(TreatmentRoot treatmentRoot) {
 		this.treatmentRoots.add(treatmentRoot);
 	}
+	
+	@Override
+	public List<Description> getDescriptions() {
+		List<Description> result = new LinkedList<Description>();
+		for(TreatmentRoot treatmentRoot : treatmentRoots) {
+			result.addAll(treatmentRoot.getDescriptions());
+		}
+		return result;
+	}
+
 }
 
 

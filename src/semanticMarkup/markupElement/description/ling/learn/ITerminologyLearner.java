@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import semanticMarkup.markupElement.description.model.Description;
-import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 
 /**
  * ITerminologyLearner learns the terminology of a list of treatments
@@ -18,13 +18,13 @@ public interface ITerminologyLearner {
 	 * Learns the terminology used in the treatments
 	 * @param treatments
 	 */
-	public void learn(List<DescriptionsFile> descriptionsFiles, String glossaryTable);
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable);
 	
 	/**
 	 * Reads the results for the treatments, so that any other function returns the 'freshest' results
 	 * @param treatments
 	 */
-	public void readResults(List<DescriptionsFile> descriptionsFiles);
+	public void readResults(List<AbstractDescriptionsFile> descriptionsFiles);
 	
 	/**
 	 * @return <treatment, <source, sentence>> map

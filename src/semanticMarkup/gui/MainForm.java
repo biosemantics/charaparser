@@ -76,6 +76,7 @@ import org.eclipse.swt.widgets.Text;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -3937,10 +3938,10 @@ public class MainForm {
 		}
 	}
 	
-	public void startMarkup(List<DescriptionsFile> descriptionsFiles) {
+	public void startMarkup(List<AbstractDescriptionsFile> descriptionsFiles) {
 		String workdir = MainForm.targetDirectory;
 		
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				String text = description.getText();
 				outputElementText(workdir, descriptionsFile.getName(), text);

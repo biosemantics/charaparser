@@ -28,7 +28,7 @@ import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.ling.learn.AdjectiveReplacementForNoun;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 import semanticMarkup.markupElement.description.model.Description;
-import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -121,7 +121,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	
 	
 	@Override
-	public void learn(List<DescriptionsFile> descriptionsFiles, String glossaryTable) {
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) {
 		File directory = new File(temporaryPath);
 		
 		try {
@@ -308,7 +308,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return tags;
 	}
 
-	protected Set<String> readBracketTags(List<DescriptionsFile> descriptionsFiles) {
+	protected Set<String> readBracketTags(List<AbstractDescriptionsFile> descriptionsFiles) {
 		Set<String> tags = new HashSet<String>();
 		try {
 			Statement statement = connection.createStatement();
@@ -335,7 +335,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return tags;
 	}
 
-	protected Map<Description, LinkedHashMap<String, String>> readSentenceTags(List<DescriptionsFile> descriptionsFiles) {
+	protected Map<Description, LinkedHashMap<String, String>> readSentenceTags(List<AbstractDescriptionsFile> descriptionsFiles) {
 		Map<Description, LinkedHashMap<String, String>> tags = new HashMap<Description, LinkedHashMap<String, String>>();
 		try {
 			Statement statement = connection.createStatement();
@@ -377,7 +377,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return tags;
 	}
 
-	protected HashMap<Description,  LinkedHashMap<String, String>> readSentencesForOrganStateMarker(List<DescriptionsFile> descriptionsFiles) {
+	protected HashMap<Description,  LinkedHashMap<String, String>> readSentencesForOrganStateMarker(List<AbstractDescriptionsFile> descriptionsFiles) {
 		HashMap<Description, LinkedHashMap<String, String>> sentences = new  HashMap<Description, LinkedHashMap<String, String>>();
 		try {
 			Statement statement = connection.createStatement();
@@ -532,7 +532,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return this.heuristicNouns;
 	}
 	
-	private void runPerl(File inDirectory, List<DescriptionsFile> descriptionsFiles, String glossaryTable) throws Exception {
+	private void runPerl(File inDirectory, List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) throws Exception {
 		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "//"
 				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix
 				+ " " + glossaryTable;
@@ -541,7 +541,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		runCommand(command);
 	}
 	
-	private void createTablesNeededForPerl(List<DescriptionsFile> descriptionsFiles) {
+	private void createTablesNeededForPerl(List<AbstractDescriptionsFile> descriptionsFiles) {
         try {
             Statement stmt = connection.createStatement();
             String cleanupQuery = "DROP TABLE IF EXISTS " + 
@@ -604,13 +604,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	    return df.format(num);
 	}
 	
-	private void writeTreatmentsToFiles(List<DescriptionsFile> descriptionsFiles, File directory) throws IOException {
+	private void writeTreatmentsToFiles(List<AbstractDescriptionsFile> descriptionsFiles, File directory) throws IOException {
 		int i = 0;
 		int descriptionCount = 0;
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			descriptionCount += descriptionsFile.getDescriptions().size();
 		}
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3));			
 				File treatmentFile = File.createTempFile(prefix  + ".", ".txt", directory);
@@ -670,7 +670,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 
 	@Override
-	public void readResults(List<DescriptionsFile> descriptionsFiles) {
+	public void readResults(List<AbstractDescriptionsFile> descriptionsFiles) {
 		this.sentences = readSentences();
 		this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(descriptionsFiles);
 		this.adjnouns = readAdjNouns();

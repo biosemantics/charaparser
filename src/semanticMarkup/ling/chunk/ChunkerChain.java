@@ -5,6 +5,7 @@ import java.util.List;
 
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -26,7 +27,7 @@ public class ChunkerChain {
 	 * @param sentenceString
 	 * @return the resulting chunkCollector
 	 */
-	public ChunkCollector chunk(AbstractParseTree parseTree, String subjectTag, Description description, DescriptionsFile descriptionsFile, 
+	public ChunkCollector chunk(AbstractParseTree parseTree, String subjectTag, Description description, AbstractDescriptionsFile descriptionsFile, 
 			String source, String sentenceString) {
 		ChunkCollector chunkCollector = new ChunkCollector(parseTree, subjectTag, description, descriptionsFile, source, sentenceString);
 		for(IChunker chunker : chunkers) {

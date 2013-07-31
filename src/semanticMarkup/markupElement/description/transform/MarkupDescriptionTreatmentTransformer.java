@@ -36,6 +36,7 @@ import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -141,7 +142,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	@Override
-	public TransformationReport transform(List<DescriptionsFile> descriptionsFiles) {
+	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) {
 		//download gloss again from real OTO because the last download is no longer in memory
 		//it is possible for gloss o change from last run, make sure to grab the correct version.
 		//when remove MYSQL, take care of this issue
@@ -324,7 +325,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * @param treatments
 	 * @param sentencesForOrganStateMarker
 	 */
-	protected void markupDescriptions(List<DescriptionsFile> descriptionsFiles, Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
+	protected void markupDescriptions(List<AbstractDescriptionsFile> descriptionsFiles, Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
 		//configure exectuorService to only allow a number of threads to run at a time
 		ExecutorService executorService = null;
 		if(!this.parallelProcessing)
@@ -335,13 +336,13 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			executorService = Executors.newCachedThreadPool();
 		
 		int descriptionCount = 0;
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			descriptionCount += descriptionsFile.getDescriptions().size();
 		}
 		CountDownLatch descriptionExtractorsLatch = new CountDownLatch(descriptionCount);
 		
 		// process each treatment separately
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				// start a DescriptionExtractorRun for the treatment to process as a separate thread
 				DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(
@@ -361,7 +362,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			log(LogLevel.ERROR, "Problem with descriptionExtractorsLatch or executorService", e);
 		}
 		
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				Future<Description> futureNewDescription = futureNewDescriptions.get(description);
 				try {
@@ -374,4 +375,5 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			}
 		}
 	}
+
 }

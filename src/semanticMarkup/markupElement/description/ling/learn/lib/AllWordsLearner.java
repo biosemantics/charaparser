@@ -11,7 +11,7 @@ import semanticMarkup.ling.Token;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.model.Description;
-import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -47,7 +47,7 @@ public class AllWordsLearner {
 				databaseUser, databasePassword);
 	}
 	
-	public void learn(List<DescriptionsFile> descriptionsFiles) throws Exception {
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles) throws Exception {
 		createAllWordsTable();
 		countWords(descriptionsFiles);
 		
@@ -100,8 +100,8 @@ public class AllWordsLearner {
      * Records the words contained in a volume including how often they appear in general and how often they
      * appear within brackets
      */
-	private void countWords(List<DescriptionsFile> descriptionsFiles) {
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+	private void countWords(List<AbstractDescriptionsFile> descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			String descriptionText = "";
 			for(Description description : descriptionsFile.getDescriptions()) {
 				descriptionText += description.getText() + " ";

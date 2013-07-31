@@ -17,7 +17,7 @@ import org.jdom2.xpath.XPathFactory;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionWriter;
 import semanticMarkup.markupElement.description.model.Description;
-import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 import semanticMarkup.markupElement.description.model.Statement;
 
@@ -35,7 +35,7 @@ public class JDOMDescriptionWriter implements IDescriptionWriter {
 			writeDirectoryFile.mkdirs();
 		if(writeDirectoryFile.exists() && writeDirectoryFile.isDirectory()) {
 			
-			for(DescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
+			for(AbstractDescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
 				File sourceFile = descriptionsFile.getFile();
 				File outputFile = new File(writeDirectory + File.separator + descriptionsFile.getFile().getName());
 				List<Description> descriptions = descriptionsFile.getDescriptions();

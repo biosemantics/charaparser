@@ -15,6 +15,7 @@ import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 
@@ -27,17 +28,17 @@ public class MOXyDescriptionReader implements IDescriptionReader {
 	public MOXyDescriptionReader(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles) throws JAXBException {
 		Map<String, Object> properties = new HashMap<String, Object>(1);
 		properties.put(JAXBContextProperties.OXM_METADATA_SOURCE, bindingsFiles);
-		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {DescriptionsFile.class}, properties);
+		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {AbstractDescriptionsFile.class}, properties);
 		this.unmarshaller = jaxbContext.createUnmarshaller(); 
 	}
 
 	@Override
 	public DescriptionsFileList read(@Named("DescriptionReader_InputDirectory")String inputDirectory) throws Exception {
-		List<DescriptionsFile> descriptionsFiles = new LinkedList<DescriptionsFile>();
+		List<AbstractDescriptionsFile> descriptionsFiles = new LinkedList<AbstractDescriptionsFile>();
 		File inputDirectoryFile = new File(inputDirectory);
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {
 			for(File inputFile : inputDirectoryFile.listFiles()) {
-				DescriptionsFile descriptionsFile = (DescriptionsFile)unmarshaller.unmarshal(inputFile);
+				AbstractDescriptionsFile descriptionsFile = (AbstractDescriptionsFile)unmarshaller.unmarshal(inputFile);
 				descriptionsFile.setFile(inputFile);
 				descriptionsFiles.add(descriptionsFile);
 			}

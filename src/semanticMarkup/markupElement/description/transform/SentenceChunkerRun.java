@@ -15,6 +15,7 @@ import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.log.Timer;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -33,7 +34,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 	private INormalizer normalizer;
 	private ChunkCollector result;
 	private Description description;
-	private DescriptionsFile descriptionsFile;
+	private AbstractDescriptionsFile descriptionsFile;
 	private CountDownLatch sentencesLatch;
 
 	/**
@@ -48,7 +49,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 	 * @param sentencesLatch 
 	 */
 	public SentenceChunkerRun(String source, String sentenceString, Description description, 
-			DescriptionsFile descriptionsFile,
+			AbstractDescriptionsFile descriptionsFile,
 			INormalizer normalizer, 
 			ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, CountDownLatch sentencesLatch) {
 		this.source = source;

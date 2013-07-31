@@ -19,6 +19,7 @@ import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -95,7 +96,7 @@ public class GUIDescriptionTransformer extends AbstractDescriptionTransformer {
 	}
 
 	@Override
-	public TransformationReport transform(List<DescriptionsFile> descriptionsFiles) {
+	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) {
 		// prepare main form (e.g. needs to create certain database tables) 
 		mainForm.startMarkup(descriptionsFiles);
 		
@@ -124,7 +125,7 @@ public class GUIDescriptionTransformer extends AbstractDescriptionTransformer {
 	 * @param treatments
 	 * @param sentencesForOrganStateMarker
 	 */
-	private void markupDescriptions(List<DescriptionsFile> descriptionsFiles, 
+	private void markupDescriptions(List<AbstractDescriptionsFile> descriptionsFiles, 
 			Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
 		//configure exectuorService to only allow a number of threads to run at a time
 		ExecutorService executorService = null;
@@ -136,13 +137,13 @@ public class GUIDescriptionTransformer extends AbstractDescriptionTransformer {
 			executorService = Executors.newCachedThreadPool();
 		
 		int descriptionCount = 0;
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			descriptionCount += descriptionsFile.getDescriptions().size();
 		}
 		CountDownLatch descriptionExtractorsLatch = new CountDownLatch(descriptionCount);
 		
 		// process each treatment separately
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				// start a DescriptionExtractorRun for the treatment to process as a separate thread
 				DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(descriptionsFile, description, normalizer, wordTokenizer, 
@@ -161,7 +162,7 @@ public class GUIDescriptionTransformer extends AbstractDescriptionTransformer {
 			log(LogLevel.ERROR, "Problem with descriptionExtractorsLatch or executorService", e);
 		}
 		
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				Future<Description> futureNewDescription = futureNewDescriptions.get(description);
 				try {

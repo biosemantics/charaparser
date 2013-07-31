@@ -5,18 +5,18 @@ import java.util.List;
 
 public class DescriptionsFileList {
 
-	private List<DescriptionsFile> descriptionsFiles;
+	private List<AbstractDescriptionsFile> descriptionsFiles;
 
-	public DescriptionsFileList(List<DescriptionsFile> descriptionsFiles) {
+	public DescriptionsFileList(List<AbstractDescriptionsFile> descriptionsFiles) {
 		super();
 		this.descriptionsFiles = descriptionsFiles;
 	}
 
-	public List<DescriptionsFile> getDescriptionsFiles() {
+	public List<AbstractDescriptionsFile> getDescriptionsFiles() {
 		return descriptionsFiles;
 	}
 
-	public void setDescriptionsFiles(List<DescriptionsFile> descriptionsFiles) {
+	public void setDescriptionsFiles(List<AbstractDescriptionsFile> descriptionsFiles) {
 		this.descriptionsFiles = descriptionsFiles;
 	}
 

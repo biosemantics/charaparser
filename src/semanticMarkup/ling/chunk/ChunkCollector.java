@@ -8,6 +8,7 @@ import java.util.List;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTree;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -31,7 +32,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 	private String sentence;
 	private AbstractParseTree parseTree;
 	private String subjectTag; //tag field in the sentence table
-	private DescriptionsFile descriptionsFile;
+	private AbstractDescriptionsFile descriptionsFile;
 	private Description description; //the entire xml input for a treatment
 	//terminalID to Chunk. 
 	//IParseTree as key doesn't work as hashcodes created have to depend on parent (otherwise same words in a sentence are assigned same hash)
@@ -46,7 +47,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 * @param source
 	 * @param sentenceString
 	 */
-	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Description description, DescriptionsFile descriptionsFile, 
+	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Description description, AbstractDescriptionsFile descriptionsFile, 
 			String source, String sentenceString) {
 		this.parseTree = parseTree;
 		/*log(LogLevel.DEBUG, "root before " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));

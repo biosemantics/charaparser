@@ -7,7 +7,7 @@ import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.markupElement.description.io.ParentTagProvider;
 import semanticMarkup.markupElement.description.model.Description;
-import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -52,13 +52,13 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	}
 	
 	@Override
-	public void learn(List<DescriptionsFile> descriptionsFiles, String glossaryTable) { 
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) { 
 		int i = 0;
 		int descriptionCount = 0;
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) 
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) 
 			descriptionCount += descriptionsFile.getDescriptions().size();
 		
-		for(DescriptionsFile descriptionsFile : descriptionsFiles) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3));
 				fileTreatments.put(prefix, description);

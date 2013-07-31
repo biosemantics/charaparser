@@ -22,6 +22,7 @@ import org.xml.sax.SAXParseException;
 
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
@@ -49,14 +50,14 @@ public class MOXyBinderDescriptionReader implements IDescriptionReader {
 
 	@Override
 	public DescriptionsFileList read(String inputDirectory) throws Exception {
-		List<DescriptionsFile> descriptionsFiles = new LinkedList<DescriptionsFile>();
+		List<AbstractDescriptionsFile> descriptionsFiles = new LinkedList<AbstractDescriptionsFile>();
 		File inputDirectoryFile = new File(inputDirectory);
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {			
 			for(File inputFile : inputDirectoryFile.listFiles()) {
 				try {
 			        Document document = documentBuilder.parse(inputFile);
 			        Binder<Node> binder = jaxbContext.createBinder();
-			        DescriptionsFile descriptionsFile = (DescriptionsFile) binder.unmarshal(document);
+			        AbstractDescriptionsFile descriptionsFile = (AbstractDescriptionsFile) binder.unmarshal(document);
 			        descriptionsFile.setFile(inputFile);
 					descriptionsFiles.add(descriptionsFile);
 				

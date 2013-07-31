@@ -6,6 +6,7 @@ import java.util.List;
 import semanticMarkup.markup.IMarkupResult;
 import semanticMarkup.markup.IMarkupResultVisitor;
 import semanticMarkup.markupElement.description.eval.model.Description;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 import semanticMarkup.markupElement.description.model.Relation;
@@ -22,7 +23,7 @@ public class DescriptionMarkupResult implements IMarkupResult {
 	
 	public DescriptionMarkupResult(DescriptionsFileList descriptionsFileList) {
 		this.descriptions = new LinkedList<Description>();
-		for(DescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
 			for(semanticMarkup.markupElement.description.model.Description description : descriptionsFile.getDescriptions()) {
 				Description newDescription = new Description();
 				newDescription.setSource(descriptionsFile.getName());

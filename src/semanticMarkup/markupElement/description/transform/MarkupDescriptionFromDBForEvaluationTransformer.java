@@ -15,6 +15,7 @@ import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
 import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -70,7 +71,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 
 
 	@Override
-	public TransformationReport transform(List<DescriptionsFile> descriptionsFiles) {
+	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) {
 		//evaluation runs with .csv glossaries as gold standard uses the
 		//character categories used in the csvs.
 		//OTOs character categories varies at times, which makes evaluation difficult.

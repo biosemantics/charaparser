@@ -10,7 +10,6 @@ import semanticMarkup.model.Element;
 
 public class Description extends Element {
 
-	private String type; //as requested per Dongye
 	private String text;
 	//private DescriptionsFile descriptionsFile;
 	
@@ -20,14 +19,6 @@ public class Description extends Element {
 
 	public void setText(String text) {
 		this.text = text;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 	
 	/*

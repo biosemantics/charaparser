@@ -3,6 +3,7 @@ package semanticMarkup.markupElement.description.markup;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
 import semanticMarkup.markupElement.description.io.IDescriptionWriter;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 import semanticMarkup.markupElement.description.model.Meta;
@@ -50,7 +51,7 @@ public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 			meta.setCharaparserVersion(report.getCharaparserVersion());
 			meta.setGlossaryType(report.getGlossaryType());
 			meta.setGlossaryVersion(report.getGlossaryVersion());
-			for(DescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
+			for(AbstractDescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
 				descriptionsFile.setMeta(meta);
 			}
 			

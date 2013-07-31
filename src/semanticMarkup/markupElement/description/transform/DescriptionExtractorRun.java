@@ -21,6 +21,7 @@ import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.transform.ITokenizer;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.ling.extract.IDescriptionExtractor;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
@@ -30,7 +31,7 @@ import semanticMarkup.markupElement.description.model.DescriptionsFile;
  */
 public class DescriptionExtractorRun implements Callable<Description> {
 
-	private DescriptionsFile descriptionsFile;
+	private AbstractDescriptionsFile descriptionsFile;
 	private Description description;
 	private List<Future<ChunkCollector>> futureChunkCollectors = new ArrayList<Future<ChunkCollector>>();
 	private INormalizer normalizer;
@@ -59,7 +60,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 	 * @param selectedSources 
 	 * @param latch 
 	 */
-	public DescriptionExtractorRun(DescriptionsFile descriptionsFile, Description description,
+	public DescriptionExtractorRun(AbstractDescriptionsFile descriptionsFile, Description description,
 			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
 			IDescriptionExtractor descriptionExtractor, Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing,
 			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch, Set<String> selectedSources) {

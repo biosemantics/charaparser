@@ -21,6 +21,7 @@ import org.w3c.dom.Node;
 
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionWriter;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
@@ -47,7 +48,7 @@ public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
 	public void write(DescriptionsFileList descriptionsFileList, String writeDirectory) throws Exception {
 		File outDirectoryFile = new File(writeDirectory);
 		if(outDirectoryFile.exists() && outDirectoryFile.isDirectory()) {			
-			for(DescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
+			for(AbstractDescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
 				if(fileDocumentMappings.containsKey(descriptionsFile.getFile())) {
 					Binding binding = fileDocumentMappings.get(descriptionsFile.getFile());
 					Binder<Node> binder = binding.getBinder();
