@@ -1,4 +1,4 @@
-package semanticMarkup.model.description.attributes;
+package semanticMarkup.markupElement.description.model.attributes;
 
 public class StructureAttribute {
 

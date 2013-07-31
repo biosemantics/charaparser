@@ -5,9 +5,9 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
+import semanticMarkup.markupElement.description.model.attributes.CharacterAttribute;
 import semanticMarkup.model.Element;
 import semanticMarkup.model.NamedElement;
-import semanticMarkup.model.description.attributes.CharacterAttribute;
 /**
  *     <xs:complexType>
       <xs:attribute name="char_type" type="xs:NCName"/>

@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
+import semanticMarkup.markupElement.description.model.attributes.StatementAttribute;
 import semanticMarkup.model.Element;
-import semanticMarkup.model.description.attributes.StatementAttribute;
 
 public class Statement extends Element {
 	

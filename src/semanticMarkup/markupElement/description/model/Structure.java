@@ -8,9 +8,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
+import semanticMarkup.markupElement.description.model.attributes.StructureAttribute;
 import semanticMarkup.model.Element;
 import semanticMarkup.model.NamedElement;
-import semanticMarkup.model.description.attributes.StructureAttribute;
 
 
 /**
