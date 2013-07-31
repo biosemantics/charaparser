@@ -62,7 +62,7 @@ public class MOXyBinderDescriptionReader implements IDescriptionReader {
 				
 					fileDocumentMappings.put(inputFile, new Binding(document, binder));
 				} catch (Exception e) {
-					log(LogLevel.ERROR, "Could not read input file " + inputFile.getAbsolutePath());
+					log(LogLevel.ERROR, "Could not read input file " + inputFile.getAbsolutePath(), e);
 				} 
 			}
 		} else {

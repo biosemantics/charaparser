@@ -27,10 +27,7 @@
         </java-type>
 		<java-type name="TreatmentRoot">
             <java-attributes>
-				<xml-element java-attribute="text" xml-path="/characters/format/states/state/@label"  />
-				<xml-element java-attribute="description" xml-path="/characters/format/states/state" 
-				type="semanticMarkup.markupElement.description.model.Description" />
-				<xml-element java-attribute="descriptions" xml-path="/characters/format/states/state" 
+				<xml-element java-attribute="descriptions" xml-path="/nex:characters/nex:format/nex:states/nex:state" 
 				type="semanticMarkup.markupElement.description.model.Description" container-type="java.util.List" />
             </java-attributes>
         </java-type>

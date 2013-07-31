@@ -27,9 +27,9 @@ public class NexTest {
 		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 		DescriptionsFile descriptionsFile = (DescriptionsFile)unmarshaller.unmarshal(new File("input//Swartz 2012.xml"));
 		//System.out.println(descriptionsFile);
-		/*for(Description description : descriptionsFile.getDescriptions()) {
-			System.out.println(description.toString());
-		}*/
+		for(Description description : descriptionsFile.getDescriptions()) {
+			System.out.println(description.getText());
+		}
 	}
 
 }
