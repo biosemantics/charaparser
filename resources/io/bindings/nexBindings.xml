@@ -1,17 +1,20 @@
 <?xml version="1.0"?>
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
-    package-name="semanticMarkup.markupElement.description.model">
+    package-name="semanticMarkup.markupElement.description.model"
+	xml-mapping-metadata-complete="true">
     
-    <xml-schema element-from-default="QUALIFIED">
-    	<xml-ns prefix="nex" namespace-uri="http://www.nexml.org/2009" />
+    <xml-schema element-form-default="QUALIFIED" namespace="http://www.nexml.org/2009">
+        <xml-ns prefix="nex" namespace-uri="http://www.nexml.org/2009" />
     </xml-schema>
     
     <java-types>
-   		<java-type name="DescriptionsFile">
-			<xml-root-element name="nex:nexml"/>
+		<!-- xml-accessor-type="NONE" is necessary, because phenoscape format contains an own meta tag, which would automatically be
+		tried to mapped to the meta field contained in DescriptionsFile, to avoid this, automatic mappings are turned off -->
+		<java-type name="DescriptionsFile" xml-accessor-type="NONE">
+			<xml-root-element name="nexml"/>
             <java-attributes>
-                <xml-element java-attribute="meta" xml-path="meta" type="semanticMarkup.markupElement.description.model.Meta"/>
+                <xml-element java-attribute="meta" xml-path="metaCharaParser" type="semanticMarkup.markupElement.description.model.Meta"/>
 				<xml-element java-attribute="treatmentRoot" xml-path="." type="semanticMarkup.markupElement.description.model.TreatmentRoot" />
             </java-attributes>
         </java-type>
@@ -24,7 +27,10 @@
         </java-type>
 		<java-type name="TreatmentRoot">
             <java-attributes>
-				<xml-element java-attribute="descriptions" xml-path="" 
+				<xml-element java-attribute="text" xml-path="/characters/format/states/state/@label"  />
+				<xml-element java-attribute="description" xml-path="/characters/format/states/state" 
+				type="semanticMarkup.markupElement.description.model.Description" />
+				<xml-element java-attribute="descriptions" xml-path="/characters/format/states/state" 
 				type="semanticMarkup.markupElement.description.model.Description" container-type="java.util.List" />
             </java-attributes>
         </java-type>
