@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<xml-bindings
+    xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
+    package-name="semanticMarkup.markupElement.description.model">
+    <java-types>
+   		<java-type name="DescriptionsFile">
+			<xml-root-element name="treatments"/>
+            <java-attributes>
+                <xml-element java-attribute="meta" xml-path="meta" type="semanticMarkup.markupElement.description.model.Meta"/>
+				<xml-element java-attribute="treatmentRoots" xml-path="treatment" type="semanticMarkup.markupElement.description.model.TreatmentRoot" container-type="java.util.List" />
+            </java-attributes>
+        </java-type>
+    </java-types>
+</xml-bindings>
+

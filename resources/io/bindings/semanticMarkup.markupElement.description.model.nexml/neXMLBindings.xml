@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
-    package-name="semanticMarkup.markupElement.description.model"
+    package-name="semanticMarkup.markupElement.description.model.nexml"
 	xml-mapping-metadata-complete="true">
     
     <xml-schema element-form-default="QUALIFIED" namespace="http://www.nexml.org/2009">
@@ -21,32 +21,17 @@
 				type="semanticMarkup.markupElement.description.model.nexml.CharacterDescription" container-type="java.util.List" />
             </java-attributes>
         </java-type>
-		<java-type name="semanticMarkup.markupElement.description.model.Meta">
-            <java-attributes>
-				<xml-element java-attribute="glossaryType" xml-path="glossaryType/text()" />
-				<xml-element java-attribute="glossaryVersion" xml-path="glossaryVersion/text()" />
-				<xml-element java-attribute="charaparserVersion" xml-path="charaparserVersion/text()" />
-            </java-attributes>
-        </java-type>		
-        <java-type name="StateDescription">
+        <java-type name="StateDescription" super-type="java.lang.Object">
             <java-attributes>			
                 <xml-element java-attribute="text" xml-path="@label"/>
 				<xml-element java-attribute="statements" xml-path="statement/" type="semanticMarkup.markupElement.description.model.Statement" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
-        <java-type name="CharacterDescription">
+        <java-type name="CharacterDescription" super-type="java.lang.Object">
             <java-attributes>			
                 <xml-element java-attribute="text" xml-path="@label"/>
 				<xml-element java-attribute="statements" xml-path="statement/" type="semanticMarkup.markupElement.description.model.Statement" container-type="java.util.List"/>
-            </java-attributes>
-        </java-type>
-		<java-type name="Statement">
-            <java-attributes>			
-                <xml-element java-attribute="text" xml-path="@text"/>
-				<xml-element java-attribute="structures" xml-path="structure/" type="semanticMarkup.markupElement.description.model.Structure" container-type="java.util.List"/>
-				<xml-element java-attribute="relations" xml-path="relation/" type="semanticMarkup.markupElement.description.model.Relation" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
     </java-types>
 </xml-bindings>
-

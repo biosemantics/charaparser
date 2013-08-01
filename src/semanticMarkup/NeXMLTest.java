@@ -2,6 +2,8 @@ package semanticMarkup;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -12,7 +14,8 @@ import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 
 import semanticMarkup.markupElement.description.model.Description;
-import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
+import semanticMarkup.markupElement.description.model.nexml.NeXMLDescriptionsFile;
 
 public class NeXMLTest {
 
@@ -22,15 +25,19 @@ public class NeXMLTest {
 	 */
 	public static void main(String[] args) throws JAXBException {
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
-		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE, "resources//io//bindings//neXMLBindings.xml");
-		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {DescriptionsFile.class}, jaxbContextProperties);
+		List<String> bindingFiles = new LinkedList<String>();
+		bindingFiles.add("resources//io//bindings//semanticMarkup.markupElement.description.model//baseBindings.xml");
+		bindingFiles.add("resources//io//bindings//semanticMarkup.markupElement.description.model//neXMLBindings.xml");
+		bindingFiles.add("resources//io//bindings//semanticMarkup.markupElement.description.model.nexml//neXMLBindings.xml");
+		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE, bindingFiles);
+		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {NeXMLDescriptionsFile.class}, jaxbContextProperties);
 		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-		DescriptionsFile descriptionsFile = (DescriptionsFile)unmarshaller.unmarshal(new File("input//Swartz 2012.xml"));
+		NeXMLDescriptionsFile descriptionsFile = (NeXMLDescriptionsFile)unmarshaller.unmarshal(new File("input//Swartz 2012.xml"));
 		//System.out.println(descriptionsFile);
-		for(Description description : descriptionsFile.getDescriptions()) {
+		/*for(Description description : descriptionsFile.getDescriptions()) {
 			System.out.println(description.getText());
 		}
-		System.out.println(descriptionsFile.getDescriptions().size());
+		System.out.println(descriptionsFile.getDescriptions().size());*/
 	}
 
 }
