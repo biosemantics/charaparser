@@ -1,5 +1,7 @@
 package semanticMarkup;
 
+import java.util.LinkedList;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -158,15 +160,18 @@ public class CLIMain {
 
 	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) {
 		if(volumeReader.equals("XML")) {
-			config.setDescriptionReaderBindings("");
+			//TODO
+			config.setDescriptionReaderBindingsList(new LinkedList<String>());
 			return;
 		}
 		if(volumeReader.equals("Taxonx")) {
-			config.setDescriptionReaderBindings("");
+			//TODO
+			config.setDescriptionReaderBindingsList(new LinkedList<String>());
 			return;
 		}
 		if(volumeReader.equals("IPlant")) {
-			config.setDescriptionReaderBindings("");
+			//TODO
+			config.setDescriptionReaderBindingsList(new LinkedList<String>());
 			return;
 		}
 		log(LogLevel.ERROR, "DescriptionReader unknown");

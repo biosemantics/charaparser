@@ -1,6 +1,7 @@
 package semanticMarkup;
 
-import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import semanticMarkup.config.dataset.PlantConfig;
 import semanticMarkup.log.LogLevel;
@@ -21,7 +22,11 @@ public class NeXMLMainTest {
 		System.out.println(java.lang.Runtime.getRuntime().maxMemory()); 
 		//TreatiseConfig //FNAv19Config
 		PlantConfig config = new PlantConfig();
-		config.setDescriptionReaderBindings("resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "nexBindings.xml");
+		List<String> bindingFiles = new LinkedList<String>();
+		bindingFiles.add("resources//io//bindings//semanticMarkup.markupElement.description.model//baseBindings.xml");
+		bindingFiles.add("resources//io//bindings//semanticMarkup.markupElement.description.model//neXMLBindings.xml");
+		bindingFiles.add("resources//io//bindings//semanticMarkup.markupElement.description.model.nexml//neXMLBindings.xml");
+		config.setDescriptionReaderBindingsList(bindingFiles);
 		config.setDescriptionReader(MOXyBinderDescriptionReader.class);
 		config.setDescriptionReaderInputDirectory("input");
 		Injector injector = Guice.createInjector(config);

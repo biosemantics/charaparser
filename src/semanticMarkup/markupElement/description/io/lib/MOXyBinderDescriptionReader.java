@@ -18,13 +18,10 @@ import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.JAXBContextProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.xml.sax.SAXParseException;
 
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
 import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
-import semanticMarkup.markupElement.description.model.Description;
-import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 
 import com.google.inject.Inject;
@@ -43,9 +40,11 @@ public class MOXyBinderDescriptionReader implements IDescriptionReader {
 		this.fileDocumentMappings = fileDocumentMappings;
 		Map<String, Object> jaxbContextProperties = new HashMap<String, Object>(1);
 		jaxbContextProperties.put(JAXBContextProperties.OXM_METADATA_SOURCE , bindingsFiles);
-		this.jaxbContext = JAXBContextFactory.createContext(new Class[] {Description.class}, jaxbContextProperties);
+		this.jaxbContext = JAXBContextFactory.createContext(new Class[] {AbstractDescriptionsFile.class}, jaxbContextProperties);
 		
-		this.documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();;
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setNamespaceAware(true);
+		this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
 	}
 
 	@Override

@@ -67,10 +67,9 @@ public class RunConfig extends BasicConfig {
 	// IO
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
 	private String descriptionReaderInputDirectory = "input";
-	private String baseBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "baseBindings.xml";
-	private String descriptionReaderBindings = "resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "singleTreatmentDescriptionBindings.xml";
-	private String evaluationCorrectReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml";
-	private String evaluationTestReaderBindings =  "resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml"; 
+	private List<String> descriptionReaderBindingsList = createDescriptionReaderBindingsList();
+	private List<String> evaluationCorrectReaderBindingsList = createEvaluationCorrectReaderBindingsList();
+	private List<String> evaluationTestReaderBindingsList = createEvaluationTestReaderBindingsList();
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
 	
 	// PROCESSING 
@@ -117,7 +116,7 @@ public class RunConfig extends BasicConfig {
 		//IO
 		bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader).in(Singleton.class);
 		bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(descriptionReaderInputDirectory);
-		bind(new TypeLiteral<List<String>>() {}).annotatedWith(Names.named("DescriptionReader_BindingsFiles")).toInstance(constructDescriptionReaderBindings());
+		bind(new TypeLiteral<List<String>>() {}).annotatedWith(Names.named("DescriptionReader_BindingsFiles")).toInstance(descriptionReaderBindingsList);
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(descriptionReaderInputDirectory));
 		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).toInstance(constructEvaluationCorrectReader());
 		bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).toInstance(constructEvaluationTestReader());
@@ -141,19 +140,30 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
 	}
 	
-	private List<String> constructDescriptionReaderBindings() {
+	private List<String> createEvaluationTestReaderBindingsList() {
 		List<String> result = new LinkedList<String>();
-		result.add(baseBindings);
-		result.add(descriptionReaderBindings);
+		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "baseBindings.xml");
+		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml");
+		return result;
+	}
+
+	private List<String> createEvaluationCorrectReaderBindingsList() {
+		List<String> result = new LinkedList<String>();
+		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "baseBindings.xml");
+		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml");
+		return result;
+	}
+
+	private List<String> createDescriptionReaderBindingsList() {
+		List<String> result = new LinkedList<String>();
+		result.add("resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "semanticMarkup.markupElement.description.model" + File.separator + "baseBindings.xml");
+		result.add("resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "semanticMarkup.markupElement.description.model" + File.separator + "singleTreatmentDescriptionBindings.xml");
 		return result;
 	}
 
 	private IDescriptionMarkupResultReader constructEvaluationTestReader() {
 		try {
-			List<String> bindings = new LinkedList<String>();
-			bindings.add(evaluationTestReaderBindings);
-			bindings.add(baseBindings);
-			return new MOXyDescriptionMarkupResultReader(bindings);
+			return new MOXyDescriptionMarkupResultReader(evaluationTestReaderBindingsList);
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
 			System.exit(0);
@@ -163,10 +173,7 @@ public class RunConfig extends BasicConfig {
 
 	private IDescriptionMarkupResultReader constructEvaluationCorrectReader() {
 		try {
-			List<String> bindings = new LinkedList<String>();
-			bindings.add(evaluationCorrectReaderBindings);
-			bindings.add(baseBindings);
-			return new MOXyDescriptionMarkupResultReader(bindings);
+			return new MOXyDescriptionMarkupResultReader(evaluationCorrectReaderBindingsList);
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
 			System.exit(0);
@@ -530,10 +537,41 @@ public class RunConfig extends BasicConfig {
 		this.descriptionReaderInputDirectory = descriptionReaderInputDirectory;
 	}
 
-	public void setDescriptionReaderBindings(String descriptionReaderBindings) {
-		this.descriptionReaderBindings = descriptionReaderBindings;
+	public List<String> getDescriptionReaderBindingsList() {
+		return descriptionReaderBindingsList;
 	}
 
+	public void setDescriptionReaderBindingsList(
+			List<String> descriptionReaderBindingsList) {
+		this.descriptionReaderBindingsList = descriptionReaderBindingsList;
+	}
+
+	public List<String> getEvaluationCorrectReaderBindingsList() {
+		return evaluationCorrectReaderBindingsList;
+	}
+
+	public void setEvaluationCorrectReaderBindingsList(
+			List<String> evaluationCorrectReaderBindingsList) {
+		this.evaluationCorrectReaderBindingsList = evaluationCorrectReaderBindingsList;
+	}
+
+	public List<String> getEvaluationTestReaderBindingsList() {
+		return evaluationTestReaderBindingsList;
+	}
+
+	public void setEvaluationTestReaderBindingsList(
+			List<String> evaluationTestReaderBindingsList) {
+		this.evaluationTestReaderBindingsList = evaluationTestReaderBindingsList;
+	}
+
+	public Class<? extends IDescriptionMarkupCreator> getDescriptionMarkupCreator() {
+		return descriptionMarkupCreator;
+	}
+
+	public void setDescriptionMarkupCreator(
+			Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator) {
+		this.descriptionMarkupCreator = descriptionMarkupCreator;
+	}
 	
 }
 
