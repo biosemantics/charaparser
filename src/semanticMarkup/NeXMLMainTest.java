@@ -6,6 +6,7 @@ import java.util.List;
 import semanticMarkup.config.dataset.PlantConfig;
 import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReader;
+import semanticMarkup.markupElement.description.ling.learn.lib.unsupervised.UnsupervisedClauseMarkup;
 import semanticMarkup.run.IRun;
 
 import com.google.inject.Guice;
@@ -29,6 +30,7 @@ public class NeXMLMainTest {
 		config.setDescriptionReaderBindingsList(bindingFiles);
 		config.setDescriptionReader(MOXyBinderDescriptionReader.class);
 		config.setDescriptionReaderInputDirectory("input");
+		config.setTerminologyLearner(UnsupervisedClauseMarkup.class);
 		Injector injector = Guice.createInjector(config);
 		IRun run = injector.getInstance(IRun.class);
 		
