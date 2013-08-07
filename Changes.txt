@@ -10,3 +10,6 @@ Version 0.1 (July, 2nd 2013)
 * Integrated a set of evaluation classes
 * Added input validation of various formats
 
+Version 0.1.1 (August, 7th 2013)
+----------- 
+* Fixed perl module to accept database host, port, user and password as input parameters

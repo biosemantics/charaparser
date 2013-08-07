@@ -533,9 +533,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 	
 	private void runPerl(File inDirectory, List<Treatment> treatments, String glossaryTable) throws Exception {
-		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "//"
-				+ "\" "+ this.databaseName + " " + this.markupMode + " " + this.databasePrefix
-				+ " " + glossaryTable;
+		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "/" + 
+				// there is a strang requirement for a slash here to make perl parse the arguments correctly
+				"\" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " + this.databaseUser + " " + this.databasePassword + " "
+				+ this.databasePrefix + " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
 		createTablesNeededForPerl(treatments);
 		runCommand(command);

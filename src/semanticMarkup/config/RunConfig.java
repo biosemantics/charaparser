@@ -191,7 +191,7 @@ public class RunConfig extends BasicConfig {
 		//result.add("765.txt-6");
 		
 		
-		String file;
+		/*String file;
 		File folder = new File(evaluationDataPath);
 		if (folder.exists()) {
 			File[] listOfFiles = folder.listFiles();
@@ -240,7 +240,7 @@ public class RunConfig extends BasicConfig {
 					// break; //TODO remove. only for test
 				}
 			}
-		}
+		} */
 		//result.add("000.txt-9");
 		//result.add("000.txt-8");
 		//result.add("000.txt-6");
