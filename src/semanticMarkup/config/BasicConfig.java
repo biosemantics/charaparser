@@ -120,7 +120,7 @@ public class BasicConfig extends AbstractModule {
 	
 	  @Override 
 	  protected void configure() {	 
-		bind(String.class).annotatedWith(Names.named("Version")).toInstance("0.1.1");
+		bind(String.class).annotatedWith(Names.named("Version")).toInstance("0.1.2");
 		  
 		 /* TODO: turn regex word lists into hashsets where appropriate */			
 		
@@ -293,7 +293,7 @@ public class BasicConfig extends AbstractModule {
 		bind(String[].class).annotatedWith(Names.named("romanNumbers")).toInstance(romanNumbers);
 		bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("EqualCharacters")).toInstance(getEqualCharacters());
 		bind(String.class).annotatedWith(Names.named("NumberPattern")).toInstance(
-						"[()\\[\\]\\-\\–\\d\\.×x\\+°²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+°²½/¼\\*/%\\?]{2,}(?![a-z{}])");
+						"[()\\[\\]\\-\\ï¿½\\d\\.ï¿½x\\+ï¿½ï¿½ï¿½/ï¿½\\*/%\\?]*?[ï¿½/ï¿½\\d][()\\[\\]\\-\\ï¿½\\d\\.,?ï¿½x\\+ï¿½ï¿½ï¿½/ï¿½\\*/%\\?]{2,}(?![a-z{}])");
 		bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("Singulars")).toInstance(getSingulars());
 		bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("Plurals")).toInstance(getPlurals());
 		bind(String.class).annotatedWith(Names.named("LyAdverbpattern")).toInstance("[a-z]{3,}ly");
@@ -328,7 +328,7 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getUnits() {
-		String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|µm|um";
+		String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|ï¿½m|um";
 		return units;
 	}
 
@@ -380,7 +380,7 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getDegreeWords() {
-		String degreeWords = "°|degree|degrees";
+		String degreeWords = "ï¿½|degree|degrees";
 		return degreeWords;
 	}
 
