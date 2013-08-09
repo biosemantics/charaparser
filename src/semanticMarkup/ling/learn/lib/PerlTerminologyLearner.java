@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.lib.db.ParentTagProvider;
@@ -533,9 +535,16 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 	
 	private void runPerl(File inDirectory, List<Treatment> treatments, String glossaryTable) throws Exception {
-		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + "\"" + inDirectory.getAbsolutePath() + "/" + 
+		String inDirectoryPath = inDirectory.getAbsolutePath() + "/"; //yes "/", not File.seperator; perl wants "/"
+		
+		//assumption: windows paths can contain spaces and are therefore put into double quotes; for unix that is not required, and actually would lead to missbehavior of perl script
+		if(SystemUtils.IS_OS_WINDOWS)
+			inDirectoryPath = "\"" + inDirectoryPath + "\"";
+		//else if(SystemUtils.IS_OS_UNIX)
+			
+		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + inDirectoryPath +  
 				// there is a strang requirement for a slash here to make perl parse the arguments correctly
-				"\" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " + this.databaseUser + " " + this.databasePassword + " "
+				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " + this.databaseUser + " " + this.databasePassword + " "
 				+ this.databasePrefix + " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
 		createTablesNeededForPerl(treatments);
