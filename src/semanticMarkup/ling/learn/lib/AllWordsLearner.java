@@ -43,7 +43,7 @@ public class AllWordsLearner {
 			throws Exception {
 		this.tokenizer = tokenizer;
 		this.glossary = glossary;
-		this.tablename = databasePrefix + "_allWords";
+		this.tablename = databasePrefix + "_allwords";
 
 		// TODO removable once OldPerlTreatmentTransformer is no longer used.
 		Class.forName("com.mysql.jdbc.Driver");
