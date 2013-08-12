@@ -293,7 +293,7 @@ public class BasicConfig extends AbstractModule {
 		bind(String[].class).annotatedWith(Names.named("romanNumbers")).toInstance(romanNumbers);
 		bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("EqualCharacters")).toInstance(getEqualCharacters());
 		bind(String.class).annotatedWith(Names.named("NumberPattern")).toInstance(
-						"[()\\[\\]\\-\\ï¿½\\d\\.ï¿½x\\+ï¿½ï¿½ï¿½/ï¿½\\*/%\\?]*?[ï¿½/ï¿½\\d][()\\[\\]\\-\\ï¿½\\d\\.,?ï¿½x\\+ï¿½ï¿½ï¿½/ï¿½\\*/%\\?]{2,}(?![a-z{}])");
+						"[()\\[\\]\\-\\–\\d\\.×x\\+°²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+°²½/¼\\*/%\\?]{2,}(?![a-z{}])");
 		bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("Singulars")).toInstance(getSingulars());
 		bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("Plurals")).toInstance(getPlurals());
 		bind(String.class).annotatedWith(Names.named("LyAdverbpattern")).toInstance("[a-z]{3,}ly");
@@ -328,7 +328,7 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getUnits() {
-		String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|ï¿½m|um";
+		String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|µm|um";
 		return units;
 	}
 
@@ -380,7 +380,7 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getDegreeWords() {
-		String degreeWords = "ï¿½|degree|degrees";
+		String degreeWords = "°|degree|degrees";
 		return degreeWords;
 	}
 
