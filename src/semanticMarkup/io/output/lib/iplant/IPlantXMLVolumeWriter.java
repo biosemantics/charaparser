@@ -2,6 +2,8 @@ package semanticMarkup.io.output.lib.iplant;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -40,8 +42,9 @@ public class IPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 		for(Treatment treatment : treatments) {
 			new File(outDirectory + File.separator + treatment.getName() + ".xml").getParentFile().mkdirs();
 			FileOutputStream outputStream = new FileOutputStream(new File(outDirectory + File.separator + treatment.getName() + ".xml"));
+			Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
 			semanticMarkup.io.output.lib.iplant.Treatment xmlTreatment = transformTreatment(treatment);
-			m.marshal(xmlTreatment, outputStream);
+			m.marshal(xmlTreatment, writer);
 		}
 	}
 

@@ -20,8 +20,9 @@ my $user = "termsuser";
 my $password = "termspassword";
 my $out = "out.rdf";
 
-my $dbh = DBI->connect("DBI:mysql:database=$db:host=$host", $user, $password)
+my $dbh = DBI->connect("DBI:mysql:database=$db:host=$host", $user, $password, { mysql_enable_utf8 => 1 })
 or die DBI->errstr."\n";
+$dbh->do('SET NAMES utf8');
 my $test = $dbh->prepare('use terms')
 or die $dbh->errstr."\n";
 $test->execute() or die $test->errstr."\n";

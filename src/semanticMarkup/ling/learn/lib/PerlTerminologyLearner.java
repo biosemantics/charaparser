@@ -3,9 +3,11 @@ package semanticMarkup.ling.learn.lib;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -624,13 +626,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			treatmentFile.deleteOnExit();
 			//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 			log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
-			BufferedWriter fileWriter = new BufferedWriter(new FileWriter(treatmentFile));
+			BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(treatmentFile), "UTF-8"));
 			
 			List<ValueTreatmentElement> descriptions = treatment.getValueTreatmentElements("description");	
 			for(ValueTreatmentElement description : descriptions) {		           
 	            fileWriter.write(description.getValue() + "\n");
-	            fileWriter.close();
 			}
+			fileWriter.close();
 			
 			fileTreatments.put(prefix, treatment);
 		}

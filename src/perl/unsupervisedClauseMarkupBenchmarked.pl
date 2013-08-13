@@ -181,7 +181,7 @@ my $debugnouns = 0;
 
 my $taglength = 150;
 
-my $dbh = DBI->connect("DBI:mysql:host=$host;port=$port", $user, $password)
+my $dbh = DBI->connect("DBI:mysql:host=$host;port=$port", $user, $password, { mysql_enable_utf8 => 1 })
 or die DBI->errstr."\n";
 $dbh->do('SET NAMES utf8');
 
@@ -591,7 +591,7 @@ sub setupdatabase{
 #$test->execute() or die $test->errstr."\n";
 #}
 
-my $test = $dbh->prepare('create database if not exists '.$db.' CHARACTER SET utf8')
+my $test = $dbh->prepare('create database if not exists '.$db.' DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci')
 or die "Program terminates unexpected due to: ".$dbh->errstr."\n";
 $test->execute() or die $test->errstr."\n";
 

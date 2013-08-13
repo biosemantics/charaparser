@@ -47,8 +47,9 @@ my $password = "termspassword";
 
 
 #my %groups = {};
-my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password)
+my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password, { mysql_enable_utf8 => 1 })
 or die DBI->errstr."\n";
+$dbh->do('SET NAMES utf8');
 
 my $test = $dbh->prepare('use '.$db)
 or die $dbh->errstr."\n";

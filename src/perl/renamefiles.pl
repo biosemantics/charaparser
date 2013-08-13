@@ -3,8 +3,9 @@ use DBI;
 my $host = "localhost";
 my $user = "termsuser";
 my $password = "termspassword";
-my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password)
+my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password, { mysql_enable_utf8 => 1 })
 or die DBI->errstr."\n";
+$dbh->do('SET NAMES utf8');
 
 my $test = $dbh->prepare('use treatiseh_benchmark')
 or die $dbh->errstr."\n";

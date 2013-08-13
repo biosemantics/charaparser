@@ -1,6 +1,10 @@
 package semanticMarkup.io.input.lib.iplant;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +38,9 @@ public class IPlantXMLVolumeReader extends AbstractFileVolumeReader  {
 		
 		for(int i = 0; i<total; i++) {
 			File file = files[i];
-	        semanticMarkup.io.input.lib.iplant.Treatment xmlTreatment = (semanticMarkup.io.input.lib.iplant.Treatment)u.unmarshal(file);
+	        InputStream inputStream = new FileInputStream(file);
+	        Reader reader = new InputStreamReader(inputStream, "UTF-8");
+	        semanticMarkup.io.input.lib.iplant.Treatment xmlTreatment = (semanticMarkup.io.input.lib.iplant.Treatment)u.unmarshal(reader);
 	        Treatment treatment = transformTreatment(xmlTreatment);
 	        treatment.setName(file.getName().split("\\.(?=[^\\.]+$)")[0]);
 	        result.add(treatment);

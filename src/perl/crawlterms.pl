@@ -13,8 +13,9 @@ use URI;
 my $host = "localhost";
 my $user = "termsuser";
 my $password = "termspassword";
-my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password)
+my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password, { mysql_enable_utf8 => 1 })
 or die DBI->errstr."\n";
+$dbh->do('SET NAMES utf8');
 
 my $query = $dbh->prepare('use characterTerms')
 or die $dbh->errstr."\n";

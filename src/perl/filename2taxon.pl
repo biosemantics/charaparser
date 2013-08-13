@@ -34,7 +34,9 @@ my $db = "toboston"; #could be any database.
 my $user = "root";
 my $password = "root";
 my $host = "localhost";
-my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password) or die DBI->errstr."\n";
+my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password, { mysql_enable_utf8 => 1 })
+or die DBI->errstr."\n";
+$dbh->do('SET NAMES utf8'); 
 my $taxontb = "markedupdatasets.fnav20_taxon";
 my $f2ttb = "fnav20_filename2taxon";
 

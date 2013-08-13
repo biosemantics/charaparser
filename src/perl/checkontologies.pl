@@ -46,7 +46,9 @@ my $password = "termspassword";
 
 my @ontologies=("oxford", "fna", "radford");
 
-my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password) or die DBI->errstr."\n";
+my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password, { mysql_enable_utf8 => 1 })
+or die DBI->errstr."\n";
+$dbh->do('SET NAMES utf8'); 
 my $query = $dbh->prepare('use '.$db) or die $dbh->errstr."\n";
 $query->execute() or die $query->errstr."\n";
 
