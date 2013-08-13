@@ -127,6 +127,8 @@ use SentenceSpliter;
 use ReadFile;
 use strict;
 use DBI;
+use utf8;
+#use Encoding::FixLatin qw(fix_latin);
 
 #commandline:
 #perl unsupervisedClauseMarkupBenchmarked.pl D:\SMART RA\Work Folders\FOC-v7\target\descriptions(convert the xlsx file into a text file and put it into the folder format: structure: character value) markedupdatasets(change to phenoscape) plain focv7(change to fish)
@@ -181,6 +183,7 @@ my $taglength = 150;
 
 my $dbh = DBI->connect("DBI:mysql:host=$host;port=$port", $user, $password)
 or die DBI->errstr."\n";
+$dbh->do('SET NAMES utf8');
 
 my $CHECKEDWORDS = ":"; #leading three words of sentences
 my $N = 3; #$N leading words
@@ -610,17 +613,17 @@ $create->execute() or print STDOUT "$create->errstr\n";
 
 $del = $dbh->prepare('drop table if exists '.$prefix.'_heuristicnouns');
 $del->execute() or print STDOUT "$del->errstr\n";
-$create = $dbh->prepare('create table if not exists '.$prefix.'_heuristicnouns (word varchar(200) not null, type varchar(20)) CHARACTER SET utf8');
+$create = $dbh->prepare('create table if not exists '.$prefix.'_heuristicnouns (word varchar(200) not null, type varchar(20)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or print STDOUT "$create->errstr\n";
 
 #$del = $dbh->prepare('drop table if exists '.$prefix.'_propernouns');
 #$del->execute() or print STDOUT "$del->errstr\n";
-#$create = $dbh->prepare('create table if not exists '.$prefix.'_propernouns (word varchar(200) not null, primary key (word)) engine=innodb');
+#$create = $dbh->prepare('create table if not exists '.$prefix.'_propernouns (word varchar(200) not null, primary key (word)) CHARACTER SET utf8 engine=innodb');
 #$create->execute() or print STDOUT "$create->errstr\n";
 #
 #$del = $dbh->prepare('drop table if exists '.$prefix.'_taxonnames');
 #$del->execute() or print STDOUT "$del->errstr\n";
-#$create = $dbh->prepare('create table if not exists '.$prefix.'_taxonnames (word varchar(200) not null, primary key (word)) engine=innodb');
+#$create = $dbh->prepare('create table if not exists '.$prefix.'_taxonnames (word varchar(200) not null, primary key (word)) CHARACTER SET utf8 engine=innodb');
 #$create->execute() or print STDOUT "$create->errstr\n";
 
 $del = $dbh->prepare('drop table if exists '.$prefix.'_sentInFile');
@@ -5976,10 +5979,8 @@ my ($file, $text, @sentences,@words,@tmp,$status,$lead,$stmt,$sth, $escaped, $or
 opendir(IN, "$dir") || die "$!: $dir\n";
 while(defined ($file=readdir(IN))){
 	if($file !~ /\w/){next;}
-	#print "read $file\n" if $debug;
 	$text = ReadFile::readfile("$dir$file");
 	$text =~ s#["']##g;
-	#print $text."\n";
 	$text =~ s#\s*-\s*to\s+# to #g; #4/7/09 plano - to
 	$text =~ s#[-_]+shaped#-shaped#g; #5/30/09
 	$text =~ s#<.*?>##g; #remove html tags
@@ -6028,6 +6029,7 @@ while(defined ($file=readdir(IN))){
 
     	#s#([^\d])\s*-\s*([^\d])#\1_\2#g;         #hyphened words: - =>_ to avoid space padding in the next step
 		s#\s*[-]+\s*([a-z])#_\1#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+
+		my $_ = fix_latin($_);			
 		s#(\W)# \1 #g;                            #add space around nonword char
     	#s#& (\w{1,5}) ;#&\1;#g;
     	s#\s+# #g;                                #multiple spaces => 1 space
@@ -6047,7 +6049,8 @@ while(defined ($file=readdir(IN))){
 		#my $line = $_;
 		#my $oline = getOriginal($line, $original, $file);
 
-    	my $line = $sentences[$_];
+    	my $line = $sentences[$_];	
+
 #print STDOUT "$SENTID 1\n";
     	my $oline = $sentcopy[$_];
     	$oline =~ s#(\d)\s*\[\s*DOT\s*\]\s*(\d)#$1.$2#g;
@@ -6057,6 +6060,7 @@ while(defined ($file=readdir(IN))){
 		$oline =~ s#\[\s*QLN\s*\]#:#g;
 		$oline =~ s#\[\s*EXM\s*\]#!#g;
     	$line =~ s#'# #g; #remove all ' to avoid escape problems
+	
     	$oline =~ s#'# #g;
 #print STDOUT "$SENTID 2\n";
     	@words = getfirstnwords($line, $N); # "w1 w2 w3"

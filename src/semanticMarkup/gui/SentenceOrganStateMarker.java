@@ -114,7 +114,8 @@ public class SentenceOrganStateMarker {
 		try{
 				Statement stmt = conn.createStatement();
 				stmt.execute("drop table if exists "+this.tableprefix+"_markedsentence");
-				stmt.execute("create table if not exists "+this.tableprefix+"_markedsentence (sentid int(11)NOT NULL Primary Key, source varchar(100) , markedsent text, rmarkedsent text)");
+				stmt.execute("create table if not exists "+this.tableprefix+"_markedsentence (sentid int(11)NOT NULL Primary Key, source varchar(100) , markedsent text, rmarkedsent text) "
+						+ "CHARACTER SET utf8 engine=innodb");
 				//stmt.execute("update "+this.tableprefix+"_sentence set charsegment =''");
 				if(colors==null){
 					colors = this.colorsFromGloss().trim();
@@ -138,7 +139,7 @@ public class SentenceOrganStateMarker {
 					sent = sent.replaceAll("\\bshades of\\b", "shades_of");
 					sent = sent.replaceAll("\\bat least\\b", "at_least");
 					String text = stringColors(sent);
-					text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)µ\\s+m\\b", "um");
+					text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)ï¿½\\s+m\\b", "um");
 					//deal with numbers
 					//text = text.replaceAll("(?<=\\d)(?=("+ChunkedSentence.units+")\\b)", " "); //23mm => 23 mm
 					//text = StanfordParser.ratio2number(text);
@@ -146,7 +147,7 @@ public class SentenceOrganStateMarker {
 					text = text.replaceAll("\\b(ca|c)\\s*\\.?\\s*(?=\\d)", "");
 					text = formatNumericalRange(text);
 					text = text.replaceAll("more or less", "moreorless");
-					text = text.replaceAll("&#176;", "°");
+					text = text.replaceAll("&#176;", "ï¿½");
 					//text = text.replaceAll("\\bca\\s*\\.", "ca");
 					text = text.replaceAll("\\bdiam\\s*\\.(?=\\s?[,a-z])", "diam");
 					text = stringCompoundPP(text);
@@ -170,8 +171,8 @@ public class SentenceOrganStateMarker {
 						if(osent.indexOf(dittos.trim())<0) osent =osent.trim() +" "+ dittos.trim(); //put a check here so dittos are not added multiple times when the user runs the Parser mutiple times on one document collection
 						dittos = "";
 						String text = stringColors(sent.replaceAll("</?[BNOM]>", ""));
-						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)µ\\s+m\\b", "um");
-						text = text.replaceAll("&#176;", "°");
+						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)ï¿½\\s+m\\b", "um");
+						text = text.replaceAll("&#176;", "ï¿½");
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
 						text = rs.getString("modifier")+"##"+tag+"##"+text;
 						sentences.put(source, text);
@@ -231,10 +232,10 @@ public class SentenceOrganStateMarker {
 		text = text.replaceAll("\\bdiameter\\s+of\\b\\s*(?=\\d)", "diameter ");
 		if(text.contains(" to ") || text.contains(" up to ")){
 			//text = text.replaceAll("(?<=\\d\\s?("+ChunkedSentence.units+")?) to (?=\\d)", " - ");// three to four???
-			//deal with: to-range such as "to 3 cm", "to 24 × 5 mm", "to 2 . 7 × 1 . 7 – 2 mm", "3 – 20 ( – 25 )" 
+			//deal with: to-range such as "to 3 cm", "to 24 ï¿½ 5 mm", "to 2 . 7 ï¿½ 1 . 7 ï¿½ 2 mm", "3 ï¿½ 20 ( ï¿½ 25 )" 
 			text = text.replaceAll(" (up )?to (?=[\\d\\. ]{1,6} )", " 0 - "); // <trees> to 3 cm => <trees> 0 - 3 cm: works for case 1,  3, (case 4 should not match)
-			text = text.replaceAll(" (?<=0 - [\\d\\. ]{1,6} [a-z ]?)× (?=[\\d\\. ]{1,6} [a-z])", " × 0 - "); //deal with case 2
-			text = text.replaceAll(" 0 - (?=[\\d\\.\\ ]{1,8} [-–])", " ");// 0 - 1 . 3  - 2 . 0 => 1 . 3 - 2 . 0
+			text = text.replaceAll(" (?<=0 - [\\d\\. ]{1,6} [a-z ]?)ï¿½ (?=[\\d\\. ]{1,6} [a-z])", " ï¿½ 0 - "); //deal with case 2
+			text = text.replaceAll(" 0 - (?=[\\d\\.\\ ]{1,8} [-ï¿½])", " ");// 0 - 1 . 3  - 2 . 0 => 1 . 3 - 2 . 0
 		}
 		if(!copy.equals(text) && printto){
 			System.out.println("[to range original] "+copy);
@@ -377,7 +378,7 @@ public class SentenceOrganStateMarker {
 		if(taggedsent.indexOf("est}")>=0 && m.matches()){
 			String aftersuperlative = m.group(3);
 			if(aftersuperlative.matches("\\s+(\\w+\\s+)?\\d.*")){//the superlative and the numbers may be separated by one word
-				//this check will miss cases such as ", {longest} {white} {margined} , 25 – 45 ( – 58 ) mm ;"
+				//this check will miss cases such as ", {longest} {white} {margined} , 25 ï¿½ 45 ( ï¿½ 58 ) mm ;"
 				taggedsent = m.group(1)+m.group(2).replaceAll("\\}", ">").replaceAll("\\{", "<").replaceAll("<+", "<").replaceAll(">+", ">")+m.group(3);
 				if(superlative) System.out.println("["+m.group(2)+"]:"+taggedsent);
 			}
@@ -519,7 +520,7 @@ public class SentenceOrganStateMarker {
 		//remove ()
 		//sent = sent.replaceAll("\\(.*?\\)", "");
 		//remove (text)
-		//sent = sent.replaceAll("\\(\\s+(?![\\d\\–\\-\\—]).*?(?<![\\d\\–\\-\\—])\\s+\\)", "");
+		//sent = sent.replaceAll("\\(\\s+(?![\\d\\ï¿½\\-\\ï¿½]).*?(?<![\\d\\ï¿½\\-\\ï¿½])\\s+\\)", "");
 		
 		sent = sent.replaceAll("(?<=\\w)\\s+(?=[,\\.;:])", "");
 

@@ -406,8 +406,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						
 						String osent = rs.getString("originalsent");
 						String text = sent;
-						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)µ\\s+m\\b", "um");
-						text = text.replaceAll("&#176;", "°");
+						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)ï¿½\\s+m\\b", "um");
+						text = text.replaceAll("&#176;", "ï¿½");
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
 						text = rs.getString("modifier")+"##"+tag+"##"+text;
 						
@@ -568,10 +568,12 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 									this.databasePrefix + "_wordpos, " + 
 									this.databasePrefix + "_wordroles;";
             stmt.execute(cleanupQuery);
-            stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)");
+            stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, "
+            		+ "dhword varchar(150), inbrackets int default 0) CHARACTER SET utf8 engine=innodb");
     		AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, this.databaseHost, this.databasePort, this.databaseName, this.databasePrefix, this.databaseUser, this.databasePassword);
     		allWordsLearner.learn(treatments);
-    		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");			
+    		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), "
+    				+ "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");			
         } catch(Exception e) {
         	e.printStackTrace();
         	log(LogLevel.ERROR, "problem initalizing tables", e);

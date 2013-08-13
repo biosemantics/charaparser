@@ -149,7 +149,8 @@ public class DeHyphenAFolder {
 	        try{
 	            Statement stmt = conn.createStatement();
 	            stmt.execute("drop table if exists "+tablename);
-	            String query = "create table if not exists "+tablename+" (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)";
+	            String query = "create table if not exists "+tablename+" (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)"
+	            		+ " CHARACTER SET utf8 engine=innodb";
 	            stmt.execute(query);	           
 	        }catch(Exception e){
 	        	e.printStackTrace();	
@@ -314,7 +315,7 @@ public class DeHyphenAFolder {
                         }                        
 	                }
 	                text = sb.toString().replaceAll("\\s*\\(\\s*", "(").replaceAll("\\s*\\)\\s*", ")")
-	                .replaceAll("(?<=[^0-9+–-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
+	                .replaceAll("(?<=[^0-9+ï¿½-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
 	                //write back
 	                File outf = new File(outfolder, flist[i].getName());
 	                //BufferedWriter out = new BufferedWriter(new FileWriter(flist[i]));

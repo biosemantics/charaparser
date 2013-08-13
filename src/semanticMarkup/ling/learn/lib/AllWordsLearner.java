@@ -74,7 +74,8 @@ public class AllWordsLearner {
 	private void createAllWordsTable() throws Exception {
         Statement statement = connection.createStatement();
         statement.execute("drop table if exists " + tablename);
-        String query = "create table if not exists " + tablename + " (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)";
+        String query = "create table if not exists " + tablename + " (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)"
+        		+ " CHARACTER SET utf8 engine=innodb";
         statement.execute(query);        
     }
 	

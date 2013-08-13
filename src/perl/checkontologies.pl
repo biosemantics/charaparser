@@ -50,7 +50,7 @@ my $dbh = DBI->connect("DBI:mysql:host=$host", $user, $password) or die DBI->err
 my $query = $dbh->prepare('use '.$db) or die $dbh->errstr."\n";
 $query->execute() or die $query->errstr."\n";
 
-$query = $dbh->prepare('create table if not exists '.$prefix.'_comparison (term varchar(100), ontology varchar(20), category varchar(100), categorypath varchar(1000), primary key (term, ontology, category)) ');
+$query = $dbh->prepare('create table if not exists '.$prefix.'_comparison (term varchar(100), ontology varchar(20), category varchar(100), categorypath varchar(1000), primary key (term, ontology, category)) CHARACTER SET utf8 engine=innodb');
 $query->execute() or die $query->errstr."\n";
 $query = $dbh->prepare('delete from '.$prefix.'_comparison');
 $query->execute() or die $query->errstr."\n";

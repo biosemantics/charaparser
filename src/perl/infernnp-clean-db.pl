@@ -53,7 +53,7 @@ $exists.=$table." ";
 
 if($exists !~/\bsentence\b/){
 #create table sentence
-$create = $dbh->prepare('create table sentence (sentid varchar(10) not null unique, sentence varchar(500), lead varchar(50), status varchar(20), tag varchar(50),primary key (sentid)) engine=innodb');
+$create = $dbh->prepare('create table sentence (sentid varchar(10) not null unique, sentence varchar(500), lead varchar(50), status varchar(20), tag varchar(50),primary key (sentid)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 }else{
 $del = $dbh->prepare('delete from sentence');
@@ -62,7 +62,7 @@ $del->execute();
 
 if($exists !~/\bwordpos\b/){
 #create table wordpos
-$create = $dbh->prepare('create table wordpos (word varchar(50) not null, pos varchar(2) not null, role varchar(5), certaintyu int, certaintyl int, primary key (word, pos)) engine=innodb');
+$create = $dbh->prepare('create table wordpos (word varchar(50) not null, pos varchar(2) not null, role varchar(5), certaintyu int, certaintyl int, primary key (word, pos)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 }else{
 $del = $dbh->prepare('delete from wordpos');
@@ -71,7 +71,7 @@ $del->execute();
 
 if($exists !~/\bwordsent\b/){
 #create table wordsent
-$create = $dbh->prepare('create table wordsent (word varchar(50) not null, sentid varchar(10) not null, primary key (word, sentid), foreign key(sentid) references sentence(sentid) on update cascade, foreign key(word) references wordpos(word) on update cascade) engine=innodb');
+$create = $dbh->prepare('create table wordsent (word varchar(50) not null, sentid varchar(10) not null, primary key (word, sentid), foreign key(sentid) references sentence(sentid) on update cascade, foreign key(word) references wordpos(word) on update cascade) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 }else{
 $del = $dbh->prepare('delete from wordsent');
@@ -81,7 +81,7 @@ $del->execute();
 
 if($exists !~/\blinkage\b/){
 #create table bsentlinkage
-$create = $dbh->prepare('create table linkage (filename varchar(300) not null unique primary key, endindex int not null) engine=innodb');
+$create = $dbh->prepare('create table linkage (filename varchar(300) not null unique primary key, endindex int not null) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 }else{
 $del = $dbh->prepare('delete from linkage');
@@ -1331,4 +1331,4 @@ sub tokenize{
     return @words;
 }
 
-#my $special = "[´–×±]";
+#my $special = "[ï¿½ï¿½×±]";

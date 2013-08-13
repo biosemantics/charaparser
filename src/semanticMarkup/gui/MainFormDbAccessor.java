@@ -86,7 +86,7 @@ public class MainFormDbAccessor {
 					+ "_noneqterms");
 			stmt.execute("create table if not exists "
 					+ this.databasePrefix
-					+ "_noneqterms (term varchar(100) not null, source varchar(200), savedid varchar(40))");
+					+ "_noneqterms (term varchar(100) not null, source varchar(200), savedid varchar(40)) CHARACTER SET utf8 engine=innodb");
 			stmt.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -101,7 +101,7 @@ public class MainFormDbAccessor {
 			stmt.execute("drop table if exists " + typotable);
 			String query = "create table if not exists "
 					+ typotable
-					+ " (typo varchar(150), correction varchar(150), primary key (typo, correction))";
+					+ " (typo varchar(150), correction varchar(150), primary key (typo, correction)) CHARACTER SET utf8 engine=innodb";
 			stmt.execute(query);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -439,7 +439,7 @@ public class MainFormDbAccessor {
 				+ "tab_gloss varchar(1) DEFAULT NULL, "
 				+ "glossary varchar(40) DEFAULT NULL, "
 				+ "option_chosen varchar(1) DEFAULT '', "
-				+ "PRIMARY KEY (prefix, time_last_accessed) ) ";
+				+ "PRIMARY KEY (prefix, time_last_accessed) ) CHARACTER SET utf8 engine=innodb ";
 
 		try {
 			// conn = DriverManager.getConnection(url);
@@ -938,7 +938,7 @@ public class MainFormDbAccessor {
 			stmt.execute("create table if not exists "
 					+ this.databasePrefix
 					+ "_wordroles"
-					+ " (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole))");
+					+ " (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

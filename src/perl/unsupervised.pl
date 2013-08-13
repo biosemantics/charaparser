@@ -377,28 +377,28 @@ $test->execute() or die $test->errstr."\n";
 
 my ($create, $del);
 
-$create = $dbh->prepare('create table if not exists sentence (sentid int(11) not null unique, source varchar(500), sentence varchar(2000), originalsent varchar(2000), lead varchar(50), status varchar(20), tag varchar(150),modifier varchar(150), charsegment varchar(500),primary key (sentid)) engine=innodb');
+$create = $dbh->prepare('create table if not exists sentence (sentid int(11) not null unique, source varchar(500), sentence varchar(2000), originalsent varchar(2000), lead varchar(50), status varchar(20), tag varchar(150),modifier varchar(150), charsegment varchar(500),primary key (sentid)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 $del = $dbh->prepare('delete from sentence');
 $del->execute();
 
 
-$create = $dbh->prepare('create table if not exists wordpos (word varchar(50) not null, pos varchar(2) not null, role varchar(5), certaintyu int, certaintyl int, primary key (word, pos)) engine=innodb');
+$create = $dbh->prepare('create table if not exists wordpos (word varchar(50) not null, pos varchar(2) not null, role varchar(5), certaintyu int, certaintyl int, primary key (word, pos)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 $del = $dbh->prepare('delete from wordpos');
 $del->execute();
 
-$create = $dbh->prepare('create table if not exists sentInFile (filename varchar(200) not null unique primary key, endindex int not null) engine=innodb');
+$create = $dbh->prepare('create table if not exists sentInFile (filename varchar(200) not null unique primary key, endindex int not null) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 $del = $dbh->prepare('delete from sentInFile');
 $del->execute();
 
-$create = $dbh->prepare('create table if not exists modifiers (word varchar(50) not null unique primary key, count int) engine=innodb');
+$create = $dbh->prepare('create table if not exists modifiers (word varchar(50) not null unique primary key, count int) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 $del = $dbh->prepare('delete from modifiers');
 $del->execute();
 
-$create = $dbh->prepare('create table if not exists isA (autoid int not null auto_increment primary key, instance varchar(50), class varchar(50)) engine=innodb');
+$create = $dbh->prepare('create table if not exists isA (autoid int not null auto_increment primary key, instance varchar(50), class varchar(50)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn "$create->errstr\n";
 $del = $dbh->prepare('delete from isA');
 $del->execute();
@@ -2059,7 +2059,7 @@ sub tokenize{
 #extract the segment matching $line from $original, mainly to get original case and parentheses
 #$line: pappi , 20 ï¿½ 40 mm , usually noticeably shorter than corolla .
 #$orginal:... Pappi (white or tawny), 20ï¿½40mm, usually noticeably shorter than corolla. ...
-#Pollen 70–100% 3-porate, mean 25 µm
+#Pollen 70ï¿½100% 3-porate, mean 25 ï¿½m
 sub getOriginal{
 	my ($line, $original, $file) = @_;
 	my $pattern1 = $line; 

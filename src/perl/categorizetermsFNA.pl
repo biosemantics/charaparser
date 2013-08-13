@@ -74,7 +74,7 @@ exit(1);
 
 if($exists !~/\bsemanticclass\b/){
 #create table sentence
-$create = $dbh->prepare('create table semanticclass (classid int, word varchar(100), weight int, primary key(classid, word))');
+$create = $dbh->prepare('create table semanticclass (classid int, word varchar(100), weight int, primary key(classid, word)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or die "$create->errstr\n";
 }else{
 $del = $dbh->prepare('delete from semanticclass');
@@ -83,7 +83,7 @@ $del->execute();
 
 if($exists !~/\blinktable\b/){
 #create table linktable
-$create = $dbh->prepare('create table linktable (id1 varchar(30), id2 varchar(30), links int, primary key(id1, id2))');
+$create = $dbh->prepare('create table linktable (id1 varchar(30), id2 varchar(30), links int, primary key(id1, id2)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or die "$create->errstr\n";
 }else{
 $del = $dbh->prepare('delete from linktable');

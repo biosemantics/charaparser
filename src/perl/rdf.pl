@@ -52,19 +52,19 @@ $del = $dbh->prepare('drop table property');
 $del->execute();
 }
 
-$create = $dbh->prepare('create table element (eid int auto_increment not null unique primary key, ename varchar(50)) engine=innodb');
+$create = $dbh->prepare('create table element (eid int auto_increment not null unique primary key, ename varchar(50)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn $create->errstr."\n";
 
-$create = $dbh->prepare('create table property (pid int auto_increment not null unique primary key, pname varchar(50)) engine=innodb');
+$create = $dbh->prepare('create table property (pid int auto_increment not null unique primary key, pname varchar(50)) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn $create->errstr."\n";
 
-$create = $dbh->prepare('create table nestedelement (parentid int not null, childid int not null, primary key(parentid, childid), foreign key(parentid) references element(eid) on update cascade on delete cascade, foreign key(childid) references element(eid) on update cascade on delete cascade) engine=innodb');
+$create = $dbh->prepare('create table nestedelement (parentid int not null, childid int not null, primary key(parentid, childid), foreign key(parentid) references element(eid) on update cascade on delete cascade, foreign key(childid) references element(eid) on update cascade on delete cascade) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn $create->errstr."\n";
 
-$create = $dbh->prepare('create table elemprop (eid int not null, pid int not null, primary key(eid, pid), foreign key(eid) references element(eid) on update cascade on delete cascade, foreign key(pid) references property(pid) on update cascade on delete cascade) engine=innodb');
+$create = $dbh->prepare('create table elemprop (eid int not null, pid int not null, primary key(eid, pid), foreign key(eid) references element(eid) on update cascade on delete cascade, foreign key(pid) references property(pid) on update cascade on delete cascade) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn $create->errstr."\n";
 
-$create = $dbh->prepare('create table propvalue (pid int not null, value varchar(100) not null, primary key(pid, value), foreign key(pid) references property(pid) on update cascade on delete cascade) engine=innodb');
+$create = $dbh->prepare('create table propvalue (pid int not null, value varchar(100) not null, primary key(pid, value), foreign key(pid) references property(pid) on update cascade on delete cascade) CHARACTER SET utf8 engine=innodb');
 $create->execute() or warn $create->errstr."\n";
 
 # populate property table

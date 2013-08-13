@@ -82,7 +82,8 @@ public class DehyphenTreatmentTransformer implements ITreatmentTransformer {
 	private void createAllWordsTable() throws Exception {
         Statement statement = connection.createStatement();
         statement.execute("drop table if exists " + tablename);
-        String query = "create table if not exists " + tablename + " (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)";
+        String query = "create table if not exists " + tablename + " (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0) "
+        		+ "CHARACTER SET utf8 engine=innodb";
         statement.execute(query);        
     }
 	
@@ -246,7 +247,7 @@ public class DehyphenTreatmentTransformer implements ITreatmentTransformer {
                     }                        
                 }
                 text = stringBuffer.toString().replaceAll("\\s*\\(\\s*", "(").replaceAll("\\s*\\)\\s*", ")")
-                .replaceAll("(?<=[^0-9+–-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
+                .replaceAll("(?<=[^0-9+ï¿½-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
                 element.setValue(text);
             }
     	}

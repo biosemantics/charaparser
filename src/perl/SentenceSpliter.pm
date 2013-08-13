@@ -23,7 +23,8 @@ $VERSION = '0.25';
 
 # LC_CTYPE now in locale "French, Canada, codeset ISO 8859-1"
 #comment out 2lines by hong, 10/27/08
-$LOC=setlocale(LC_CTYPE, "fr_CA.ISO8859-1"); 
+#$LOC=setlocale(LC_CTYPE, "fr_CA.ISO8859-1"); 
+$LOC=setlocale(LC_CTYPE, "en_US.UTF-8"); 
 use locale;
 
 @ISA = qw( Exporter );
@@ -33,9 +34,9 @@ use locale;
 
 $EOS="\001";
 $P = q/[\.!?;:]/;			## PUNCTUATION
-$AP = q/(?:'|"|»|\)|\]|\})?/;	## AFTER PUNCTUATION
+$AP = q/(?:'|"|ï¿½|\)|\]|\})?/;	## AFTER PUNCTUATION
 $PAP = $P.$AP;
-$SAP = q/(?:\.|'|"|»|\)|\]|\})?/;
+$SAP = q/(?:\.|'|"|ï¿½|\)|\]|\})?/;
 
 my @PEOPLE = ( 'jr', 'mr', 'mrs', 'ms', 'dr', 'prof', 'sr', "sens?", "reps?", 'gov',
 		"attys?", 'supt',  'det', 'rev' );
@@ -53,7 +54,7 @@ my @PLACES = ( 'arc', 'al', 'ave', "blv?d", 'cl', 'ct', 'cres', 'dr', "expy?",
 		'Mich', 'Minn', 'Miss', 'Mo', 'Mont', 'Neb', 'Nebr' , 'Nev',
 		'Mex', 'Okla', 'Ok', 'Ore', 'Penna', 'Penn', 'Pa'  , 'Dak',
 		'Tenn', 'Tex', 'Ut', 'Vt', 'Va', 'Wash', 'Wis', 'Wisc', 'Wy',
-		'Wyo', 'USAFA', 'Alta' , 'Man', 'Ont', 'Qué', 'Sask', 'Yuk');
+		'Wyo', 'USAFA', 'Alta' , 'Man', 'Ont', 'Quï¿½', 'Sask', 'Yuk');
 my @MONTHS = ('jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec','sept');
 my @MISC = ( 'vs', 'etc', 'no', 'esp', 'fig', 'eg', 'et al', 'cf');
 my @BOT1 = ('diam', 'sq','Rottb', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v','w','x','y','z');#single letter genus name abbrev
@@ -142,8 +143,8 @@ sub set_EOS {
 #
 #
 #               The following will set the LC_COLLATE behaviour to
-#               Argentinian Spanish. NOTE: The naming and avail­
-#               ability of locales depends on your operating sys­
+#               Argentinian Spanish. NOTE: The naming and availï¿½
+#               ability of locales depends on your operating sysï¿½
 #               tem. Please consult the perllocale manpage for how
 #               to find out which locales are available in your
 #               system.

@@ -5,8 +5,9 @@ package ReadFile;
 sub readfile{
 	my $file = shift;
 	my $content = "";
-	open(F, "$file") || die "$!:$file\n";
-	while($line =<F>){
+	open $f, '<:encoding(UTF-8)', $file;  # auto decoding on read
+	#open(F, "$file") || die "$!:$file\n";
+	while($line =<$f>){
 		$line =~ s#\r|\n# #g;
 		$content .= $line;
 	}		 

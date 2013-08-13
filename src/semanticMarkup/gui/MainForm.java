@@ -628,7 +628,7 @@ public class MainForm {
 						}
 						Statement stmt = conn.createStatement();
 						stmt.execute("drop table if exists "+dataPrefixCombo.getText().replaceAll("-", "_").trim()+"_group_decisions");
-						stmt.execute("create table if not exists "+dataPrefixCombo.getText().replaceAll("-", "_").trim()+"_group_decisions (groupId int, category varchar(200), primary key(groupId))");
+						stmt.execute("create table if not exists "+dataPrefixCombo.getText().replaceAll("-", "_").trim()+"_group_decisions (groupId int, category varchar(200), primary key(groupId)) CHARACTER SET utf8 engine=innodb");
 					}catch (Exception e){
 						e.printStackTrace();
 					}

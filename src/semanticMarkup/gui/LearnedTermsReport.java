@@ -197,7 +197,7 @@ public class LearnedTermsReport {
 	private void createLearnedStructureTable(){
 		try{
 			Statement stmt = conn.createStatement();
-			stmt.execute("create table if not exists "+LearnedTermsReport.otablename +"(structure varchar(100))");
+			stmt.execute("create table if not exists "+LearnedTermsReport.otablename +"(structure varchar(100)) CHARACTER SET utf8 engine=innodb");
 			stmt.execute("delete from "+LearnedTermsReport.otablename);
 			ResultSet rs = stmt.executeQuery("select distinct modifier, tag from "+LearnedTermsReport.otablename1);
 			while(rs.next()){
