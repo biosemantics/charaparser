@@ -128,7 +128,7 @@ use ReadFile;
 use strict;
 use DBI;
 use utf8;
-#use Encoding::FixLatin qw(fix_latin);
+use Encoding::FixLatin qw(fix_latin);
 
 #commandline:
 #perl unsupervisedClauseMarkupBenchmarked.pl D:\SMART RA\Work Folders\FOC-v7\target\descriptions(convert the xlsx file into a text file and put it into the folder format: structure: character value) markedupdatasets(change to phenoscape) plain focv7(change to fish)
