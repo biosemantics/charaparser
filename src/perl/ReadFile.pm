@@ -5,13 +5,11 @@ use Encoding::FixLatin qw(fix_latin);
 
 sub readfile{
 	my $file = shift;
-	print stdout "read file: " . $file;
 	my $content = "";
 	open $f, '<:encoding(UTF-8)', $file;   # auto decoding on read 
 	#open($f, "$file") || die "$!:$file\n";
 	
 	while($line =<$f>){
-		print stdout "$line";
 		$line = fix_latin($line);		
 		$line =~ s#\r|\n# #g;
 		$content .= $line;

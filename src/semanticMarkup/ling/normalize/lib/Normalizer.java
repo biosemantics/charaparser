@@ -150,8 +150,6 @@ public abstract class Normalizer implements INormalizer {
 	
 	@Override
 	public String normalize(String str, String tag, String modifier, String source) {	
-		if(str.startsWith("plants"))
-			System.out.println("here");
 		str = dataSetSpecificNormalization(str);
 		
 		str = str.replaceAll("_", "-");
