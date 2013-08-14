@@ -51,7 +51,7 @@ public class FloweringTimeTreatmentRefiner implements ITreatmentRefiner {
 	
 	@Override
 	public void refine(Treatment treatment, String clue, String nameForValues) {
-		clue = clue.toLowerCase().replaceFirst("flowering\\s+", "").replaceAll("–", "-");
+		clue = clue.toLowerCase().replaceFirst("flowering\\s+", "").replaceAll("â€“", "-");
 		//log(LogLevel.DEBUG, "original: "+text);
 		//clean up the text
 		Matcher m = valuePattern.matcher(clue);

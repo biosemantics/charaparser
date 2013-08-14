@@ -46,7 +46,7 @@ public class AreaChunker extends AbstractChunker {
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
-			//token: 4-9cm×usually15-25mm		
+			//token: 4-9cmï¿½usually15-25mm		
 			String terminalsText = terminal.getTerminalsText();
 			if(terminalsText.contains("x") && !terminalsText.contains("\\s")) {
 				String dim[] = terminalsText.split("x");
@@ -59,7 +59,7 @@ public class AreaChunker extends AbstractChunker {
 					dimensions++;
 				}
 				if(dimensions >= 2) {
-					terminalsText = terminalsText.replaceAll("×[^0-9]*", " × ").replaceAll("(?<=[^a-z])(?=[a-z])", " ").replaceAll("(?<=[a-z])(?=[^a-z])", " ").replaceAll("\\s+", " ").trim();
+					terminalsText = terminalsText.replaceAll("Ã—[^0-9]*", " Ã— ").replaceAll("(?<=[^a-z])(?=[a-z])", " ").replaceAll("(?<=[a-z])(?=[^a-z])", " ").replaceAll("\\s+", " ").trim();
 					terminal.setTerminalsText(terminalsText);
 					chunkCollector.addChunk(new Chunk(ChunkType.AREA, terminal));
 				}

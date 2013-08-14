@@ -44,22 +44,22 @@ public abstract class Normalizer implements INormalizer {
 	private String prepositionWords;
 	private Pattern modifierList;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
-	private Pattern numbergroup = Pattern.compile("(.*?)([()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d]?[()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{1,}(?![a-z{}]))(.*)"); //added , and ? for chromosome counts, used {1, } to include single digit expressions such as [rarely 0]
+	private Pattern numbergroup = Pattern.compile("(.*?)([()\\[\\]\\-\\â€“\\d\\.Ã—x\\+Â²Â½/Â¼\\*/%\\?]*?[Â½/Â¼\\d]?[()\\[\\]\\-\\â€“\\d\\.,?Ã—x\\+Â²Â½/Â¼\\*/%\\?]{1,}(?![a-z{}]))(.*)"); //added , and ? for chromosome counts, used {1, } to include single digit expressions such as [rarely 0]
 	private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-{0,1},{0,1}\\s*)+ (to|or) \\d-(\\w+))(\\b.*)");
-	private Pattern numberpattern = Pattern.compile("[()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{2,}(?![a-z{}])"); //added , and ? for chromosome counts
+	private Pattern numberpattern = Pattern.compile("[()\\[\\]\\-\\â€“\\d\\.Ã—x\\+Â²Â½/Â¼\\*/%\\?]*?[Â½/Â¼\\d][()\\[\\]\\-\\â€“\\d\\.,?Ã—x\\+Â²Â½/Â¼\\*/%\\?]{2,}(?![a-z{}])"); //added , and ? for chromosome counts
 	private Pattern modifierlist = Pattern.compile("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");
 	private String countp = "more|fewer|less|\\d+";
 	private Pattern countptn = Pattern.compile("((?:^| |\\{)(?:"+countp+")\\}? (?:or|to) \\{?(?:"+countp+")(?:\\}| |$))");
 	private Pattern colorpattern = Pattern.compile("(.*?)((coloration|color)\\s+%\\s+(?:(?:coloration|color|@|%) )*(?:coloration|color))\\s((?![^,;()\\[\\]]*[#]).*)");
 	private Pattern distributePrepPattern = Pattern.compile("(^.*~list~)(.*?~with~)(.*?~or~)(.*)");
-	private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ \\{?[cmd]?m\\}?×\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?×?(\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?)?)(.*)");
+	private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ \\{?[cmd]?m\\}?Ã—\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?Ã—?(\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?)?)(.*)");
 	private Pattern viewptn = Pattern.compile( "(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)"); //to match in dorsal view and in profile
 	private Pattern bulletpattern  = Pattern.compile("^(and )?([(\\[]\\s*\\d+\\s*[)\\]]|\\d+.)\\s+(.*)"); //( 1 ), [ 2 ], 12.
 	private Pattern asaspattern = Pattern.compile("(.*?\\b)(as\\s+[\\w{}<>]+\\s+as)(\\b.*)");
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private IInflector inflector;
-	private static Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
-	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
+	private static Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-zâ€“\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-zâ€“\\[\\]\\+-]+ly )*(\\4)+([0-9a-zâ€“\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
+	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-zâ€“\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-zâ€“\\[\\]\\+-]+ly )*(\\3)+([0-9a-zâ€“\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
 	
 	private ParentTagProvider parentTagProvider;
 	
@@ -150,6 +150,8 @@ public abstract class Normalizer implements INormalizer {
 	
 	@Override
 	public String normalize(String str, String tag, String modifier, String source) {	
+		if(str.startsWith("plants"))
+			System.out.println("here");
 		str = dataSetSpecificNormalization(str);
 		
 		str = str.replaceAll("_", "-");
@@ -169,12 +171,12 @@ public abstract class Normalizer implements INormalizer {
 		
 		/*str = str.replaceAll("\\b(?<=\\d+) \\. (?=\\d+)\\b", "."); //2 . 5 =>2.5
 		str = str.replaceAll("(?<=\\d)\\s+/\\s+(?=\\d)", "/"); // 1 / 2 => 1/2
-		str = str.replaceAll("(?<=\\d)\\s+[–-—]\\s+(?=\\d)", "-"); // 1 - 2 => 1-2*/
-		/*if(str.indexOf(" -{")>=0){//1–2-{pinnately} or -{palmately} {lobed} => {1–2-pinnately-or-palmately} {lobed}
+		str = str.replaceAll("(?<=\\d)\\s+[ï¿½-ï¿½]\\s+(?=\\d)", "-"); // 1 - 2 => 1-2*/
+		/*if(str.indexOf(" -{")>=0){//1ï¿½2-{pinnately} or -{palmately} {lobed} => {1ï¿½2-pinnately-or-palmately} {lobed}
 			str = str.replaceAll("\\s+or\\s+-\\{", "-or-").replaceAll("\\s+to\\s+-\\{", "-to-").replaceAll("\\s+-\\{", "-{");
 		}*/
 
-		if(str.matches(".*?-(or|to)\\b.*") || str.matches(".*?\\b(or|to)-.*") ){//1–2-{pinnately} or-{palmately} {lobed} => {1–2-pinnately-or-palmately} {lobed}
+		if(str.matches(".*?-(or|to)\\b.*") || str.matches(".*?\\b(or|to)-.*") ){//1ï¿½2-{pinnately} or-{palmately} {lobed} => {1ï¿½2-pinnately-or-palmately} {lobed}
 			str = str.replaceAll("\\}?-or\\s+\\{?", "-or-").replaceAll("\\}?\\s+or-\\{?", "-or-").replaceAll("\\}?-to\\s+\\{?", "-to-").replaceAll("\\}?\\s+to-\\{?", "-to-").replaceAll("-or\\} \\{", "-or-").replaceAll("-to\\} \\{", "-to-");
 		}
 		//{often} 2-, 3-, or 5-{ribbed} ; =>{often} {2-,3-,or5-ribbed} ;  635.txt-16
@@ -190,7 +192,7 @@ public abstract class Normalizer implements INormalizer {
 				break;
 		}
 		String scp = str;
-		str = str.replaceAll("(?<![\\d(\\[–—-]\\s?)[–—-]+\\s*(?="+numberpattern+"\\s+\\W?("+units+")\\W?)", " to "); //fna: tips>-2.5 {mm}
+		str = str.replaceAll("(?<![\\d(\\[â€“â€”-]\\s?)[â€“â€”-]+\\s*(?="+numberpattern+"\\s+\\W?("+units+")\\W?)", " to "); //fna: tips>-2.5 {mm}
 		//if(!scp.equals(str)){
 		//	log(LogLevel.DEBUG, );
 		//}
@@ -225,7 +227,7 @@ public abstract class Normalizer implements INormalizer {
         }
         
         
-        //10-20(-38) {cm}×6-10 {mm} 
+        //10-20(-38) {cm}ï¿½6-10 {mm} 
         
         
 		//try{
@@ -233,8 +235,8 @@ public abstract class Normalizer implements INormalizer {
 			
 			String strnum = null;
 			/*
-			//if(str.indexOf("}×")>0){//{cm}×
-			if(str.indexOf("×")>0){
+			//if(str.indexOf("}ï¿½")>0){//{cm}ï¿½
+			if(str.indexOf("ï¿½")>0){
 				containsArea = true;
 				String[] area = normalizeArea(str);
 				str = area[0]; //with complete info
@@ -247,8 +249,8 @@ public abstract class Normalizer implements INormalizer {
 			if(m.matches()){
 				str = m.group(3);
 			}
-			if(str.indexOf("±")>=0){
-				str = str.replaceAll("±(?!~[a-z])","{moreorless}").replaceAll("±(?!\\s+\\d)","moreorless");
+			if(str.indexOf("Â±")>=0){
+				str = str.replaceAll("Â±(?!~[a-z])","{moreorless}").replaceAll("Â±(?!\\s+\\d)","moreorless");
 			}
 			/*to match {more} or {less}*/
 			if(str.matches(".*?\\b[{<]*more[}>]*\\s+or\\s+[{<]*less[}>]*\\b?.*")){
@@ -263,7 +265,7 @@ public abstract class Normalizer implements INormalizer {
 				}
 			}
 			
-			if(str.indexOf("×")>0){
+			if(str.indexOf("Ã—")>0){
 				containsArea = true;
 				String[] area = normalizeArea(str);
 				str = area[0]; //with complete info
@@ -701,8 +703,8 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("n\\s*=", "n=");
 		sent = sent.replaceAll("x\\s*=", "x=");
 
-		//sent = sent.replaceAll("[–—-]", "-").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\[", " [ ").replaceAll("\\]", " ] ").replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").replaceAll("\\s+", " ").trim();
-		sent = sent.replaceAll("[~–—-]", "-").replaceAll("°", " ° ").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\s+", " ").trim();
+		//sent = sent.replaceAll("[ï¿½ï¿½-]", "-").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\[", " [ ").replaceAll("\\]", " ] ").replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").replaceAll("\\s+", " ").trim();
+		sent = sent.replaceAll("[~â€“â€”-]", "-").replaceAll("Â°", " Â° ").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\s+", " ").trim();
 		sent = sent.replaceAll("(?<=\\d) (?=\\?)", ""); //deals especially x=[9 ? , 13] 12, 19 cases
 		sent = sent.replaceAll("(?<=\\?) (?=,)", "");
 		if(sent.matches(".*?[nx]=.*")){
@@ -713,8 +715,8 @@ public abstract class Normalizer implements INormalizer {
 		
 		
 		//sent = sent.replaceAll("(?<=\\d)\\s+/\\s+(?=\\d)", "/"); // 1 / 2 => 1/2
-		//sent = sent.replaceAll("(?<=[\\d()\\[\\]])\\s+[–—-]\\s+(?=[\\d()\\[\\]])", "-"); // 1 - 2 => 1-2
-		//sent = sent.replaceAll("(?<=[\\d])\\s+[–—-]\\s+(?=[\\d])", "-"); // 1 - 2 => 1-2
+		//sent = sent.replaceAll("(?<=[\\d()\\[\\]])\\s+[ï¿½ï¿½-]\\s+(?=[\\d()\\[\\]])", "-"); // 1 - 2 => 1-2
+		//sent = sent.replaceAll("(?<=[\\d])\\s+[ï¿½ï¿½-]\\s+(?=[\\d])", "-"); // 1 - 2 => 1-2
 		
 		//4-25 [ -60 ] => 4-25[-60]: this works only because "(text)" have already been removed from sentence in perl program
 		sent = sent.replaceAll("\\(\\s+(?=[\\d\\+\\-%])", "("). //"( 4" => "(4"
@@ -729,32 +731,32 @@ public abstract class Normalizer implements INormalizer {
 		replaceAll("(?<=[\\d\\+\\-%])\\s+\\]", "]"). //"4 ]" => "4]"
 		replaceAll("\\[(?=\\d+-\\{)", "[ "); //except for [ 4-{angled} ]
 		
-		/*Pattern p = Pattern.compile("(.*?)(\\d*)\\s+\\[\\s+([ –—+\\d\\.,?×/-]+)\\s+\\]\\s+(\\d*)(.*)");  //4-25 [ -60 ] => 4-25[-60]. ? is for chromosome count
+		/*Pattern p = Pattern.compile("(.*?)(\\d*)\\s+\\[\\s+([ ï¿½ï¿½+\\d\\.,?ï¿½/-]+)\\s+\\]\\s+(\\d*)(.*)");  //4-25 [ -60 ] => 4-25[-60]. ? is for chromosome count
 		Matcher m = p.matcher(sent);
 		while(m.matches()){
-			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"["+m.group(3).replaceAll("\\s*[–—-]\\s*", "-")+"]"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
+			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"["+m.group(3).replaceAll("\\s*[ï¿½ï¿½-]\\s*", "-")+"]"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
 			m = p.matcher(sent);
 		}
 		////keep the space after the first (, so ( 3-15 mm) will not become 3-15mm ) in POSTagger.
-		p = Pattern.compile("(.*?)(\\d*)\\s+\\(\\s+([ –—+\\d\\.,?×/-]+)\\s+\\)\\s+(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
-		//p = Pattern.compile("(.*?)(\\d*)\\s*\\(\\s*([ –—+\\d\\.,?×/-]+)\\s*\\)\\s*(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
+		p = Pattern.compile("(.*?)(\\d*)\\s+\\(\\s+([ ï¿½ï¿½+\\d\\.,?ï¿½/-]+)\\s+\\)\\s+(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
+		//p = Pattern.compile("(.*?)(\\d*)\\s*\\(\\s*([ ï¿½ï¿½+\\d\\.,?ï¿½/-]+)\\s*\\)\\s*(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
 		m = p.matcher(sent);
 		while(m.matches()){
-			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"("+m.group(3).replaceAll("\\s*[–—-]\\s*", "-")+")"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
+			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"("+m.group(3).replaceAll("\\s*[ï¿½ï¿½-]\\s*", "-")+")"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
 			m = p.matcher(sent);
 		}*/
 		
 		sent = sent.replaceAll("\\s+/\\s+", "/"); //and/or 1/2
-		sent = sent.replaceAll("\\s+×\\s+", "×");
+		sent = sent.replaceAll("\\s+Ã—\\s+", "Ã—");
 		sent = sent.replaceAll("\\s*\\+\\s*", "+"); // 1 + => 1+
-		sent = sent.replaceAll("(?<![\\d()\\]\\[×-])\\+", " +");
-		sent = sent.replaceAll("\\+(?![\\d()\\]\\[×-])", "+ ");
+		sent = sent.replaceAll("(?<![\\d()\\]\\[Ã—-])\\+", " +");
+		sent = sent.replaceAll("\\+(?![\\d()\\]\\[Ã—-])", "+ ");
 		sent = sent.replaceAll("(?<=(\\d))\\s*\\?\\s*(?=[\\d)\\]])", "?"); // (0? )
 		sent = sent.replaceAll("\\s*-\\s*", "-"); // 1 - 2 => 1-2, 4 - {merous} => 4-{merous}
-		sent = sent.replaceAll("(?<=[\\d\\+-][\\)\\]])\\s+(?=[\\(\\[][\\d-])", "");//2(–3) [–6]  ??
-		//%,°, and ×
-		sent = sent.replaceAll("(?<![a-z])\\s+%", "%").replaceAll("(?<![a-z])\\s+°", "°").replaceAll("(?<![a-z ])\\s*×\\s*(?![ a-z])", "×");
-		/*if(sent.indexOf(" -{")>=0){//1–2-{pinnately} or -{palmately} {lobed} => {1–2-pinnately-or-palmately} {lobed}
+		sent = sent.replaceAll("(?<=[\\d\\+-][\\)\\]])\\s+(?=[\\(\\[][\\d-])", "");//2(ï¿½3) [ï¿½6]  ??
+		//%,ï¿½, and ï¿½
+		sent = sent.replaceAll("(?<![a-z])\\s+%", "%").replaceAll("(?<![a-z])\\s+Â°", "Â°").replaceAll("(?<![a-z ])\\s*Ã—\\s*(?![ a-z])", "Ã—");
+		/*if(sent.indexOf(" -{")>=0){//1ï¿½2-{pinnately} or -{palmately} {lobed} => {1ï¿½2-pinnately-or-palmately} {lobed}
 			sent = sent.replaceAll("\\s+or\\s+-\\{", "-or-").replaceAll("\\s+to\\s+-\\{", "-to-").replaceAll("\\s+-\\{", "-{");
 		}*/
 		//mohan code 11/9/2011 to replace (?) by nothing
@@ -968,16 +970,16 @@ public abstract class Normalizer implements INormalizer {
 		str = hideLists(str, lists);		
 		//threeing
 		str = str.replaceAll("(?<=\\d)-(?=\\{)", " - "); //this is need to keep "-" in 5-{merous} after 3ed (3-{merous} and not 3 {merous}) 
-		//Pattern pattern3 = Pattern.compile("[\\d]+[\\-\\–]+[\\d]+");
+		//Pattern pattern3 = Pattern.compile("[\\d]+[\\-\\ï¿½]+[\\d]+");
 		//Pattern pattern3 = Pattern.compile(NumericalHandler.numberpattern);
-		//Pattern pattern4 = Pattern.compile("(?<!(ca[\\s]?|diam[\\s]?))([\\d]?[\\s]?\\.[\\s]?[\\d]+[\\s]?[\\–\\-]+[\\s]?[\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]+[\\s]?[\\–\\-]+[\\s]?[\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]/[\\d][\\s]?[\\–\\-][\\s]?[\\d]/[\\d])|(?<!(ca[\\s]?|diam[\\s]?))([\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]/[\\d])");
-		//Pattern pattern5 = Pattern.compile("[\\d±\\+\\–\\-\\—°²:½/¼\"“”\\_´\\×µ%\\*\\{\\}\\[\\]=]+");
-		//Pattern pattern5 = Pattern.compile("[\\d\\+°²½/¼\"“”´\\×µ%\\*]+(?!~[a-z])");
-		Pattern pattern5 = Pattern.compile("[\\d\\+°²½/¼\"“”´\\×µ%\\*]+(?![a-z])"); //single numbers, not including individual "-", would turn 3-branched to 3 branched 
+		//Pattern pattern4 = Pattern.compile("(?<!(ca[\\s]?|diam[\\s]?))([\\d]?[\\s]?\\.[\\s]?[\\d]+[\\s]?[\\ï¿½\\-]+[\\s]?[\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]+[\\s]?[\\ï¿½\\-]+[\\s]?[\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]/[\\d][\\s]?[\\ï¿½\\-][\\s]?[\\d]/[\\d])|(?<!(ca[\\s]?|diam[\\s]?))([\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]/[\\d])");
+		//Pattern pattern5 = Pattern.compile("[\\dï¿½\\+\\ï¿½\\-\\ï¿½ï¿½ï¿½:ï¿½/ï¿½\"ï¿½ï¿½\\_ï¿½\\×µ%\\*\\{\\}\\[\\]=]+");
+		//Pattern pattern5 = Pattern.compile("[\\d\\+ï¿½ï¿½ï¿½/ï¿½\"ï¿½ï¿½ï¿½\\×µ%\\*]+(?!~[a-z])");
+		Pattern pattern5 = Pattern.compile("[\\d\\+Â°Â²Â½/Â¼\"â€œâ€Â´\\Ã—Âµ%\\*]+(?![a-z])"); //single numbers, not including individual "-", would turn 3-branched to 3 branched 
 		//Pattern pattern6 = Pattern.compile("([\\s]*0[\\s]*)+(?!~[a-z])"); //condense multiple 0s.
 		Pattern pattern6 = Pattern.compile("(?<=\\s)[0\\s]+(?=\\s)");
-		//Pattern pattern5 = Pattern.compile("((?<!(/|(\\.[\\s]?)))[\\d]+[\\-\\–]+[\\d]+(?!([\\–\\-]+/|([\\s]?\\.))))|((?<!(\\{|/))[\\d]+(?!(\\}|/)))");
-         //[\\d±\\+\\–\\-\\—°.²:½/¼\"“”\\_;x´\\×\\s,µ%\\*\\{\\}\\[\\]=(<\\{)(\\}>)]+
+		//Pattern pattern5 = Pattern.compile("((?<!(/|(\\.[\\s]?)))[\\d]+[\\-\\ï¿½]+[\\d]+(?!([\\ï¿½\\-]+/|([\\s]?\\.))))|((?<!(\\{|/))[\\d]+(?!(\\}|/)))");
+         //[\\dï¿½\\+\\ï¿½\\-\\ï¿½ï¿½.ï¿½:ï¿½/ï¿½\"ï¿½ï¿½\\_;xï¿½\\ï¿½\\s,ï¿½%\\*\\{\\}\\[\\]=(<\\{)(\\}>)]+
 		Pattern pattern7 = Pattern.compile("[(\\[]\\s*\\d+\\s*[)\\]]"); // deal with ( 2 ), (23) is dealt with by NumericalHandler.numberpattern
 		
 		Matcher	 matcher1 = numberpattern.matcher(str);
@@ -1009,7 +1011,7 @@ public abstract class Normalizer implements INormalizer {
          
          
          //3 -{many} or 3- {many}=> {3-many}
-         str = str.replaceAll("0\\s*-\\s*", "0-").replaceAll("0(?!~[a-z])", "3").replaceAll("3\\s*[–-]\\{", "{3-").replaceAll("±(?!~[a-z])","{moreorless}").replaceAll("±","moreorless"); //stanford parser gives different results on 0 and other numbers.
+         str = str.replaceAll("0\\s*-\\s*", "0-").replaceAll("0(?!~[a-z])", "3").replaceAll("3\\s*[â€“-]\\{", "{3-").replaceAll("Â±(?!~[a-z])","{moreorless}").replaceAll("Â±","moreorless"); //stanford parser gives different results on 0 and other numbers.
          
          //2-or-{3-lobed} => {2-or-3-lobed}
          str = str.replaceAll("(?<=-(to|or)-)\\{", "").replaceAll("[^\\{]\\b(?=3-(to|or)-3\\S+\\})", " {");
@@ -1102,7 +1104,7 @@ public abstract class Normalizer implements INormalizer {
 			}else if(word.matches("(to|or|and-or|and/or|and_or)") || word.matches("\\S+ly~(to|or|and-or|and/or|and_or)~\\S+ly")){//loosely~to~densely 
 				characterTokensReversed.add("@"); //to|or
 				save = true;
-			}else if(word.compareTo("±")==0){//±
+			}else if(word.compareTo("Â±")==0){//Â±
 				characterTokensReversed.add("moreorlessly"); //,;. add -ly so it will be treated as an adv.
 				save = true;
 			}else if(word.matches("\\W")){
@@ -1341,7 +1343,7 @@ public abstract class Normalizer implements INormalizer {
 		String listcopy = list;
 		//log(LogLevel.DEBUG, list);
 		int base = 0;
-		//Pattern pt = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([a-z-]+ )+([@,;\\.] )+\\s*)(([a-z-]+ )*(\\4)+[@,;\\.%\\[\\]\\(\\)#].*)");//
+		//Pattern pt = Pattern.compile("(.*?(?:^| ))(([0-9a-zï¿½\\[\\]\\+-]+ly )*([a-z-]+ )+([@,;\\.] )+\\s*)(([a-z-]+ )*(\\4)+[@,;\\.%\\[\\]\\(\\)#].*)");//
 		Matcher mt = charalistpattern.matcher(list);
 		while(mt.matches()){
 			int start = (mt.group(1).trim()+" a").trim().split("\\s+").length+base-1; //"".split(" ") == 1
@@ -1358,7 +1360,7 @@ public abstract class Normalizer implements INormalizer {
 			}
 			//l += list.replaceFirst("[@,;\\.%\\[\\]\\(\\)#].*$", "");//take the last seg from the list
 			//l += list.replaceFirst("[@,;\\.%\\[\\]\\(\\)&#].*$", "");//take the last seg from the list 6/29/2012
-			l += list.replaceFirst("(?<="+ch+"(\\s[0-9a-z–\\[\\]\\+-]{1,10}ly)?).*$", "");//arrangement_or_shape @ arrangement_or_shape coating_or_texture # ;
+			l += list.replaceFirst("(?<="+ch+"(\\s[0-9a-zâ€“\\[\\]\\+-]{1,10}ly)?).*$", "");//arrangement_or_shape @ arrangement_or_shape coating_or_texture # ;
 			int end = start+(l.trim()+" b").trim().split("\\s+").length-1;
 			//if(! l.matches(".*?@[^,;\\.]*") && l.matches(".*?,.*")){ //the last state is not connected by or/to, then it is not a list
 			//	start = end;

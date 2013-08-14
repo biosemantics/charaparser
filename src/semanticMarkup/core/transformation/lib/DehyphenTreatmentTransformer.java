@@ -247,7 +247,7 @@ public class DehyphenTreatmentTransformer implements ITreatmentTransformer {
                     }                        
                 }
                 text = stringBuffer.toString().replaceAll("\\s*\\(\\s*", "(").replaceAll("\\s*\\)\\s*", ")")
-                .replaceAll("(?<=[^0-9+�-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
+                		.replaceAll("(?<=[^0-9+–-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
                 element.setValue(text);
             }
     	}

@@ -44,9 +44,9 @@ public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader 
 			("^((?:Genera|Genus|Species|Subspecies|Varieties|Subgenera).*?:)\\s*(introduced\\s*;)?(.*)");
 	private Pattern floweringPattern = Pattern.compile("(Flowering.*?\\.)?(.*?(?:;|\\.$))?(\\s*of conservation concern\\s*(?:;|\\.$))?(.*?\\b(?:\\d+|m)\\b.*?(?:;|\\.$))?\\s*(introduced(?:;|\\.$))?(.*)");
 	private Pattern caProvincesPattern = Pattern.compile(".*?\\b("+this.caProvinces+")(\\W|$).*");
-	private Pattern referencePattern = Pattern.compile("(.*?\\d+–\\d+\\.\\]?)(\\s+[A-Z]\\w+,.*)");
+	private Pattern referencePattern = Pattern.compile("(.*?\\d+â€“\\d+\\.\\]?)(\\s+[A-Z]\\w+,.*)");
 	private Pattern markupKeyPattern1 = Pattern.compile("(.*?)(( ### [\\d ]+[a-z]?\\.| ?#* ?Group +\\d).*)");//determ
-	private Pattern markupKeyPattern2 = Pattern.compile("^([\\d ]+[a-z]?\\..*?) (.? ?[A-Z].*)");//id   2. "Ray” corollas
+	private Pattern markupKeyPattern2 = Pattern.compile("^([\\d ]+[a-z]?\\..*?) (.? ?[A-Z].*)");//id   2. "Rayï¿½ corollas
 	
 	private Pattern nameAuthorityPattern1 = 
 			Pattern.compile(".*?\\b(subfam|var|subgen|subg|subsp|ser|tribe|sect|subsect)\\b.*");
@@ -63,7 +63,7 @@ public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader 
 	private Pattern parseNamePattern3 = 
 			Pattern.compile("\\((?:as )?(.*?)\\)(.*)");
 	private Pattern parseNamePattern4 = 
-			Pattern.compile("(.*?)[•·](.*?)(\\[.*|$)");
+			Pattern.compile("(.*?)[â€¢Â·](.*?)(\\[.*|$)");
 	private Pattern parseNamePattern5 = 
 			Pattern.compile(".*?\\w+.*");
 	
@@ -376,9 +376,9 @@ public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader 
 	
 	/**
 	 * turn
-	 * <references>SELECTED REFERENCES Behnke, H.-D., C. Chang, I. J. Eifert, and T. J. Mabry. 1974. Betalains and P-type sieve-tube plastids in Petiveria and Agdestis (Phytolaccaceae). Taxon 23: 541–542. Brown, G. K. and G. S. Varadarajan. 1985. Studies in Caryophyllales I: Re-evaluation of classification of Phytolaccaceae s.l. Syst. Bot. 10: 49–63. Heimerl, A. 1934. Phytolaccaceae. In: H. G. A. Engler et al., eds. 1924+. Die natürlichen Pflanzenfamilien…, ed. 2. 26+ vols. Leipzig and Berlin. Vol. 16c, pp. 135–164. Nowicke, J. W. 1968. Palynotaxonomic study of the Phytolaccaceae. Ann. Missouri Bot. Gard. 55: 294–364. Rogers, G. K. 1985. The genera of Phytolaccaceae in the southeastern United States. J. Arnold Arbor. 66: 1–37. Thieret, J. W. 1966b. Seeds of some United States Phytolaccaceae and Aizoaceae. Sida 2: 352–360. Walter, H. P. H. 1906. Die Diagramme der Phytolaccaceen. Leipzig. [Preprinted from Bot. Jahrb. Syst. 37(suppl.): 1–57.] Walter, H. P. H. 1909. Phytolaccaceae. In: H. G. A. Engler, ed. 1900–1953. Das Pflanzenreich…. 107 vols. Berlin. Vol. 39[IV,83], pp. 1–154. Wilson, P. 1932. Petiveriaceae. In: N. L. Britton et al., eds. 1905+. North American Flora…. 47+ vols. New York. Vol. 21, pp. 257–266.</references>
+	 * <references>SELECTED REFERENCES Behnke, H.-D., C. Chang, I. J. Eifert, and T. J. Mabry. 1974. Betalains and P-type sieve-tube plastids in Petiveria and Agdestis (Phytolaccaceae). Taxon 23: 541ï¿½542. Brown, G. K. and G. S. Varadarajan. 1985. Studies in Caryophyllales I: Re-evaluation of classification of Phytolaccaceae s.l. Syst. Bot. 10: 49ï¿½63. Heimerl, A. 1934. Phytolaccaceae. In: H. G. A. Engler et al., eds. 1924+. Die natï¿½rlichen Pflanzenfamilienï¿½, ed. 2. 26+ vols. Leipzig and Berlin. Vol. 16c, pp. 135ï¿½164. Nowicke, J. W. 1968. Palynotaxonomic study of the Phytolaccaceae. Ann. Missouri Bot. Gard. 55: 294ï¿½364. Rogers, G. K. 1985. The genera of Phytolaccaceae in the southeastern United States. J. Arnold Arbor. 66: 1ï¿½37. Thieret, J. W. 1966b. Seeds of some United States Phytolaccaceae and Aizoaceae. Sida 2: 352ï¿½360. Walter, H. P. H. 1906. Die Diagramme der Phytolaccaceen. Leipzig. [Preprinted from Bot. Jahrb. Syst. 37(suppl.): 1ï¿½57.] Walter, H. P. H. 1909. Phytolaccaceae. In: H. G. A. Engler, ed. 1900ï¿½1953. Das Pflanzenreichï¿½. 107 vols. Berlin. Vol. 39[IV,83], pp. 1ï¿½154. Wilson, P. 1932. Petiveriaceae. In: N. L. Britton et al., eds. 1905+. North American Floraï¿½. 47+ vols. New York. Vol. 21, pp. 257ï¿½266.</references>
 	 * to
-	 * <references><reference>Behnke, H.-D., C. Chang, I. J. Eifert, and T. J. Mabry. 1974. Betalains and P-type sieve-tube plastids in Petiveria and Agdestis (Phytolaccaceae). Taxon 23: 541–542. </reference> <reference>...</reference>....</references>
+	 * <references><reference>Behnke, H.-D., C. Chang, I. J. Eifert, and T. J. Mabry. 1974. Betalains and P-type sieve-tube plastids in Petiveria and Agdestis (Phytolaccaceae). Taxon 23: 541ï¿½542. </reference> <reference>...</reference>....</references>
 	 * @param treatment 
 	 * @param ref
 	 */
@@ -491,7 +491,7 @@ public abstract class AbstractWordVolumeReader extends AbstractFileVolumeReader 
 		
 		// make a copy of the line and will work on the new copy
 		String text = new String(line);
-		text = text.replaceAll(" ", " ").replaceAll("\\s+", " ").trim(); 
+		text = text.replaceAll("Â ", " ").replaceAll("\\s+", " ").trim(); 
 		//there are some whitespaces that are not really a space, don't know what they are. 
 		
 		String number = taxonExtractor.getNumber(treatment);

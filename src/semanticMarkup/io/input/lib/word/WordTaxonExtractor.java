@@ -93,7 +93,7 @@ public class WordTaxonExtractor {
 		
 		String text = buffer.toString().replaceAll("\\s+", " ").trim();
 		text = text.replaceFirst("^.*?(?=[A-Z])", "").trim();
-		text = text.replaceAll(" ", " ").replaceAll("\\s+", " ").trim(); 
+		text = text.replaceAll("Â ", " ").replaceAll("\\s+", " ").trim(); 
 		//there are some whitespaces that are not really a space, don't know what they are. 
 		//fix broken names: T HYRSOSTACHYS;  va r. subhispida
 		text = fixBrokenNames(text);
@@ -194,9 +194,9 @@ public class WordTaxonExtractor {
 	private String chunkPlaceOfPub(String text) {
 		String journal = null;
 		Matcher m = null;
-		//problems 489.xml 6a. Dysphania R. Brown sect. Adenois (Moquin-Tandon) Mosyakin & Clemants, Ukrayins’k. Bot. Zhurn., n. s. 59: 382. 2002
+		//problems 489.xml 6a. Dysphania R. Brown sect. Adenois (Moquin-Tandon) Mosyakin & Clemants, Ukrayinsï¿½k. Bot. Zhurn., n. s. 59: 382. 2002
 		m = chunkPlaceOfPubPattern1.matcher(text);
-		while(m.matches()) {//4a. Echinocereus pectinatus (Scheidweiler) Engelmann var. wenigeri L. D. Benson, Cact. Succ. J. (Los Angeles) 40: 124, <=================>fig. 3. 1968 · Weniger’shedgehog,ashy white ra inbow cactus, langtry rainbow cactus
+		while(m.matches()) {//4a. Echinocereus pectinatus (Scheidweiler) Engelmann var. wenigeri L. D. Benson, Cact. Succ. J. (Los Angeles) 40: 124, <=================>fig. 3. 1968 ï¿½ Wenigerï¿½shedgehog,ashy white ra inbow cactus, langtry rainbow cactus
 			m = chunkPlaceOfPubPattern2.matcher(text);
 			if(m.matches()){
 				text = m.group(1).trim();
@@ -225,10 +225,10 @@ public class WordTaxonExtractor {
 			//String rest = textcp.substring(in).trim();
 		}
 		
-		//PHYTOLACCACEAE R. Brown • Pokeweed Family
-		in = text.indexOf("·");
+		//PHYTOLACCACEAE R. Brown ï¿½ Pokeweed Family
+		in = text.indexOf("Â·");
 		if(in < 0){
-			in = text.indexOf("•");
+			in = text.indexOf("â€¢");
 		}
 		if(in > 0){
 			text = text.substring(0, in).trim();

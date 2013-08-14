@@ -56,7 +56,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		//** find parents, modifiers
 		//TODO: check the use of [ and ( in extreme values
 		//ArrayList<Element> parents = lastStructures();
-		String text = chunk.getTerminalsText().replaceAll("–", "-");
+		String text = chunk.getTerminalsText().replaceAll("â€“", "-");
 		boolean resetFrom = false;
 		if(text.matches(".*\\bto \\d.*")){ //m[mostly] to 6 m ==> m[mostly] 0-6 m
 			text = text.replaceFirst("to\\s+", "0-");
@@ -66,7 +66,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<DescriptionTreatmentElement> parents = lastStructures(processingContext, processingContextState);
 		
 		/*String modifier1 = "";
-		//m[mostly] [4-]8–12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint
+		//m[mostly] [4-]8ï¿½12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint
 		String modifier2 = "";
 		modifier1 = text.replaceFirst("\\[?\\d.*$", "");
 		String rest = text.replace(modifier1, "");
@@ -106,7 +106,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 	//** find parents, modifiers
 	//TODO: check the use of [ and ( in extreme values
 	//ArrayList<Element> parents = lastStructures();
-	/*String text = ck.toString().replaceAll("–", "-");
+	/*String text = ck.toString().replaceAll("ï¿½", "-");
 	boolean resetfrom = false;
 	if(text.matches(".*\\bto \\d.*")){ //m[mostly] to 6 m ==> m[mostly] 0-6 m
 		text = text.replaceFirst("to\\s+", "0-");
@@ -120,7 +120,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		log(LogLevel.DEBUG, );
 		log(LogLevel.DEBUG, ">>>>>>>>>>>>>"+text);
 	}
-	String modifier1 = "";//m[mostly] [4-]8–12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint
+	String modifier1 = "";//m[mostly] [4-]8ï¿½12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint
 	String modifier2 = "";
 	modifier1 = text.replaceFirst("\\[?\\d.*$", "");
 	String rest = text.replace(modifier1, "");

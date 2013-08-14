@@ -315,7 +315,7 @@ public class DeHyphenAFolder {
                         }                        
 	                }
 	                text = sb.toString().replaceAll("\\s*\\(\\s*", "(").replaceAll("\\s*\\)\\s*", ")")
-	                .replaceAll("(?<=[^0-9+�-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
+	                		.replaceAll("(?<=[^0-9+–-])\\(", " (").replaceAll("\\)(?=[a-z])", ") ").trim();
 	                //write back
 	                File outf = new File(outfolder, flist[i].getName());
 	                //BufferedWriter out = new BufferedWriter(new FileWriter(flist[i]));

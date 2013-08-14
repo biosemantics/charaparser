@@ -32,7 +32,7 @@ use locale;
 
 $EOS="\001";
 $P = q/[\.!?]/;			## PUNCTUATION
-$AP = q/(?:'|"|»|\)|\]|\})?/;	## AFTER PUNCTUATION
+$AP = q/(?:'|"|Â»|\)|\]|\})?/;	## AFTER PUNCTUATION
 $PAP = $P.$AP;
 
 my @PEOPLE = ( 'jr', 'mr', 'mrs', 'ms', 'dr', 'prof', 'sr', "sens?", "reps?", 'gov',
@@ -51,7 +51,7 @@ my @PLACES = ( 'arc', 'al', 'ave', "blv?d", 'cl', 'ct', 'cres', 'dr', "expy?",
 		'Mich', 'Minn', 'Miss', 'Mo', 'Mont', 'Neb', 'Nebr' , 'Nev',
 		'Mex', 'Okla', 'Ok', 'Ore', 'Penna', 'Penn', 'Pa'  , 'Dak',
 		'Tenn', 'Tex', 'Ut', 'Vt', 'Va', 'Wash', 'Wis', 'Wisc', 'Wy',
-		'Wyo', 'USAFA', 'Alta' , 'Man', 'Ont', 'Qué', 'Sask', 'Yuk');
+		'Wyo', 'USAFA', 'Alta' , 'Man', 'Ont', 'QuÃ©', 'Sask', 'Yuk');
 my @MONTHS = ('jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec','sept');
 my @MISC = ( 'vs', 'etc', 'no', 'esp' );
 
@@ -137,8 +137,8 @@ sub set_EOS {
 #
 #
 #               The following will set the LC_COLLATE behaviour to
-#               Argentinian Spanish. NOTE: The naming and avail­
-#               ability of locales depends on your operating sys­
+#               Argentinian Spanish. NOTE: The naming and availï¿½
+#               ability of locales depends on your operating sysï¿½
 #               tem. Please consult the perllocale manpage for how
 #               to find out which locales are available in your
 #               system.

@@ -109,7 +109,7 @@ public class LearnedPOSKnowledgeBase implements IPOSKnowledgeBase {
 		if(word.compareTo("becoming")==0){
 			return true;
 		}
-		if(word.compareTo("±")==0){
+		if(word.compareTo("Â±")==0){
 			return true;
 		}
 		if(!word.matches(".*?[a-z]+.*")){

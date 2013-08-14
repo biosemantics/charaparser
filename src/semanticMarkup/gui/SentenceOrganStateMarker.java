@@ -139,7 +139,7 @@ public class SentenceOrganStateMarker {
 					sent = sent.replaceAll("\\bshades of\\b", "shades_of");
 					sent = sent.replaceAll("\\bat least\\b", "at_least");
 					String text = stringColors(sent);
-					text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)�\\s+m\\b", "um");
+					text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)µ\\s+m\\b", "um");
 					//deal with numbers
 					//text = text.replaceAll("(?<=\\d)(?=("+ChunkedSentence.units+")\\b)", " "); //23mm => 23 mm
 					//text = StanfordParser.ratio2number(text);
@@ -147,7 +147,7 @@ public class SentenceOrganStateMarker {
 					text = text.replaceAll("\\b(ca|c)\\s*\\.?\\s*(?=\\d)", "");
 					text = formatNumericalRange(text);
 					text = text.replaceAll("more or less", "moreorless");
-					text = text.replaceAll("&#176;", "�");
+					text = text.replaceAll("&#176;", "°");
 					//text = text.replaceAll("\\bca\\s*\\.", "ca");
 					text = text.replaceAll("\\bdiam\\s*\\.(?=\\s?[,a-z])", "diam");
 					text = stringCompoundPP(text);
@@ -234,8 +234,8 @@ public class SentenceOrganStateMarker {
 			//text = text.replaceAll("(?<=\\d\\s?("+ChunkedSentence.units+")?) to (?=\\d)", " - ");// three to four???
 			//deal with: to-range such as "to 3 cm", "to 24 � 5 mm", "to 2 . 7 � 1 . 7 � 2 mm", "3 � 20 ( � 25 )" 
 			text = text.replaceAll(" (up )?to (?=[\\d\\. ]{1,6} )", " 0 - "); // <trees> to 3 cm => <trees> 0 - 3 cm: works for case 1,  3, (case 4 should not match)
-			text = text.replaceAll(" (?<=0 - [\\d\\. ]{1,6} [a-z ]?)� (?=[\\d\\. ]{1,6} [a-z])", " � 0 - "); //deal with case 2
-			text = text.replaceAll(" 0 - (?=[\\d\\.\\ ]{1,8} [-�])", " ");// 0 - 1 . 3  - 2 . 0 => 1 . 3 - 2 . 0
+			text = text.replaceAll(" (?<=0 - [\\d\\. ]{1,6} [a-z ]?)× (?=[\\d\\. ]{1,6} [a-z])", " × 0 - "); //deal with case 2
+			text = text.replaceAll(" 0 - (?=[\\d\\.\\ ]{1,8} [-–])", " ");// 0 - 1 . 3  - 2 . 0 => 1 . 3 - 2 . 0
 		}
 		if(!copy.equals(text) && printto){
 			System.out.println("[to range original] "+copy);

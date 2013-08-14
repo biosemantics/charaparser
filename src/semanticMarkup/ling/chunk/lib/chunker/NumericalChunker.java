@@ -101,7 +101,7 @@ public class NumericalChunker extends AbstractChunker {
 						continue;
 					}
 					
-					if(terminalsText.matches(".*?[()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*(-\\s*(" + countWords + ")\\b|$)")) {
+					if(terminalsText.matches(".*?[()\\[\\]\\-\\â€“\\d\\.Ã—\\+Â°Â²Â½/Â¼\\*/%]*?[Â½/Â¼\\d][()\\[\\]\\-\\â€“\\d\\.Ã—\\+Â°Â²Â½/Â¼\\*/%]*(-\\s*(" + countWords + ")\\b|$)")) {
 						
 						//ends with a number
 						if(i==terminals.size()-1) {
@@ -122,7 +122,7 @@ public class NumericalChunker extends AbstractChunker {
 							LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 							childChunks.add(chunkCollector.getChunk(terminal));
 							childChunks.add(chunkCollector.getChunk(lookForwardTerminal));
-							if(combinedText.contains("×")) {
+							if(combinedText.contains("Ã—")) {
 								Chunk area = new Chunk(ChunkType.AREA, childChunks);
 								chunkCollector.addChunk(area);
 							} else {
