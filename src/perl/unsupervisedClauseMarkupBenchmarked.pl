@@ -223,6 +223,7 @@ my $ANDORPTN = "^(?:".$SEGANDORPTN."[,&]+)*".$SEGANDORPTN.$bptn;
 my $IGNOREPTN = "(assignment|resemb[a-z]+|like [A-Z]|similar|differs|differ|revision|genus|family|suborder|species|specimen|order|superfamily|class|known|characters|characteristics|prepared|subphylum|assign[a-z]*|available|nomen dubium|said|topotype|1[5-9][0-9][0-9])";
 
 my $stop = $NounHeuristics::STOP;
+my $adv = "often|sometimes|seldom|always|never";
 
 #prepare database
 my $haskb = 0;
@@ -913,19 +914,19 @@ sub characterHeuristics{
 			}			
 		}
 		#noun rule 1: #sources with 1 _ are character statements, 2 _ are descriptions
-		if($source !~ /\.xml_\S+_/ and $originalsent !~ /\s/){#single word
-			if(!isDescriptor($originalsent)){
-				$originalsent =~ tr/A-Z/a-z/;
-				$nouns{$originalsent}=1;
-				if($debugnouns) {print "[noun1:$originalsent] $originalsent\n";}
-			}
-		}	
+		#if($source !~ /\.xml_\S+_/ and $originalsent !~ /\s/){#single word
+		#	if(!isDescriptor($originalsent)){
+		#		$originalsent =~ tr/A-Z/a-z/;
+		#		$nouns{$originalsent}=1;
+		#		if($debugnouns) {print "[noun1:$originalsent] $originalsent\n";}
+		#	}
+		#}	
 		#noun rule 4: epibranchial 4
 		$cp = $originalsent;
 		while($cp =~ /(.*?)\s(\w+)\s+\d+(.*)/){
 			my $t = $2;
 			$cp = $3;
-			if($t !~ /\b($PREPOSITION|$stop)\b/){
+			if($t !~ /\b($PREPOSITION|$stop|$adv)\b/ and $t !~/ly$/){
 				$t =~ tr/A-Z/a-z/;
 				$nouns{$t} = 1;
 				if($debugnouns){ print "[noun4:$t] $originalsent\n";}
