@@ -13,3 +13,9 @@ Version 0.1 (July, 2nd 2013)
 Version 0.1.1 (August, 7th 2013)
 ----------- 
 * Fixed perl module to accept database host, port, user and password as input parameters
+
+Version 0.1.2 (August, 7th 2013)
+----------- 
+* Changed encoding of source code to UTF-8
+* Made iplant related IO (file read/write, db access) to use UTF-8 encoding
+* Fixed unsupervised learning difference between unix/windows
