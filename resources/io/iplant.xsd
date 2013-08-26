@@ -6,7 +6,7 @@
         <xs:element ref="meta"/>
         <xs:element ref="TaxonIdentification"/>
         <xs:element ref="description"/>
-        <xs:element maxOccurs="unbounded" ref="discussion"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="discussion"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -14,7 +14,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="source"/>
-        <xs:element maxOccurs="unbounded" ref="other_info"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="other_info"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -23,7 +23,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element ref="taxon_name"/>
-        <xs:element maxOccurs="unbounded" ref="other_info"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="other_info"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
