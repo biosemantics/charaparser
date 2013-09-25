@@ -118,18 +118,12 @@ import com.google.inject.name.Names;
  */
 public class BasicConfig extends AbstractModule {
 	
+	  private String version = "0.1.2";
+	
 	  @Override 
-	  protected void configure() {	 
-		bind(String.class).annotatedWith(Names.named("Version")).toInstance("0.1.2");
-		  
+	  protected void configure() {	
+		bind(String.class).annotatedWith(Names.named("Version")).toInstance(version);
 		 /* TODO: turn regex word lists into hashsets where appropriate */			
-		
-		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd");
-		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd");
-		bind(String.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(
-				"." + File.separator + "resources" + File.separator + "io" + File.separator + "iplant.xsd");
 		  
 		bind(ParentTagProvider.class).annotatedWith(Names.named("parentTagProvider")).to(ParentTagProvider.class).in(Singleton.class);
 		
@@ -137,9 +131,6 @@ public class BasicConfig extends AbstractModule {
 		bind(ITokenCombiner.class).annotatedWith(Names.named("WordCombiner")).to(WhitespaceTokenCombiner.class);
 		
 		bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance("resources" + File.separator + "brown.csv");
-		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
-		//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 		bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 		bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);
 		bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);;
@@ -466,4 +457,13 @@ public class BasicConfig extends AbstractModule {
 		plurals.put("species", "species");
 		return plurals;
 	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+	
 }

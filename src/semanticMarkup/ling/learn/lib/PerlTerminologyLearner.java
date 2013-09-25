@@ -75,6 +75,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private String databaseHost;
 	private String databasePort;
 	private Map<String, AjectiveReplacementForNoun> adjectiveReplacementsForNouns;
+	private String srcDirectory;
 
 	/**
 	 * @param temporaryPath
@@ -103,7 +104,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("selectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer,
-			@Named("parentTagProvider") ParentTagProvider parentTagProvider) throws Exception {
+			@Named("parentTagProvider") ParentTagProvider parentTagProvider,
+			@Named("SrcDirectory") String srcDirectory) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.markupMode = markupMode;
 		this.databasePrefix = databasePrefix;
@@ -117,6 +119,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.databaseName = databaseName;
 		this.databaseUser = databaseUser;
 		this.databasePassword = databasePassword;
+		this.srcDirectory = srcDirectory;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
@@ -544,8 +547,9 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			inDirectoryPath = "\"" + inDirectoryPath + "\"";
 		//else if(SystemUtils.IS_OS_UNIX)
 			
-		String command = "perl src/perl/unsupervisedClauseMarkupBenchmarked.pl " + inDirectoryPath +  
-				// there is a strang requirement for a slash here to make perl parse the arguments correctly
+		String command = "perl " + srcDirectory + File.separator + "perl" + File.separator + "unsupervisedClauseMarkupBenchmarked.pl " 
+				+ inDirectoryPath +  
+				// there is a strange requirement for a slash here to make perl parse the arguments correctly
 				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " + this.databaseUser + " " + this.databasePassword + " "
 				+ this.databasePrefix + " " + glossaryTable;
 		log(LogLevel.DEBUG, command);

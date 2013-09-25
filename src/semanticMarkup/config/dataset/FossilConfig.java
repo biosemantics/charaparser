@@ -16,7 +16,7 @@ public class FossilConfig extends RunConfig {
 		this.setStandardVolumeReaderSourcefiles("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
 		//this.setDatabaseTablePrefix("treatise");
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
-		this.setGlossaryFile("resources" + File.separator + "treatisehglossaryfixed.csv");
+		this.setGlossaryFile(getResourcesDirectory() + File.separator + "treatisehglossaryfixed.csv");
 		this.setNormalizer(TreatisehNormalizer.class);
 		this.setGlossaryType(Glossary.Fossil.toString());
 	}

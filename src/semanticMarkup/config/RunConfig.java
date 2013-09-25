@@ -39,6 +39,9 @@ import com.google.inject.name.Names;
  */
 public class RunConfig extends BasicConfig {
 
+	private String srcDirectory = "src" ;
+	private String resourcesDirectory = "resources";
+	private String workspaceDirectory = "workspace";
 	private Class<? extends IRun> run = MarkupRun.class;
 	//MarkupRun, EvaluationRun, MarkupEvaluationRun
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
@@ -59,11 +62,15 @@ public class RunConfig extends BasicConfig {
 	private String wordVolumeReaderStyleNamePattern = ".*?(Syn|Name).*";
 	private String wordVolumeReaderStyleKeyPattern =  ".*?-Key.*";
 	private String wordVolumeReaderTribegennamestyle = "caps";
-	private String wordVolumeReaderStyleMappingFile = "" + "resources" + File.separator + "stylemapping.properties";
+	private String wordVolumeReaderStyleMappingFile = resourcesDirectory + File.separator + "stylemapping.properties";
 	private String xmlVolumeReaderSourceDirectory = "evaluationData" + File.separator + "perlTest" + File.separator + "source" +
 			File.separator;
 	private String outputVolumeReaderSourceDirectory = "." + File.separator + "out" + File.separator;
 	private String genericFileVolumeReaderSource = "evaluationData" + File.separator + "perlTest" + File.separator + "source" + File.separator;
+	private String taxonxSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd";
+	private String xmlSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd";
+	private String iplantSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "iplant.xsd";
+	
 	//"evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml"
 	//"evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + "source" + File.separator + "FNA19 Excerpt-source.docx"
 	private String taxonxVolumeReaderSourceFile = "evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml";
@@ -85,7 +92,10 @@ public class RunConfig extends BasicConfig {
 	private String databaseTablePrefix = "myrun";
 	private String glossaryType = "plant";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
-	private String glossaryFile = "resources" + File.separator + "fnaglossaryfixed.csv";
+	private String csvCorpusPath = resourcesDirectory + File.separator + "brown.csv";
+	private String wordNetSource = resourcesDirectory + File.separator + "wordNet3.1" + File.separator +"dict" + File.separator;
+	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
+	private String glossaryFile = resourcesDirectory + File.separator + "fnaglossaryfixed.csv";
 	private String otoLiteReviewFile = "TermReview.txt";
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
@@ -99,9 +109,12 @@ public class RunConfig extends BasicConfig {
 		super.configure();
 		bind(IRun.class).to(run);
 		bind(IGlossary.class).to(glossary).in(Singleton.class);
-		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance("workspace" + File.separator + this.databaseTablePrefix);
-		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance("workspace" + File.separator + this.databaseTablePrefix + File.separator + "out");
-		bind(String.class).annotatedWith(Names.named("Run_TemporaryPath")).toInstance("workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp");
+		bind(String.class).annotatedWith(Names.named("ResourcesDirectory")).toInstance(this.resourcesDirectory);
+		bind(String.class).annotatedWith(Names.named("SrcDirectory")).toInstance(this.srcDirectory);
+		bind(String.class).annotatedWith(Names.named("WorkspaceDirectory")).toInstance(this.workspaceDirectory);
+		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(workspaceDirectory + File.separator + this.databaseTablePrefix);
+		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out");
+		bind(String.class).annotatedWith(Names.named("Run_TemporaryPath")).toInstance(workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp");
 		bind(IEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_GoldStandardReader")).to(evaluationGoldStandardReader);
 		bind(IVolumeReader.class).annotatedWith(Names.named("EvaluationRun_CreatedVolumeReader")).to(evaluationRunCreatedVolumeReader);
@@ -117,7 +130,10 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("IPlantXMLVolumeReader_Source")).toInstance(iPlantXMLVolumeReaderSource);
 		bind(String.class).annotatedWith(Names.named("OutputVolumeReader_SourceDirectory")).toInstance(outputVolumeReaderSourceDirectory);
 		bind(String.class).annotatedWith(Names.named("GenericFileVolumeReader_Source")).toInstance(genericFileVolumeReaderSource);
-
+		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(taxonxSchemaFile);
+		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(xmlSchemaFile);
+		bind(String.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(iplantSchemaFile);
+		
 		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
 		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 		bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
@@ -142,6 +158,9 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("otoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
 		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
+		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance(csvCorpusPath);
+		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance(wordNetSource);
+		//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_filePath")).toInstance(glossaryFile); 
 		bind(INormalizer.class).to(normalizer); 
 	}
@@ -596,6 +615,32 @@ public class RunConfig extends BasicConfig {
 	public void setiPlantXMLVolumeReaderSource(String iPlantXMLVolumeReaderSource) {
 		this.iPlantXMLVolumeReaderSource = iPlantXMLVolumeReaderSource;
 	}
+
+	public void setResourcesDirectory(String resourcesDirectory) {
+		this.resourcesDirectory = resourcesDirectory;
+	}
+
+	public void setSrcDirectory(String srcDirectory) {
+		this.srcDirectory = srcDirectory;		
+	}
+
+	public String getSrcDirectory() {
+		return srcDirectory;
+	}
+
+	public String getResourcesDirectory() {
+		return resourcesDirectory;
+	}
+
+	public void setWorkspaceDirectory(String workspaceDirectory) {
+		this.workspaceDirectory = workspaceDirectory;
+	}
+
+	public String getWorkspaceDirectory() {
+		return workspaceDirectory;
+	}
+	
+	
 	
 }
 

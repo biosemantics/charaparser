@@ -48,6 +48,9 @@ public class LearnMain extends CLIMain {
 		options.addOption("w", "style mapping", true, "Optional style mapping to use for Word file input");
 		
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
+		options.addOption("r", "resources directory", true, "location of resources directory");
+		options.addOption("l", "src directory", true, "location of src directory");
+		options.addOption("t", "workspace directory", true, "location of workspace directory");
 		options.addOption("n", "database-host", true, "dbms host");
 		options.addOption("p", "database-port", true, "dbms port");
 		options.addOption("d", "database-name", true, "name of database to use");
@@ -148,6 +151,16 @@ public class LearnMain extends CLIMain {
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
+		    }
+		    
+		    if(commandLine.hasOption("r")) {
+		    	config.setResourcesDirectory(commandLine.getOptionValue("r"));
+		    }
+		    if(commandLine.hasOption("l")) {
+		    	config.setSrcDirectory(commandLine.getOptionValue("l"));
+		    }
+		    if(commandLine.hasOption("t")) {
+		    	config.setWorkspaceDirectory(commandLine.getOptionValue("t"));
 		    }
 		} catch (ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
