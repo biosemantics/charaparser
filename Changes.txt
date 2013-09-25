@@ -19,3 +19,8 @@ Version 0.1.2 (August, 7th 2013)
 * Changed encoding of source code to UTF-8
 * Made iplant related IO (file read/write, db access) to use UTF-8 encoding
 * Fixed unsupervised learning difference between unix/windows
+
+Version 0.1.3 (September, 25th 2013)
+-----------
+* prefix table stores creation time for possible cleanup
+* resources, src, and workspace directory are configurable per CLI
