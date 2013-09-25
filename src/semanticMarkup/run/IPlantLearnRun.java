@@ -66,7 +66,7 @@ public class IPlantLearnRun extends AbstractRun {
 				databaseUser, databasePassword);
 		
 		String sql = "CREATE TABLE IF NOT EXISTS datasetprefixes (prefix varchar(100) NOT NULL, glossary_version varchar(10), oto_uploadid int(11) NOT NULL DEFAULT '-1', " +
-				"PRIMARY KEY (prefix)) CHARACTER SET utf8 engine=innodb";
+				"created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (prefix)) CHARACTER SET utf8 engine=innodb";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.execute();
 		
