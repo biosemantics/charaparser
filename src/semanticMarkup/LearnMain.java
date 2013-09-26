@@ -50,7 +50,7 @@ public class LearnMain extends CLIMain {
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
 		options.addOption("r", "resources directory", true, "location of resources directory");
 		options.addOption("l", "src directory", true, "location of src directory");
-		options.addOption("t", "workspace directory", true, "location of workspace directory");
+		options.addOption("a", "workspace directory", true, "location of workspace directory");
 		options.addOption("n", "database-host", true, "dbms host");
 		options.addOption("p", "database-port", true, "dbms port");
 		options.addOption("d", "database-name", true, "name of database to use");
@@ -159,8 +159,8 @@ public class LearnMain extends CLIMain {
 		    if(commandLine.hasOption("l")) {
 		    	config.setSrcDirectory(commandLine.getOptionValue("l"));
 		    }
-		    if(commandLine.hasOption("t")) {
-		    	config.setWorkspaceDirectory(commandLine.getOptionValue("t"));
+		    if(commandLine.hasOption("a")) {
+		    	config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
 		    }
 		} catch (ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
