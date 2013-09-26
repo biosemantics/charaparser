@@ -1,4 +1,5 @@
 package semanticMarkup;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -27,6 +28,7 @@ public class Cleanup {
 		ResultSet findOldTablesResultSet = findOldTablesStatement.getResultSet();
 		while(findOldTablesResultSet.next()) { 
 			String prefixToDelete = findOldTablesResultSet.getString(1);
+			//System.out.println("prefix: " + prefixToDelete);
 			
 			//delete tables with the prefix
 			String findTablesSql = "SELECT TABLE_NAME FROM information_schema.TABLES WHERE " +
@@ -37,6 +39,7 @@ public class Cleanup {
 			ResultSet findTablesResultSet = findTablesStatement.getResultSet();
 			while(findTablesResultSet.next()) {
 				String tableToDelete = findTablesResultSet.getString(1);
+				//System.out.println("table: " + tableToDelete);
 				String dropTableSql = "DROP TABLE " + databaseName + "." + tableToDelete;
 				Statement dropTableStatement = connection.createStatement();
 				dropTableStatement.executeUpdate(dropTableSql);
@@ -45,7 +48,14 @@ public class Cleanup {
 			findTablesStatement.close();
 		}
 		findOldTablesStatement.close();
+		
+		String removeOldPrefixesSql = "DELETE FROM " + databaseName + ".datasetprefixes WHERE created < CURDATE() - " + numberOfDays;
+		Statement removeOldPrefixesStatement = connection.createStatement();
+		removeOldPrefixesStatement.executeUpdate(removeOldPrefixesSql);
+		
 		connection.close();
+		
+		
 	}
 	
 }
