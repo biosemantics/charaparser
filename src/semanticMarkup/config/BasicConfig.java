@@ -118,7 +118,7 @@ import com.google.inject.name.Names;
  */
 public class BasicConfig extends AbstractModule {
 	
-	  private String version = "0.1.2";
+	  private String version = "0.1.3";
 	
 	  @Override 
 	  protected void configure() {	
