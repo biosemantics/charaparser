@@ -618,13 +618,13 @@ public class RunConfig extends BasicConfig {
 
 	public void setResourcesDirectory(String resourcesDirectory) {
 		String oldResourcesDirectory = this.getResourcesDirectory();
-		this.csvCorpusPath.replace(oldResourcesDirectory, resourcesDirectory);
-		this.wordVolumeReaderStyleMappingFile.replace(oldResourcesDirectory, resourcesDirectory);
-		this.taxonxSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
-		this.xmlSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
-		this.iplantSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
-		this.wordNetSource.replace(oldResourcesDirectory, resourcesDirectory);
-		this.glossaryFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.csvCorpusPath = this.csvCorpusPath.replace(oldResourcesDirectory, resourcesDirectory);
+		this.wordVolumeReaderStyleMappingFile = this.wordVolumeReaderStyleMappingFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.taxonxSchemaFile = this.taxonxSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.xmlSchemaFile = this.xmlSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.iplantSchemaFile = this.iplantSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.wordNetSource = this.wordNetSource.replace(oldResourcesDirectory, resourcesDirectory);
+		this.glossaryFile = this.glossaryFile.replace(oldResourcesDirectory, resourcesDirectory);
 		this.resourcesDirectory = resourcesDirectory;
 	}
 
