@@ -546,12 +546,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		if(SystemUtils.IS_OS_WINDOWS)
 			inDirectoryPath = "\"" + inDirectoryPath + "\"";
 		//else if(SystemUtils.IS_OS_UNIX)
-			
-		String command = "perl " + srcDirectory + File.separator + "perl" + File.separator + "unsupervisedClauseMarkupBenchmarked.pl " 
+
+		String command = "perl -I " + srcDirectory + File.separator + "perl" + 
+				" " + srcDirectory + File.separator + "perl" + File.separator + "unsupervisedClauseMarkupBenchmarked.pl " 
 				+ inDirectoryPath +  
 				// there is a strange requirement for a slash here to make perl parse the arguments correctly
-				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " + this.databaseUser + " " + this.databasePassword + " "
-				+ this.databasePrefix + " " + glossaryTable + " " + this.srcDirectory + File.separator + "perl";
+				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " 
+				+ this.databaseUser + " " + this.databasePassword + " " + this.databasePrefix + " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
 		createTablesNeededForPerl(treatments);
 		runCommand(command);
