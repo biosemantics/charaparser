@@ -551,7 +551,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				+ inDirectoryPath +  
 				// there is a strange requirement for a slash here to make perl parse the arguments correctly
 				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " + this.databaseUser + " " + this.databasePassword + " "
-				+ this.databasePrefix + " " + glossaryTable;
+				+ this.databasePrefix + " " + glossaryTable + " " + this.srcDirectory + File.separator + "perl";
 		log(LogLevel.DEBUG, command);
 		createTablesNeededForPerl(treatments);
 		runCommand(command);
