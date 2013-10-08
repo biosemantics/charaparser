@@ -48,10 +48,6 @@ public class CLIMain {
 		cliMain.parse(args);
 		cliMain.run();
 	}
-	
-	public CLIMain() {
-		setupLogging("workspace/debug.log", "workspace/error.log");
-	}
 
 	protected void setupLogging(String debugLog, String errorLog) {
 		Logger rootLogger = Logger.getRootLogger();
@@ -129,6 +125,8 @@ public class CLIMain {
 		options.addOption("dbgt", "database-glossary-table", true, "database glossary table to use");
 		options.addOption("g", "glossary", true, "csv glossary to use");
 		options.addOption("h", "help", false, "shows the help");
+		
+		setupLogging("workspace/debug.log", "workspace/error.log");
 		
 		config = new RunConfig();
 		try {
