@@ -7,6 +7,13 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.Priority;
+import org.apache.log4j.RollingFileAppender;
 
 import semanticMarkup.config.RunConfig;
 import semanticMarkup.config.dataset.AlgaeConfig;
@@ -40,6 +47,49 @@ public class CLIMain {
 		CLIMain cliMain = new CLIMain();
 		cliMain.parse(args);
 		cliMain.run();
+	}
+	
+	public CLIMain() {
+		setupLogging("workspace/debug.log", "workspace/error.log");
+	}
+
+	protected void setupLogging(String debugLog, String errorLog) {
+		Logger rootLogger = Logger.getRootLogger();
+		rootLogger.getLoggerRepository().resetConfiguration();
+		
+		PatternLayout layout = new PatternLayout();
+		layout.setConversionPattern("%d [%t] %-5p %c:%L - %m%n");
+		
+		RollingFileAppender debugFileAppender = new RollingFileAppender();
+		debugFileAppender.setEncoding("UTF-8");
+		debugFileAppender.setFile(debugLog);
+		debugFileAppender.setMaxFileSize("100MB");
+		debugFileAppender.setAppend(false);
+		debugFileAppender.setMaxBackupIndex(100);
+		debugFileAppender.setLayout(layout);
+		debugFileAppender.setThreshold(Level.DEBUG);
+		debugFileAppender.activateOptions();
+		
+		RollingFileAppender errorFileAppender = new RollingFileAppender();
+		errorFileAppender.setEncoding("UTF-8");
+		errorFileAppender.setFile(errorLog);
+		errorFileAppender.setMaxFileSize("100MB");
+		errorFileAppender.setAppend(false);
+		errorFileAppender.setMaxBackupIndex(100);
+		errorFileAppender.setLayout(layout);
+		errorFileAppender.setThreshold(Level.ERROR);
+		errorFileAppender.activateOptions();
+		
+		ConsoleAppender consoleErrorAppender = new ConsoleAppender();
+		consoleErrorAppender.setTarget("System.out");
+		consoleErrorAppender.setLayout(layout);
+		consoleErrorAppender.setThreshold(Level.ERROR);
+		consoleErrorAppender.activateOptions();
+
+		rootLogger.setLevel(Level.DEBUG);
+		rootLogger.addAppender(debugFileAppender);
+		rootLogger.addAppender(errorFileAppender);
+		rootLogger.addAppender(consoleErrorAppender);
 	}
 
 	/**

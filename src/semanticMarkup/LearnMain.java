@@ -48,6 +48,8 @@ public class LearnMain extends CLIMain {
 		options.addOption("w", "style mapping", true, "Optional style mapping to use for Word file input");
 		
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
+		options.addOption("b", "debug log", true, "location of debug log file");
+		options.addOption("e", "error log", true, "location of error log file");
 		options.addOption("r", "resources directory", true, "location of resources directory");
 		options.addOption("l", "src directory", true, "location of src directory");
 		options.addOption("a", "workspace directory", true, "location of workspace directory");
@@ -64,6 +66,12 @@ public class LearnMain extends CLIMain {
 		config = new RunConfig();
 		try {
 		    CommandLine commandLine = parser.parse( options, args );
+		    if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
+		    	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
+		    } else {
+		    	log(LogLevel.ERROR, "You have not specified a debug or error log file");
+		    	System.exit(0);
+		    }
 		    if(commandLine.hasOption("h")) {
 		    	HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "what is this?", options );
