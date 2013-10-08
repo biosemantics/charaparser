@@ -48,6 +48,11 @@ public class LearnMain extends CLIMain {
 		options.addOption("w", "style mapping", true, "Optional style mapping to use for Word file input");
 		
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
+		options.addOption("f", "source", true, "source of the descriptions, e.g. fna v7");
+		options.addOption("g", "user", true, "etc user submitting learned terms to oto lite");
+		options.addOption("j", "bioportal user id", true, "bioportal user id to use for bioportal submission");
+		options.addOption("k", "bioportal api key", true, "bioportal api key to use for bioportal submission");
+		
 		options.addOption("b", "debug log", true, "location of debug log file");
 		options.addOption("e", "error log", true, "location of error log file");
 		options.addOption("r", "resources directory", true, "location of resources directory");
@@ -83,6 +88,19 @@ public class LearnMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify a configuration to use");
 		    	System.exit(0);
 		    	//use standard config RunConfig
+		    }
+		    
+		    if(commandLine.hasOption("f")) {
+		    	config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
+		    }
+		    if(commandLine.hasOption("g")) {
+		    	config.setEtcUser(commandLine.getOptionValue("g"));
+		    }
+		    if(commandLine.hasOption("j")) {
+		    	config.setBioportalUserId(commandLine.getOptionValue("j"));
+		    }
+		    if(commandLine.hasOption("k")) {
+		    	config.setBioportalAPIKey(commandLine.getOptionValue("k"));
 		    }
 		    
 		    config.setMarkupCreatorVolumeReader(IPlantXMLVolumeReader.class);

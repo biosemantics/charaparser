@@ -99,6 +99,12 @@ public class RunConfig extends BasicConfig {
 	private String otoLiteReviewFile = "TermReview.txt";
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	//required for bioportal submission of oto lite
+	private String sourceOfDescriptions;
+	private String etcUser;
+	private String bioportalAPIKey;
+	private String bioportalUserId;
+	//
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
@@ -157,6 +163,10 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("otoLiteReviewFile")).toInstance(otoLiteReviewFile);
 		bind(String.class).annotatedWith(Names.named("otoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
 		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
+		bind(String.class).annotatedWith(Names.named("SourceOfDescriptions")).toInstance(sourceOfDescriptions);
+		bind(String.class).annotatedWith(Names.named("EtcUser")).toInstance(etcUser);
+		bind(String.class).annotatedWith(Names.named("BioportalAPIKey")).toInstance(bioportalAPIKey);
+		bind(String.class).annotatedWith(Names.named("BioportalUserId")).toInstance(bioportalUserId);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance(csvCorpusPath);
 		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance(wordNetSource);
@@ -646,6 +656,38 @@ public class RunConfig extends BasicConfig {
 
 	public String getWorkspaceDirectory() {
 		return workspaceDirectory;
+	}
+
+	public String getSourceOfDescriptions() {
+		return sourceOfDescriptions;
+	}
+
+	public void setSourceOfDescriptions(String sourceOfDescriptions) {
+		this.sourceOfDescriptions = sourceOfDescriptions;
+	}
+
+	public String getEtcUser() {
+		return etcUser;
+	}
+
+	public void setEtcUser(String etcUser) {
+		this.etcUser = etcUser;
+	}
+
+	public String getBioportalAPIKey() {
+		return bioportalAPIKey;
+	}
+
+	public void setBioportalAPIKey(String bioportalAPIKey) {
+		this.bioportalAPIKey = bioportalAPIKey;
+	}
+
+	public String getBioportalUserId() {
+		return bioportalUserId;
+	}
+
+	public void setBioportalUserId(String bioportalUserId) {
+		this.bioportalUserId = bioportalUserId;
 	}
 	
 	

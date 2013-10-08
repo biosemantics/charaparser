@@ -57,6 +57,10 @@ public class OTOLearner implements ILearner {
 	private String otoLiteTermReviewURL;
 	private String otoLiteReviewFile;
 	private String runRootDirectory;
+	private String bioportalAPIKey;
+	private String bioportalUserId;
+	private String etcUser;
+	private String sourceOfDescriptions;
 	
 	/**
 	 * @param volumeReader
@@ -86,7 +90,11 @@ public class OTOLearner implements ILearner {
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
 			IPOSKnowledgeBase posKnowledgeBase, 
-			@Named("Run_RootDirectory")String runRootDirectory) throws Exception {	
+			@Named("Run_RootDirectory")String runRootDirectory, 
+			@Named("BioportalAPIKey")String bioportalAPIKey, 
+			@Named("BioportalUserId")String bioportalUserId, 
+			@Named("EtcUser")String etcUser, 
+			@Named("SourceOfDescriptions")String sourceOfDescriptions) throws Exception {	
 		this.volumeReader = volumeReader;
 		this.terminologyLearner = terminologyLearner;
 		this.otoClient = otoClient;
@@ -98,6 +106,10 @@ public class OTOLearner implements ILearner {
 		this.glossaryTable = glossaryTable;
 		this.posKnowledgeBase = posKnowledgeBase;
 		this.runRootDirectory = runRootDirectory;
+		this.bioportalAPIKey = bioportalAPIKey;
+		this.bioportalUserId = bioportalUserId;
+		this.etcUser = etcUser;
+		this.sourceOfDescriptions = sourceOfDescriptions;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
@@ -240,6 +252,10 @@ public class OTOLearner implements ILearner {
 
 	private Upload readUpload() {
 		Upload upload = new Upload();
+		upload.setBioportalAPIKey(bioportalAPIKey);
+		upload.setBioportalUserId(bioportalUserId);
+		upload.setUser(etcUser);
+		upload.setSource(sourceOfDescriptions);
 
 		upload.setPossibleStructures(getStructures());
 		upload.setPossibleCharacters(getCharacters());
