@@ -37,7 +37,7 @@
   <xs:element name="description">
     <xs:complexType>
       <xs:sequence>
-        <xs:element maxOccurs="unbounded" ref="description_statement"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="description_statement"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>  	
