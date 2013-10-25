@@ -100,10 +100,10 @@ public class RunConfig extends BasicConfig {
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	//required for bioportal submission of oto lite
-	private String sourceOfDescriptions;
-	private String etcUser;
-	private String bioportalAPIKey;
-	private String bioportalUserId;
+	private String sourceOfDescriptions = "";
+	private String etcUser = "";
+	private String bioportalAPIKey = "";
+	private String bioportalUserId = "";
 	//
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;

@@ -69,7 +69,7 @@ public abstract class AbstractRun implements IRun {
 
 	
 	protected void appendConfigFile(BufferedWriter bwSetup) throws IOException {
-		bwSetup.append("GuiceModule configuration of EvaluationRun \n" +
+		bwSetup.append("GuiceModule configuration of Run \n" +
 		  "---------------------\n");
 		bwSetup.append(this.guiceModuleFile);
 		bwSetup.append("---------------------\n\n");

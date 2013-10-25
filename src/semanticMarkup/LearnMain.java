@@ -1,5 +1,7 @@
 package semanticMarkup;
 
+import java.io.File;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -37,7 +39,7 @@ public class LearnMain extends CLIMain {
 	}
 
 	@Override
-	public void parse(String[] args) {		
+	public void parse(String[] args) {
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
 		
@@ -71,16 +73,20 @@ public class LearnMain extends CLIMain {
 		config = new RunConfig();
 		try {
 		    CommandLine commandLine = parser.parse( options, args );
-		    if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
-		    	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
-		    } else {
-		    	log(LogLevel.ERROR, "You have not specified a debug or error log file");
-		    	System.exit(0);
-		    }
 		    if(commandLine.hasOption("h")) {
 		    	HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "what is this?", options );
 				System.exit(0);
+		    }
+		    if(commandLine.hasOption("a")) {
+		    	config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
+		    }
+		    String workspace = config.getWorkspaceDirectory();
+		    
+		    if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
+		    	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
+		    } else {
+		    	setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
 		    }
 		    if(commandLine.hasOption("c")) {
 		    	config = getConfig(commandLine.getOptionValue("c"));
@@ -185,9 +191,6 @@ public class LearnMain extends CLIMain {
 		    if(commandLine.hasOption("l")) {
 		    	config.setSrcDirectory(commandLine.getOptionValue("l"));
 		    }
-		    if(commandLine.hasOption("a")) {
-		    	config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
-		    }
 		} catch (ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
@@ -197,5 +200,6 @@ public class LearnMain extends CLIMain {
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
 		config.setVolumeWriter(IPlantXMLVolumeWriter.class);
+		config.setOtoLiteReviewFile("nextStep.txt");
 	}
 }
