@@ -148,7 +148,10 @@ public class OTOLearner implements ILearner {
 		
 		//store URL that uses upload id in a local file so that user can look it up
 		FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
-		fw.write(this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
+		fw.write("Please visit the link [1] below to categorize a selection of terms that appeared in the descriptions you provided as input. ");
+		fw.write("Categorizing these terms will ensure you obtain the best results possible from CharaParser Markup.\n\n");
+		fw.write("The categorization can be done by selecting terms on the left and dragging and dropping the arrow into the corresponding category on the right-hand side.\n\n");
+		fw.write("[1]: " + this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
 		fw.close();
 	}
 
