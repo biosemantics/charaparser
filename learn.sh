@@ -15,8 +15,11 @@ internalId=$username$timestamp
 
 #REPLACE USER PROVIDED ID WITH INTERNAL ID
 parametersCopy=("$@")
-while getopts ":i:c:z:w:f:g:j:k:b:e:r:l:a:n:p:d:u:s:t:" opt; do
+skipTermReview=false
+while getopts ":i:c:z:w:f:g:j:k:b:e:r:l:a:n:p:d:u:s:t:y:" opt; do
      case $opt in
+     	y)
+     		skipTermReview=true
 	z)
 		userProvidedId=$OPTARG
 		parametersCopy[$OPTIND-2]=$internalId
@@ -26,7 +29,7 @@ done
 
 reviewFile="workspace/$internalId/nextStep.txt"
 
-#EXECUTE CHARAPARSER
+#EXECUTE CHARAPARSER LEARN
 if [ -n "$userProvidedId" ]; then
 	#echo "$JAVAHOME/java -jar $CHARAPARSERHOME/learn/learn.jar ${parametersCopy[@]}"
 	$JAVAHOME/java -jar $CHARAPARSERHOME/learn/learn.jar "${parametersCopy[@]}"
@@ -43,5 +46,16 @@ fi
 #MOVE LOG FILES
 for file in workspace/debug.log*; do
 	filename=$(basename "$file")
-	cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.learn.$filename"; 
+	cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.learn.$filename" 
+done
+
+# EXECUTE CHARAPARSER MARKUP
+if $skipTermReview; then
+	$JAVAHOME/java -jar $CHARAPARSERHOME/markup/markup.jar "${parametersCopy[@]}"
+fi
+
+#MOVE LOG FILES
+for file in workspace/debug.log*; do
+        filename=$(basename "$file")
+        cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.markup.$filename" 
 done
