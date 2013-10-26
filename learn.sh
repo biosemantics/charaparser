@@ -49,13 +49,15 @@ for file in workspace/debug.log*; do
 	cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.learn.$filename" 
 done
 
-# EXECUTE CHARAPARSER MARKUP
 if $skipTermReview; then
+	# EXECUTE CHARAPARSER MARKUP
 	$JAVAHOME/java -jar $CHARAPARSERHOME/markup/markup.jar "${parametersCopy[@]}"
+	
+	#MOVE LOG FILES
+	for file in workspace/debug.log*; do
+	        filename=$(basename "$file")
+	        cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.markup.$filename" 
+	done
 fi
 
-#MOVE LOG FILES
-for file in workspace/debug.log*; do
-        filename=$(basename "$file")
-        cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.markup.$filename" 
-done
+
