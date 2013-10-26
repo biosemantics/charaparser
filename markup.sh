@@ -25,7 +25,7 @@ while getopts ":i:c:z:w:f:g:j:k:b:e:r:l:a:n:p:d:u:s:t:" opt; do
       esac
 done
 
-#EXECUTE CHARAPARSER
+#EXECUTE CHARAPARSER MARKUP
 if [ -n "$idFile" ]; then
 	#echo "$JAVAHOME/java -jar $CHARAPARSERHOME/markup/markup.jar ${parametersCopy[@]}"
 	$JAVAHOME/java -jar $CHARAPARSERHOME/markup/markup.jar "${parametersCopy[@]}"
@@ -36,5 +36,5 @@ fi
 #MOVE LOG FILES
 for file in workspace/debug.log*; do
 	filename=$(basename "$file")
-	cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.markup.$filename"; 
+	cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.markup.$filename"
 done
