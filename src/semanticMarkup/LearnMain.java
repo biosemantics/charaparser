@@ -48,7 +48,7 @@ public class LearnMain extends CLIMain {
 		options.addOption("c", "config", true, "config to use"); 
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
 		options.addOption("w", "style mapping", true, "Optional style mapping to use for Word file input");
-		options.addOption("y", "categorize terms", true, "Intend to categorize newly discovered terms to improve markup");
+		options.addOption("y", "categorize terms", true, "If specified, indicates that one does not intend to categorize newly discovered terms to improve markup");
 		
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
 		options.addOption("f", "source", true, "source of the descriptions, e.g. fna v7");
@@ -110,7 +110,7 @@ public class LearnMain extends CLIMain {
 		    	config.setBioportalAPIKey(commandLine.getOptionValue("k"));
 		    }
 		    
-		    if(commandLine.hasOption("y")) {
+		    if(!commandLine.hasOption("y")) {
 		    	config.setTermCategorizationRequired(true);
 		    }
 		    
