@@ -74,6 +74,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 	protected String otoLiteTermReviewURL;
 	protected Set<String> selectedSources;
 	private String glossaryTable;
+	private boolean termCategorizationRequired;
 	
 	/**
 	 * @param wordTokenizer
@@ -119,7 +120,8 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			@Named("glossaryType")String glossaryType,
 			IGlossary glossary, 
 			@Named("selectedSources")Set<String> selectedSources, 
-			@Named("GlossaryTable")String glossaryTable) throws Exception {
+			@Named("GlossaryTable")String glossaryTable,
+			@Named("termCategorizationRequired")boolean termCategorizationRequired) throws Exception {
 		super(version, parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -138,6 +140,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		this.glossaryType = glossaryType;
 		this.selectedSources = selectedSources;
 		this.glossaryTable = glossaryTable;
+		this.termCategorizationRequired = termCategorizationRequired;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
@@ -181,7 +184,10 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			this.log(LogLevel.ERROR, "Problem reading uploadId", e);
 			download = new Download();
 		}
-		
+		if(!download.isFinalized() && termCategorizationRequired) {
+			log(LogLevel.ERROR, "The term categorization has to be finalized to run markup. Please return to categorizing terms and finalize first.");
+			System.exit(0);
+		}
 		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
 				"Number of term categoy relations " + glossaryDownload.getTermCategories().size() + "\n" +
 				"Number of term synonym relations " + glossaryDownload.getTermSynonyms().size());

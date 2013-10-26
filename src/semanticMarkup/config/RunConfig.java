@@ -96,6 +96,7 @@ public class RunConfig extends BasicConfig {
 	private String wordNetSource = resourcesDirectory + File.separator + "wordNet3.1" + File.separator +"dict" + File.separator;
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 	private String glossaryFile = resourcesDirectory + File.separator + "fnaglossaryfixed.csv";
+	private boolean termCategorizationRequired = false;
 	private String otoLiteReviewFile = "TermReview.txt";
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
@@ -160,6 +161,7 @@ public class RunConfig extends BasicConfig {
 		bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("selectedSources")).toInstance(getSelectedSources(standardVolumeReaderSourcefiles));
 		bind(String.class).annotatedWith(Names.named("databasePrefix")).toInstance(databaseTablePrefix); 
 		bind(String.class).annotatedWith(Names.named("glossaryType")).toInstance(glossaryType);
+		bind(Boolean.class).annotatedWith(Names.named("termCategorizationRequired")).toInstance(termCategorizationRequired);
 		bind(String.class).annotatedWith(Names.named("otoLiteReviewFile")).toInstance(otoLiteReviewFile);
 		bind(String.class).annotatedWith(Names.named("otoLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
 		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
@@ -688,6 +690,14 @@ public class RunConfig extends BasicConfig {
 
 	public void setBioportalUserId(String bioportalUserId) {
 		this.bioportalUserId = bioportalUserId;
+	}
+
+	public boolean isTermCategorizationRequired() {
+		return termCategorizationRequired;
+	}
+
+	public void setTermCategorizationRequired(boolean termCategorizationRequired) {
+		this.termCategorizationRequired = termCategorizationRequired;
 	}
 	
 	
