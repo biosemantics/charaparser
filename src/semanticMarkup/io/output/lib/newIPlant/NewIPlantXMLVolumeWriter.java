@@ -53,7 +53,6 @@ public class NewIPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 		return xmlTreatment;
 	}
 
-	//TODO: deal with additional meta stuff
 	private void createMeta(Treatment treatment, semanticMarkup.io.output.lib.newIPlant.Treatment xmlTreatment) {
 		ContainerTreatmentElement metaElement = treatment.getContainerTreatmentElement("meta");
 		
@@ -64,27 +63,31 @@ public class NewIPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 		
 		ContainerTreatmentElement processedByElement = metaElement.getContainerTreatmentElement("processed_by");
 		ProcessedBy processedBy = new ProcessedBy();
-		for(ValueTreatmentElement processorElement : processedByElement.getValueTreatmentElements("processor")) {
-			Processor processor = new Processor();
-			processor.setProcessType(processorElement.getAttribute("process_type"));
-			processor.setValue(processorElement.getValue());
-			processedBy.getProcessor().add(processor);
-		}
-		for(ContainerTreatmentElement charaparserElement : processedByElement.getContainerTreatmentElements("charaparser")) {
-			Charaparser charaparser = new Charaparser();
-			ValueTreatmentElement charaparserVersionElement = charaparserElement.getValueTreatmentElement("charaparser_version");
-			if(charaparserVersionElement != null)
-				charaparser.setCharaparserVersion(charaparserVersionElement.getValue());
-			ValueTreatmentElement charaparserUserElement = charaparserElement.getValueTreatmentElement("charaparser_user");
-			if(charaparserUserElement != null)
-				charaparser.setCharaparserUser(charaparserUserElement.getValue());
-			ValueTreatmentElement glossaryNameElement = charaparserElement.getValueTreatmentElement("glossary_name");
-			if(glossaryNameElement != null)
-				charaparser.setGlossaryName(glossaryNameElement.getValue());
-			ValueTreatmentElement glossaryVersionElement = charaparserElement.getValueTreatmentElement("glossary_version");
-			if(glossaryVersionElement != null)
-				charaparser.setGlossaryVersion(glossaryVersionElement.getValue());
-			processedBy.getCharaparser().add(charaparser);
+		for(TreatmentElement treatmentElement : processedByElement.getTreatmentElements()) {
+			if(treatmentElement.getName().equals("processor")) {
+				ValueTreatmentElement processorElement = (ValueTreatmentElement)treatmentElement;
+				Processor processor = new Processor();
+				processor.setProcessType(processorElement.getAttribute("process_type"));
+				processor.setValue(processorElement.getValue());
+				processedBy.getProcessorOrCharaparser().add(processor);
+			}
+			if(treatmentElement.getName().equals("charaparser")) {
+				ContainerTreatmentElement charaparserElement = (ContainerTreatmentElement)treatmentElement;
+				Charaparser charaparser = new Charaparser();
+				ValueTreatmentElement charaparserVersionElement = charaparserElement.getValueTreatmentElement("charaparser_version");
+				if(charaparserVersionElement != null)
+					charaparser.setCharaparserVersion(charaparserVersionElement.getValue());
+				ValueTreatmentElement charaparserUserElement = charaparserElement.getValueTreatmentElement("charaparser_user");
+				if(charaparserUserElement != null)
+					charaparser.setCharaparserUser(charaparserUserElement.getValue());
+				ValueTreatmentElement glossaryNameElement = charaparserElement.getValueTreatmentElement("glossary_name");
+				if(glossaryNameElement != null)
+					charaparser.setGlossaryName(glossaryNameElement.getValue());
+				ValueTreatmentElement glossaryVersionElement = charaparserElement.getValueTreatmentElement("glossary_version");
+				if(glossaryVersionElement != null)
+					charaparser.setGlossaryVersion(glossaryVersionElement.getValue());
+				processedBy.getProcessorOrCharaparser().add(charaparser);
+			}
 		}
 		meta.setProcessedBy(processedBy);
 

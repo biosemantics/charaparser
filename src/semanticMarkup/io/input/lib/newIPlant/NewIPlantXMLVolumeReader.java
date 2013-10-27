@@ -59,18 +59,22 @@ public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 		metaTreatmentElement.addTreatmentElement(new ValueTreatmentElement("source", source));
 		
 		ContainerTreatmentElement processedByContainerTreatmentElement = new ContainerTreatmentElement("processed_by");
-		for(Processor processor : processedBy.getProcessor()) {
-			ValueTreatmentElement processorTreatmentElement = new ValueTreatmentElement("processor", processor.getValue());
-			processorTreatmentElement.setAttribute("process_type", processor.getProcessType());
-			processedByContainerTreatmentElement.addTreatmentElement(processorTreatmentElement);
-		}
-		for(Charaparser charaparser : processedBy.getCharaparser()) {
-			ContainerTreatmentElement charaparserTreatmentElement = new ContainerTreatmentElement("charaparser");
-			charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", charaparser.getCharaparserVersion()));
-			charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_user", charaparser.getCharaparserUser()));
-			charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_name", charaparser.getGlossaryName()));
-			charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", charaparser.getGlossaryVersion()));
-			processedByContainerTreatmentElement.addTreatmentElement(charaparserTreatmentElement);
+		for(Object object : processedBy.getProcessorOrCharaparser()) {
+			if(object instanceof Processor) {
+				Processor processor = (Processor)object;
+				ValueTreatmentElement processorTreatmentElement = new ValueTreatmentElement("processor", processor.getValue());
+				processorTreatmentElement.setAttribute("process_type", processor.getProcessType());
+				processedByContainerTreatmentElement.addTreatmentElement(processorTreatmentElement);
+			}
+			if(object instanceof Charaparser) {
+				Charaparser charaparser = (Charaparser)object;
+				ContainerTreatmentElement charaparserTreatmentElement = new ContainerTreatmentElement("charaparser");
+				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", charaparser.getCharaparserVersion()));
+				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_user", charaparser.getCharaparserUser()));
+				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_name", charaparser.getGlossaryName()));
+				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", charaparser.getGlossaryVersion()));
+				processedByContainerTreatmentElement.addTreatmentElement(charaparserTreatmentElement);
+			}
 		}
 		metaTreatmentElement.addTreatmentElement(processedByContainerTreatmentElement);
 
@@ -99,7 +103,7 @@ public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 		treatment.addTreatmentElement(taxonIdentificationElement);
 		
 		//description
-		treatment.addTreatmentElement(new ValueTreatmentElement("description", xmlTreatment.getDescription().getText()));
+		treatment.addTreatmentElement(new ValueTreatmentElement("description", xmlTreatment.getDescription()));
 		
 		//discussion
 		for(String discussion : xmlTreatment.getDiscussion()) {
