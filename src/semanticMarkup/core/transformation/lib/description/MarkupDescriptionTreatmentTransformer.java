@@ -170,9 +170,14 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			if(!treatment.containsContainerTreatmentElement("meta"))
 				treatment.addTreatmentElement(new ContainerTreatmentElement("meta"));
 			ContainerTreatmentElement metaElement = treatment.getContainerTreatmentElement("meta");
-			metaElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", version));
-			metaElement.addTreatmentElement(new ValueTreatmentElement("glossary_name", glossaryType));
-			metaElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", glossaryVersion));
+			if(!metaElement.containsContainerTreatmentElement("processed_by"))
+				metaElement.addTreatmentElement(new ContainerTreatmentElement("processed_by"));
+			ContainerTreatmentElement processedByElement = treatment.getContainerTreatmentElement("processed_by");
+			ContainerTreatmentElement charaparserElement = new ContainerTreatmentElement("charaparser");
+			processedByElement.addTreatmentElement(charaparserElement);
+			charaparserElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", version));
+			charaparserElement.addTreatmentElement(new ValueTreatmentElement("glossary_name", glossaryType));
+			charaparserElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", glossaryVersion));
 		}
 		
 		int uploadId;
