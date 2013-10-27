@@ -14,7 +14,7 @@ timestamp=$(($(date +%s%N)/1000000))
 
 #REPLACE USER PROVIDED ID WITH INTERNAL ID
 parametersCopy=("$@")
-while getopts ":i:c:z:w:f:g:j:k:b:e:r:l:a:n:p:d:u:s:t:y:" opt; do
+while getopts ":i:c:z:w:f:g:j:k:b:e:r:l:a:n:p:d:u:s:t:y" opt; do
      case $opt in
 	z)
            	idFile=$OPTARG
