@@ -12,6 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import semanticMarkup.core.ContainerTreatmentElement;
@@ -21,6 +22,7 @@ import semanticMarkup.io.input.AbstractFileVolumeReader;
 
 public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 
+	@Inject
 	public NewIPlantXMLVolumeReader(@Named("IPlantXMLVolumeReader_Source") String filePath) {
 		super(filePath);
 	}
@@ -28,7 +30,7 @@ public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 	@Override
 	public List<Treatment> read() throws Exception {
 		List<Treatment> result = new ArrayList<Treatment>();
-		JAXBContext jc = JAXBContext.newInstance("semanticMarkup.io.input.lib.newIplant");
+		JAXBContext jc = JAXBContext.newInstance("semanticMarkup.io.input.lib.newIPlant");
         Unmarshaller u = jc.createUnmarshaller();
         
         File sourceDirectory = new File(filePath);
@@ -39,7 +41,9 @@ public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 			File file = files[i];
 	        InputStream inputStream = new FileInputStream(file);
 	        Reader reader = new InputStreamReader(inputStream, "UTF-8");
-	        semanticMarkup.io.input.lib.newIPlant.Treatment xmlTreatment = (semanticMarkup.io.input.lib.newIPlant.Treatment)u.unmarshal(reader);
+	        Object object = u.unmarshal(reader);
+	        JAXBElement< semanticMarkup.io.input.lib.newIPlant.Treatment> jaxbElement = (JAXBElement< semanticMarkup.io.input.lib.newIPlant.Treatment>)object;
+	        semanticMarkup.io.input.lib.newIPlant.Treatment xmlTreatment = jaxbElement.getValue();
 	        Treatment treatment = transformTreatment(xmlTreatment);
 	        treatment.setName(file.getName().split("\\.(?=[^\\.]+$)")[0]);
 	        result.add(treatment);
@@ -51,56 +55,69 @@ public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 		Treatment treatment = new Treatment();
 		
 		//meta
-		ContainerTreatmentElement metaTreatmentElement = new ContainerTreatmentElement("meta");
 		Meta meta = xmlTreatment.getMeta();
-		String source = meta.getSource();
-		List<String> otherInfosOnMeta = meta.getOtherInfoOnMeta();
-		ProcessedBy processedBy = meta.getProcessedBy();
-		metaTreatmentElement.addTreatmentElement(new ValueTreatmentElement("source", source));
+		if(meta != null) {
+			ContainerTreatmentElement metaTreatmentElement = new ContainerTreatmentElement("meta");
+			String source = meta.getSource();
+			List<String> otherInfosOnMeta = meta.getOtherInfoOnMeta();
+			ProcessedBy processedBy = meta.getProcessedBy();
+			if(source != null)
+				metaTreatmentElement.addTreatmentElement(new ValueTreatmentElement("source", source));
 		
-		ContainerTreatmentElement processedByContainerTreatmentElement = new ContainerTreatmentElement("processed_by");
-		for(Object object : processedBy.getProcessorOrCharaparser()) {
-			if(object instanceof Processor) {
-				Processor processor = (Processor)object;
-				ValueTreatmentElement processorTreatmentElement = new ValueTreatmentElement("processor", processor.getValue());
-				processorTreatmentElement.setAttribute("process_type", processor.getProcessType());
-				processedByContainerTreatmentElement.addTreatmentElement(processorTreatmentElement);
+			if(processedBy != null) {
+				ContainerTreatmentElement processedByContainerTreatmentElement = new ContainerTreatmentElement("processed_by");
+				for(Object object : processedBy.getProcessorOrCharaparser()) {
+					if(object != null) {
+						if(object instanceof Processor) {
+							Processor processor = (Processor)object;
+							ValueTreatmentElement processorTreatmentElement = new ValueTreatmentElement("processor", processor.getValue());
+							processorTreatmentElement.setAttribute("process_type", processor.getProcessType());
+							processedByContainerTreatmentElement.addTreatmentElement(processorTreatmentElement);
+						}
+						if(object instanceof Charaparser) {
+							Charaparser charaparser = (Charaparser)object;
+							ContainerTreatmentElement charaparserTreatmentElement = new ContainerTreatmentElement("charaparser");
+							charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", charaparser.getCharaparserVersion()));
+							if(charaparser.getCharaparserUser() != null)
+								charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_user", charaparser.getCharaparserUser()));
+							charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_name", charaparser.getGlossaryName()));
+							charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", charaparser.getGlossaryVersion()));
+							processedByContainerTreatmentElement.addTreatmentElement(charaparserTreatmentElement);
+						}
+					}
+				}
+				metaTreatmentElement.addTreatmentElement(processedByContainerTreatmentElement);
 			}
-			if(object instanceof Charaparser) {
-				Charaparser charaparser = (Charaparser)object;
-				ContainerTreatmentElement charaparserTreatmentElement = new ContainerTreatmentElement("charaparser");
-				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", charaparser.getCharaparserVersion()));
-				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("charaparser_user", charaparser.getCharaparserUser()));
-				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_name", charaparser.getGlossaryName()));
-				charaparserTreatmentElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", charaparser.getGlossaryVersion()));
-				processedByContainerTreatmentElement.addTreatmentElement(charaparserTreatmentElement);
-			}
-		}
-		metaTreatmentElement.addTreatmentElement(processedByContainerTreatmentElement);
+		
 
-		for(String otherInfoOnMeta : otherInfosOnMeta)
-			metaTreatmentElement.addTreatmentElement(new ValueTreatmentElement("other_info_on_meta", otherInfoOnMeta));
-		treatment.addTreatmentElement(metaTreatmentElement);
+			for(String otherInfoOnMeta : otherInfosOnMeta)
+				metaTreatmentElement.addTreatmentElement(new ValueTreatmentElement("other_info_on_meta", otherInfoOnMeta));
+			treatment.addTreatmentElement(metaTreatmentElement);
+		}
 
 		//taxon identification
 		TaxonIdentification taxonIdentification = xmlTreatment.getTaxonIdentification();
-		ContainerTreatmentElement taxonIdentificationElement = new ContainerTreatmentElement("taxon_identification");
-		for(Object content : taxonIdentification.getContent()) {
-			if(content instanceof PlaceOfPublication) {
-				PlaceOfPublication placeOfPublicationContent = (PlaceOfPublication)content;
-				ContainerTreatmentElement placeOfPublicationElement = new ContainerTreatmentElement("place_of_publication");
-				placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("publication_title", placeOfPublicationContent.getPublicationTitle()));
-				placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("place_in_publication", placeOfPublicationContent.getPlaceInPublication()));
-				for(String otherInfoPub : placeOfPublicationContent.getOtherInfoOnPub()) 
-					placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("other_info_on_pub", otherInfoPub));
-				taxonIdentificationElement.addTreatmentElement(placeOfPublicationElement);
-			} else if(content instanceof JAXBElement) {
-        		JAXBElement<String> element = (JAXBElement<String>) content;
-        		taxonIdentificationElement.addTreatmentElement(new ValueTreatmentElement(element.getName().toString(), element.getValue()));
-        	}
+		if(taxonIdentification != null) {
+			ContainerTreatmentElement taxonIdentificationElement = new ContainerTreatmentElement("taxon_identification");
+			for(Object content : taxonIdentification.getContent()) {
+				if(content != null ) {
+					if(content instanceof PlaceOfPublication) {
+						PlaceOfPublication placeOfPublicationContent = (PlaceOfPublication)content;
+						ContainerTreatmentElement placeOfPublicationElement = new ContainerTreatmentElement("place_of_publication");
+						placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("publication_title", placeOfPublicationContent.getPublicationTitle()));
+						placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("place_in_publication", placeOfPublicationContent.getPlaceInPublication()));
+						for(String otherInfoPub : placeOfPublicationContent.getOtherInfoOnPub()) 
+							placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("other_info_on_pub", otherInfoPub));
+						taxonIdentificationElement.addTreatmentElement(placeOfPublicationElement);
+					} else if(content instanceof JAXBElement) {
+		        		JAXBElement<String> element = (JAXBElement<String>) content;
+		        		taxonIdentificationElement.addTreatmentElement(new ValueTreatmentElement(element.getName().toString(), element.getValue()));
+		        	}
+				}
+			}
+			taxonIdentificationElement.setAttribute("status", taxonIdentification.getStatus());
+			treatment.addTreatmentElement(taxonIdentificationElement);
 		}
-		taxonIdentificationElement.setAttribute("status", taxonIdentification.getStatus());
-		treatment.addTreatmentElement(taxonIdentificationElement);
 		
 		//description
 		treatment.addTreatmentElement(new ValueTreatmentElement("description", xmlTreatment.getDescription()));

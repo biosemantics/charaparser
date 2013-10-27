@@ -172,7 +172,7 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			ContainerTreatmentElement metaElement = treatment.getContainerTreatmentElement("meta");
 			if(!metaElement.containsContainerTreatmentElement("processed_by"))
 				metaElement.addTreatmentElement(new ContainerTreatmentElement("processed_by"));
-			ContainerTreatmentElement processedByElement = treatment.getContainerTreatmentElement("processed_by");
+			ContainerTreatmentElement processedByElement = metaElement.getContainerTreatmentElement("processed_by");
 			ContainerTreatmentElement charaparserElement = new ContainerTreatmentElement("charaparser");
 			processedByElement.addTreatmentElement(charaparserElement);
 			charaparserElement.addTreatmentElement(new ValueTreatmentElement("charaparser_version", version));

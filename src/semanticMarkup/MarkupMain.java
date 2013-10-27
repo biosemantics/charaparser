@@ -14,8 +14,10 @@ import semanticMarkup.config.RunConfig;
 import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
+import semanticMarkup.io.input.lib.newIPlant.NewIPlantXMLVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
+import semanticMarkup.io.output.lib.newIPlant.NewIPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.log.LogLevel;
@@ -111,7 +113,7 @@ public class MarkupMain extends CLIMain {
 		    	config.setTermCategorizationRequired(true);
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(IPlantXMLVolumeReader.class);
+		    config.setMarkupCreatorVolumeReader(NewIPlantXMLVolumeReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
@@ -199,6 +201,6 @@ public class MarkupMain extends CLIMain {
 		config.setGlossary(InMemoryGlossary.class);
 		//no learning required, already passed learning and reviewed terms in OTO Lite 
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
-		config.setVolumeWriter(IPlantXMLVolumeWriter.class);
+		config.setVolumeWriter(NewIPlantXMLVolumeWriter.class);
 	}
 }

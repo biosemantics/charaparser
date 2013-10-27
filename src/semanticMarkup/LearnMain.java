@@ -15,8 +15,10 @@ import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreat
 import semanticMarkup.io.input.GenericFileVolumeReader;
 import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
+import semanticMarkup.io.input.lib.newIPlant.NewIPlantXMLVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
+import semanticMarkup.io.output.lib.newIPlant.NewIPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
 import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
@@ -114,7 +116,7 @@ public class LearnMain extends CLIMain {
 		    	config.setTermCategorizationRequired(true);
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(IPlantXMLVolumeReader.class);
+		    config.setMarkupCreatorVolumeReader(NewIPlantXMLVolumeReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
@@ -204,7 +206,7 @@ public class LearnMain extends CLIMain {
 		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
-		config.setVolumeWriter(IPlantXMLVolumeWriter.class);
+		config.setVolumeWriter(NewIPlantXMLVolumeWriter.class);
 		config.setOtoLiteReviewFile("nextStep.txt");
 	}
 }

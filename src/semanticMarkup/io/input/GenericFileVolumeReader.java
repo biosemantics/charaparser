@@ -17,6 +17,7 @@ import semanticMarkup.core.Treatment;
 import semanticMarkup.io.input.extract.lib.DistributionTreatmentRefiner;
 import semanticMarkup.io.input.extract.lib.FloweringTimeTreatmentRefiner;
 import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
+import semanticMarkup.io.input.lib.newIPlant.NewIPlantXMLVolumeReader;
 import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
 import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
 import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
@@ -91,7 +92,7 @@ public class GenericFileVolumeReader extends AbstractFileVolumeReader {
 		validationRuns.put(new ValidationRun(new TaxonxVolumeValidator(new File(taxonxSchemaFile)), new File(filePath)), 
 				new TaxonxVolumeReader(filePath));
 		validationRuns.put(new ValidationRun(new IPlantXmlVolumeValidator(new File(iplantXmlSchemaFile)), new File(filePath)),
-				new IPlantXMLVolumeReader(filePath));
+				new NewIPlantXMLVolumeReader(filePath));
 		validationRuns.put(new ValidationRun(new WordVolumeValidator(), new File(filePath)),
 				new DocWordVolumeReader(filePath, styleStartPattern, styleNamePattern,
 						styleKeyPattern, tribegennamestyle, styleMappingFile, distributionTreatmentRefiner, floweringTimeTreatmentRefiner));
