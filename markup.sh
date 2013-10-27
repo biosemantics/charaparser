@@ -10,6 +10,7 @@ LOGSHOME="/home/thomas/Desktop/losLogs/" #"/iplant/home/shared/charaparser_de_lo
 
 #username=$(basename $(dirname $(dirname $(pwd)))) #basename/dirname to username folder
 username="thomas"
+timestamp=$(($(date +%s%N)/1000000))
 
 #REPLACE USER PROVIDED ID WITH INTERNAL ID
 parametersCopy=("$@")
