@@ -69,7 +69,7 @@ public class ConstraintChunkProcessor extends AbstractChunkProcessor {
 			if(structure!=null) {
 				DescriptionTreatmentElement constraintStructure = 
 						new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-				int structureId = contextState.fetchAndIncrementStructureId(constraintStructure);
+				int structureId = processingContext.fetchAndIncrementStructureId(constraintStructure);
 				constraintStructure.setAttribute("id", "o" + structureId);
 				constraintStructure.setAttribute("name", structure.getAttribute("name"));
 				constraintStructure.setAttribute("constraint", chunk.getTerminalsText());

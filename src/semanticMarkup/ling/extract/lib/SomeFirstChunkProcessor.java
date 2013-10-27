@@ -71,14 +71,14 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		
 		//starts with a organ (subject)
 		if(firstChunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN)) {
-			result.addAll(establishSubject(firstChunk, processingContextState));
+			result.addAll(establishSubject(firstChunk, processingContext, processingContextState));
 			skipFirstChunk = true;
 		} else {
 			DescriptionTreatmentElement structureElement;
 			
 			if(processingContext.getChunkCollector().getSubjectTag().equals("general")) {
 				structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
 				structureElement.setAttribute("name", "whole_organism");
 				LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
@@ -89,7 +89,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 				String previousMainSubjectOrgan = parentTagProvider.getParentTag(processingContext.getChunkCollector().getSource());
 				previousMainSubjectOrgan = previousMainSubjectOrgan.equals("general")? "whole_organism" : previousMainSubjectOrgan;
 				structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
 				structureElement.setAttribute("name", previousMainSubjectOrgan);
 				

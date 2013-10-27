@@ -52,7 +52,7 @@ public class MainSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 	protected ArrayList<DescriptionTreatmentElement> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		ArrayList<DescriptionTreatmentElement> result = this.establishSubject(chunk, processingContextState);
+		ArrayList<DescriptionTreatmentElement> result = this.establishSubject(chunk, processingContext, processingContextState);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}

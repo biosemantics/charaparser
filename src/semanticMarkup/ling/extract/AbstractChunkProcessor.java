@@ -125,7 +125,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 	
 	protected ArrayList<DescriptionTreatmentElement> establishSubject(
-			Chunk subjectChunk, ProcessingContextState processingContextState) {
+			Chunk subjectChunk, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		log(LogLevel.DEBUG, "establish subject from " + subjectChunk);
 		ArrayList<DescriptionTreatmentElement> result = new ArrayList<DescriptionTreatmentElement>();
 		
@@ -133,7 +133,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		subjectChunks.addAll(processingContextState.getUnassignedConstraints());
 		subjectChunks.add(subjectChunk);
 		processingContextState.clearUnassignedConstraints();
-		LinkedList<DescriptionTreatmentElement> subjectStructures = createStructureElements(subjectChunks, processingContextState);
+		LinkedList<DescriptionTreatmentElement> subjectStructures = createStructureElements(subjectChunks, processingContext, processingContextState);
 		return this.establishSubject(subjectStructures, processingContextState);
 	}
 
@@ -154,7 +154,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return result;
 	}
 
-	protected LinkedList<DescriptionTreatmentElement> createStructureElements(List<Chunk> subjectChunks, ProcessingContextState processingContextState) {
+	protected LinkedList<DescriptionTreatmentElement> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, 
+			ProcessingContextState processingContextState) {
 		//assumption: all the information can more easily be extracted if chunk structure (subchunks) is considered instead of just the plain string
 		//therefore use a very simplified implementation now and then later go from examples to tune
 		
@@ -183,7 +184,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if(!organChunks.isEmpty()) {
 			for(Chunk organChunk : organChunks) {
 				DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-				int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 				structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));
 			
 				Chunk constraintChunk = getConstraintOf(organChunk, subjectChunk);
@@ -624,7 +625,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		//find the organs in object o[.........{m} {m} (o1) and {m} (o2)]
 		
 		//log(LogLevel.DEBUG, "twoParts " + twoParts);
-		structures = createStructureElements(twoParts.get(1), processingContextState);
+		structures = createStructureElements(twoParts.get(1), processingContext, processingContextState);
 		// 7-12-02 add cs//to be added structures found in 2nd part, not rewrite this.latestelements yet
 		if(!twoParts.get(0).isEmpty()) {
 			LinkedList<DescriptionTreatmentElement> structuresCopy = 
@@ -1258,7 +1259,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			if(relation == null)
 				relation = relationLabel(preposition, subjectStructures, structures, object, chunkCollector);//determine the relation
 			if(relation != null){
-				result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
+				result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, 
+						processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
 			}
 			if(relation!= null && relation.compareTo("part_of")==0) 
 				structures = subjectStructures; //part_of holds: make the organbeforeof/entity1 the return value, all subsequent characters should be refering to organbeforeOf/entity1
@@ -1348,7 +1350,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected LinkedList<DescriptionTreatmentElement> createRelationElements(String relation, 
 			List<DescriptionTreatmentElement> fromStructures, List<DescriptionTreatmentElement> toStructures, List<Chunk> modifiers, boolean symmetric, 
-			ProcessingContextState processingContextState) {
+			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		log(LogLevel.DEBUG, "create relation " + relation + " between " + fromStructures + " to " + toStructures);
 		//add relation elements
 		LinkedList<DescriptionTreatmentElement> relationElements = new LinkedList<DescriptionTreatmentElement>();
@@ -1370,20 +1372,20 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					negation = true;
 					relation = relation.replace("not", "").trim();
 				}
-				relationElements.add(addRelation(relation, modifiers, symmetric, o1id, o2id, negation, processingContextState));
+				relationElements.add(addRelation(relation, modifiers, symmetric, o1id, o2id, negation, processingContext, processingContextState));
 			}
 		}
 		return relationElements;
 	}
 	
 	protected DescriptionTreatmentElement addRelation(String relation, List<Chunk> modifiers,
-			boolean symmetric, String o1id, String o2id, boolean negation, ProcessingContextState processingContextState) {
+			boolean symmetric, String o1id, String o2id, boolean negation, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		DescriptionTreatmentElement relationElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.RELATION);
 		relationElement.setAttribute("name", relation);
 		relationElement.setAttribute("from", o1id);
 		relationElement.setAttribute("to", o2id);
 		relationElement.setAttribute("negation", String.valueOf(negation));
-		relationElement.setAttribute("id", "r" + String.valueOf(processingContextState.fetchAndIncrementRelationId(relationElement)));	
+		relationElement.setAttribute("id", "r" + String.valueOf(processingContext.fetchAndIncrementRelationId(relationElement)));	
 		
 		for(Chunk modifier : modifiers) {
 			relationElement.appendAttribute("modifier", modifier.getTerminalsText());

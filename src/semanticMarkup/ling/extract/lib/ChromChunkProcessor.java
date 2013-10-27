@@ -61,7 +61,7 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 			//Element structure = new Element("chromosome");
 			DescriptionTreatmentElement structure = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
 			structure.setAttribute("name", "chromosome");
-			structure.setAttribute("id", "o" + String.valueOf(processingContextState.fetchAndIncrementStructureId(structure)));
+			structure.setAttribute("id", "o" + String.valueOf(processingContext.fetchAndIncrementStructureId(structure)));
 			result.add(structure);
 			
 			List<Chunk> modifiers = new LinkedList<Chunk>();

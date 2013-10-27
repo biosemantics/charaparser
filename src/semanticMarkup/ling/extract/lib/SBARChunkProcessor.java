@@ -79,8 +79,8 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			
 			int constraintId;
 			if(last.containsChunkType(ChunkType.ORGAN)) {
-				constraintId = processingContextState.getStructureId() - 1;
-				DescriptionTreatmentElement lastStructure = processingContextState.getStructure(constraintId);
+				constraintId = processingContext.getStructureId() - 1;
+				DescriptionTreatmentElement lastStructure = processingContext.getStructure(constraintId);
 				LinkedList<DescriptionTreatmentElement> newSubjects = new LinkedList<DescriptionTreatmentElement>();
 				newSubjects.add(lastStructure);
 				processingContextState.setSubjects(newSubjects);
@@ -165,7 +165,7 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 				chunkIterator.next();
 		
 			if(last.containsChunkType(ChunkType.ORGAN)) {
-				int constraintId = processingContextState.getStructureId() - 1;				
+				int constraintId = processingContext.getStructureId() - 1;				
 				processingContextState.setClauseModifierContraint(last.getTerminalsText());
 				processingContextState.setClauseModifierContraintId(String.valueOf(constraintId));
 			}

@@ -102,7 +102,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 						entity1 = (LinkedList<DescriptionTreatmentElement>)processingContextState.getLastElements().clone();
 					}
 					
-					LinkedList<DescriptionTreatmentElement> relationElement = createRelationElements(relation, entity1, structures, modifiers, false, processingContextState);
+					LinkedList<DescriptionTreatmentElement> relationElement = createRelationElements(relation, entity1, structures, modifiers, false, processingContext, processingContextState);
 					result.addAll(relationElement);
 					processingContextState.setLastElements(relationElement);
 					result.addAll(structures);

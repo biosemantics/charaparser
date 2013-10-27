@@ -60,7 +60,7 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 		
 		//ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 		//chunks.add(chunk);
-		ArrayList<DescriptionTreatmentElement> result = this.establishSubject(chunk, processingContextState);
+		ArrayList<DescriptionTreatmentElement> result = this.establishSubject(chunk, processingContext, processingContextState);
 		//LinkedList<DescriptionTreatmentElement> structures = this.createStructureElements(chunks, processingContextState);
 		//result.addAll(structures);
 		//DescriptionTreatmentElement lastElement = lastElements.isEmpty() ? null : lastElements.getLast();

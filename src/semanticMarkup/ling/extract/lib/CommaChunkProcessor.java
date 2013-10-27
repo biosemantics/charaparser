@@ -77,7 +77,7 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
 		if(!unassignedCharacters.isEmpty() && nextChunkIsOrgan(processingContext)) {
 			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+			int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 			structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
 			structureElement.setAttribute("name", "whole_organism"); 
 			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();

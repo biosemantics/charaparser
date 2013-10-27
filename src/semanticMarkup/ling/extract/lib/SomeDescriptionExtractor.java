@@ -125,7 +125,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		result.add(structureElement);
 		result.add(relationElement);*/
 		createWholeOrganismDescription(result);
-		createMayBeSameRelations(result, processingContext.getCurrentState());
+		createMayBeSameRelations(result, processingContext);
 		return result;
 	}
 	
@@ -137,7 +137,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	}
 
 
-	private void createMayBeSameRelations(List<DescriptionTreatmentElement> result, ProcessingContextState processingContextState) {
+	private void createMayBeSameRelations(List<DescriptionTreatmentElement> result, ProcessingContext processingContext) {
 		HashMap<String, Set<String>> names = new HashMap<String, Set<String>>();
 		for (DescriptionTreatmentElement element : result) {
 			if (element.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE)) {
@@ -169,7 +169,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 							relationElement.setAttribute("from", idA);
 							relationElement.setAttribute("to", idB);
 							relationElement.setAttribute("negation", String.valueOf(false));
-							relationElement.setAttribute("id", "r" + String.valueOf(processingContextState.fetchAndIncrementRelationId(relationElement)));	
+							relationElement.setAttribute("id", "r" + String.valueOf(processingContext.fetchAndIncrementRelationId(relationElement)));	
 						}
 					}
 					idIterator.remove();

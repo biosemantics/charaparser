@@ -65,7 +65,7 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 				for(DescriptionTreatmentElement element : lastElements) {
 					int structureId = Integer.valueOf(element.getAttribute("id").substring(1));
 					
-					Set<DescriptionTreatmentElement> relations = processingContextState.getRelationsTo(structureId);
+					Set<DescriptionTreatmentElement> relations = processingContext.getRelationsTo(structureId);
 					int greatestId = 0;
 					DescriptionTreatmentElement latestRelation = null;
 					for(DescriptionTreatmentElement relation : relations) {
@@ -96,7 +96,7 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 		List<DescriptionTreatmentElement> unassignedCharacters = processingContextState.getUnassignedCharacters();
 		if(!unassignedCharacters.isEmpty()) {
 			DescriptionTreatmentElement structureElement = new DescriptionTreatmentElement(DescriptionTreatmentElementType.STRUCTURE);
-			int structureIdString = processingContextState.fetchAndIncrementStructureId(structureElement);
+			int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 			structureElement.setAttribute("id", "o" + String.valueOf(structureIdString));	
 			structureElement.setAttribute("name", "whole_organism"); 
 			LinkedList<DescriptionTreatmentElement> structureElements = new LinkedList<DescriptionTreatmentElement>();
