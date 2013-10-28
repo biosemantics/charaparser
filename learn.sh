@@ -31,11 +31,13 @@ done
 reviewFile="workspace/$internalId/nextStep.txt"
 
 #EXECUTE CHARAPARSER LEARN
+learnSucceeded=false
 if [ -n "$userProvidedId" ]; then
 	#echo "$JAVAHOME/java -jar $CHARAPARSERHOME/learn/learn.jar ${parametersCopy[@]}"
 	$JAVAHOME/java -jar $CHARAPARSERHOME/learn/learn.jar "${parametersCopy[@]}"
 	#EXECUTED SUCCESSFULL?	
 	if [ -f "$reviewFile" ]; then
+		learnSucceeded=true
 		echo $internalId > $userProvidedId.learn
 	else 
 		echo "CharaParser execution failed"	
@@ -50,7 +52,7 @@ for file in workspace/debug.log*; do
 	cp -v "$file" "$LOGSHOME/$username.$userProvidedId.$timestamp.learn.$filename" 
 done
 
-if $skipTermReview; then
+if [[ $learnSucceeded && $skipTermReview ]]; then
 	# EXECUTE CHARAPARSER MARKUP
 	$JAVAHOME/java -jar $CHARAPARSERHOME/markup/markup.jar "${parametersCopy[@]}"
 	
