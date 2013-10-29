@@ -207,6 +207,6 @@ public class LearnMain extends CLIMain {
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
 		config.setVolumeWriter(NewIPlantXMLVolumeWriter.class);
-		config.setOtoLiteReviewFile("nextStep.txt");
+		config.setOtoLiteReviewFile("nextStep.html");
 	}
 }

@@ -147,29 +147,30 @@ public class OTOLearner implements ILearner {
 		preparedStatement.execute();
 		
 		//store URL that uses upload id in a local file so that user can look it up
-		FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
+		/*FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
 		fw.write("Please visit the link [1] below to categorize a selection of terms that appeared in the descriptions you provided as input. ");
 		fw.write("Categorizing these terms will ensure you obtain the best results possible from CharaParser Markup.\n\n");
 		fw.write("The categorization can be done by selecting terms on the left and dragging and dropping the arrow into the corresponding category on the right-hand side.\n\n");
 		fw.write("[1]: " + this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
-		fw.close();
+		fw.close();*/
 		
-		/*
+		
 		FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
 		fw.write("<!DOCTYPE html>");
 		fw.write("<html>");
 		fw.write("<head>");
 		fw.write("<meta charset=\"UTF-8\">");
-		fw.write("<title>Title of the document</title>");
+		fw.write("<title>Term categorization</title>");
 		fw.write("</head>");
 		fw.write("<body>");
-		fw.write("Please <a href=\"" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId + "\">categorize a selection of terms</a> " +
-				"that appeared in the descriptions you provided as input. Categorizing these terms will ensure you obtain the best results possible from CharaParser Markup.");
+		fw.write("Please click the link <a href=\"" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId + "\">" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId +"</a> " +
+				"to categorize a selection of terms that appeared in the descriptions you provided as input. Categorizing these terms will ensure you obtain the best " +
+				"results possible from CharaParser Markup.");
 		fw.write("<br /><br />");
 		fw.write("The categorization can be done by selecting terms on the left and dragging and dropping the arrow into the corresponding category on the right-hand side.");
 		fw.write("</body>");
 		fw.write("</html>");
-		fw.close();*/
+		fw.close();
 	}
 
 
