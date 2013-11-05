@@ -27,5 +27,10 @@ public class TaxonxVolumeValidator extends AbstractXMLVolumeValidator {
 		return this.validateXMLFileWithSchema(file, taxonxSchemaFile);
 	}
 
+	@Override
+	public String getError() {
+		return "";
+	}
+
 
 }

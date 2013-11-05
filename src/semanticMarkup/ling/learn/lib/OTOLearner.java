@@ -159,15 +159,16 @@ public class OTOLearner implements ILearner {
 		fw.write("<!DOCTYPE html>");
 		fw.write("<html>");
 		fw.write("<head>");
-		fw.write("<meta charset=\"UTF-8\">");
+		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId + "&origin=iplant\" charset=\"UTF-8\">");
 		fw.write("<title>Term categorization</title>");
 		fw.write("</head>");
 		fw.write("<body>");
-		fw.write("Please click the link <a href=\"" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId + "\">" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId +"</a> " +
+		fw.write("If you are not redirected automatically, please click the link <a href=\"" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId + "&origin=iplant\">" 
+				+ this.otoLiteTermReviewURL + "?uploadID=" + uploadId +"&origin=iplant</a> " +
 				"to categorize a selection of terms that appeared in the descriptions you provided as input. Categorizing these terms will ensure you obtain the best " +
 				"results possible from CharaParser Markup.");
-		fw.write("<br /><br />");
-		fw.write("The categorization can be done by selecting terms on the left and dragging and dropping the arrow into the corresponding category on the right-hand side.");
+		//fw.write("<br /><br />");
+		//fw.write("The categorization can be done by selecting terms on the left and dragging and dropping the arrow into the corresponding category on the right-hand side.");
 		fw.write("</body>");
 		fw.write("</html>");
 		fw.close();

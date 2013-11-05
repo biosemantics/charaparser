@@ -10,4 +10,6 @@ public interface IVolumeValidator {
 
 	public boolean validate(File file);
 	
+	public String getError();
+	
 }

@@ -19,16 +19,24 @@ import semanticMarkup.core.ContainerTreatmentElement;
 import semanticMarkup.core.Treatment;
 import semanticMarkup.core.ValueTreatmentElement;
 import semanticMarkup.io.input.AbstractFileVolumeReader;
+import semanticMarkup.io.input.validate.lib.NewIPlantXmlVolumeValidator;
 
 public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 
+	private String schema;
+
 	@Inject
-	public NewIPlantXMLVolumeReader(@Named("IPlantXMLVolumeReader_Source") String filePath) {
+	public NewIPlantXMLVolumeReader(@Named("IPlantXMLVolumeReader_Source") String filePath, @Named("newIPlantXML_SchemaFile") String schema) {
 		super(filePath);
+		this.schema = schema;
 	}
 
 	@Override
 	public List<Treatment> read() throws Exception {
+		NewIPlantXmlVolumeValidator validator = new NewIPlantXmlVolumeValidator(new File(schema));
+		if(!validator.validate(new File(filePath)))
+			throw new Exception(validator.getError());
+			
 		List<Treatment> result = new ArrayList<Treatment>();
 		JAXBContext jc = JAXBContext.newInstance("semanticMarkup.io.input.lib.newIPlant");
         Unmarshaller u = jc.createUnmarshaller();
@@ -96,27 +104,32 @@ public class NewIPlantXMLVolumeReader extends AbstractFileVolumeReader{
 		}
 
 		//taxon identification
-		TaxonIdentification taxonIdentification = xmlTreatment.getTaxonIdentification();
-		if(taxonIdentification != null) {
-			ContainerTreatmentElement taxonIdentificationElement = new ContainerTreatmentElement("taxon_identification");
-			for(Object content : taxonIdentification.getContent()) {
-				if(content != null ) {
-					if(content instanceof PlaceOfPublication) {
-						PlaceOfPublication placeOfPublicationContent = (PlaceOfPublication)content;
-						ContainerTreatmentElement placeOfPublicationElement = new ContainerTreatmentElement("place_of_publication");
-						placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("publication_title", placeOfPublicationContent.getPublicationTitle()));
-						placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("place_in_publication", placeOfPublicationContent.getPlaceInPublication()));
-						for(String otherInfoPub : placeOfPublicationContent.getOtherInfoOnPub()) 
-							placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("other_info_on_pub", otherInfoPub));
-						taxonIdentificationElement.addTreatmentElement(placeOfPublicationElement);
-					} else if(content instanceof JAXBElement) {
-		        		JAXBElement<String> element = (JAXBElement<String>) content;
-		        		taxonIdentificationElement.addTreatmentElement(new ValueTreatmentElement(element.getName().toString(), element.getValue()));
-		        	}
+		List<TaxonIdentification> taxonIdentifications = xmlTreatment.getTaxonIdentification();
+		if(taxonIdentifications != null) {
+			
+			for(TaxonIdentification taxonIdentification : taxonIdentifications) {
+				ContainerTreatmentElement taxonIdentificationElement = new ContainerTreatmentElement("taxon_identification");
+				
+				for(Object familyNameOrFamilyAuthorityOrSubfamilyName : taxonIdentification.getFamilyNameOrFamilyAuthorityOrSubfamilyName()) {
+					if(familyNameOrFamilyAuthorityOrSubfamilyName != null ) {
+						if(familyNameOrFamilyAuthorityOrSubfamilyName instanceof PlaceOfPublication) {
+							PlaceOfPublication placeOfPublicationContent = (PlaceOfPublication)familyNameOrFamilyAuthorityOrSubfamilyName;
+							ContainerTreatmentElement placeOfPublicationElement = new ContainerTreatmentElement("place_of_publication");
+							placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("publication_title", placeOfPublicationContent.getPublicationTitle()));
+							placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("place_in_publication", placeOfPublicationContent.getPlaceInPublication()));
+							for(String otherInfoPub : placeOfPublicationContent.getOtherInfoOnPub()) 
+								placeOfPublicationElement.addTreatmentElement(new ValueTreatmentElement("other_info_on_pub", otherInfoPub));
+							taxonIdentificationElement.addTreatmentElement(placeOfPublicationElement);
+						} else if(familyNameOrFamilyAuthorityOrSubfamilyName instanceof JAXBElement) {
+			        		JAXBElement<String> element = (JAXBElement<String>) familyNameOrFamilyAuthorityOrSubfamilyName;
+			        		taxonIdentificationElement.addTreatmentElement(new ValueTreatmentElement(element.getName().toString(), element.getValue()));
+			        	}
+					}
 				}
+				
+				taxonIdentificationElement.setAttribute("status", taxonIdentification.getStatus());
+				treatment.addTreatmentElement(taxonIdentificationElement);
 			}
-			taxonIdentificationElement.setAttribute("status", taxonIdentification.getStatus());
-			treatment.addTreatmentElement(taxonIdentificationElement);
 		}
 		
 		//description

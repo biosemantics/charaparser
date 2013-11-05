@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -104,15 +105,16 @@ public class NewIPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 	}
 	
 	private void createTaxonIdentification(Treatment treatment, semanticMarkup.io.output.lib.newIPlant.Treatment xmlTreatment) {
-		if(treatment.containsContainerTreatmentElement("taxon_identification")) {
-			ContainerTreatmentElement taxonIdentificationElement = treatment.getContainerTreatmentElement("taxon_identification");
-			
+		List<ContainerTreatmentElement> taxonIdentificationElements = treatment.getContainerTreatmentElements("taxon_identification");
+		
+		for(ContainerTreatmentElement taxonIdentificationElement : taxonIdentificationElements) {
 			TaxonIdentification taxonIdentification = new TaxonIdentification();
 			List<ValueTreatmentElement> treatmentElements = taxonIdentificationElement.getValueTreatmentElements();
 			for(TreatmentElement treatmentElement : treatmentElements) {
 				if(treatmentElement instanceof ValueTreatmentElement) {
 					ValueTreatmentElement valueTreatmentElement = (ValueTreatmentElement)treatmentElement;
-					taxonIdentification.getContent().add(new JAXBElement<String>(new QName("", valueTreatmentElement.getName()), String.class, valueTreatmentElement.getValue()));
+					taxonIdentification.getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(
+							new JAXBElement<String>(new QName("", valueTreatmentElement.getName()), String.class, valueTreatmentElement.getValue()));
 				}
 				if(treatmentElement instanceof ContainerTreatmentElement) {
 					ContainerTreatmentElement containerTreatmentElement = (ContainerTreatmentElement)treatmentElement;
@@ -124,12 +126,12 @@ public class NewIPlantXMLVolumeWriter extends AbstractFileVolumeWriter {
 							placeOfPublication.setPlaceInPublication(containerTreatmentElement.getValueTreatmentElement("place_in_publication").getValue());
 						for(ValueTreatmentElement otherInfoOnPub : containerTreatmentElement.getValueTreatmentElements("other_info_on_pub"))
 							placeOfPublication.getOtherInfoOnPub().add(otherInfoOnPub.getValue());
-						taxonIdentification.getContent().add(placeOfPublication);
+						taxonIdentification.getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(placeOfPublication);
 					}
 				}
 			}
 			taxonIdentification.setStatus(taxonIdentificationElement.getAttribute("status"));
-			xmlTreatment.setTaxonIdentification(taxonIdentification);
+			xmlTreatment.getTaxonIdentification().add(taxonIdentification);
 		}
 	}
 	

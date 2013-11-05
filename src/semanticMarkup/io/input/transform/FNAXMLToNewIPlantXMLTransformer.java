@@ -2,6 +2,7 @@ package semanticMarkup.io.input.transform;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -113,7 +114,7 @@ public class FNAXMLToNewIPlantXMLTransformer {
 	private Treatment doTranslation(semanticMarkup.io.input.lib.xml.Treatment xmlTreatment) {
 		semanticMarkup.io.input.lib.newIPlant.Treatment result = new semanticMarkup.io.input.lib.newIPlant.Treatment();
 		
-		result.setTaxonIdentification(new semanticMarkup.io.input.lib.newIPlant.TaxonIdentification());
+		result.getTaxonIdentification().add(new semanticMarkup.io.input.lib.newIPlant.TaxonIdentification());
 		result.setMeta(new Meta());
 		result.getMeta().setSource("FNA " + xmlTreatment.getNumber());
 		
@@ -139,59 +140,59 @@ public class FNAXMLToNewIPlantXMLTransformer {
         				JAXBElement<String> element = (JAXBElement<String>) content;
         				if(element.getValue() != null) {
 	        				if(element.getName().toString().equals("genus_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "genus_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "genus_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("family_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "family_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "family_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("family_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "family_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "family_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subfamily_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subfamily_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subfamily_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subfamily_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subfamily_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subfamily_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("tribe_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "tribe_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "tribe_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("tribe_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "tribe_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "tribe_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subtribe_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subtribe_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subtribe_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subtribe_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subtribe_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subtribe_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("genus_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "genus_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "genus_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subgenus_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subgenus_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subgenus_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subgenus_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subgenus_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subgenus_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("section_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "section_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "section_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("section_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "section_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "section_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subsection_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subsection_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subsection_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subsection_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subsection_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subsection_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("series_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "series_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "series_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("series_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "series_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "series_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("species_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "species_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "species_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("species_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "species_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "species_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subspecies_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subspecies_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subspecies_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("subspecies_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "subspecies_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "subspecies_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("variety_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "variety_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "variety_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("variety_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "variety_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "variety_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("unranked_epithet_name"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "unranked_epithet_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "unranked_epithet_name"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("unranked_epithet_authority"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "unranked_epithet_authority"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "unranked_epithet_authority"), String.class, element.getValue()));
 	        				if(element.getName().toString().equals("other_info"))
-	        					result.getTaxonIdentification().getContent().add(new JAXBElement<String>(new QName("", "other_info_on_name"), String.class, element.getValue()));
+	        					result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(new JAXBElement<String>(new QName("", "other_info_on_name"), String.class, element.getValue()));
 	        				//else 
 	        				//	result.getTaxonIdentification().getOtherInfo().add(element.getName() + ": " + element.getValue());
         				}
@@ -210,12 +211,12 @@ public class FNAXMLToNewIPlantXMLTransformer {
         				for(String otherInfo : placeOfPublication.getOtherInfo()) 
         					if(otherInfo != null)
         						outPlaceOfPublication.getOtherInfoOnPub().add(otherInfo);
-        				result.getTaxonIdentification().getContent().add(outPlaceOfPublication);
+        				result.getTaxonIdentification().get(0).getFamilyNameOrFamilyAuthorityOrSubfamilyName().add(outPlaceOfPublication);
         			}
         		}
         		
         		if(taxonIdentification.getStatus() != null)
-        			result.getTaxonIdentification().setStatus(taxonIdentification.getStatus());
+        			result.getTaxonIdentification().get(0).setStatus(taxonIdentification.getStatus());
         	}
         }
         
@@ -271,7 +272,7 @@ public class FNAXMLToNewIPlantXMLTransformer {
 
 	public static void main(String[] args) throws Exception {
 		String inFile = "C:\\FNAv7.original.source\\";
-		String outFile = "C:\\FNAv7.newIplant.source\\";
+		String outFile = "C:\\FNAv7.newIplant.source2\\";
 		FNAXMLToNewIPlantXMLTransformer translator = new FNAXMLToNewIPlantXMLTransformer(inFile, outFile);
 		translator.translate();
 	}

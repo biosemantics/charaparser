@@ -33,4 +33,9 @@ public class WordVolumeValidator implements IVolumeValidator {
 			}
 		}
 	}
+
+	@Override
+	public String getError() {
+		return "";
+	}
 }

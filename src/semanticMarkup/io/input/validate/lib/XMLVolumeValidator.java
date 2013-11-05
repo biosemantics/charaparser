@@ -36,4 +36,9 @@ public class XMLVolumeValidator extends AbstractXMLVolumeValidator {
 		return result;
 	}
 
+	@Override
+	public String getError() {
+		return "";
+	}
+
 }

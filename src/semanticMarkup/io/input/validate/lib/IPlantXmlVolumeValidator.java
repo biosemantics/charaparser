@@ -32,4 +32,9 @@ public class IPlantXmlVolumeValidator extends AbstractXMLVolumeValidator {
 		return result;
 	}
 
+	@Override
+	public String getError() {
+		return "";
+	}
+
 }
