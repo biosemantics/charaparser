@@ -29,6 +29,7 @@ import oto.lite.IOTOLiteClient;
 import oto.lite.beans.Decision;
 import oto.lite.beans.Download;
 import oto.lite.beans.Synonym;
+import oto.lite.beans.UploadResult;
 
 import semanticMarkup.core.ContainerTreatmentElement;
 import semanticMarkup.core.Treatment;
@@ -180,13 +181,13 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 			charaparserElement.addTreatmentElement(new ValueTreatmentElement("glossary_version", glossaryVersion));
 		}
 		
-		int uploadId;
+		UploadResult uploadResult;
 		Download download;
 		try {
-			uploadId = readUploadId();		
-			download = otoLiteClient.download(uploadId);
+			uploadResult = readUploadResult();		
+			download = otoLiteClient.download(uploadResult);
 		} catch (SQLException e) {
-			this.log(LogLevel.ERROR, "Problem reading uploadId", e);
+			this.log(LogLevel.ERROR, "Problem reading upload result", e);
 			download = new Download();
 		}
 		if(!download.isFinalized() && termCategorizationRequired) {
@@ -230,17 +231,19 @@ public class MarkupDescriptionTreatmentTransformer extends DescriptionTreatmentT
 		return glossaryVersion;
 	}
 
-	private int readUploadId() throws SQLException {
+	private UploadResult readUploadResult() throws SQLException {
 		int uploadId = -1;
-		String sql = "SELECT oto_uploadid FROM datasetprefixes WHERE prefix = ?";
+		String secret = "";
+		String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		preparedStatement.setString(1, databasePrefix);
 		preparedStatement.execute();
 		ResultSet resultSet = preparedStatement.getResultSet();
 		while(resultSet.next()) {
 			uploadId = resultSet.getInt("oto_uploadid");
+			secret = resultSet.getString("oto_secret");
 		}
-		return uploadId;
+		return new UploadResult(uploadId, secret);
 	}
 
 	/**

@@ -24,6 +24,7 @@ import oto.lite.IOTOLiteClient;
 import oto.lite.beans.Sentence;
 import oto.lite.beans.Term;
 import oto.lite.beans.Upload;
+import oto.lite.beans.UploadResult;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -135,15 +136,16 @@ public class OTOLearner implements ILearner {
 		terminologyLearner.learn(treatments, glossaryTable);
 		
 		//upload to OTO lite
-		int uploadId = otoLiteClient.upload(readUpload());
+		UploadResult uploadResult = otoLiteClient.upload(readUpload());
 		
 		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
 		//iplant environment, hence the dependency on mysql can for iplant not completely be removed
-		String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, glossary_version = ? WHERE prefix = ?";
+		String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, oto_secret = ?, glossary_version = ? WHERE prefix = ?";
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		preparedStatement.setInt(1, uploadId);
-		preparedStatement.setString(2, glossaryDownload.getVersion());
-		preparedStatement.setString(3, databasePrefix);
+		preparedStatement.setInt(1, uploadResult.getUploadId());
+		preparedStatement.setString(2, uploadResult.getSecret());
+		preparedStatement.setString(3, glossaryDownload.getVersion());
+		preparedStatement.setString(4, databasePrefix);
 		preparedStatement.execute();
 		
 		//store URL that uses upload id in a local file so that user can look it up
@@ -159,12 +161,14 @@ public class OTOLearner implements ILearner {
 		fw.write("<!DOCTYPE html>");
 		fw.write("<html>");
 		fw.write("<head>");
-		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId + "&origin=iplant\" charset=\"UTF-8\">");
+		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + this.otoLiteTermReviewURL + "?uploadID=" + uploadResult.getUploadId() + "&secret=" + uploadResult.getSecret() + 
+				"&origin=iplant\" charset=\"UTF-8\">");
 		fw.write("<title>Term categorization</title>");
 		fw.write("</head>");
 		fw.write("<body>");
-		fw.write("If you are not redirected automatically, please click the link <a href=\"" + this.otoLiteTermReviewURL + "?uploadID=" + uploadId + "&origin=iplant\">" 
-				+ this.otoLiteTermReviewURL + "?uploadID=" + uploadId +"&origin=iplant</a> " +
+		fw.write("If you are not redirected automatically, please click the link <a href=\"" + this.otoLiteTermReviewURL + "?uploadID=" + uploadResult.getUploadId() + 
+				"&secret=" + uploadResult.getSecret() + "&origin=iplant\">" 
+				+ this.otoLiteTermReviewURL + "?uploadID=" + uploadResult.getUploadId() + "&secret=" + uploadResult.getSecret() + "&origin=iplant</a> " +
 				"to categorize a selection of terms that appeared in the descriptions you provided as input. Categorizing these terms will ensure you obtain the best " +
 				"results possible from CharaParser Markup.");
 		//fw.write("<br /><br />");
