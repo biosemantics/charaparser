@@ -26,3 +26,14 @@ Version 0.1.3 (September, 25th 2013)
 * added cleanup 
 * learn/markup/cleanup bash scripts
 * resources, src, and workspace directory are configurable per CLI
+
+Version 0.1.4 (November, 13th 2013)
+------------
+* added volume reader to support new common schema in biosemantics/schemas
+* created uniqueness of structure and relation id over an input file
+* added term categorization required parameter
+* added configurability of logging locations
+* added unique ID generation and file rearrangement for iPlant wrapper script
+* added secret handling for oto light
+* added bioportal parameters for ontology submission
+ 
