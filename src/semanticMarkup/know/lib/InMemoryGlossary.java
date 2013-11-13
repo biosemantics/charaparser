@@ -3,6 +3,7 @@ package semanticMarkup.know.lib;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import semanticMarkup.know.IGlossary;
 
@@ -104,8 +105,8 @@ public class InMemoryGlossary implements IGlossary {
 		return result;
 	}
 */
-	protected HashMap<String, Set<String>> glossary = new HashMap<String, Set<String>>();
-	protected HashMap<String, Set<String>> reverseGlossary = new HashMap<String, Set<String>>();
+	protected ConcurrentHashMap<String, Set<String>> glossary = new ConcurrentHashMap<String, Set<String>>();
+	protected ConcurrentHashMap<String, Set<String>> reverseGlossary = new ConcurrentHashMap<String, Set<String>>();
 	
 	@Override
 	public Set<String> getWords(String category) {

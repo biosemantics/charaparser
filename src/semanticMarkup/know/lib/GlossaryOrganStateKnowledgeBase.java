@@ -1,7 +1,9 @@
 package semanticMarkup.know.lib;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
@@ -13,8 +15,8 @@ import semanticMarkup.ling.transform.IInflector;
  */
 public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase {
 
-	protected Set<String> organs = new HashSet<String>();
-	protected Set<String> states = new HashSet<String>();
+	protected Set<String> organs = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	protected Set<String> states = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 	private IGlossary glossary;
 	protected IInflector inflector;
 	

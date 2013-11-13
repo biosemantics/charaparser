@@ -70,7 +70,6 @@ public class RunConfig extends BasicConfig {
 	private String taxonxSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "taxonx" + File.separator + "taxonx1.xsd";
 	private String xmlSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "FNAXMLSchemaInput.xsd";
 	private String iplantSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "iplant.xsd";
-	private String newIPlantSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "iplantInputTreatment.xsd";
 	
 	//"evaluationData" + File.separator + "DonatAnts_Type4" + File.separator + "source" + File.separator + "8538_pyr_mad_tx1.xml"
 	//"evaluationData" + File.separator + "FNA-v19-excerpt_Type1" + File.separator + "source" + File.separator + "FNA19 Excerpt-source.docx"
@@ -110,6 +109,7 @@ public class RunConfig extends BasicConfig {
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
+	private String markupRunValidateSchemaFile = resourcesDirectory + File.separator + "io" + File.separator + "iplantOutputTreatment.xsd";
 	//PerlTerminologyLearner //DatabaseInputNoLearner;
 	
 	@Override 
@@ -141,7 +141,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(taxonxSchemaFile);
 		bind(String.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(xmlSchemaFile);
 		bind(String.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(iplantSchemaFile);
-		bind(String.class).annotatedWith(Names.named("newIPlantXML_SchemaFile")).toInstance(newIPlantSchemaFile);
+		bind(String.class).annotatedWith(Names.named("MarkupRun_ValidateSchemaFile")).toInstance(markupRunValidateSchemaFile);
 		
 		bind(String.class).annotatedWith(Names.named("TaxonxVolumeReader_SourceFile")).toInstance(taxonxVolumeReaderSourceFile);
 		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
@@ -637,9 +637,9 @@ public class RunConfig extends BasicConfig {
 		this.taxonxSchemaFile = this.taxonxSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
 		this.xmlSchemaFile = this.xmlSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
 		this.iplantSchemaFile = this.iplantSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
-		this.newIPlantSchemaFile = this.newIPlantSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
 		this.wordNetSource = this.wordNetSource.replace(oldResourcesDirectory, resourcesDirectory);
 		this.glossaryFile = this.glossaryFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.markupRunValidateSchemaFile = this.markupRunValidateSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
 		this.resourcesDirectory = resourcesDirectory;
 	}
 
@@ -701,6 +701,14 @@ public class RunConfig extends BasicConfig {
 
 	public void setTermCategorizationRequired(boolean termCategorizationRequired) {
 		this.termCategorizationRequired = termCategorizationRequired;
+	}
+
+	public String getMarkupRunValidateSchemaFile() {
+		return markupRunValidateSchemaFile;
+	}
+
+	public void setMarkupRunValidateSchemaFile(String markupRunValidateSchemaFile) {
+		this.markupRunValidateSchemaFile = markupRunValidateSchemaFile;
 	}
 	
 	

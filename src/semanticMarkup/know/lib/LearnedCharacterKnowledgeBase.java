@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
@@ -23,7 +24,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private IGlossary glossary;
 	private String or = "_or_";
 	private ITerminologyLearner terminologyLearner;
-	private HashMap<String, String> addedCharacters = new HashMap<String, String>();
+	private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * @param terminologyLearner

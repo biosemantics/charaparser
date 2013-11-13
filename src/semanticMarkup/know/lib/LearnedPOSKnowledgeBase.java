@@ -1,8 +1,10 @@
 package semanticMarkup.know.lib;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IPOSKnowledgeBase;
@@ -20,14 +22,14 @@ public class LearnedPOSKnowledgeBase implements IPOSKnowledgeBase {
 
 	private IGlossary glossary;
 	private IPOSKnowledgeBase fallbackKnowledgeBase;
-	private Set<String> notNouns = new HashSet<String>();
-	private Set<String> nouns = new HashSet<String>();
-	private Set<String> verbs = new HashSet<String>();
-	private Set<String> notVerbs = new HashSet<String>();
-	private Set<String> adverbs = new HashSet<String>();
-	private Set<String> notAdverbs = new HashSet<String>();
-	private Set<String> adjectives = new HashSet<String>();
-	private Set<String> notAdjectives = new HashSet<String>();
+	private Set<String> notNouns = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private Set<String> nouns = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private Set<String> verbs = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private Set<String> notVerbs = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private Set<String> adverbs = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private Set<String> notAdverbs = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private Set<String> adjectives = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+	private Set<String> notAdjectives = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 	
 	private Set<String> stopWords;
 
