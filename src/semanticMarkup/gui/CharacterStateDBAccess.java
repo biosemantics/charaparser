@@ -1,15 +1,11 @@
 package semanticMarkup.gui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import org.apache.log4j.Logger;
 
 @SuppressWarnings({ "unused" })
 public class CharacterStateDBAccess {
@@ -30,7 +26,7 @@ public class CharacterStateDBAccess {
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
 			String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-					this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+					this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 			this.conn = DriverManager.getConnection(URL);
 		}catch(Exception e){
 			e.printStackTrace();

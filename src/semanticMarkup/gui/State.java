@@ -1,6 +1,6 @@
 package semanticMarkup.gui;
 
-import java.util.*;
+import java.util.Comparator;
 
 public class State implements Comparator<Object>{
 	private String state = null;

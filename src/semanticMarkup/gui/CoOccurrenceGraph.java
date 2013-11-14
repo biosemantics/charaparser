@@ -2,8 +2,6 @@ package semanticMarkup.gui;
 
 
 import java.awt.Color;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.swing.JFrame;
 

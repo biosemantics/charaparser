@@ -14,11 +14,11 @@ import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -590,7 +590,7 @@ public class CleanupChunker extends AbstractChunker {
 			//r[p[around] o[10 mm]] should be ChunkValue
 			Chunk object = terminalChunk.getChunkDFS(ChunkType.OBJECT);
 			if(object != null) {
-				if(object.getTerminalsText().matches(".*\\(?[0-9+×x°²½/¼*/%-]+\\)?.*(" + units + ")")) {
+				if(object.getTerminalsText().matches(".*\\(?[0-9+�x���/�*/%-]+\\)?.*(" + units + ")")) {
 					LinkedHashSet<Chunk> chunks = terminalChunk.getChunks();
 					for(Chunk chunk : chunks) {
 						switch(chunk.getChunkType()) {
@@ -606,7 +606,7 @@ public class CleanupChunker extends AbstractChunker {
 						}
 					}
 					return ChunkType.VALUE;
-				} else if(object.getTerminalsText().matches(".* \\(?[0-9+×x°²½/¼*/%-]+\\)?") && !terminalChunk.getTerminalsText().matches(".*[×x]\\].*")) {
+				} else if(object.getTerminalsText().matches(".* \\(?[0-9+�x���/�*/%-]+\\)?") && !terminalChunk.getTerminalsText().matches(".*[�x]\\].*")) {
 					LinkedHashSet<Chunk> chunks = terminalChunk.getChunks();
 					for(Chunk chunk : chunks) {
 						switch(chunk.getChunkType()) {

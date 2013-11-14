@@ -1,6 +1,3 @@
-/**
- * 
- */
 package semanticMarkup.gui;
 
 
@@ -16,22 +13,13 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.URL;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -44,13 +32,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JLabel;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
@@ -62,10 +46,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowData;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
@@ -88,21 +69,16 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IWebBrowser;
 
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
 import semanticMarkup.ling.transform.IInflector;
-import semanticMarkup.core.Treatment;
-import semanticMarkup.gui.WordUtilities;
+import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
+import semanticMarkup.markupElement.description.model.Description;
+import semanticMarkup.markupElement.description.model.DescriptionsFile;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 
 
 @SuppressWarnings("unchecked")
@@ -339,9 +315,10 @@ public class MainForm {
 	private IInflector inflector;
 
 	
+	
 	@Inject
-	public MainForm(MainFormDbAccessor mainDb, @Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
-			@Named("databasePassword") String databasePassword, @Named("databasePrefix")String databasePrefix, 
+	public MainForm(MainFormDbAccessor mainDb, @Named("DatabaseName")String databaseName, @Named("DatabaseUser")String databaseUser, 
+			@Named("DatabasePassword") String databasePassword, @Named("DatabasePrefix")String databasePrefix, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase, IInflector inflector) {
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.mainDb = mainDb;
@@ -623,12 +600,12 @@ public class MainForm {
 						if(conn == null){
 							Class.forName("com.mysql.jdbc.Driver");
 							String URL = "jdbc:mysql://localhost/" + MainForm.databaseName + "?user=" + MainForm.databaseUser + "&password=" + 
-									MainForm.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+									MainForm.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 							conn = DriverManager.getConnection(URL);
 						}
 						Statement stmt = conn.createStatement();
 						stmt.execute("drop table if exists "+dataPrefixCombo.getText().replaceAll("-", "_").trim()+"_group_decisions");
-						stmt.execute("create table if not exists "+dataPrefixCombo.getText().replaceAll("-", "_").trim()+"_group_decisions (groupId int, category varchar(200), primary key(groupId)) CHARACTER SET utf8 engine=innodb");
+						stmt.execute("create table if not exists "+dataPrefixCombo.getText().replaceAll("-", "_").trim()+"_group_decisions (groupId int, category varchar(200), primary key(groupId))");
 					}catch (Exception e){
 						e.printStackTrace();
 					}
@@ -3048,7 +3025,7 @@ public class MainForm {
 					Class.forName("com.mysql.jdbc.Driver");
 					conn = DriverManager.getConnection(
 							"jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-									this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
+									this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true");
 				}
 				stmt = conn.createStatement();
 				//update dataprefix_term_category dataprefix_syns
@@ -3959,12 +3936,14 @@ public class MainForm {
 		}
 	}
 	
-	public void startMarkup(List<Treatment> treatments) {
+	public void startMarkup(List<AbstractDescriptionsFile> descriptionsFiles) {
 		String workdir = MainForm.targetDirectory;
 		
-		for(Treatment treatment : treatments) {
-			String text = treatment.getValueTreatmentElements("description").get(0).getValue();
-			outputElementText(workdir, treatment.getName(), text);
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
+			for(Description description : descriptionsFile.getDescriptions()) {
+				String text = description.getText();
+				outputElementText(workdir, descriptionsFile.getName(), text);
+			}
 		}
 		
 		//if(vd == null || !vd.isAlive()){
@@ -4100,7 +4079,7 @@ public class MainForm {
 					if(conn == null){
 						Class.forName("com.mysql.jdbc.Driver");
 						String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-								this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+								this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 						conn = DriverManager.getConnection(URL);
 					}
 				}catch(Exception e){
@@ -4570,7 +4549,7 @@ public class MainForm {
 								if(conn == null){
 									Class.forName("com.mysql.jdbc.Driver");
 									String URL = "jdbc:mysql://localhost/" + MainForm.databaseName + "?user=" + MainForm.databaseUser + "&password=" + 
-											MainForm.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+											MainForm.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 									conn = DriverManager.getConnection(URL);
 								}								
 								
@@ -4829,7 +4808,7 @@ public class MainForm {
 								if(conn == null){
 									Class.forName("com.mysql.jdbc.Driver");
 									String URL = "jdbc:mysql://localhost/" + MainForm.databaseName + "?user=" + MainForm.databaseUser + "&password=" + 
-											MainForm.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+											MainForm.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 									conn = DriverManager.getConnection(URL);
 								}								
 								
@@ -5130,7 +5109,7 @@ public class MainForm {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
+						this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
 			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(this.databaseName, this.databaseUser, this.databasePassword, 
@@ -5179,7 +5158,7 @@ public class MainForm {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
+						this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
 			VolumeMarkupDbAccessor vmdb = new VolumeMarkupDbAccessor(this.databaseName, this.databaseUser, this.databasePassword, 
@@ -5223,7 +5202,7 @@ public class MainForm {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true");
+						this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true");
 			}
 			String prefix = dataPrefixCombo.getText().replaceAll("-", "_").trim();
 			WordUtilities utilities = new WordUtilities(posKnowledgeBase);

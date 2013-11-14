@@ -11,18 +11,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
-import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
-import semanticMarkup.io.input.lib.newIPlant.NewIPlantXMLVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
-import semanticMarkup.io.output.lib.newIPlant.NewIPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
-import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.IPlantMarkupRun;
-import semanticMarkup.run.MarkupRun;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReader;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionWriter;
+import semanticMarkup.markupElement.description.io.lib.MOXyDescriptionReader;
+import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
+import semanticMarkup.markupElement.description.run.iplant.IPlantMarkupRun;
+import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
 
 /**
  * Markup CLI Entry point into the processing of the charaparser framework
@@ -74,21 +70,22 @@ public class MarkupMain extends CLIMain {
 		
 		config = new RunConfig();
 		try {
-		    CommandLine commandLine = parser.parse( options, args );	    
+		    CommandLine commandLine = parser.parse( options, args );
 		    if(commandLine.hasOption("h")) {
 		    	HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "what is this?", options );
 				System.exit(0);
 		    }
-		    if(commandLine.hasOption("a")) {
-		    	config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
-		    }
-		    String workspace = config.getWorkspaceDirectory();
-		    if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
-		    	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
-		    } else {
-		    	setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
-		    }
+			if (commandLine.hasOption("a")) {
+				config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
+			}
+			String workspace = config.getWorkspaceDirectory();
+			if (commandLine.hasOption("b") && commandLine.hasOption("e")) {
+				this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
+			} else {
+				setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
+			}
+		    
 		    if(commandLine.hasOption("c")) {
 		    	config = getConfig(commandLine.getOptionValue("c"));
 		    } else {
@@ -96,32 +93,33 @@ public class MarkupMain extends CLIMain {
 		    	System.exit(0);
 		    	//use standard config RunConfig
 		    }
-		    if(commandLine.hasOption("f")) {
-		    	config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
-		    }
-		    if(commandLine.hasOption("g")) {
-		    	config.setEtcUser(commandLine.getOptionValue("g"));
-		    }
-		    if(commandLine.hasOption("j")) {
-		    	config.setBioportalUserId(commandLine.getOptionValue("j"));
-		    }
-		    if(commandLine.hasOption("k")) {
-		    	config.setBioportalAPIKey(commandLine.getOptionValue("k"));
-		    }
 		    
-		    if(!commandLine.hasOption("y")) {
-		    	config.setTermCategorizationRequired(true);
-		    }
+			if (commandLine.hasOption("f")) {
+				config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
+			}
+			if (commandLine.hasOption("g")) {
+				config.setEtcUser(commandLine.getOptionValue("g"));
+			}
+			if (commandLine.hasOption("j")) {
+				config.setBioportalUserId(commandLine.getOptionValue("j"));
+			}
+			if (commandLine.hasOption("k")) {
+				config.setBioportalAPIKey(commandLine.getOptionValue("k"));
+			}
+			
+			if(!commandLine.hasOption("y")) {
+				config.setTermCategorizationRequired(true);
+			}
 		    
-		    config.setMarkupCreatorVolumeReader(NewIPlantXMLVolumeReader.class);
+		    config.setDescriptionReader(MOXyBinderDescriptionReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setiPlantXMLVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
-		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
+		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -186,12 +184,13 @@ public class MarkupMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
 		    	System.exit(0);
 		    }
-		    if(commandLine.hasOption("r")) {
-		    	config.setResourcesDirectory(commandLine.getOptionValue("r"));
-		    }
-		    if(commandLine.hasOption("l")) {
-		    	config.setSrcDirectory(commandLine.getOptionValue("l"));
-		    }
+		    
+			if (commandLine.hasOption("r")) {
+				config.setResourcesDirectory(commandLine.getOptionValue("r"));
+			}
+			if (commandLine.hasOption("l")) {
+				config.setSrcDirectory(commandLine.getOptionValue("l"));
+			}
 		} catch(ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
@@ -201,6 +200,6 @@ public class MarkupMain extends CLIMain {
 		config.setGlossary(InMemoryGlossary.class);
 		//no learning required, already passed learning and reviewed terms in OTO Lite 
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
-		config.setVolumeWriter(NewIPlantXMLVolumeWriter.class);
+		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 	}
 }

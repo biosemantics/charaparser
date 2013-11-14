@@ -11,19 +11,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
-import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
-import semanticMarkup.io.input.lib.iplant.IPlantXMLVolumeReader;
-import semanticMarkup.io.input.lib.newIPlant.NewIPlantXMLVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
-import semanticMarkup.io.output.lib.iplant.IPlantXMLVolumeWriter;
-import semanticMarkup.io.output.lib.newIPlant.NewIPlantXMLVolumeWriter;
 import semanticMarkup.know.lib.InMemoryGlossary;
-import semanticMarkup.ling.learn.lib.DatabaseInputNoLearner;
-import semanticMarkup.ling.learn.lib.PerlTerminologyLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.IPlantLearnRun;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionReader;
+import semanticMarkup.markupElement.description.io.lib.MOXyBinderDescriptionWriter;
+import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputNoLearner;
+import semanticMarkup.markupElement.description.ling.learn.lib.PerlTerminologyLearner;
+import semanticMarkup.markupElement.description.run.iplant.IPlantLearnRun;
+import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
 
 /**
  * Learn CLI Entry point into the processing of the charaparser framework
@@ -41,7 +36,7 @@ public class LearnMain extends CLIMain {
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parse(String[] args) {		
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
 		
@@ -53,13 +48,13 @@ public class LearnMain extends CLIMain {
 		options.addOption("y", "categorize terms", false, "If specified, indicates that one does not intend to categorize newly discovered terms to improve markup");
 		
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
-		options.addOption("f", "source", true, "source of the descriptions, e.g. fna v7");
-		options.addOption("g", "user", true, "etc user submitting learned terms to oto lite");
-		options.addOption("j", "bioportal user id", true, "bioportal user id to use for bioportal submission");
-		options.addOption("k", "bioportal api key", true, "bioportal api key to use for bioportal submission");
+        options.addOption("f", "source", true, "source of the descriptions, e.g. fna v7");
+        options.addOption("g", "user", true, "etc user submitting learned terms to oto lite");
+        options.addOption("j", "bioportal user id", true, "bioportal user id to use for bioportal submission");
+        options.addOption("k", "bioportal api key", true, "bioportal api key to use for bioportal submission");
 		
 		options.addOption("b", "debug log", true, "location of debug log file");
-		options.addOption("e", "error log", true, "location of error log file");
+        options.addOption("e", "error log", true, "location of error log file");
 		options.addOption("r", "resources directory", true, "location of resources directory");
 		options.addOption("l", "src directory", true, "location of src directory");
 		options.addOption("a", "workspace directory", true, "location of workspace directory");
@@ -81,16 +76,11 @@ public class LearnMain extends CLIMain {
 				formatter.printHelp( "what is this?", options );
 				System.exit(0);
 		    }
-		    if(commandLine.hasOption("a")) {
-		    	config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
-		    }
-		    String workspace = config.getWorkspaceDirectory();
-		    
-		    if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
-		    	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
-		    } else {
-		    	setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
-		    }
+			if (commandLine.hasOption("a")) {
+				config.setWorkspaceDirectory(commandLine.getOptionValue("t"));
+			}
+			String workspace = config.getWorkspaceDirectory();
+			
 		    if(commandLine.hasOption("c")) {
 		    	config = getConfig(commandLine.getOptionValue("c"));
 		    } else {
@@ -99,33 +89,39 @@ public class LearnMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    if(commandLine.hasOption("f")) {
-		    	config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
-		    }
-		    if(commandLine.hasOption("g")) {
-		    	config.setEtcUser(commandLine.getOptionValue("g"));
-		    }
-		    if(commandLine.hasOption("j")) {
-		    	config.setBioportalUserId(commandLine.getOptionValue("j"));
-		    }
-		    if(commandLine.hasOption("k")) {
-		    	config.setBioportalAPIKey(commandLine.getOptionValue("k"));
-		    }
+            if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
+            	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
+	        } else {
+	        	setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
+	        }
 		    
-		    if(!commandLine.hasOption("y")) {
-		    	config.setTermCategorizationRequired(true);
-		    }
-		    
-		    config.setMarkupCreatorVolumeReader(NewIPlantXMLVolumeReader.class);
+            if(commandLine.hasOption("f")) {
+                config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
+	        }
+	        if(commandLine.hasOption("g")) {
+	                config.setEtcUser(commandLine.getOptionValue("g"));
+	        }
+	        if(commandLine.hasOption("j")) {
+	                config.setBioportalUserId(commandLine.getOptionValue("j"));
+	        }
+	        if(commandLine.hasOption("k")) {
+	                config.setBioportalAPIKey(commandLine.getOptionValue("k"));
+	        }
+	        
+	        if(!commandLine.hasOption("y")) {
+	            config.setTermCategorizationRequired(true);
+	          }
+			    
+		    config.setDescriptionReader(MOXyBinderDescriptionReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setiPlantXMLVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
-		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
+		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -192,12 +188,13 @@ public class LearnMain extends CLIMain {
 		    	System.exit(0);
 		    }
 		    
-		    if(commandLine.hasOption("r")) {
-		    	config.setResourcesDirectory(commandLine.getOptionValue("r"));
-		    }
-		    if(commandLine.hasOption("l")) {
-		    	config.setSrcDirectory(commandLine.getOptionValue("l"));
-		    }
+			if (commandLine.hasOption("r")) {
+				config.setResourcesDirectory(commandLine.getOptionValue("r"));
+			}
+			if (commandLine.hasOption("l")) {
+				config.setSrcDirectory(commandLine.getOptionValue("l"));
+			}
+
 		} catch (ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
@@ -206,7 +203,7 @@ public class LearnMain extends CLIMain {
 		config.setRun(IPlantLearnRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
-		config.setVolumeWriter(NewIPlantXMLVolumeWriter.class);
+		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 		config.setOtoLiteReviewFile("nextStep.html");
 	}
 }

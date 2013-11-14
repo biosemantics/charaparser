@@ -9,14 +9,14 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import semanticMarkup.config.RunConfig;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionFromDBForEvaluationTransformer;
-import semanticMarkup.core.transformation.lib.description.MarkupDescriptionTreatmentTransformer;
-import semanticMarkup.io.input.lib.db.EvaluationDBVolumeReader;
 import semanticMarkup.know.lib.CSVGlossary;
 import semanticMarkup.know.lib.InMemoryGlossary;
-import semanticMarkup.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
 import semanticMarkup.log.LogLevel;
-import semanticMarkup.run.MarkupRun;
+import semanticMarkup.markupElement.description.transform.MarkupDescriptionFromDBForEvaluationTransformer;
+import semanticMarkup.markupElement.description.transform.MarkupDescriptionTreatmentTransformer;
+import semanticMarkup.markupElement.description.io.lib.EvaluationDBDescriptionReader;
+import semanticMarkup.markupElement.description.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
+import semanticMarkup.markupElement.description.run.DescriptionMarkupRun;
 
 public class EvaluationMain extends CLIMain {
 	
@@ -67,15 +67,15 @@ public class EvaluationMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
-		    config.setMarkupCreatorVolumeReader(EvaluationDBVolumeReader.class);
+		    config.setDescriptionReader(EvaluationDBDescriptionReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
-		    	config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
+		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -144,7 +144,7 @@ public class EvaluationMain extends CLIMain {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 		
-		config.setRun(MarkupRun.class);
+		config.setRun(DescriptionMarkupRun.class);
 		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionFromDBForEvaluationTransformer.class);
 		config.setGlossary(CSVGlossary.class);
 		config.setTerminologyLearner(DatabaseInputFromEvaluationNoLearner.class);

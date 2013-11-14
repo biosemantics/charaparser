@@ -11,10 +11,10 @@ import semanticMarkup.ling.chunk.AbstractChunker;
 import semanticMarkup.ling.chunk.Chunk;
 import semanticMarkup.ling.chunk.ChunkCollector;
 import semanticMarkup.ling.chunk.ChunkType;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.parse.AbstractParseTree;
 import semanticMarkup.ling.parse.IParseTreeFactory;
 import semanticMarkup.ling.transform.IInflector;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -101,7 +101,7 @@ public class NumericalChunker extends AbstractChunker {
 						continue;
 					}
 					
-					if(terminalsText.matches(".*?[()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*(-\\s*(" + countWords + ")\\b|$)")) {
+					if(terminalsText.matches(".*?[()\\[\\]\\-\\�\\d\\.�\\+���/�\\*/%]*?[�/�\\d][()\\[\\]\\-\\�\\d\\.�\\+���/�\\*/%]*(-\\s*(" + countWords + ")\\b|$)")) {
 						
 						//ends with a number
 						if(i==terminals.size()-1) {
@@ -122,7 +122,7 @@ public class NumericalChunker extends AbstractChunker {
 							LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 							childChunks.add(chunkCollector.getChunk(terminal));
 							childChunks.add(chunkCollector.getChunk(lookForwardTerminal));
-							if(combinedText.contains("×")) {
+							if(combinedText.contains("�")) {
 								Chunk area = new Chunk(ChunkType.AREA, childChunks);
 								chunkCollector.addChunk(area);
 							} else {

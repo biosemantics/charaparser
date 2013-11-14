@@ -15,9 +15,6 @@
  */
 package semanticMarkup.gui;
 
-import java.awt.Color;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -36,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.lf5.LogLevel;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -59,10 +55,10 @@ public class MainFormDbAccessor {
 	private String databaseUser;
 
 	@Inject
-	public MainFormDbAccessor(@Named("databaseHost") String databaseHost,
-			@Named("databasePort") String databasePort,
-			@Named("databaseName")String databaseName, @Named("databaseUser")String databaseUser, 
-			@Named("databasePassword")String databasePassword, @Named("databasePrefix")String databasePrefix) {
+	public MainFormDbAccessor(@Named("DatabaseHost") String databaseHost,
+			@Named("DatabasePort") String databasePort,
+			@Named("DatabaseName")String databaseName, @Named("DatabaseUser")String databaseUser, 
+			@Named("DatabasePassword")String databasePassword, @Named("DatabasePrefix")String databasePrefix) {
 		this.databaseName = databaseName;
 		this.databaseUser = databaseUser;
 		this.databasePassword = databasePassword;
@@ -71,7 +67,7 @@ public class MainFormDbAccessor {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			String URL = "jdbc:mysql://" + databaseHost + ":" + databasePort + "/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-					this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+					this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 			connection = DriverManager.getConnection(URL);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -439,7 +435,7 @@ public class MainFormDbAccessor {
 				+ "tab_gloss varchar(1) DEFAULT NULL, "
 				+ "glossary varchar(40) DEFAULT NULL, "
 				+ "option_chosen varchar(1) DEFAULT '', "
-				+ "PRIMARY KEY (prefix, time_last_accessed) ) CHARACTER SET utf8 engine=innodb ";
+				+ "PRIMARY KEY (prefix, time_last_accessed) ) CHARACTER SET utf8 engine=innodb";
 
 		try {
 			// conn = DriverManager.getConnection(url);
@@ -938,7 +934,7 @@ public class MainFormDbAccessor {
 			stmt.execute("create table if not exists "
 					+ this.databasePrefix
 					+ "_wordroles"
-					+ " (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");
+					+ " (word varchar(50), semanticrole varchar(2), savedid varchar(40), primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb ");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

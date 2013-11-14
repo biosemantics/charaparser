@@ -1,7 +1,5 @@
 package semanticMarkup.gui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -17,7 +15,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import semanticMarkup.know.IOrganStateKnowledgeBase;
-
 import edu.uci.ics.jung.algorithms.cluster.VoltageClusterer;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;
@@ -48,17 +45,20 @@ public class StateMatrix {
 		try{
 			stmt = conn.createStatement();
 			stmt.execute("drop table if exists "+tableprefix+"_terms");
-			stmt.execute("create table if not exists "+tableprefix+"_terms (term varchar(100), cooccurTerm varchar(100), frequency int(4), "
-					+ "grouped varchar(2) default 'n', sourceFiles varchar(2000),  primary key(term, cooccurTerm)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_terms (term varchar(100), cooccurTerm varchar(100), frequency int(4), grouped varchar(2) default 'n', sourceFiles varchar(2000),  primary key(term, cooccurTerm)) " +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.execute("drop table if exists "+tableprefix+"_grouped_terms");
-			stmt.execute("create table if not exists "+tableprefix+"_grouped_terms (groupId int, term varchar(100), cooccurTerm varchar(100), "
-					+ "frequency int(4), keep varchar(20), sourceFiles varchar(2000)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_grouped_terms (groupId int, term varchar(100), cooccurTerm varchar(100), frequency int(4), keep varchar(20), sourceFiles varchar(2000))" +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.execute("drop table if exists "+tableprefix+"_group_decisions");
-			stmt.execute("create table if not exists "+tableprefix+"_group_decisions (groupId int, category varchar(200), primary key(groupId)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_group_decisions (groupId int, category varchar(200), primary key(groupId))" +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.execute("drop table if exists "+tableprefix+"_term_category");
-			stmt.execute("create table if not exists "+tableprefix+"_term_category (term varchar(100), category varchar(200), hasSyn tinyint(1)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_term_category (term varchar(100), category varchar(200), hasSyn tinyint(1))" +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.execute("drop table if exists "+tableprefix+"_syns");
-			stmt.execute("create table if not exists "+tableprefix+"_syns (term varchar(200), synonym varchar(200)) CHARACTER SET utf8 engine=innodb");	
+			stmt.execute("create table if not exists "+tableprefix+"_syns (term varchar(200), synonym varchar(200))" +
+					" CHARACTER SET utf8 engine=innodb");	
 			//noneqterms must not be refreshed
 			//stmt.execute("create table if not exists "+tableprefix+"_noneqterms (term varchar(100) not null, source varchar(200))");
 			stmt.close();
@@ -85,15 +85,17 @@ public class StateMatrix {
 		try{
 			stmt = conn.createStatement();
 			stmt.execute("drop table if exists "+tableprefix+"_terms");
-			stmt.execute("create table if not exists "+tableprefix+"_terms (term varchar(100), cooccurTerm varchar(100), frequency int(4), keep varchar(20), "
-					+ "sourceFiles varchar(2000),  primary key(term, cooccurTerm)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_terms (term varchar(100), cooccurTerm varchar(100), frequency int(4), keep varchar(20), sourceFiles varchar(2000),  primary key(term, cooccurTerm))" +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.execute("drop table if exists "+tableprefix+"_grouped_terms");
-			stmt.execute("create table if not exists "+tableprefix+"_grouped_terms (groupId int, term varchar(100), cooccurTerm varchar(100), "
-					+ "frequency int(4), keep varchar(20), sourceFiles varchar(2000), primary key(term, cooccurTerm)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_grouped_terms (groupId int, term varchar(100), cooccurTerm varchar(100), frequency int(4), keep varchar(20), sourceFiles varchar(2000), primary key(term, cooccurTerm))" +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.execute("drop table if exists "+tableprefix+"_group_decisions");
-			stmt.execute("create table if not exists "+tableprefix+"_group_decisions (groupId int, category varchar(200), primary key(groupId)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_group_decisions (groupId int, category varchar(200), primary key(groupId))" +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.execute("drop table if exists "+tableprefix+"_term_category");
-			stmt.execute("create table if not exists "+tableprefix+"_term_category (term varchar(100), category varchar(200), tinyint(1)) CHARACTER SET utf8 engine=innodb");
+			stmt.execute("create table if not exists "+tableprefix+"_term_category (term varchar(100), category varchar(200), tinyint(1))" +
+					" CHARACTER SET utf8 engine=innodb");
 			stmt.close();
 		}catch(Exception e){
 			e.printStackTrace();

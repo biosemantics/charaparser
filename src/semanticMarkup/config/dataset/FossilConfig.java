@@ -13,11 +13,20 @@ import semanticMarkup.ling.normalize.lib.TreatisehNormalizer;
 public class FossilConfig extends RunConfig {
 	
 	public FossilConfig() {
-		this.setStandardVolumeReaderSourcefiles("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
+		
+		// ENVIRONMENTAL 
 		//this.setDatabaseTablePrefix("treatise");
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
-		this.setGlossaryFile(getResourcesDirectory() + File.separator + "treatisehglossaryfixed.csv");
-		this.setNormalizer(TreatisehNormalizer.class);
+		this.setGlossaryFile("resources" + File.separator + "treatisehglossaryfixed.csv");
+		
+		// IO
+		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
+		
+		// PROCESSING 
 		this.setGlossaryType(Glossary.Fossil.toString());
+		this.setNormalizer(TreatisehNormalizer.class);
+		
+		// MISC
+		
 	}
 }

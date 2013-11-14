@@ -1,5 +1,7 @@
 package semanticMarkup;
 
+import java.util.LinkedList;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -21,12 +23,9 @@ import semanticMarkup.config.dataset.FossilConfig;
 import semanticMarkup.config.dataset.HymenopteraConfig;
 import semanticMarkup.config.dataset.PlantConfig;
 import semanticMarkup.config.dataset.PoriferaConfig;
-import semanticMarkup.io.input.GenericFileVolumeReader;
-import semanticMarkup.io.input.lib.taxonx.TaxonxVolumeReader;
-import semanticMarkup.io.input.lib.word.DocWordVolumeReader;
-import semanticMarkup.io.input.lib.xml.XMLVolumeReader;
 import semanticMarkup.know.Glossary;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.GenericDescriptionReader;
 import semanticMarkup.run.IRun;
 
 import com.google.inject.Guice;
@@ -149,8 +148,8 @@ public class CLIMain {
 		    	setReaderSpecificConfigValues(config, commandLine.getOptionValue("r"), commandLine.getOptionValue("i"));
 		    } else {
 		    	//use GenericFileVolumeReader
-		    	config.setMarkupCreatorVolumeReader(GenericFileVolumeReader.class);
-		    	config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
+		    	config.setDescriptionReader(GenericDescriptionReader.class);
+		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
@@ -208,22 +207,22 @@ public class CLIMain {
 	}
 
 	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) {
-		if(volumeReader.equals("Word")) {
-			config.setMarkupCreatorVolumeReader(DocWordVolumeReader.class);
-			config.setWordVolumeReaderSourceFile(input);
-			return;
-		}
 		if(volumeReader.equals("XML")) {
-			config.setMarkupCreatorVolumeReader(XMLVolumeReader.class);
-			config.setXmlVolumeReaderSourceDirectory(input);
+			//TODO
+			config.setDescriptionReaderBindingsList(new LinkedList<String>());
 			return;
 		}
 		if(volumeReader.equals("Taxonx")) {
-			config.setMarkupCreatorVolumeReader(TaxonxVolumeReader.class);
-			config.setTaxonxVolumeReaderSourceFile(input);
+			//TODO
+			config.setDescriptionReaderBindingsList(new LinkedList<String>());
 			return;
 		}
-		log(LogLevel.ERROR, "VolumeReader unknown");
+		if(volumeReader.equals("IPlant")) {
+			//TODO
+			config.setDescriptionReaderBindingsList(new LinkedList<String>());
+			return;
+		}
+		log(LogLevel.ERROR, "DescriptionReader unknown");
 		System.exit(0);
 	}
 

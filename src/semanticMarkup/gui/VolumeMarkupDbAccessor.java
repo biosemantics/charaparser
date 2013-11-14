@@ -16,8 +16,6 @@
 
 package semanticMarkup.gui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -26,8 +24,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.HashSet;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -61,7 +59,7 @@ public class VolumeMarkupDbAccessor {
     	try {
     		Class.forName("com.mysql.jdbc.Driver");
     		String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-					this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+					this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 			conn = DriverManager.getConnection(URL);
     	} catch (Exception e) {
 			e.printStackTrace();

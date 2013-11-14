@@ -1,5 +1,8 @@
 package semanticMarkup.log;
 
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
@@ -8,6 +11,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  */
 public aspect StringifyInjectionAspect {
 	
+	@XmlTransient
+	@Transient
 	@JsonIgnore
 	private IPrintable IPrintable.thisObject;
 	
@@ -36,21 +41,32 @@ public aspect StringifyInjectionAspect {
 	/**
 	 * IPrintables are specified
 	 */
+	
+	declare parents : semanticMarkup.* implements IPrintable;
+	declare parents : semanticMarkup.config..* implements IPrintable;
+	declare parents : semanticMarkup.eval..* implements IPrintable;
+	declare parents : semanticMarkup.model..* implements IPrintable;
+	declare parents : semanticMarkup.gui..* implements IPrintable;
+	declare parents : semanticMarkup.io..* implements IPrintable;
+	declare parents : semanticMarkup.know..* implements IPrintable;
+	declare parents : semanticMarkup.ling..* implements IPrintable;
+	declare parents : semanticMarkup.markup..* implements IPrintable;
+	declare parents : semanticMarkup.markupElement..* implements IPrintable;
+	declare parents : semanticMarkup.run..* implements IPrintable;
+	
+	/*description.model..* implements IPrintable;
+	declare parents : semanticMarkup.markupElement.description.eval.model..* implements IPrintable;
+	declare parents : semanticMarkup.markupElement.habitat.model..* implements IPrintable;
+	
 	declare parents : semanticMarkup.* implements IPrintable;
 	
-	declare parents : semanticMarkup.core..* implements IPrintable;
+	declare parents : semanticMarkup.model..* implements IPrintable;
 	
 	declare parents : semanticMarkup.eval..* implements IPrintable;
 	declare parents : semanticMarkup.config.* implements IPrintable;
 	
 	// JAXB container classes may not implement an interface, JAXB can't handle interface, will throw exception
-	declare parents : semanticMarkup.io.* implements IPrintable;
-	declare parents : semanticMarkup.io.input.* implements IPrintable;
-	declare parents : semanticMarkup.io.input.extract..* implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.db.* implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.serial.* implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.xml implements IPrintable;
-	declare parents : semanticMarkup.io.input.lib.word implements IPrintable;
+	declare parents : semanticMarkup.io..* implements IPrintable;
 	declare parents : semanticMarkup.io.output.* implements IPrintable;
 	declare parents : semanticMarkup.io.output.lib.* implements IPrintable;
 	declare parents : semanticMarkup.io.output.lib.serial.* implements IPrintable;
@@ -65,7 +81,7 @@ public aspect StringifyInjectionAspect {
 	//declare parents : semanticMarkup.ling..* implements IPrintable;	
 	//declare parents : semanticMarkup.ling.* implements IPrintable;
 	declare parents : semanticMarkup.ling.extract..* implements IPrintable;
-	declare parents : semanticMarkup.ling.learn..* implements IPrintable;
+	declare parents : semanticMarkup.markupElement.description.ling.learn..* implements IPrintable;
 	//declare parents : semanticMarkup.ling.mark..* implements IPrintable;
 	declare parents : semanticMarkup.ling.normalize..* implements IPrintable;
 	//declare parents : semanticMarkup.ling.pos..* implements IPrintable;
@@ -73,6 +89,6 @@ public aspect StringifyInjectionAspect {
 	
 	declare parents : semanticMarkup.markup..* implements IPrintable;
 	
-	declare parents : semanticMarkup.run..* implements IPrintable;
+	declare parents : semanticMarkup.run..* implements IPrintable;*/
 	
 }

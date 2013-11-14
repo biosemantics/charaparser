@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 
@@ -44,8 +44,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			return addedCharacters.get(word);
 		if (word.indexOf(" ") > 0)
 			word = word.substring(word.lastIndexOf(" ") + 1).trim();
-		word = word.replaceAll("[{}<>()]", "").replaceAll("\\d+[–-]", "_")
-				.replaceAll("–", "-")
+		word = word.replaceAll("[{}<>()]", "").replaceAll("\\d+[�-]", "_")
+				.replaceAll("�", "-")
 				./* replaceAll(" ", ""). */replaceAll("_+", "_");
 		// "(3-)5-merous"/ =>_merous
 		word = word.replaceFirst(".*?_(?=[a-z]+$)", ""); 

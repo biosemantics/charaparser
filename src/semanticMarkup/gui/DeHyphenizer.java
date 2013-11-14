@@ -2,12 +2,10 @@ package semanticMarkup.gui;
 
 
 //
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
@@ -41,7 +39,7 @@ public class DeHyphenizer {
 			if(conn == null){
 				Class.forName("com.mysql.jdbc.Driver");
 				String URL = "jdbc:mysql://localhost/" + this.databaseName + "?user=" + this.databaseUser + "&password=" + 
-						this.databasePassword + "?connecttimeout=0&sockettimeout=0&autoreconnect=true";
+						this.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 				conn = DriverManager.getConnection(URL);
 			}
 		}catch(Exception e){

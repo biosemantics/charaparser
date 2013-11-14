@@ -2,12 +2,8 @@ package semanticMarkup.know.lib;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import semanticMarkup.know.IGlossary;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.inject.Inject;
@@ -24,7 +20,7 @@ public class CSVGlossary extends InMemoryGlossary {
 	 * @throws IOException
 	 */
 	@Inject
-	public CSVGlossary(@Named("CSVGlossary_filePath") String filePath) throws IOException {
+	public CSVGlossary(@Named("CSVGlossary_FilePath") String filePath) throws IOException {
 		CSVReader reader = new CSVReader(new FileReader(filePath));
 		
 		List<String[]> lines = reader.readAll();

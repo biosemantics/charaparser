@@ -10,10 +10,10 @@ import java.util.regex.Pattern;
 import semanticMarkup.know.ICorpus;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.ling.Token;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.pos.IPOSTagger;
 import semanticMarkup.ling.pos.POS;
 import semanticMarkup.ling.pos.POSedToken;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -24,7 +24,7 @@ import com.google.inject.name.Named;
  */
 public class OrganCharacterPOSTagger implements IPOSTagger {
 
-	public static final String roman="i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX";
+	private String roman="i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX";
 	private ICorpus corpus;
 	private String prepositions;
 	private Set<String> stopWords;

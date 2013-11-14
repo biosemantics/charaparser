@@ -1,21 +1,26 @@
 package semanticMarkup.gui;
 
 
-import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-
-import com.google.inject.name.Named;
-import com.jcraft.jsch.*;
-
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+
+import com.google.inject.name.Named;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
 
 public class UploadTerms2OTO{
 	
@@ -41,8 +46,8 @@ public class UploadTerms2OTO{
      * 
      * dataprefix: must the the dataprefix set in the configuration tab of CharaParser
      */
-	public UploadTerms2OTO(@Named("databaseName") String databaseName, @Named("databaseUser") String databaseUser, 
-			@Named("databasePassword") String databasePassword, @Named("databasePrefix") String databasePrefix) {
+	public UploadTerms2OTO(@Named("DatabaseName") String databaseName, @Named("DatabaseUser") String databaseUser, 
+			@Named("DatabasePassword") String databasePassword, @Named("DatabasePrefix") String databasePrefix) {
 		UploadTerms2OTO.databaseName = databaseName;
 		UploadTerms2OTO.databaseUser = databaseUser;
 		UploadTerms2OTO.databasePassword = databasePassword;

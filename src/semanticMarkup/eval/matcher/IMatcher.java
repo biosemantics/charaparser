@@ -1,6 +1,6 @@
 package semanticMarkup.eval.matcher;
 
-import semanticMarkup.eval.model.Element;
+import semanticMarkup.model.Element;
 
 public interface IMatcher<T extends Element> {
 

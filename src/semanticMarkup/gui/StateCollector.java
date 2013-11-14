@@ -1,7 +1,5 @@
 package semanticMarkup.gui;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -136,7 +134,7 @@ public class StateCollector  {
 		// create statemartix	
 		try{
 				Statement stmt = conn.createStatement();
-				stmt.execute("create table if not exists "+this.tableprefix+"_learnedstates (state varchar(100) NOT NULL PRIMARY KEY, count int(4)) CHARACTER SET utf8 engine=innodb");
+				stmt.execute("create table if not exists "+this.tableprefix+"_learnedstates (state varchar(100) NOT NULL PRIMARY KEY, count int(4))  CHARACTER SET utf8 engine=innodb");
 				stmt.execute("delete from "+this.tableprefix+"_learnedstates");
 				//stmt.execute("create table if not exists "+this.tableprefix+"_markedsentence (source varchar(100) NOT NULL PRIMARY KEY, markedsent text, rmarkedsent text)");
 				//ResultSet rs = stmt.executeQuery("select * from "+this.tableprefix+"_markedsentence");

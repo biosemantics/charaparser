@@ -1,13 +1,9 @@
 package semanticMarkup.gui;
 
 
-import java.util.ArrayList;
-
 import org.apache.log4j.Logger;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 

@@ -11,16 +11,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import semanticMarkup.io.input.lib.db.ParentTagProvider;
 import semanticMarkup.know.ICharacterKnowledgeBase;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.know.IOrganStateKnowledgeBase;
 import semanticMarkup.know.IPOSKnowledgeBase;
-import semanticMarkup.ling.learn.AjectiveReplacementForNoun;
-import semanticMarkup.ling.learn.ITerminologyLearner;
 import semanticMarkup.ling.normalize.INormalizer;
 import semanticMarkup.ling.transform.IInflector;
 import semanticMarkup.log.LogLevel;
+import semanticMarkup.markupElement.description.io.ParentTagProvider;
+import semanticMarkup.markupElement.description.ling.learn.AdjectiveReplacementForNoun;
+import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -47,20 +47,20 @@ public abstract class Normalizer implements INormalizer {
 	private Pattern numbergroup = Pattern.compile("(.*?)([()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d]?[()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{1,}(?![a-z{}]))(.*)"); //added , and ? for chromosome counts, used {1, } to include single digit expressions such as [rarely 0]
 	private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-{0,1},{0,1}\\s*)+ (to|or) \\d-(\\w+))(\\b.*)");
 	private Pattern numberpattern = Pattern.compile("[()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{2,}(?![a-z{}])"); //added , and ? for chromosome counts
-	private Pattern modifierlist = Pattern.compile("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");
+    private Pattern modifierlist = Pattern.compile("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");
 	private String countp = "more|fewer|less|\\d+";
 	private Pattern countptn = Pattern.compile("((?:^| |\\{)(?:"+countp+")\\}? (?:or|to) \\{?(?:"+countp+")(?:\\}| |$))");
 	private Pattern colorpattern = Pattern.compile("(.*?)((coloration|color)\\s+%\\s+(?:(?:coloration|color|@|%) )*(?:coloration|color))\\s((?![^,;()\\[\\]]*[#]).*)");
 	private Pattern distributePrepPattern = Pattern.compile("(^.*~list~)(.*?~with~)(.*?~or~)(.*)");
 	private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ \\{?[cmd]?m\\}?×\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?×?(\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?)?)(.*)");
-	private Pattern viewptn = Pattern.compile( "(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)"); //to match in dorsal view and in profile
+    private Pattern viewptn = Pattern.compile( "(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)"); //to match in dorsal view and in profile
 	private Pattern bulletpattern  = Pattern.compile("^(and )?([(\\[]\\s*\\d+\\s*[)\\]]|\\d+.)\\s+(.*)"); //( 1 ), [ 2 ], 12.
 	private Pattern asaspattern = Pattern.compile("(.*?\\b)(as\\s+[\\w{}<>]+\\s+as)(\\b.*)");
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private IInflector inflector;
 	private static Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
 	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
-	
+	    
 	private ParentTagProvider parentTagProvider;
 	
 	/**
@@ -99,19 +99,19 @@ public abstract class Normalizer implements INormalizer {
 	public Normalizer(IGlossary glossary, @Named("Units") String units, @Named("NumberPattern")String numberPattern,
 			@Named("Singulars")HashMap<String, String> singulars, @Named("Plurals")HashMap<String, String> plurals, 
 			IPOSKnowledgeBase posKnowledgeBase, @Named("LyAdverbpattern") String lyAdverbPattern,
-			@Named("p1")String p1, @Named("p2")String p2, @Named("p3")String p3, @Named("p4")String p4, @Named("p5")String p5, 
-			@Named("p6")String p6, @Named("p7")String p7, @Named("p75")String p75, @Named("p8")String p8, 
+			@Named("P1")String p1, @Named("P2")String p2, @Named("P3")String p3, @Named("P4")String p4, @Named("P5")String p5, 
+			@Named("P6")String p6, @Named("P7")String p7, @Named("P75")String p75, @Named("P8")String p8, 
 			ITerminologyLearner terminologyLearner, 
-			@Named("viewPattern") String viewPattern,
-			@Named("countPattern") String countPattern,
-			@Named("positionPattern") String positionPattern,
-			@Named("romanRangePattern") String romanRangePattern,
-			@Named("romanPattern") String romanPattern,
-			@Named("romanNumbers") String[] romanNumbers, 
+			@Named("ViewPattern") String viewPattern,
+			@Named("CountPattern") String countPattern,
+			@Named("PositionPattern") String positionPattern,
+			@Named("RomanRangePattern") String romanRangePattern,
+			@Named("RomanPattern") String romanPattern,
+			@Named("RomanNumbers") String[] romanNumbers, 
 			@Named("StopWords") Set<String> stopWords, 
 			@Named("PrepositionWords") String prepositionWords,
-			@Named("modifierList") String modifierList, 
-			@Named("parentTagProvider") ParentTagProvider parentTagProvider,
+			@Named("ModifierList") String modifierList, 
+			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, 
 			IInflector inflector) {
@@ -227,14 +227,13 @@ public abstract class Normalizer implements INormalizer {
         
         //10-20(-38) {cm}�6-10 {mm} 
         
-        
 		//try{
 			String strcp2 = str;
 			
 			String strnum = null;
 			/*
 			//if(str.indexOf("}�")>0){//{cm}�
-			if(str.indexOf("�")>0){
+      		if(str.indexOf("�")>0){
 				containsArea = true;
 				String[] area = normalizeArea(str);
 				str = area[0]; //with complete info
@@ -307,10 +306,10 @@ public abstract class Normalizer implements INormalizer {
 	}
 	
 	private String normalizeInnerNew(String str, String tag, String source) {
-		Map<String, AjectiveReplacementForNoun> replacements = 
+		Map<String, AdjectiveReplacementForNoun> replacements = 
 				terminologyLearner.getAdjectiveReplacementsForNouns();
 		if(replacements.containsKey(source)) {
-			AjectiveReplacementForNoun replacement = replacements.get(source);
+			AdjectiveReplacementForNoun replacement = replacements.get(source);
 			
 			String newString = "";
 			String remainder = str;
@@ -737,7 +736,7 @@ public abstract class Normalizer implements INormalizer {
 		}
 		////keep the space after the first (, so ( 3-15 mm) will not become 3-15mm ) in POSTagger.
 		p = Pattern.compile("(.*?)(\\d*)\\s+\\(\\s+([ ��+\\d\\.,?�/-]+)\\s+\\)\\s+(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
-		//p = Pattern.compile("(.*?)(\\d*)\\s*\\(\\s*([ ��+\\d\\.,?�/-]+)\\s*\\)\\s*(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
+ 		//p = Pattern.compile("(.*?)(\\d*)\\s*\\(\\s*([ ��+\\d\\.,?�/-]+)\\s*\\)\\s*(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
 		m = p.matcher(sent);
 		while(m.matches()){
 			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"("+m.group(3).replaceAll("\\s*[��-]\\s*", "-")+")"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
@@ -977,7 +976,7 @@ public abstract class Normalizer implements INormalizer {
 		//Pattern pattern6 = Pattern.compile("([\\s]*0[\\s]*)+(?!~[a-z])"); //condense multiple 0s.
 		Pattern pattern6 = Pattern.compile("(?<=\\s)[0\\s]+(?=\\s)");
 		//Pattern pattern5 = Pattern.compile("((?<!(/|(\\.[\\s]?)))[\\d]+[\\-\\�]+[\\d]+(?!([\\�\\-]+/|([\\s]?\\.))))|((?<!(\\{|/))[\\d]+(?!(\\}|/)))");
-         //[\\d�\\+\\�\\-\\��.�:�/�\"��\\_;x�\\�\\s,�%\\*\\{\\}\\[\\]=(<\\{)(\\}>)]+
+		//[\\d�\\+\\�\\-\\��.�:�/�\"��\\_;x�\\�\\s,�%\\*\\{\\}\\[\\]=(<\\{)(\\}>)]+
 		Pattern pattern7 = Pattern.compile("[(\\[]\\s*\\d+\\s*[)\\]]"); // deal with ( 2 ), (23) is dealt with by NumericalHandler.numberpattern
 		
 		Matcher	 matcher1 = numberpattern.matcher(str);
