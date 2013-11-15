@@ -24,7 +24,6 @@ public class IPlantLearnRun extends AbstractRun {
 	private String databasePrefix;
 
 	/**
-	 * @param runRootDirectory
 	 * @param outDirectory
 	 * @param guiceModuleFile
 	 * @param learner

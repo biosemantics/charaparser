@@ -1,5 +1,6 @@
 package semanticMarkup;
 
+import java.io.File;
 import java.util.LinkedList;
 
 import org.apache.commons.cli.BasicParser;
@@ -125,7 +126,8 @@ public class CLIMain {
 		options.addOption("g", "glossary", true, "csv glossary to use");
 		options.addOption("h", "help", false, "shows the help");
 		
-		setupLogging("workspace/debug.log", "workspace/error.log");
+		String workspace = config.getWorkspaceDirectory();
+		setupLogging(workspace + File.separator + "debug.log", workspace + File.separator + "error.log");
 		
 		config = new RunConfig();
 		try {

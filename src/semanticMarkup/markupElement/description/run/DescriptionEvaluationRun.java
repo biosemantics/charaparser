@@ -24,7 +24,6 @@ public class DescriptionEvaluationRun extends AbstractRun {
 
 	/**
 	 * @param guiceModuleFile
-	 * @param runRootDirectory
 	 * @param runOutDirectory
 	 * @param evaluator
 	 * @param createdVolumeReader

@@ -25,7 +25,6 @@ public class IPlantMarkupRun extends AbstractRun {
 
 	@Inject
 	public IPlantMarkupRun(@Named("GuiceModuleFile")String guiceModuleFile,
-			@Named("Run_RootDirectory")String runRootDirectory,
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("MarkupCreator") IMarkupCreator creator, 
 			@Named("databaseHost") String databaseHost,
@@ -46,7 +45,7 @@ public class IPlantMarkupRun extends AbstractRun {
 
 	@Override
 	protected void doRun() throws Exception {
-		if(!isValidRun(runRootDirectory)) {
+		if(!isValidRun()) {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has not been found as having successfully completed learning.");
 			return;
 		}
@@ -55,7 +54,7 @@ public class IPlantMarkupRun extends AbstractRun {
 		creator.create();
 	}
 	
-	private boolean isValidRun(String runRootDirectory) throws ClassNotFoundException, SQLException {
+	private boolean isValidRun() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
 				databaseUser, databasePassword);

@@ -24,14 +24,12 @@ public class IPlantLearnRun extends AbstractRun {
 	private String databasePrefix;
 
 	/**
-	 * @param runRootDirectory
 	 * @param outDirectory
 	 * @param guiceModuleFile
 	 * @param learner
 	 */
 	@Inject
 	public IPlantLearnRun(@Named("GuiceModuleFile")String guiceModuleFile,
-			@Named("Run_RootDirectory")String runRootDirectory,
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("databaseHost") String databaseHost,
 			@Named("databasePort") String databasePort,
@@ -52,7 +50,7 @@ public class IPlantLearnRun extends AbstractRun {
 
 	@Override
 	protected void doRun() throws Exception {
-		if(!isValidRun(runRootDirectory)) {
+		if(!isValidRun()) {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has already been used.");
 			return;
 		}
@@ -61,7 +59,7 @@ public class IPlantLearnRun extends AbstractRun {
 		learner.learn();
 	}
 	
-	protected boolean isValidRun(String runRootDirectory) throws ClassNotFoundException, SQLException {
+	protected boolean isValidRun() throws ClassNotFoundException, SQLException {
 		Class.forName("com.mysql.jdbc.Driver");
 		Connection connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
 				databaseUser, databasePassword);

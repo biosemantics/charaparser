@@ -82,9 +82,9 @@ public class RunConfig extends BasicConfig {
 	// PROCESSING 
 	private String glossaryType = "plant";
 	private Class<? extends IRun> run = DescriptionMarkupRun.class;
-	private String runRootDirectory = "workspace" + File.separator + this.databaseTablePrefix;
-	private String runOutDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "out";
-	private String runTemporaryDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp";
+	private String runRootDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix;
+	private String runOutDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
+	private String runTemporaryDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator = DescriptionMarkupCreator.class;
@@ -116,9 +116,9 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("ResourcesDirectory")).toInstance(this.resourcesDirectory);
 		bind(String.class).annotatedWith(Names.named("SrcDirectory")).toInstance(this.srcDirectory);
 		bind(String.class).annotatedWith(Names.named("WorkspaceDirectory")).toInstance(this.workspaceDirectory);
-		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(workspaceDirectory + File.separator + this.databaseTablePrefix);
-		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out");
-		bind(String.class).annotatedWith(Names.named("Run_TemporaryPath")).toInstance(workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp");
+		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(this.runRootDirectory);
+		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(this.runOutDirectory);
+		bind(String.class).annotatedWith(Names.named("Run_TemporaryPath")).toInstance(this.runTemporaryDirectory);
 
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator).in(Singleton.class);
 		bind(IDescriptionMarkupCreator.class).to(descriptionMarkupCreator).in(Singleton.class);
@@ -405,9 +405,9 @@ public class RunConfig extends BasicConfig {
 
 	public void setDatabaseTablePrefix(String databaseTablePrefix) {
 		this.databaseTablePrefix = databaseTablePrefix;
-		this.runRootDirectory = "workspace" + File.separator + this.databaseTablePrefix;
-		this.runOutDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "out";
-		this.runTemporaryDirectory = "workspace" + File.separator + this.databaseTablePrefix + File.separator + "temp";
+		this.runRootDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix;
+		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
+		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
 		
 	}
 
@@ -622,6 +622,9 @@ public class RunConfig extends BasicConfig {
 
 	public void setWorkspaceDirectory(String workspaceDirectory) {
 		this.workspaceDirectory = workspaceDirectory;
+		this.runRootDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix;
+		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
+		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
 	}
 
 	public String getWorkspaceDirectory() {

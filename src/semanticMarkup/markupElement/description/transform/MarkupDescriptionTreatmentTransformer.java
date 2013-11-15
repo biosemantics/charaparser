@@ -27,6 +27,7 @@ import oto.lite.IOTOLiteClient;
 import oto.lite.beans.Decision;
 import oto.lite.beans.Download;
 import oto.lite.beans.Synonym;
+import oto.lite.beans.UploadResult;
 import semanticMarkup.know.IGlossary;
 import semanticMarkup.ling.chunk.ChunkerChain;
 import semanticMarkup.ling.normalize.INormalizer;
@@ -39,6 +40,7 @@ import semanticMarkup.markupElement.description.ling.learn.ITerminologyLearner;
 import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
 import semanticMarkup.markupElement.description.model.Description;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
+import semanticMarkup.markupElement.description.model.Meta;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -71,6 +73,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected String otoLiteTermReviewURL;
 	protected Set<String> selectedSources;
 	private String glossaryTable;
+	private boolean termCategorizationRequired;
 	
 	/**
 	 * @param wordTokenizer
@@ -116,7 +119,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("GlossaryType")String glossaryType,
 			IGlossary glossary, 
 			@Named("SelectedSources")Set<String> selectedSources, 
-			@Named("GlossaryTable")String glossaryTable) throws Exception {
+			@Named("GlossaryTable")String glossaryTable,
+			@Named("termCategorizationRequired")boolean termCategorizationRequired) throws Exception {
 		super(version, parallelProcessing);
 		this.parser = parser;
 		this.posTagger = posTagger;
@@ -135,6 +139,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.glossaryType = glossaryType;
 		this.selectedSources = selectedSources;
 		this.glossaryTable = glossaryTable;
+		this.termCategorizationRequired = termCategorizationRequired;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
@@ -159,15 +164,28 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		GlossaryDownload glossaryDownload = otoClient.download(glossaryType, glossaryVersion); 
 		glossaryVersion = glossaryDownload.getVersion();
 		
-		int uploadId;
-		Download download;
+		Meta meta = new Meta();
+		meta.setCharaparserVersion(version);
+		meta.setGlossaryType(glossaryType);
+		meta.setGlossaryVersion(glossaryVersion);
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
+			descriptionsFile.setMeta(meta);
+		}
+		
+        UploadResult uploadResult;
+        Download download;
 		try {
-			uploadId = readUploadId();		
-			download = otoLiteClient.download(uploadId);
+			uploadResult = readUploadResult();
+			download = otoLiteClient.download(uploadResult);
 		} catch (SQLException e) {
-			this.log(LogLevel.ERROR, "Problem reading uploadId", e);
+			this.log(LogLevel.ERROR, "Problem reading upload result", e);
 			download = new Download();
 		}
+
+        if(!download.isFinalized() && termCategorizationRequired) {
+        	log(LogLevel.ERROR, "The term categorization has to be finalized to run markup. Please return to categorizing terms and finalize first.");
+        	System.exit(0);
+        }
 		
 		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
 				"Number of term categoy relations " + glossaryDownload.getTermCategories().size() + "\n" +
@@ -190,6 +208,21 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		return new TransformationReport(version, glossaryType, glossaryVersion);
 		
 	}
+	
+    private UploadResult readUploadResult() throws SQLException {
+        int uploadId = -1;
+        String secret = "";
+        String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setString(1, databasePrefix);
+        preparedStatement.execute();
+        ResultSet resultSet = preparedStatement.getResultSet();
+        while(resultSet.next()) {
+                uploadId = resultSet.getInt("oto_uploadid");
+                secret = resultSet.getString("oto_secret");
+        }
+        return new UploadResult(uploadId, secret);
+}
 
 	private String getGlossaryVersionOfLearn() {
 		String glossaryVersion = null;
@@ -290,11 +323,11 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 									tablePrefix + "_syns, " +
 									tablePrefix + "_wordroles;";
 	        stmt.execute(cleanupQuery);
-	        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)");
+	        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
-					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)");
+					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
-					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`));");
+					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`))  CHARACTER SET utf8 engine=innodb");
 			
 			for(TermCategory termCategory : termCategories) {
 				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
