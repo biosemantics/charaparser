@@ -3,11 +3,17 @@
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
     package-name="semanticMarkup.markupElement.description.model">
     <java-types>
+        <java-type name="AbstractDescriptionsFile">
+            <java-attributes>
+                <xml-transient java-attribute="file"/>
+            </java-attributes>
+        </java-type>
    		<java-type name="DescriptionsFile">
 			<xml-root-element name="treatment"/>
             <java-attributes>
                 <xml-element java-attribute="meta" xml-path="meta" type="semanticMarkup.markupElement.description.model.Meta"/>
 				<xml-element java-attribute="treatmentRoot" xml-path="." type="semanticMarkup.markupElement.description.model.TreatmentRoot" />
+				<xml-transient java-attribute="treatmentRoots"/>
             </java-attributes>
         </java-type>
     </java-types>

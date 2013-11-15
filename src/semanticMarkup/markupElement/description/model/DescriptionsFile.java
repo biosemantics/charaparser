@@ -24,10 +24,24 @@ public class DescriptionsFile extends AbstractDescriptionsFile {
 	 * Needed for input format where no <treatments><treatment>...</treatment></treatments> is given
 	 * but instead only one level such as <treatment>...</treatment>
 	 * To still maintain the generic model a treatmentroot has to be added to the list 
+	 * Alternatively: Create two separate subclasses of AbstractDescriptionsFile that accomodate those differences and 
+	 * reference the respective one from bindings
 	 * @return
 	 */
 	public void setTreatmentRoot(TreatmentRoot treatmentRoot) {
 		this.treatmentRoots.add(treatmentRoot);
+	}
+	
+	/**
+	 * Needed for input format where no <treatments><treatment>...</treatment></treatments> is given
+	 * but instead only one level such as <treatment>...</treatment>
+	 * To still maintain the generic model a treatmentroot has to be added to the list 
+	 * Alternatively: Create two separate subclasses of AbstractDescriptionsFile that accomodate those differences and 
+	 * reference the respective one from bindings
+	 * @return
+	 */
+	public TreatmentRoot getTreatmentRoot() {
+		return this.treatmentRoots.get(0);
 	}
 	
 	@Override
