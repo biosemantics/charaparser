@@ -398,11 +398,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				Future<Description> futureNewDescription = futureNewDescriptions.get(description);
-				try {
-					description.setText(futureNewDescription.get().getText());
+				description.setText("");
+				/*try {
+					//description.setText(futureNewDescription.get().getText());
 				} catch (Exception e) {
 					log(LogLevel.DEBUG, "Problem getting Future from new description", e);
-				}
+				}*/
 				log(LogLevel.DEBUG, " -> JAXB: ");
 				log(LogLevel.DEBUG, description.toString());
 			}
