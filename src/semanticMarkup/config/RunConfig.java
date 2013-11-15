@@ -118,7 +118,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("WorkspaceDirectory")).toInstance(this.workspaceDirectory);
 		bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(this.runRootDirectory);
 		bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(this.runOutDirectory);
-		bind(String.class).annotatedWith(Names.named("Run_TemporaryPath")).toInstance(this.runTemporaryDirectory);
+		bind(String.class).annotatedWith(Names.named("Run_TemporaryDirectory")).toInstance(this.runTemporaryDirectory);
 
 		bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator).in(Singleton.class);
 		bind(IDescriptionMarkupCreator.class).to(descriptionMarkupCreator).in(Singleton.class);

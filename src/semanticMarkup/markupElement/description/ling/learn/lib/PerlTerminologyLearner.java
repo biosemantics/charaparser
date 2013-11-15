@@ -104,7 +104,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("SelectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer,
-			@Named("parentTagProvider") ParentTagProvider parentTagProvider,
+			@Named("ParentTagProvider") ParentTagProvider parentTagProvider,
 			@Named("SrcDirectory") String srcDirectory) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.markupMode = markupMode;
