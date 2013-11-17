@@ -2,16 +2,35 @@
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
     package-name="semanticMarkup.markupElement.description.model">
+        
     <java-types>
         <!-- 
         recall that later definitions can and will override previous definitions 
         http://wiki.eclipse.org/EclipseLink/Development/339373
         -->
+        
        	<java-type name="Meta">
+			<java-attributes>
+        		<xml-element java-attribute="source" xml-path="source/text()" />
+        		<xml-elements java-attribute="processedBy" container-type="java.util.List">
+					<xml-element xml-path="processed_by/processor" type="semanticMarkup.markupElement.description.model.Processor"/>
+                    <xml-element xml-path="processed_by/charaparser" type="semanticMarkup.markupElement.description.model.CharaParser"/>
+                </xml-elements>
+        		<xml-element java-attribute="otherInfoOnMeta" xml-path="other_info_on_meta/text()" container-type="java.util.List" />
+        	</java-attributes>
+        </java-type>
+        <java-type name="Processor">
+        	<java-attributes>
+        		<xml-element java-attribute="process_type" xml-path="@process_type" />
+        		<xml-element java-attribute="text" xml-path="text()" />
+        	</java-attributes>
+        </java-type>
+        <java-type name="CharaParser">
             <java-attributes>
-				<xml-element java-attribute="glossaryType" xml-path="glossaryType/text()" />
-				<xml-element java-attribute="glossaryVersion" xml-path="glossaryVersion/text()" />
-				<xml-element java-attribute="charaparserVersion" xml-path="charaparserVersion/text()" />
+				<xml-element java-attribute="glossaryType" xml-path="glossary_type/text()" />
+				<xml-element java-attribute="glossaryVersion" xml-path="glossary_version/text()" />
+				<xml-element java-attribute="charaparserVersion" xml-path="charaparser_version/text()" />
+				<xml-element java-attribute="charaparserUser" xml-path="charaparser_user/text()" />
             </java-attributes>
         </java-type>
         <java-type name="TreatmentRoot">
