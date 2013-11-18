@@ -4,6 +4,7 @@ import semanticMarkup.log.LogLevel;
 import semanticMarkup.markupElement.description.io.IDescriptionReader;
 import semanticMarkup.markupElement.description.io.IDescriptionWriter;
 import semanticMarkup.markupElement.description.model.AbstractDescriptionsFile;
+import semanticMarkup.markupElement.description.model.CharaParser;
 import semanticMarkup.markupElement.description.model.DescriptionsFile;
 import semanticMarkup.markupElement.description.model.DescriptionsFileList;
 import semanticMarkup.markupElement.description.model.Meta;
@@ -47,11 +48,15 @@ public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 			log(LogLevel.DEBUG, "transform treatments using " + descriptionTransformer.getClass());
 			TransformationReport report = descriptionTransformer.transform(descriptionsFileList.getDescriptionsFiles());
 			
-			Meta meta = new Meta();
-			meta.setCharaparserVersion(report.getCharaparserVersion());
-			meta.setGlossaryType(report.getGlossaryType());
-			meta.setGlossaryVersion(report.getGlossaryVersion());
 			for(AbstractDescriptionsFile descriptionsFile : descriptionsFileList.getDescriptionsFiles()) {
+				Meta meta = descriptionsFile.getMeta();
+				if(meta == null)
+					meta = new Meta();
+				CharaParser charaParser = new CharaParser();
+				charaParser.setCharaparserVersion(report.getCharaparserVersion());
+				charaParser.setGlossaryType(report.getGlossaryType());
+				charaParser.setGlossaryVersion(report.getGlossaryVersion());
+				meta.addProcessedBy(charaParser);
 				descriptionsFile.setMeta(meta);
 			}
 			

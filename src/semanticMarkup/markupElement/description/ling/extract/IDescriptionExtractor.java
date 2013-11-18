@@ -13,9 +13,10 @@ public interface IDescriptionExtractor {
 
 	/**
 	 * @param description
+	 * @param descriptionNumber 
 	 * @param treatmentChunkCollectors
 	 */
-	public void extract(Description description, List<ChunkCollector> treatmentChunkCollectors);
+	public void extract(Description description, int descriptionNumber, List<ChunkCollector> treatmentChunkCollectors);
 
 	/**
 	 * @return a descriptive String of this IDescriptionExtractor

@@ -63,8 +63,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 	
 	@Override
-	public void extract(Description description, 
-			List<ChunkCollector> chunkCollectors) {
+	public void extract(Description description, int descriptionNumber, List<ChunkCollector> chunkCollectors) {
 		ProcessingContext processingContext = new ProcessingContext();
 		processingContext.setChunkProcessorsProvider(chunkProcessorProvider);
 
@@ -72,11 +71,12 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		// this method is called per treatment
 		
 		//going through all sentences
-		for(ChunkCollector chunkCollector : chunkCollectors) {
+		for(int i=0; i<chunkCollectors.size(); i++) {
+			ChunkCollector chunkCollector = chunkCollectors.get(i);
 			processingContext.reset();
 			Statement statement = new Statement();
 			statement.setText(chunkCollector.getSentence());
-			statement.setSource(chunkCollector.getSource());
+			statement.setId("d" + descriptionNumber + "_s" + i);
 			description.addStatement(statement);
 			
 			processingContext.setChunkCollector(chunkCollector);

@@ -624,6 +624,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	    return df.format(num);
 	}
 	
+	/**
+	 * Renames files other than the original input files to get a order for perl as input that is independent on the OS 
+	 * that CharaParser is run on. E.g. when iterating files in unix and windows it can be different 
+	 * Also, if a input descriptionsFile contains multiple descriptions we want to feed perl one description per file.
+	 * @param descriptionsFiles
+	 * @param directory
+	 * @throws IOException
+	 */
 	private void writeTreatmentsToFiles(List<AbstractDescriptionsFile> descriptionsFiles, File directory) throws IOException {
 		int i = 0;
 		int descriptionCount = 0;

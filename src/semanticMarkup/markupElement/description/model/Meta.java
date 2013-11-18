@@ -20,48 +20,29 @@ public class Meta extends Element {
 		this.processedBy.add(processedBy);
 	}
 	
-	
 	public String getSource() {
 		return source;
 	}
-
-
-
 
 	public void setSource(String source) {
 		this.source = source;
 	}
 
-
-
-
 	public List<Object> getProcessedBy() {
 		return processedBy;
 	}
-
-
-
 
 	public void setProcessedBy(List<Object> processedBy) {
 		this.processedBy = processedBy;
 	}
 
-
-
-
 	public List<String> getOtherInfoOnMeta() {
 		return otherInfoOnMeta;
 	}
-
-
-
-
+	
 	public void setOtherInfoOnMeta(List<String> otherInfoOnMeta) {
 		this.otherInfoOnMeta = otherInfoOnMeta;
 	}
-
-
-
 
 	@Override
 	public void removeElementRecursively(Element element) {

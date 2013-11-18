@@ -20,9 +20,6 @@ public class Statement extends Element {
 	@XmlPath("@" + StatementAttribute.provenance)
 	private String provenance;
 	
-	@XmlPath("@" + StatementAttribute.source)
-	private String source;
-	
 	@XmlPath("@" + StatementAttribute.notes)
 	private String notes;
 
@@ -61,12 +58,6 @@ public class Statement extends Element {
 	}
 	public void setProvenance(String provenance) {
 		this.provenance = provenance;
-	}
-	public String getSource() {
-		return source;
-	}
-	public void setSource(String source) {
-		this.source = source;
 	}
 	public String getNotes() {
 		return notes;

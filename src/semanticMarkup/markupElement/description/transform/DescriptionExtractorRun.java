@@ -45,6 +45,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 	private int sentenceChunkerRunMaximum;
 	private CountDownLatch descriptionExtractorsLatch;
 	private Set<String> selectedSources;
+	private int descriptionNumber;
 
 	/**
 	 * @param treatment
@@ -60,12 +61,13 @@ public class DescriptionExtractorRun implements Callable<Description> {
 	 * @param selectedSources 
 	 * @param latch 
 	 */
-	public DescriptionExtractorRun(AbstractDescriptionsFile descriptionsFile, Description description,
+	public DescriptionExtractorRun(AbstractDescriptionsFile descriptionsFile, Description description, int descriptionNumber,
 			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
 			IDescriptionExtractor descriptionExtractor, Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing,
 			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch, Set<String> selectedSources) {
 		this.descriptionsFile = descriptionsFile;
 		this.description = description;
+		this.descriptionNumber = descriptionNumber;
 		this.normalizer = normalizer;
 		this.wordTokenizer = wordTokenizer;
 		this.posTagger = posTagger;
@@ -138,7 +140,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 		}
 		
 		log(LogLevel.DEBUG, "extract for treatment " + descriptionsFile.getName());
-		descriptionExtractor.extract(description, treatmentChunkCollectors);
+		descriptionExtractor.extract(description, descriptionNumber, treatmentChunkCollectors);
 		
 		descriptionExtractorsLatch.countDown();
 		return description;

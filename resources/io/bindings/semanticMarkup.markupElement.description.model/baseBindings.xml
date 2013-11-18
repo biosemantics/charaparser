@@ -10,6 +10,7 @@
         -->
         
        	<java-type name="Meta">
+       	    <xml-type prop-order="source processedBy otherInfoOnMeta" />
 			<java-attributes>
         		<xml-element java-attribute="source" xml-path="source/text()" />
         		<xml-elements java-attribute="processedBy" container-type="java.util.List">
@@ -39,20 +40,22 @@
             </java-attributes>
         </java-type>
         <java-type name="Description">
-            <java-attributes>			
+            <java-attributes>
                 <xml-element java-attribute="text" xml-path="text()"/>
 				<xml-element java-attribute="statements" xml-path="statement/" type="semanticMarkup.markupElement.description.model.Statement" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
    		<java-type name="Statement">
+   		    <xml-type prop-order="text structures relations id" />
             <java-attributes>			
                 <xml-element java-attribute="text" xml-path="@text"/>
 				<xml-element java-attribute="structures" xml-path="structure/" type="semanticMarkup.markupElement.description.model.Structure" container-type="java.util.List"/>
 				<xml-element java-attribute="relations" xml-path="relation/" type="semanticMarkup.markupElement.description.model.Relation" container-type="java.util.List"/>
+				<xml-element java-attribute="id" xml-path="@id"/>
             </java-attributes>
         </java-type>
 		<java-type name="Character">
-            <java-attributes>			
+            <java-attributes>	
                 <xml-element java-attribute="charType" xml-path="@char_type"/>
 				<xml-element java-attribute="constraint" xml-path="@constraint"/>
 				<xml-element java-attribute="constraintId" xml-path="@constraintid"/>

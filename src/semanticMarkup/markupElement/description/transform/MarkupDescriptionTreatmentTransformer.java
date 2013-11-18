@@ -163,15 +163,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		
 		GlossaryDownload glossaryDownload = otoClient.download(glossaryType, glossaryVersion); 
 		glossaryVersion = glossaryDownload.getVersion();
-		
-		Meta meta = new Meta();
-		meta.setCharaparserVersion(version);
-		meta.setGlossaryType(glossaryType);
-		meta.setGlossaryVersion(glossaryVersion);
-		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
-			descriptionsFile.setMeta(meta);
-		}
-		
+				
         UploadResult uploadResult;
         Download download;
 		try {
@@ -206,7 +198,6 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		markupDescriptions(descriptionsFiles, sentencesForOrganStateMarker);		
 
 		return new TransformationReport(version, glossaryType, glossaryVersion);
-		
 	}
 	
     private UploadResult readUploadResult() throws SQLException {
@@ -376,10 +367,11 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		
 		// process each treatment separately
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
-			for(Description description : descriptionsFile.getDescriptions()) {
+			for(int i=0; i<descriptionsFile.getDescriptions().size(); i++) {
+				Description description = descriptionsFile.getDescriptions().get(i);
 				// start a DescriptionExtractorRun for the treatment to process as a separate thread
 				DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(
-						descriptionsFile, description, normalizer, wordTokenizer, 
+						descriptionsFile, description, i, normalizer, wordTokenizer, 
 						posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum, 
 						descriptionExtractorsLatch, selectedSources);
 				Future<Description> futureNewDescription = executorService.submit(descriptionExtractorRun);
