@@ -1,32 +1,68 @@
 package semanticMarkup.markupElement.description.model;
 
 
+import java.util.LinkedList;
+import java.util.List;
+
 import semanticMarkup.model.Element;
 
 public class Meta extends Element {
 	
-	private String charaparserVersion;
-	private String glossaryType;
-	private String glossaryVersion;
+	private String source;
+	private List<Object> processedBy = new LinkedList<Object>();
+	private List<String> otherInfoOnMeta = new LinkedList<String>();
+
+	public void addOtherInfoOnMeta(String otherInfoOnMeta) {
+		this.otherInfoOnMeta.add(otherInfoOnMeta);
+	}
 	
-	public String getCharaparserVersion() {
-		return charaparserVersion;
+	public void addProcessedBy(Object processedBy) {
+		this.processedBy.add(processedBy);
 	}
-	public void setCharaparserVersion(String charaparserVersion) {
-		this.charaparserVersion = charaparserVersion;
+	
+	
+	public String getSource() {
+		return source;
 	}
-	public String getGlossaryType() {
-		return glossaryType;
+
+
+
+
+	public void setSource(String source) {
+		this.source = source;
 	}
-	public void setGlossaryType(String glossaryType) {
-		this.glossaryType = glossaryType;
+
+
+
+
+	public List<Object> getProcessedBy() {
+		return processedBy;
 	}
-	public String getGlossaryVersion() {
-		return glossaryVersion;
+
+
+
+
+	public void setProcessedBy(List<Object> processedBy) {
+		this.processedBy = processedBy;
 	}
-	public void setGlossaryVersion(String glossaryVersion) {
-		this.glossaryVersion = glossaryVersion;
+
+
+
+
+	public List<String> getOtherInfoOnMeta() {
+		return otherInfoOnMeta;
 	}
+
+
+
+
+	public void setOtherInfoOnMeta(List<String> otherInfoOnMeta) {
+		this.otherInfoOnMeta = otherInfoOnMeta;
+	}
+
+
+
+
 	@Override
 	public void removeElementRecursively(Element element) {
 		return;
