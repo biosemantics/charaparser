@@ -136,8 +136,6 @@ public class BasicConfig extends AbstractModule {
 				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "FNAXMLSchemaInput.xsd");
 		  bind(String.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(
 				"." + File.separator + "resources" + File.separator + "io" + File.separator + "schemas" + File.separator + "iplant.xsd");
-		  bind(String.class).annotatedWith(Names.named("CSVCorpus_FilePath")).toInstance("resources" + File.separator + "corpora" + File.separator + "brown.csv");
-		  bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance("resources" + File.separator +"wordNet3.1" + File.separator +"dict" + File.separator);
 		  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 			 
 		  // IO

@@ -65,8 +65,8 @@ public class RunConfig extends BasicConfig {
 	private String srcDirectory = "src" ;
 	private String resourcesDirectory = "resources";
 	private String workspaceDirectory = "workspace";
-	private String glossaryFile = resourcesDirectory + File.separator + "fnaglossaryfixed.csv";
-	private String csvCorpusPath = resourcesDirectory + File.separator + "brown.csv";
+	private String glossaryFile = resourcesDirectory + File.separator + "glossaries" + File.separator + "fnaglossaryfixed.csv";
+	private String csvCorpusPath = resourcesDirectory + File.separator + "corpora" + File.separator + "brown.csv";
 	private String wordNetSource = resourcesDirectory + File.separator + "wordNet3.1" + File.separator +"dict" + File.separator;
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 	
@@ -153,7 +153,7 @@ public class RunConfig extends BasicConfig {
 		bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
 		bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 		bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
-		bind(String.class).annotatedWith(Names.named("CSVCorpus_filePath")).toInstance(csvCorpusPath);
+		bind(String.class).annotatedWith(Names.named("CSVCorpus_FilePath")).toInstance(csvCorpusPath);
 		bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance(wordNetSource);
 		//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 		bind(String.class).annotatedWith(Names.named("CSVGlossary_FilePath")).toInstance(glossaryFile); 
@@ -168,22 +168,22 @@ public class RunConfig extends BasicConfig {
 	
 	private List<String> createEvaluationTestReaderBindingsList() {
 		List<String> result = new LinkedList<String>();
-		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "baseBindings.xml");
-		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml");
+		result.add(this.resourcesDirectory + File.separator + "eval" + File.separator + "bindings" + File.separator + "baseBindings.xml");
+		result.add(this.resourcesDirectory + File.separator + "eval" + File.separator + "bindings" + File.separator + "testBindings.xml");
 		return result;
 	}
 
 	private List<String> createEvaluationCorrectReaderBindingsList() {
 		List<String> result = new LinkedList<String>();
-		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "baseBindings.xml");
-		result.add("resources" + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml");
+		result.add(this.resourcesDirectory + File.separator + "eval" + File.separator + "bindings" + File.separator + "baseBindings.xml");
+		result.add(this.resourcesDirectory + File.separator + "eval" + File.separator + "bindings" + File.separator + "correctBindings.xml");
 		return result;
 	}
 
 	private List<String> createDescriptionReaderBindingsList() {
 		List<String> result = new LinkedList<String>();
-		result.add("resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "semanticMarkup.markupElement.description.model" + File.separator + "baseBindings.xml");
-		result.add("resources" + File.separator + "io" + File.separator + "bindings" + File.separator + "semanticMarkup.markupElement.description.model" + File.separator + "singleTreatmentDescriptionBindings.xml");
+		result.add(this.resourcesDirectory + File.separator + "io" + File.separator + "bindings" + File.separator + "semanticMarkup.markupElement.description.model" + File.separator + "baseBindings.xml");
+		result.add(this.resourcesDirectory + File.separator + "io" + File.separator + "bindings" + File.separator + "semanticMarkup.markupElement.description.model" + File.separator + "singleTreatmentDescriptionBindings.xml");
 		return result;
 	}
 
@@ -601,11 +601,14 @@ public class RunConfig extends BasicConfig {
 	
 	public void setResourcesDirectory(String resourcesDirectory) {
 		String oldResourcesDirectory = this.getResourcesDirectory();
+		this.resourcesDirectory = resourcesDirectory;
 		this.csvCorpusPath = this.csvCorpusPath.replace(oldResourcesDirectory, resourcesDirectory);
-		this.csvCorpusPath.replace(oldResourcesDirectory, resourcesDirectory);
-		this.wordNetSource.replace(oldResourcesDirectory, resourcesDirectory);
-		this.glossaryFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.wordNetSource = this.wordNetSource.replace(oldResourcesDirectory, resourcesDirectory);
+		this.glossaryFile = this.glossaryFile.replace(oldResourcesDirectory, resourcesDirectory);
 		this.markupRunValidateSchemaFile = this.markupRunValidateSchemaFile.replace(oldResourcesDirectory, resourcesDirectory);
+		this.descriptionReaderBindingsList = this.createDescriptionReaderBindingsList();
+		this.evaluationCorrectReaderBindingsList = this.createEvaluationCorrectReaderBindingsList();
+		this.evaluationTestReaderBindingsList = this.createEvaluationTestReaderBindingsList();
 	}
 
 	public void setSrcDirectory(String srcDirectory) {
