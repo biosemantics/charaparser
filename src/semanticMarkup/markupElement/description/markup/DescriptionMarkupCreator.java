@@ -54,7 +54,7 @@ public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 					meta = new Meta();
 				CharaParser charaParser = new CharaParser();
 				charaParser.setCharaparserVersion(report.getCharaparserVersion());
-				charaParser.setGlossaryType(report.getGlossaryType());
+				charaParser.setGlossaryName(report.getGlossaryType());
 				charaParser.setGlossaryVersion(report.getGlossaryVersion());
 				meta.addProcessedBy(charaParser);
 				descriptionsFile.setMeta(meta);

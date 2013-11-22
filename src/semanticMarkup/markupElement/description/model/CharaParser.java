@@ -3,7 +3,7 @@ package semanticMarkup.markupElement.description.model;
 public class CharaParser {
 	private String charaparserVersion;
 	private String charaparserUser;
-	private String glossaryType;
+	private String glossaryName;
 	private String glossaryVersion;
 	
 	public String getCharaparserVersion() {
@@ -12,11 +12,11 @@ public class CharaParser {
 	public void setCharaparserVersion(String charaparserVersion) {
 		this.charaparserVersion = charaparserVersion;
 	}
-	public String getGlossaryType() {
-		return glossaryType;
+	public String getGlossaryName() {
+		return glossaryName;
 	}
-	public void setGlossaryType(String glossaryType) {
-		this.glossaryType = glossaryType;
+	public void setGlossaryName(String glossaryName) {
+		this.glossaryName = glossaryName;
 	}
 	public String getGlossaryVersion() {
 		return glossaryVersion;
