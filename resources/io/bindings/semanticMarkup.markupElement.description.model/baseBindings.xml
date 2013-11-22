@@ -49,7 +49,7 @@
    		<java-type name="Statement">
    		    <xml-type prop-order="text structures relations id" />
             <java-attributes>			
-                <xml-element java-attribute="text" xml-path="@text"/>
+                <xml-element java-attribute="text" xml-path="text/text()"/>
 				<xml-element java-attribute="structures" xml-path="structure/" type="semanticMarkup.markupElement.description.model.Structure" container-type="java.util.List"/>
 				<xml-element java-attribute="relations" xml-path="relation/" type="semanticMarkup.markupElement.description.model.Relation" container-type="java.util.List"/>
 				<xml-element java-attribute="id" xml-path="@id"/>
