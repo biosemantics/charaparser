@@ -12,6 +12,7 @@
 			<xml-root-element name="treatment"/>
 			<xml-type prop-order="meta treatmentRoot treatmentRoots" />
             <java-attributes>
+            	<xml-transient java-attribute="file"/>
                 <xml-element java-attribute="meta" xml-path="meta" type="semanticMarkup.markupElement.description.model.Meta"/>
 				<xml-element java-attribute="treatmentRoot" xml-path="." type="semanticMarkup.markupElement.description.model.TreatmentRoot" />
 				<xml-transient java-attribute="treatmentRoots"/>
