@@ -5,10 +5,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-//XMLTransient is necesary because otherwise an xsi:type attribute will be generated when marshalling any subclass of this class.
-//This can for example cause the output not to be valid against one of our schemas (that does not specify the xsi:type)
-//At this time it is not known how to specify xml-transient for java type instead of a java attribute in a bindings file. Hence this annotation here.
-@XmlTransient
 public abstract class AbstractDescriptionsFile {
 
 	private File file; // source could later then be filename + descriptionID + sentenceID
