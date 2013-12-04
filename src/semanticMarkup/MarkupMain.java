@@ -75,7 +75,15 @@ public class MarkupMain extends CLIMain {
 		    	HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "what is this?", options );
 				System.exit(0);
+		    }    
+		    if(commandLine.hasOption("c")) {
+		    	config = getConfig(commandLine.getOptionValue("c"));
+		    } else {
+		    	log(LogLevel.ERROR, "You have to specify a configuration to use");
+		    	System.exit(0);
+		    	//use standard config RunConfig
 		    }
+		    
 			if (commandLine.hasOption("a")) {
 				config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
 			}
@@ -85,15 +93,6 @@ public class MarkupMain extends CLIMain {
 			} else {
 				setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
 			}
-		    
-		    if(commandLine.hasOption("c")) {
-		    	config = getConfig(commandLine.getOptionValue("c"));
-		    } else {
-		    	log(LogLevel.ERROR, "You have to specify a configuration to use");
-		    	System.exit(0);
-		    	//use standard config RunConfig
-		    }
-		    
 			if (commandLine.hasOption("f")) {
 				config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
 			}

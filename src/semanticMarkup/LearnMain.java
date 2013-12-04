@@ -76,11 +76,6 @@ public class LearnMain extends CLIMain {
 				formatter.printHelp( "what is this?", options );
 				System.exit(0);
 		    }
-			if (commandLine.hasOption("a")) {
-				config.setWorkspaceDirectory(commandLine.getOptionValue("t"));
-			}
-			String workspace = config.getWorkspaceDirectory();
-			
 		    if(commandLine.hasOption("c")) {
 		    	config = getConfig(commandLine.getOptionValue("c"));
 		    } else {
@@ -89,6 +84,10 @@ public class LearnMain extends CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    
+			if (commandLine.hasOption("a")) {
+				config.setWorkspaceDirectory(commandLine.getOptionValue("t"));
+			}
+			String workspace = config.getWorkspaceDirectory();
             if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
             	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
 	        } else {
