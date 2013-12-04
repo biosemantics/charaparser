@@ -85,7 +85,7 @@ public class LearnMain extends CLIMain {
 		    }
 		    
 			if (commandLine.hasOption("a")) {
-				config.setWorkspaceDirectory(commandLine.getOptionValue("t"));
+				config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
 			}
 			String workspace = config.getWorkspaceDirectory();
             if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
