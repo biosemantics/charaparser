@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
-    package-name="semanticMarkup.markupElement.description.model">
+    package-name="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model">
     <java-types>
 		<java-type name="Character">
             <java-attributes>			

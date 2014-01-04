@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
-    package-name="semanticMarkup.markupElement.description.model">
+    package-name="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model">
     <java-types>
      <!-- 	
      		XMLTransient is necesary for AbstractDescriptionsFile because otherwise an xsi:type attribute will be generated when marshalling any subclass of this class.
@@ -14,8 +14,8 @@
 			<xml-type prop-order="meta treatmentRoot treatmentRoots" />
             <java-attributes>
             	<xml-transient java-attribute="file"/>
-                <xml-element java-attribute="meta" xml-path="meta" type="semanticMarkup.markupElement.description.model.Meta"/>
-				<xml-element java-attribute="treatmentRoot" xml-path="." type="semanticMarkup.markupElement.description.model.TreatmentRoot" />
+                <xml-element java-attribute="meta" xml-path="meta" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta"/>
+				<xml-element java-attribute="treatmentRoot" xml-path="." type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot" />
 				<xml-transient java-attribute="treatmentRoots"/>
             </java-attributes>
         </java-type>

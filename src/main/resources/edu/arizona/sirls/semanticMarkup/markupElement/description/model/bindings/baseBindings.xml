@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
-    package-name="semanticMarkup.markupElement.description.model">
+    package-name="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model">
         
     <java-types>
         <!-- 
@@ -14,8 +14,8 @@
 			<java-attributes>
         		<xml-element java-attribute="source" xml-path="source/text()" />
         		<xml-elements java-attribute="processedBy" container-type="java.util.List">
-					<xml-element xml-path="processed_by/processor" type="semanticMarkup.markupElement.description.model.Processor"/>
-                    <xml-element xml-path="processed_by/charaparser" type="semanticMarkup.markupElement.description.model.CharaParser"/>
+					<xml-element xml-path="processed_by/processor" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor"/>
+                    <xml-element xml-path="processed_by/charaparser" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.CharaParser"/>
                 </xml-elements>
         		<xml-element java-attribute="otherInfoOnMeta" xml-path="other_info_on_meta/text()" container-type="java.util.List" />
         	</java-attributes>
@@ -37,21 +37,21 @@
         </java-type>
         <java-type name="TreatmentRoot">
             <java-attributes>
-				<xml-element java-attribute="descriptions" xml-path="description" type="semanticMarkup.markupElement.description.model.Description" container-type="java.util.List" />
+				<xml-element java-attribute="descriptions" xml-path="description" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description" container-type="java.util.List" />
             </java-attributes>
         </java-type>
         <java-type name="Description">
             <java-attributes>
                 <xml-element java-attribute="text" xml-path="text()"/>
-				<xml-element java-attribute="statements" xml-path="statement/" type="semanticMarkup.markupElement.description.model.Statement" container-type="java.util.List"/>
+				<xml-element java-attribute="statements" xml-path="statement/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
    		<java-type name="Statement">
    		    <xml-type prop-order="text structures relations id" />
             <java-attributes>			
                 <xml-element java-attribute="text" xml-path="text/text()"/>
-				<xml-element java-attribute="structures" xml-path="structure/" type="semanticMarkup.markupElement.description.model.Structure" container-type="java.util.List"/>
-				<xml-element java-attribute="relations" xml-path="relation/" type="semanticMarkup.markupElement.description.model.Relation" container-type="java.util.List"/>
+				<xml-element java-attribute="structures" xml-path="structure/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure" container-type="java.util.List"/>
+				<xml-element java-attribute="relations" xml-path="relation/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation" container-type="java.util.List"/>
 				<xml-element java-attribute="id" xml-path="@id"/>
             </java-attributes>
         </java-type>

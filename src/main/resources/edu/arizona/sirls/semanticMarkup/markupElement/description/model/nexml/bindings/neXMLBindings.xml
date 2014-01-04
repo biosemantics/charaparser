@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xml-bindings
     xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
-    package-name="semanticMarkup.markupElement.description.model.nexml"
+    package-name="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.nexml"
 	xml-mapping-metadata-complete="true">
     
     <xml-schema element-form-default="QUALIFIED" namespace="http://www.nexml.org/2009">
@@ -14,23 +14,23 @@
 		<java-type name="NeXMLDescriptionsFile" xml-accessor-type="NONE">
 			<xml-root-element name="nexml"/>
             <java-attributes>
-                <xml-element java-attribute="meta" xml-path="metaCharaParser" type="semanticMarkup.markupElement.description.model.Meta"/>
+                <xml-element java-attribute="meta" xml-path="metaCharaParser" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta"/>
                 <xml-element java-attribute="stateDescriptions" xml-path="/nex:characters/nex:format/nex:states/nex:state" 
-				type="semanticMarkup.markupElement.description.model.nexml.StateDescription" container-type="java.util.List" />
+				type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.nexml.StateDescription" container-type="java.util.List" />
 				<xml-element java-attribute="characterDescriptions" xml-path="/nex:characters/nex:format/nex:char" 
-				type="semanticMarkup.markupElement.description.model.nexml.CharacterDescription" container-type="java.util.List" />
+				type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.nexml.CharacterDescription" container-type="java.util.List" />
             </java-attributes>
         </java-type>
         <java-type name="StateDescription" super-type="java.lang.Object">
             <java-attributes>			
                 <xml-element java-attribute="text" xml-path="@label"/>
-				<xml-element java-attribute="statements" xml-path="statement/" type="semanticMarkup.markupElement.description.model.Statement" container-type="java.util.List"/>
+				<xml-element java-attribute="statements" xml-path="statement/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
         <java-type name="CharacterDescription" super-type="java.lang.Object">
             <java-attributes>			
                 <xml-element java-attribute="text" xml-path="@label"/>
-				<xml-element java-attribute="statements" xml-path="statement/" type="semanticMarkup.markupElement.description.model.Statement" container-type="java.util.List"/>
+				<xml-element java-attribute="statements" xml-path="statement/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
     </java-types>
