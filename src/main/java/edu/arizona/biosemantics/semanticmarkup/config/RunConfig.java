@@ -66,11 +66,11 @@ public class RunConfig extends BasicConfig {
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
-	private String perlDirectory = "/edu/arizona/biosemantics/perl" ;
+	private String perlDirectory = "edu/arizona/biosemantics/perl" ;
 	private String workspaceDirectory = "workspace";
-	private String glossaryFile = "/edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv";
-	private String csvCorpusPath = "/edu/arizona/biosemantics/semanticmarkup/know/corpora/brown.csv";
-	private String wordNetSource = "/edu/arizona/biosemantics/semanticmarkup/know/wordnet/wn31/dict";
+	private String glossaryFile = "edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv";
+	private String csvCorpusPath = "edu/arizona/biosemantics/semanticmarkup/know/corpora/brown.csv";
+	private String wordNetSource = "edu/arizona/biosemantics/semanticmarkup/know/wordnet/wn31/dict";
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 	
 	// IO
@@ -78,7 +78,7 @@ public class RunConfig extends BasicConfig {
 	private List<InputStream> descriptionReaderBindingsList = createXMLReaderBindingsList();
 	private String descriptionReaderInputDirectory = "input";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
-	private String markupRunValidateSchemaFile = "/edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplantOutputTreatment.xsd";
+	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplantOutputTreatment.xsd";
 	
 	// PROCESSING 
 	private String glossaryType = "plant";

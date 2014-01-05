@@ -16,7 +16,7 @@ public class HymenopteraConfig extends RunConfig {
 		// ENVIRONMENTAL 
 		//this.setDatabaseTablePrefix("foc_v10_jing");
 		this.setDatabaseGlossaryTable("antglossaryfixed");
-		this.setGlossaryFile("/edu/arizona/biosemantics/semanticmarkup/know/glossaries/antglossaryfixed.csv");
+		this.setGlossaryFile("edu/arizona/biosemantics/semanticmarkup/know/glossaries/antglossaryfixed.csv");
 		
 		// IO
 		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "Ant_CharaParser_Evaluation");
