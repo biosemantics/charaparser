@@ -106,7 +106,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer,
 			@Named("ParentTagProvider") ParentTagProvider parentTagProvider,
-			@Named("PerlDirectory") String srcDirectory) throws Exception {
+			@Named("PerlDirectory") String perlDirectory) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.markupMode = markupMode;
 		this.databasePrefix = databasePrefix;
