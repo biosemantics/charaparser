@@ -18,20 +18,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import oto.beans.TermCategory;
-import oto.beans.TermSynonym;
-import oto.beans.WordRole;
-import oto.full.IOTOClient;
-import oto.full.beans.GlossaryDownload;
-import oto.lite.IOTOLiteClient;
-import oto.lite.beans.Decision;
-import oto.lite.beans.Download;
-import oto.lite.beans.Synonym;
-import oto.lite.beans.UploadResult;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.oto.beans.TermCategory;
+import edu.arizona.biosemantics.oto.beans.TermSynonym;
+import edu.arizona.biosemantics.oto.beans.WordRole;
+import edu.arizona.biosemantics.oto.full.IOTOClient;
+import edu.arizona.biosemantics.oto.full.beans.GlossaryDownload;
+import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.lite.beans.Decision;
+import edu.arizona.biosemantics.oto.lite.beans.Download;
+import edu.arizona.biosemantics.oto.lite.beans.Synonym;
+import edu.arizona.biosemantics.oto.lite.beans.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;

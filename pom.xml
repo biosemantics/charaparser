@@ -11,6 +11,10 @@
 	</properties>
 
 	<repositories>
+   		<repository>
+			<id>local</id>
+			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+		</repository>
 		<repository>
 			<id>swt-repo</id>
 			<url>https://swt-repo.googlecode.com/svn/repo/</url>
@@ -192,7 +196,6 @@
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-			<type>pom</type>
 		</dependency>
 
 	</dependencies>

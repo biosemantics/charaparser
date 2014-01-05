@@ -10,18 +10,16 @@ import java.util.Set;
 
 import org.w3c.dom.Document;
 
-import oto.full.IOTOClient;
-import oto.full.OTOClient;
-import oto.lite.IOTOLiteClient;
-import oto.lite.OTOLiteClient;
-
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
+import edu.arizona.biosemantics.oto.full.IOTOClient;
+import edu.arizona.biosemantics.oto.full.OTOClient;
+import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.lite.OTOLiteClient;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;

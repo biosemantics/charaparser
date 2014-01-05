@@ -15,20 +15,20 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import oto.beans.TermCategory;
-import oto.beans.TermSynonym;
-import oto.beans.WordRole;
-import oto.full.IOTOClient;
-import oto.full.beans.GlossaryDownload;
-import oto.lite.IOTOLiteClient;
-import oto.lite.beans.Sentence;
-import oto.lite.beans.Term;
-import oto.lite.beans.Upload;
-import oto.lite.beans.UploadResult;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.oto.beans.TermCategory;
+import edu.arizona.biosemantics.oto.beans.TermSynonym;
+import edu.arizona.biosemantics.oto.beans.WordRole;
+import edu.arizona.biosemantics.oto.full.IOTOClient;
+import edu.arizona.biosemantics.oto.full.beans.GlossaryDownload;
+import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.lite.beans.Sentence;
+import edu.arizona.biosemantics.oto.lite.beans.Term;
+import edu.arizona.biosemantics.oto.lite.beans.Upload;
+import edu.arizona.biosemantics.oto.lite.beans.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
