@@ -70,7 +70,7 @@ public class RunConfig extends BasicConfig {
 	private String workspaceDirectory = "workspace";
 	private String glossaryFile = "edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv";
 	private String csvCorpusPath = "edu/arizona/biosemantics/semanticmarkup/know/corpora/brown.csv";
-	private String wordNetSource = "edu/arizona/biosemantics/semanticmarkup/know/wordnet/wn31/dict";
+	private String wordNetSource = "wordnet/wn31/dict";
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 	
 	// IO
@@ -671,4 +671,13 @@ public class RunConfig extends BasicConfig {
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupElement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));
 		return result;
 	}
+
+	public String getWordNetSource() {
+		return wordNetSource;
+	}
+
+	public void setWordNetSource(String wordNetSource) {
+		this.wordNetSource = wordNetSource;
+	}
+	
 }

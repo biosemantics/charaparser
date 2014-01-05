@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
 	private JAXBContext jaxbContext;
 	
 	@Inject
-	public MOXyBinderDescriptionWriter(@Named("DescriptionReader_BindingsFiles")List<String> bindingsFiles, 
+	public MOXyBinderDescriptionWriter(@Named("DescriptionReader_BindingsFiles")List<InputStream> bindingsFiles, 
 			@Named("MOXyBinderDescriptionReaderWriter_FileDocumentMappings")Map<File, Binding> fileDocumentMappings) 
 			throws JAXBException {
 		this.fileDocumentMappings = fileDocumentMappings;

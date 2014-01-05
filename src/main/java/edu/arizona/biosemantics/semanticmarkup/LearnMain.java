@@ -57,7 +57,7 @@ public class LearnMain extends CLIMain {
 		
 		options.addOption("b", "debug log", true, "location of debug log file");
         options.addOption("e", "error log", true, "location of error log file");
-		options.addOption("r", "resources directory", true, "location of resources directory");
+		options.addOption("w", "wordnet dict directory", true, "location of wordnet dict directory");
 		options.addOption("l", "src directory", true, "location of src directory");
 		options.addOption("a", "workspace directory", true, "location of workspace directory");
 		options.addOption("n", "database-host", true, "dbms host");
@@ -199,6 +199,9 @@ public class LearnMain extends CLIMain {
 		    	System.exit(0);
 		    }
 		    
+            if (commandLine.hasOption("w")) {
+                config.setWordNetSource(commandLine.getOptionValue("w"));
+            }
 			if (commandLine.hasOption("l")) {
 				config.setPerlDirectory(commandLine.getOptionValue("l"));
 			}

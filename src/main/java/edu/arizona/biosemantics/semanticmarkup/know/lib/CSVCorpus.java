@@ -27,7 +27,7 @@ public class CSVCorpus implements ICorpus {
 	 * @throws IOException
 	 */
 	@Inject
-	public CSVCorpus(@Named("CSVCorpus_FilePath") InputStream corpus) throws IOException {
+	public CSVCorpus(@Named("CSVCorpus") InputStream corpus) throws IOException {
 		CSVReader reader = new CSVReader(new InputStreamReader(corpus));
 		List<String[]> lines = reader.readAll();
 		for(String[] line : lines) {
