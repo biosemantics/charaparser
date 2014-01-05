@@ -66,11 +66,11 @@ public class RunConfig extends BasicConfig {
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
-	private String perlDirectory = "perl" ;
+	private String perlDirectory = "/edu/arizona/biosemantics/perl" ;
 	private String workspaceDirectory = "workspace";
-	private String glossaryFile = "/edu/arizona/sirls/semanticMarkup/know/glossaries/fnaglossaryfixed.csv";
-	private String csvCorpusPath = "/edu/arizona/sirls/semanticMarkup/know/corpora/brown.csv";
-	private String wordNetSource = "/edu/arizona/sirls/semanticMarkup/know/wordnet/wn31/dict";
+	private String glossaryFile = "/edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv";
+	private String csvCorpusPath = "/edu/arizona/biosemantics/semanticmarkup/know/corpora/brown.csv";
+	private String wordNetSource = "/edu/arizona/biosemantics/semanticmarkup/know/wordnet/wn31/dict";
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 	
 	// IO
@@ -78,7 +78,7 @@ public class RunConfig extends BasicConfig {
 	private List<InputStream> descriptionReaderBindingsList = createXMLReaderBindingsList();
 	private String descriptionReaderInputDirectory = "input";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
-	private String markupRunValidateSchemaFile = "/edu/arizona/sirls/semanticMarkup/description/io/schemas/iplantOutputTreatment.xsd";
+	private String markupRunValidateSchemaFile = "/edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplantOutputTreatment.xsd";
 	
 	// PROCESSING 
 	private String glossaryType = "plant";
@@ -104,11 +104,10 @@ public class RunConfig extends BasicConfig {
 	private String etcUser = "";
 	private String bioportalAPIKey = "";
 	private String bioportalUserId = "";
-	private InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	//
 	
 	public RunConfig() throws IOException {
-		
+		super();
 	}
 
 	@Override 
@@ -178,15 +177,15 @@ public class RunConfig extends BasicConfig {
 	
 	private List<InputStream> createEvaluationTestReaderBindingsList() throws IOException {
 		List<InputStream> result = new LinkedList<InputStream>();
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/sirls/semanticMarkup/markupElement/description/eval/model/bindings/baseBindings.xml"));
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/sirls/semanticMarkup/markupElement/description/eval/model/bindings/testBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupElement/description/eval/model/bindings/baseBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupElement/description/eval/model/bindings/testBindings.xml"));
 		return result;
 	}
 
 	private List<InputStream> createEvaluationCorrectReaderBindingsList() throws IOException {
 		List<InputStream> result = new LinkedList<InputStream>();
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/sirls/semanticMarkup/markupElement/description/eval/model/bindings/baseBindings.xml"));
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/sirls/semanticMarkup/markupElement/description/eval/model/bindings/correctBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupElement/description/eval/model/bindings/baseBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupElement/description/eval/model/bindings/correctBindings.xml"));
 		return result;
 	}
 
@@ -668,8 +667,8 @@ public class RunConfig extends BasicConfig {
 
 	private List<InputStream> createXMLReaderBindingsList() throws IOException {
 		List<InputStream> result = new LinkedList<InputStream>();
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/sirls/semanticMarkup/markupElement/description/model/bindings/baseBindings.xml"));
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/sirls/semanticMarkup/markupElement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupElement/description/model/bindings/baseBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupElement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));
 		return result;
 	}
 }

@@ -129,18 +129,18 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 public class BasicConfig extends AbstractModule {
 	
 	  private String version = "0.1.4";
-	  private InputStreamCreator inputStreamCreator = new InputStreamCreator();
+	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
 	  @Override 
 	  protected void configure() {	
 		  try {
 			  // ENVIRONMENTAL 
 			  bind(InputStream.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(inputStreamCreator.readStreamFromString(
-					  "/edu/arizona/sirls/semanticMarkup/description/io/schemas/taxons/taxonx1.xsd"));
+					  "/edu/arizona/biosemantics/semanticmarkup/description/io/schemas/taxons/taxonx1.xsd"));
 			  bind(InputStream.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(inputStreamCreator.readStreamFromString(
-					  "/edu/arizona/sirls/semanticMarkup/description/io/schemas/FNAXMLSchemaInput.xsd"));
+					  "/edu/arizona/biosemantics/semanticmarkup/description/io/schemas/FNAXMLSchemaInput.xsd"));
 			  bind(InputStream.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(inputStreamCreator.readStreamFromString(
-					  "/edu/arizona/sirls/semanticMarkup/description/io/schemas/iplant.xsd"));
+					  "/edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplant.xsd"));
 			  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 			  
 			  // IO

@@ -19,7 +19,7 @@ public class PlantConfig extends RunConfig {
 		// ENVIRONMENTAL 
 		//this.setDatabaseTablePrefix("foc_v10_jing");
 		this.setDatabaseGlossaryTable("fnaglossaryfixed");
-		this.setGlossaryFile("/edu/arizona/sirls/semanticMarkup/know/glossaries/fnaglossaryfixed.csv");
+		this.setGlossaryFile("/edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv");
 		
 		// IO
 		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation");
