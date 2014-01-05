@@ -188,6 +188,13 @@
 			<version>1.5.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>edu.arizona.biosemantics.oto</groupId>
+			<artifactId>oto-client</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>pom</type>
+		</dependency>
+
 	</dependencies>
 
 	<build>
