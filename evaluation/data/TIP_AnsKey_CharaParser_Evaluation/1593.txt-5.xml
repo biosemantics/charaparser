@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s7">
+    <structure id="o15" name="ridge" constraint="inner socket">
+      <character name="shape" value="elongate" modifier="variably" />
+    </structure>
+    <structure id="o16" name="line" constraint="hinge" />
+    <relation id="r6" from="o15" name="parallel to" modifier="almost" negation="false" to="o16" />
+    <text>inner socket ridges variably elongate , almost parallel to hinge line ;</text>
+  </statement>
+</description>
+

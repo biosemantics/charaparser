@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s14">
+    <structure id="o32" name="field" constraint="dorsal muscle" />
+    <structure id="o33" name="ridge">
+      <character name="position" value="low" />
+    </structure>
+    <relation id="r16" from="o32" name="bounded by" negation="false" to="o33" />
+    <text>dorsal muscle field bounded by low ridges ;</text>
+  </statement>
+</description>
+

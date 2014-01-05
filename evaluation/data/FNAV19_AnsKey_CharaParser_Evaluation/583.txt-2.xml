@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="583.txt-2">
+        <structure id="o236" name="stem">
+            <character name="count" char_type="range_value" from="1" to="20" upper_restricted="false"/>
+            <character name="shape" value="scapiform"/>
+            <character name="orientation" value="erect"/>
+            <character name="architecture" value="eglandular"/>
+            <character name="pubescence" value="glandular-villous" modifier="lightly"/>
+        </structure>
+        <text>stems 1  20 + ,  scapiform , erect , eglandular or lightly glandular_villous .</text>
+    </statement>
+</description>

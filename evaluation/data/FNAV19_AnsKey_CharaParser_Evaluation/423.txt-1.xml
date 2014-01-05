@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="423.txt-1">
+        <structure id="o36" name="stem">
+            <character name="pubescence" value="glabrous" modifier="proximally usually"/>
+            <character name="pubescence" value="piloso-hirsute" modifier="sometimes"/>
+            <character name="pubescence" value="stellate-pubescent" modifier="sometimes"/>
+            <character name="pubescence" value="glabrous" modifier="distally"/>
+            <character name="pubescence" value="stellate-pubescent" modifier="distally"/>
+        </structure>
+        <text>stems proximally usually glabrous , sometimes piloso_hirsute and stellate_pubescent , distally glabrous or stellate_pubescent .</text>
+    </statement>
+</description>

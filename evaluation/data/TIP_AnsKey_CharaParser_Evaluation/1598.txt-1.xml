@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s10">
+    <structure id="o21" name="ruga" />
+    <structure id="o22" name="valve" />
+    <relation id="r9" from="o21" name="on" negation="false" to="o22" />
+    <structure id="o23" name="ribbing">
+      <character name="presence" value="no" />
+    </structure>
+    <text>rugae on both valves , no ribbing ;</text>
+  </statement>
+</description>
+

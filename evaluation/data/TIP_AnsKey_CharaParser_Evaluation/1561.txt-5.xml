@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s17">
+    <structure id="o38" name="spine">
+      <character name="fragility" value="strong" modifier="ventrally" />
+      <character name="orientation" value="semirecumbent" />
+      <character name="texture" value="fine" modifier="dorsally" />
+    </structure>
+    <structure id="o39" name="valve" />
+    <relation id="r18" from="o38" name="cover" negation="false" to="o39" />
+    <text>spines cover both valves , ventrally strong , semirecumbent , dorsally fine ;</text>
+  </statement>
+</description>
+

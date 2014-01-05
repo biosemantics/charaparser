@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="leaf" constraint="basal">
+            <character name="duration" value="withered" modifier="before flowering"/>
+        </structure>
+        <structure id="o2" name="blade">
+            <character name="length" char_type="range_value" from="5" to="13" from_unit="cm" to_unit="cm"/>
+            <character name="width" char_type="range_value" from="1.5" to="3" from_unit="cm" to_unit="cm"/>
+        </structure>
+        <text>basal withered before flowering , blades 5 – 13 × 1 . 5 – 3 cm .</text>
+    </statement>
+</description>

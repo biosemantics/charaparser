@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="525.txt-3">
+        <structure id="o178" name="leaf">
+            <character value="basal" name="insertion_or_position" />
+            <character value="cauline" name="insertion_or_position" />
+        </structure>
+        <text>leaves basal and cauline ;</text>
+    </statement>
+</description>

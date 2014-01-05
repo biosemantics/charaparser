@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="519.txt-9">
+        <structure id="o165" name="pappus">
+        </structure>
+        <structure id="o166" name="bristle">
+            <character name="count" char_type="range_value" from="40" to="80"/>
+            <character name="habit" value="intergradent"/>
+            <character name="architecture" value="smooth"/>
+            <character name="architecture" value="barbellulate"/>
+            <character name="architecture" char_type="range_value" from="smooth" to="barbellulate"/>
+        </structure>
+        <structure id="o167" name="scale">
+            <character name="shape" value="subulate"/>
+            <character name="shape" value="setiform"/>
+            <character name="shape" char_type="range_value" from="subulate" to="setiform"/>
+            <character name="size" char_type="range_value" from="8" from_unit="mm" to="10" to_unit="mm"/>
+        </structure>
+        <relation id="r1" from="o165" name="consist_of" negation="false" to="o166"/>
+        <relation id="r2" from="o165" name="consist_of" negation="false" to="o167"/>
+        <text>pappi of 40  80 , intergradent , smooth to barbellulate bristles and  subulate to setiform scales 8  10 mm .</text>
+    </statement>
+</description>

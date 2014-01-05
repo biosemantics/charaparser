@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="costa" constraint="median enlarged">
+            <character name="presence" value="absent" />
+            
+        </structure>
+        <structure id="o2" name="commissure">
+            <character name="position" value="anterior"/>
+        </structure>
+        <relation id="r1" from="o1" name="reaching" negation="false" to="o2"/>
+        <text>median enlarged costa absent or reaching anterior commissure ;</text>
+    </statement>
+</description>

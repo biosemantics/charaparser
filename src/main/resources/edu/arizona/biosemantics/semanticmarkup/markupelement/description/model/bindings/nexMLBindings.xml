@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<xml-bindings
+    xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
+    package-name="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model"
+	xml-mapping-metadata-complete="true">
+       
+    <java-types>
+		<java-type name="Description" xml-transient="true" />
+    </java-types>
+</xml-bindings>

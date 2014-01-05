@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1000.txt-4">
+    <structure id="o149" name="valve" constraint="dorsal" />
+    <structure id="o150" name="pseudointerarea">
+      <character name="size" value="small" />
+      <character name="shape" value="undivided"/>
+    </structure>
+    <structure id="o151" name="plate" />
+    <structure id="o152" name="valve"></structure>
+    <relation id="r1" from="o149" name="with" negation="false" to="o150"/>
+    <relation id="r32" from="o150" name="extending into" negation="true" to="o152" />
+    <relation id="r3" from="o150" name="as" negation="true" to="o151"/>
+    <text>dorsal valve with small , undivided pseudointerarea not extending as plate into valve ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="whole_organism">
+            <character name="size" value="small"/>
+            <character name="width" value="10" unit="mm" modifier="around"/>
+            <character name="outline" value="subquadrate"/>
+            <character name="profile" value="concavoconvex" modifier="gently"/>
+        </structure>
+        
+        <text>Small , around 10 mm wide , subquadrate outline , gently concavoconvex profile ;</text>
+    </statement>
+</description>

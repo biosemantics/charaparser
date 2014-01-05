@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="stem">
+            <character name="count" value="several"/>
+            <character name="architecture_or_shape" value="much-branched" modifier="diffusely;distally"/>
+            <character name="pubescence" value="tomentose" modifier="finely"/>
+            <character name="coloration_or_relief" value="resin-gland-dotted" modifier="minutely"/>
+        </structure>
+        <text>stems several , diffusely much_branched distally , finely tomentose ,
+            minutely resin_gland_dotted .</text>
+    </statement>
+</description>

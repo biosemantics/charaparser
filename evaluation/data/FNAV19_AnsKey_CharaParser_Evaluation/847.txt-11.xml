@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s15">
+        <structure id="o23" name="floret" constraint="disc">
+            <character name="count" char_type="range_value" from="2" to="20"/>
+            <character name="atypical_count" char_type="range_value" from="20" to="30" upper_restricted="false" from_inclusive="false"/>
+            <character name="reproduction" value="bisexual"/>
+            <character name="reproduction" value="fertile"/>
+            <character name="architecture" value="staminate" modifier="functionally"/>
+        </structure>
+        <text>disc florets 2 – 20 ( – 30 + ) , bisexual and fertile , or functionally staminate ;</text>
+    </statement>
+</description>

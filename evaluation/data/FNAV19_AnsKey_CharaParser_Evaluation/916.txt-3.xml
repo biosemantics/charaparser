@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s10">
+        <structure id="o12" name="blade" constraint="leaf">
+            <character name="shape" value="lanceolate" modifier="broadly"/>
+            <character name="shape" value="elliptic" modifier="narrowly"/>
+            <character name="shape" char_type="range_value" from="lanceolate" to="elliptic"/><!-- do we include modifiers with values in range_value ???  -->
+            <character name="length" char_type="range_value" from="1.5" from_unit="cm" to="11" to_unit="cm"/>
+            <character name="width" char_type="range_value" from="1" from_unit="cm" to="1.5" to_unit="cm"/>
+            <character name="shape" value="lobed" modifier="2-pinnately"/>
+        </structure>
+        <structure id="o13" name="face">
+            <character name="pubescence" value="white-tomentose"/>
+            <character name="pubescence" value="glabrous"/>
+            <character name="coloration_or_relief" value="yellow-gland-dotted"/> 
+        </structure>
+        <text>blades broadly lanceolate to narrowly elliptic , 1 . 5 – 11 × 1 – 1 . 5 cm , 2 - pinnately lobed , , faces white_tomentose or glabrous , yellow_gland_dotted .</text>
+    </statement>
+</description>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="stem">
+            <character name="pubescence" value="appressed-puberulent" modifier="sparsely"/>
+               
+        </structure>
+        <text>stems sparsely appressed_puberulent .</text>
+    </statement>
+</description>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s13">
+    <structure id="o28" name="septum" >
+      <character name="comparison" value="uneven" modifier="normally"/>
+    </structure>
+    <structure id="o30" name="septum" constraint="median">
+      <character name="height" value="higher" modifier="slightly" constraint="than others" constraintid="o31"  />
+    </structure>
+    <relation id="r12" from="o28" name="with" negation="false" to="o30" />
+    <structure id="o31" name="septum" constraint="other" />
+ 
+    <structure id="o32" name="crest">
+      <character name="shape" value="rounded" />
+      <character name="shape" value="sharp" />
+    </structure>
+    <structure id="o33" name="septum" />
+    <relation id="r14" from="o32" name="part_of" negation="false" to="o33" />
+    <text>septa normally uneven in number with median septum slightly higher than others ,
+      crests of septa rounded or sharp ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="490.txt-13">
+        <structure id="o114" name="pappus">
+            <character name="duration" value="persistent"/>
+         </structure>
+        <structure id="o115" name="tooth">
+            <character name="count" char_type="range_value" from="8" to="15" upper_restricted="false"/>
+            <character name="shape" value="needlelike"/>
+        </structure>
+        <structure id="o116" name="bristle">
+            <character name="count" value="1"/>
+            <character name="atypical_count" char_type="range_value" from="1" to="2" from_inclusive="false"/>
+        </structure>
+        <relation id="r1" from="o114" name="consist_of" negation="false" to="o115"/>
+        <relation id="r2" from="o114" name="consist_of" negation="false" to="o116"/>
+        <text>pappi persistent , of 8  15 + , needlelike teeth plus 1 (  2 ) bristles .</text>
+    </statement>
+</description>

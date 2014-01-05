@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="leaf" constraint="principal cauline">
+          <character name="insertion_or_position" value="in proximal 1/2"  modifier="mostly"/>
+            <character name="architecture" value="winged-petiolate"/>
+            <character name="architecture" value="sessile"/>
+        </structure>
+        
+        <structure id="o2" name="base">
+            <character name="size" value="narrowed"/>
+            <character name="shape" value="auriculate"/>
+        </structure>
+        
+        <structure id="o3" name="vein">
+            <character name="prominence" value="raised" modifier="often prominently" constraint="on abaxial faces" constraintid="o4"/>
+        </structure>
+       
+        <structure id="o4" name="face" constraint="abaxial"></structure>
+         <text>principal cauline mostly in proximal 1 / 2 , winged_petiolate or sessile , bases narrowed ,
+            auriculate ,veins often prominently raised on abaxial faces ;</text>
+    </statement>
+</description>

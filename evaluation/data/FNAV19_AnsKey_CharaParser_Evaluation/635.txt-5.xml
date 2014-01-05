@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="635.txt-5">
+        <structure id="o302" name="head">
+            <character name="arrangement" value="singly"/>
+        </structure>
+        <text>heads borne singly .</text>
+    </statement>
+</description>

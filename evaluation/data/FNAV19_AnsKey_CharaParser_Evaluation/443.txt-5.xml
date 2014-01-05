@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="443.txt-5">
+        <structure id="o52" name="blade" constraint="leaf">
+            <character name="shape" value="lanceolate"/>
+            <character name="shape" value="linear"/>
+            <character name="shape" value="oblanceolate"/>
+            <character name="shape" value="oblong"/>
+            <character name="shape" value="ovate"/>
+        </structure>
+        <structure id="o53" name="margin">
+            <character name="shape" value="entire"/>
+            <character name="shape" value="dentate"/>
+            <character name="shape" value="lobed" modifier="pinnately"/>
+            <character name="shape" char_type="range_value" from="dentate" to="lobed"/>
+        </structure>
+        <text>blades lanceolate , linear , oblanceolate , oblong , or ovate , margins entire or dentate to pinnately lobed .</text>
+    </statement>
+</description>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="911.txt-1">
+    <structure id="o107" name="beak" constraint="ventral" />
+    <structure id="o108" name="emarginature">
+      <character name="size" value="large" />
+      <character name="arrangement" value="semicircular" />
+    </structure>
+    <relation id="r1" from="o107" name="with" negation="false" to="o108"/>
+    <text>ventral beak with large , semicircular emarginature ;</text>
+  </statement>
+</description>
+

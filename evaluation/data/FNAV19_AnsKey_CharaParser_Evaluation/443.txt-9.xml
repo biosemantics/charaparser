@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="443.txt-9">
+        <structure id="o54" name="involucre">
+            <character name="shape" value="campanulate"/>
+            <character name="shape" value="cylindric"/>
+            <character name="shape" char_type="range_value" from="campanulate" to="cylindric"/>
+            <character name="size" char_type="range_value" from="3" from_unit="mm" to="12" to_unit="mm"/>
+        </structure>
+        <text>involucres campanulate to cylindric , 3  12 mm diam . .</text>
+    </statement>
+</description>

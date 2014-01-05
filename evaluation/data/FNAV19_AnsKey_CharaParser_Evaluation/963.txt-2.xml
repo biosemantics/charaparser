@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s19">
+        <structure id="o24" name="leaf">
+            <character name="insertion_or_position" value="cauline" modifier="mostly"/>
+        </structure>
+        <text>leaves mostly cauline ;</text>
+    </statement>
+</description>

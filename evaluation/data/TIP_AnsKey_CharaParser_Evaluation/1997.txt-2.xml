@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s16">
+    <structure id="o40" name="fold" constraint="dorsal">
+      <character name="position" value="low" />
+    </structure>
+    <text>dorsal fold low ;</text>
+  </statement>
+</description>
+

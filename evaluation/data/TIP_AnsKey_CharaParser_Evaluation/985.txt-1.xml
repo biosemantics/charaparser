@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="985.txt-1">
+    <structure id="o135" name="corpus">
+      <character name="outline" value="triangular" constraint="with ears" constraintid="o136" />
+    </structure>
+    <structure id="o136" name="ear" >
+      <character name="size" value="large"/>
+      <character name="shape" value="flattened"/>
+    </structure>
+    <text>corpus outline triangular with large flattened ears ;</text>
+  </statement>
+</description>
+

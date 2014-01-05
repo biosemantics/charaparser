@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="606.txt-7">
+        <structure id="o262" name="floret">
+            <character name="count" char_type="range_value" from="20" to="30"/>
+        </structure>
+        <text>florets 20  30 ;</text>
+    </statement>
+</description>

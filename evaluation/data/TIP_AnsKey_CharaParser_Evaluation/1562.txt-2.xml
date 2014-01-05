@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s18">
+    <structure id="o40" name="interior" constraint="dorsal" />
+    <structure id="o41" name="myophore">
+      <character name="size" value="small" />
+    </structure>
+    <relation id="r19" from="o40" name="with" negation="false" to="o41" />
+    <structure id="o42" name="shaft">
+      <character name="size" value="short" />
+    </structure>
+    <relation id="r20" from="o40" name="with" negation="false" to="o42" />
+    <text>dorsal interior with small myophore and short shaft ;</text>
+  </statement>
+</description>
+

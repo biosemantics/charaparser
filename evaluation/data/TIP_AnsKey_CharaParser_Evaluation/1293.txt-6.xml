@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1293.txt-6">
+    <structure id="o289" name="scar" constraint="ventral" />
+    <structure id="o290" name="muscle" constraint="outside lateral and posterior adductor">
+    </structure>
+    <structure id="o291" name="platform" >
+      <character name="thickness" value="thickened"/>
+      <character name="size" value="elongate"/>
+      <character name="shape" value="semioval"/>
+    </structure>
+    <relation id="r64" from="o289" name="on" negation="false" to="o291" />
+    <relation id="r65" from="o289" name="part_of" negation="false" to="o290" />
+    <text>ventral scars of outside lateral and posterior adductor muscles 
+      on thickened , elongate semioval platforms ;</text>
+  </statement>
+</description>
+

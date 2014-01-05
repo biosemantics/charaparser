@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s2">
+    <structure id="o4" name="interarea" constraint="ventral">
+      <character name="height" value="high" />
+      <character name="shape" value="triangular" />
+      <character name="architecture" value="apsacline" />
+    </structure>
+    <structure id="o5" name="homeodeltidium">
+      <character name="depth" value="deep" />
+      <character name="shape" value="concave" />
+    </structure>
+    <relation id="r3" from="o4" name="with" negation="false" to="o5" />
+    <structure id="o6" name="interarea" />
+    <relation id="r4" from="o5" name="occupying more than half of" negation="false" to="o6" />
+    <text>ventral interarea high , triangular , apsacline , with deep concave homeodeltidium occupying more than half of interarea ;</text>
+  </statement>
+</description>
+

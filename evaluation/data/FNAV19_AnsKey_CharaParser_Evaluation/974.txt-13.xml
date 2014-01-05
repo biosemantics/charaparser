@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s9">
+        <structure id="o13" name="corolla">
+            <character name="coloration" value="yellow" modifier="usually"/>
+            <character name="coloration" value="reddish" modifier="sometimes"/>
+        </structure>
+        <structure id="o14" name="tube">
+            <character name="shape" value="cylindric" modifier="more or less"/>
+        </structure>
+        <structure id="o15" name="throat">
+            <character name="shape" value="campanulate"/>
+        </structure>
+        <structure id="o16" name="lobe">
+            <character name="count" value="5"/>
+            <character name="shape" value="deltate"/>
+        </structure>
+        <text>corollas usually yellow , sometimes reddish , tubes more or less cylindric , throats campanulate , lobes 5 , deltate .</text>
+    </statement>
+</description>

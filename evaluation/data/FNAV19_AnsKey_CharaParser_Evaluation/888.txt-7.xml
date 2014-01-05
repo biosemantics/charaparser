@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s16">
+        <structure id="o20" name="phyllary">
+            <character name="coloration" value="gray"/>
+            <character name="pubescence" value="villous"/>
+        </structure>
+        <text>phyllaries gray , villous .</text>
+    </statement>
+</description>

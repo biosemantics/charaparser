@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="491.txt-4">
+        <structure id="o117" name="leaf" constraint="distal cauline">
+            <character name="size" value="reduced"/>
+        </structure>
+        <text>distal reduced .</text>
+    </statement>
+</description>

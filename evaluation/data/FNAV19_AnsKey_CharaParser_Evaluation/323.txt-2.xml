@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="stem">
+            <character name="count" char_type="range_value" from="1" to="5"/>
+            <character name="orientation" char_type="range_value" from="erect" to="ascending"/>
+            <character name="orientation" value="erect"/>
+            <character name="orientation" value="ascending"/>
+            <character name="coloration" value="purplish"/>
+            <character name="pubescence" char_type="range_value" from="glabrate" to="villous"/>
+            <character name="pubescence" value="glabrate"/>
+            <character name="pubescence" value="villous" modifier="sparsely;proximally"/>
+            <character name="pubescence" value="villous" modifier="more or less densely;distally"/>
+        </structure>
+        <text>stems 1 – 5 , erect to ascending , purplish , , glabrate to sparsely villous proximally ,
+            more or less densely villous distally .</text>
+    </statement>
+</description>

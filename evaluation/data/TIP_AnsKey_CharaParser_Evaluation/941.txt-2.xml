@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="941.txt-2">
+    <structure id="o114" name="process" constraint="cardinal">
+      <character name="presence" value="absent" />
+    </structure>
+    <structure id="o115" name="socket" />
+    <structure id="o116" name="plate" constraint="fulcral" />
+    <relation id="r23" from="o115" name="defined by" modifier="laterally" negation="false" to="o116" />
+    <text>cardinal process absent , sockets defined laterally by fulcral plates ;</text>
+  </statement>
+</description>
+

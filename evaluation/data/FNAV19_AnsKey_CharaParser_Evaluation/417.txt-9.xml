@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="417.txt-9">
+        <structure id="o35" name="involucre">
+            <character name="shape" value="campanulate"/>
+            <character name="size" char_type="range_value" from="7" to="10" unit="mm"/>
+            <character name="atypical_size" char_type="range_value" from="6" from_unit="mm" to="7" to_unit="mm" to_inclusive="false"/>
+        </structure>
+        <text>involucres  campanulate , ( 6 ) 7  10 mm .</text>
+    </statement>
+</description>

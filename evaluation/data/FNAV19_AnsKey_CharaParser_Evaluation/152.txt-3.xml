@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="blade" constraint="leaf">
+            <character name="shape" value="oblanceolate" />
+            <character value="elliptic" modifier="narrowly" name="arrangement_or_shape" />
+            <character name="shape" value="lobed" modifier="pinnately" />
+        </structure>
+        <structure id="o2" name="spine" constraint="longer">
+            
+            <character name="fragility" value="stout" modifier="more or less" />
+            <character name="size" value="1" unit="cm" modifier="usually" />
+            <character name="size" value="shorter" />
+        </structure>
+        <structure id="o3" name="face" constraint="abaxial">
+            <character name="pubescence" char_type="range_value" from="glabrous" to="gray_tomentose" />
+            <character name="pubescence" value="glabrous" />
+            <character name="pubescence" value="gray-tomentose" modifier="thinly" />
+        </structure>
+        <structure id="o4" name="face" constraint="adaxial">
+            <character name="pubescence" value="glabrous" />
+        </structure>
+        <text>blades oblanceolate or narrowly elliptic , pinnately lobed , longer spines more or less stout ,
+            usually 1 cm or shorter , abaxial faces glabrous to thinly gray_tomentose , adaxial glabrous ;
+        </text>
+    </statement>
+</description>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="592.txt-13">
+        <structure id="o247" name="corolla">
+            <character name="coloration" value="pink" modifier="usually"/>
+            <character name="coloration" value="lavender" modifier="usually"/>
+            <character name="coloration" char_type="range_value" from="pink" to="lavender"/>
+            <character name="coloration" value="purple" modifier="usually"/>
+            <character name="coloration" value="white" modifier="rarely"/>
+        </structure>
+        <text>corollas usually pink to lavender or purple , rarely white .</text>
+    </statement>
+</description>

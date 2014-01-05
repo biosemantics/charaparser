@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s12">
+    <structure id="o26" name="myocoelidium" />
+    <structure id="o27" name="septum">
+      <character name="count" value="3" />
+    </structure>
+    <relation id="r10" from="o26" name="with" negation="false" to="o27" />
+    <text>myocoelidium with three septa ;</text>
+  </statement>
+</description>
+

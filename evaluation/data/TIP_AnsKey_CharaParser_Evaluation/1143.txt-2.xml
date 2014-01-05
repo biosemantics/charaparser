@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1143.txt-2">
+    <structure id="o241" name="shell" >
+      <character name="architecture" value="lamellose" modifier="peripherally"/>
+    </structure>
+    <text>may be lamellose peripherally ;</text>
+  </statement>
+</description>
+

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="scar" constraint="diductor"></structure>
+        <structure id="o2" name="scar" constraint="adductor"></structure>
+        <relation id="r1" from="o1" name="enclosing" negation="false" to="o2"/>
+        <text>diductor scars enclosing adductor scars ;</text>
+    </statement>
+</description>

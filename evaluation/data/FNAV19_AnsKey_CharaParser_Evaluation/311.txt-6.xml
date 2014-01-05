@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="phyllary">
+            <character name="shape" value="lanceolate" />
+        </structure>
+        <structure id="o2" name="apex">
+            <character name="shape" value="acute" />
+        </structure>
+        <structure id="o3" name="face">
+            <character value="stipitate-glandular" modifier="strongly" name="architecture_or_exudation_or_pubescence" />
+        </structure>
+        <text>phyllaries lanceolate , apices acute , faces strongly stipitate_glandular .</text>
+    </statement>
+</description>

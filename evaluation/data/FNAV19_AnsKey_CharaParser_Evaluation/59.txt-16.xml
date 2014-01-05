@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="59.txt-16">
+        <structure id="o245" name="pappus">
+            <character name="size" char_type="range_value" from="12" from_unit="mm" to="20" to_unit="mm"/>
+        </structure>
+        <text>pappi 12  20 mm .</text>
+    </statement>
+</description>

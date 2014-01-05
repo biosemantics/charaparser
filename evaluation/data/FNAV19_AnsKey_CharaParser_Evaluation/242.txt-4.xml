@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="phyllary" constraint="inner">
+            <character name="size" char_type="range_value" from="6" to="8" from_unit="mm" to_unit="mm"/>
+            <character name="pubescence" char_type="range_value" from="strigose" to="villous"/>
+            <character name="pubescence" value="strigose" modifier="more or less densely"/>
+            <character name="pubescence" value="villous"/>
+        </structure>
+        <structure id="o2" name="hair">
+            <character  name="atypical_size" char_type="range_value" from="0.3" to="0.5" from_unit="mm" to_unit="mm" to_inclusive="false"/>
+            <character name="size" char_type="range_value" from="0.5" to="1" from_unit="mm" to_unit="mm"/>
+           
+        </structure>
+        <text>inner phyllaries 6 – 8 mm , more or less densely strigose to villous , hairs ( 0 . 3 – ) 0 . 5 – 1 mm .</text>
+    </statement>
+</description>

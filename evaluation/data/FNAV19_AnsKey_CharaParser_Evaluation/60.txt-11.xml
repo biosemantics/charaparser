@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="60.txt-11">
+        <structure id="o252" name="phyllary">
+            <character value="imbricate" name="aestivation_or_arrangement" />
+            <character name="shape" value="lanceolate" />
+            <character name="shape" value="linear" />
+            <character name="shape" char_type="range_value" from="lanceolate" to="linear" />
+        </structure>
+        <structure id="o253" name="series">
+            <character name="count" char_type="range_value" from="6" to="9" />
+        </structure>
+        <relation id="r1" from="o252" name="in" negation="false" to="o253"/>
+        <structure id="o254" name="face" constraint="abaxial" />
+        <structure id="o255" name="ridge"  >
+            <character name="coating_or_texture" value="glutinous"/>
+        </structure>
+        <relation id="r2" from="o254" name="with" negation="false" to="o255"/>
+        <structure id="o256" name="phyllary" constraint="outer">
+            <character name="orientation" value="appressed" modifier="tightly" />
+        </structure>
+        <structure id="o257" name="phyllary" constraint="middle">
+            <character name="orientation" value="appressed" modifier="tightly" />
+        </structure>
+        <structure id="o258" name="body">
+            <character name="pubescence_or_relief" value="scabrous" />
+            <character name="architecture_or_shape" value="spinulose" />
+        </structure>
+        <structure id="o259" name="spine">
+            <character name="orientation" value="erect" />
+            <character name="orientation" value="ascending" modifier="weakly" />
+            <character name="size" char_type="range_value" from="1" from_unit="mm" to="4" to_unit="mm" />
+        </structure>
+        <text>phyllaries in 6  9 series , imbricate , lanceolate to linear , 
+            abaxial faces with glutinous ridge , outer and middle tightly appressed ,
+            bodies scabrous or spinulose , spines erect or weakly ascending , 1  4 mm ;</text>
+    </statement>
+</description>

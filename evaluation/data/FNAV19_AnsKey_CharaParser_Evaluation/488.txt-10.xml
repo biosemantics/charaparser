@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="488.txt-10">
+        <structure id="o109" name="corolla">
+            <character name="coloration" value="white"/>
+            <character name="coloration" value="yellow" modifier="pale"/>
+            <character name="size" char_type="range_value" from="6" from_unit="mm" to="10" to_unit="mm" upper_restricted="false"/>
+        </structure>
+        <text>corollas white or pale yellow , 6  10 + mm ;</text>
+    </statement>
+</description>

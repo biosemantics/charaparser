@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1156.txt-3">
+    <structure id="o243" name="field" constraint="ventral muscle">
+      <character name="size" value="short" />
+      <character name="shape" value="subcircular" constraint="with ridges" constraintid="o244"/>
+    </structure>
+    <structure id="o244" name="ridge">
+      <character name="development" value="developed" modifier="variably" />
+      <character name="function" value="muscle-bounding"/>
+    </structure>
+    <text>ventral muscle field short , subcircular with variably developed muscle - bounding ridges ;</text>
+  </statement>
+</description>
+

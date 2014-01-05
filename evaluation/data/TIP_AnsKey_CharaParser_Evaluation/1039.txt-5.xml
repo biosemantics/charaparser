@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1039.txt-5">
+    <structure id="o181" name="ridge" constraint="socket">
+      <character name="arrangement" value="divergent" />
+      <character name="shape" value="bladelike" />
+    </structure>
+    <text>socket ridges divergent , bladelike ;</text>
+  </statement>
+</description>
+

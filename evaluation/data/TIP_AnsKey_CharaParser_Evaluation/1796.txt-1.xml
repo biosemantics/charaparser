@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s12">
+    <structure id="o18" name="hinge" />
+    <structure id="o19" name="sulcus" />
+    <relation id="r5" from="o18" name="without" negation="false" to="o19" />
+    <structure id="o20" name="fold" />
+    <relation id="r6" from="o18" name="without" negation="false" to="o20" />
+    <text>without sulcus , fold ;</text>
+  </statement>
+</description>
+

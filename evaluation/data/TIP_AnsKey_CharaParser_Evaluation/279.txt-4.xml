@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="row" constraint="spine">
+           <character name="arrangement" value="scattered" modifier="widely" constraint="over valve" constraintid="o3"/>
+        </structure>
+        <structure id="o2" name="hinge"></structure>
+        <relation id="r1" from="o1" name="near" negation="false" to="o2"/>
+        <structure id="o3" name="valve"></structure>
+        <text>spine row near hinge , widely scattered over valve ;</text>
+    </statement>
+</description>

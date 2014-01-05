@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="ridge" constraint="socket">
+            <character name="shape" value="flaring" modifier="laterally" constraint="subparallel to hinge line" constraintid="o2"/>
+        </structure>
+        <structure id="o2" name="line" constraint="hinge"></structure>
+        <text>socket ridges flaring laterally subparallel to hinge line ;</text>
+    </statement>
+</description>

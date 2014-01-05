@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="492.txt-15">
+        <structure id="o122" name="pappus">
+            <character name="orientation" value="falling"/>
+        </structure>
+        <structure id="o123" name="scale">
+            <character name="count" value="5"/>
+            <character name="fusion" value="distinct"/>
+            <character name="coloration" value="white"/>
+            <character name="reflectance" value="lustrous"/>
+            <character name="shape" value="lanceolate"/>
+            <character name="shape" value="aristate"/>
+        </structure>
+        <relation id="r1" from="o122" name="consist_of" negation="false" to="o123"/>
+        <text>pappi falling , of 5 , distinct , white , lustrous , lanceolate , aristate scales .</text>
+    </statement>
+</description>

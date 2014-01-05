@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <text>phyllaries 40 – 60 in 5 – 6 series , sparsely puberulent to tomentulose , glabrescent ,
+            margins ciliolate , the outer lance_deltate to subulate , 1 – 3 mm , inner oblong , 4 – 7 + mm , 
+            tips acuminate to subulate or filiform .</text>
+        <structure id="o1" name="phyllary">
+            <character name="count" char_type="range_value" from="40" to="60"/>
+            <character name="pubescence" char_type="range_value" from="puberulent" to="tomentulose"/>
+            <character name="pubescence" value="puberulent" modifier="sparsely"/>
+            <character name="pubescence" value="tomentulose" />
+            <character name="pubescence" value="glabrescent" />
+        </structure>
+        <structure id="o2" name="series">
+            <character name="count" char_type="range_value" from="5" to="6"/>
+        </structure>
+        <relation id="r1" from="o1" name="in" negation="false" to="o2"/>
+        <structure id="o3" name="margin">
+            <character name="pubescence" value="ciliolate"/>
+        </structure>
+        <structure id="o4" name="phyllary" constraint="outer">
+            <character name="shape" char_type="range_value" from="lance-deltate" to="subulate"/>
+            <character name="shape" value="lance-deltate"/>
+            <character name="shape" value="subulate" />
+            <character name="size" char_type="range_value" from="1" to="3" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <structure id="o5" name="phyllary" constraint="inner">
+            <character name="shape" value="oblong"/>
+            <character name="size" char_type="range_value" from="4" to="7" from_unit="mm" to_unit="mm" upper_restricted="false"/>
+            
+        </structure>
+        <structure id="o6" name="tip">
+            <character name="shape" char_type="range_value" from="acuminate" to="subulate"/>
+            <character name="shape" value="acuminate" />
+            <character name="shape" value="subulate" />
+            <character name="shape" value="filiform" />
+        </structure>
+        <text>phyllaries 40 – 60 in 5 – 6 series , sparsely puberulent to tomentulose , glabrescent ,
+            margins ciliolate , the outer lance_deltate to subulate , 1 – 3 mm , inner oblong , 4 – 7 + mm , 
+            tips acuminate to subulate or filiform .</text>
+    </statement>
+</description>

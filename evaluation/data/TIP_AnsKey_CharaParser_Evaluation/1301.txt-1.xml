@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1301.txt-1">
+    <structure id="o297" name="ornament" />
+    <structure id="o298" name="parvicostella">
+      <character name="shape" value="curved" modifier="gently" />
+      <character name="size" value="unequal"/>
+    </structure>
+    <relation id="r66" from="o297" name="consist_of" negation="false" to="o298" />
+    <text>ornament of gently curved unequal parvicostellae ;</text>
+  </statement>
+</description>
+

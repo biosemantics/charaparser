@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s6">
+    <structure id="o12" name="platform" constraint="notothyrial">
+      <character name="development" value="developed" modifier="variably" />
+    </structure>
+    <structure id="o13" name="ridge" constraint="dorsal median">
+      <character name="size" value="short" />
+      <character name="prominence" value="subdued" />
+      <character name="development" value="culminating" modifier="more rarely" constraint="in septum" constraintid="o14"/>
+    </structure>
+    <relation id="r5" from="o12" name="with" constraint="usually" negation="false" to="o13" />
+    <structure id="o14" name="septum">
+      <character name="height" value="high" />
+      <character name="shape" value="bladelike" />
+    </structure>
+    <text>notothyrial platform variably developed , usually with short subdued dorsal median ridge 
+      more rarely culminating in high , bladelike septum ;</text>
+  </statement>
+</description>
+

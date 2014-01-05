@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<treatment>
+    <number>9b.</number>
+    <TaxonIdentification Status="ACCEPTED">
+        <genus_name>Arenaria</genus_name>
+        <species_name>serpyllifolia</species_name>
+        <species_authority>Linnaeus</species_authority>
+        <variety_name>tenuior</variety_name>
+        <variety_authority>Mertens &amp; W. D. J. Koch</variety_authority>
+        <place_of_publication>
+            <publication_title>in J. C. Röhling et al., Deutschl. Fl. ed.</publication_title>
+            <place_in_publication>3, 3: 266. 1831</place_in_publication>
+        </place_of_publication>
+    </TaxonIdentification>
+    <TaxonIdentification Status="SYNONYM">
+        <genus_name>Arenaria</genus_name>
+        <species_name>leptoclados</species_name>
+        <species_authority>(Reichenbach) Gussone</species_authority>
+    </TaxonIdentification>
+    <TaxonIdentification Status="SYNONYM">
+        <genus_name>Arenaria</genus_name>
+        <species_name>serpyllifolia</species_name>
+        <subspecies_name>leptoclados</subspecies_name>
+        <subspecies_authority>(Reichenbach) Nyman</subspecies_authority>
+    </TaxonIdentification>
+    <TaxonIdentification Status="SYNONYM">
+        <genus_name>Arenaria</genus_name>
+        <species_name>serpyllifolia</species_name>
+        <variety_name>leptoclados</variety_name>
+        <variety_authority>Reichenbach</variety_authority>
+    </TaxonIdentification>
+    <description>Sepals 2–3 mm, not enlarging in fruit. Capsules cylindric to cylindric-ovoid, not
+        significantly broader at base (walls nearly straight). Seeds ca. 0.4 mm. 2n = 20
+        (Europe).</description>
+    <phenology>spring</phenology>
+    <phenology>mar</phenology>
+    <phenology>apr</phenology>
+    <phenology>may</phenology>
+    <phenology>summer</phenology>
+    <phenology>jun</phenology>
+    <phenology>jul</phenology>
+    <phenology>aug</phenology>
+    <habitat>roadsides</habitat>
+    <habitat>open, sandy or rocky, disturbed sites</habitat>
+    <elevation>0–400 m;</elevation>
+    <introduced>introduced;</introduced>
+    <us_distribution>Ark.</us_distribution>
+    <us_distribution>D.C.</us_distribution>
+    <us_distribution>Fla.</us_distribution>
+    <us_distribution>Ga.</us_distribution>
+    <us_distribution>Ky.</us_distribution>
+    <us_distribution>La.</us_distribution>
+    <us_distribution>Miss.</us_distribution>
+    <us_distribution>Mo.</us_distribution>
+    <us_distribution>N.C.</us_distribution>
+    <us_distribution>Pa.</us_distribution>
+    <us_distribution>S.C.</us_distribution>
+    <us_distribution>Tenn.</us_distribution>
+    <us_distribution>Va.</us_distribution>
+    <global_distribution>Europe</global_distribution>
+    <global_distribution>w Asia</global_distribution>
+    <global_distribution>n Africa</global_distribution>
+    <global_distribution>introduced in Australia.</global_distribution>
+    <discussion>Variety tenuior is to be expected elsewhere.</discussion>
+</treatment>

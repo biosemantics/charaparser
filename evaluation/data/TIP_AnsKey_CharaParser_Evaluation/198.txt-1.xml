@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="tooth">
+            <character name="dehiscence" value="transverse"/>
+            <character name="tooth_type" value="deltidiodont"/>
+        </structure>
+        <structure id="o2" name="plate" constraint="dental">
+            <character name="arrangement" value="disposed" modifier="variably"/>
+        </structure>
+        <relation id="r1" from="o1" name="supported by" negation="false" to="o2"/>
+        <text>teeth transverse to deltidiodont , supported by variably disposed dental plates ;</text>
+    </statement>
+</description>

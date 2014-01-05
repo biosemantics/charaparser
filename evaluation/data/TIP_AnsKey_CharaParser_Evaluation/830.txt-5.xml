@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="830.txt-5">
+    <structure id="o79" name="scar" constraint="anterior">
+      <character name="size" value="smaller" />
+      <character name="arrangement" value="paired" />
+    </structure>
+    <structure id="o80" name="ridge" constraint="median" >
+      <character name="size" value="broad"/>
+    </structure>
+    <structure id="o81" name="margin" constraint="anterior" />
+    <relation id="r16" from="o80" name="extending toward" negation="false" to="o81" modifier="well"/>
+    <text>anterior scars smaller , paired , broad median ridge 
+      extending well toward anterior margin ;</text>
+  </statement>
+</description>
+

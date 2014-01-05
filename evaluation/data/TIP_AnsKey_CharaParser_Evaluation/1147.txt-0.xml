@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1147.txt-0">
+    <structure id="o242" name="whole_organism" >
+      <character name="size" char_type="range_value" from="medium" to="large"/>
+      <character name="size" value="medium"/>
+      <character name="size" value="large"/>
+      <character name="profile" value="transverse" modifier="weakly convex"/>
+    </structure>
+    <text>Medium to large with weakly convex transverse profile ;</text>
+  </statement>
+</description>
+

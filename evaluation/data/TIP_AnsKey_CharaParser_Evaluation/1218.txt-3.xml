@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1218.txt-3">
+    <structure id="o265" name="denticle">
+      <character name="arrangement" value="paired"/>
+    </structure>
+    <structure id="o266" name="structure" constraint="supporting" />
+    <relation id="r1" from="o265" name="lacking" negation="false" to="o266" modifier="if present"/>
+    <text>paired denticles , if present , lacking supporting structures ;</text>
+  </statement>
+</description>
+

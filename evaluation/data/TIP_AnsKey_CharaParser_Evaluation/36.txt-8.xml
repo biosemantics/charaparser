@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="platform"></structure>
+        <structure id="o2" name="pseudopuncta">
+            <character name="shape" value="elongate"/>
+        </structure>
+        <relation id="r1" from="o1" name="indicated by" negation="false" to="o2" modifier="sometimes"/>
+        <text>platform sometimes indicated merely by elongate pseudopunctae ;</text>
+    </statement>
+</description>

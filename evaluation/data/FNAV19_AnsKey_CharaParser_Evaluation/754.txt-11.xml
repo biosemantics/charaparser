@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s10">
+        <structure id="o13" name="wing" constraint="pistillate palea">
+            <character name="orientation" value="erect" modifier="more or less"/>
+            <character name="orientation" value="inflexed"/>
+        </structure>
+        <text>wings more or less erect or inflexed .</text>
+    </statement>
+</description>

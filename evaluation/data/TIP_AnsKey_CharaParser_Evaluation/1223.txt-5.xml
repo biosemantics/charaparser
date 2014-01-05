@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="1223.txt-5">
+    <structure id="o269" name="lateralium" constraint="vascula">
+      <character name="position" value="submarginal" />
+      <character name="course" value="arcuate" />
+    </structure>
+    <structure id="o270" name="valve" />
+    <relation id="r59" from="o269" name="part_of" negation="false" to="o270" />
+    <text>vascula lateralia of both valves submarginal , arcuate ;</text>
+  </statement>
+</description>
+

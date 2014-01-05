@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s3">
+    <structure id="o4" name="hinge" >
+      <character name="size" value="narrower than maximum width"/>
+    </structure>
+    <text>hinge narrower than maximum width ;</text>
+  </statement>
+</description>
+

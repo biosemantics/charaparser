@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="base" constraint="outer and mid phyllary">
+            <character name="orientation" value="appressed"/>
+        </structure>
+        <structure id="o3" name="apex">
+            <character name="orientation" char_type="range_value" from="radiating" to="ascending"/>
+            <character name="orientation" value="radiating" modifier="stiffly"/>
+            <character name="orientation" value="ascending"/>
+            <character name="size" value="long"/>
+            <character name="size" value="narrow" modifier="very"/>
+            <character name="shape" value="entire"/>
+        </structure>
+        <structure id="o4" name="spine">
+            <character name="size" value="slender"/>
+            <character name="size" char_type="range_value" from="3" to="10" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <text>outer and mid bases appressed , apices stiffly radiating to ascending ,
+            long , very narrow , entire , spines slender , 3 – 10 mm ;</text>
+    </statement>
+</description>

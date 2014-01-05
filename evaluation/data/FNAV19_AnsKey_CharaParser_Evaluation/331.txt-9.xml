@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="floret">
+            <character name="count" char_type="range_value" from="30" to="50"/>
+            <character name="atypical_count" char_type="range_value" from="50" to="60" from_inclusive="false"/>
+        </structure>
+        <text>florets 30 – 50 ( – 60 ) ;</text>
+    </statement>
+</description>

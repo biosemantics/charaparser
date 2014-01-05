@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="calyculus">
+        </structure>
+        <structure id="o2" name="bractlet">
+            <character name="count" char_type="range_value" from="8" to="14"/>
+            <character name="orientation" char_type="range_value" from="appressed" to="spreading"/>
+            <character name="orientation" value="appressed"/>
+            <character name="orientation" value="spreading"/>
+            <character name="orientation" value="reflexed" modifier="later"/>
+            <character name="shape_or_vernation" value="revolute" />
+            <character name="coloration" value="purplish-tinged" modifier="sometimes"/>
+            <character name="shape" value="ovate" modifier="broadly"/>
+            <character name="shape"  char_type="range_value" from="ovate" to="lance-ovate"/>
+            <character name="shape" value="ovate" />
+            <character name="shape" value="lance-ovate" />
+            <character name="length" char_type="range_value" from="3" to="5" from_unit="mm" to_unit="mm"/>
+            <character name="width" char_type="range_value" from="1.8" to="2.5" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <structure id="o3" name="series">
+            <character name="count" char_type="range_value" from="2" to="3"/>
+        </structure>
+        <relation id="r1" from="o1" name="consist_of" negation="false" to="o2"/>
+        <relation id="r2" from="o2" name="in" negation="false" to="o3"/>
+        
+        <structure id="o4" name="margin">
+            <character name="texture" value="scarious" modifier="not;barely"/>
+        </structure>
+        <structure id="o5" name="apex">
+            <character name="shape" value="acuminate" modifier="usually"/>
+            <character name="shape" value="acute" modifier="sometimes"/>
+            <character name="architecture" value="hornless"/>
+        </structure>
+        <structure id="o6" name="tip">
+            <character name="relief_or_shape" value="scarious-erose" modifier="slightly"/>
+        </structure>
+        <text>calyculi of 8 – 14 , appressed to spreading , later reflexed to revolute , 
+            sometimes purplish_tinged , broadly ovate or ovate to lance_ovate bractlets in 2 – 3 series ,
+            3 – 5 × 1 . 8 – 2 . 5 mm , margins not or barely scarious , apices usually acuminate ,
+            sometimes acute , hornless , tips slightly scarious_erose .</text>
+    </statement>
+</description>

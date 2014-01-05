@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="520.txt-1">
+        <structure id="o169" name="stem"></structure>
+        <structure id="o170" name="bract">
+            <character name="count" char_type="range_value" from="1" to="2"/>
+            <character name="architecture" value="leafy"/>
+        </structure>
+        <structure id="o171" name="base"></structure>
+        <relation id="r22" from="o169" name="with" negation="false" to="o170" modifier="often"/>
+        <relation id="r33" from="o170" name="near" negation="false" to="o171"/>
+        <text>stems often with 1  2 , leafy bracts near bases .</text>
+    </statement>
+</description>

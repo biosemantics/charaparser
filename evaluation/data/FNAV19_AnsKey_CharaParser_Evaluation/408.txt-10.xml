@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="408.txt-10">
+        <structure id="o23" name="phyllary">
+            <character name="count" char_type="range_value" from="12" to="21" upper_restricted="false" />
+        </structure>
+        <structure id="o24" name="apex">
+            <character name="shape" char_type="range_value" from="rounded" to="acute" />
+            <character name="shape" value="rounded"/>
+            <character name="shape" value="acute"/>
+        </structure>
+        <structure id="o25" name="face" constraint="abaxial">
+            <character name="pubescence" value="piloso-hirsute" />
+            <character name="pubescence" value="stellate-pubescent" />
+            <character value="stipitate-glandular" name="architecture_or_exudation_or_pubescence" />
+        </structure>
+        <text>phyllaries 12  21 + , apices rounded to acute , abaxial faces piloso_hirsute , stellate_pubescent , and stipitate_glandular .</text>
+    </statement>
+</description>

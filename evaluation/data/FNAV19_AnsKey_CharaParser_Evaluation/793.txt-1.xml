@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s4">
+        <structure id="o5" name="stem">
+            <character name="pubescence" value="pilose" modifier="more or less" />
+            <character value="stipitate-glandular" name="architecture_or_exudation_or_pubescence" />
+        </structure>
+        <text>stems more or less pilose and stipitate_glandular .</text>
+    </statement>
+</description>

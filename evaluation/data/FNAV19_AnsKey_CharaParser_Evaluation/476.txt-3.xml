@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="476.txt-3">
+        <structure id="o97" name="leaf" constraint="proximal cauline">
+            <character name="shape" value="obovate"/>
+            <character name="shape" value="spatulate" modifier="narrowly"/>
+            <character name="shape" char_type="range_value" from="obovate" to="spatulate"/>
+            <character name="shape" value="lobed" modifier="sometimes pinnately"/>
+            <character name="texture" value="fleshy" modifier="sometimes"/>
+        </structure>
+        <structure id="o98" name="margin">
+            <character name="shape" value="obtuse-lobed" modifier="usually"/>
+            <character name="shape" value="entire" modifier="sometimes"/>
+        </structure>
+        <text>proximal obovate to narrowly spatulate , sometimes pinnately lobed , sometimes  fleshy , margins usually obtuse_lobed , sometimes entire ;</text>
+    </statement>
+</description>

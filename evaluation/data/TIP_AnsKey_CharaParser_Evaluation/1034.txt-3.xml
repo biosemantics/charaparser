@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description>
+  <statement id="1034.txt-3">
+    <structure id="o177" name="process" constraint="cardinal">
+      <character name="presence" value="absent" />
+    </structure>
+    <structure id="o178" name="brachiophore">
+      <character name="arrangement" value="divergent"/>
+      <character name="size" value="short" />
+      <character name="shape" value="bladelike" />
+    </structure>
+    <text>cardinal process absent , divergent brachiophores short , bladelike ;</text>
+  </statement>
+</description>
+

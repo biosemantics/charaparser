@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="663.txt-9">
+        <structure id="o334" name="phyllary">
+            <character name="coloration" value="brown" modifier="distally"/>
+            <character name="coloration" value="cream" modifier="distally"/>
+            <character name="coloration" value="gray" modifier="distally"/>
+            <character name="coloration" value="green" modifier="distally"/>
+            <character name="coloration" value="pink" modifier="distally"/>
+            <character name="coloration" value="red" modifier="distally"/>
+            <character name="coloration" value="white" modifier="distally"/>
+            <character name="coloration" value="yellow" modifier="distally"/>
+        </structure>
+        <text>phyllaries distally brown , cream , gray , green , pink , red , white , or yellow .</text>
+    </statement>
+</description>

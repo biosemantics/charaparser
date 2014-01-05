@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="770.txt-5">
+    <structure id="o63" name="platform" constraint="notothyrial" />
+    <structure id="o64" name="process" constraint="cardinal">
+      <character name="development" value="developed" modifier="variably" />
+    </structure>
+    <structure id="o65" name="ridge" constraint="median" />
+    <structure id="o66" name="scar" constraint="dorsal adductor">
+      <character name="architecture" value="quadripartite" />
+      <character name="relief" value="impressed" modifier="rarely" />
+    </structure>
+    <relation id="r14" from="o63" name="supporting" negation="false" to="o64" />
+    <relation id="r15" from="o63" name="extending forward as" modifier="normally" negation="false" to="o65" />
+    <text>notothyrial platform supporting variably developed cardinal process , 
+      normally extending forward as median ridge , quadripartite dorsal adductor scars rarely impressed ;</text>
+  </statement>
+</description>
+

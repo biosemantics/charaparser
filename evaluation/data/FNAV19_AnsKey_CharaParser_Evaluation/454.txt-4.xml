@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="454.txt-4">
+        <structure id="o66" name="leaf" constraint="basal">
+            <character name="architecture" value="sessile"/>
+            <character name="architecture" value="petiolate"/>
+        </structure>
+        <structure id="o67" name="leaf" constraint="distal">
+            <character name="architecture" value="sessile"/>
+        </structure>
+        <text>basal sessile or petiolate , distal sessile ;</text>
+    </statement>
+</description>

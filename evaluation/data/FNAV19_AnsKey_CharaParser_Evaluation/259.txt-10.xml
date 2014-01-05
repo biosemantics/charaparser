@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="pappus">
+            <character name="coloration" char_type="range_value" from="whitish" to="stramineous"/>
+            <character name="coloration" value="whitish" modifier="usually"/>
+            <character name="coloration" value="stramineous" modifier="usually"/>
+        </structure>
+        <structure id="o2" name="scale" constraint="outer">
+            <character name="count" char_type="range_value" from="20" upper_restricted="false"/>
+            <character name="size" char_type="range_value" from="0.3" to="1" from_unit="mm" to_unit="mm" upper_restricted="false"/>
+         </structure>
+        <structure id="o3" name="bristle" constraint="outer">
+            <character name="count" char_type="range_value" from="20" upper_restricted="false"/>
+            <character name="size" char_type="range_value" from="0.3" to="1" from_unit="mm" to_unit="mm" upper_restricted="false"/>
+        </structure>
+        <structure id="o4" name="scale" constraint="inner">
+            <character name="shape" value="subulate"/>
+            <character name="count" char_type="range_value" from="20" upper_restricted="false"/>
+            <character name="size" char_type="range_value" from="6" to="7" from_unit="mm" to_unit="mm" upper_restricted="false"/>
+        </structure>
+        <structure id="o5" name="bristle" constraint="inner">
+            <character name="shape" value="subulate"/>
+            <character name="count" char_type="range_value" from="20" upper_restricted="false"/>
+            <character name="size" char_type="range_value" from="6" to="7" from_unit="mm" to_unit="mm" upper_restricted="false"/>
+        </structure>
+        <relation id="r1" from="o2" name="contrasting with" negation="false" to="o4"/>
+        <relation id="r2" from="o3" name="contrasting with" negation="false" to="o5"/>
+        <relation id="r3" from="o2" name="intergrading with" negation="false" to="o4"/>
+        <relation id="r4" from="o3" name="intergrading with" negation="false" to="o5"/>
+        
+        <text>pappi usually whitish to stramineous , outer scales or bristles 20 + , 0 . 3 – 1 + mm , 
+            contrasting or intergrading with 20 + , 6 – 7 + mm inner subulate scales or bristles .</text>
+    </statement>
+</description>

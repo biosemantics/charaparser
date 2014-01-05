@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s2">
+    <structure id="o2" name="plate" constraint="dental">
+      <character name="development" value="developed" modifier="poorly" />
+      <character name="presence" value="absent" modifier="often" />
+    </structure>
+    <text>dental plates poorly developed , often absent ;</text>
+  </statement>
+</description>
+

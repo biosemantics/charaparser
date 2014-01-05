@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="764.txt-3">
+    <structure id="o60" name="myophragm" constraint="ventral">
+      <character name="size" value="reduced" />
+    </structure>
+    <text>ventral myophragm reduced ;</text>
+  </statement>
+</description>
+

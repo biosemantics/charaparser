@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="833.txt-5">
+    <structure id="o82" name="process" constraint="cardinal">
+      <character name="fragility" value="strong" />
+      <character name="position" value="low" />
+      <character name="size" value="wide" />
+    </structure>
+    <text>strong , low , wide cardinal process ;</text>
+  </statement>
+</description>
+

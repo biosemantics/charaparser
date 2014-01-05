@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="52.txt-9">
+        <structure id="o168" name="peduncle">
+            <character name="size" char_type="range_value" from="1" from_unit="cm" to="6" to_unit="cm"/>
+        </structure>
+        <text>peduncles 1  6 cm .</text>
+    </statement>
+</description>

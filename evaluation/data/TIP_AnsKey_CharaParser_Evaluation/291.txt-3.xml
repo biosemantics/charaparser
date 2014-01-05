@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="scar" constraint="dorsal adductor">
+            <character name="architecture" value="quadripartite"/>
+        </structure>
+       <structure id="o2" name="pair" constraint="posterior">
+           <character name="size" value="larger" constraint="than anterior" constraintid="o3"/>
+       </structure>
+        <structure id="o3" name="pair" constraint="anterior"></structure>
+        <relation id="r1" from="o2" name="part_of" negation="false" to="o1"/>
+        <relation id="r2" from="o3" name="part_of" negation="false" to="o1"/>
+        <text>posterior pair of quadripartite dorsal adductor scars larger than anterior ;</text>
+    </statement>
+</description>

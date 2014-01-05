@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s7">
+    <structure id="o15" name="platform" constraint="notothyrial">
+      <character name="development" value="developed" modifier="weakly" />
+      <character name="shape" value="platelike" />
+    </structure>
+    <structure id="o16" name="process" constraint="cardinal" />
+    <structure id="o17" name="ridge" constraint="median">
+      <character name="size" value="short"/>
+    </structure>
+    <structure id="o18" name="brachiophore">
+      <character name="arrangement" value="divergent" />
+      <character name="size" value="short" />
+      <character name="shape" value="bladelike" />
+    </structure>
+    <relation id="r1" from="o16" name="with" negation="false" to="o17"/>
+    <relation id="r2" from="o16" name="with" negation="false" to="o18"/>
+    <text>weakly developed , platelike , notothyrial platform and cardinal process with short median ridge , divergent , short , bladelike brachiophores ;</text>
+  </statement>
+</description>
+

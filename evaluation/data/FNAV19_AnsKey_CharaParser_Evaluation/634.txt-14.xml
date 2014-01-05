@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="634.txt-14">
+        <structure id="o301" name="cypsela">
+            <character name="size" char_type="range_value" from="2" from_unit="mm" to="3.5" to_unit="mm"/>
+            <character name="pubescence" value="pubescent"/>
+        </structure>
+        <text>cypselae 2  3 . 5 mm , pubescent ;</text>
+    </statement>
+</description>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+     <statement id="s4">
+    <structure id="o7" name="palea" constraint="pistillate">
+        <character name="manifestation" value="visible" modifier="individually" constraint="through indument" constraintid="o8"/>
+    </structure>
+    <structure id="o8" name="indument">
+    </structure>
+    <structure id="o9" name="palea" constraint="longest">
+        <character name="size" char_type="range_value" from="1.5" from_unit="mm" to="2.7" to_unit="mm" modifier="mostly"/>
+    </structure>
+    <text>pistillate paleae individually visible through indument , longest mostly 1 . 5 – 2 . 7 mm .</text>
+    </statement>
+</description>

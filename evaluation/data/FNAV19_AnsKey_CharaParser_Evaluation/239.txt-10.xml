@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="s1">
+        <structure id="o1" name="cypsela">
+            <character name="shape" value="clavate" modifier="more or less" />
+            <character name="shape" value="flattened" modifier="sometimes more or less" />
+            
+            <character value="10-nerved-or-ribbed" name="architecture_or_shape" />
+            
+            <character name="pubescence" char_type="range_value" from="strigillose" to="hirsutulous" />
+            <character name="pubescence" value="strigillose" />
+            <character name="pubescence" value="hirsutulous" />
+        </structure>
+        <text>cypselae more or less clavate , sometimes more or less flattened , 10 - nerved or_ribbed , strigillose to hirsutulous ;</text>
+    </statement>
+</description>

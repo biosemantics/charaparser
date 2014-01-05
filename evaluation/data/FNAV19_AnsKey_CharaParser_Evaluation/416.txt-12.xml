@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+    <statement id="416.txt-12">
+        <structure id="o34" name="corolla">
+            <character name="coloration" value="yellow"/>
+            <character name="size" char_type="range_value" from="12" to="15" from_unit="mm" to_unit="mm"/>
+        </structure>
+        <text>corollas yellow , 12  15 mm .</text>
+    </statement>
+</description>

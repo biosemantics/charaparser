@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:noNamespaceSchemaLocation="../../../../../workspace/characterStatements/characterAnnotationSchema.xsd">
+  <statement id="s4">
+    <structure id="o9" name="whole_organism">
+      <character name="size" value="smaller medium"  />
+    </structure>
+    <relation id="o10" from="o9" name="with" negation="false" to="o11" />
+    <structure id="o11" name="corpus">
+      <character name="outline" value="subcircular" />
+    </structure>
+    <structure id="o12" name="trail">
+      <character name="size" value="short" />
+    </structure>
+    <text>Smaller medium size with subcircular corpus outline , short trails ;</text>
+  </statement>
+</description>
+
