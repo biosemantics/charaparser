@@ -36,4 +36,16 @@ Version 0.1.4 (November, 13th 2013)
 * added unique ID generation and file rearrangement for iPlant wrapper script
 * added secret handling for oto light
 * added bioportal parameters for ontology submission
+
+Version 0.1.5 (January, 6th 2013)
+------------
+* refactored package structure, markup workflow (separated concerns related to markup of different elements), IO and model (merged development branch)
+* added MOXy reader/writer using Binder to retain XML Infoset
+* created NeXML model and IO
+* added and fitted Dongyes unsupervised learning
+* organized configuration;
+* various bug fixes
+* mavenized
+
+
  
