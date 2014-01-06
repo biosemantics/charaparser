@@ -58,37 +58,37 @@ public aspect StringifyInjectionAspect {
 	declare parents : semanticmarkup.markupelement.description.eval.model..* implements IPrintable;
 	declare parents : semanticmarkup.markupelement.habitat.model..* implements IPrintable;
 	
-	declare parents : semanticMarkup.* implements IPrintable;
+	declare parents : semanticmarkup.* implements IPrintable;
 	
-	declare parents : semanticMarkup.model..* implements IPrintable;
+	declare parents : semanticmarkup.model..* implements IPrintable;
 	
-	declare parents : semanticMarkup.eval..* implements IPrintable;
-	declare parents : semanticMarkup.config.* implements IPrintable;
+	declare parents : semanticmarkup.eval..* implements IPrintable;
+	declare parents : semanticmarkup.config.* implements IPrintable;
 	
 	// JAXB container classes may not implement an interface, JAXB can't handle interface, will throw exception
-	declare parents : semanticMarkup.io..* implements IPrintable;
-	declare parents : semanticMarkup.io.output.* implements IPrintable;
-	declare parents : semanticMarkup.io.output.lib.* implements IPrintable;
-	declare parents : semanticMarkup.io.output.lib.serial.* implements IPrintable;
-	//declare parents : semanticMarkup.io.input.* implements IPrintable;
-	//declare parents : semanticMarkup.io.output..* implements IPrintable; 	
-	//declare parents : semanticMarkup.io.output.lib.* implements IPrintable; 	
-	//declare parents : semanticMarkup.io.output.lib.xml.* implements IPrintable; 	
+	declare parents : semanticmarkup.io..* implements IPrintable;
+	declare parents : semanticmarkup.io.output.* implements IPrintable;
+	declare parents : semanticmarkup.io.output.lib.* implements IPrintable;
+	declare parents : semanticmarkup.io.output.lib.serial.* implements IPrintable;
+	//declare parents : semanticmarkup.io.input.* implements IPrintable;
+	//declare parents : semanticmarkup.io.output..* implements IPrintable; 	
+	//declare parents : semanticmarkup.io.output.lib.* implements IPrintable; 	
+	//declare parents : semanticmarkup.io.output.lib.xml.* implements IPrintable; 	
 	
-	declare parents : semanticMarkup.know..* implements IPrintable;
+	declare parents : semanticmarkup.know..* implements IPrintable;
 	
 	//chunkcollector and abstractparsetree, token, markedToken, posedToken printing is better done differently
-	//declare parents : semanticMarkup.ling..* implements IPrintable;	
-	//declare parents : semanticMarkup.ling.* implements IPrintable;
-	declare parents : semanticMarkup.ling.extract..* implements IPrintable;
+	//declare parents : semanticmarkup.ling..* implements IPrintable;	
+	//declare parents : semanticmarkup.ling.* implements IPrintable;
+	declare parents : semanticmarkup.ling.extract..* implements IPrintable;
 	declare parents : semanticmarkup.markupelement.description.ling.learn..* implements IPrintable;
-	//declare parents : semanticMarkup.ling.mark..* implements IPrintable;
-	declare parents : semanticMarkup.ling.normalize..* implements IPrintable;
-	//declare parents : semanticMarkup.ling.pos..* implements IPrintable;
-	declare parents : semanticMarkup.ling.transform..* implements IPrintable;
+	//declare parents : semanticmarkup.ling.mark..* implements IPrintable;
+	declare parents : semanticmarkup.ling.normalize..* implements IPrintable;
+	//declare parents : semanticmarkup.ling.pos..* implements IPrintable;
+	declare parents : semanticmarkup.ling.transform..* implements IPrintable;
 	
-	declare parents : semanticMarkup.markup..* implements IPrintable;
+	declare parents : semanticmarkup.markup..* implements IPrintable;
 	
-	declare parents : semanticMarkup.run..* implements IPrintable;*/
+	declare parents : semanticmarkup.run..* implements IPrintable;*/
 	
 }

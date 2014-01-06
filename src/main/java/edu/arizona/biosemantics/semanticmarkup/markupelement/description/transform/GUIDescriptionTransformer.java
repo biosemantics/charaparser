@@ -29,7 +29,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.D
 
 /**
  * Transforms the treatments by semantically marking up the description treatment element of a treatment
- * Uses MainForm from previous Charaparser (all classes in semanticMarkup.gui are of the previous version and 
+ * Uses MainForm from previous Charaparser (all classes in semanticmarkup.gui are of the previous version and 
  * coupled with MainForm but nothing outside of the package) and hence requires e.g. certain database tables 
  * to process the results of the perl learning part.
  * @author rodenhausen

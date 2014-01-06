@@ -8,7 +8,7 @@ import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.Word;
 
 /**
- * WordStanfordParserTokenTransformer transforms semanticMarkup.ling.Token types to the stanford parser equivalent tokens: HasWord
+ * WordStanfordParserTokenTransformer transforms semanticmarkup.ling.Token types to the stanford parser equivalent tokens: HasWord
  * @author rodenhausen
  */
 public class WordStanfordParserTokenTransformer implements IStanfordParserTokenTransformer {
