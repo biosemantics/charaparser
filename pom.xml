@@ -10,6 +10,23 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
 	</properties>
+	
+	<profiles>
+	    <profile>
+	      <id>learn</id>
+	      <properties>
+	     	<mainName>learn</mainName>
+	        <mainClass>edu.arizona.biosemantics.semanticmarkup.LearnMain</mainClass>
+	      </properties>
+	    </profile>
+	    <profile>
+	      <id>markup</id>
+	      <properties>
+	      	<mainName>markup</mainName>
+	        <mainClass>edu.arizona.biosemantics.semanticmarkup.MarkupMain</mainClass>
+	      </properties>
+	    </profile>
+	</profiles>
 
 	<repositories>
    		<repository>
@@ -249,12 +266,13 @@
 		      <configuration>
 		        <archive>
 		          <manifest>
-		            <mainClass>edu.arizona.biosemantics.semanticmarkup.LearnMain</mainClass>
+		            <mainClass>${mainClass}</mainClass>
 		          </manifest>
 		        </archive>
 		        <descriptorRefs>
 		          <descriptorRef>jar-with-dependencies</descriptorRef>
 		        </descriptorRefs>
+		        <finalName>${project.artifactId}-${mainName}-${project.version}</finalName>
 		      </configuration>
 		    </plugin>
 		</plugins>
