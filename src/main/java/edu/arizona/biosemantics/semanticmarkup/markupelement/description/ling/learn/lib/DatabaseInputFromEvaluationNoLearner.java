@@ -29,10 +29,10 @@ public class DatabaseInputFromEvaluationNoLearner extends PerlTerminologyLearner
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer, 
 			@Named("ParentTagProvider") ParentTagProvider parentTagProvider, 
-			@Named("SrcDirectory") String srcDirectory) throws Exception {
+			@Named("PerlDirectory") String perlDirectory) throws Exception {
 		super(temporaryPath, markupMode, databaseHost, databasePort, databaseName,
 				databasePrefix, databaseUser, databasePassword,
-				stopWords, selectedSources, glossary, tokenizer, parentTagProvider, srcDirectory);
+				stopWords, selectedSources, glossary, tokenizer, parentTagProvider, perlDirectory);
 	}
 	
 	@Override
