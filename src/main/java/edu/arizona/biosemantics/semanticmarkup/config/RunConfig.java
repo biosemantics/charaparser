@@ -66,7 +66,7 @@ public class RunConfig extends BasicConfig {
 	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
-	private String perlDirectory = "target/classes/edu/arizona/biosemantics/semanticmarkup/markupelement/description/ling/learn/lib/perl" ;
+	private String perlDirectory = "src/main/perl/edu/arizona/biosemantics/semanticmarkup/markupelement/description/ling/learn/lib/perl" ;
 	private String workspaceDirectory = "workspace";
 	private String glossaryFile = "edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv";
 	private String csvCorpusPath = "edu/arizona/biosemantics/semanticmarkup/know/corpora/brown.csv";
