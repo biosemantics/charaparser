@@ -12,7 +12,7 @@
 
 	<repositories>
    		<repository>
-			<id>local</id>
+			<id>my</id>
 			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
@@ -48,12 +48,6 @@
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.0</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -151,7 +145,7 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.7.4</version>
+			<version>1.7.3</version>
 		</dependency>
 
 		<dependency> 
@@ -214,6 +208,8 @@
 				<artifactId>aspectj-maven-plugin</artifactId>
 				<version>1.5</version>
 				<configuration>
+					<proceedOnError>true</proceedOnError>
+					<failOnError>false</failOnError>
 					<complianceLevel>1.7</complianceLevel>
 					<source>1.7</source>
 					<target>1.7</target>
@@ -222,16 +218,12 @@
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjrt</artifactId>
-						<version>1.7.4</version>
-					</dependency>
-					<dependency>
-						<groupId>org.aspectj</groupId>
-						<artifactId>aspectjtools</artifactId>
-						<version>1.7.4</version>
+						<version>1.7.3</version>
 					</dependency>
 				</dependencies>
 				<executions>
 					<execution>
+						<phase>process-sources</phase>
 						<goals>
 							<goal>compile</goal>       <!-- use this goal to weave all your main classes -->
 							<goal>test-compile</goal>  <!-- use this goal to weave all your test classes -->
@@ -244,8 +236,8 @@
 
 	<distributionManagement>
 		<repository>
-			<id>local</id>
-			<name>local repo</name>
+			<id>my</id>
+			<name>my local repo</name>
 			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</distributionManagement>
