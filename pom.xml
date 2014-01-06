@@ -8,6 +8,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.7</java.version>
 	</properties>
 
 	<repositories>
@@ -69,8 +70,6 @@
 			<artifactId>jsch</artifactId>
 			<version>0.1.49</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
@@ -209,9 +208,10 @@
 				<version>1.5</version>
 				<configuration>
 					<proceedOnError>true</proceedOnError>
-					<complianceLevel>1.7</complianceLevel>
-					<source>1.7</source>
-					<target>1.7</target>
+					<complianceLevel>${java.version}</complianceLevel>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 				<dependencies>
 					<dependency>
@@ -222,14 +222,31 @@
 				</dependencies>
 				<executions>
 					<execution>
+						<!-- Necessary, so aspectj compile is executed before java compile -->
 						<phase>process-sources</phase>
 						<goals>
-							<goal>compile</goal>       <!-- use this goal to weave all your main classes -->
-							<goal>test-compile</goal>  <!-- use this goal to weave all your test classes -->
+							<goal>compile</goal>
+							<goal>test-compile</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
+			
+			<!-- plugin only added so eclipse can pick up the source and target java version, since it doesn't do it from
+				the aspectj-maven-plugin. Exclusion makes sure it doesn't actually process anything. However, then on the other
+				hand a java file is always considered "not part of source code" by eclipse, which is not nice either. -->
+			<!--<plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+			        <excludes>
+			          <exclude>**/*.java</exclude> 
+			        </excludes>
+			        <complianceLevel>${java.version}</complianceLevel>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>-->
 		</plugins>
 	</build>
 
