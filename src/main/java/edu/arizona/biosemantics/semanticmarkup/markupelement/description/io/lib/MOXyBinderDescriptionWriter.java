@@ -37,7 +37,7 @@ public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
 	private JAXBContext jaxbContext;
 	
 	@Inject
-	public MOXyBinderDescriptionWriter(@Named("DescriptionReader_BindingsFiles")List<InputStream> bindingsFiles, 
+	public MOXyBinderDescriptionWriter(@Named("DescriptionWriter_BindingsFiles")List<InputStream> bindingsFiles, 
 			@Named("MOXyBinderDescriptionReaderWriter_FileDocumentMappings")Map<File, Binding> fileDocumentMappings) 
 			throws JAXBException {
 		this.fileDocumentMappings = fileDocumentMappings;

@@ -222,7 +222,7 @@ public class CLIMain {
 
 	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) {
 		try {
-			config.setDescriptionReaderBindingsList(volumeReader);
+			config.setIODescriptionBindingsList(volumeReader);
 		} catch(IllegalArgumentException | IOException e) {
 			log(LogLevel.ERROR, "DescriptionReader unknown or couldn't read bindings");
 			System.exit(0);

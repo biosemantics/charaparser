@@ -75,8 +75,9 @@ public class RunConfig extends BasicConfig {
 	
 	// IO
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
-	private List<InputStream> descriptionReaderBindingsList = createXMLReaderBindingsList();
-	private String descriptionReaderInputDirectory = "input";
+	private List<InputStream> descriptionReaderBindingsList = createIOXMLBindingsList();
+	private List<InputStream> descriptionWriterBindingsList = createIOXMLBindingsList();
+ 	private String descriptionReaderInputDirectory = "input";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
 	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplantOutputTreatment.xsd";
 	
@@ -140,6 +141,7 @@ public class RunConfig extends BasicConfig {
 			bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(descriptionReaderInputDirectory);
 			bind(new TypeLiteral<List<InputStream>>() {}).annotatedWith(Names.named("DescriptionReader_BindingsFiles")).toInstance(descriptionReaderBindingsList);
+			bind(new TypeLiteral<List<InputStream>>() {}).annotatedWith(Names.named("DescriptionWriter_BindingsFiles")).toInstance(descriptionWriterBindingsList);
 			bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(descriptionReaderInputDirectory));
 			bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).toInstance(constructEvaluationCorrectReader());
 			bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).toInstance(constructEvaluationTestReader());
@@ -643,29 +645,32 @@ public class RunConfig extends BasicConfig {
 	
 	
 
-	public void setDescriptionReaderBindingsList(String volumeReader) throws IllegalArgumentException, IOException {
+	public void setIODescriptionBindingsList(String volumeReader) throws IllegalArgumentException, IOException {
 		if(volumeReader.equals("XML")) {
-			this.descriptionReaderBindingsList = createXMLReaderBindingsList();
+			this.descriptionReaderBindingsList = createIOXMLBindingsList();
+			this.descriptionWriterBindingsList = createIOXMLBindingsList();
 		}
 		if(volumeReader.equals("Taxonx")) {
-			this.descriptionReaderBindingsList = createTaxonxReaderBindingsList();
+			this.descriptionReaderBindingsList = createIOTaxonxBindingsList();
+			this.descriptionWriterBindingsList = createIOTaxonxBindingsList();
 		}
 		if(volumeReader.equals("IPlant")) {
-			this.descriptionReaderBindingsList = createIPlantReaderBindingsList();
+			this.descriptionReaderBindingsList = createIOIPlantBindingsList();
+			this.descriptionWriterBindingsList = createIOIPlantBindingsList();
 		}
 	}
 
-	private List<InputStream> createIPlantReaderBindingsList() {
+	private List<InputStream> createIOIPlantBindingsList() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private List<InputStream> createTaxonxReaderBindingsList() {
+	private List<InputStream> createIOTaxonxBindingsList() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private List<InputStream> createXMLReaderBindingsList() throws IOException {
+	private List<InputStream> createIOXMLBindingsList() throws IOException {
 		List<InputStream> result = new LinkedList<InputStream>();
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/baseBindings.xml"));
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));

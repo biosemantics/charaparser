@@ -28,7 +28,7 @@ public class NeXMLMainTest {
 		bindingFiles.add("resources//io//bindings//semanticmarkup.markupelement.description.model//baseBindings.xml");
 		bindingFiles.add("resources//io//bindings//semanticmarkup.markupelement.description.model//neXMLBindings.xml");
 		bindingFiles.add("resources//io//bindings//semanticmarkup.markupelement.description.model.nexml//neXMLBindings.xml");
-		config.setDescriptionReaderBindingsList(bindingFiles);
+		config.setIODescriptionBindingsList(bindingFiles);
 		config.setDescriptionReader(MOXyBinderDescriptionReader.class);
 		config.setDescriptionReaderInputDirectory("input");
 		config.setTerminologyLearner(UnsupervisedClauseMarkup.class);
