@@ -209,7 +209,6 @@
 				<version>1.5</version>
 				<configuration>
 					<proceedOnError>true</proceedOnError>
-					<failOnError>false</failOnError>
 					<complianceLevel>1.7</complianceLevel>
 					<source>1.7</source>
 					<target>1.7</target>
