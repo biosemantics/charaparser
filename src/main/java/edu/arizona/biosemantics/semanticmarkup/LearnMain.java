@@ -46,7 +46,7 @@ public class LearnMain extends CLIMain {
 		options.addOption("i", "input", true, "input file or directory");
 		options.addOption("c", "config", true, "config to use"); 
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
-		options.addOption("w", "style mapping", true, "Optional style mapping to use for Word file input");
+		options.addOption("m", "style mapping", true, "Optional style mapping to use for Word file input");
 		options.addOption("y", "categorize terms", false, "If specified, indicates that one does not intend to categorize newly discovered terms to improve markup");
 		
 		//for iplant user hidden inputs, but still required or 'nice to have' configuration possibilities'
@@ -131,8 +131,8 @@ public class LearnMain extends CLIMain {
 		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
 		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
-		    if(commandLine.hasOption("w")) {
-		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));
+		    if(commandLine.hasOption("m")) {
+		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("m"));
 		    }
 		    if(commandLine.hasOption("t")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
