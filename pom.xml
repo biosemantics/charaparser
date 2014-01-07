@@ -282,7 +282,7 @@
 		<repository>
 			<id>my</id>
 			<name>my local repo</name>
-			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+			<url>http://localhost:8081/nexus/content/repositories/releases/</url>
 		</repository>
 	</distributionManagement>
 
