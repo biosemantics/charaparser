@@ -79,7 +79,7 @@ public class RunConfig extends BasicConfig {
 	private List<InputStream> descriptionWriterBindingsList = createIOXMLBindingsList();
  	private String descriptionReaderInputDirectory = "input";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
-	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplantOutputTreatment.xsd";
+	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplantOutputTreatment.xsd";
 	
 	// PROCESSING 
 	private String glossaryType = "plant";
