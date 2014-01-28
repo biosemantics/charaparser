@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+
+	<xs:element name="treatment" type="treatment" />
+
+	<xs:complexType name="treatment">
+		<xs:sequence>
+			<xs:element type="meta" name="meta" />
+			<xs:element type="taxon_identification" name="taxon_identification" maxOccurs="unbounded" />
+			<xs:choice minOccurs="1" maxOccurs="unbounded">
+				<xs:element type="xs:string" name="number" minOccurs="0" maxOccurs="1" />
+				<xs:element type="description" name="description" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element type="type" name="type" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element type="other_name" name="other_name" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element type="material" name="material" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element type="discussion" name="discussion" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element type="taxon_relation_articulation" name="taxon_relation_articulation" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element type="xs:string" name="key_file" minOccurs="0" maxOccurs="unbounded" />
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="meta">
+		<xs:sequence>
+			<xs:element type="source" name="source">
+				<xs:annotation>
+					<xs:documentation>put the bibliographic information of the source paper here</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="processed_by" type="processed_by"	minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>e.g. name of the person who converted the original to	this format</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element minOccurs="0" maxOccurs="unbounded" type="other_info_on_meta" name="other_info_on_meta" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="source" mixed="true">
+		<xs:sequence>
+			<xs:element name="author" type="xs:string" minOccurs="1" maxOccurs="1" />
+			<xs:element name="date" type="xs:string" minOccurs="1" maxOccurs="1" />
+			<xs:element name="title" type="xs:string" minOccurs="0"	maxOccurs="1" />
+			<xs:element name="pages" type="xs:string" minOccurs="0"	maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="other_info_on_meta">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="processed_by">
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="processor" type="processor" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="processor">
+		<xs:sequence>
+			<xs:element name="date" type="xs:string"/>
+			<xs:choice minOccurs="1">
+				<xs:element type="software" name="software"  minOccurs="0"  />
+				<xs:element name="operator" type="xs:string" minOccurs="0" />
+			</xs:choice>
+			<xs:element type="resource" name="resource"  minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="software">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="version" type="xs:string" />
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="resource">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="version" type="xs:string" />
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="taxon_identification">
+		<xs:choice minOccurs="1" maxOccurs="unbounded">
+			<!--extending this list with other ranks by adding rank_name and rank_authority -->
+			<xs:element name="order_name" type="xs:string" minOccurs="0" />
+			<xs:element name="order_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="suborder_name" type="xs:string" minOccurs="0" />
+			<xs:element name="suborder_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="superfamily_name" type="xs:string" minOccurs="0" />
+			<xs:element name="superfamily_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="family_name" type="xs:string" minOccurs="0" />
+			<xs:element name="family_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="subfamily_name" type="xs:string" minOccurs="0" />
+			<xs:element name="subfamily_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="tribe_name" type="xs:string" minOccurs="0" />
+			<xs:element name="tribe_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="subtribe_name" type="xs:string" minOccurs="0" />
+			<xs:element name="subtribe_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="genus_name" type="xs:string" minOccurs="0" />
+			<xs:element name="genus_group_name" type="xs:string" minOccurs="0" />
+			<xs:element name="genus_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="subgenus_name" type="xs:string" minOccurs="0" />
+			<xs:element name="subgenus_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="section_name" type="xs:string" minOccurs="0" />
+			<xs:element name="section_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="subsection_name" type="xs:string" minOccurs="0" />
+			<xs:element name="subsection_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="series_name" type="xs:string" minOccurs="0" />
+			<xs:element name="series_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="species_name" type="xs:string" minOccurs="0" />
+			<xs:element name="species_group_name" type="xs:string" minOccurs="0" />
+			<xs:element name="species_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="subspecies_name" type="xs:string" minOccurs="0" />
+			<xs:element name="subspecies_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="variety_name" type="xs:string" minOccurs="0" />
+			<xs:element name="variety_authority" type="xs:string" minOccurs="0" />
+			<xs:element name="unranked_epithet_name" type="xs:string" minOccurs="0" />
+			<xs:element name="unranked_epithet_authority" type="xs:string" minOccurs="0" />
+			<xs:element type="other_info_on_name" name="other_info_on_name" minOccurs="0" />
+			<xs:element type="place_of_publication" name="place_of_publication" minOccurs="0" />
+			<xs:element type="xs:string" name="taxon_hierarchy" minOccurs="0" />
+		</xs:choice>
+		<xs:attribute name="status" type="xs:NCName" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="place_of_publication">
+		<xs:sequence>
+			<xs:element minOccurs="0" name="publication_title" type="xs:string" />
+			<xs:element minOccurs="0" name="place_in_publication" type="xs:string" />
+			<xs:element minOccurs="0" maxOccurs="unbounded" type="other_info_on_pub" name="other_info_on_pub" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="other_info_on_name">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType name="other_info_on_pub">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="description">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="type">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:element name="synonym" type="xs:string" />
+	
+	<xs:complexType name="other_name">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:complexType name="material">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="discussion">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	
+	<xs:complexType name="taxon_relation_articulation">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+</xs:schema>

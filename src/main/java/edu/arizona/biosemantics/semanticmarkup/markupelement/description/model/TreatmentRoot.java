@@ -1,10 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class TreatmentRoot {
 
-	private List<Description> descriptions;
+	private List<Description> descriptions = new LinkedList<Description>();
 
 	public List<Description> getDescriptions() {
 		return descriptions;

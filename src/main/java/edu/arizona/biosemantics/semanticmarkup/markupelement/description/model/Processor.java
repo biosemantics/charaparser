@@ -1,27 +1,64 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.model;
 
-public class Processor {
+import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
-	private String process_type;
-	private String text;
+public class Processor extends Element {
 
-	public String getProcess_type() {
-		return process_type;
-	}
+	private String date;
+	private Software software;
+	private String operator;
+	private Resource resource;
 
-	public void setProcess_type(String process_type) {
-		this.process_type = process_type;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
+	public Processor(String date, Software software, String operator,
+			Resource resource) {
+		super();
+		this.date = date;
+		this.software = software;
+		this.operator = operator;
+		this.resource = resource;
 	}
 	
-	
-	
-	
+	public Processor() { }
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public Software getSoftware() {
+		return software;
+	}
+
+	public void setSoftware(Software software) {
+		this.software = software;
+	}
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	public Resource getResource() {
+		return resource;
+	}
+
+	public void setResource(Resource resource) {
+		this.resource = resource;
+	}
+
+	@Override
+	public void removeElementRecursively(Element element) {
+		if(software.equals(element))
+			software = null;
+		if(resource.equals(element))
+			resource = null;
+		software.removeElementRecursively(element);
+		resource.removeElementRecursively(element);
+	}
 }

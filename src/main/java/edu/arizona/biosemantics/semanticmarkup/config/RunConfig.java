@@ -672,7 +672,7 @@ public class RunConfig extends BasicConfig {
 
 	private List<InputStream> createIOXMLBindingsList() throws IOException {
 		List<InputStream> result = new LinkedList<InputStream>();
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/baseBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/semanticMarkupBaseBindings.xml"));
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));
 		return result;
 	}
