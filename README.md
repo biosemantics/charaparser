@@ -52,6 +52,9 @@ Software Dependencies
 In its current version, CharaParser dependes on the following additional Software.
 * MySQL
 * Perl
+** DBI
+** DBD::MySQL
+** Encoding::FixLatin
 * WordNet
 
 JavaDoc
