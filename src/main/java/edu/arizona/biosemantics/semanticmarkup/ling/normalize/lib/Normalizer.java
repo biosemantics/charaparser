@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 
 import com.google.inject.Inject;
@@ -63,6 +65,9 @@ public abstract class Normalizer implements INormalizer {
 	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
 	    
 	private ParentTagProvider parentTagProvider;
+	String adjnounslist = "";
+	Map<String, String> adjnounsent;
+	
 	
 	/**
 	 * @param glossary
@@ -147,6 +152,20 @@ public abstract class Normalizer implements INormalizer {
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.inflector = inflector;
 		this.parentTagProvider = parentTagProvider;
+		
+		adjnounsent = terminologyLearner.getAdjNounSent();
+		List<String> adjnouns = terminologyLearner.getAdjNouns();
+		Collections.sort(adjnouns); 
+		for(int i = adjnouns.size()-1; i>=0; i--) {
+			String adjnoun = adjnouns.get(i);
+			if(adjnoun.contains("or") || adjnoun.contains("and")) {
+				String[] parts = adjnoun.split("or|and");
+				for(String part : parts) 
+					adjnounslist += part.trim()+"|";			
+			} else 
+				adjnounslist += adjnoun+"|";			
+		}
+		adjnounslist = adjnounslist.trim().length()==0? null : adjnounslist.replaceFirst("(\\|+$|^\\|+)", "").replaceAll("\\|+", "|");
 	}
 	
 	@Override
@@ -475,26 +494,11 @@ public abstract class Normalizer implements INormalizer {
 
 
 	private String normalizeInner(String str, String tag, String source) {
-		Map<String, String> adjnounsent = terminologyLearner.getAdjNounSent();
-		List<String> adjnouns = terminologyLearner.getAdjNouns();
-		//Collections.sort(adjnouns); //what for?
-		String adjnounslist = "";
-		for(int i = adjnouns.size()-1; i>=0; i--) {
-			String adjnoun = adjnouns.get(i);
-			if(adjnoun.contains("or") || adjnoun.contains("and")) {
-				String[] parts = adjnoun.split("or|and");
-				for(String part : parts) 
-					adjnounslist += part.trim()+"|";			
-			} else 
-				adjnounslist += adjnoun+"|";			
-		}
-		adjnounslist = adjnounslist.trim().length()==0? null : "[<{]*"+adjnounslist.replaceFirst("\\|$", "").replaceAll("\\|+", "|").replaceAll("\\|", "[}>]*|[<{]*").replaceAll(" ", "[}>]* [<{]*")+"[}>]*";
-		
-		if((adjnounsent.containsKey(tag) && str.matches(".*?[<{]*\\b(?:"+adjnounslist+")[^ly ]*\\b[}>]*.*")) || str.matches(".*? of [<{]*\\b(?:"+adjnounslist+")[^ly ]*\\b[}>]*.*")){
+				//if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")[^ly ]*\\b.*")) || str.matches(".*? of \\b(?:"+adjnounslist+")[^ly ]*\\b.*")){
+		if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")\\b.*"))){
 			str = fixInner(str, tag.replaceAll("\\W",""), adjnounslist, source);
 			//need to put tag in after the modifier inner
 		}
-
 		return str;
 	}
 
@@ -1429,7 +1433,7 @@ public abstract class Normalizer implements INormalizer {
 	
 	
 	/**
-	 * mark Inner as organ for sent such as inner red.
+	 * mark Inner as organ for sent such as "inner red".
 	 * @param adjnouns
 	 * @param taggedsent
 	 * @return inner-fixed String
@@ -1485,7 +1489,7 @@ public abstract class Normalizer implements INormalizer {
 				}
 					
 				String copyinner = inner.trim();
-				inner = copyinner.replaceAll("[<{}>]", "").replaceAll("\\{and\\}", "and").replaceAll("\\{or\\}", "or");
+				//inner = copyinner.replaceAll("[<{}>]", "").replaceAll("\\{and\\}", "and").replaceAll("\\{or\\}", "or");
 				//inner = "<"+inner+">";
 				//inner = "{"+inner+"} <"+tag+">";
 				fixed +=before + " " + inner + " ";
@@ -1574,6 +1578,6 @@ public abstract class Normalizer implements INormalizer {
 			fixed = taggedsent;
 		}
 		
-		return fixed.trim().replaceAll("\\s+", " ").replaceAll("<null>", "");
+		return fixed.trim().replaceAll("\\s+", " ");//.replaceAll("<null>", "");
 	}
 }

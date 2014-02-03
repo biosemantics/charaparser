@@ -193,7 +193,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		terminologyLearner.learn(descriptionsFiles, glossaryTable);
 		terminologyLearner.readResults(descriptionsFiles);
 		Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker = 
-				terminologyLearner.getSentencesForOrganStateMarker();
+				terminologyLearner.getSentencesForOrganStateMarker(); //sentence level markup: modifier##tag##sentence text
 		// do the actual markup
 		markupDescriptions(descriptionsFiles, sentencesForOrganStateMarker);		
 
@@ -369,7 +369,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(int i=0; i<descriptionsFile.getDescriptions().size(); i++) {
 				Description description = descriptionsFile.getDescriptions().get(i);
-				// start a DescriptionExtractorRun for the treatment to process as a separate thread
+				//start a DescriptionExtractorRun for the treatment to process as a separate thread
 				DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(
 						descriptionsFile, description, i, normalizer, wordTokenizer, 
 						posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum, 

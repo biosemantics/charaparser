@@ -259,8 +259,21 @@ public class BasicConfig extends AbstractModule {
 			  bind(String.class).annotatedWith(Names.named("PrepositionWords")).toInstance(prepositionWords);
 			  Set<String> prepositionWordsSet = getPrepositionWordsSet();
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("PrepositionWordsSet")).toInstance(prepositionWordsSet);
+			  
+			  
+			  Set<String> simplePrepWordsSet = this.getSimplePrepsSet();
+			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("SimplePrepsWordsSet")).toInstance(simplePrepWordsSet);
+			  String simplePrepWords = this.getSimplePreWords();
+			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("SimplePrepWords")).toInstance(simplePrepWords);
+			  
+			  Set<String> compoundPrepWordsSet = this.getCompoundPrepsSet();
+			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("CompoundPrepsWordsSet")).toInstance(compoundPrepWordsSet);
+			  String compoundPrepWords = this.getCompoundPreWords();
+			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("CompoundPrepWords")).toInstance(compoundPrepWords);
+			  
+			  
 			  Set<String> stopWords = getStopWords();
-			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("StopWords")).toInstance(stopWords);
+			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("StopWords")).toInstance(stopWords);			  
 			  String units = getUnits();
 			  bind(String.class).annotatedWith(Names.named("Units")).toInstance(units);
 			  Set<String> notInModifier = getNotInModifier();
@@ -309,7 +322,8 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getUnits() {
-		String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|µm|um";
+		//String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|µm|um";
+		String units= "pm|cm|mm|dm|m|meters|meter|microns|micron|unes|µm|um|centimeters|centimeter|millimeters|millimeter";
 		return units;
 	}
 
@@ -331,7 +345,9 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private Set<String> getClusterWords() {
-		String clusterWords = "cluster|clusters|involucre|involucres|rosette|rosettes|pair|pairs|series|ornament|ornamentation|array|arrays";
+		//String clusterWords = "cluster|clusters|involucre|involucres|rosette|rosettes|pair|pairs|series|ornament|ornamentation|array|arrays";
+		String clusterWords="clusters|cluster|involucres|involucre|rosettes|rosette|pairs|pair|series|ornamentation|ornament|arrays|array|turfs|turf|multiples"; //pl before singular.
+
 		return this.getWordSet(clusterWords);
 	}
 
@@ -356,12 +372,12 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getTimesWords() {
-		String timesWords = "time|times|folds|lengths|widths";
+		String timesWords = "times|folds|lengths|widths";
 		return timesWords;
 	}
 
 	private String getDegreeWords() {
-		String degreeWords = "°|degree|degrees";
+		String degreeWords = "°|degrees|degree";
 		return degreeWords;
 	}
 
@@ -389,9 +405,13 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private Set<String> getStopWords() {
+		//String stopWordsString = "a|about|above|across|after|along|also|although|amp|an|and|are|as|at|be|because|become|becomes|becoming|been|before|being|"
+		//		+ "beneath|between|beyond|but|by|ca|can|could|did|do|does|doing|done|for|from|had|has|have|hence|here|how|if|in|into|inside|inward|is|it|its|"
+		//		+ "may|might|more|most|near|no|not|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
+		//		+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
 		String stopWordsString = "a|about|above|across|after|along|also|although|amp|an|and|are|as|at|be|because|become|becomes|becoming|been|before|being|"
-				+ "beneath|between|beyond|but|by|ca|can|could|did|do|does|doing|done|for|from|had|has|have|hence|here|how|if|in|into|inside|inward|is|it|its|"
-				+ "may|might|more|most|near|no|not|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
+				+ "beneath|between|beyond|but|by|ca|can|could|did|do|does|doing|done|for|from|had|has|have|hence|here|how|however|if|in|into|inside|inward|is|it|its|"
+				+ "may|might|more|most|near|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
 				+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
 		return this.getWordSet(stopWordsString);
 	}
@@ -447,7 +467,26 @@ public class BasicConfig extends AbstractModule {
 		plurals.put("species", "species");
 		return plurals;
 	}
+	
+	private Set<String> getSimplePrepsSet(){
+		String simplePrepWords =  "aboard|about|above|across|after|against|along|alongside|amid|amidst|among|amongst|anti|around|as|astride|at|atop|bar|barring|before|behind|below|beneath|beside|besides|between|beyond|but|by|circa|concerning|considering|counting|cum|despite|down|during|except|excepting|excluding|following|for|from|given|gone|in|including|inside|into|less|like|minus|near|notwithstanding|of|off|on|onto|opposite|outside|over|past|pending|per|plus|pro|re|regarding|respecting|round|save|saving|since|than|through|throughout|till|to|touching|toward|towards|under|underneath|unlike|until|up|upon|versus|via|with|within|without|worth";
+		return this.getWordSet(simplePrepWords);		
+	}
+	
+	private String getSimplePreWords(){
+		String simplePrepWords =  "aboard|about|above|across|after|against|along|alongside|amid|amidst|among|amongst|anti|around|as|astride|at|atop|bar|barring|before|behind|below|beneath|beside|besides|between|beyond|but|by|circa|concerning|considering|counting|cum|despite|down|during|except|excepting|excluding|following|for|from|given|gone|in|including|inside|into|less|like|minus|near|notwithstanding|of|off|on|onto|opposite|outside|over|past|pending|per|plus|pro|re|regarding|respecting|round|save|saving|since|than|through|throughout|till|to|touching|toward|towards|under|underneath|unlike|until|up|upon|versus|via|with|within|without|worth";
+		return simplePrepWords;
+	}
 
+	private Set<String> getCompoundPrepsSet(){
+		String compoundPrepWords =  "according to|ahead of|along with|apart from|as for|aside from|as per|as to|as well as|away from|because of|but for|by means of|close to|contrary to|depending on|due to|except for|except in|forward of|further to|in addition to|in association with|in between|in case of|in combination with|in contact with|in face of|in favour of|in front of|in lieu of|in spite of|instead of|in view of|near to|next to|on account of|on behalf of|on board|on to|on top of|opposite to|other than|out of|outside of|owing to|preparatory to|prior to|regardless of|save for|thanks to|together with|up against|up to|up until|vis a vis|with reference to|with regard to";
+		return this.getWordSet(compoundPrepWords);		
+	}
+	
+	private String getCompoundPreWords(){
+		String compoundPrepWords =  "according to|ahead of|along with|apart from|as for|aside from|as per|as to|as well as|away from|because of|but for|by means of|close to|contrary to|depending on|due to|except for|except in|forward of|further to|in addition to|in association with|in between|in case of|in combination with|in contact with|in face of|in favour of|in front of|in lieu of|in spite of|instead of|in view of|near to|next to|on account of|on behalf of|on board|on to|on top of|opposite to|other than|out of|outside of|owing to|preparatory to|prior to|regardless of|save for|thanks to|together with|up against|up to|up until|vis a vis|with reference to|with regard to";
+		return compoundPrepWords;
+	}
 	public String getVersion() {
 		return version;
 	}

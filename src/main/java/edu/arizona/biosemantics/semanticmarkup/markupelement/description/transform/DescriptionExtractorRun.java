@@ -141,7 +141,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 		}
 		
 		log(LogLevel.DEBUG, "extract for treatment " + descriptionsFile.getName());
-		descriptionExtractor.extract(description, descriptionNumber, treatmentChunkCollectors);
+		descriptionExtractor.extract(description, descriptionNumber, treatmentChunkCollectors); //TODO: Hong annotating chunk in 'extract'
 		
 		descriptionExtractorsLatch.countDown();
 		return description;

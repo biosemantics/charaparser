@@ -72,7 +72,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 			
 			String[] sentenceArray = sentenceString.split("##");
 			sentenceString = sentenceArray[2];
-			String subjectTag = sentenceArray[1];
+			String subjectTag = sentenceArray[1]; //TODO: Hong stop using subjectTag and modifier
 			String modifier = sentenceArray[0];
 			modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
 			subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
@@ -80,7 +80,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 			// normalize sentence
 			String normalizedSentence="";
 			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
-			log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);
+			log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);//TODO: (4) is not '3'
 			
 			// tokenize sentence
 			List<Token> sentence = wordTokenizer.tokenize(normalizedSentence);

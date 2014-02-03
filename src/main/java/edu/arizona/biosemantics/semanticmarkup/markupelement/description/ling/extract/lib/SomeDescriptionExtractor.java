@@ -82,7 +82,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			
 			processingContext.setChunkCollector(chunkCollector);
 			try {
-				List<Element> descriptiveElements = getDescriptiveElements(processingContext);
+				List<Element> descriptiveElements = getDescriptiveElements(processingContext); //chunk to xml
 				for(Element element : descriptiveElements) {
 					if(element.isRelation())
 						statement.addRelation((Relation)element);
@@ -108,7 +108,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		processingContext.setChunkListIterator(iterator);
 		
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
-		addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext));
+		addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext)); //process subject?
 		log(LogLevel.DEBUG, "result:\n" + result);
 		while(iterator.hasNext()) {
 			if(!iterator.hasPrevious() && firstChunkProcessor.skipFirstChunk()) {

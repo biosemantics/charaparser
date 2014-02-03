@@ -49,6 +49,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected HashMap<String, String> equalCharacters;
 	protected String numberPattern;
 	protected String times;
+	protected Set<String> simplePreps;
+	protected Set<String> compoundPreps;
 	
 	/**
 	 * @param inflector
@@ -66,10 +68,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 */
 	@Inject
 	public AbstractChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
-			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
-			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositions")Set<String> locationPrepositions, 
-			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			@Named("NumberPattern")String numberPattern, @Named("Times")String times) {
+			ICharacterKnowledgeBase characterKnowledgeBase, 
+			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
+			@Named("BaseCountWords")Set<String> baseCountWords, 
+			@Named("LocationPrepositions")Set<String> locationPrepositions, 
+			@Named("Clusters")Set<String> clusters, 
+			@Named("Units")String units, 
+			@Named("EqualCharacters")HashMap<String, String> equalCharacters, 
+			@Named("NumberPattern")String numberPattern, 
+			@Named("Times")String times) {
 		this.inflector = inflector;
 		this.glossary = glossary;
 		this.characterKnowledgeBase = characterKnowledgeBase;

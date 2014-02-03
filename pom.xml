@@ -31,7 +31,7 @@
 	<repositories>
    		<repository>
 			<id>my</id>
-			<url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+			<url>http://128.196.105.88:8081/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>swt-repo</id>
@@ -307,7 +307,7 @@
 		<repository>
 			<id>my</id>
 			<name>my local repo</name>
-			<url>http://localhost:8081/nexus/content/repositories/releases/</url>
+			<url>http://128.196.105.88:8081/nexus/content/repositories/releases/</url>
 		</repository>
 	</distributionManagement>
 
