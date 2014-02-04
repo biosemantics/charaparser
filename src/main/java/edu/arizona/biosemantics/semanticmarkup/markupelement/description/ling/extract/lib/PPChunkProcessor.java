@@ -158,7 +158,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				if(preposition.getTerminalsText().equals("to") && !foundOrgan && containsCharacter(beforeOrganChunks)) {
 					result.addAll(connectCharacters(subjectStructures, unassignedModifiers, preposition, beforeOrganChunks, processingContext));
 				} else if(lastChunkIsOrgan) {
-					List<Element> linkedResult = linkObjects(subjectStructures, modifier, preposition, aObject, lastIsStructure, lastIsCharacter, processingContext, processingContextState, usedRelation);
+					List<Element> linkedResult = linkObjects(subjectStructures, modifier, preposition, aObject, lastIsStructure, lastIsCharacter, processingContext, processingContextState, usedRelation, lastElement);
 					usedRelation = getRelation(linkedResult);
 					result.addAll(linkedResult);
 				} else if(foundOrgan) {
@@ -169,7 +169,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					//modi = afterOrganChunks;
 					
 					Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
-					List<Element> linkedResult = linkObjects(subjectStructures, modifier, preposition, objectChunk, lastIsStructure, lastIsCharacter, processingContext, processingContextState, usedRelation);
+					List<Element> linkedResult = linkObjects(subjectStructures, modifier, preposition, objectChunk, lastIsStructure, lastIsCharacter, processingContext, processingContextState, usedRelation, lastElement);
 					usedRelation = getRelation(linkedResult);
 					result.addAll(linkedResult); 
 					//result.addAll(structures);

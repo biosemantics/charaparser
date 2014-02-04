@@ -684,12 +684,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected List<Element> linkObjects(List<Structure> subjectStructures, List<Chunk> modifiers, 
 			Chunk preposition, Chunk object, boolean lastIsStruct, boolean lastIsChara, 
-			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation) {
+			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation, Element lastElement) {
 		LinkedList<Element> result = new LinkedList<Element>();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
-		Element lastElementBackup = null;
-		if(!lastElements.isEmpty())
-			lastElementBackup = lastElements.getLast(); //extractStructuresFromObject will change lastElements leading to "lastIsX" being wrong
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 		
 		List<Chunk> unassignedModifiers = processingContext.getCurrentState().getUnassignedModifiers();
@@ -704,15 +701,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if(baseCountWords.contains(object.getTerminalsText())) {
 			base = "each";
 		}
-		if(lastIsChara && lastElementBackup != null && !processingContextState.isCommaAndOrEosEolAfterLastElements()) {
-			Character lastElement = (Character)lastElementBackup;
+		if(lastIsChara && lastElement != null && !processingContextState.isCommaAndOrEosEolAfterLastElements()) {
+			Character character = (Character)lastElement;
 			//if last character is size, change to location: <margins> r[p[with] o[3�6 (spines)]] 1�3 {mm} r[p[{near}] o[(bases)]]. 
 			//1-3 mm is not a size, but a location of spines
-			if(lastElement.getName().equals("size") && 
-					((lastElement.getValue() != null && lastElement.getValue().matches(".*?\\d.*")) || 
-							(lastElement.getFrom() != null && lastElement.getFrom().matches(".*?\\d.*"))) 
+			if(character.getName().equals("size") && 
+					((character.getValue() != null && character.getValue().matches(".*?\\d.*")) || 
+							(character.getFrom() != null && character.getFrom().matches(".*?\\d.*"))) 
 				&& locationPrepositions.contains(preposition.getTerminalsText())) {
-				lastElement.setName("location");
+				character.setName("location");
 			}
 			
 			String modifierString = "";
@@ -720,8 +717,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				modifierString += modifier.getTerminalsText() + " ";
 			}
 			
-			lastElement.setConstraint(modifierString + preposition.getTerminalsText() + " " + listStructureNames(object));
-			lastElement.setConstraintId(listStructureIds(structures));
+			character.setConstraint(modifierString + preposition.getTerminalsText() + " " + listStructureNames(object));
+			character.setConstraintId(listStructureIds(structures));
 			/*if(!modifiers.isEmpty()) {
 				for(Chunk modifier : modifiers) {
 					lastElement.appendAttribute("modifier", modifier.getTerminalsText());
