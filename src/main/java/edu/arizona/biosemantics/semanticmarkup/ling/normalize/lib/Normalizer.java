@@ -65,8 +65,9 @@ public abstract class Normalizer implements INormalizer {
 	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
 	    
 	private ParentTagProvider parentTagProvider;
-	String adjnounslist = "";
+	String adjnounslist;
 	Map<String, String> adjnounsent;
+	Map<String, AdjectiveReplacementForNoun> replacements;
 	
 	
 	/**
@@ -155,17 +156,22 @@ public abstract class Normalizer implements INormalizer {
 		
 		adjnounsent = terminologyLearner.getAdjNounSent();
 		List<String> adjnouns = terminologyLearner.getAdjNouns();
-		Collections.sort(adjnouns); 
-		for(int i = adjnouns.size()-1; i>=0; i--) {
-			String adjnoun = adjnouns.get(i);
-			if(adjnoun.contains("or") || adjnoun.contains("and")) {
-				String[] parts = adjnoun.split("or|and");
-				for(String part : parts) 
-					adjnounslist += part.trim()+"|";			
-			} else 
-				adjnounslist += adjnoun+"|";			
+		if(adjnouns!=null && adjnounsent!=null){
+			Collections.sort(adjnouns); 
+			adjnounslist = "";
+			for(int i = adjnouns.size()-1; i>=0; i--) {
+				String adjnoun = adjnouns.get(i);
+				if(adjnoun.contains("or") || adjnoun.contains("and")) {
+					String[] parts = adjnoun.split("or|and");
+					for(String part : parts) 
+						adjnounslist += part.trim()+"|";			
+				} else 
+					adjnounslist += adjnoun+"|";			
+			}
+			adjnounslist = adjnounslist.trim().length()==0? null : adjnounslist.replaceFirst("(\\|+$|^\\|+)", "").replaceAll("\\|+", "|");
 		}
-		adjnounslist = adjnounslist.trim().length()==0? null : adjnounslist.replaceFirst("(\\|+$|^\\|+)", "").replaceAll("\\|+", "|");
+		replacements = 
+				terminologyLearner.getAdjectiveReplacementsForNouns();
 	}
 	
 	@Override
@@ -326,9 +332,8 @@ public abstract class Normalizer implements INormalizer {
 	}
 	
 	private String normalizeInnerNew(String str, String tag, String source) {
-		Map<String, AdjectiveReplacementForNoun> replacements = 
-				terminologyLearner.getAdjectiveReplacementsForNouns();
-		if(replacements.containsKey(source)) {
+
+		if(replacements!=null && replacements.containsKey(source)) {
 			AdjectiveReplacementForNoun replacement = replacements.get(source);
 			
 			String newString = "";
@@ -494,8 +499,8 @@ public abstract class Normalizer implements INormalizer {
 
 
 	private String normalizeInner(String str, String tag, String source) {
-				//if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")[^ly ]*\\b.*")) || str.matches(".*? of \\b(?:"+adjnounslist+")[^ly ]*\\b.*")){
-		if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")\\b.*"))){
+				//if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")[^ly ]*\\b.*")) || str.matches(".*? of \\b(?:"+adjnounslist+")[^ly ]*\\b.*")){	
+		if(adjnounsent!=null && adjnounslist!=null && (adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")\\b.*"))){
 			str = fixInner(str, tag.replaceAll("\\W",""), adjnounslist, source);
 			//need to put tag in after the modifier inner
 		}

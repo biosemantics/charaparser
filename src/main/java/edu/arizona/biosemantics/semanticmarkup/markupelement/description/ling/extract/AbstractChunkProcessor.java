@@ -691,9 +691,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	
 	protected List<Element> linkObjects(List<Structure> subjectStructures, List<Chunk> modifiers, 
 			Chunk preposition, Chunk object, boolean lastIsStruct, boolean lastIsChara, 
-			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation) {
+			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation, Element lastE) {
 		LinkedList<Element> result = new LinkedList<Element>();
-		LinkedList<Element> lastElements = processingContextState.getLastElements();
+		LinkedList<Element> lastElements = processingContextState.getLastElements(); //lastElements changed after extractStructuresFromObject
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 		
 		List<Chunk> unassignedModifiers = processingContext.getCurrentState().getUnassignedModifiers();
@@ -701,7 +701,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		unassignedModifiers.clear();
 		
 		List<Structure> structures;
-		structures = extractStructuresFromObject(object, processingContext, processingContextState);
+		structures = extractStructuresFromObject(object, processingContext, processingContextState); //extractStructuresFromObject changed lastElements
 		result.addAll(structures);
 		String base = "";
 		
@@ -709,7 +709,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			base = "each";
 		}
 		if(lastIsChara && !lastElements.isEmpty() && !processingContextState.isCommaAndOrEosEolAfterLastElements()) {
-			Character lastElement = (Character)lastElements.getLast();
+			//Character lastElement = (Character)lastElements.getLast();
+			Character lastElement = (Character) lastE;
 			//if last character is size, change to location: <margins> r[p[with] o[3�6 (spines)]] 1�3 {mm} r[p[{near}] o[(bases)]]. 
 			//1-3 mm is not a size, but a location of spines
 			if(lastElement.getName().equals("size") && 
@@ -736,7 +737,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				relation = relationLabel(preposition, subjectStructures, structures, object, chunkCollector);//determine the relation
 			if(relation != null){
 				result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
-				result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
+				//result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
 			}
 			if(relation!= null && relation.compareTo("part_of")==0) 
 				structures = subjectStructures; //part_of holds: make the organbeforeof/entity1 the return value, all subsequent characters should be refering to organbeforeOf/entity1
