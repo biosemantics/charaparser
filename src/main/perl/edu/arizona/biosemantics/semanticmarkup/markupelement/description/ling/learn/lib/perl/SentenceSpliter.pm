@@ -54,7 +54,12 @@ my @PLACES = ( 'arc', 'al', 'ave', "blv?d", 'cl', 'ct', 'cres', 'dr', "expy?",
 		'Mich', 'Minn', 'Miss', 'Mo', 'Mont', 'Neb', 'Nebr' , 'Nev',
 		'Mex', 'Okla', 'Ok', 'Ore', 'Penna', 'Penn', 'Pa'  , 'Dak',
 		'Tenn', 'Tex', 'Ut', 'Vt', 'Va', 'Wash', 'Wis', 'Wisc', 'Wy',
-		'Wyo', 'USAFA', 'Alta' , 'Man', 'Ont', 'Qué', 'Sask', 'Yuk');
+		'Wyo', 'USAFA', 'Alta' , 'Man', 'Ont', 'Qué', 'Sask', 'Yuk', 'B.C', 'Can', 'C.B', 'Centr', 
+		'S', 'E', 'N', 'W', 's', 'e', 'n', 'w', 'Eastw', 'Greenl', 'L', 'L.I', 'Lab', 'L. Sup', 'Mackenz', 'M.I',
+		'Mediterr. reg', 'Mt', 'mts', 'N. Am', 'N.B', 'N.C', 'N.D', 'N.E', 'N.H', 'N.J', 'N.M', 'N.S', 'N.Y', 'Ne', 
+		'Nfld', 'Northw', 'Nw', 'O', 'P.E.I', 'Pen', 'Que', 'R', 'R.I', 'Reg', 'Se', 'S. Am', 'S.C', 'S.D', 'Scotl',
+		'Trop', 'Ung', 'Val', 'W.I', 'W. Va', 'Westw', 'Afr', 'Alta', 'Alt', 'Am', 'Arct', 'Atl', 'Austral', 'Southw', 
+		'Southwestw', 'St. P. et Miq', 'Subtrop', 'Sw', 'Cos', 'Ct', 'Hemisph');
 my @MONTHS = ('jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec','sept');
 my @MISC = ( 'vs', 'etc', 'no', 'esp', 'fig', 'eg', 'et al', 'cf');
 my @BOT1 = ('diam', 'sq','Rottb', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v','w','x','y','z');#single letter genus name abbrev
