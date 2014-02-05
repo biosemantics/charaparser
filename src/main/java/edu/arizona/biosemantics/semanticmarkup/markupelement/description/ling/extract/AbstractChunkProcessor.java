@@ -760,7 +760,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				} else if(!foundChunk)
 					beforePPChunk = chunk;
 			}
-			if(beforePPChunk.getChunkType().equals(ChunkType.PP)) {
+			if(beforePPChunk != null && beforePPChunk.getChunkType().equals(ChunkType.PP)) {
 				return "part_of";
 			}
 			if(afterPPChunk!=null && (afterPPChunk.isOfChunkType(ChunkType.END_OF_LINE) || afterPPChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE) ||

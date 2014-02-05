@@ -69,12 +69,14 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
-		Chunk nextChunk = chunkListIterator.next();
-		chunkListIterator.previous();
+		if(chunkListIterator.hasNext()) {
+			Chunk nextChunk = chunkListIterator.next();
+			chunkListIterator.previous();
 		
-		if(!chunk.containsChunkType(ChunkType.ORGAN) && nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
-			processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
-			return result;
+			if(!chunk.containsChunkType(ChunkType.ORGAN) && nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
+				processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
+				return result;
+			}
 		}
 		
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
@@ -196,7 +198,8 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				processingContext.getCurrentState().setLastElements(newLastElements);
 				for(Chunk afterOrganChunk : afterOrganChunks) {
 					IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(afterOrganChunk.getChunkType());
-					result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
+					if(chunkProcessor != null) 
+						result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
 				}
 				
 				processingContext.getCurrentState().setLastElements(lastElementsBackup);
