@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -71,13 +72,14 @@ public class TreatisehNormalizer extends Normalizer {
 			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, 
-			IInflector inflector) {
+			IInflector inflector, 
+			@Named("CompoundPrepWords")String compoundPPptn) {
 		super(glossary, units, numberPattern, singulars, plurals, posKnowledgeBase,
 				lyAdverbPattern, p1, p2, p3, p4, p5, p6, p7, p75, p8,
 				terminologyLearner, viewPattern, countPattern, positionPattern,
 				romanRangePattern, romanPattern, romanNumbers, stopWords,
 				prepositionWords, modifierList, parentTagProvider,
-				characterKnowledgeBase, organStateKnowledgeBase, inflector);
+				characterKnowledgeBase, organStateKnowledgeBase, inflector, compoundPPptn);
 		// TODO Auto-generated constructor stub
 	}
 

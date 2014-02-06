@@ -14,6 +14,9 @@ import java.util.regex.Pattern;
 
 
 
+
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -47,6 +50,7 @@ public abstract class Normalizer implements INormalizer {
 	private String prepositionWords;
 	private Pattern modifierList;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
+	private static Pattern range = Pattern.compile("(.*?)\\b(?:from|between)\\s*([\\d\\. /\\(\\)\\?+-]+)\\s*(?:to|and|-)\\s*([\\d\\. /\\(\\)\\?+-]+)(.*)");
 	private Pattern numbergroup = Pattern.compile("(.*?)([()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d]?[()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{1,}(?![a-z{}]))(.*)"); //added , and ? for chromosome counts, used {1, } to include single digit expressions such as [rarely 0]
 	private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-{0,1},{0,1}\\s*)+ (to|or) \\d-(\\w+))(\\b.*)");
 	private Pattern numberpattern = Pattern.compile("[()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{2,}(?![a-z{}])"); //added , and ? for chromosome counts
@@ -63,7 +67,7 @@ public abstract class Normalizer implements INormalizer {
 	private IInflector inflector;
 	private static Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
 	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
-	    
+	private static Pattern compoundPPptn;    
 	private ParentTagProvider parentTagProvider;
 	String adjnounslist;
 	Map<String, String> adjnounsent;
@@ -101,6 +105,7 @@ public abstract class Normalizer implements INormalizer {
 	 * @param characterKnowledgeBase
 	 * @param organStateKnowledgeBase
 	 * @param inflector
+	 * @param compoundPPptn TODO
 	 */
 	@Inject
 	public Normalizer(IGlossary glossary, @Named("Units") String units, @Named("NumberPattern")String numberPattern,
@@ -121,7 +126,8 @@ public abstract class Normalizer implements INormalizer {
 			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			IOrganStateKnowledgeBase organStateKnowledgeBase, 
-			IInflector inflector) {
+			IInflector inflector, 
+			@Named("CompoundPrepWords")String compoundPPptn) {
 		this.units = units;
 		this.numberPattern = numberPattern;
 		this.glossary = glossary;
@@ -153,7 +159,10 @@ public abstract class Normalizer implements INormalizer {
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.inflector = inflector;
 		this.parentTagProvider = parentTagProvider;
-		
+		this.compoundPPptn = Pattern.compile("(.*?)\\b("+compoundPPptn+")\\b(.*)");		
+	}
+	
+	public void init(){
 		adjnounsent = terminologyLearner.getAdjNounSent();
 		List<String> adjnouns = terminologyLearner.getAdjNouns();
 		if(adjnouns!=null && adjnounsent!=null){
@@ -178,8 +187,30 @@ public abstract class Normalizer implements INormalizer {
 	public String normalize(String str, String tag, String modifier, String source) {	
 		str = dataSetSpecificNormalization(str);
 		
-		str = str.replaceAll("_", "-");
+		str = str.replaceAll("_", "-");//??
+
+		//sent = sent.replace("taxonname_", ""); //clean up the mark from the Transformer step
+		str = str.replaceAll("\\bshades of\\b", "shades_of");
+		str = str.replaceAll("\\bat least\\b", "at_least");
+		str = str.replaceAll("[ _-]+\\s*shaped", "-shaped");
+		str = str.replaceAll("(?<=\\s)µ\\s+m\\b", "um");
+		str = str.replaceAll("\\bdiam\\s*\\.(?=\\s?[,a-z])", "diam");
+		str = str.replaceAll("more or less", "moreorless");
+		str = str.replaceAll("&#176;", "°");
+		str = str.replaceAll("\\b(ca|c)\\s*\\.?\\s*(?=\\d)", "");
+		str = str.replaceAll("(?<=\\d)(?=("+units+")\\b)", " "); //23mm => 23 mm
+		str = str.replaceAll("\\bten\\b", "10");
 		
+		//str = stringColors(str);
+		str = connectColors(str);
+        //deal with numbers
+
+		str = ratio2number(str);
+		str = toNumber(str);
+
+		str = formatNumericalRange(str, source);
+		//text = text.replaceAll("\\bca\\s*\\.", "ca");
+		str = stringCompoundPP(str);		
 		String backupStr = str;
 		str = normalizeInner(str, tag, source);
 		if(str.equals(backupStr))
@@ -187,8 +218,9 @@ public abstract class Normalizer implements INormalizer {
 		//if(!modifier.trim().isEmpty())
 		//	str = addModifier(str, modifier, tag);
 		
-		str = connectColors(str);
 		
+		
+		//===========================================================================
 		boolean containsArea = false;
 		String strcp = str;
 		str = normalizeSpacesRoundNumbers(str);
@@ -331,6 +363,82 @@ public abstract class Normalizer implements INormalizer {
 		return str;
 	}
 	
+	/*
+	 * Handles the compound prepositions
+	 */
+	 private String stringCompoundPP(String text) {
+	        boolean did = false;
+	        String result = "";
+	        Matcher m = compoundPPptn.matcher(text);
+	        while(m.matches()){
+	            String linked = m.group(2).replaceAll("\\s+", "-");
+	            result += m.group(1)+ linked;
+	            text = m.group(3);
+	            m = compoundPPptn.matcher(text);
+	            did = true;
+	        }
+	        result += text;
+	        if(did) log(LogLevel.DEBUG, "[compound pp]:"+result);
+	        return result;
+	    }
+	
+
+	/**
+	 * from 5-6 to 10 => 5-10
+	 * between 1.0 and 2.0 => 10-20
+	 * from 1/3 to 1/2 
+	 * 10 to 20
+	 * 
+	 * "reduced to 2" should not be included.
+	 * @param text
+	 * @return
+	 */
+	private String formatNumericalRange(String text, String src) {
+		String copy = text;
+		text = text.replaceAll("\\bone\\b\\s?\\b(?=to\\s?\\d)", "1 "); //one to 3 valves
+		if(text.contains("from") || text.contains("between")){
+			Matcher m = range.matcher(text);
+			while(m.matches()){
+				text = m.group(1)+m.group(2)+" - "+m.group(3)+m.group(4);
+				m = range.matcher(text);
+			}
+		}
+		text = text.replaceAll("\\bdiameter\\s+of\\b\\s*(?=\\d)", "diameter ");
+		if(text.contains(" to ") || text.contains(" up to ")){
+			text = text.replaceAll("(?<=\\d\\s?("+units+")?) to (?=\\d)", " - ");// three to four???
+			text = to_Range(text);				
+			text = text.replaceAll(" (?<=0 - [\\d\\. ]{1,6} [a-z ]?)× (?=[\\d\\. ]{1,6} [a-z])", " × 0 - "); //deal with case 2
+			text = text.replaceAll(" 0 - (?=[\\d\\.\\ ]{1,8} [-–])", " ");// 0 - 1 . 3  - 2 . 0 => 1 . 3 - 2 . 0
+		}
+		if(!copy.equals(text)){
+			log(LogLevel.DEBUG, src+" [to range original] "+copy);
+			log(LogLevel.DEBUG, src+" [to range now] "+text);
+		}
+		return text.replaceAll("\\s+", " ").trim();
+	}
+	
+	/**
+	 * deal with: to-range such as "to 3 cm", "to 24 × 5 mm", "to 2 . 7 × 1 . 7 – 2 mm", "3 – 20 ( – 25 )" 
+	 * text = text.replaceAll(" (up )?to (?=[\\d\\. ]{1,6} )", " 0 - "); // <trees> to 3 cm => <trees> 0 - 3 cm: works for case 1,  3, (case 4 should not match)
+	 * "verb-ed to" pattern is excluded
+	 * @param text
+	 * @return
+	 */
+	private String to_Range(String text) {
+		//Pattern torangeptn = Pattern.compile("(.*?)\\b(\\S+)? to ([\\d\\. ]{1,6} )(.*)");// doesn't match "elongate , to 10 cm in diameter" because of '\b' not matching ','
+		Pattern torangeptn = Pattern.compile("(.*?)\\b?(\\S+)? to ([\\d\\. ]{1,6} )(.*)");
+		Matcher m = torangeptn.matcher(text);
+		while(m.matches()){
+			if(m.group(2).compareTo("up")==0 || ! this.posKnowledgeBase.isVerb(m.group(2))){
+				text = m.group(1)+m.group(2).replaceFirst("\\bup\\b", "")+" 0 - "+m.group(3)+m.group(4);
+			}else{
+				text = m.group(1)+m.group(2)+" TO "+m.group(3)+m.group(4);
+			}
+			m = torangeptn.matcher(text);
+		}
+		return text.replaceAll("TO", "to");
+	}
+	
 	private String normalizeInnerNew(String str, String tag, String source) {
 
 		if(replacements!=null && replacements.containsKey(source)) {
@@ -396,7 +504,7 @@ public abstract class Normalizer implements INormalizer {
 	protected abstract String dataSetSpecificNormalization(String sentence);
 
 
-	private String addModifier(String str, String modifier, String tag) {
+	/*private String addModifier(String str, String modifier, String tag) {
 		String singularTag = inflector.getSingular(tag);
 		String pluralTag = inflector.getPlural(tag);
 		
@@ -437,22 +545,22 @@ public abstract class Normalizer implements INormalizer {
 		    //index = str.indexOf(tag, searchIndex);
 		}
 				
-		/*int i=0;
-		for(Integer position : tagPositions) {
-			int correctPosition = position + (i * modifier.length());
-			
-			String prefixStr = str.substring(0, correctPosition);
-			String postfixStr = str.substring(correctPosition);
-			
-			String[] prefixTokens = prefixStr.split("\\b");
-			if(!modifier.contains(prefixTokens[prefixTokens.length-1])) {
-				str = prefixStr + " " + modifier + " " + postfixStr;
-				i++;
-			}
-		}*/
+		//int i=0;
+		//for(Integer position : tagPositions) {
+		//	int correctPosition = position + (i * modifier.length());
+		//	
+		//	String prefixStr = str.substring(0, correctPosition);
+		//	String postfixStr = str.substring(correctPosition);
+		//	
+		//	String[] prefixTokens = prefixStr.split("\\b");
+		//	if(!modifier.contains(prefixTokens[prefixTokens.length-1])) {
+		//		str = prefixStr + " " + modifier + " " + postfixStr;
+		//		i++;
+		//	}
+		//}
 	
 		return str;
-	}
+	}*/
 
 
 	/**

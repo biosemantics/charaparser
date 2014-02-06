@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -49,8 +50,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected HashMap<String, String> equalCharacters;
 	protected String numberPattern;
 	protected String times;
-	protected Set<String> simplePreps;
-	protected Set<String> compoundPreps;
+	protected String compoundPreps;
+
 	
 	/**
 	 * @param inflector
@@ -65,6 +66,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param equalCharacters
 	 * @param numberPattern
 	 * @param times
+	 * @param compoundPreps TODO
 	 */
 	@Inject
 	public AbstractChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
@@ -76,7 +78,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			@Named("Units")String units, 
 			@Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			@Named("NumberPattern")String numberPattern, 
-			@Named("Times")String times) {
+			@Named("Times")String times, 
+			@Named("CompoundPrepWords") String compoundpreps) {
 		this.inflector = inflector;
 		this.glossary = glossary;
 		this.characterKnowledgeBase = characterKnowledgeBase;
@@ -89,6 +92,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		this.equalCharacters = equalCharacters;
 		this.numberPattern = numberPattern;
 		this.times = times;
+		this.compoundPreps = "("+compoundpreps.replaceAll("\\s+", "-")+")";
 	}
 	
 	/**
@@ -828,6 +832,18 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			List<Structure> fromStructures, List<Structure> toStructures, 
 			List<Chunk> modifiers, boolean symmetric, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
+		//compoundprep relations have "-" in them, remove '-' before output
+		if(relation.contains("-")){
+			String[] tokens = relation.split("\\s+");
+			String newrel = "";
+			for(String t: tokens){
+				if(t.matches(this.compoundPreps)){
+					t = t.replaceAll("-", " ");
+					newrel += t + " ";
+				}
+			}
+			relation = newrel.trim();
+		}
 		log(LogLevel.DEBUG, "create relation \"" + relation + "\" between: \n" + fromStructures + "\nto\n" + toStructures);
 		//add relation elements
 		LinkedList<Relation> relationElements = new LinkedList<Relation>();

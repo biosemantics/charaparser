@@ -33,6 +33,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 	private ITerminologyLearner terminologyLearner;
 	private Set<String> vbWords;
 	private Pattern compreppattern = Pattern.compile("\\{?(according-to|ahead-of|along-with|apart-from|as-for|aside-from|as-per|as-to-as-well-as|away-from|because-of|but-for|by-means-of|close-to|contrary-to|depending-on|due-to|except-for|forward-of|further-to|in-addition-to|in-between|in-case-of|in-face-of|in-favour-of|in-front-of|in-lieu-of|in-spite-of|instead-of|in-view-of|near-to|next-to|on-account-of|on-behalf-of|on-board|on-to|on-top-of|opposite-to|other-than|out-of|outside-of|owing-to|preparatory-to|prior-to|regardless-of|save-for|thanks-to|together-with|up-against|up-to|up-until|vis-a-vis|with-reference-to|with-regard-to)\\}?");
+	//private Pattern compreppattern;
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	
 	/**
@@ -47,7 +48,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 	@Inject
 	public OrganCharacterPOSTagger(ICorpus corpus, @Named("PrepositionWords") String prepositions, @Named("StopWords") Set<String> stopWords,
 			@Named("Units") String units, ITerminologyLearner terminologyLearner, @Named("VBWords")Set<String> vbWords, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+			IOrganStateKnowledgeBase organStateKnowledgeBase, @Named("CompoundPrepWords")String compoundPrepWords) {
 		this.corpus = corpus;
 		this.prepositions = prepositions;
 		this.stopWords = stopWords;
@@ -55,6 +56,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 		this.terminologyLearner = terminologyLearner;
 		this.vbWords = vbWords;
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		this.compreppattern = Pattern.compile("("+compoundPrepWords.replaceAll("\\s+", "-")+")");
 	}
 	
 	

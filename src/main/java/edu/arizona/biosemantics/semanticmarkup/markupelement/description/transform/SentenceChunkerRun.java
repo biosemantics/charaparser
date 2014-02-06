@@ -1,6 +1,7 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -76,9 +77,11 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 			String modifier = sentenceArray[0];
 			modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
 			subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
-			
+			//collect info from terminology learner
+
 			// normalize sentence
 			String normalizedSentence="";
+			normalizer.init();
 			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
 			log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);//TODO: (4) is not '3'
 			
