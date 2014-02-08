@@ -23,10 +23,11 @@ public class DescriptionMarkupRun extends AbstractRun {
 
 	@Inject
 	public DescriptionMarkupRun(@Named("GuiceModuleFile")String guiceModuleFile,
+			@Named("InputDirectory")String inputDirectory, 
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			IDescriptionMarkupCreator creator,
 			@Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile) {
-		super(guiceModuleFile, runOutDirectory);
+		super(guiceModuleFile, inputDirectory, runOutDirectory);
 		this.creator = creator;
 		this.validateSchemaFile = validateSchemaFile;
 	}

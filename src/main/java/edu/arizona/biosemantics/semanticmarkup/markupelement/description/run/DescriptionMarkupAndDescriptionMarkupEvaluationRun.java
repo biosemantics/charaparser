@@ -32,12 +32,13 @@ public class DescriptionMarkupAndDescriptionMarkupEvaluationRun extends Abstract
 	 */
 	@Inject
 	public DescriptionMarkupAndDescriptionMarkupEvaluationRun(@Named("GuiceModuleFile")String guiceModuleFile,
+			@Named("InputDirectory")String inputDirectory, 
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("MarkupCreator") IDescriptionMarkupCreator creator, 
 			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator, 
 			@Named("EvaluationRun_DescriptionMarkupResultReader")IDescriptionMarkupResultReader descriptionMarkupResultReader, 
 			String correctInputDirectory) {
-		super(guiceModuleFile, runOutDirectory);
+		super(guiceModuleFile, inputDirectory, runOutDirectory);
 		this.creator = creator;
 		this.descriptionMarkupResultReader = descriptionMarkupResultReader;
 		this.evaluator = evaluator;

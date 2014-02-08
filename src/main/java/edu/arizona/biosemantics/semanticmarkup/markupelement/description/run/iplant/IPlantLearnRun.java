@@ -31,6 +31,7 @@ public class IPlantLearnRun extends AbstractRun {
 	 */
 	@Inject
 	public IPlantLearnRun(@Named("GuiceModuleFile")String guiceModuleFile,
+			@Named("InputDirectory")String inputDirectory, 
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,
@@ -39,7 +40,7 @@ public class IPlantLearnRun extends AbstractRun {
 			@Named("DatabasePassword") String databasePassword,
 			@Named("DatabasePrefix") String databasePrefix,
 			ILearner learner) {
-		super(guiceModuleFile, runOutDirectory);
+		super(guiceModuleFile, inputDirectory, runOutDirectory);
 		this.learner = learner;
 		this.databaseHost = databaseHost;
 		this.databasePort = databasePort;

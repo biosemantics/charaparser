@@ -30,7 +30,7 @@ public class NeXMLMainTest {
 		bindingFiles.add("resources//io//bindings//semanticmarkup.markupelement.description.model.nexml//neXMLBindings.xml");
 		config.setIODescriptionBindingsList(bindingFiles);
 		config.setDescriptionReader(MOXyBinderDescriptionReader.class);
-		config.setDescriptionReaderInputDirectory("input");
+		config.setInputDirectory("input");
 		config.setTerminologyLearner(UnsupervisedClauseMarkup.class);
 		Injector injector = Guice.createInjector(config);
 		IRun run = injector.getInstance(IRun.class);

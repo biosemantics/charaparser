@@ -23,7 +23,7 @@ public class FossilConfig extends RunConfig {
 		this.setGlossaryFile("edu/arizona/biosemantics/semanticmarkup/know/glossaries/treatisehglossaryfixed.csv");
 		
 		// IO
-		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
+		this.setInputDirectory("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
 		
 		// PROCESSING 
 		this.setGlossaryType(Glossary.Fossil.toString());

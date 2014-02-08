@@ -32,13 +32,14 @@ public class DescriptionEvaluationRun extends AbstractRun {
 	 */
 	@Inject
 	public DescriptionEvaluationRun(@Named("GuiceModuleFile")String guiceModuleFile,
+			@Named("InputDirectory")String inputDirectory, 
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator, 
 			@Named("EvaluationRun_TestReader")IDescriptionMarkupResultReader testReader,
 			@Named("EvaluationRun_CorrectReader")IDescriptionMarkupResultReader correctReader, 
 			String testInputDirectory,
 			String correctInputDirectory) {
-		super(guiceModuleFile, runOutDirectory);
+		super(guiceModuleFile, inputDirectory, runOutDirectory);
 		this.testReader = testReader;
 		this.correctReader = correctReader;
 		this.evaluator = evaluator;

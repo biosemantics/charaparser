@@ -13,7 +13,7 @@
        	    <xml-type prop-order="source processedBy otherInfoOnMeta" />
 			<java-attributes>
         		<xml-element java-attribute="source" xml-path="source" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Source" />
-        		<xml-element java-attribute="processedBy" xml-path="processed_by" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor" container-type="java.util.List"/>
+        		<xml-element java-attribute="processedBy" xml-path="processed_by/processor" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor" container-type="java.util.List"/>
         		<xml-element java-attribute="otherInfoOnMeta" xml-path="other_info_on_meta" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.OtherInfoOnMeta" container-type="java.util.List" />
         	</java-attributes>
         </java-type>

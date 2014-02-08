@@ -34,7 +34,7 @@ public class JDOMHabitatReader implements IHabitatReader {
 		
 		File sourceDirectory = new File(filePath);
 		for(File file : sourceDirectory.listFiles()) {
-			HabitatsFile habitatFile = new HabitatsFile();
+			HabitatsFile habitatsFile = new HabitatsFile();
 			
 			SAXBuilder builder = new SAXBuilder();
 			Document document = (Document) builder.build(file);
@@ -51,9 +51,9 @@ public class JDOMHabitatReader implements IHabitatReader {
 			List<Treatment> treatments = new LinkedList<Treatment>();
 			treatments.add(treatment);
 			
-			habitatFile.setTreatments(treatments);
-			habitatFile.setFile(file);
-			habitatsFiles.add(habitatFile);
+			habitatsFile.setTreatments(treatments);
+			habitatsFile.setFile(file);
+			habitatsFiles.add(habitatsFile);
 		}
 		return new HabitatsFileList(habitatsFiles);
 	}

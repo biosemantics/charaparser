@@ -26,13 +26,13 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transfo
  * Markup CLI Entry point into the processing of the charaparser framework
  * @author thomas rodenhausen
  */
-public class MarkupMain extends CLIMain {
+public class IPlantMarkupMain extends CLIMain {
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CLIMain cliMain = new MarkupMain();
+		CLIMain cliMain = new IPlantMarkupMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
@@ -127,7 +127,7 @@ public class MarkupMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
+		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("m")) {
 		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("m"));

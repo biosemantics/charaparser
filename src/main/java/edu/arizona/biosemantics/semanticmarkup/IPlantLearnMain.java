@@ -26,13 +26,13 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transfo
  * Learn CLI Entry point into the processing of the charaparser framework
  * @author thomas rodenhausen
  */
-public class LearnMain extends CLIMain {
+public class IPlantLearnMain extends CLIMain {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		CLIMain cliMain = new LearnMain();
+		CLIMain cliMain = new IPlantLearnMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
@@ -128,7 +128,7 @@ public class LearnMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
+		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    	//config.setGenericFileVolumeReaderSource(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("m")) {

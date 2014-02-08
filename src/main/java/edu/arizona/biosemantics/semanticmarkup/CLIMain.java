@@ -163,7 +163,7 @@ public class CLIMain {
 		    } else {
 		    	//use GenericFileVolumeReader
 		    	config.setDescriptionReader(GenericDescriptionReader.class);
-		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
+		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setMarkupDescriptionTreatmentTransformerParallelProcessing(true);
