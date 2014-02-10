@@ -13,11 +13,12 @@ public class ElevationTransformer implements IElevationTransformer {
 	@Override
 	public void transform(List<ElevationsFile> elevationsFiles) {
 		for(ElevationsFile elevationsFile : elevationsFiles) {
+			int i = 0;
 			for(Treatment treatment : elevationsFile.getTreatments()) {
 				for(Elevation elevation : treatment.getElevations()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
-					statement.setId("d0");
+					statement.setId("distribution" + i);
 					statement.setText(elevation.getText());
 					statements.add(statement);
 					elevation.setStatements(statements);

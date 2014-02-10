@@ -13,11 +13,12 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	@Override
 	public void transform(List<PhenologiesFile> phenologiesFiles) {
 		for(PhenologiesFile phenologiesFile : phenologiesFiles) {
+			int i = 0;
 			for(Treatment treatment : phenologiesFile.getTreatments()) {
 				for(Phenology phenology : treatment.getPhenologies()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
-					statement.setId("d0");
+					statement.setId("distribution" + i);
 					statement.setText(phenology.getText());
 					statements.add(statement);
 					phenology.setStatements(statements);

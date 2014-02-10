@@ -13,11 +13,12 @@ public class HabitatTransformer implements IHabitatTransformer {
 	@Override
 	public void transform(List<HabitatsFile> habitatsFiles) {
 		for(HabitatsFile habitatsFile : habitatsFiles) {
+			int i = 0;
 			for(Treatment treatment : habitatsFile.getTreatments()) {
 				for(Habitat habitat : treatment.getHabitats()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
-					statement.setId("d0");
+					statement.setId("distribution" + i);
 					statement.setText(habitat.getText());
 					statements.add(statement);
 					habitat.setStatements(statements);
