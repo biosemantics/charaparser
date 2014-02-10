@@ -44,6 +44,7 @@ public class JDOMHabitatWriter implements IHabitatWriter {
 				currentElement.setText("");
 				for(Statement statement : habitat.getStatements()) {
 					Element statementElement = new Element("statement");
+					statementElement.setAttribute("id", statement.getId());
 					statementElement.setText(statement.getText());
 					currentElement.addContent(statementElement);
 				}

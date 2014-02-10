@@ -44,6 +44,7 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 				currentElement.setText("");
 				for(Statement statement : phenology.getStatements()) {
 					Element statementElement = new Element("statement");
+					statementElement.setAttribute("id", statement.getId());
 					statementElement.setText(statement.getText());
 					currentElement.addContent(statementElement);
 				}

@@ -44,6 +44,7 @@ public class JDOMElevationWriter implements IElevationWriter {
 				currentElement.setText("");
 				for(Statement statement : elevation.getStatements()) {
 					Element statementElement = new Element("statement");
+					statementElement.setAttribute("id", statement.getId());
 					statementElement.setText(statement.getText());
 					currentElement.addContent(statementElement);
 				}

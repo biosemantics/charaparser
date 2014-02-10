@@ -44,6 +44,7 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 				currentElement.setText("");
 				for(Statement statement : distribution.getStatements()) {
 					Element statementElement = new Element("statement");
+					statementElement.setAttribute("id", statement.getId());
 					statementElement.setText(statement.getText());
 					currentElement.addContent(statementElement);
 				}
