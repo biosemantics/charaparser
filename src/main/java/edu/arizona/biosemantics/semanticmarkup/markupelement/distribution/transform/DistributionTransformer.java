@@ -17,6 +17,7 @@ public class DistributionTransformer implements IDistributionTransformer {
 				for(Distribution distribution : treatment.getDistributions()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
+					statement.setId("d0");
 					statement.setText(distribution.getText());
 					statements.add(statement);
 					distribution.setStatements(statements);

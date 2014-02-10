@@ -17,6 +17,7 @@ public class ElevationTransformer implements IElevationTransformer {
 				for(Elevation elevation : treatment.getElevations()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
+					statement.setId("d0");
 					statement.setText(elevation.getText());
 					statements.add(statement);
 					elevation.setStatements(statements);

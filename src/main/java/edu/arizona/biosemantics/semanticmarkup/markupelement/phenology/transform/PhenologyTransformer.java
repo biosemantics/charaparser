@@ -17,6 +17,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 				for(Phenology phenology : treatment.getPhenologies()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
+					statement.setId("d0");
 					statement.setText(phenology.getText());
 					statements.add(statement);
 					phenology.setStatements(statements);
