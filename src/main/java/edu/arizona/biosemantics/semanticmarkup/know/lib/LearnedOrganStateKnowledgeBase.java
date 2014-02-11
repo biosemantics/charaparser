@@ -39,7 +39,8 @@ public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeB
 	}
 	
 	@Override
-	public boolean isOrgan(String word) {		
+	public boolean isOrgan(String word) {	
+		if(word.matches("\\W+")) return false;
 		if(!learned)
 			addLearnedOrgansAndStates();
 		
@@ -48,12 +49,13 @@ public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeB
 
 	@Override
 	public boolean isState(String word) {
+		if(word.matches("\\W+")) return false;
 		word = word.toLowerCase();
 		
 		if(!learned)
 			addLearnedOrgansAndStates();
-		
-		boolean result = states.contains(word);
+		boolean result = super.isState(word); //populated states from perm. glossary
+		//boolean result = states.contains(word);
 		if(!result && word.contains("-")) {
 			String[] parts = word.split("-");
 			result = states.contains(parts[parts.length-1]);

@@ -301,7 +301,7 @@ public abstract class Normalizer implements INormalizer {
 				//log(LogLevel.DEBUG, str);
 			//}
         	//str = normalizeCharacterLists(str); //a set of states of the same character connected by ,/to/or => {color-blue-to-red}
-        	str = cln.normalizeParentheses(str); 
+        	str = cln.normalizeParentheses(str, characterTokensReversed); 
         }
 
         if(str.matches(".*? as\\s+[\\w]+\\s+as .*")){

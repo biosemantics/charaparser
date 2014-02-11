@@ -165,7 +165,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 					//mostly r[p[at] o[(tips)]] r[p[of] o[(inflorescences)]] ; other prepchunks should be processed as well if they are not followed by an organ chunk.
 					if(!(nextChunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN)) && !(nextChunk.isOfChunkType(ChunkType.NP_LIST)) && 
 							!(nextChunk.isOfChunkType(ChunkType.NON_SUBJECT_ORGAN))) {
-						result.addAll(reestablishSubject(processingContextState));
+						result.addAll(reestablishSubject(processingContext, processingContextState));
 						skipFirstNChunk = 1;
 						return result;
 					}else{
@@ -181,8 +181,8 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		} else {
 			if(firstChunk.isOfChunkType(ChunkType.MODIFIER) || firstChunk.isOfChunkType(ChunkType.CONSTRAINT))
 				processingContextState.getUnassignedConstraints().add(firstChunk);
-			result.addAll(reestablishSubject(processingContextState));
-			skipFirstNChunk = 1;
+			result.addAll(reestablishSubject(processingContext, processingContextState));
+			skipFirstNChunk = 0;
 			return result;
 		}
 		

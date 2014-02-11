@@ -28,13 +28,14 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 	public GlossaryOrganStateKnowledgeBase(IGlossary glossary, IInflector inflector) {
 		this.glossary = glossary;
 		this.inflector = inflector;
-		getOrgans();
-		getStates();
+		//getOrgans();
+		//getStates();
 	}
 	
 
 	@Override
 	public boolean isOrgan(String word) {
+		getOrgans();
 		boolean result = false;
 		word = word.toLowerCase().trim();
 		result = organs.contains(word);
@@ -45,6 +46,7 @@ public class GlossaryOrganStateKnowledgeBase implements IOrganStateKnowledgeBase
 
 	@Override
 	public boolean isState(String word) {
+		getStates();
 		word = word.toLowerCase();
 		return states.contains(word);
 	}

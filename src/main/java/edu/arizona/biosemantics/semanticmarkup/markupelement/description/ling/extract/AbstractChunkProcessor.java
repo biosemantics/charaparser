@@ -151,12 +151,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 
-	protected List<Structure> reestablishSubject(ProcessingContextState processingContextState) {
+	protected List<Structure> reestablishSubject(ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		log(LogLevel.DEBUG, "reestablish subject");
 		List<Structure> result = new LinkedList<Structure>();
 
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
-		LinkedList<Structure> subjects = processingContextState.getSubjects();
+		List<Structure> subjects = processingContextState.getSubjects();
+		if(subjects.size()==0){
+			subjects = processingContext.getLastSubjects();
+		}
 		lastElements.clear();
 		for(Structure structure : subjects) {
 			lastElements.add(structure);
