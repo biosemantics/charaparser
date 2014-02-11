@@ -45,7 +45,7 @@ public class ProcessingContextState implements Cloneable {
 	private ArrayList<Entry<String, String>> scopeProperties;
 
 	private int inBracketsLevel = 0;
-	
+
 	/**
 	 * Reset: clear unassignedCharacter and mainSubjectStructure
 	 */
@@ -172,6 +172,7 @@ public class ProcessingContextState implements Cloneable {
 		else {
 			this.lastElements.clear();
 			this.lastElements.addAll(lastElements);
+			System.out.print("");
 		}
 	}
 
@@ -316,5 +317,6 @@ public class ProcessingContextState implements Cloneable {
 		}
 		return null;
 	}
+
 
 }

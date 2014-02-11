@@ -17,6 +17,8 @@ import java.util.regex.Pattern;
 
 
 
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -50,28 +52,42 @@ public abstract class Normalizer implements INormalizer {
 	private String prepositionWords;
 	private Pattern modifierList;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
-	private static Pattern range = Pattern.compile("(.*?)\\b(?:from|between)\\s*([\\d\\. /\\(\\)\\?+-]+)\\s*(?:to|and|-)\\s*([\\d\\. /\\(\\)\\?+-]+)(.*)");
-	private Pattern numbergroup = Pattern.compile("(.*?)([()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d]?[()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{1,}(?![a-z{}]))(.*)"); //added , and ? for chromosome counts, used {1, } to include single digit expressions such as [rarely 0]
+	private Pattern range = Pattern.compile("(.*?)\\b(?:from|between)\\s*([\\d\\. /\\(\\)\\?+-]+)\\s*(?:to|and|-)\\s*([\\d\\. /\\(\\)\\?+-]+)(.*)");
+	private Pattern numbergroup = Pattern.compile("(.*?)([()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d]?[()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{1,}(?![a-z]))(.*)"); //added , and ? for chromosome counts, used {1, } to include single digit expressions such as [rarely 0]
+	//private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-,\\s*)+ (to|or) \\d-\\{)(.*)");	
 	private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-{0,1},{0,1}\\s*)+ (to|or) \\d-(\\w+))(\\b.*)");
-	private Pattern numberpattern = Pattern.compile("[()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{2,}(?![a-z{}])"); //added , and ? for chromosome counts
-    private Pattern modifierlist = Pattern.compile("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");
+	private Pattern numberpattern = Pattern.compile("[()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{2,}(?![a-z])"); //added , and ? for chromosome counts
+	//positionptn does not apply to FNA, it may apply to animal descriptions e.g. rib_I, rib_II,
+	//private static Pattern positionptn = Pattern.compile("(<(\\S+?)> \\d+(?: and \\d+)?)"); // <{wing}> 1 – 3 cm ;
+	private static Pattern positionptn = Pattern.compile("(<(\\S+?)> \\d+(?:(?: and |_)\\d+)?(?!\\s*(?:\\.|/|times)))");//changed to match "4_5", "4 and 5" but not "<structure> 2 / 5" or "<structure> 2 times"
+
+	private Pattern modifierlist = Pattern.compile("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");
 	private String countp = "more|fewer|less|\\d+";
-	private Pattern countptn = Pattern.compile("((?:^| |\\{)(?:"+countp+")\\}? (?:or|to) \\{?(?:"+countp+")(?:\\}| |$))");
+	private Pattern countptn = Pattern.compile("((?:^| )(?:"+countp+") (?:or|to) (?:"+countp+")(?: |$))");
 	private Pattern colorpattern = Pattern.compile("(.*?)((coloration|color)\\s+%\\s+(?:(?:coloration|color|@|%) )*(?:coloration|color))\\s((?![^,;()\\[\\]]*[#]).*)");
 	private Pattern distributePrepPattern = Pattern.compile("(^.*~list~)(.*?~with~)(.*?~or~)(.*)");
-	private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ \\{?[cmd]?m\\}?×\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?×?(\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?)?)(.*)");
-    private Pattern viewptn = Pattern.compile( "(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)"); //to match in dorsal view and in profile
+	private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ ?[µucmd]?m?\\s*[x×]\\S*\\s*[\\d\\.()+-]+ [µucmd]?m\\s*[x×]?(\\S*\\s*[\\d\\.()+-]+ [µucmd]?m)?)(.*)");
+	//private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ \\{?[cmd]?m\\}?×\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?×?(\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?)?)(.*)");
+	private Pattern viewptn = Pattern.compile( "(.*?\\b)((?:in|at)\\s+[a-z_ -]*\\s*(?:view|profile|closure))(\\s.*)"); //to match in dorsal view and in profile
+	//private Pattern viewptn = Pattern.compile( "(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)"); //to match in dorsal view and in profile
 	private Pattern bulletpattern  = Pattern.compile("^(and )?([(\\[]\\s*\\d+\\s*[)\\]]|\\d+.)\\s+(.*)"); //( 1 ), [ 2 ], 12.
-	private Pattern asaspattern = Pattern.compile("(.*?\\b)(as\\s+[\\w{}<>]+\\s+as)(\\b.*)");
+	private Pattern asaspattern = Pattern.compile("(.*?\\b)(as\\s+[\\w]+\\s+as)(\\b.*)");
 	private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private IInflector inflector;
-	private static Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
-	private static Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
-	private static Pattern compoundPPptn;    
+	//private Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([`@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[`@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
+	//private Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
+	//private Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([`@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[`@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
+	//private Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
+	private Pattern vaguenumberptn1 = Pattern.compile("(.*?)\\b((?:equal[ _-]to|(?:more|greater|less|fewer) than|or| )+) ([\\d.]+)(.*)");
+	private Pattern vaguenumberptn2 = Pattern.compile("(.*?)0(-[\\d.]+)( \\w+ )(?:and|but) ([\\d.]+)\\+(.*)");
+	private String[] modifierphrases = new String[] {"at first"};
+	private HashSet<String> modifiertokens = new HashSet<String>();
+	private Pattern compoundPPptn;    
 	private ParentTagProvider parentTagProvider;
-	String adjnounslist;
-	Map<String, String> adjnounsent;
-	Map<String, AdjectiveReplacementForNoun> replacements;
+	private String adjnounslist;
+	private Map<String, String> adjnounsent;
+	private Map<String, AdjectiveReplacementForNoun> replacements;
+	private CharacterListNormalizer cln;
 	
 	
 	/**
@@ -159,7 +175,8 @@ public abstract class Normalizer implements INormalizer {
 		this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.inflector = inflector;
 		this.parentTagProvider = parentTagProvider;
-		this.compoundPPptn = Pattern.compile("(.*?)\\b("+compoundPPptn+")\\b(.*)");		
+		this.compoundPPptn = Pattern.compile("(.*?)\\b("+compoundPPptn+")\\b(.*)");	
+		
 	}
 	
 	public void init(){
@@ -181,8 +198,17 @@ public abstract class Normalizer implements INormalizer {
 		}
 		replacements = 
 				terminologyLearner.getAdjectiveReplacementsForNouns();
+		
+		for(String mp: this.modifierphrases){
+			this.modifiertokens.add(mp.replaceAll("\\s+", "-"));
+		}
+		
+		cln = CharacterListNormalizer.getInstance(characterKnowledgeBase, organStateKnowledgeBase);
 	}
 	
+	public Set<String> getModifierTokens(){
+		return this.modifiertokens;
+	}
 	@Override
 	public String normalize(String str, String tag, String modifier, String source) {	
 		str = dataSetSpecificNormalization(str);
@@ -200,6 +226,7 @@ public abstract class Normalizer implements INormalizer {
 		str = str.replaceAll("\\b(ca|c)\\s*\\.?\\s*(?=\\d)", "");
 		str = str.replaceAll("(?<=\\d)(?=("+units+")\\b)", " "); //23mm => 23 mm
 		str = str.replaceAll("\\bten\\b", "10");
+		str = str.replaceAll("\\bca\\s*\\.\\s*", ""); //remove ca.
 		
 		//str = stringColors(str);
 		str = connectColors(str);
@@ -211,6 +238,7 @@ public abstract class Normalizer implements INormalizer {
 		str = formatNumericalRange(str, source);
 		//text = text.replaceAll("\\bca\\s*\\.", "ca");
 		str = stringCompoundPP(str);		
+		
 		String backupStr = str;
 		str = normalizeInner(str, tag, source);
 		if(str.equals(backupStr))
@@ -231,17 +259,19 @@ public abstract class Normalizer implements INormalizer {
 		/*if(str.indexOf(" -{")>=0){//1�2-{pinnately} or -{palmately} {lobed} => {1�2-pinnately-or-palmately} {lobed}
 			str = str.replaceAll("\\s+or\\s+-\\{", "-or-").replaceAll("\\s+to\\s+-\\{", "-to-").replaceAll("\\s+-\\{", "-{");
 		}*/
-
+		//TODO: Hong [_-]?  _or_?
 		if(str.matches(".*?-(or|to)\\b.*") || str.matches(".*?\\b(or|to)-.*") ){//1�2-{pinnately} or-{palmately} {lobed} => {1�2-pinnately-or-palmately} {lobed}
-			str = str.replaceAll("\\}?-or\\s+\\{?", "-or-").replaceAll("\\}?\\s+or-\\{?", "-or-").replaceAll("\\}?-to\\s+\\{?", "-to-").replaceAll("\\}?\\s+to-\\{?", "-to-").replaceAll("-or\\} \\{", "-or-").replaceAll("-to\\} \\{", "-to-");
+			str = str.replaceAll("-or\\s+", "-or-").replaceAll("\\s+or-", "-or-").replaceAll("-to\\s+", "-to-").replaceAll("\\s+to-", "-to-");
+			//str = str.replaceAll("\\}?-or\\s+\\{?", "-or-").replaceAll("\\}?\\s+or-\\{?", "-or-").replaceAll("\\}?-to\\s+\\{?", "-to-").replaceAll("\\}?\\s+to-\\{?", "-to-").replaceAll("-or\\} \\{", "-or-").replaceAll("-to\\} \\{", "-to-");
 		}
 		//{often} 2-, 3-, or 5-{ribbed} ; =>{often} {2-,3-,or5-ribbed} ;  635.txt-16
-		Matcher m = hyphenedtoorpattern.matcher(str);
+		Matcher m = hyphenedtoorpattern.matcher(str); //TODO: _ribbed not in local learned terms set. why?
 		while(m.matches()){
 			String possibleCharacterState = m.group(5);
-			boolean isCharacterState = this.organStateKnowledgeBase.isState(possibleCharacterState);
+			boolean isCharacterState = this.organStateKnowledgeBase.isState(possibleCharacterState); //TODO should also check perm. gloss.
 			if(isCharacterState) {
-				str = m.group(1) + "{" + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-").replaceAll("\\{$", "")+ "}" + m.group(6);
+				str = m.group(1) + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-") + m.group(6);
+				//str = m.group(1) + "{" + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-").replaceAll("\\{$", "")+ "}" + m.group(6);
 				//str = m.group(1)+"{"+m.group(2).replaceAll("[, ]","").replaceAll("\\{$", "")+m.group(5);	
 				m = hyphenedtoorpattern.matcher(str);
 			} else 
@@ -253,16 +283,16 @@ public abstract class Normalizer implements INormalizer {
 		//	log(LogLevel.DEBUG, );
 		//}
 
-		ArrayList<String> chunkedTokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
-    	str = normalizemodifier(str, chunkedTokens);//shallowly to deeply pinnatifid: this should be done before other normalization that involved composing new tokens using ~
+		//ArrayList<String> chunkedTokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
+    	str = normalizemodifier(str);//shallowly to deeply pinnatifid: this should be done before other normalization that involved composing new tokens using ~
 		//position list does not apply to FNA.			
-		//str = normalizePositionList(str);
-		str = normalizeCountList(str+"", chunkedTokens);
+		//str = normalizePositionList(str); //TODO Hong 
+		str = normalizeCountList(str);
 
 		//lookupCharacters(str);//populate charactertokens
-		ArrayList<String> characterTokensReversed = lookupCharacters(str, false, chunkedTokens);//treating -ly as %
+		ArrayList<String> characterTokensReversed = cln.lookupCharacters(str, false);//treating -ly as %
         if(characterTokensReversed.contains("color") || characterTokensReversed.contains("coloration")){
-        	str = normalizeColorPatterns(chunkedTokens, characterTokensReversed);
+        	str = normalizeColorPatterns(str, characterTokensReversed);
         	//lookupCharacters(str);
         }
         //lookupCharacters(str, true); //treating -ly as -ly
@@ -271,14 +301,16 @@ public abstract class Normalizer implements INormalizer {
 				//log(LogLevel.DEBUG, str);
 			//}
         	//str = normalizeCharacterLists(str); //a set of states of the same character connected by ,/to/or => {color-blue-to-red}
-        	str = normalizeParentheses(str, chunkedTokens); 
+        	str = cln.normalizeParentheses(str); 
         }
 
-        if(str.matches(".*? as\\s+[\\w{}<>]+\\s+as .*")){
+        if(str.matches(".*? as\\s+[\\w]+\\s+as .*")){
            str = normalizeAsAs(str);
         }
         
-        if(str.matches(".*?(?<=[a-z])/(?=[a-z]).*")){
+
+        
+        if(str.matches(".*?(?<=[a-z])/(?=[a-z]).*")){ //tooth/lobe =>tooth-lobe TODO Hong?
         	str = str.replaceAll("(?<=[a-z])/(?=[a-z])", "-");
         }
         
@@ -305,42 +337,43 @@ public abstract class Normalizer implements INormalizer {
 				str = m.group(3);
 			}
 			if(str.indexOf("±")>=0){
-				str = str.replaceAll("±(?!~[a-z])","{moreorless}").replaceAll("±(?!\\s+\\d)","moreorless");
+				str = str.replaceAll("±(?!~[a-z])","moreorless").replaceAll("±(?!\\s+\\d)","moreorless");
 			}
 			/*to match {more} or {less}*/
-			if(str.matches(".*?\\b[{<]*more[}>]*\\s+or\\s+[{<]*less[}>]*\\b?.*")){
-				str = str.replaceAll("[{<]*more[}>]*\\s+or\\s+[{<]*less[}>]*", "{moreorless}");
+			if(str.matches(".*?\\bmore\\s+or\\s+less\\b?.*")){
+				str = str.replaceAll("more\\s+or\\s+less", "moreorless");
 			}
 			//if(str.matches(".*?\\bin\\s+[a-z_<>{} -]+\\s+[<{]?view[}>]?\\b.*")){//ants: "in full-face view"
-			if(str.matches(".*?\\bin\\s+[a-z_<>{} -]*\\s*[<{]?(view|profile)[}>]?\\b.*")){
+			//if(str.matches(".*?\\bin\\s+[a-z_<>{} -]*\\s*[<{]?(view|profile)[}>]?\\b.*")){
+			if(str.matches(".*\\b(in|at)\\b.*?\\b(view|profile|closure)\\b.*")){
 				Matcher vm = viewptn.matcher(str);
 				while(vm.matches()){
-					str = vm.group(1)+" {"+vm.group(2).replaceAll("[<>{}]", "").replaceAll("\\s+", "-")+"} "+vm.group(3); 
+					str = vm.group(1)+" "+vm.group(2).replaceAll("\\s+", "-")+" "+vm.group(3); 
 					vm = viewptn.matcher(str);
 				}
 			}
 			
-			if(str.indexOf("×")>0){
+			if(str.indexOf("×")>0 || str.matches(".*?\\d\\s*\\b?("+units+")?\\b?\\s*x\\s*\\d.*")){
 				containsArea = true;
 				String[] area = normalizeArea(str);
 				str = area[0]; //with complete info
 				strnum = area[1]; //like str but with numerical expression normalized
 			}
 
+			for(String modifierphrase: modifierphrases){
+				str = str.replaceAll(modifierphrase, modifierphrase.replace(" ", "_"));
+			}
 			//str = handleBrackets(str);
 
 			//str = Utilities.handleBrackets(str);
-
+			if(str.matches(".*?\\d.*")){
+				str = normalizeVagueNumbers(str); //more than 5, less than 5
+			}
 			//stmt.execute("update "+this.tableprefix+"_markedsentence set rmarkedsent ='"+str+"' where source='"+src+"'");	
 			
-			if(containsArea){
+			/*if(containsArea){
 				str = strnum;
-
-				//str = handleBrackets(str);
-
-				//str = Utilities.handleBrackets(str);
-
-			}
+			}*/
 			
 			//leave threeing out as multiple tokens can be given to sp and protect them from being split up 
 			//str = threeingSentence(str);
@@ -354,7 +387,7 @@ public abstract class Normalizer implements INormalizer {
 			//}
            //str = str.replaceAll("}>", "/NN").replaceAll(">}", "/NN").replaceAll(">", "/NN").replaceAll("}", "/JJ").replaceAll("[<{]", "");
 		
-		str = str.replaceAll("\\{", "").replaceAll("\\}", "");
+		//str = str.replaceAll("\\{", "").replaceAll("\\}", "");//Hong TODO {}, remove }> from reg exps.
 		
 		/*if(!tag.equals("ditto"))
 			this.parentTag = tag;
@@ -363,6 +396,46 @@ public abstract class Normalizer implements INormalizer {
 		return str;
 	}
 	
+    /**
+	 * more|greater than 5 => 5+
+	 * more than or equal to 5 => 5+
+	 * less|fewer than 5 => 0-5	
+	 * at most 5 => no more than 5
+	 * @param str
+	 * @return
+	 */
+	private String normalizeVagueNumbers(String str) {
+		if(str.matches(".*? at most .*")){
+			str = str.replaceAll("\\bat most ", "no more than " );
+		}
+
+
+		Matcher m = vaguenumberptn1.matcher(str);
+		while(m.matches()){
+			if(m.group(2).matches(".*?\\b(more|greater)\\b.*")){
+				str = m.group(1)+" "+m.group(3)+"+"+m.group(4);
+			}else if(m.group(2).matches(".*?\\b(less|fewer)\\b.*")){
+				str = m.group(1)+" 0-"+m.group(3)+m.group(4);
+			}else{
+				return str; //not contain a vague number
+			}
+			m = vaguenumberptn1.matcher(str);
+		}
+		str = str.replaceAll("\\s+", " ");
+		//4+ and 0-6 => 4-6
+		str = str.replaceAll("(?<=\\d)\\+ (and|but) 0(?=-\\d)", "");
+		//0-6 feet and 4+ =>4-6
+
+		Matcher m2 = vaguenumberptn2.matcher(str);
+		while(m2.matches()){
+			str = m2.group(1)+" "+m2.group(4)+m2.group(2)+" "+m2.group(3)+" "+m2.group(5);
+			m2 = vaguenumberptn2.matcher(str);
+		}
+		return str.replaceAll("\\s+", " ").trim();
+	}
+
+
+
 	/*
 	 * Handles the compound prepositions
 	 */
@@ -615,6 +688,44 @@ public abstract class Normalizer implements INormalizer {
 		return str;
 	}
 
+	/**
+	 * 
+	 * @param text: {oblanceolate} , 15-70×30-150+ cm , {flat} 
+	 * @return two strings: one contains all text from text with rearranged spaces,
+	 *  the other contains numbers as the place holder of the area expressions
+	 */	
+	private String[] normalizeArea(String text){
+		String[] result = new String[2];
+		String text2= text;
+		Matcher m = areapattern.matcher(text);
+		while(m.matches()){
+			if(m.group(2).matches("[(\\[\\d].*")){
+				text = m.group(1)+m.group(2).replaceAll("[ \\{\\}]", "")+ m.group(4);
+				m = areapattern.matcher(text2); //match on text2 to keep the unit-free segment
+				m.matches();
+				text2 = m.group(1)+m.group(2).replaceAll("[cmd]?m", "").replaceAll("[ \\{\\}]", "")+ m.group(4);
+				m = areapattern.matcher(text);
+			}else {//{pistillate} 9-47 ( -55 in <fruit> ) ×5.5-19 mm , {flowering} <branchlet> 0-4 mm ; m.group(2)= ) ×5.5-19 mm , {flowering} <branchlet> 0-4 mm ;
+				String left = "";
+				if(m.group(2).startsWith(")")) left = "(";
+				if(m.group(2).startsWith("]")) left = "[";
+				if(left.length()>0){
+				    //m.group(1) = {pistillate} 9-47 ( -55 in <fruit> 
+					//find the starting brackets in temp and remove the braketed content
+					//if(temp.matches(".*?\\d$")){
+					text = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[ \\{\\}]", "") + m.group(4);
+					m = areapattern.matcher(text2);
+					m.matches();
+					text2 = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[cmd]?m", "").replaceAll("[ \\{\\}]", "") + m.group(4);
+					m = areapattern.matcher(text);
+					//}
+				}
+			}
+		}
+		result[0] = text.replaceAll("x(?=\\.?\\d)", "×");//{oblanceolate} , 15-70×30-150+cm , {flat}  
+		result[1] = text2.replaceAll("x(?=\\.?\\d)", "×");//{oblanceolate} , 15-70×30-150+ , {flat} 
+		return result;
+}
 
 	/**
 	 * 
@@ -623,7 +734,7 @@ public abstract class Normalizer implements INormalizer {
 	 *         spaces, the other contains numbers as the place holder of the
 	 *         area expressions
 	 */
-	private String[] normalizeArea(String text) {
+	/*private String[] normalizeArea(String text) {
 		String[] result = new String[2];
 		String text2 = text;
 		Matcher m = areapattern.matcher(text);
@@ -640,7 +751,7 @@ public abstract class Normalizer implements INormalizer {
 		result[0] = text;
 		result[1] = text2;
 		return result;
-	}
+	}*/
 		
 	/**
 	 * make "suffused with dark blue and purple or green" one token
@@ -650,21 +761,21 @@ public abstract class Normalizer implements INormalizer {
 	 * 
 	 * @return color-pattern-normalized String
 	 */
-	private String normalizeColorPatterns(ArrayList<String> chunkedTokens, ArrayList<String> characterTokensReversed) {
+	private String normalizeColorPatterns(String str, ArrayList<String> characterTokensReversed) {
 		String list = "";
 		String result = "";
 		String header = "ttt";
+		
+		ArrayList<String> chunkedTokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
 		
 		for (int i = characterTokensReversed.size() - 1; i >= 0; i--) {
 			list += characterTokensReversed.get(i) + " ";
 		}
 		list = list.trim() + " "; // need to have a trailing space
-		String listcp = list;
 		// Pattern p =
 		// Pattern.compile("(.*?)((color|coloration)\\s+%\\s+(?:(?:color|coloration|@|%) )+)(.*)");
 		Matcher m = colorpattern.matcher(list);
 		int base = 0;
-		boolean islist = false;
 		while (m.matches()) {
 			int start = (m.group(1).trim() + " a").trim().split("\\s+").length
 					+ base - 1;
@@ -679,7 +790,6 @@ public abstract class Normalizer implements INormalizer {
 				result += chunkedTokens.get(i) + " ";
 			}
 			if (end > start) { // if it is a list
-				islist = true;
 				String t = "{" + ch + "~list~";
 				for (int i = start; i < end; i++) {
 					t += chunkedTokens.get(i).trim()
@@ -713,11 +823,7 @@ public abstract class Normalizer implements INormalizer {
 			// i<(list.trim()+" b").trim().split("\\s+").length+base; i++){
 			result += chunkedTokens.get(i) + " ";
 		}
-		/*if (this.printColorList) {
-			log(LogLevel.DEBUG, islist + ":" + src + ":" + listcp);
-			log(LogLevel.DEBUG, islist + ":" + src + ":" + result);
-			log(LogLevel.DEBUG, );
-		}*/
+
 		return result;
 	}
 	
@@ -737,20 +843,23 @@ public abstract class Normalizer implements INormalizer {
 	}
 		
 	/**
-	 * replace "one or two" with {count~list~one~or~two} in the string update
+	 * replace "few or/to more" with "count~list~few~or/to~more" in the string update
 	 * this.chunkedTokens
 	 * 
 	 * @param str
 	 * @param chunkedTokens 
 	 */
-	private String normalizeCountList(String str, ArrayList<String> chunkedTokens) {
+	private String normalizeCountList(String str) {//Hong TODO: chunkedTokens
 		Matcher m = this.countptn.matcher(str);
 		while (m.find()) {
 			int start = m.start(1);
 			int end = m.end(1);
 			String count = m.group(1).trim();
-			String rcount = "{count~list~"
-					+ count.replaceAll(" ", "~").replaceAll("[{}]", "") + "}";
+			String rcount = "count~list~"
+					+ count.replaceAll(" ", "~");
+			str = str.substring(0, start).trim() +" "+rcount+str.substring(end).trim();
+			
+			/*
 			// synchronise this.chunkedtokens
 			// split by single space to get an accurate count to elements that
 			// would be in chunkedtokens
@@ -767,7 +876,7 @@ public abstract class Normalizer implements INormalizer {
 			str = "";
 			for (String t : chunkedTokens) {
 				str += t + " ";
-			}
+			}*/
 			m = this.countptn.matcher(str);
 		}
 		return str.replaceAll("\\s+", " ").trim();
@@ -780,7 +889,7 @@ public abstract class Normalizer implements INormalizer {
 	 * @param chunkedTokens 
 	 * @return modifier-normalized String
 	 */
-	private String normalizemodifier(String str, ArrayList<String> chunkedTokens) {
+	private String normalizemodifier(String str) { //Hong TODO: why still maintain chunkedTokens?
 		String result = "";
 		int base = 0;
 		Matcher m = modifierlist.matcher(str.trim());
@@ -795,21 +904,104 @@ public abstract class Normalizer implements INormalizer {
 			String newtoken = l.replaceAll("\\s+", "~");
 			result += newtoken;
 			base = end;
-			// adjust chunkedtokens
-			for (int i = start; i < end; i++) {
-				chunkedTokens.set(i, "");
-			}
-			chunkedTokens.set(start, newtoken);
 		}
 		result += str;
 		return result;
 	}
-
-
+	
+	/*challenging cases: 
+	 * <petiole> 15 - 30 ( - 53 ) cm {long} ( 20 - 30 ( - 50 ) % of total <leaf> ) , <petiole> {glabrous} , {spinescent} for 20 - 35 % of {length} .*/
 	private String normalizeSpacesRoundNumbers(String sent) {
-		sent = ratio2number(sent);//bhl
+		sent = sent.replaceAll("-+", "-");// 2--4 => 2-4
+		sent = sent.replaceAll("(- )+", "- ");// 2 - - 4 => 2 - 4
+		if(sent.contains("×")) sent = sent.replaceAll("(?<="+units+")\\s*\\.\\s*(?=×)", " "); //4 cm.x 6cm => 4 cm x 6cm
 		sent = sent.replaceAll("(?<=\\d)\\s*/\\s*(?=\\d)", "/");
 		sent = sent.replaceAll("(?<=\\d)\\s+(?=\\d)", "-"); //bhl: two numbers connected by a space
+		sent = sent.replaceAll("\\btwice\\b", "2 times");
+		sent = sent.replaceAll("\\bthrice\\b", "3 times");
+		sent = sent.replaceAll("2\\s*n\\s*=", "2n=");
+		sent = sent.replaceAll("2\\s*x\\s*=", "2x=");
+		sent = sent.replaceAll("n\\s*=", "n=");
+		sent = sent.replaceAll("x\\s*=", "x=");
+		sent = sent.replaceAll("q\\s*=", "q=");
+
+		//sent = sent.replaceAll("[–—-]", "-").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\[", " [ ").replaceAll("\\]", " ] ").replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").replaceAll("\\s+", " ").trim();
+		sent = sent.replaceAll("[~–—-]", "-").replaceAll("°", " ° ").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\s+", " ").trim();
+		sent = sent.replaceAll("(?<=\\d) (?=\\?)", ""); //deals especially x=[9 ? , 13] 12, 19 cases
+		sent = sent.replaceAll("(?<=\\?) (?=,)", "");
+		if(sent.matches(".*?[nxq]=.*")){
+			sent = sent.replaceAll("(?<=[\\d?])\\s*,\\s*(?=\\d)", ","); //remove spaces around , for chromosome only so numericalHandler.numericalPattern can "3" them into one 3. Other "," connecting two numbers needs spaces to avoid being "3"-ed (fruits 10, 3 of them large) 
+		}
+		sent = sent.replaceAll("\\b(?<=\\d+) \\. (?=\\d+)\\b", ".");//2 . 5 => 2.5
+		sent = sent.replaceAll("(?<=\\d)\\.(?=\\d[nx]=)", " . "); //pappi 0.2n=12
+		
+		
+		//sent = sent.replaceAll("(?<=\\d)\\s+/\\s+(?=\\d)", "/"); // 1 / 2 => 1/2
+		//sent = sent.replaceAll("(?<=[\\d()\\[\\]])\\s+[–—-]\\s+(?=[\\d()\\[\\]])", "-"); // 1 - 2 => 1-2
+		//sent = sent.replaceAll("(?<=[\\d])\\s+[–—-]\\s+(?=[\\d])", "-"); // 1 - 2 => 1-2
+		
+		//4-25 [ -60 ] => 4-25[-60]: this works only because "(text)" have already been removed from sentence in perl program
+		sent = sent.replaceAll("\\(\\s+(?=[\\d\\+\\-%])", "("). //"( 4" => "(4"
+		replaceAll("(?<=[\\d\\+\\-%])\\s+\\((?!\\s?[{<a-zA-Z])", "("). //" 4 (" => "4("
+		replaceAll("(?<![a-zA-Z}>]\\s?)\\)\\s+(?=[\\d\\+\\-%])", ")"). //") 4" => ")4"
+		replaceAll("(?<=[\\d\\+\\-%])\\s+\\)", ")"). //"4 )" => "4)"
+		replaceAll("\\((?=\\d+-\\{)", "( "); //except for ( 4-{angled} )
+		
+		sent = sent.replaceAll("\\[\\s+(?=[\\d\\+\\-%])", "["). //"[ 4" => "[4", not [ -subpalmately ]
+		replaceAll("(?<=[\\d\\+\\-%])\\s+\\[(?!\\s?[{<a-zA-Z])", "["). //" 4 [" => "4["
+		replaceAll("(?<![a-zA-Z}>]\\s?)\\]\\s+(?=[\\d\\+\\-%])", "]"). //"] 4" => "]4"
+		replaceAll("(?<=[\\d\\+\\-%])\\s+\\]", "]"). //"4 ]" => "4]"
+		replaceAll("\\[(?=\\d+-\\{)", "[ "); //except for [ 4-{angled} ]
+		
+		/*Pattern p = Pattern.compile("(.*?)(\\d*)\\s+\\[\\s+([ –—+\\d\\.,?×/-]+)\\s+\\]\\s+(\\d*)(.*)");  //4-25 [ -60 ] => 4-25[-60]. ? is for chromosome count
+		Matcher m = p.matcher(sent);
+		while(m.matches()){
+			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"["+m.group(3).replaceAll("\\s*[–—-]\\s*", "-")+"]"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
+			m = p.matcher(sent);
+		}
+		////keep the space after the first (, so ( 3-15 mm) will not become 3-15mm ) in POSTagger.
+		p = Pattern.compile("(.*?)(\\d*)\\s+\\(\\s+([ –—+\\d\\.,?×/-]+)\\s+\\)\\s+(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
+		//p = Pattern.compile("(.*?)(\\d*)\\s*\\(\\s*([ –—+\\d\\.,?×/-]+)\\s*\\)\\s*(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
+		m = p.matcher(sent);
+		while(m.matches()){
+			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"("+m.group(3).replaceAll("\\s*[–—-]\\s*", "-")+")"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
+			m = p.matcher(sent);
+		}*/
+		
+		sent = sent.replaceAll("\\s+/\\s+", "/"); //and/or 1/2
+		sent = sent.replaceAll("\\s+×\\s+", "×");
+		sent = sent.replaceAll("\\s*\\+\\s*", "+"); // 1 + => 1+
+		sent = sent.replaceAll("(?<![\\d()\\]\\[×-])\\+", " +");
+		sent = sent.replaceAll("\\+(?![\\d()\\]\\[×-])", "+ ");
+		sent = sent.replaceAll("(?<=(\\d))\\s*\\?\\s*(?=[\\d)\\]])", "?"); // (0? )
+		sent = sent.replaceAll("\\s*-\\s*", "-"); // 1 - 2 => 1-2, 4 - {merous} => 4-{merous}
+		sent = sent.replaceAll("(?<=[\\d\\+-][\\)\\]])\\s+(?=[\\(\\[][\\d-])", "");//2(–3) [–6]  ??
+		//%,°, and ×
+		sent = sent.replaceAll("(?<![a-z])\\s+%", "%").replaceAll("(?<![a-z])\\s+°", "°").replaceAll("(?<![a-z ])\\s*×\\s*(?![ a-z])", "×");
+		/*if(sent.indexOf(" -{")>=0){//1–2-{pinnately} or -{palmately} {lobed} => {1–2-pinnately-or-palmately} {lobed}
+			sent = sent.replaceAll("\\s+or\\s+-\\{", "-or-").replaceAll("\\s+to\\s+-\\{", "-to-").replaceAll("\\s+-\\{", "-{");
+		}*/
+		//mohan code 11/9/2011 to replace (?) by nothing
+		sent = sent.replaceAll("\\(\\s*\\?\\s*\\)","");
+		//end mohan code
+		sent = sent.replaceAll("(?<=[xnq]=)\\s+(?=[\\d\\[(])", "");//2n= 44 => 2n=44
+	
+		//make sure brackets that are not part of a numerical expression are separated from the expression by a space
+		if(sent.contains("(") || sent.contains(")")) sent = normalizeBrackets(sent, '(');
+		if(sent.contains("[") || sent.contains("]")) sent = normalizeBrackets(sent, '[');
+		
+		sent = sent.replaceAll("\\[(?=-[a-z])", "[ ");//[-subpalmately ] => [ -subpalmately ]
+		sent = sent.replaceAll("\\((?=-[a-z])", "( ");//[-subpalmately ] => [ -subpalmately ]
+		
+		sent = sent.replaceAll("\\bav\\s*\\.", "av.");
+		return sent;
+	}
+
+
+	//private String normalizeSpacesRoundNumbers(String sent) {
+	//	sent = ratio2number(sent);//bhl
+	//	sent = sent.replaceAll("(?<=\\d)\\s*/\\s*(?=\\d)", "/");
+	/*	sent = sent.replaceAll("(?<=\\d)\\s+(?=\\d)", "-"); //bhl: two numbers connected by a space
 		sent = sent.replaceAll("at least", "at-least");
 		sent = sent.replaceAll("<?\\{?\\btwice\\b\\}?>?", "2 times");
 		sent = sent.replaceAll("<?\\{?\\bthrice\\b\\}?>?", "3 times");
@@ -828,11 +1020,6 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("\\b(?<=\\d+) \\. (?=\\d+)\\b", ".");//2 . 5 => 2.5
 		sent = sent.replaceAll("(?<=\\d)\\.(?=\\d[nx]=)", " . "); //pappi 0.2n=12
 		
-		
-		//sent = sent.replaceAll("(?<=\\d)\\s+/\\s+(?=\\d)", "/"); // 1 / 2 => 1/2
-		//sent = sent.replaceAll("(?<=[\\d()\\[\\]])\\s+[��-]\\s+(?=[\\d()\\[\\]])", "-"); // 1 - 2 => 1-2
-		//sent = sent.replaceAll("(?<=[\\d])\\s+[��-]\\s+(?=[\\d])", "-"); // 1 - 2 => 1-2
-		
 		//4-25 [ -60 ] => 4-25[-60]: this works only because "(text)" have already been removed from sentence in perl program
 		sent = sent.replaceAll("\\(\\s+(?=[\\d\\+\\-%])", "("). //"( 4" => "(4"
 		replaceAll("(?<=[\\d\\+\\-%])\\s+\\((?!\\s?[{<a-zA-Z])", "("). //" 4 (" => "4("
@@ -846,21 +1033,6 @@ public abstract class Normalizer implements INormalizer {
 		replaceAll("(?<=[\\d\\+\\-%])\\s+\\]", "]"). //"4 ]" => "4]"
 		replaceAll("\\[(?=\\d+-\\{)", "[ "); //except for [ 4-{angled} ]
 		
-		/*Pattern p = Pattern.compile("(.*?)(\\d*)\\s+\\[\\s+([ ��+\\d\\.,?�/-]+)\\s+\\]\\s+(\\d*)(.*)");  //4-25 [ -60 ] => 4-25[-60]. ? is for chromosome count
-		Matcher m = p.matcher(sent);
-		while(m.matches()){
-			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"["+m.group(3).replaceAll("\\s*[��-]\\s*", "-")+"]"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
-			m = p.matcher(sent);
-		}
-		////keep the space after the first (, so ( 3-15 mm) will not become 3-15mm ) in POSTagger.
-		p = Pattern.compile("(.*?)(\\d*)\\s+\\(\\s+([ ��+\\d\\.,?�/-]+)\\s+\\)\\s+(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
- 		//p = Pattern.compile("(.*?)(\\d*)\\s*\\(\\s*([ ��+\\d\\.,?�/-]+)\\s*\\)\\s*(\\d*)(.*)");  //4-25 ( -60 ) => 4-25(-60)
-		m = p.matcher(sent);
-		while(m.matches()){
-			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"("+m.group(3).replaceAll("\\s*[��-]\\s*", "-")+")"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
-			m = p.matcher(sent);
-		}*/
-		
 		sent = sent.replaceAll("\\s+/\\s+", "/"); //and/or 1/2
 		sent = sent.replaceAll("\\s+×\\s+", "×");
 		sent = sent.replaceAll("\\s*\\+\\s*", "+"); // 1 + => 1+
@@ -871,13 +1043,10 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("(?<=[\\d\\+-][\\)\\]])\\s+(?=[\\(\\[][\\d-])", "");//2(�3) [�6]  ??
 		//%,�, and �
 		sent = sent.replaceAll("(?<![a-z])\\s+%", "%").replaceAll("(?<![a-z])\\s+°", "°").replaceAll("(?<![a-z ])\\s*×\\s*(?![ a-z])", "×");
-		/*if(sent.indexOf(" -{")>=0){//1�2-{pinnately} or -{palmately} {lobed} => {1�2-pinnately-or-palmately} {lobed}
-			sent = sent.replaceAll("\\s+or\\s+-\\{", "-or-").replaceAll("\\s+to\\s+-\\{", "-to-").replaceAll("\\s+-\\{", "-{");
-		}*/
+
 		//mohan code 11/9/2011 to replace (?) by nothing
 		sent = sent.replaceAll("\\(\\s*\\?\\s*\\)","");
 		//end mohan code
-	
 		//make sure brackets that are not part of a numerical expression are separated from the expression by a space
 		if(sent.contains("(") || sent.contains(")")) sent = normalizeBrackets(sent, '(');
 		if(sent.contains("[") || sent.contains("]")) sent = normalizeBrackets(sent, '[');
@@ -885,7 +1054,7 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("\\[(?=-[a-z])", "[ ");//[-subpalmately ] => [ -subpalmately ]
 		sent = sent.replaceAll("\\((?=-[a-z])", "( ");//[-subpalmately ] => [ -subpalmately ]
 		return sent;
-	}
+	}*/
 	
 	
 	private String ratio2number(String sent){
@@ -1186,7 +1355,7 @@ public abstract class Normalizer implements INormalizer {
 	}
 	
 	
-	private ArrayList<String> lookupCharacters(String str, boolean markadv, ArrayList<String> chunkedTokens) {		
+	/*private ArrayList<String> lookupCharacters(String str, boolean markadv, ArrayList<String> chunkedTokens) {		
 		ArrayList<String> characterTokensReversed = new ArrayList<String>();
 		boolean save = false;
 		boolean ambiguous = false;
@@ -1258,7 +1427,7 @@ public abstract class Normalizer implements INormalizer {
 		}
 		//log(LogLevel.DEBUG, "characterTokensReversed " + this.charactertokensReversed);
 		return characterTokensReversed;
-	}
+	}*/
 	
 	/**
 	 * lookback
@@ -1266,7 +1435,7 @@ public abstract class Normalizer implements INormalizer {
 	 * @param index
 	 * @return looked up String
 	 */
-	private String lastSaved(ArrayList<String> saved, int index){
+	/*private String lastSaved(ArrayList<String> saved, int index){
 		int inbrackets = 0;
 		for(int i = index-1; i >=0 && i<saved.size(); i--){
 			String c = saved.get(i).trim();
@@ -1275,7 +1444,7 @@ public abstract class Normalizer implements INormalizer {
 			else if(inbrackets ==0 && c.length()>0) return c;
 		}
 		return "";
-	}
+	}*/
 	
 	/**
 	 * lookahead
@@ -1283,7 +1452,7 @@ public abstract class Normalizer implements INormalizer {
 	 * @param index
 	 * @return looked up String
 	 */
-	private String nextSaved(ArrayList<String> saved, int index){
+	/*private String nextSaved(ArrayList<String> saved, int index){
 		int inbrackets = 0;
 		for(int i = index+1; i <saved.size(); i++){
 			String c = saved.get(i).trim();
@@ -1292,16 +1461,16 @@ public abstract class Normalizer implements INormalizer {
 			else if(inbrackets ==0 && c.length()>0) return c;			
 		}
 		return "";
-	}
+	}*/
 	
 	
 	
-	private void save(ArrayList<String> saved, int index, String ch){
+	/*private void save(ArrayList<String> saved, int index, String ch){
 		while(saved.size()<=index){
 			saved.add("");
 		}
 		saved.set(index, ch);
-	}
+	}*/
 	
 	
 	/**
@@ -1330,7 +1499,7 @@ public abstract class Normalizer implements INormalizer {
 	 * @param chunkedTokens 
 	 * @return paraentheses-normalized String
 	 */
-	private String normalizeParentheses(String src, ArrayList<String> chunkedTokens){
+	/*private String normalizeParentheses(String src, ArrayList<String> chunkedTokens){
 		ArrayList<String> characterTokensReversed = lookupCharacters(src, true, chunkedTokens); //treating -ly as -ly
 		
 		//use & as place holders
@@ -1397,7 +1566,7 @@ public abstract class Normalizer implements INormalizer {
 			result += chunkedTokens.get(i)+" ";
 		}
 		return result.replaceAll("\\s+", " ").trim(); //{shape~list~lanceolate~(~outer~)~to~linear}, note the constraint( inner ) after liner is not in the shape list, it will be associated to "linear" later in the process (in annotator) when more information become available for more reliable associations.
-	}
+	}*/
 	
 	
 	/**
@@ -1441,7 +1610,7 @@ public abstract class Normalizer implements INormalizer {
 	 * @return updated string
 	 */
 	//private String normalizeCharacterLists(String list){
-	private void normalizeCharacterLists(String list, ArrayList<String> chunkedTokens){
+	/*private void normalizeCharacterLists(String list, ArrayList<String> chunkedTokens){
 		//charactertokens.toString
 		//String list = ""; //6/29/12
 		//String result = ""; //6/29/12
@@ -1516,10 +1685,10 @@ public abstract class Normalizer implements INormalizer {
 				if(t.indexOf("ttt~list")>=0) t = t.replaceAll("~color.*?ttt~list", "");
 				chunkedTokens.set(start, t);
 				//result +=t; //6/29/12
-				/*if(this.printCharacterList){
-					if(this.src.equals("100.txt-1"))
-						log(LogLevel.DEBUG, this.src+":"+">>>"+t);
-				}*/
+				//if(this.printCharacterList){
+				//	if(this.src.equals("100.txt-1"))
+				//		log(LogLevel.DEBUG, this.src+":"+">>>"+t);
+				//}
 			}
 			base = end;
 		}
@@ -1529,11 +1698,11 @@ public abstract class Normalizer implements INormalizer {
 		//	result += this.chunkedtokens.get(i)+" ";
 		//}
 		//return result.trim();
-	}
+	}*/
 	
 
 
-	private String segByWord(String listcopy, int startindex) {
+	/*private String segByWord(String listcopy, int startindex) {
 		String seg = "";
 		if(startindex < 0) return seg;
 		String[] tokens = listcopy.trim().split("\\s+");
@@ -1541,7 +1710,7 @@ public abstract class Normalizer implements INormalizer {
 			seg += tokens[i]+" ";
 		}
 		return seg.trim();
-	}
+	}*/
 	
 	
 	

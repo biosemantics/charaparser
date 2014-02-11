@@ -45,9 +45,9 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			return addedCharacters.get(word);
 		if (word.indexOf(" ") > 0)
 			word = word.substring(word.lastIndexOf(" ") + 1).trim();
-		word = word.replaceAll("[{}<>()]", "").replaceAll("\\d+[�-]", "_")
-				.replaceAll("�", "-")
-				./* replaceAll(" ", ""). */replaceAll("_+", "_");
+		word = word.replaceAll("[{}<>()]", "").replaceAll("\\d+[–-]", "_")
+				.replaceAll("–", "-")
+				./* replaceAll(" ", ""). */replaceAll("_+", "_"); //\\–\\- -
 		// "(3-)5-merous"/ =>_merous
 		word = word.replaceFirst(".*?_(?=[a-z]+$)", ""); 
 		// _or_ribbed

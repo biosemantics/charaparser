@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker;
+ package edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
- * AndChunker chunks by handling character name describing terminals
+ * CharacterNameChunker chunks by handling character name describing terminals
  * @author rodenhausen
  */
 public class CharacterNameChunker extends AbstractChunker {

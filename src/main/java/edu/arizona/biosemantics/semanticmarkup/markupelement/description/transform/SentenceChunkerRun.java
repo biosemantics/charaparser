@@ -81,7 +81,6 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 
 			// normalize sentence
 			String normalizedSentence="";
-			normalizer.init();
 			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
 			log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);//TODO: (4) is not '3'
 			

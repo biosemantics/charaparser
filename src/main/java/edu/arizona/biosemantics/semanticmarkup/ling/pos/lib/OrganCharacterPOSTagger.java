@@ -77,7 +77,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				isState = true;
 			isOrgan = organStateKnowledgeBase.isOrgan(word);
 				
-			word = word.replaceAll("[<>{}]", "");
+			word = word.replaceAll("[<>{}]", ""); //Hong TODO remove this
 
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();
@@ -88,6 +88,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 					p = wordsToRoles.get(word).iterator().next();
 			}
 
+			//Hong TODO modifiertokens
 			Matcher mc = compreppattern.matcher(word);
 			if(word.equals("moreorless")) {
 				posedSentence.add(new POSedToken(word, POS.RB));

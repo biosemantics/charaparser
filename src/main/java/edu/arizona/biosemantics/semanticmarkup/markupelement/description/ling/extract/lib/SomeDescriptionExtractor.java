@@ -74,6 +74,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		//going through all sentences
 		for(int i=0; i<chunkCollectors.size(); i++) {
 			ChunkCollector chunkCollector = chunkCollectors.get(i);
+			//processingContext.setChunkCollectors(chunkCollectors);
 			processingContext.reset();
 			Statement statement = new Statement();
 			statement.setText(chunkCollector.getSentence());
@@ -111,8 +112,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext)); //process subject?
 		log(LogLevel.DEBUG, "result:\n" + result);
 		while(iterator.hasNext()) {
-			if(!iterator.hasPrevious() && firstChunkProcessor.skipFirstChunk()) {
-				iterator.next();
+			if(!iterator.hasPrevious()) {
+				for(int i = 0; i < firstChunkProcessor.skipFirstNChunk(); i++)
+					iterator.next();
 				continue;
 			}
 			if(iterator.hasNext()) {
@@ -129,7 +131,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		RelationTreatmentElement relationElement = new RelationTreatmentElement("relationName", "id", "from", "to", false);
 		result.add(structureElement);
 		result.add(relationElement);*/
-		createWholeOrganismDescription(result);
+		createWholeOrganismDescription(result); //TODO: Hong post parsing normalization
 		createMayBeSameRelations(result, processingContext);
 		return result;
 	}

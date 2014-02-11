@@ -80,7 +80,7 @@ public class LearnedOrganStateKnowledgeBase extends GlossaryOrganStateKnowledgeB
 		this.organs.addAll(terminologyLearner.getBracketTags());
 		this.organs.addAll(terminologyLearner.getWordRoleTags());
 		this.organs.add("array");
-		this.organs.add("arrays");
+		this.organs.add("arrays");//TODO Hong 
 	}
 	
 	private void addStates() {

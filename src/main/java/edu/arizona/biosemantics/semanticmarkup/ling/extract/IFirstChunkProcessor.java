@@ -9,6 +9,6 @@ public interface IFirstChunkProcessor extends IChunkProcessor {
 	/**
 	 * @return if the first chunk ought to be skipped consequently (has sufficiently been treated by this IChunkProcessor)
 	 */
-	public boolean skipFirstChunk();
+	public int skipFirstNChunk();
 
 }

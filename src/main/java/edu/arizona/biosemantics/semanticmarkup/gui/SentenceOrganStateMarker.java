@@ -133,7 +133,7 @@ public class SentenceOrganStateMarker {
 					sent = sent.replaceAll("\\bshades of\\b", "shades_of");
 					sent = sent.replaceAll("\\bat least\\b", "at_least");
 					String text = stringColors(sent);
-					text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)�\\s+m\\b", "um");
+					text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)µ\\s*m\\b", "um"); 
 					//deal with numbers
 					//text = text.replaceAll("(?<=\\d)(?=("+ChunkedSentence.units+")\\b)", " "); //23mm => 23 mm
 					//text = StanfordParser.ratio2number(text);

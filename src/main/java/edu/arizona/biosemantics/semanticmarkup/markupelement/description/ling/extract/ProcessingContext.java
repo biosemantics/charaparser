@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.e
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -27,8 +28,11 @@ public class ProcessingContext {
 	private IChunkProcessorProvider chunkProcessorProvider;
 	private List<Element> result;
 	private ListIterator<Chunk> chunkListIterator;
-	private ChunkCollector chunkCollector;
+	//private List<ChunkCollector> chunkCollectors; //chunkCollectors of all sentences in one description
+	private ChunkCollector chunkCollector; //the chunkCollector of the current sentence
 	private ProcessingContextState currentState = new ProcessingContextState();
+	private HashMap<Chunk, ProcessingContextState> states = new HashMap<Chunk, ProcessingContextState>();
+
 	
 	/** these can't be reset for each new statement, Ids have to be unique over the whole xml schema. Also references by relations can be accross statements **/
 	private int structureId;
@@ -37,6 +41,7 @@ public class ProcessingContext {
 	private HashMap<Integer, Relation> relations = new HashMap<Integer, Relation>();
 	private HashMap<Integer, Set<Relation>> relationsFromStructure = new HashMap<Integer, Set<Relation>>();
 	private HashMap<Integer, Set<Relation>> relationsToStructure = new HashMap<Integer, Set<Relation>>();
+	private List<Structure> lastSubjects = new LinkedList<Structure>();
 	
 	/**
 	 * @return the current processingContextState
@@ -61,7 +66,7 @@ public class ProcessingContext {
 		this.currentState = currentState;
 	}
 
-	private HashMap<Chunk, ProcessingContextState> states = new HashMap<Chunk, ProcessingContextState>();
+
 
 	/**
 	 * @param chunk
@@ -284,5 +289,13 @@ public class ProcessingContext {
 	public int fetchAndIncrementStructureId(Structure structure) {
 		structures.put(structureId, structure);
 		return structureId++;
+	}
+
+	public void setLastSubjects(List<Structure> subjectStructures) {
+		this.lastSubjects = subjectStructures;
+	}
+	
+	public List<Structure> getLastSubjects() {
+		return this.lastSubjects;
 	}
 }

@@ -590,8 +590,8 @@ public class CleanupChunker extends AbstractChunker {
 		if(terminalChunk.isOfChunkType(ChunkType.PP)) { 
 			//r[p[around] o[10 mm]] should be ChunkValue
 			Chunk object = terminalChunk.getChunkDFS(ChunkType.OBJECT);
-			if(object != null) {
-				if(object.getTerminalsText().matches(".*\\(?[0-9+�x���/�*/%-]+\\)?.*(" + units + ")")) {
+			if(object != null) {                             
+				if(object.getTerminalsText().matches(".*\\(?[0-9+×x°²½/¼*/%-]+\\)?.*(" + units + ")")) {
 					LinkedHashSet<Chunk> chunks = terminalChunk.getChunks();
 					for(Chunk chunk : chunks) {
 						switch(chunk.getChunkType()) {
@@ -607,7 +607,7 @@ public class CleanupChunker extends AbstractChunker {
 						}
 					}
 					return ChunkType.VALUE;
-				} else if(object.getTerminalsText().matches(".* \\(?[0-9+�x���/�*/%-]+\\)?") && !terminalChunk.getTerminalsText().matches(".*[�x]\\].*")) {
+					} else if(object.getTerminalsText().matches(".* \\(?[0-9+×x°²½/¼*/%-]+\\)?") && !terminalChunk.getTerminalsText().matches(".*[×x]")) { //at 30× is not a value
 					LinkedHashSet<Chunk> chunks = terminalChunk.getChunks();
 					for(Chunk chunk : chunks) {
 						switch(chunk.getChunkType()) {

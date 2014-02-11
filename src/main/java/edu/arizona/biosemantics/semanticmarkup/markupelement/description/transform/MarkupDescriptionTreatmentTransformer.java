@@ -141,6 +141,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.glossaryTable = glossaryTable;
 		this.termCategorizationRequired = termCategorizationRequired;
 		
+		normalizer.init();
+		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
 				databaseUser, databasePassword);
@@ -364,7 +366,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			descriptionCount += descriptionsFile.getDescriptions().size();
 		}
 		CountDownLatch descriptionExtractorsLatch = new CountDownLatch(descriptionCount);
-		
+
 		// process each treatment separately
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(int i=0; i<descriptionsFile.getDescriptions().size(); i++) {

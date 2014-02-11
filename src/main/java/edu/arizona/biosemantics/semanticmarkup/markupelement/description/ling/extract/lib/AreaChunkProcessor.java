@@ -7,6 +7,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -15,6 +16,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
+import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
@@ -59,6 +61,7 @@ public class AreaChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> modifiers = new ArrayList<Chunk>();
 		List<Character> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
 				parents, false, processingContextState);
+		log(LogLevel.DEBUG, "area characters:\n" + characters);
 		processingContextState.getLastElements().addAll(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;

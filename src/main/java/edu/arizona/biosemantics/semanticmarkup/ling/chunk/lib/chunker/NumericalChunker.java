@@ -101,9 +101,7 @@ public class NumericalChunker extends AbstractChunker {
 						chunkCollector.addChunk(valueDegree);
 						continue;
 					}
-					
-					if(terminalsText.matches(".*?[()\\[\\]\\-\\�\\d\\.�\\+���/�\\*/%]*?[�/�\\d][()\\[\\]\\-\\�\\d\\.�\\+���/�\\*/%]*(-\\s*(" + countWords + ")\\b|$)")) {
-						
+					if(terminalsText.matches(".*?[()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.×\\+°²½/¼\\*/%]*(-\\s*(" + countWords + ")\\b|$)")) {						
 						//ends with a number
 						if(i==terminals.size()-1) {
 							Chunk count = new Chunk(ChunkType.COUNT,  chunkCollector.getChunk(terminal));
@@ -115,7 +113,7 @@ public class NumericalChunker extends AbstractChunker {
 						AbstractParseTree lookForwardTerminal = terminals.get(i);
 						String lookForwardText = lookForwardTerminal.getTerminalsText();
 						
-						if(lookForwardText.matches("^[{<(]*(" + units + ")\\b.*?")){
+						if(lookForwardText.matches("^(" + units + ")\\b.*?")){
 							String combinedText = terminalsText + " " + lookForwardText;
 							//adjustPointer4Dot(pointer, terminals);
 							//in bhl, 10 cm . long, should skip the ". long" after the unit
@@ -123,7 +121,7 @@ public class NumericalChunker extends AbstractChunker {
 							LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 							childChunks.add(chunkCollector.getChunk(terminal));
 							childChunks.add(chunkCollector.getChunk(lookForwardTerminal));
-							if(combinedText.contains("�")) {
+							if(combinedText.contains("×")) { //×
 								Chunk area = new Chunk(ChunkType.AREA, childChunks);
 								chunkCollector.addChunk(area);
 							} else {
@@ -132,7 +130,7 @@ public class NumericalChunker extends AbstractChunker {
 							}
 							continue;
 						}
-						if(lookForwardText.matches("^[{<(]*(" + timesWords + ")\\b.*?")){
+						if(lookForwardText.matches("(" + timesWords + ")\\b.*?")){
 							i++;
 							AbstractParseTree lookDoubleForwardTerminal = terminals.get(i);
 							Chunk lookDoubleForwardChunk = chunkCollector.getChunk(lookDoubleForwardTerminal);

@@ -33,6 +33,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.IChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.CharaparserChunkerChain;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker.AreaChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker.AndChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker.CharacterListChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker.CharacterNameChunker;
@@ -166,6 +167,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(ParentTagProvider.class).annotatedWith(Names.named("ParentTagProvider")).to(ParentTagProvider.class).in(Singleton.class);
 			  
 			  bind(ChunkerChain.class).annotatedWith(Names.named("ChunkerChain")).to(CharaparserChunkerChain.class).in(Singleton.class);
+			  bind(IChunker.class).annotatedWith(Names.named("AreaChunker")).to(AreaChunker.class).in(Singleton.class);
 			  bind(IChunker.class).annotatedWith(Names.named("OrganChunker")).to(OrganChunker.class).in(Singleton.class);
 			  bind(IChunker.class).annotatedWith(Names.named("StateChunker")).to(MyStateChunker.class).in(Singleton.class);
 			  bind(IChunker.class).annotatedWith(Names.named("NPListChunker")).to(NPListChunker.class).in(Singleton.class);
@@ -300,12 +302,13 @@ public class BasicConfig extends AbstractModule {
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("VBWords")).toInstance(getSetOfVBWords());
 			  bind(String.class).annotatedWith(Names.named("ViewPattern")).toInstance("(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)");	
 			  String count = "more|fewer|less|\\d";
-			  bind(String.class).annotatedWith(Names.named("CountPattern")).toInstance("((?:^| |\\{)(?:"+count+")\\}? (?:or|to) \\{?(?:"+count+")(?:\\}| |$))");
+			  bind(String.class).annotatedWith(Names.named("CountPattern")).toInstance("((?:^| )(?:"+count+") (?:or|to) (?:"+count+")(?: |$))");
 			  bind(String.class).annotatedWith(Names.named("PositionPattern")).toInstance("(<(\\S+?)> \\d+(?:(?: and |_)\\d+)?(?!\\s*(?:/|times)))");
 			  String roman = "i|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|xvi|xvii|xviii|xix|xx|I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX";
 			  bind(String.class).annotatedWith(Names.named("RomanRangePattern")).toInstance("(\\d+)-<?\\b("+roman+")\\b>?");
 			  bind(String.class).annotatedWith(Names.named("RomanPattern")).toInstance("(<(\\S+?)> <?\\{?\\b("+roman+")\\b\\}?>?)");
 			  bind(String.class).annotatedWith(Names.named("ModifierList")).toInstance("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");	
+
 		  } catch(IOException e) {
 			  e.printStackTrace();
 		  }

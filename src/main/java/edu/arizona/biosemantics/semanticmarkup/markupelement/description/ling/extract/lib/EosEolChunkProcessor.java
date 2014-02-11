@@ -101,26 +101,36 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 			}
 		}
 		
-		List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters();
+		List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters(); //TODO: Hong ???
 		if(!unassignedCharacters.isEmpty()) {
-			Structure structureElement = new Structure();
-			int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
-			structureElement.setId("o" + String.valueOf(structureIdString));	
-			structureElement.setName("whole_organism"); 
-			List<Structure> structureElements = new LinkedList<Structure>();
-			structureElements.add(structureElement);
-			result.addAll(establishSubject(structureElements, processingContextState));
-			
-			for(Character character : unassignedCharacters) {
-				for(Structure parent : structureElements) {
-					parent.addCharacter(character);
+			List<Structure> lastSubjects = processingContext.getLastSubjects();
+			if(lastSubjects.size()>0){
+				for(Character character : unassignedCharacters) {
+					for(Structure parent : lastSubjects) {
+						parent.addCharacter(character);
+					}
+				}
+				result.addAll(lastSubjects);
+			}else{
+				Structure structureElement = new Structure();
+				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
+				structureElement.setId("o" + String.valueOf(structureIdString));	
+				structureElement.setName("whole_organism"); 
+				List<Structure> structureElements = new LinkedList<Structure>();
+				structureElements.add(structureElement);
+				result.addAll(establishSubject(structureElements, processingContextState));
+
+				for(Character character : unassignedCharacters) {
+					for(Structure parent : structureElements) {
+						parent.addCharacter(character);
+					}
 				}
 			}
 		}
 		unassignedCharacters.clear();
-		
+
 		processingContextState.clearUnassignedModifiers();
-		
+
 		return result;
 	}
 

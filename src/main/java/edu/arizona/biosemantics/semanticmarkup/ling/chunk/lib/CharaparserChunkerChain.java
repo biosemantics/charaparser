@@ -65,8 +65,10 @@ public class CharaparserChunkerChain extends ChunkerChain {
 			@Named("AndChunker") IChunker andChunker,
 			@Named("PunctuationChunker") IChunker punctuationChunker,
 			@Named("SpecificPPChunker") IChunker specificPPChunker,
-			@Named("ChromosomeChunker") IChunker chromosomeChunker
+			@Named("ChromosomeChunker") IChunker chromosomeChunker,
+			@Named("AreaChunker") IChunker areaChunker
 			) {
+		this.add(areaChunker);
 		this.add(characterListChunker);
 		this.add(punctuationChunker);
 		this.add(chromosomeChunker);
@@ -90,5 +92,6 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(orChunker);
 		this.add(andChunker);
 		this.add(cleanupChunker);
+		
 	}
 }
