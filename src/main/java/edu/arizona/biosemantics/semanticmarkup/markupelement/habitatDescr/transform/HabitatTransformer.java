@@ -18,7 +18,7 @@ public class HabitatTransformer implements IHabitatTransformer {
 				for(Habitat habitat : treatment.getHabitats()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
-					statement.setId("distribution" + i);
+					statement.setId("habitat" + i++);
 					statement.setText(habitat.getText());
 					statements.add(statement);
 					habitat.setStatements(statements);
