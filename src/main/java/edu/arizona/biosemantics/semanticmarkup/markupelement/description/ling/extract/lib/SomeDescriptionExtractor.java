@@ -45,6 +45,13 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 	private IChunkProcessorProvider chunkProcessorProvider;
 	
+	//necessary to obtain unique IDs in files with multiple descriptions
+	//return from a call to extract to some higher entity and inject back if ever required to
+	//e.g. have a stateless DescriptionExtractor to e.g. run multiple descriptionextractors alongside
+	private int structureId;
+	private int relationId;
+	
+	
 	/**
 	 * @param glossary
 	 * @param chunkProcessorProvider
@@ -65,7 +72,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	
 	@Override
 	public void extract(Description description, int descriptionNumber, List<ChunkCollector> chunkCollectors) {
-		ProcessingContext processingContext = new ProcessingContext();
+		ProcessingContext processingContext = new ProcessingContext(structureId, relationId);
 		processingContext.setChunkProcessorsProvider(chunkProcessorProvider);
 
 		// one chunk collector for one statement / sentence
@@ -95,6 +102,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 						e);
 			}
 		}
+		this.structureId = processingContext.getStructureId();
+		this.relationId = processingContext.getRelationId();
 	}
 
 	private List<Element> getDescriptiveElements(ProcessingContext processingContext) {

@@ -38,6 +38,11 @@ public class ProcessingContext {
 	private HashMap<Integer, Set<Relation>> relationsFromStructure = new HashMap<Integer, Set<Relation>>();
 	private HashMap<Integer, Set<Relation>> relationsToStructure = new HashMap<Integer, Set<Relation>>();
 	
+	public ProcessingContext(int structureId, int relationId) {
+		this.structureId = structureId;
+		this.relationId = relationId;
+	}
+	
 	/**
 	 * @return the current processingContextState
 	 */
