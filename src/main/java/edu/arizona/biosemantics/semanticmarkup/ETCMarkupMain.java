@@ -60,6 +60,7 @@ public class ETCMarkupMain extends CLIMain {
 		options.addOption("j", "bioportal user id", true, "bioportal user id to use for bioportal submission");
 		options.addOption("k", "bioportal api key", true, "bioportal api key to use for bioportal submission");
 		
+		options.addOption("o", "oto lite url", true, "OTO Lite URL");
 		options.addOption("b", "debug log", true, "location of debug log file");
 		options.addOption("e", "error log", true, "location of error log file");
 		options.addOption("w", "wordnet dict directory", true, "location of wordnet dict directory");
@@ -201,6 +202,9 @@ public class ETCMarkupMain extends CLIMain {
 		    	System.exit(0);
 		    }
 
+			if (commandLine.hasOption("o")) {
+				config.setOtoLiteClientURL(commandLine.getOptionValue("o"));
+			}
             if (commandLine.hasOption("w")) {
                 config.setWordNetSource(commandLine.getOptionValue("w"));
             }
