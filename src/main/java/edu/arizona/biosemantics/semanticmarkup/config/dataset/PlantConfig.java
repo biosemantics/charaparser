@@ -22,7 +22,7 @@ public class PlantConfig extends RunConfig {
 		this.setGlossaryFile("edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv");
 		
 		// IO
-		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation");
+		this.setInputDirectory("evaluationData" + File.separator + "FNAV19_AnsKey_CharaParser_Evaluation");
 		
 		// PROCESSING 
 		this.setGlossaryType(Glossary.Plant.toString());

@@ -19,7 +19,7 @@ public class HymenopteraConfig extends RunConfig {
 		this.setGlossaryFile("edu/arizona/biosemantics/semanticmarkup/know/glossaries/antglossaryfixed.csv");
 		
 		// IO
-		this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "Ant_CharaParser_Evaluation");
+		this.setInputDirectory("evaluationData" + File.separator + "Ant_CharaParser_Evaluation");
 		
 		// PROCESSING 
 		this.setGlossaryType(Glossary.Hymenoptera.toString());

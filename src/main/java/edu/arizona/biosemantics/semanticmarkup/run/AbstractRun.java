@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 
+import org.apache.commons.io.FileUtils;
+
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -20,41 +22,50 @@ public abstract class AbstractRun implements IRun {
 
 	protected String guiceModuleFile;
 	protected String runOutDirectory;
+	private String inputDirectory;
 
 	/**
 	 * @param guiceModuleFile
 	 */
 	@Inject
 	public AbstractRun(@Named("GuiceModuleFile")String guiceModuleFile,
+		@Named("InputDirectory")String inputDirectory,
 		@Named("Run_OutDirectory")String runOutDirectory) {
 		this.guiceModuleFile = guiceModuleFile;
+		this.inputDirectory = inputDirectory;
 		this.runOutDirectory = runOutDirectory;
 	}
 	
-	public void run() throws Exception {		
-		new File(runOutDirectory + File.separator + "config.txt").getParentFile().mkdirs();
-		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(runOutDirectory + File.separator + "config.txt"));
-		appendConfigFile(bwSetup);
-		
+	public void run() throws Exception {	
+		StringBuilder config = new StringBuilder();
+		appendConfigFile(config);
+				
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		String startedAt = "started at " + startTime;
-		bwSetup.append(startedAt + "\n\n");
+		config.append(startedAt + "\n\n");
 		log(LogLevel.INFO, startedAt);
 
+		FileUtils.deleteDirectory(new File(runOutDirectory));
+		new File(runOutDirectory).mkdirs();
+		FileUtils.copyDirectory(new File(inputDirectory), new File(runOutDirectory));
+		
 		doRun();
 		
 		long endTime = Calendar.getInstance().getTimeInMillis();
 		String wasDone = "was done at " + endTime;
-		bwSetup.append(wasDone + "\n");
+		config.append(wasDone + "\n");
 		log(LogLevel.INFO, wasDone);
 		long milliseconds = endTime - startTime;
 		String tookMe = "took me " + (endTime - startTime) + " milliseconds";
-		bwSetup.append(tookMe + "\n");
+		config.append(tookMe + "\n");
 		log(LogLevel.INFO, tookMe);
 		
 		String timeString = getTimeString(milliseconds);
-		bwSetup.append(timeString + "\n");
+		config.append(timeString + "\n");
 		log(LogLevel.INFO, timeString);
+		
+		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(runOutDirectory + File.separator + "config.txt"));
+		bwSetup.append(config.toString());
 		bwSetup.flush();
 		bwSetup.close();
 	}
@@ -66,11 +77,11 @@ public abstract class AbstractRun implements IRun {
 	}
 
 	
-	protected void appendConfigFile(BufferedWriter bwSetup) throws IOException {
-		bwSetup.append("GuiceModule configuration of Run \n" +
+	protected void appendConfigFile(StringBuilder stringBuilder) throws IOException {
+		stringBuilder.append("GuiceModule configuration of Run \n" +
 		  "---------------------\n");
-		bwSetup.append(this.guiceModuleFile);
-		bwSetup.append("---------------------\n\n");
+		stringBuilder.append(this.guiceModuleFile);
+		stringBuilder.append("---------------------\n\n");
 	}
 	
 	protected String getTimeString(long milliseconds) {

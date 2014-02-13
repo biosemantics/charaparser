@@ -9,8 +9,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.D
 
 public class NeXMLDescriptionsFile extends AbstractDescriptionsFile {
 
-	private List<StateDescription> stateDescriptions;
-	private List<CharacterDescription> characterDescriptions;
+	private List<StateDescription> stateDescriptions = new LinkedList<StateDescription>();
+	private List<CharacterDescription> characterDescriptions = new LinkedList<CharacterDescription>();
 	
 	@Override
 	public List<Description> getDescriptions() {

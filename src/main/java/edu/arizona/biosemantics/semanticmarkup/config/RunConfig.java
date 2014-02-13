@@ -46,7 +46,40 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupRun;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.GUIDescriptionTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.IDescriptionTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.IDistributionMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.IElevationMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.IHabitatReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.IHabitatWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.HabitatMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.IHabitatMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.HabitatTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.IHabitatTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.transform.ElevationTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.transform.IElevationTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.DistributionMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.DistributionTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.IDistributionTransformer;
 import edu.arizona.biosemantics.semanticmarkup.run.IRun;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.lib.JDOMPhenologyReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.lib.JDOMPhenologyWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.IPhenologyMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.PhenologyMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.transform.IPhenologyTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.transform.PhenologyTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationWriter;
+
 
 /**
  * Guice config file for parameters of a run
@@ -77,9 +110,17 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
 	private List<InputStream> descriptionReaderBindingsList = createIOXMLBindingsList();
 	private List<InputStream> descriptionWriterBindingsList = createIOXMLBindingsList();
- 	private String descriptionReaderInputDirectory = "input";
+ 	private String inputDirectory = "input";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
-	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplantOutputTreatment.xsd";
+	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplantOutputTreatment.xsd";
+	private Class<? extends IHabitatReader> habitatReader = JDOMHabitatReader.class;
+	private Class<? extends IHabitatWriter> habitatWriter = JDOMHabitatWriter.class;
+	private Class<? extends IPhenologyReader> phenologyReader = JDOMPhenologyReader.class;
+	private Class<? extends IPhenologyWriter> phenologyWriter = JDOMPhenologyWriter.class;
+	private Class<? extends IDistributionReader> distributionReader = JDOMDistributionReader.class;
+	private Class<? extends IDistributionWriter> distributionWriter = JDOMDistributionWriter.class;
+	private Class<? extends IElevationReader> elevationReader = JDOMElevationReader.class;
+	private Class<? extends IElevationWriter> elevationWriter = JDOMElevationWriter.class;
 	
 	// PROCESSING 
 	private String glossaryType = "plant";
@@ -91,6 +132,10 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTransformer.class;
+	private Class<? extends IHabitatMarkupCreator> habitatMarkupCreator = HabitatMarkupCreator.class;
+	private Class<? extends IElevationMarkupCreator> elevationMarkupCreator = ElevationMarkupCreator.class;
+	private Class<? extends IDistributionMarkupCreator> distributionMarkupCreator = DistributionMarkupCreator.class;
+	private Class<? extends IPhenologyMarkupCreator> phenologyMarkupCreator = PhenologyMarkupCreator.class;
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
@@ -137,16 +182,40 @@ public class RunConfig extends BasicConfig {
 			bind(IDescriptionMarkupEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
 			bind(Boolean.class).annotatedWith(Names.named("termCategorizationRequired")).toInstance(termCategorizationRequired);
 			
+			bind(IHabitatMarkupCreator.class).to(habitatMarkupCreator).in(Singleton.class);
+			bind(IHabitatTransformer.class).to(HabitatTransformer.class).in(Singleton.class);
+			bind(IDistributionMarkupCreator.class).to(distributionMarkupCreator).in(Singleton.class);
+			bind(IDistributionTransformer.class).to(DistributionTransformer.class).in(Singleton.class);
+			bind(IElevationMarkupCreator.class).to(elevationMarkupCreator).in(Singleton.class);
+			bind(IElevationTransformer.class).to(ElevationTransformer.class).in(Singleton.class);
+			bind(IPhenologyMarkupCreator.class).to(phenologyMarkupCreator).in(Singleton.class);
+			bind(IPhenologyTransformer.class).to(PhenologyTransformer.class).in(Singleton.class);
+			
 			//IO
+			bind(String.class).annotatedWith(Names.named("InputDirectory")).toInstance(inputDirectory);
 			bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader).in(Singleton.class);
-			bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(descriptionReaderInputDirectory);
+			bind(String.class).annotatedWith(Names.named("DescriptionReader_InputDirectory")).toInstance(runOutDirectory);
 			bind(new TypeLiteral<List<InputStream>>() {}).annotatedWith(Names.named("DescriptionReader_BindingsFiles")).toInstance(descriptionReaderBindingsList);
 			bind(new TypeLiteral<List<InputStream>>() {}).annotatedWith(Names.named("DescriptionWriter_BindingsFiles")).toInstance(descriptionWriterBindingsList);
-			bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(descriptionReaderInputDirectory));
+			bind(new TypeLiteral<Set<String>>() {}).annotatedWith(Names.named("SelectedSources")).toInstance(getSelectedSources(runOutDirectory));
 			bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_CorrectReader")).toInstance(constructEvaluationCorrectReader());
 			bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).toInstance(constructEvaluationTestReader());
 			bind(IDescriptionWriter.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionWriter")).to(descriptionWriter).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("MarkupRun_ValidateSchemaFile")).toInstance(markupRunValidateSchemaFile);
+			
+			bind(IHabitatReader.class).annotatedWith(Names.named("HabitatMarkupCreator_HabitatReader")).to(habitatReader).in(Singleton.class);
+			bind(IHabitatWriter.class).annotatedWith(Names.named("HabitatMarkupCreator_HabitatWriter")).to(habitatWriter).in(Singleton.class);
+			bind(String.class).annotatedWith(Names.named("HabitatReader_InputDirectory")).toInstance(runOutDirectory);
+			bind(IPhenologyReader.class).annotatedWith(Names.named("PhenologyMarkupCreator_PhenologyReader")).to(phenologyReader).in(Singleton.class);
+			bind(IPhenologyWriter.class).annotatedWith(Names.named("PhenologyMarkupCreator_PhenologyWriter")).to(phenologyWriter).in(Singleton.class);
+			bind(String.class).annotatedWith(Names.named("PhenologyReader_InputDirectory")).toInstance(runOutDirectory);
+			bind(IDistributionReader.class).annotatedWith(Names.named("DistributionMarkupCreator_DistributionReader")).to(distributionReader).in(Singleton.class);
+		    bind(IDistributionWriter.class).annotatedWith(Names.named("DistributionMarkupCreator_DistributionWriter")).to(distributionWriter).in(Singleton.class);
+			bind(String.class).annotatedWith(Names.named("DistributionReader_InputDirectory")).toInstance(runOutDirectory);
+			bind(IElevationReader.class).annotatedWith(Names.named("ElevationMarkupCreator_ElevationReader")).to(elevationReader).in(Singleton.class);
+			bind(IElevationWriter.class).annotatedWith(Names.named("ElevationMarkupCreator_ElevationWriter")).to(elevationWriter).in(Singleton.class);
+			bind(String.class).annotatedWith(Names.named("ElevationReader_InputDirectory")).toInstance(runOutDirectory);
+			
 			
 			//ENVIRONMENTAL
 			bind(String.class).annotatedWith(Names.named("DatabasePrefix")).toInstance(databaseTablePrefix); 
@@ -558,13 +627,12 @@ public class RunConfig extends BasicConfig {
 		this.evaluationRunEvaluator = evaluationRunEvaluator;
 	}
 
-	public String getDescriptionReaderInputDirectory() {
-		return descriptionReaderInputDirectory;
+	public String getInputDirectory() {
+		return inputDirectory;
 	}
 
-	public void setDescriptionReaderInputDirectory(
-			String descriptionReaderInputDirectory) {
-		this.descriptionReaderInputDirectory = descriptionReaderInputDirectory;
+	public void setInputDirectory(String inputDirectory) {
+		this.inputDirectory = inputDirectory;
 	}
 
 	public Class<? extends IDescriptionMarkupCreator> getDescriptionMarkupCreator() {
@@ -672,7 +740,7 @@ public class RunConfig extends BasicConfig {
 
 	private List<InputStream> createIOXMLBindingsList() throws IOException {
 		List<InputStream> result = new LinkedList<InputStream>();
-		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/baseBindings.xml"));
+		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/semanticMarkupBaseBindings.xml"));
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));
 		return result;
 	}
@@ -683,6 +751,6 @@ public class RunConfig extends BasicConfig {
 
 	public void setWordNetSource(String wordNetSource) {
 		this.wordNetSource = wordNetSource;
-	}
+	}	
 	
 }

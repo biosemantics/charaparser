@@ -85,7 +85,7 @@ public class EvaluationMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	System.exit(0);
 		    } else {
-		    	config.setDescriptionReaderInputDirectory(commandLine.getOptionValue("i"));
+		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("w")) {
 		    	//config.setWordVolumeReaderStyleMappingFile(commandLine.getOptionValue("w"));

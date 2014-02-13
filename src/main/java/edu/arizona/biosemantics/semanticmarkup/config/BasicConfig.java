@@ -135,11 +135,11 @@ public class BasicConfig extends AbstractModule {
 		  try {
 			  // ENVIRONMENTAL 
 			  bind(InputStream.class).annotatedWith(Names.named("Taxonx_SchemaFile")).toInstance(inputStreamCreator.readStreamFromString(
-					  "edu/arizona/biosemantics/semanticmarkup/description/io/schemas/taxonx/taxonx1.xsd"));
+					  "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/taxonx/taxonx1.xsd"));
 			  bind(InputStream.class).annotatedWith(Names.named("XML_SchemaFile")).toInstance(inputStreamCreator.readStreamFromString(
-					  "edu/arizona/biosemantics/semanticmarkup/description/io/schemas/FNAXMLSchemaInput.xsd"));
+					  "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/FNAXMLSchemaInput.xsd"));
 			  bind(InputStream.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(inputStreamCreator.readStreamFromString(
-					  "edu/arizona/biosemantics/semanticmarkup/description/io/schemas/iplant.xsd"));
+					  "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplant.xsd"));
 			  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 			  
 			  // IO

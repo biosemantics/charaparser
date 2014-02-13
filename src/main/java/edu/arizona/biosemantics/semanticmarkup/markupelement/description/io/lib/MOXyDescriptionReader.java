@@ -34,7 +34,7 @@ public class MOXyDescriptionReader implements IDescriptionReader {
 	}
 
 	@Override
-	public DescriptionsFileList read(@Named("DescriptionReader_InputDirectory")String inputDirectory) throws Exception {
+	public DescriptionsFileList read(String inputDirectory) throws Exception {
 		List<AbstractDescriptionsFile> descriptionsFiles = new LinkedList<AbstractDescriptionsFile>();
 		File inputDirectoryFile = new File(inputDirectory);
 		if(inputDirectoryFile.exists() && inputDirectoryFile.isDirectory()) {
