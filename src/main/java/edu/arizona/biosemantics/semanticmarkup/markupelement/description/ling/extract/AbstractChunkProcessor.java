@@ -840,7 +840,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if(relation.contains("-")){
 			String[] tokens = relation.split("\\s+");
 			String newrel = "";
-			for(String t: tokens){
+			for(String t: tokens){//remove added - for compound preps
 				if(t.matches(this.compoundPreps)){
 					t = t.replaceAll("-", " ");
 				}
