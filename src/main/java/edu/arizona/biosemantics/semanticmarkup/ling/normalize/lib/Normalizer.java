@@ -219,7 +219,7 @@ public abstract class Normalizer implements INormalizer {
 		str = str.replaceAll("\\bshades of\\b", "shades_of");
 		str = str.replaceAll("\\bat least\\b", "at_least");
 		str = str.replaceAll("[ _-]+\\s*shaped", "-shaped");
-		str = str.replaceAll("(?<=\\s)µ\\s+m\\b", "um");
+		str = str.replaceAll("(?<=\\s)µ\\s*m\\b", "um");
 		str = str.replaceAll("\\bdiam\\s*\\.(?=\\s?[,a-z])", "diam");
 		str = str.replaceAll("more or less", "moreorless");
 		str = str.replaceAll("&#176;", "°");
@@ -277,7 +277,7 @@ public abstract class Normalizer implements INormalizer {
 			} else 
 				break;
 		}
-		String scp = str;
+		str = str.replaceAll("-+", "-");
 		str = str.replaceAll("(?<![\\d(\\[–—-]\\s?)[–—-]+\\s*(?="+numberpattern+"\\s+\\W?("+units+")\\W?)", " to "); //fna: tips>-2.5 {mm}
 		//if(!scp.equals(str)){
 		//	log(LogLevel.DEBUG, );
@@ -310,9 +310,9 @@ public abstract class Normalizer implements INormalizer {
         
 
         
-        if(str.matches(".*?(?<=[a-z])/(?=[a-z]).*")){ //tooth/lobe =>tooth-lobe TODO Hong?
+        /*if(str.matches(".*?(?<=[a-z])/(?=[a-z]).*")){ //tooth/lobe =>tooth-lobe TODO Hong?
         	str = str.replaceAll("(?<=[a-z])/(?=[a-z])", "-");
-        }
+        }*/
         
         
         //10-20(-38) {cm}�6-10 {mm} 
@@ -400,13 +400,13 @@ public abstract class Normalizer implements INormalizer {
 	 * more|greater than 5 => 5+
 	 * more than or equal to 5 => 5+
 	 * less|fewer than 5 => 0-5	
-	 * at most 5 => no more than 5
+	 * at most 5 => 0 - 5
 	 * @param str
 	 * @return
 	 */
 	private String normalizeVagueNumbers(String str) {
 		if(str.matches(".*? at most .*")){
-			str = str.replaceAll("\\bat most ", "no more than " );
+			str = str.replaceAll("\\bat most\\s*", "0-" );
 		}
 
 
@@ -672,8 +672,10 @@ public abstract class Normalizer implements INormalizer {
 		
 		for(String color : allColors) {
 			color = color.trim();
-			color = color.indexOf(" ") > 0? color.substring(color.lastIndexOf(" ") + 1) : color;
-			colorsString.append(color + "|");
+			//color = color.indexOf(" ") > 0? color.substring(color.lastIndexOf(" ") + 1) : color;
+			String[] clrs = color.split("[ -]+");
+			for(String clr: clrs)
+				colorsString.append(clr + "|");
 		}
 		return colorsString.toString().replaceFirst("\\|$", "");
 	}
@@ -1485,7 +1487,7 @@ public abstract class Normalizer implements INormalizer {
 		Matcher m = asaspattern.matcher(str);
 		while(m.matches()){
 			result+=m.group(1);
-			result+="{"+m.group(2).replaceAll("\\s+", "-").replaceAll("[{}<>]", "")+"}";
+			result+=m.group(2).replaceAll("\\s+", "-");
 			str = m.group(3);
 			m = asaspattern.matcher(str);
 		}

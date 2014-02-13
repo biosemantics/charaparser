@@ -425,6 +425,9 @@ public class BasicConfig extends AbstractModule {
 		equalCharacters.put("long", "length");
 		equalCharacters.put("broad", "width");
 		equalCharacters.put("diam", "diameter");
+		equalCharacters.put("high", "height");
+		equalCharacters.put("tall", "height");
+		equalCharacters.put("thick", "thickness");
 		return equalCharacters;
 	}
 
@@ -487,7 +490,7 @@ public class BasicConfig extends AbstractModule {
 	}
 	
 	private String getCompoundPreWords(){
-		String compoundPrepWords =  "according to|ahead of|along with|apart from|as for|aside from|as per|as to|as well as|away from|because of|but for|by means of|close to|contrary to|depending on|due to|except for|except in|forward of|further to|in addition to|in association with|in between|in case of|in combination with|in contact with|in face of|in favour of|in front of|in lieu of|in spite of|instead of|in view of|near to|next to|on account of|on behalf of|on board|on to|on top of|opposite to|other than|out of|outside of|owing to|preparatory to|prior to|regardless of|save for|thanks to|together with|up against|up to|up until|vis a vis|with reference to|with regard to";
+		String compoundPrepWords =  "as \\w+ as|according to|ahead of|along with|apart from|as for|aside from|as per|as to|as well as|away from|because of|but for|by means of|close to|contrary to|depending on|due to|except for|except in|forward of|further to|in addition to|in association with|in between|in case of|in combination with|in contact with|in face of|in favour of|in front of|in lieu of|in spite of|instead of|in view of|near to|next to|on account of|on behalf of|on board|on to|on top of|opposite to|other than|out of|outside of|owing to|preparatory to|prior to|regardless of|save for|thanks to|together with|up against|up to|up until|vis a vis|with reference to|with regard to";
 		return compoundPrepWords;
 	}
 	public String getVersion() {

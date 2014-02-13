@@ -36,6 +36,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 
 	private Pattern hyphenedCharacterPattern = Pattern.compile("\\w+-(\\w+)");
+	private boolean eqcharaExempt = false;
 
 	/**
 	 * @param inflector
@@ -84,6 +85,83 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 	protected List<Element> processCharacterState(Chunk content,
 			List<Structure> parents, ProcessingContextState processingContextState, 
 			ProcessingContext processingContext) {
+		
+		List<Element> results = new LinkedList<Element>();
+		List<Chunk> modifiers = new LinkedList<Chunk>();
+		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
+		modifiers.addAll(unassignedModifiers);
+		modifiers.addAll(content.getChunks(ChunkType.MODIFIER));	
+		
+		String character = content.getPropertyBFS("characterName");
+		if(processingContextState.getUnassignedCharacter()!=null) { //override character with unassigned character
+			character = processingContextState.getUnassignedCharacter();
+			processingContextState.setUnassignedCharacter(null);
+		}
+		Chunk characterState = content.getChunkDFS(ChunkType.STATE);
+		String characterStateString = characterState.getTerminalsText();
+		
+		if(characterState.size() > 1) {
+			List<Chunk> characters = new ArrayList<Chunk>();
+			characters.add(content);
+			List<Element> result = this.processCharacterText(characters, parents, character, processingContextState, 
+					processingContext);
+			//results = this.processCharacterList(content, parents, processingContextState);
+			//return results;
+			return result;
+		}
+	
+		
+		String newState = equalCharacters.get(characterStateString);
+		if(newState != null && !this.eqcharaExempt){
+			characterStateString = newState;
+			if(characterKnowledgeBase.containsCharacterState(characterStateString))
+				character = characterKnowledgeBase.getCharacterName(characterStateString);
+		}
+		if(character.equals("character") && modifiers.size() == 0 &&!this.eqcharaExempt) {
+			//high relief: character=relief, reset the character of "high" to "relief"
+			if(processingContextState.getLastElements().size() > 0){
+				Element lastElement = processingContextState.getLastElements().getLast();
+				if(lastElement.isCharacter()) 
+					for(Element element : processingContextState.getLastElements()) 
+						if(element.isCharacter())
+							((Character)element).setName(characterStateString);
+			}else 
+				processingContextState.setUnassignedCharacter(characterStateString);
+			results.addAll(processingContextState.getLastElements());
+		} else if(characterStateString.length() > 0) {
+			//Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
+			//if(characterElement!=null)
+			//	results.add(characterElement);
+			String characterStateText = characterState.getTerminalsText();
+			Matcher matcher = hyphenedCharacterPattern.matcher(characterStateText); //TODO Hong not sure what this does
+			if(matcher.matches()) {
+				ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
+				int backupNextIndex = chunkListIterator.nextIndex();
+				String suffix = matcher.group(1);
+				results.addAll(findPreviousCharacterList(processingContext, character, suffix));
+				while(chunkListIterator.nextIndex() < backupNextIndex)
+					chunkListIterator.next();
+			}	
+			if(characterStateString.contains(" to "))
+				results.addAll(createRangeCharacterElement(parents, modifiers, characterStateString, character, processingContextState));
+			else {
+				Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
+				if(characterElement!=null)
+					results.add(characterElement);
+			}
+		}
+		unassignedModifiers.clear();
+		
+		return results;
+	}
+	
+	public void setEqcharaExempt(){
+		this.eqcharaExempt = true;
+	}
+	/*Thomas'.
+	 protected List<Element> processCharacterState(Chunk content,
+			List<Structure> parents, ProcessingContextState processingContextState, 
+			ProcessingContext processingContext) {
 		List<Element> results = new LinkedList<Element>();
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
@@ -114,21 +192,13 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 				processingContextState.setUnassignedCharacter(null);
 			}
 			
-			if(characterStateString.contains(" to "))
+			if(characterStateString.contains(" to ")) //Hong: will this 'to' block ever be reached? 
 				results.addAll(createRangeCharacterElement(parents, modifiers, characterStateString, character, processingContextState));
 			else {
 				Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
 				if(characterElement!=null)
 					results.add(characterElement);
 			}
-			/*for(AbstractParseTree state : characterState.getTerminals()) {
-				String stateText = state.getTerminalsText().trim();
-				if(!stateText.equals(",") && !stateText.equals("and") && !stateText.equals("or")) {
-					DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, state.getTerminalsText(), character, "", processingContextState);
-					if(characterElement!=null)
-						results.add(characterElement);
-				}
-			}*/
 		} else {
 			if(characterState.size() > 1) {
 				List<Element> result = this.processCharacterText(characters, parents, character, processingContextState, 
@@ -169,6 +239,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		return results;
 	}
 	
+	 */
 
 	private List<Element> findPreviousCharacterList(ProcessingContext processingContext, String characterName, String suffix) {
 		List<Element> result = new LinkedList<Element>();

@@ -102,9 +102,9 @@ public class LearnedPOSKnowledgeBase implements IPOSKnowledgeBase {
 			return true;
 		}
 		/*mohan code to make as-long-as an adverb*/
-		if(word.matches("aslongas")){//covers as-long-as
+		/*if(word.matches("aslongas")){//covers as-long-as
 			return true;
-		}
+		}*/
 		/*End mohan code*/
 		if(word.compareTo("moreorless")==0){
 			return true;

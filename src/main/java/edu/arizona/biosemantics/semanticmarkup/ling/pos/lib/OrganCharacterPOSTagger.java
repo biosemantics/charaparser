@@ -114,7 +114,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			} else if (word.matches("(" + units + ")")) {
 				posedSentence.add(new POSedToken(word, POS.NNS));
 			} else if (word.matches("as-\\S+")) { 
-				posedSentence.add(new POSedToken(word, POS.RB));
+				posedSentence.add(new POSedToken(word, POS.IN));
 			} else if (p.contains("op")) { // <inner> larger.
 				posedSentence.add(new POSedToken(word, POS.NNS));
 			} else if (p.contains("os")
