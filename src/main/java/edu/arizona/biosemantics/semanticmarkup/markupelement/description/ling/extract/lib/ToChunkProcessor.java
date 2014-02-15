@@ -80,6 +80,8 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 				if(processor instanceof MyCharacterStateChunkProcessor)
 					((MyCharacterStateChunkProcessor) processor).setEqcharaExempt();//ToChunk is exempted from eqcharacter checking				
 				results.addAll(processor.process(characterStateChunk, processingContext));
+				if(processor instanceof MyCharacterStateChunkProcessor)
+					((MyCharacterStateChunkProcessor) processor).resetEqcharaExempt();//ToChunk is exempted from eqcharacter checking				
 				processingContextState = processingContext.getCurrentState();
 			}
 			

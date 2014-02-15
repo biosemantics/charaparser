@@ -184,7 +184,7 @@ public class StanfordParseTree extends AbstractParseTree {
 		//a node may just have been created and hence be neither terminal nor non-terminal as not yet inserted in final position in another tree
 		// one may still already want to set its text. therefore dont restrict here
 		//if(!this.isTerminal()) 
-			this.setText(pos.toString());
+			this.setText(pos.toString());//this.setPOS(pos);
 	}
 
 	@Override

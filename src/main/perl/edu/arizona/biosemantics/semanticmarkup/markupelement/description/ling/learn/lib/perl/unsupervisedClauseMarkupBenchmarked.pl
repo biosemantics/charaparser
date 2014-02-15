@@ -770,21 +770,16 @@ sub addheuristicsnouns{
 	#EOL:@nouns = ("angle[s]", "angles[p]", "base[s]", "bases[p]", "cell[s]", "cells[p]", "depression[s]", "depressions[p]", "ellipsoid[s]", "ellipsoids[p]", "eyespot[s]", "eyespots[p]", "face[s]", "faces[p]", "flagellum[s]", "flagella[p]", "flange[s]", "flanges[p]", "globule[s]", "globules[p]", "groove[s]", "grooves[p]", "line[s]", "lines[p]", "lobe[s]", "lobes[p]", "margin[s]", "margins[p]", "membrane[s]", "membranes[p]", "notch[s]", "notches[p]", "plastid[s]", "plastids[p]", "pore[s]", "pores[p]", "pyrenoid[s]", "pyrenoids[p]", "quarter[s]", "quarters[p]", "ridge[s]", "ridges[p]", "rod[s]", "rods[p]", "row[s]", "rows[p]", "sample[s]", "samples[p]", "sediment[s]", "sediments[p]", "side[s]", "sides[p]", "vacuole[s]", "vacuoles[p]", "valve[s]", "valves[p]");
 	print  "nouns learnt from heuristics:\n@nouns\n" if $debug;
 
-	my @result = characterHeuristics();
-	my $rnouns = $result[0];
-	my $rdescriptors = $result[1];
-	my @rnouns = @$rnouns;
-	my @descriptors = @$rdescriptors;
-	addDescriptors(@descriptors);
-	addNouns(@rnouns);
-#	print "nouns\n";
-#	foreach my $n (@nouns){
-#		print "$n\t";
-#	}
-#	print "Descriptors\n";
-#	foreach my $d (@descriptors){
-#		print "$d\t";
-#	}
+	#characterHeuristics is not reliable
+	#my @result = characterHeuristics();
+    print STDOUT "completed characterHeuristics\n";
+	#my $rnouns = $result[0];
+	#my $rdescriptors = $result[1];
+	#my @rnouns = @$rnouns;
+	#my @descriptors = @$rdescriptors;
+	#addDescriptors(@descriptors);
+	#addNouns(@rnouns);
+
 
 	#"adhere[s] adheres[p] angle[s] angles[p] attach[s] attaches[p] base[s] bases[p] cell[s] cells[p] depression[s] depressions[p] direction[s] directions[p] ellipsoid[s] ellipsoids[p] eyespot[s] eyespots[p] face[s] faces[p] flagellum[s] flagella[p] flange[s] flanges[p] forward[s] forwards[p] globule[s] globules[p] groove[s] grooves[p] insert[s] inserts[p] jerk[s] jerks[p] length[s] lengths[p] lie[s] lies[p] line[s] lines[p] lobe[s] lobes[p] margin[s] margins[p] measure[s] meet[s] meets[p] membrane[s] membranes[p] narrow[s] narrows[p] notch[s] notches[p] observation[s] observations[p] plastid[s] plastids[p] pore[s] pores[p] pyrenoid[s] pyrenoids[p] quarter[s] quarters[p] ridge[s] ridges[p] rod[s] rods[p] row[s] rows[p] sample[s] samples[p] sediment[s] sediments[p] side[s] sides[p] size[s] sizes[p] third[s] thirds[p] vacuole[s] vacuoles[p] valve[s] valves[p] width[s] widths[p]"
 	my $pn = ""; #previous n
@@ -880,7 +875,7 @@ sub characterHeuristics{
 		my $cp = $originalsent;
 		while($cp =~ /(.*?)\b(a|an|the|some|any|this|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) +(\w+)\s*($|\(|\[|{|\b($PREPOSITION)\b)(.*)/){
 			my $t = $3;
-			$cp = $5;
+			$cp = $6; #not $5
 			my $prep = $4;
 			if($prep =~/\w/ && $t =~/\b(length|width|presence|\w+tion)\b/){next;}
 			$t =~ tr/A-Z/a-z/;
@@ -1071,7 +1066,7 @@ sub containsuffix{
 
 	$base =~ s#_##g; #cup_shaped
 	$wnoutputword = `wn $word -over`;
-	if($wnoutputword =~ /not recognized/){
+	if($wnoutputword =~ /not recognized/ and $wnoutputword !~ /overview/i){
 		print stdout "$wnoutputword:\n";
 		print stdout "Please make sure WordNet is properly installed and try again\n".
 		exit(1);
@@ -3419,7 +3414,7 @@ sub markupignore{
 	my ($sth);
 	#4/26/09
 	#$sth = $dbh->prepare("update ".$prefix."_sentence set tag = 'ignore', modifier='' where originalsent rlike '^$IGNOREPTN ' or originalsent rlike '[^,;.]+ $IGNOREPTN '");
-	$sth = $dbh->prepare("update ".$prefix."_sentence set tag = 'ignore', modifier='' where originalsent rlike '(^| )$IGNOREPTN ' ");
+	$sth = $dbh->prepare("update ".$prefix."_sentence set tag = 'ignore', modifier='' where originalsent rlike '(^| )".$IGNOREPTN."[[:>:]]' ");
 	$sth->execute() or print STDOUT "$sth->errstr\n";
 
 
@@ -5746,7 +5741,7 @@ sub checkWN{
   #otherwise, call wn
   my $result = `wn $word -over`;
 #print STDOUT "$SENTID 3.2 $word: *$result*\n";  
-  if($result =~ /not recognized/){	
+  if($result =~ /not recognized/ and $result!~/overview/i){	#capture 'command not recognized error'
 		print STDOUT "$result:\n";
 		print STDOUT "Please make sure WordNet is properly installed and try again\n".
 		exit(1);
@@ -5990,6 +5985,8 @@ while(defined ($file=readdir(IN))){
 	$text =~ s#^\s*\d+[a-z].\s*##; #remove 2a. (key marks)
 
 	$original = $text;
+	$text =~ s#[-]+#-#g; #- => -
+	$text =~ s#\+/-# moreorless #g;
   	$text =~ s/&[;#\w\d]+;/ /g; #remove HTML entities
   	$text =~ s# & # and #g;
   	$text = hideBrackets($text);#implemented in DeHyphenAFolder.java
@@ -6028,7 +6025,7 @@ while(defined ($file=readdir(IN))){
   		s#{[^{}]*?[a-zA-Z][^{}]*?}# #g; #remove {.a.}
 
     	#s#([^\d])\s*-\s*([^\d])#\1_\2#g;         #hyphened words: - =>_ to avoid space padding in the next step
-		s#\s*[-]+\s*([a-z])#_\1#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+	
+		s#([^/])[-]+\s*([a-z])#\1_\2#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+, exclude +/- hairy 
 		s#(\W)# \1 #g;                            #add space around nonword char
     	#s#& (\w{1,5}) ;#&\1;#g;
     	s#\s+# #g;                                #multiple spaces => 1 space

@@ -158,6 +158,10 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 	public void setEqcharaExempt(){
 		this.eqcharaExempt = true;
 	}
+	
+	public void resetEqcharaExempt(){
+		this.eqcharaExempt = false;
+	}
 	/*Thomas'.
 	 protected List<Element> processCharacterState(Chunk content,
 			List<Structure> parents, ProcessingContextState processingContextState, 
@@ -295,4 +299,6 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		}*/
 		return result;
 	}
+
+
 }

@@ -180,7 +180,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				Structure structure = new Structure();
 				int structureIdString = processingContext.fetchAndIncrementStructureId(structure);
 				structure.setId("o" + String.valueOf(structureIdString));
-
+				String t = "";
 				Chunk constraintChunk = getConstraintOf(organChunk, subjectChunk);
 
 				if(constraintChunk != null) {
@@ -302,8 +302,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					Chunk constraintChunk = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.CONSTRAINT, terminal);
 					if(constraintChunk!=null)
 						constraints.addAll(constraintChunk.getTerminals());
-				} else if(terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or"))
-					constraints.add(terminal);
+				}/*else if(terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or"))
+					constraints.add(terminal);*/ //TODO Hong Don't understand why 'and/or' would be treated as constraints: trees or shrubs. changed to the opposite
 				if(organChunk.containsOrEquals(terminal)) {
 					Chunk returnChunk = new Chunk(ChunkType.CONSTRAINT, constraints);
 					return returnChunk;
@@ -1314,7 +1314,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 
 		//int countct = 0;
-		String text = "";
+		String text = original;
 		boolean iscount = false;
 		Pattern pattern15 = Pattern.compile("([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?|[\\[]?[±]?[\\d]+[+]?[\\]]?[\\s]?)[\\–\\–\\-]+[a-zA-Z]+");
 		matcher2 = pattern15.matcher(numberexp);
@@ -1330,7 +1330,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			i=matcher2.start();
 			j=matcher2.end();
 			String extreme = numberexp.substring(i,j);
-			text = original.replace(extreme, "").trim();
+			text = text.replace(extreme, "").trim();
 			i = 0;
 			j = extreme.length();
 			Pattern pattern20 = Pattern.compile("\\[[±\\d\\.\\s\\+]+[\\–\\-]{1}[±\\d\\.\\s\\+\\–\\-]*\\]");
@@ -1573,7 +1573,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		}
 		matcher2.reset();   
 		if(iscount && text.length()>0){
-			//add units to all counts. //Why counts need to have units? TODO Hong
+			//add units to all counts. //Eh, why counts need to have units? TODO Hong
 			for(Character character: innertagstate){
 				//Iterator<Element> it = innertagstate.iterator();
 				//while(it.hasNext()){

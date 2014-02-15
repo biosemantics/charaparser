@@ -33,7 +33,7 @@ use locale;
 		get_EOS set_EOS);
 
 $EOS="\001";
-$P = q/[\.!?;:]/;			## PUNCTUATION
+$P = q/[\.!?;]/;			## PUNCTUATION
 $AP = q/(?:'|"|»|\)|\]|\})?/;	## AFTER PUNCTUATION
 $PAP = $P.$AP;
 $SAP = q/(?:\.|'|"|»|\)|\]|\})?/;
@@ -63,8 +63,11 @@ my @PLACES = ( 'arc', 'al', 'ave', "blv?d", 'cl', 'ct', 'cres', 'dr', "expy?",
 my @MONTHS = ('jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec','sept');
 my @MISC = ( 'vs', 'etc', 'no', 'esp', 'fig', 'eg', 'et al', 'cf');
 my @BOT1 = ('diam', 'sq','Rottb', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v','w','x','y','z');#single letter genus name abbrev
-my @BOT2 = ('ca', 'fl', 'Fl','Fr','fr', 'var', 'sp', 'nov'); # can not start a new sentence right after the abbrev.
+my @BOT2 = ('ca', 'fl', 'Fl','Fr','fr', 'var', 'sp', 'nov', 'av'); #av. = average  # can not start a new sentence right after the abbrev.
 @ABBREVIATIONS = (@PEOPLE, @ARMY, @INSTITUTES, @COMPANIES, @PLACES, @MONTHS, @MISC, @BOT1); 
+my $ABBPTN = join("|",@ABBREVIATIONS);
+$ABBPTN=~ s# #\\s+#g;
+
 
 
 #==============================================================================
@@ -148,8 +151,8 @@ sub set_EOS {
 #
 #
 #               The following will set the LC_COLLATE behaviour to
-#               Argentinian Spanish. NOTE: The naming and avail�
-#               ability of locales depends on your operating sys�
+#               Argentinian Spanish. NOTE: The naming and avail­
+#               ability of locales depends on your operating sys­
 #               tem. Please consult the perllocale manpage for how
 #               to find out which locales are available in your
 #               system.
@@ -199,7 +202,10 @@ sub remove_false_end_of_sentence {
 	## fix where abbreviations exist
 	foreach (@ABBREVIATIONS) {
      $marked_segment=~s/(\b$_$SAP\s)$EOS\s*(?!([A-Z]|\d+-+[a-zA-Z]))/$1/sg;  #replace when not matach [A-Z] or 1-flowered
-  }
+	}
+	## fix where two more more abbreviations are one after another "S. Am." 
+	$marked_segment =~ s/\b($ABBPTN)([. ]+)$EOS($ABBPTN)([. ])/$1$2$3$4/sg;
+  
 
 	foreach (@BOT2) {
      $marked_segment=~s/(\b$_$SAP\s)$EOS/$1/sg;  
@@ -241,6 +247,7 @@ sub split_unsplit_stuff {
 
 	return $text;
 }
+
 
 sub clean_sentences {
 	my ($sentences) = @_;

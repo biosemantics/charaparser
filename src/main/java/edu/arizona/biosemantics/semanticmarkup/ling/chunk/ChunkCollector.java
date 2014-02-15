@@ -153,7 +153,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 				
 		for(IParseTree parseTree : chunk.getTerminals()) {	
-			chunks.put(getTerminalId(parseTree), chunk);
+			chunks.put(getTerminalId(parseTree), chunk); //first check if the index exists in the chunks!
 		}
 		this.hasChanged = true;
 	}
@@ -315,4 +315,19 @@ public class ChunkCollector implements Iterable<Chunk> {
 	public String getSource() {
 		return source;
 	}
+
+	/**
+	 * update indexConverter
+	 * call this method right after a newnode is added to terminal
+	 * @param terminal
+	 * @param toTree
+	 */
+	/*public void reindex(AbstractParseTree terminal, AbstractParseTree newnode) {
+		int i = getTerminalId(newnode);
+		int n = newnode.getTerminals().size();
+		for(int j = i-1; i< n; i++){
+			indexConverter
+		}
+		
+	}*/
 }

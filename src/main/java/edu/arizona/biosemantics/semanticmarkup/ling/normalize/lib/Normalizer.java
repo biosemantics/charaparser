@@ -212,7 +212,7 @@ public abstract class Normalizer implements INormalizer {
 	@Override
 	public String normalize(String str, String tag, String modifier, String source) {	
 		str = dataSetSpecificNormalization(str);
-		
+		str = str.replaceFirst("^—\\s*", ""); //remove the leading "—" in a sentence
 		str = str.replaceAll("_", "-");//??
 
 		//sent = sent.replace("taxonname_", ""); //clean up the mark from the Transformer step
@@ -290,7 +290,7 @@ public abstract class Normalizer implements INormalizer {
 		str = normalizeCountList(str);
 
 		//lookupCharacters(str);//populate charactertokens
-		ArrayList<String> characterTokensReversed = cln.lookupCharacters(str, false);//treating -ly as %
+		ArrayList<String> characterTokensReversed = cln.lookupCharacters(str, false);//false: treating -ly as %
         if(characterTokensReversed.contains("color") || characterTokensReversed.contains("coloration")){
         	str = normalizeColorPatterns(str, characterTokensReversed);
         	//lookupCharacters(str);
@@ -301,7 +301,7 @@ public abstract class Normalizer implements INormalizer {
 				//log(LogLevel.DEBUG, str);
 			//}
         	//str = normalizeCharacterLists(str); //a set of states of the same character connected by ,/to/or => {color-blue-to-red}
-        	str = cln.normalizeParentheses(str, characterTokensReversed); 
+        	str = cln.normalizeParentheses(str); 
         }
 
         if(str.matches(".*? as\\s+[\\w]+\\s+as .*")){

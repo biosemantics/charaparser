@@ -226,7 +226,11 @@ public class CharacterListChunker extends AbstractChunker {
 				toChunks.add(characterChunk);
 				AbstractParseTree toTree = parseTreeFactory.create();
 				toTree.setPOS(POS.TO);
+				chunkCollector.toString(); //before
 				terminal.addChild(toTree);
+				//chunkCollector.reindex(terminal, toTree);
+				chunkCollector.toString(); //after
+				//chunkCollector.addChunk(new Chunk(ChunkType.UNASSIGNED, toTree)); //when add to terminal, also add to chunkCollector to keep synch.
 				AbstractParseTree to = parseTreeFactory.create();
 				to.setTerminalsText(modifierStateToken);
 				toTree.addChild(to);
@@ -300,6 +304,7 @@ public class CharacterListChunker extends AbstractChunker {
 						statesTree = parseTreeFactory.create();
 						statesTree.setPOS(POS.ADJP);
 						terminal.addChild(statesTree);
+						chunkCollector.toString();
 					}
 					
 					//immediately preceeding token was processed as state too, make it a modifier instead
