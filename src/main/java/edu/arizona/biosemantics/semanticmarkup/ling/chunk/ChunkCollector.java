@@ -40,6 +40,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 	//, but IParseTree doesnt know its parent in the current implementation
 	private HashMap<Integer, Chunk> chunks = new HashMap<Integer, Chunk>(); //integer is the index of ther terminal nodes in the parse tree
 	private String source;
+	private HashMap<Integer, Integer> indexConverter = new HashMap<Integer, Integer>(); //used when accessing chunks via parsetree.
 	
 	/**
 	 * @param parseTree
@@ -60,6 +61,12 @@ public class ChunkCollector implements Iterable<Chunk> {
 		this.description = description;
 		this.source = source;
 		this.sentence = sentenceString;
+		//init indexConverter
+		int i = 0;
+		for(AbstractParseTree node: getTerminals()){
+			indexConverter.put(i, i);
+			i++;
+		}
 	}
 	
 	@Override
@@ -71,7 +78,8 @@ public class ChunkCollector implements Iterable<Chunk> {
 		result.append("description: ").append(descriptionsFile.getName()).append("\n");
 		result.append("chunks:\n");
 		for(AbstractParseTree terminal : getTerminals()) {
-			Chunk chunk = this.getChunk(terminal);
+			Chunk chunk = this.getChunk(terminal); //this is problematics to be inculded in toString function.
+			//Chunk chunk = chunks.get(getConvertedTerminalId(terminal));
 			if(chunk!=null)
 				result.append(terminal.toString()).append(" => ").append(chunk.toString()).append("\n");
 			else
@@ -153,7 +161,8 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 				
 		for(IParseTree parseTree : chunk.getTerminals()) {	
-			chunks.put(getTerminalId(parseTree), chunk); //first check if the index exists in the chunks!
+			//chunks.put(getTerminalId(parseTree), chunk); //first check if the index exists in the chunks!
+			chunks.put(getConvertedTerminalId(parseTree), chunk);
 		}
 		this.hasChanged = true;
 	}
@@ -164,20 +173,30 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 */
 	public int getTerminalId(IParseTree parseTree) {
 		return this.getTerminals().indexOf(parseTree);
+
 	}
 	
-	private int getMaxTerminalId() {
-		return this.getTerminals().size() - 1;
+	public int getConvertedTerminalId(IParseTree parseTree) {
+		Integer i = indexConverter.get(getTerminals().indexOf(parseTree));
+		if(i==null){
+			System.out.println();
+		}
+		return i;
+		//return this.getTerminals().indexOf(parseTree);
 	}
+	
+	/*private int getMaxTerminalId() {
+		return this.getTerminals().size() - 1; //note about indexConverter if bring this to life
+	}*/
 	
 	/**
 	 * @param parseTree
 	 * @return the root chunk associated with the parseTree
 	 */
 	public Chunk getChunk(AbstractParseTree parseTree) {
-		if(chunks.get(getTerminalId(parseTree)) == null)
+		if(chunks.get(getConvertedTerminalId(parseTree)) == null)
 			this.addChunk(parseTree);
-		return chunks.get(getTerminalId(parseTree));
+		return chunks.get(getConvertedTerminalId(parseTree));
 	}
 	
 	/**
@@ -322,12 +341,19 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 * @param terminal
 	 * @param toTree
 	 */
-	/*public void reindex(AbstractParseTree terminal, AbstractParseTree newnode) {
-		int i = getTerminalId(newnode);
+	public void reindex(AbstractParseTree terminal, AbstractParseTree newnode) {
+		//what if the parsetree have other nodes same as newnode?
+		int i = getTerminalId(newnode.getTerminals().get(0));
 		int n = newnode.getTerminals().size();
-		for(int j = i-1; i< n; i++){
-			indexConverter
+		for(int j = 0; j< n; j++){
+			for(int k=getTerminals().size()-1; k >= i+j+1;  k--){
+				Integer t = this.indexConverter.get(k-1);
+				this.indexConverter.put(k, t);//make room for the new element
+			}
+			//this.indexConverter.put(i+j, this.indexConverter.get(i-1)); //associate all new s with the original index of the point of addition 
+			this.indexConverter.put(i+j, this.indexConverter.get(i==0? 0: i-1)); //associate all new s with the original index of the point of addition 
 		}
+
 		
-	}*/
+	}
 }
