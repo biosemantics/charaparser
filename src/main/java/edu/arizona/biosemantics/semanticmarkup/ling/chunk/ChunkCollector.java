@@ -180,6 +180,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		Integer i = indexConverter.get(getTerminals().indexOf(parseTree));
 		if(i==null){
 			System.out.println();
+			log(LogLevel.ERROR, "Can't located '"+parseTree.toString()+"' in sentence: "+sentence);
 		}
 		return i;
 		//return this.getTerminals().indexOf(parseTree);
