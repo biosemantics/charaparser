@@ -564,18 +564,20 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param parents
 	 * @param results
 	 * @param modifier
-	 * @param cvalue
+	 * @param characterValue 
 	 * @param cname
 	 */
 	protected List<Character> createRangeCharacterElement(List<Structure> parents,
 			List<Chunk> modifiers, String characterValue, String characterName, ProcessingContextState processingContextState) {
 		LinkedList<Character> results = new  LinkedList<Character>();
+		if(characterValue.indexOf(" to ") < 0) return results;
 
 		Character character = new Character();
 		//if(this.inbrackets){character.setAttribute("in_bracket", "true");}
 		character.setCharType("range_value");
 		character.setName(characterName);
-
+		
+		 
 		String[] range = characterValue.split("\\s+to\\s+");//a or b, c, to d, c, e
 		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+or\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
 		String from = getFirstCharacter(tokens[tokens.length-1]);
