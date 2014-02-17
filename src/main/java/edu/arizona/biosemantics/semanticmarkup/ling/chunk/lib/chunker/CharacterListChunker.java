@@ -32,6 +32,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
  * However, hashing in AbstractParseTree is implemented such that two same named terminals get the same hash. Hash function would have to be rewritten.
  * 
  * @author rodenhausen
+ * 
+ * Hong: need to treat or-phrases as to-phrases (see more comments in ChunkCollector.reindex)
  */
 public class CharacterListChunker extends AbstractChunker {
 
@@ -266,8 +268,6 @@ public class CharacterListChunker extends AbstractChunker {
 				terminal.addChild(toTree);
 				int after = chunkCollector.getTerminals().size();
 				if(after > before) chunkCollector.reindex(terminal, toTree);
-				//chunkCollector.toString(); //after
-				//chunkCollector.addChunk(new Chunk(ChunkType.UNASSIGNED, toTree)); //when add to terminal, also add to chunkCollector to keep synch.
 				AbstractParseTree to = parseTreeFactory.create();
 				to.setTerminalsText(modifierStateToken);
 				toTree.addChild(to);
@@ -340,6 +340,7 @@ public class CharacterListChunker extends AbstractChunker {
 						if(after > before) chunkCollector.reindex(terminal, ccTree);
 						newState = true;
 					} else if(modifierStateToken.equals("or")) {
+						toChunks.add(characterChunk); //treat or-node also as part of TO-chunk
 						AbstractParseTree ccTree = parseTreeFactory.create();
 						ccTree.setPOS(POS.CC);
 						AbstractParseTree cc = parseTreeFactory.create();
@@ -348,8 +349,11 @@ public class CharacterListChunker extends AbstractChunker {
 						int before = chunkCollector.getTerminals().size();
 						terminal.addChild(ccTree);
 						int after = chunkCollector.getTerminals().size();
-						if(after > before) chunkCollector.reindex(terminal, ccTree);
-						newState = true;
+						if(after > before) 
+							chunkCollector.reindex(terminal, ccTree);
+						toChunks.add(new Chunk(ChunkType.TO, cc)); //add or-nodes to TO-Chunk
+						collectToChunks = true;
+						newState = false;
 					} 
 					//previousCharacter = null;
 					//previousStateTree = null;

@@ -79,7 +79,6 @@ public class ChunkCollector implements Iterable<Chunk> {
 		result.append("chunks:\n");
 		for(AbstractParseTree terminal : getTerminals()) {
 			Chunk chunk = this.getChunk(terminal); //this is problematics to be inculded in toString function.
-			//Chunk chunk = chunks.get(getConvertedTerminalId(terminal));
 			if(chunk!=null)
 				result.append(terminal.toString()).append(" => ").append(chunk.toString()).append("\n");
 			else
@@ -198,6 +197,9 @@ public class ChunkCollector implements Iterable<Chunk> {
 		if(chunks.get(getConvertedTerminalId(parseTree)) == null)
 			this.addChunk(parseTree);
 		return chunks.get(getConvertedTerminalId(parseTree));
+		//if(chunks.get(getTerminalId(parseTree)) == null)
+		//	this.addChunk(parseTree);
+		//return chunks.get(getTerminalId(parseTree));
 	}
 	
 	/**
@@ -337,6 +339,9 @@ public class ChunkCollector implements Iterable<Chunk> {
 	}
 
 	/**
+	 * attempt 1: the idea works but it didn't allow elements of an "or" phrase to have different chunks : green or red would all end up with the coloration/red chunk, 
+	 * due to the shared target index in indexConverter for added nodes.
+	 * 
 	 * update indexConverter
 	 * call this method right after a newnode is added to terminal
 	 * @param terminal
@@ -352,9 +357,27 @@ public class ChunkCollector implements Iterable<Chunk> {
 				this.indexConverter.put(k, t);//make room for the new element
 			}
 			//this.indexConverter.put(i+j, this.indexConverter.get(i-1)); //associate all new s with the original index of the point of addition 
-			this.indexConverter.put(i+j, this.indexConverter.get(i==0? 0: i-1)); //associate all new s with the original index of the point of addition 
+			this.indexConverter.put(i+j, this.indexConverter.get(i==0? 0: i-1)); //associate all new nodes with the original index of the point of addition 
 		}
-
-		
 	}
+	
+	/**
+	 * this approach run into difficulties with validity checking in this.addChunk()
+	 * create a placeholder in this.chunks for the newnode, the placeholder will be updated with the corresponding chunk by this.addChunk()
+	 * @param terminal
+	 * @param newnode
+	 */
+	/*public void reindex(AbstractParseTree terminal, AbstractParseTree newnode) {
+		//what if the parsetree have other nodes same as newnode?
+		int i = getTerminalId(newnode.getTerminals().get(0));
+		int n = newnode.getTerminals().size();
+		for(int j = 0; j< n; j++){
+			for(int k=getTerminals().size()-1; k >= i+j+1;  k--){
+				Chunk t = this.chunks.get(k-1);
+				this.chunks.put(k, t);//make room for the new element
+			}
+			//this.indexConverter.put(i+j, this.indexConverter.get(i-1)); //associate all new s with the original index of the point of addition 
+			this.chunks.put(i+j, newnode); //new nodes get placeholders (newnode) 
+		}
+	}*/
 }
