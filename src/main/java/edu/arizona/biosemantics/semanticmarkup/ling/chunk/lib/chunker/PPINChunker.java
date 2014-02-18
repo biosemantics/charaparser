@@ -106,7 +106,7 @@ public class PPINChunker extends AbstractChunker {
 					collapseSubtree(parseTree, pp, POS.PP_CHECKED);
 					return;
 				}
-				
+				//TODO Hong: nested pp-chunks? Handled. 
 				//log(LogLevel.DEBUG, "pp " + pp);
 				//log(LogLevel.DEBUG, "in " + in);
 				//log(LogLevel.DEBUG, "firstNP " + firstNPTree);

@@ -77,6 +77,14 @@ public abstract class AbstractChunker implements IChunker {
 		
 		first.setPOS(firstPOS);
 		IParseTree secondParent = second.getParent(root);
+		while(secondParent.getChildren().size()==1 && secondParent.getChildren().get(0).equals(second)){
+			//Don't leave an orphan secondParent after removing second, 
+			//as secondParent will become a terminal node and 
+			//introduce extra characters such as "S" (sentence tag) in the
+			//description sentence
+			second = secondParent;
+			secondParent = second.getParent(root);
+		}
 		secondParent.removeChild(second);
 		int firstIndex = root.indexOf(first);
 		root.addChild(firstIndex+1, second);
