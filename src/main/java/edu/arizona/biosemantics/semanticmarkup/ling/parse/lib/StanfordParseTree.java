@@ -3,8 +3,10 @@ package edu.arizona.biosemantics.semanticmarkup.ling.parse.lib;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
@@ -21,7 +23,7 @@ import edu.stanford.nlp.trees.Tree;
 public class StanfordParseTree extends AbstractParseTree {
 	
 	private Tree stanfordParseTree;
-
+	
 	/**
 	 * @param stanfordParseTree
 	 */
@@ -216,38 +218,29 @@ public class StanfordParseTree extends AbstractParseTree {
 
 
 	/**
-	 * Implements a hashCode for StanfordParseTree's. Two trees should have the same hashcode
-	 * if they are equal, so we hash on the label value and the parent tree
-	 * If a new wrapper is created for a Tree the StanfordParseTree's that wrap this Tree are to produce the same hash code
-	 * If two Tree's have the same label they however should not be given the same hash code. 
-	 * Same word in the same sentence is to be given different hashCodes, to be able to assign different chunks to it in ChunkCollector.
-	 * @return The hash code
-	 */
+	 * Two StanfordParseTrees that wrap the same Tree should return the same hashCode. 
+	 * This becomes necessary, as e.g. getTerminals() creates a new Tree-wrapping-StanfordParseTree object upon every call.
+	 * ChunkCollector requires them to be hashed equally in order to store the terminal -> chunk mapping.
+	 * 
+	 * Tree hashes in its implementation not on System.identityHashCode() (the default hash for any object), but rather based on content.
+	 * Since Tree's hashcode is only based on label value and children's label valuues, the hash becomes equal for leaves with equal text.
+	 * This is not sufficient for our needs, since a sentence can easily contain the same word twice
+	 */ 
 	@Override
 	public int hashCode() {
-		// dont have parent information
-		return this.stanfordParseTree.hashCode();
+		return System.identityHashCode(this.stanfordParseTree);
 	}
 	
-	@Override
+	/**
+	 * Two StanfordParseTrees are to be considered equal when their wrapped Tree is equal according to the hash function (i.e. exactly the same object)
+	 */
+	@Override 
 	public boolean equals(Object object) {
-		if(object instanceof StanfordParseTree) {
-			StanfordParseTree objectTree = (StanfordParseTree)object;
-			return this.stanfordParseTree==objectTree.stanfordParseTree;
-		}
-		return false;
+		if(object == null)
+			return false;
+		return object.hashCode()==this.hashCode();
 	}
 	
-	/*@Override
-	//Tree's equals() had to be overwritten to be useful
-	public boolean equals(Object object) {
-		if(object instanceof StanfordParseTree) {
-			StanfordParseTree otherTree = (StanfordParseTree)object;
-			return this.stanfordParseTree.equals(otherTree.stanfordParseTree);
-		}
-		return false;
-	}*/
-
 	@Override
 	public void removeDescendant(IParseTree descendant) {
 		if(descendant instanceof StanfordParseTree) {
