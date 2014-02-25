@@ -5985,6 +5985,7 @@ while(defined ($file=readdir(IN))){
 	$text =~ s#^\s*\d+[a-z].\s*##; #remove 2a. (key marks)
 
 	$original = $text;
+	$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
 	$text =~ s#[-]+#-#g; #- => -
 	$text =~ s#\+/-# moreorless #g;
   	$text =~ s/&[;#\w\d]+;/ /g; #remove HTML entities
