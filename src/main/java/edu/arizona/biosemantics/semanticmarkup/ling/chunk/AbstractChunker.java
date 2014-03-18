@@ -3,10 +3,12 @@ package edu.arizona.biosemantics.semanticmarkup.ling.chunk;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 
 
 import com.google.inject.Inject;
@@ -240,18 +242,28 @@ public abstract class AbstractChunker implements IChunker {
 		getFirstTree(parseTree, afterThisTree, chunkCollector, result, false);
 		if(result.isEmpty())
 			return null;
-		return result.get(result.size()-1);
+		AbstractParseTree tree = result.get(result.size()-1);
+		int p1 = parseTree.getTerminalID(afterThisTree.getTerminals().get(0));
+		int p2 = parseTree.getTerminalID(tree.getTerminals().get(0));
+		
+		if(p2 - p1 != 1 || !endsWithNN(tree) || tree.getTerminals().get(0).toString().matches("\\W")){ //tree must end with a NN and can not start with a punctuation mark like ','
+			return null;
+		}else{
+			return tree;
+		}
+		
 	}
-	
+
 	private boolean getFirstTree(AbstractParseTree parseTree, AbstractParseTree afterThisTree, ChunkCollector chunkCollector, LinkedList<AbstractParseTree> result, boolean after) {
 		Set<POS> lastSubtreePOS = new HashSet<POS>();
 		lastSubtreePOS.add(POS.NP);
 		lastSubtreePOS.add(POS.OBJECT);
 		Set<POS> firstSubtreePOS = new HashSet<POS>();
-		firstSubtreePOS.add(POS.PP);
+		firstSubtreePOS.add(POS.PP); 
 		firstSubtreePOS.add(POS.COLLAPSED_PPIN);
 		firstSubtreePOS.add(POS.COLLAPSED_VB);
 		firstSubtreePOS.add(POS.VP);
+		//firstSubtreePOS.add(POS.ADJP); //added by Hong
 		
 		if(parseTree.equals(afterThisTree))
 			after = true;
@@ -274,7 +286,9 @@ public abstract class AbstractChunker implements IChunker {
 			if(!childResult.isEmpty()) {
 				result.clear();
 				result.addAll(childResult);
-				break;
+				//break; //break stops the search at the first level encountered with a non-empty childResult
+				//should stop when childResult does not contain NPs
+				if(!containsNPObjects(childResult.get(childResult.size()-1))) break; //when childResult is the lowest NPObject
 			}
 		}
 		
@@ -282,6 +296,36 @@ public abstract class AbstractChunker implements IChunker {
 	}
 	
 	
+	/**
+	 * 
+	 * @param tree
+	 * @return true if the last element in tree contains NP or OBJECT at any level
+	 */
+	private boolean endsWithNN(AbstractParseTree tree) {
+		if(!tree.isTerminal() && tree.getDepth(tree.getTerminals().get(0))==1){ //(NN prickles)
+			String pos = tree.getPOS().toString();
+			if(!pos.matches(".*?\\w.*")) return false; // pos = ','
+			if(pos.matches(".*?\\w.*")){
+				if((pos.equals("NN") || pos.equals("NNS") ||pos.equals("NNP"))) return true;
+				else return false;
+			}
+		}else{	
+			List<AbstractParseTree> children = tree.getChildren();
+			return endsWithNN(children.get(children.size()-1));
+			
+		}
+		return false;
+	}
+	
+
+	private boolean containsNPObjects(AbstractParseTree onetree) {
+		for(AbstractParseTree t: onetree.getChildren()){
+			if(!t.isTerminal() && (t.getPOS().equals(POS.NP) || t.getPOS().equals(POS.OBJECT))) return true;
+			else if(containsNPObjects(t)) return true;
+		}
+		return false;
+	}
+
 	@Override
 	public String getName() {
 		return this.getClass().toString();

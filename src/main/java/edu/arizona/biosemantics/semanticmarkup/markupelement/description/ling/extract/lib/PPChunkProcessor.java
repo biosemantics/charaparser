@@ -70,10 +70,14 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
-		Chunk nextChunk = chunkListIterator.next();
-		chunkListIterator.previous();
+		Chunk nextChunk = null;
+		if(chunkListIterator.hasNext()){
+			nextChunk = chunkListIterator.next();
+			chunkListIterator.previous();
+		}
 		
-		if(!chunk.containsChunkType(ChunkType.ORGAN) && nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
+		
+		if(!chunk.containsChunkType(ChunkType.ORGAN) && (nextChunk==null || nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE))) {
 			processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
 			return result;
 		}

@@ -77,7 +77,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				isState = true;
 			isOrgan = organStateKnowledgeBase.isOrgan(word);
 				
-			word = word.replaceAll("[<>{}]", ""); //Hong TODO remove this
+			//word = word.replaceAll("[<>{}]", ""); //Hong TODO remove this
 
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();

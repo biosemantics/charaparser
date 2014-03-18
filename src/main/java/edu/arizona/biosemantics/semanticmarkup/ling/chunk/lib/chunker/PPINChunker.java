@@ -97,10 +97,12 @@ public class PPINChunker extends AbstractChunker {
 				//if child has no organ name, extract a constraint, location, "leaves on ...??
 				//if parent has no organ name, collapse the NP. "distance of ..."
 				String inTerminalText = in.getTerminalsText();
-				//text of IN is not a word, e.g. "x"
+				
 				
 				IParseTree firstNPTree = getFirstObjectTree(pp, in, chunkCollector);
-				boolean toConnectsCharacters = isToConnectingCharacters(pp, in, chunkCollector);
+				
+				boolean toConnectsCharacters = isToConnectingCharacters(pp, in, chunkCollector);//"pink to red"
+				//text of IN is not a word, e.g. "x"
 				if(inTerminalText.length() < 2 || inTerminalText.matches("\\b(\\w+ly|ca|than)\\b") || firstNPTree==null || toConnectsCharacters) { 
 					//dont create junk "" is no text
 					collapseSubtree(parseTree, pp, POS.PP_CHECKED);
