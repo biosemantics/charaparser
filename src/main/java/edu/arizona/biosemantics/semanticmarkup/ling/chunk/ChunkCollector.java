@@ -55,6 +55,12 @@ public class ChunkCollector implements Iterable<Chunk> {
 		this.sentence = sentenceString;
 	}
 	
+	/*@Override
+	public Object clone(){
+		return new ChunkCollector((AbstractParseTree)parseTree.clone(), subjectTag, 
+				(Description)description.clone(), (AbstractDescriptionsFile) descriptionsFile.clone()
+				, source, sentence);
+	}*/
 	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
@@ -315,4 +321,6 @@ public class ChunkCollector implements Iterable<Chunk> {
 	public String getSource() {
 		return source;
 	}
+	
+	
 }

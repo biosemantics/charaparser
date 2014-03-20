@@ -48,6 +48,19 @@ public class Description extends Element {
 		this.statements.add(statement);
 	}
 
+	/*@Override
+	public Object clone(){
+		Description d = new Description();
+		d.setText(d.getText());
+		LinkedList<Statement> copy = new LinkedList<Statement>();
+		Iterator<Statement> it = statements.iterator();
+		while(it.hasNext()){
+			Statement state = it.next();
+			copy.add((Statement)state.clone());
+		}
+		d.setStatements(copy);
+		return d;
+	}*/
 	@Override
 	public void removeElementRecursively(Element element) {
 		Iterator<Statement> statementsIterator = statements.iterator();
