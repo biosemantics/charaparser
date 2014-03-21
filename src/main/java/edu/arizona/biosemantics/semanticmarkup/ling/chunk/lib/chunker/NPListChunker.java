@@ -74,7 +74,8 @@ public class NPListChunker extends AbstractChunker {
 			if (!cc.getTerminalsText().matches("(and|or|plus)")) {
 				isList = false;
 			}
-			List<IParseTree> ccs = np.getChildrenOfPOS(POS.CC);
+			//List<IParseTree> ccs = np.getChildrenOfPOS(POS.CC);
+			List<IParseTree> ccs = np.getDescendants(POS.CC); //Hong 3/21/14
 			if (ccs.size() > 1) {
 				isList = false;
 			}
@@ -86,8 +87,9 @@ public class NPListChunker extends AbstractChunker {
 			// } //basal and cauline leaves=> two NN after CC
 			for(IParseTree child : children) {
 				POS childPOS = child.getPOS();
-				if (!childPOS.equals(POS.NP) && !childPOS.equals(POS.NN) && !childPOS.equals(POS.NNS) 
-						&& !childPOS.equals(POS.CC) && !childPOS.equals(POS.NONE)) { //.matches("NP|NN|NNS|CC|[^\\w]")) {
+				if (!childPOS.equals(POS.NP) && !childPOS.equals(POS.NN) && !childPOS.equals(POS.NNS) && !childPOS.equals(POS.NNP) 
+						&& !childPOS.equals(POS.CC) && !childPOS.equals(POS.PUNCT) && !childPOS.equals(POS.PRN) 
+						&& !childPOS.equals(POS.ADJP) && !childPOS.equals(POS.JJ) && !childPOS.equals(POS.RB) && !childPOS.equals(POS.NONE)) { //.matches("NP|NN|NNS|CC|[^\\w]")) //"\\b(NP|NN|NNS|CC|PUNCT|PRN|ADJP|JJ|RB)\\b")){//extended on 10/29/2013, not backwards tested
 					isList = false;
 					break;
 				}
@@ -95,12 +97,13 @@ public class NPListChunker extends AbstractChunker {
 				if (grandChildren.size() > 0) {
 					IParseTree lastGrandChild = grandChildren.get(grandChildren.size() - 1);
 					POS lastGrandChildrenPOS = lastGrandChild.getPOS();
-					if (!lastGrandChild.isTerminal() && !lastGrandChildrenPOS.equals(POS.NN) && !lastGrandChildrenPOS.equals(POS.NNS)) {
+					if (!lastGrandChild.isTerminal() && !lastGrandChildrenPOS.equals(POS.NN) && !lastGrandChildrenPOS.equals(POS.NNS) && !lastGrandChildrenPOS.equals(POS.PUNCT)) {//add PUNCT for parenthesis
 						isList = false;
 						break;
 					}
 				}
-				if(child.getDescendants(POS.ADJP).size() != 0 || child.getDescendants(POS.PP).size() != 0) {
+				//if(child.getDescendants(POS.ADJP).size() != 0 || child.getDescendants(POS.PP).size() != 0) {
+				if(child.getDescendants(POS.PP).size() != 0) {
 					isList = false;
 					break;
 				}
