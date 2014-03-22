@@ -75,7 +75,7 @@ public class NPListChunker extends AbstractChunker {
 				isList = false;
 			}
 			//List<IParseTree> ccs = np.getChildrenOfPOS(POS.CC);
-			List<IParseTree> ccs = np.getDescendants(POS.CC); //Hong 3/21/14
+			List<IParseTree> ccs = np.getDescendants(POS.CC); //Hong 3/21/14: with mostly forking ascending branches , the axis and branches or pedicels armed with firm setae : "branches , the axis and branches or pedicels" should not be a list 
 			if (ccs.size() > 1) {
 				isList = false;
 			}

@@ -76,8 +76,6 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
 				isState = true;
 			isOrgan = organStateKnowledgeBase.isOrgan(word);
-				
-			//word = word.replaceAll("[<>{}]", ""); //Hong TODO remove this
 
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();

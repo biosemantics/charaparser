@@ -60,7 +60,9 @@ public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
 					File outputFile = new File(writeDirectory + File.separator + descriptionsFile.getFile().getName());
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			        Transformer transformer = transformerFactory.newTransformer();
+			        transformer.setOutputProperty("indent", "yes");
 			        transformer.transform(new DOMSource(document), new StreamResult(outputFile));
+
 				} else {
 					this.log(LogLevel.ERROR, "There is a descriptionsFile without a corresponding DOM Document");
 				}

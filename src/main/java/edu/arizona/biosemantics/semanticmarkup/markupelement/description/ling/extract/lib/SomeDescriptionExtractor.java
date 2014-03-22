@@ -96,6 +96,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 						e);
 			}
 		}
+		//for(Statement statement: description.getStatements()){
+			//System.out.println(statement.toString());
+		//}
 	}
 
 	private List<Element> getDescriptiveElements(ProcessingContext processingContext) {
@@ -119,7 +122,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			}
 			if(iterator.hasNext()) {
 				addToResult(result, describeChunk(processingContext));
-			}
+			}	
 			log(LogLevel.DEBUG, "result:\n" + result);
 		}
 		

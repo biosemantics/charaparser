@@ -191,7 +191,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 						}
 					}
 				}
-				
+				//Hong TODO remove afterOrganChunk logic
 				LinkedList<Element> lastElementsBackup =(LinkedList<Element>) processingContext.getCurrentState().getLastElements().clone();
 				LinkedList<Element> newLastElements = new LinkedList<Element>();
 				for(Element resultElement : result) {

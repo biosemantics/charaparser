@@ -342,8 +342,8 @@ public class OtherINsChunker extends AbstractChunker {
 					}*/
 				}else if(j-i != 1){
 					//if np =~ ^or and the next token is a prep chunk, then merge np and the chunk: r[i[throughout or only in] o[ultimate branches]]
-					AbstractParseTree nextoken = terminals.get(j);
-					if(np!=null && np.startsWith("or ") && nextoken.isOfChunkType(ChunkType.PP)){
+					if(np!=null && np.startsWith("or ") && terminals.size()>j && terminals.get(j).isOfChunkType(ChunkType.PP)){
+						AbstractParseTree nextoken = terminals.get(j);
 						//concat two pps
 						LinkedHashSet<Chunk> pps = new LinkedHashSet<Chunk>();
 						pps.add(terminal);
@@ -363,8 +363,8 @@ public class OtherINsChunker extends AbstractChunker {
 					}else if(np!=null && stop - i != 1){
 						//collect from i to stop
 						LinkedHashSet<Chunk> organTerminals = new LinkedHashSet<Chunk>(); //aka np
-						int k = 0;
-						for(k=i+1; i<stop; k++) {
+						int k = i+1;
+						for(k=i+1; k<stop; k++) {
 							AbstractParseTree lookAheadTerminal = terminals.get(k);
 							Chunk lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
 							if(lookAheadChunk.equals(chunkCollector.getChunk(terminal))) {
@@ -383,8 +383,8 @@ public class OtherINsChunker extends AbstractChunker {
 						}
 						
 						//if next token is r[p[ too, join the pp
-						nextoken = terminals.get(k);
-						if(!startNoun && nextoken.isOfChunkType(ChunkType.PP)){//join
+						if(!startNoun && terminals.size()>k && terminals.get(k).isOfChunkType(ChunkType.PP)){//join
+							AbstractParseTree nextoken = terminals.get(k);
 							//concat two pps
 							LinkedHashSet<Chunk> pps = new LinkedHashSet<Chunk>();
 							pps.addAll(organTerminals);

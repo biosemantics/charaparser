@@ -82,7 +82,7 @@ public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 			}
 			
 			log(LogLevel.DEBUG, "writing result using " + writer.getClass());
-			writer.write(descriptionsFileList, outputDirectory);
+			writer.write(descriptionsFileList, outputDirectory); //descriptionsFileList.getDescriptionsFiles().get(0).getDescriptions().get(0).getStatements().get(2)
 			
 			return new DescriptionMarkupResult(descriptionsFileList);
 		} catch(Exception e) {

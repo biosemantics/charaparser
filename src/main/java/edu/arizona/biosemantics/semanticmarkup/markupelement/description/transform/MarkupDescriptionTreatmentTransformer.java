@@ -194,6 +194,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		//even though no actual learning is taking place
 		terminologyLearner.learn(descriptionsFiles, glossaryTable);
 		terminologyLearner.readResults(descriptionsFiles);
+
 		Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker = 
 				terminologyLearner.getSentencesForOrganStateMarker(); //sentence level markup: modifier##tag##sentence text
 		// do the actual markup
@@ -254,11 +255,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * @param otoGlossary
 	 */
 	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+		//@TODO deals with synonyms
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-			glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
+			glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage
 		}	
 		for(Decision decision : download.getDecisions()) {
-			glossary.addEntry(decision.getTerm(), decision.getCategory());
+			glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 		}
 	}
 	
