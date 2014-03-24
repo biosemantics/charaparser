@@ -51,11 +51,12 @@ public class AndChunker extends AbstractChunker {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		for(int i=0; i<terminals.size(); i++)  {
 			AbstractParseTree terminal = terminals.get(i);
+			//Hong 3/23/2014 doesn't make sense to merge: petals mostly imbricated [in the [bud and usually inserted with the stamens]]
 			if(!chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().equals("and")) {
 				chunkCollector.addChunk(new Chunk(ChunkType.AND, terminal));
-				if(previousChunk != null && previousChunk.isOfChunkType(ChunkType.PP)) {
+				/*if(previousChunk != null && previousChunk.isOfChunkType(ChunkType.PP)) {
 					connectOrganWithPP(i, previousChunk, terminals, chunkCollector);
-				}
+				}*/
 			}
 			if(chunkCollector.isPartOfANonTerminalChunk(terminal) && terminal.getTerminalsText().equals("and")) {
 				Chunk chunk = chunkCollector.getChunk(terminal);

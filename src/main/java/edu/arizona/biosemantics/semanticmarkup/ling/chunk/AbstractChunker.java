@@ -246,12 +246,35 @@ public abstract class AbstractChunker implements IChunker {
 		int p1 = parseTree.getTerminalID(afterThisTree.getTerminals().get(0));
 		int p2 = parseTree.getTerminalID(tree.getTerminals().get(0));
 		
-		if(p2 - p1 != 1 || !endsWithNN(tree) || tree.getTerminals().get(0).toString().matches("\\W")){ //tree must end with a NN and can not start with a punctuation mark like ','
+		if(p2 - p1 != 1 ||
+			!endsWithNN(tree) || hasSeparatedNNs(tree) ||
+			tree.getTerminals().get(0).toString().matches("\\W")){ //tree must has and end with a NN and can not start with a punctuation mark like ','
 			return null;
 		}else{
 			return tree;
 		}
 		
+	}
+
+	private boolean hasSeparatedNNs(AbstractParseTree tree) {
+		//(NP (JJ caudate) (NN acumination) (JJ 1.5-2.5) (NNS cm))
+		List<AbstractParseTree> terminals = tree.getTerminals();
+		boolean findNN = false;
+		boolean findSep = false;
+		int index = -1;
+		for(AbstractParseTree t: terminals){
+			POS pos = t.getParent(tree).getPOS(); 
+			if(!findNN && (pos.equals(POS.NN) || pos.equals(POS.NNS) || pos.equals(POS.NNP))){
+				findNN = true;
+				index = tree.getTerminalID(t);
+			}else if(findNN && (pos.equals(POS.NN) || pos.equals(POS.NNS) || pos.equals(POS.NNP))){
+				if(tree.getTerminalID(t) - index > 1 && findSep) return true;
+				else index = tree.getTerminalID(t);
+			}else if(findNN && t.getTerminalsText().matches("[^a-zA-Z]+")){ //a token contains no letters
+				findSep = true;
+			}
+		}
+		return false;
 	}
 
 	private boolean getFirstTree(AbstractParseTree parseTree, AbstractParseTree afterThisTree, ChunkCollector chunkCollector, LinkedList<AbstractParseTree> result, boolean after) {
@@ -299,7 +322,7 @@ public abstract class AbstractChunker implements IChunker {
 	/**
 	 * 
 	 * @param tree
-	 * @return true if the last element in tree contains NP or OBJECT at any level
+	 * @return true if the last terminal of the tree is an NN
 	 */
 	private boolean endsWithNN(AbstractParseTree tree) {
 		if(!tree.isTerminal() && tree.getDepth(tree.getTerminals().get(0))==1){ //(NN prickles)

@@ -68,6 +68,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
+
 		
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
 		Chunk nextChunk = null;
@@ -191,7 +192,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 						}
 					}
 				}
-				//Hong TODO remove afterOrganChunk logic
+				//not sure the afterorgan logic is useful. not used for 'and-ed' chunks.
 				LinkedList<Element> lastElementsBackup =(LinkedList<Element>) processingContext.getCurrentState().getLastElements().clone();
 				LinkedList<Element> newLastElements = new LinkedList<Element>();
 				for(Element resultElement : result) {

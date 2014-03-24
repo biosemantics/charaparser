@@ -37,15 +37,16 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		this.glossary = glossary;
 	}
 	
+
 	@Override
-	public String getCharacterName(String word) {
+	public String getCharacterName(String word) {//hyphened or underscored word? 
 		if (word.trim().length() == 0)
 			return null;
 		if(this.addedCharacters.containsKey(word))
 			return addedCharacters.get(word);
 		if (word.indexOf(" ") > 0)
 			word = word.substring(word.lastIndexOf(" ") + 1).trim();
-		word = word.replaceAll("[{}<>()]", "").replaceAll("\\d+[–-]", "_")
+		word = word.replaceAll("\\d+[–-]", "_")
 				.replaceAll("–", "-")
 				./* replaceAll(" ", ""). */replaceAll("_+", "_"); //\\–\\- -
 		// "(3-)5-merous"/ =>_merous
@@ -85,7 +86,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			// check _term_category table
 			Set<String> categories = new HashSet<String>();
 
-			Map<String, Set<String>> termCategories = terminologyLearner.getTermCategories();
+			Map<String, Set<String>> termCategories = terminologyLearner.getTermCategories(); //Question TODO checking terminologyLearner is redundant?
 			//log(LogLevel.DEBUG, "termcategories " + termCategories);
 			if(termCategories.containsKey(word))
 				categories.addAll(termCategories.get(word));
@@ -103,8 +104,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			String categoriesString = categoriesStringBuilder.toString();
 			if (categoriesString.length() > 0) {
 				categoriesString = categoriesString.replaceFirst(this.or + "$", "");
-				if(word.equals("pale"))
-					log(LogLevel.DEBUG, "categoriesString " + categoriesString);
+				/*if(word.equals("pale"))
+					log(LogLevel.DEBUG, "categoriesString " + categoriesString);*/
 				return categoriesString;
 			}
 		}

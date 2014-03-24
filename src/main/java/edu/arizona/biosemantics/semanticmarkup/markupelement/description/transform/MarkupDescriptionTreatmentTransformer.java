@@ -192,6 +192,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place
+		//Question TODO  all term category info are in the glossary, then why do we need terminologyLearner?
 		terminologyLearner.learn(descriptionsFiles, glossaryTable);
 		terminologyLearner.readResults(descriptionsFiles);
 
@@ -251,14 +252,23 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 
 	/**
 	 * TODO: OTO Webservice should probably only return one term category list.
-	 * No need to return an extra term synonym list just because it might make sense to have them seperate in a relational database schema
+	 * No need to return an extra term synonym list just because it might make sense to have them separate in a relational database schema
+	 * 
+	 * returning a term synonym list makes sense, but here we need to add syn info to the glossary.
+	 * 
 	 * @param otoGlossary
 	 */
 	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
-		//@TODO deals with synonyms
+		//TODO deals with synonyms
+		//the glossary
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage
 		}	
+		//the syn set for the glossary
+		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
+			//Hong TODO need to add category info to synonym entry in OTOLite
+		}
+		
 		for(Decision decision : download.getDecisions()) {
 			glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 		}
