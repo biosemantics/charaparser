@@ -27,6 +27,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	
 	private IGlossary glossary;
 	private String or = "_or_";
+	private String c = "_c_";
+	
 	private String negWords; 
 	//private ITerminologyLearner terminologyLearner;
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
@@ -65,7 +67,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		
 		if (word.trim().length() == 0 || word.matches("\\W+"))
 			return new Match(null);
-		if(this.addedCharacters.containsKey(word)) //color_c_color, terms created by the program
+		if(this.addedCharacters.containsKey(word)) //"brownish red" from "brownish_c_red", terms created by the program
 			return addedCharacters.get(word);
 		
 		if (word.indexOf(" ") > 0)
@@ -246,6 +248,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	
 	@Override
 	public void addCharacterStateToName(String word, Match match) {
+		word = word.replaceAll(this.c, " ");
 		this.addedCharacters.put(word, match);
 	}
 

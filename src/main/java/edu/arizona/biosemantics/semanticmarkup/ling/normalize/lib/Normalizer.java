@@ -644,7 +644,7 @@ public abstract class Normalizer implements INormalizer {
 
 
 	/**
-	 * turn reddish purple to reddish-purple
+	 * turn reddish purple to reddish_c_purple
 	 * @param text
 	 * @return text
 	 */
@@ -658,9 +658,10 @@ public abstract class Normalizer implements INormalizer {
 		while(m.find()){
 			String toReplace = m.group();
 			String replacement = m.group().replaceAll("\\s+", "_c_");
+			//String replacement = m.group().replaceAll("\\s+", " ");
 			organStateKnowledgeBase.addState(replacement);
 			HashSet<Term> t = new HashSet<Term>();
-			t.add(new Term(replacement, "coloration"));
+			t.add(new Term(replacement.replaceAll("_c_", " "), "coloration"));
 			characterKnowledgeBase.addCharacterStateToName(replacement, new Match (t));
 			text = text.replaceFirst(toReplace, replacement);
 			m = p.matcher(text);
