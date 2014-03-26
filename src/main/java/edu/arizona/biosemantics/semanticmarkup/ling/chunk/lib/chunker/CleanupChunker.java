@@ -310,7 +310,7 @@ public class CleanupChunker extends AbstractChunker {
 						return  pointer;
 					}
 				} else {
-					String character = this.characterKnowledgeBase.getCharacterName(terminalsText);
+					String character = this.characterKnowledgeBase.getCharacterName(terminalsText).getCategories();
 					if(!foundState && character != null){
 						AbstractParseTree characterTerminal = parseTreeFactory.create();
 						characterTerminal.setTerminalsText(character);
@@ -385,7 +385,7 @@ public class CleanupChunker extends AbstractChunker {
 									
 									if(savedCharacterState!=null) {
 										for(Chunk beforeOrganChunk : beforeOrgan) {
-											String characterFound = characterKnowledgeBase.getCharacterName(beforeOrganChunk.getTerminalsText());
+											String characterFound = characterKnowledgeBase.getCharacterName(beforeOrganChunk.getTerminalsText()).getCategories();
 											if(characterFound!=null){
 												LinkedHashSet<Chunk> characterStateChildren = new LinkedHashSet<Chunk>();
 												AbstractParseTree characterTerminal = parseTreeFactory.create();
@@ -411,7 +411,7 @@ public class CleanupChunker extends AbstractChunker {
 									chunkCollector.addChunk(savedCharacterState);
 									return pointer;
 								}
-								String lookForwardCharacter =  characterKnowledgeBase.getCharacterName(lookForwardTerminalText);
+								String lookForwardCharacter =  characterKnowledgeBase.getCharacterName(lookForwardTerminalText).getCategories();
 								if((!findChunk && !findOrgan) && (
 										chunkCollector.isPartOfChunkType(lookForwardTerminal, ChunkType.NP_LIST) ||
 										chunkCollector.isPartOfChunkType(lookForwardTerminal, ChunkType.TO) ||
@@ -677,7 +677,7 @@ public class CleanupChunker extends AbstractChunker {
 			}
 			String character = null;
 			if(!characterWord.matches("("+moreWords+")")){
-				character =  characterKnowledgeBase.getCharacterName(characterWord);
+				character =  characterKnowledgeBase.getCharacterName(characterWord).getCategories();
 			}
 			
 			//String beforethan = token.substring(0, token.indexOf(" than "));

@@ -117,6 +117,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.Learner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.OTOLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 
 /**
  * Guice config file for basic parameters
@@ -150,7 +151,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
 			  bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 			  bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);
-			  bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);;
+			  bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);
 			  bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
 			  bind(IPOSKnowledgeBase.class).to(WordNetPOSKnowledgeBase.class).in(Singleton.class);
 			  bind(IPOSKnowledgeBase.class).annotatedWith(Names.named("LearnedPOSKnowledgeBase")).to(LearnedPOSKnowledgeBase.class).in(Singleton.class);
@@ -245,6 +246,8 @@ public class BasicConfig extends AbstractModule {
 			  bind(String.class).annotatedWith(Names.named("DegreeWords")).toInstance(degreeWords);
 			  String timesWords = getTimesWords();
 			  bind(String.class).annotatedWith(Names.named("TimesWords")).toInstance(timesWords);
+			  String negWords = getNegationWords();
+			  bind(String.class).annotatedWith(Names.named("NegationWords")).toInstance(negWords);
 			  Set<String> perWords = getPerWords();
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("PerWords")).toInstance(perWords);
 			  Set<String> moreWords = getMoreWords();
@@ -378,6 +381,11 @@ public class BasicConfig extends AbstractModule {
 		String timesWords = "times|folds|lengths|widths";
 		return timesWords;
 	}
+	
+	private String getNegationWords() {
+		String negWords = "no|not|never";
+		return negWords;
+	}
 
 	private String getDegreeWords() {
 		String degreeWords = "°|degrees|degree";
@@ -419,6 +427,7 @@ public class BasicConfig extends AbstractModule {
 		return this.getWordSet(stopWordsString);
 	}
 
+	//keep this up to date with the glossary.
 	private HashMap<String, String> getEqualCharacters() {
 		HashMap<String, String> equalCharacters = new HashMap<String, String>();
 		equalCharacters.put("wide", "width");
@@ -433,7 +442,59 @@ public class BasicConfig extends AbstractModule {
 
 	private HashMap<String, String> getSingulars() {
 		HashMap<String, String> singulars = new HashMap<String, String>();
+		singulars.put("rachis", "rachis");
+	    //special cases
+		singulars.put("anthocyathia", "anthocyathus");
 		singulars.put("axis", "axis");
+		singulars.put("axes", "axis");
+		singulars.put("bases", "base");
+		singulars.put("brit", "brit");
+		singulars.put("boss", "boss");
+		singulars.put("buttress", "buttress");
+		singulars.put("callus", "callus");
+		singulars.put("catenabe", "catena");
+		singulars.put("coremata", "corematis");
+		singulars.put("corpora", "corpus");
+		singulars.put("crepides", "crepis");
+		singulars.put("ephyre", "ephyra");
+		singulars.put("ephyrae", "ephyra");
+		singulars.put("ephyrula", "ephyra");
+		singulars.put("falces", "falx");
+		singulars.put("forceps", "forceps");
+		singulars.put("fusules", "fusula");
+		singulars.put("frons", "frons");
+		singulars.put("fry", "fry");
+		singulars.put("genera", "genus");
+		singulars.put("glochines", "glochis");
+		singulars.put("grooves", "groove");
+		singulars.put("incudes", "incus");
+		singulars.put("interstices", "interstice");
+		singulars.put("irises", "iris");
+		singulars.put("irides", "iris");
+		singulars.put("latera", "latus");
+		singulars.put("lens", "len");
+		singulars.put("malli", "malleus");
+		singulars.put("media", "media");
+		singulars.put("midnerves", "midnerve");
+		singulars.put("mollusks", "mollusca");
+		singulars.put("molluscs", "mollusca");
+		singulars.put("parasides", "parapsis");
+		singulars.put("perradia", "perradius");
+		singulars.put("pharynges", "pharynx");
+		singulars.put("pharynxes", "pharynx");
+		singulars.put("proboscises", "proboscis");
+		singulars.put("process", "process");
+		singulars.put("ptyxis", "ptyxis");
+		singulars.put("proglottides", "proglottis");
+		singulars.put("pseudocoelomata", "pseudocoelomates");
+		singulars.put("series", "series");
+		singulars.put("setules", "setula");
+		singulars.put("species", "species");
+		singulars.put("sperm", "sperm");
+		singulars.put("teeth", "tooth");
+		singulars.put("themselves", "themselves");
+		singulars.put("valves", "valve");
+		/*singulars.put("axis", "axis");
 		singulars.put("axes", "axis");
 		singulars.put("bases", "base");
 		singulars.put("boss", "boss");
@@ -449,13 +510,61 @@ public class BasicConfig extends AbstractModule {
 		singulars.put("series", "series");
 		singulars.put("species", "species");
 		singulars.put("teeth", "tooth");
-		singulars.put("valves", "valve");
+		singulars.put("valves", "valve");*/
 		return singulars;
 	}
 
 	private HashMap<String, String> getPlurals() {
 		HashMap<String, String> plurals = new HashMap<String, String>();
+		plurals.put("anthocyathus","anthocyathia");
 		plurals.put("axis", "axes");
+		plurals.put("base", "bases");
+		plurals.put("brit", "brit");
+		plurals.put("boss", "bosses");
+		plurals.put("buttress", "buttresses");
+		plurals.put("callus", "calluses");
+		plurals.put("catena","catenabe");
+		plurals.put("corematis","coremata");
+		plurals.put("corpus","corpora");
+		plurals.put("crepis","crepides");
+		plurals.put("ephyra","ephyre");
+		plurals.put("ephyra","ephyrae");
+		plurals.put("ephyra","ephyrula");
+		plurals.put("falx","falces");
+		plurals.put("forceps", "forceps");
+		plurals.put("frons", "fronses");
+		plurals.put("fry", "fry");
+		plurals.put("fusula","fusules");
+		plurals.put("genus","genera");
+		plurals.put("glochis","glochines");
+		plurals.put("groove", "grooves");
+		plurals.put("incus","incudes");
+		plurals.put("interstice", "interstices");
+		plurals.put("iris","irises");
+		plurals.put("iris","irides");
+		plurals.put("latus","latera");
+		plurals.put("len", "lens");
+		plurals.put("malleus","malli");
+		plurals.put("media", "media");
+		plurals.put("midnerve", "midnerves");
+		plurals.put("mollusca","mollusks");
+		plurals.put("mollusca","molluscs");
+		plurals.put("parapsis","parasides");
+		plurals.put("perradius","perradia");
+		plurals.put("pharynx","pharynges");
+		plurals.put("pharynx","pharynxes");
+		plurals.put("proboscis","proboscises");
+		plurals.put("proglottis","proglottides");
+		plurals.put("process", "processes");
+		plurals.put("pseudocoelomates","pseudocoelomata");
+		plurals.put("ptyxis", "ptyxis");
+		plurals.put("series", "series");
+		plurals.put("setula","setules");
+		plurals.put("species", "species");
+		plurals.put("sperm", "sperm");
+		plurals.put("tooth", "teeth");
+		plurals.put("valve", "valves");
+		/*plurals.put("axis", "axes");
 		plurals.put("base", "bases");
 		plurals.put("groove", "grooves");
 		plurals.put("interstice", "interstices");
@@ -470,7 +579,7 @@ public class BasicConfig extends AbstractModule {
 		plurals.put("frons", "fronses");
 		plurals.put("process", "processes");
 		plurals.put("series", "series");
-		plurals.put("species", "species");
+		plurals.put("species", "species");*/
 		return plurals;
 	}
 	

@@ -19,13 +19,20 @@ import java.util.regex.Pattern;
 
 
 
+
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+
+//import edu.arizona.biosemantics.oto.lite.beans.Term;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
@@ -652,7 +659,9 @@ public abstract class Normalizer implements INormalizer {
 			String toReplace = m.group();
 			String replacement = m.group().replaceAll("\\s+", "_c_");
 			organStateKnowledgeBase.addState(replacement);
-			characterKnowledgeBase.addCharacterStateToName(replacement, "coloration");
+			HashSet<Term> t = new HashSet<Term>();
+			t.add(new Term(replacement, "coloration"));
+			characterKnowledgeBase.addCharacterStateToName(replacement, new Match (t));
 			text = text.replaceFirst(toReplace, replacement);
 			m = p.matcher(text);
 		}

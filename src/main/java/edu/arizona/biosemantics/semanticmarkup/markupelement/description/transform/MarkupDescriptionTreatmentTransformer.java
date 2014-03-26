@@ -32,10 +32,12 @@ import edu.arizona.biosemantics.oto.lite.beans.Download;
 import edu.arizona.biosemantics.oto.lite.beans.Synonym;
 import edu.arizona.biosemantics.oto.lite.beans.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
+import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
@@ -74,6 +76,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected Set<String> selectedSources;
 	private String glossaryTable;
 	private boolean termCategorizationRequired;
+	private IInflector inflector;
 	
 	/**
 	 * @param wordTokenizer
@@ -120,8 +123,10 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			IGlossary glossary, 
 			@Named("SelectedSources")Set<String> selectedSources, 
 			@Named("GlossaryTable")String glossaryTable,
-			@Named("termCategorizationRequired")boolean termCategorizationRequired) throws Exception {
+			@Named("termCategorizationRequired")boolean termCategorizationRequired,
+			IInflector inflector) throws Exception {
 		super(version, parallelProcessing);
+		this.inflector = inflector;
 		this.parser = parser;
 		this.posTagger = posTagger;
 		this.chunkerChain = chunkerChain;
@@ -256,21 +261,100 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * 
 	 * returning a term synonym list makes sense, but here we need to add syn info to the glossary.
 	 * 
+	 * Merge glossaryDownload and download to one glossary
 	 * @param otoGlossary
 	 */
 	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
 		//TODO deals with synonyms
-		//the glossary
-		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-			glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage
-		}	
-		//the syn set for the glossary
+	
+		//add the syn set of the glossary
+		HashSet<Term> gsyns = new HashSet<Term>();
 		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
 			//Hong TODO need to add category info to synonym entry in OTOLite
+			
+			/*if(termSyn.getCategory().compareTo("structure")==0){
+				//take care of singular and plural forms
+				String syns = ""; 
+				String synp = "";
+				String terms = "";
+				String termp = "";
+				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
+					synp = termSyn.getSynonym().replaceAll("_",  "-");
+					syns = inflector.getSingular(synp);					
+				}else{
+					syns = termSyn.getSynonym().replaceAll("_",  "-");
+					synp = inflector.getPlural(syns);
+				}
+				
+				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+					termp = termSyn.getTerm().replaceAll("_",  "-");
+					terms = inflector.getSingular(termp);					
+				}else{
+					terms = termSyn.getTerm().replaceAll("_",  "-");
+					termp = inflector.getPlural(terms);
+				}
+				glossary.addSynonym(syns, termSyn.getCategory(), terms);
+				glossary.addSynonym(synp, termSyn.getCategory(), termp);
+				gsyns.add(new Term(syns, termSyn.getCategory());
+				gsyns.add(new Term(synp, termSyn.getCategory());
+			}else{*/
+				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
+				//gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory());
+				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
+			//}
 		}
 		
+		//the glossary, excluding gsyns
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+			if(!gsyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
+				glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
+		}
+
+		
+		//add syn set of term_category
+		HashSet<Term> dsyns = new HashSet<Term>();
+		for(Synonym termSyn: download.getSynonyms()){
+			//Hong TODO need to add category info to synonym entry in OTOLite
+			/*if(termSyn.getCategory().compareTo("structure")==0){
+			//take care of singular and plural forms
+			String syns = ""; 
+			String synp = "";
+			String terms = "";
+			String termp = "";
+			if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
+				synp = termSyn.getSynonym().replaceAll("_",  "-");
+				syns = inflector.getSingular(synp);					
+			}else{
+				syns = termSyn.getSynonym().replaceAll("_",  "-");
+				synp = inflector.getPlural(syns);
+			}
+			
+			if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+				termp = termSyn.getTerm().replaceAll("_",  "-");
+				terms = inflector.getSingular(termp);					
+			}else{
+				terms = termSyn.getTerm().replaceAll("_",  "-");
+				termp = inflector.getPlural(terms);
+			}
+			//glossary.addSynonym(syns, termSyn.getCategory(), terms);
+			//glossary.addSynonym(synp, termSyn.getCategory(), termp);
+			//dsyns.add(new Term(syns, termSyn.getCategory());
+			//dsyns.add(new Term(synp, termSyn.getCategory());
+			glossary.addSynonym(syns, "structure", terms);
+			glossary.addSynonym(synp, "structure", termp);
+			dsyns.add(new Term(syns, "structure"));
+			dsyns.add(new Term(synp, "structure"));
+		//}else{*/
+			glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
+			//syns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory());
+			dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
+		//}					
+		}
+
+		//term_category from OTO, excluding syns
 		for(Decision decision : download.getDecisions()) {
-			glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
+			if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))
+				glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 		}
 	}
 	

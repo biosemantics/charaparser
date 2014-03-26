@@ -1,5 +1,7 @@
 package edu.arizona.biosemantics.semanticmarkup.know;
 
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
+
 /**
  * An ICharacterKnowledgeBase allows the management and lookup of character names for character states
  * @author rodenhausen
@@ -10,7 +12,8 @@ public interface ICharacterKnowledgeBase {
 	 * @param characterState
 	 * @return character name of the character state or null if no character name exists for the state
 	 */
-	public String getCharacterName(String characterState);
+	//public String getCharacterName(String characterState);
+	public Match getCharacterName(String characterState);
 	
 	/**
 	 * @param characterState
@@ -23,12 +26,17 @@ public interface ICharacterKnowledgeBase {
 	 * @param characterState
 	 * @param characterName
 	 */
-	public void addCharacterStateToName(String characterState, String characterName);
+	//public void addCharacterStateToName(String characterState, String characterName);
+	public void addCharacterStateToName(String characterState, Match match);
 
 	/**
 	 * @param characterName
 	 * @return if the character name is contained in the knowledgebase 
 	 */
 	public boolean containsCharacterName(String characterName);
+
+	public boolean isState(String terminalsText);
+	
+	public boolean isOrgan(String terminalsText);
 	
 }

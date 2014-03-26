@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -21,6 +22,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
+import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
@@ -114,8 +116,13 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		String newState = equalCharacters.get(characterStateString);
 		if(newState != null && !this.eqcharaExempt){
 			characterStateString = newState;
-			if(characterKnowledgeBase.containsCharacterState(characterStateString))
-				character = characterKnowledgeBase.getCharacterName(characterStateString);
+			if(characterKnowledgeBase.containsCharacterState(characterStateString)){
+				character = characterKnowledgeBase.getCharacterName(characterStateString).getCategories();
+				if(character==null){
+					character = characterStateString; //characterStateString not in glossary, should be added
+					log(LogLevel.INFO, characterStateString +" should be added to the glossary as a 'character' ");
+				}				
+			}
 		}
 		if(character.equals("character") && modifiers.size() == 0 &&!this.eqcharaExempt) {
 			//high relief: character=relief, reset the character of "high" to "relief"

@@ -2,6 +2,8 @@ package edu.arizona.biosemantics.semanticmarkup.know;
 
 import java.util.Set;
 
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
+
 /**
  * An IGlossary allows to lookup categories of words and vice versa
  * @author rodenhausen
@@ -15,6 +17,7 @@ public interface IGlossary {
 	 */
 	public Set<String> getCategories(String word);
 	
+	public Set<Term> getInfo(String word);
 	/**
 	 * @param category
 	 * @return word in the category
@@ -40,6 +43,13 @@ public interface IGlossary {
 	public void addEntry(String word, String category);
 	
 	
+	/**
+	 * a synonym and its preferred term [label] always share the same category.
+	 * @param syn
+	 * @param category
+	 * @param label
+	 */
+	public void addSynonym(String synonym, String category, String term); 
 	
 	/*
 	public void addStructure(String structure);

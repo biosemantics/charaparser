@@ -148,7 +148,7 @@ public class CharacterListNormalizer{
 				String ch = word.substring(0, word.indexOf("~list~")).replaceAll("\\W", "").replaceFirst("ttt$", "");
 				characterTokensReversed.add(ch);
 			}else if(organStateKnowledgeBase.isState(word) && !organStateKnowledgeBase.isOrgan(word)) {
-				String ch = characterKnowledgeBase.getCharacterName(word); //remember the char for this word (this word is a word before (to|or|\\W)
+				String ch = characterKnowledgeBase.getCharacterName(word).getCategories(); //remember the char for this word (this word is a word before (to|or|\\W)
 				if(ch==null){
 					characterTokensReversed.add(word); //
 				}else{

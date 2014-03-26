@@ -11,6 +11,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 
 
 /**
+ * distinguishes organs from states
  * GlossaryOrganStateKnowledgeBase creates an IOrganStateKnowledgeBase using an IGlossary
  * @author rodenhausen
  */

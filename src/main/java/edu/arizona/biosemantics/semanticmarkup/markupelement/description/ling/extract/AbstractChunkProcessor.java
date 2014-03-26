@@ -12,12 +12,14 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
@@ -506,7 +508,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				if(token.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 					tokensCharacter = token.getProperty("characterName");
 				} else {
-					tokensCharacter = characterKnowledgeBase.getCharacterName(w);
+					tokensCharacter = characterKnowledgeBase.getCharacterName(w).getCategories();
 				}
 				if(tokensCharacter==null && w.matches("no")){
 					tokensCharacter = "presence";

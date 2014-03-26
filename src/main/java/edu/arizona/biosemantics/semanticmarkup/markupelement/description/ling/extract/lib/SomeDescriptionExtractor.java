@@ -11,8 +11,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 
+
+
 import com.google.inject.Inject;
 
+import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
@@ -25,6 +28,7 @@ import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
@@ -44,6 +48,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	private ILastChunkProcessor lastChunkProcessor;
 
 	private IChunkProcessorProvider chunkProcessorProvider;
+	private ICharacterKnowledgeBase characterKnowledgeBase;
 	
 	/**
 	 * @param glossary
@@ -55,11 +60,12 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	public SomeDescriptionExtractor(IGlossary glossary, 
 			IChunkProcessorProvider chunkProcessorProvider, 
 			IFirstChunkProcessor firstChunkProcessor, 
-			ILastChunkProcessor lastChunkProcessor) {
+			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase) {
 		lifeStyles = glossary.getWords("life_style");
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
+		this.characterKnowledgeBase = characterKnowledgeBase;
 	}
 
 	
@@ -136,6 +142,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		result.add(relationElement);*/
 		createWholeOrganismDescription(result); //TODO: Hong post parsing normalization
 		createMayBeSameRelations(result, processingContext);
+		TerminologyStandardizer ts = new TerminologyStandardizer(this.characterKnowledgeBase);
+		ts.standardize(result);
 		return result;
 	}
 	

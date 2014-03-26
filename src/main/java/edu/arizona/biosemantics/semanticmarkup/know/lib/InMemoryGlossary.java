@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.know.lib;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -108,9 +109,10 @@ public class InMemoryGlossary implements IGlossary {
 */
 	protected ConcurrentHashMap<String, Set<String>> glossary = new ConcurrentHashMap<String, Set<String>>();
 	protected ConcurrentHashMap<String, Set<String>> reverseGlossary = new ConcurrentHashMap<String, Set<String>>();
-	
+	protected ConcurrentHashMap<String, Set<Term>> syns = new ConcurrentHashMap<String, Set<Term>>(); //syn => label, category
+	protected ConcurrentHashMap<String, Set<Term>> reverseSyns = new ConcurrentHashMap<String, Set<Term>>(); //label => syn, catgory
 	@Override
-	public Set<String> getWords(String category) {
+	public Set<String> getWords(String category) { //returns only preferred terms
 		category = category.toLowerCase().trim();
 		if(reverseGlossary.containsKey(category))
 			return reverseGlossary.get(category);
@@ -121,18 +123,38 @@ public class InMemoryGlossary implements IGlossary {
 	@Override
 	public boolean contains(String word) {
 		word = word.toLowerCase().trim();
-		return glossary.containsKey(word);
+		return glossary.containsKey(word) || syns.containsKey(word);
 	}
 
 	@Override
 	public Set<String> getCategories(String word) {
-		word = word.toLowerCase().trim();
-		if(glossary.containsKey(word))
-			return glossary.get(word);
-		else
-			return new HashSet<String>();
+		Set<Term> results = getInfo(word);
+		Set<String> cats = new HashSet<String>();
+		Iterator<Term> it = results.iterator();
+		while(it.hasNext()){
+			Term t = it.next();
+			cats.add(t.getCategory());
+		}
+		return cats;
 	}
 
+	@Override
+	public Set<Term> getInfo(String word) {
+		word = word.toLowerCase().trim();
+		Set<Term> results = new HashSet<Term>();
+		if(glossary.containsKey(word)){
+			Set<String> cats = glossary.get(word);
+			for(String cat: cats){
+				results.add(new Term(word, cat));
+			}
+			return results;
+		}
+		else if(syns.containsKey(word)){
+			return syns.get(word);
+		}else					
+			return new HashSet<Term>();
+	}
+	
 	@Override
 	public Set<String> getWordsNotInCategories(Set<String> categories) {
 		Set<String> normalizedCategories = new HashSet<String>();
@@ -158,4 +180,20 @@ public class InMemoryGlossary implements IGlossary {
 			reverseGlossary.put(category, new HashSet<String>());
 		reverseGlossary.get(category).add(word);
 	}
+	
+	@Override
+	public void addSynonym(String syn, String category, String label) {
+		syn = syn.toLowerCase().trim();
+		label = label.toLowerCase().trim();
+		category = category.toLowerCase().trim();
+		
+		if(!syns.containsKey(syn))
+			syns.put(syn, new HashSet<Term>());
+		syns.get(syn).add( new Term (label, category));
+		if(!reverseSyns.containsKey(label))
+			reverseSyns.put(label, new HashSet<Term>());
+		reverseSyns.get(label).add(new Term(syn, category));
+	}
+
+
 }

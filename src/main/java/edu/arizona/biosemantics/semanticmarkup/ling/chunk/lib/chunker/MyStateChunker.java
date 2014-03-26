@@ -104,20 +104,21 @@ public class MyStateChunker extends AbstractChunker {
 				chunkCollector.addChunk(characterChunk);
 			}
 			
-			if(organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
+			//if(organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
+			if(characterKnowledgeBase.isState(terminal.getTerminalsText())) {
 				String character = null;
 				if(characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText())) {
-					character = characterKnowledgeBase.getCharacterName(terminal.getTerminalsText());
+					character = characterKnowledgeBase.getCharacterName(terminal.getTerminalsText()).getCategories();
 				}
 				
 				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);
-				chunkCollector.addChunk(stateChunk);
+				chunkCollector.addChunk(stateChunk); //forking => STATE: [forking]
 				List<Chunk> characterStateChildChunks = new ArrayList<Chunk>();
 				characterStateChildChunks.addAll(modifierChunks);
 				characterStateChildChunks.add(stateChunk);
 				Chunk characterStateChunk = new Chunk(ChunkType.CHARACTER_STATE, characterStateChildChunks);
 				
-				if(character != null) {
+				if(character != null) {//forking => CHARACTER_STATE: characterName->arrangement; [MODIFIER: [mostly], STATE: [forking]]
 					characterStateChunk.setProperty("characterName", character);
 					chunkCollector.addChunk(characterStateChunk);
 				} 

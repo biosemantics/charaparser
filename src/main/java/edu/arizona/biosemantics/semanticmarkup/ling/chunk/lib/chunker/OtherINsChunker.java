@@ -232,7 +232,7 @@ public class OtherINsChunker extends AbstractChunker {
 					 */
 					
 					
-					String character = characterKnowledgeBase.getCharacterName(lookAheadTerminal.getTerminalsText());
+					String character = characterKnowledgeBase.getCharacterName(lookAheadTerminal.getTerminalsText()).getCategories();
 					if(!foundposition && character!=null && character.contains("position")){
 						foundposition = true;
 					}
