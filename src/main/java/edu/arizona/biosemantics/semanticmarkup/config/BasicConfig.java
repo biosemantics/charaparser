@@ -27,7 +27,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.CSVCorpus;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedCharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedOrganStateKnowledgeBase;
+//import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
@@ -152,7 +152,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 			  bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);
 			  bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);
-			  bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
+			  //bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
 			  bind(IPOSKnowledgeBase.class).to(WordNetPOSKnowledgeBase.class).in(Singleton.class);
 			  bind(IPOSKnowledgeBase.class).annotatedWith(Names.named("LearnedPOSKnowledgeBase")).to(LearnedPOSKnowledgeBase.class).in(Singleton.class);
 			  bind(ITokenizer.class).annotatedWith(Names.named("WordTokenizer")).to(WhitespaceTokenizer.class);

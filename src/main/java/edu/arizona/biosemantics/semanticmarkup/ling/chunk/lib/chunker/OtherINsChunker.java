@@ -50,9 +50,9 @@ public class OtherINsChunker extends AbstractChunker {
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
 			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase, ICharacterKnowledgeBase characterKnowledgeBase) {
+			 ICharacterKnowledgeBase characterKnowledgeBase, ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
-				inflector, organStateKnowledgeBase);
+				inflector,  learnedCharacterKnowledgeBase);
 		this.posKnowledgeBase = posKnowledgeBase;
 		this.characterKnowledgeBase = characterKnowledgeBase;
 	}

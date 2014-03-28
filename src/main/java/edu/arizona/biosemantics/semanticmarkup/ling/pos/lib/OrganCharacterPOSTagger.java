@@ -8,9 +8,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
 import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
@@ -34,7 +36,8 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 	private Set<String> vbWords;
 	private Pattern compreppattern = Pattern.compile("\\{?(according-to|ahead-of|along-with|apart-from|as-for|aside-from|as-per|as-to-as-well-as|away-from|because-of|but-for|by-means-of|close-to|contrary-to|depending-on|due-to|except-for|forward-of|further-to|in-addition-to|in-between|in-case-of|in-face-of|in-favour-of|in-front-of|in-lieu-of|in-spite-of|instead-of|in-view-of|near-to|next-to|on-account-of|on-behalf-of|on-board|on-to|on-top-of|opposite-to|other-than|out-of|outside-of|owing-to|preparatory-to|prior-to|regardless-of|save-for|thanks-to|together-with|up-against|up-to|up-until|vis-a-vis|with-reference-to|with-regard-to)\\}?");
 	//private Pattern compreppattern;
-	private IOrganStateKnowledgeBase organStateKnowledgeBase;
+	//private IOrganStateKnowledgeBase organStateKnowledgeBase;
+	private ICharacterKnowledgeBase learnedCharacterKnowledgeBase;
 	
 	/**
 	 * @param corpus
@@ -48,14 +51,15 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 	@Inject
 	public OrganCharacterPOSTagger(ICorpus corpus, @Named("PrepositionWords") String prepositions, @Named("StopWords") Set<String> stopWords,
 			@Named("Units") String units, ITerminologyLearner terminologyLearner, @Named("VBWords")Set<String> vbWords, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase, @Named("CompoundPrepWords")String compoundPrepWords) {
+			/*IOrganStateKnowledgeBase organStateKnowledgeBase,*/ICharacterKnowledgeBase learnedCharacterKnowledgeBase, @Named("CompoundPrepWords")String compoundPrepWords) {
 		this.corpus = corpus;
 		this.prepositions = prepositions;
 		this.stopWords = stopWords;
 		this.units = units;
 		this.terminologyLearner = terminologyLearner;
 		this.vbWords = vbWords;
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		//this.organStateKnowledgeBase = organStateKnowledgeBase;
+		this.learnedCharacterKnowledgeBase = learnedCharacterKnowledgeBase;
 		this.compreppattern = Pattern.compile("("+compoundPrepWords.replaceAll("\\s+", "-")+")");
 	}
 	
@@ -73,9 +77,11 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			
 			boolean isState = false;
 			boolean isOrgan = false;
-			if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
+			//if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
+			if(word.contains("~list~") || word.contains("_c_") || learnedCharacterKnowledgeBase.isState(word))
 				isState = true;
-			isOrgan = organStateKnowledgeBase.isOrgan(word);
+			//isOrgan = organStateKnowledgeBase.isOrgan(word);
+			isOrgan = learnedCharacterKnowledgeBase.isOrgan(word);
 
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();

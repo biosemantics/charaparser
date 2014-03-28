@@ -36,8 +36,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private ConcurrentHashMap<String, Match> characterCache = new ConcurrentHashMap<String, Match> ();
 
 	/**
-	 * @param terminologyLearner
 	 * @param glossary
+	 * @param negWords
 	 */
 	@Inject
 	public LearnedCharacterKnowledgeBase(/*ITerminologyLearner terminologyLearner,*/ IGlossary glossary, 

@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
@@ -39,9 +41,10 @@ public class PunctuationChunker extends AbstractChunker {
 	@Inject
 	public PunctuationChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
+			 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner,
-				inflector, organStateKnowledgeBase);
+				inflector,  learnedCharacterKnowledgeBase);
 	}
 	
 	@Override

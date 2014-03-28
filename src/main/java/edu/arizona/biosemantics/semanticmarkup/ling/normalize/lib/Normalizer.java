@@ -79,7 +79,7 @@ public abstract class Normalizer implements INormalizer {
 	//private Pattern viewptn = Pattern.compile( "(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)"); //to match in dorsal view and in profile
 	private Pattern bulletpattern  = Pattern.compile("^(and )?([(\\[]\\s*\\d+\\s*[)\\]]|\\d+.)\\s+(.*)"); //( 1 ), [ 2 ], 12.
 	private Pattern asaspattern = Pattern.compile("(.*?\\b)(as\\s+[\\w]+\\s+as)(\\b.*)");
-	private IOrganStateKnowledgeBase organStateKnowledgeBase;
+	//private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private IInflector inflector;
 	//private Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([`@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[`@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
 	//private Pattern charalistpattern = Pattern.compile("(.*?(?:^| ))(([0-9a-z–\\[\\]\\+-]+ly )*([_a-z-]+ )+[& ]*([@,;\\.] )+\\s*)(([_a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\4)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//
@@ -148,7 +148,7 @@ public abstract class Normalizer implements INormalizer {
 			@Named("ModifierList") String modifierList, 
 			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase, 
+			/*IOrganStateKnowledgeBase organStateKnowledgeBase, */
 			IInflector inflector, 
 			@Named("CompoundPrepWords")String compoundPPptn) {
 		this.units = units;
@@ -179,7 +179,7 @@ public abstract class Normalizer implements INormalizer {
 		this.prepositionWords = prepositionWords;
 		this.modifierList = Pattern.compile(modifierList);
 		this.characterKnowledgeBase = characterKnowledgeBase;
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		//this.organStateKnowledgeBase = organStateKnowledgeBase;
 		this.inflector = inflector;
 		this.parentTagProvider = parentTagProvider;
 		this.compoundPPptn = Pattern.compile("(.*?)\\b("+compoundPPptn+")\\b(.*)");	
@@ -210,7 +210,7 @@ public abstract class Normalizer implements INormalizer {
 			this.modifiertokens.add(mp.replaceAll("\\s+", "-"));
 		}
 		
-		cln = CharacterListNormalizer.getInstance(characterKnowledgeBase, organStateKnowledgeBase);
+		cln = CharacterListNormalizer.getInstance(characterKnowledgeBase/*, organStateKnowledgeBase*/);
 	}
 	
 	public Set<String> getModifierTokens(){
@@ -275,7 +275,8 @@ public abstract class Normalizer implements INormalizer {
 		Matcher m = hyphenedtoorpattern.matcher(str); //TODO: _ribbed not in local learned terms set. why?
 		while(m.matches()){
 			String possibleCharacterState = m.group(5);
-			boolean isCharacterState = this.organStateKnowledgeBase.isState(possibleCharacterState); //TODO should also check perm. gloss.
+			//boolean isCharacterState = this.organStateKnowledgeBase.isState(possibleCharacterState); //TODO should also check perm. gloss.
+			boolean isCharacterState = this.characterKnowledgeBase.isState(possibleCharacterState); //TODO should also check perm. gloss.
 			if(isCharacterState) {
 				str = m.group(1) + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-") + m.group(6);
 				//str = m.group(1) + "{" + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-").replaceAll("\\{$", "")+ "}" + m.group(6);
@@ -659,7 +660,7 @@ public abstract class Normalizer implements INormalizer {
 			String toReplace = m.group();
 			String replacement = m.group().replaceAll("\\s+", "_c_");
 			//String replacement = m.group().replaceAll("\\s+", " ");
-			organStateKnowledgeBase.addState(replacement);
+			//organStateKnowledgeBase.addState(replacement);
 			HashSet<Term> t = new HashSet<Term>();
 			t.add(new Term(replacement.replaceAll("_c_", " "), "coloration"));
 			characterKnowledgeBase.addCharacterStateToName(replacement, new Match (t));
@@ -1756,13 +1757,17 @@ public abstract class Normalizer implements INormalizer {
 			String[] beforeTokens = before.split(" ");
 			String[] afterTokens = after.split(" ");
 			log(LogLevel.DEBUG, "before token " + beforeTokens[beforeTokens.length-1]);
-			log(LogLevel.DEBUG, String.valueOf(organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1])));
-			if(!organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]) &&
-					!organStateKnowledgeBase.isOrgan(afterTokens[0])) {
+			//log(LogLevel.DEBUG, String.valueOf(organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1])));
+			log(LogLevel.DEBUG, String.valueOf(characterKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1])));
+			//if(!organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]) &&
+			//		!organStateKnowledgeBase.isOrgan(afterTokens[0])) {
+			if(!characterKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]) &&
+						!characterKnowledgeBase.isOrgan(afterTokens[0])) {
 				boolean beforeContainsOrgan = false;
 				String organ = "";
 				for(String beforeToken : beforeTokens) {
-					if(organStateKnowledgeBase.isOrgan(beforeToken)) {
+					//if(organStateKnowledgeBase.isOrgan(beforeToken)) {
+					if(characterKnowledgeBase.isOrgan(beforeToken)) {
 						beforeContainsOrgan = true;
 						organ = "";
 					}
@@ -1801,7 +1806,8 @@ public abstract class Normalizer implements INormalizer {
 					boolean fixedContainsOrgan = false;
 					String fixedOrgan = "";
 					for(String fixedToken : fixedTokens) {
-						if(this.organStateKnowledgeBase.isOrgan(fixedToken)) {
+						//if(this.organStateKnowledgeBase.isOrgan(fixedToken)) {
+						if(this.characterKnowledgeBase.isOrgan(fixedToken)) {
 							fixedContainsOrgan = true;
 							fixedOrgan = fixedToken;
 						}

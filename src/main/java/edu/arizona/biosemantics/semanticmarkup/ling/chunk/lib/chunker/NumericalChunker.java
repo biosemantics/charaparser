@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Set;
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
@@ -59,9 +61,9 @@ public class NumericalChunker extends AbstractChunker {
 			@Named("CountWords") String countWords, 
 			@Named("TimesWords") String timesWords, 
 			@Named("NumberPattern") String numberPattern, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+			ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,
-				glossary, terminologyLearner, inflector, organStateKnowledgeBase);
+				glossary, terminologyLearner, inflector,learnedCharacterKnowledgeBase);
 		this.percentageWords = percentageWords;
 		this.degreeWords = degreeWords;
 		this.countWords = countWords;

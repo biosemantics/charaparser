@@ -4,9 +4,11 @@ import java.util.HashMap;
 import java.util.Set;
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
@@ -38,9 +40,10 @@ public class StateChunker extends AbstractChunker {
 	@Inject
 	public StateChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase) {
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
+			 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,
-				glossary, terminologyLearner, inflector, organStateKnowledgeBase);
+				glossary, terminologyLearner, inflector,  learnedCharacterKnowledgeBase);
 	}
 
 	@Override
@@ -49,7 +52,8 @@ public class StateChunker extends AbstractChunker {
 			//collapse here? no decided to create chunk on the fly 
 			//terminalParent = terminal.getParent(parseTree);
 			Chunk chunk = chunkCollector.getChunk(terminal);
-			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
+			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && learnedCharacterKnowledgeBase.isState(terminal.getTerminalsText())) {
+			//if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
 				chunkCollector.addChunk(new Chunk(ChunkType.STATE, terminal));
 			}
 		}

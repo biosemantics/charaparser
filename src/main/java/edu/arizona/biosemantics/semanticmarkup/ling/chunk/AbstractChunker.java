@@ -11,9 +11,11 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
@@ -38,7 +40,7 @@ public abstract class AbstractChunker implements IChunker {
 	protected ITerminologyLearner terminologyLearner;
 	protected Set<String> stopWords;
 	protected IInflector inflector;
-	protected IOrganStateKnowledgeBase organStateKnowledgeBase;
+	protected ICharacterKnowledgeBase learnedCharacterKnowledgeBase;
 	
 	/**
 	 * @param parseTreeFactory
@@ -53,8 +55,7 @@ public abstract class AbstractChunker implements IChunker {
 	@Inject
 	public AbstractChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase) {		
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {		
 		this.parseTreeFactory = parseTreeFactory;
 		this.stopWords = stopWords;
 		this.prepositionWords = prepositionWords;
@@ -63,7 +64,7 @@ public abstract class AbstractChunker implements IChunker {
 		this.glossary = glossary;
 		this.terminologyLearner = terminologyLearner;
 		this.inflector = inflector;
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		this.learnedCharacterKnowledgeBase = learnedCharacterKnowledgeBase;
 	}
 		
 	protected void collapseSubtree(IParseTree parseTree, IParseTree collapseRoot, POS pos) {
@@ -206,8 +207,10 @@ public abstract class AbstractChunker implements IChunker {
 					alreadyAssignedToValidChunk |= chunkCollector.isPartOfANonTerminalChunk(terminal);
 				}
 				if(terminals.size() == 1 && 
-						organStateKnowledgeBase.isOrgan(terminals.get(0).getTerminalsText()) && 
-						organStateKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
+						//organStateKnowledgeBase.isOrgan(terminals.get(0).getTerminalsText()) && 
+						//organStateKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
+						learnedCharacterKnowledgeBase.isOrgan(terminals.get(0).getTerminalsText()) && 
+						learnedCharacterKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
 						chunkCollector.isPartOfChunkType(terminals.get(0), ChunkType.STATE)) {
 					alreadyAssignedToValidChunk = false;
 				}

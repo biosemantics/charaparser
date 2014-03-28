@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
@@ -55,9 +57,9 @@ public class CharacterListChunker extends AbstractChunker {
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,
 			@Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+			ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
-				inflector, organStateKnowledgeBase);
+				inflector, learnedCharacterKnowledgeBase);
 		this.posKnowledgeBase = posKnowledgeBase;
 	}
 

@@ -44,9 +44,9 @@ public class CharacterNameChunker extends AbstractChunker {
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
 			ICharacterKnowledgeBase characterKnowledgeBase, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+			 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
-				terminologyLearner, inflector, organStateKnowledgeBase);
+				terminologyLearner, inflector,  learnedCharacterKnowledgeBase);
 		this.characterKnowledgeBase = characterKnowledgeBase;
 	}
 

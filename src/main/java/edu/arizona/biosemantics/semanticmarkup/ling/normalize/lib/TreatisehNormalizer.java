@@ -71,7 +71,7 @@ public class TreatisehNormalizer extends Normalizer {
 			@Named("ModifierList") String modifierList, 
 			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase, 
+			/*IOrganStateKnowledgeBase organStateKnowledgeBase, */
 			IInflector inflector, 
 			@Named("CompoundPrepWords")String compoundPPptn) {
 		super(glossary, units, numberPattern, singulars, plurals, posKnowledgeBase,
@@ -79,7 +79,7 @@ public class TreatisehNormalizer extends Normalizer {
 				terminologyLearner, viewPattern, countPattern, positionPattern,
 				romanRangePattern, romanPattern, romanNumbers, stopWords,
 				prepositionWords, modifierList, parentTagProvider,
-				characterKnowledgeBase, organStateKnowledgeBase, inflector, compoundPPptn);
+				characterKnowledgeBase /*, organStateKnowledgeBase*/, inflector, compoundPPptn);
 		// TODO Auto-generated constructor stub
 	}
 

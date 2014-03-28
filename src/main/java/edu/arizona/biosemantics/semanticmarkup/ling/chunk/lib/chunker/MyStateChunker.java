@@ -52,11 +52,11 @@ public class MyStateChunker extends AbstractChunker {
 	@Inject
 	public MyStateChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, IOrganStateKnowledgeBase organStateKnowledgeBase, 
-			ICharacterKnowledgeBase characterKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase) {
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
+			ICharacterKnowledgeBase characterKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase, ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
-				terminologyLearner, inflector, organStateKnowledgeBase);
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+				terminologyLearner, inflector, learnedCharacterKnowledgeBase);
+
 		this.characterKnowledgeBase = characterKnowledgeBase;
 		this.posKnowledgeBase = posKnowledgeBase;
 	}
@@ -66,9 +66,14 @@ public class MyStateChunker extends AbstractChunker {
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
 			
-			boolean validCharacterState = organStateKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
+			//boolean validCharacterState = organStateKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
+			//boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
+			//		organStateKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
+			
+			boolean validCharacterState = learnedCharacterKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 			boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
-					organStateKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
+					learnedCharacterKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
+
 			boolean stateNotModifier = validCharacterState && !adverbCharacterState;
 			result[i] = stateNotModifier;
 		}

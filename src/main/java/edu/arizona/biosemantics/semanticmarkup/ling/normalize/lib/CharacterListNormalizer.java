@@ -23,7 +23,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
  */
 public class CharacterListNormalizer{
 	private ICharacterKnowledgeBase characterKnowledgeBase;
-	private IOrganStateKnowledgeBase organStateKnowledgeBase;
+	//private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private String negations = "not|never|seldom";//not -ly words. -ly words are already treated in character list patterns
 	private String or = "_or_";
 	private String noadjorg ="low"; //list of position terms that can not be used as a ref to an organ/part
@@ -34,14 +34,14 @@ public class CharacterListNormalizer{
 	private static CharacterListNormalizer singleton = null;
 	
 	
-	private CharacterListNormalizer(ICharacterKnowledgeBase characterKnowledgeBase, IOrganStateKnowledgeBase organStateKnowledgeBase){
+	private CharacterListNormalizer(ICharacterKnowledgeBase characterKnowledgeBase /*, IOrganStateKnowledgeBase organStateKnowledgeBase*/){
 		this.characterKnowledgeBase = characterKnowledgeBase;
-		this.organStateKnowledgeBase = organStateKnowledgeBase;
+		//this.organStateKnowledgeBase = organStateKnowledgeBase;
 	}
 	
-	public static CharacterListNormalizer getInstance(ICharacterKnowledgeBase characterKnowledgeBase, IOrganStateKnowledgeBase organStateKnowledgeBase){
+	public static CharacterListNormalizer getInstance(ICharacterKnowledgeBase characterKnowledgeBase /*, IOrganStateKnowledgeBase organStateKnowledgeBase*/){
 		if(singleton == null)
-			return new CharacterListNormalizer(characterKnowledgeBase, organStateKnowledgeBase);
+			return new CharacterListNormalizer(characterKnowledgeBase /*, organStateKnowledgeBase*/);
 		else 
 			return singleton;
 	}
@@ -147,7 +147,8 @@ public class CharacterListNormalizer{
 			if(word.indexOf("~list~")>0){
 				String ch = word.substring(0, word.indexOf("~list~")).replaceAll("\\W", "").replaceFirst("ttt$", "");
 				characterTokensReversed.add(ch);
-			}else if(organStateKnowledgeBase.isState(word) && !organStateKnowledgeBase.isOrgan(word)) {
+			//}else if(organStateKnowledgeBase.isState(word) && !organStateKnowledgeBase.isOrgan(word)) {
+			}else if(characterKnowledgeBase.isState(word) && !characterKnowledgeBase.isOrgan(word)) {
 				String ch = characterKnowledgeBase.getCharacterName(word).getCategories(); //remember the char for this word (this word is a word before (to|or|\\W)
 				if(ch==null){
 					characterTokensReversed.add(word); //
@@ -174,7 +175,8 @@ public class CharacterListNormalizer{
 					}
 					save = false;
 				}
-			}else if (organStateKnowledgeBase.isOrgan(word)){
+			//}else if (organStateKnowledgeBase.isOrgan(word)){
+			}else if (characterKnowledgeBase.isOrgan(word)){
 				characterTokensReversed.add("#");
 				save = true;
 			}else if(word.matches("(or|and-or|and/or|and_or)") || word.matches("\\S+ly~(or|and-or|and/or|and_or)~\\S+ly")){//loosely~to~densely 
@@ -382,7 +384,8 @@ public class CharacterListNormalizer{
 					if(chunkedTokens.get(i).compareTo(")")==0) leftround--;
 					if(chunkedTokens.get(i).length()>0){
 						//if(t.indexOf("<")>0){
-						if(this.organStateKnowledgeBase.isOrgan(t)){	
+						//if(this.organStateKnowledgeBase.isOrgan(t)){	
+						if(this.characterKnowledgeBase.isOrgan(t)){		
 							//case: {shape~list~ovate~to~lance-ovate~(~glabrous~or~sparsely~glandular-pubescent~punct~<apices>~acute~to~acuminate~)} 
 							//this is caused by adding more tokens to t to complete a open bracket
 							//solution: abort normalization
@@ -406,7 +409,8 @@ public class CharacterListNormalizer{
 						if(chunkedTokens.get(i).compareTo("]")==0) leftsquare--;
 						if(chunkedTokens.get(i).compareTo(")")==0) leftround--;
 						if(chunkedTokens.get(i).length()>0){
-							if(this.organStateKnowledgeBase.isOrgan(t)/* t.indexOf("<")>0*/){
+							//if(this.organStateKnowledgeBase.isOrgan(t)/* t.indexOf("<")>0*/){
+							if(this.characterKnowledgeBase.isOrgan(t)/* t.indexOf("<")>0*/){
 								//case: {shape~list~ovate~to~lance-ovate~(~glabrous~or~sparsely~glandular-pubescent~punct~<apices>~acute~to~acuminate~)} 
 								//this is caused by adding more tokens to t to complete a open bracket
 								//solution: abort normalization

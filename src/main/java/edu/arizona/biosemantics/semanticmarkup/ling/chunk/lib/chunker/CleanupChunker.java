@@ -70,9 +70,9 @@ public class CleanupChunker extends AbstractChunker {
 			@Named("MoreWords")String moreWords, @Named("NumberPattern") String numberPattern, IPOSKnowledgeBase posKnowledgeBase, 
 			@Named("PercentageWords")String percentage, @Named("DegreeWords") String degree, @Named("CountWords")String counts, 
 			@Named("TimesWords") String times, ICharacterKnowledgeBase characterKnowledgeBase, 
-			IOrganStateKnowledgeBase organStateKnowledgeBase) {
+			 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
-				terminologyLearner, inflector, organStateKnowledgeBase);
+				terminologyLearner, inflector,  learnedCharacterKnowledgeBase);
 		this.skipWords = skipWords;
 		this.moreWords = moreWords;
 		this.numberPattern = numberPattern;
