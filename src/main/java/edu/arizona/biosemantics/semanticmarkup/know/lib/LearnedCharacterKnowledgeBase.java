@@ -34,7 +34,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
 	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
 	private ConcurrentHashMap<String, Match> characterCache = new ConcurrentHashMap<String, Match> ();
-
+	private ConcurrentHashMap<String, Boolean> isOrganCache = new ConcurrentHashMap<String, Boolean> ();
+	private ConcurrentHashMap<String, Boolean> isStateCache = new ConcurrentHashMap<String, Boolean> ();
 	/**
 	 * @param glossary
 	 * @param negWords
@@ -49,19 +50,28 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	
 	@Override
 	public boolean isOrgan(String word){
+		if(isOrganCache.get(word)!=null) return isOrganCache.get(word);
+				
 		String cats = this.getCharacterName(word).getCategories();
-		return cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
+		boolean isorgan = cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
+		isOrganCache.put(word, isorgan);
+		return isorgan;
 	}
 	
 	@Override
 	public boolean isState(String word){
+		if(isStateCache.get(word)!=null) return isStateCache.get(word);
+		
 		String cats = this.getCharacterName(word).getCategories();
-		return cats!=null && !cats.matches(".*?(^|_)structure(_|$).*");
+		boolean isstate = cats!=null && !cats.matches(".*?(^|_)structure(_|$).*");
+		isStateCache.put(word, isstate);
+		return isstate;
 	}
 
 	@Override
 	public Match getCharacterName(String word) {//hyphened or underscored word? 
 		String wo = word;
+		if(characterCache.get(wo)!=null) return characterCache.get(wo);
 
 		if(word.matches("("+negWords+")")) return new Match(null);
 		
@@ -107,6 +117,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		if(ch == null && wc.indexOf('-') > 0) {
 			ch = new Match(lookup(ws[0]));
 		}
+		
+		characterCache.put(wo, ch);
 		return ch;
 	}
 	
