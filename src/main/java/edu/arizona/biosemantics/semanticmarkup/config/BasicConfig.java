@@ -23,7 +23,7 @@ import edu.arizona.biosemantics.oto.lite.OTOLiteClient;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
-import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
+//import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.CSVCorpus;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedCharacterKnowledgeBase;

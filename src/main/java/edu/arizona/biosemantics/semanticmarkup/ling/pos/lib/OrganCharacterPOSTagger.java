@@ -14,7 +14,7 @@ import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
-import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
+//import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.POS;
