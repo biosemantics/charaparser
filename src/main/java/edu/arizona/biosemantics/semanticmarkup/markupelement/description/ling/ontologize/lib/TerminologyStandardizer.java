@@ -14,7 +14,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 /**
  * @author Hong Cui
- * 1. replace synonyms to perferred terms
+ * 1. replace synonyms to preferred terms
  */
 public class TerminologyStandardizer {
 	private ICharacterKnowledgeBase characterKnowledgeBase;

@@ -1,5 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,6 +10,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 import java.util.Set;
+
+
+
+
 
 
 
@@ -28,6 +33,8 @@ import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.NonOntologyBasedStandardizer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.StructureNameStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
@@ -42,13 +49,14 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  */
 public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
-	private Set<String> lifeStyles;
+
 	
 	private IFirstChunkProcessor firstChunkProcessor;
 	private ILastChunkProcessor lastChunkProcessor;
 
 	private IChunkProcessorProvider chunkProcessorProvider;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
+	private IGlossary glossary;
 	
 	/**
 	 * @param glossary
@@ -61,7 +69,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			IChunkProcessorProvider chunkProcessorProvider, 
 			IFirstChunkProcessor firstChunkProcessor, 
 			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase) {
-		lifeStyles = glossary.getWords("life_style");
+		this.glossary = glossary;
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
@@ -78,6 +86,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		// this method is called per treatment
 		
 		//going through all sentences
+		
 		for(int i=0; i<chunkCollectors.size(); i++) {
 			ChunkCollector chunkCollector = chunkCollectors.get(i);
 			//processingContext.setChunkCollectors(chunkCollectors);
@@ -89,7 +98,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			
 			processingContext.setChunkCollector(chunkCollector);
 			try {
-				List<Element> descriptiveElements = getDescriptiveElements(processingContext); //chunk to xml
+				List<Element> descriptiveElements = getDescriptiveElements(processingContext, chunkCollector.getSentence()); //chunk to xml
 				for(Element element : descriptiveElements) {
 					if(element.isRelation())
 						statement.addRelation((Relation)element);
@@ -102,12 +111,26 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 						e);
 			}
 		}
-		//for(Statement statement: description.getStatements()){
-			//System.out.println(statement.toString());
-		//}
+		/*System.out.println("====1====");
+		for(Statement statement: description.getStatements()){
+		System.out.println(statement.toString());
+	    }*/
+		
+		List<Element> xml = new LinkedList<Element>();
+		for(Statement s: description.getStatements()){
+			xml.addAll(s.getStructures());
+			xml.addAll(s.getRelations());
+		}
+		
+		new StructureNameStandardizer().standardize((LinkedList<Element>) xml);
+		
 	}
+	
 
-	private List<Element> getDescriptiveElements(ProcessingContext processingContext) {
+
+
+
+	private List<Element> getDescriptiveElements(ProcessingContext processingContext, String sentence) {
 		List<Element> result = new LinkedList<Element>();
 		processingContext.setResult(result);
 
@@ -140,10 +163,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		RelationTreatmentElement relationElement = new RelationTreatmentElement("relationName", "id", "from", "to", false);
 		result.add(structureElement);
 		result.add(relationElement);*/
-		createWholeOrganismDescription(result); //TODO: Hong post parsing normalization
-		createMayBeSameRelations(result, processingContext);
-		TerminologyStandardizer ts = new TerminologyStandardizer(this.characterKnowledgeBase);
-		ts.standardize(result);
+		new NonOntologyBasedStandardizer(glossary, sentence, processingContext).standardize((LinkedList<Element>) result);
+		new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result);
 		return result;
 	}
 	
@@ -155,112 +176,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	}
 
 
-	private void createMayBeSameRelations(List<Element> result, ProcessingContext processingContext) {
-		HashMap<String, Set<String>> names = new HashMap<String, Set<String>>();
-		for (Element element : result) {
-			if (element.isStructure()) {
-				Structure structure = (Structure)element;
-				String name = structure.getName();
-				
-				/*if (element.containsAttribute("constraintType"))
-					name = element.getCongetAttribute("constraintType") + " " + name;
-				if (element.containsAttribute("constraintParentOrgan"))
-					name = element.getAttribute("constraintParentOrgan") + " " + name;
-				if (element.containsAttribute("constraint"))
-					name = element.getAttribute("constraint") + " " + name;*/
-				
-				if (structure.getConstraint() != null && !structure.getConstraint().isEmpty())
-					name = structure.getConstraint() + " " + name;
-				
-				String id = structure.getId();
-				if(!names.containsKey(name)) 
-					names.put(name, new HashSet<String>());
-				names.get(name).add(id);
-			}
-		}
-		
-		for(Entry<String, Set<String>> nameEntry : names.entrySet()) {
-			Set<String> ids = nameEntry.getValue();
-			if(ids.size() > 1) {
-				Iterator<String> idIterator = ids.iterator();
-				while(idIterator.hasNext()) {
-					String idA = idIterator.next();
-					for(String idB : ids) {
-						if(!idA.equals(idB)) {
-							Relation relationElement = new Relation();
-							relationElement.setName("may_be_the_same");
-							relationElement.setFrom(idA);
-							relationElement.setTo(idB);
-							relationElement.setNegation(String.valueOf(false));
-							relationElement.setId("r" + String.valueOf(processingContext.fetchAndIncrementRelationId(relationElement)));	
-						}
-					}
-					idIterator.remove();
-				}
-			}
-		}
-	}
-
-
-	private void createWholeOrganismDescription(List<Element> result) {
-		Structure wholeOrganism = new Structure();
-		for(Element element : result) {
-			if(element.isStructure() && ((Structure)element).getName().equals("whole_organism")) {
-				wholeOrganism = (Structure)element;
-				break;
-			}
-		}
-		
-		boolean modifiedWholeOrganism = false;
-		Iterator<Element> resultIterator = result.iterator();
-		while(resultIterator.hasNext()) {
-			Element element = resultIterator.next();
-			if(element.isStructure()) {
-				Structure structure = (Structure)element;
-				String name = structure.getName();
-				if(lifeStyles.contains(name)) {
-					
-					/*if(element.containsAttribute("constraintType")) {
-						name = element.getAttribute("constraintType") + " " + name;
-					}
-					if(element.containsAttribute("constraintParentOrgan")) {
-						name = element.getAttribute("constraintParentOrgan") + " " + name;
-					}*/
-					
-					wholeOrganism.appendAlterName(structure.getAlterName());
-					wholeOrganism.appendConstraint(structure.getConstraint());
-					wholeOrganism.appendConstraintId(structure.getConstraintId());
-					wholeOrganism.appendGeographicalConstraint(structure.getGeographicalConstraint());
-					wholeOrganism.appendId(structure.getId());
-					wholeOrganism.appendInBracket(structure.getInBracket());
-					wholeOrganism.appendInBrackets(structure.getInBrackets());
-					wholeOrganism.appendNotes(structure.getNotes());
-					wholeOrganism.appendOntologyId(structure.getOntologyId());
-					wholeOrganism.appendParallelismConstraint(structure.getParallelismConstraint());
-					wholeOrganism.appendProvenance(structure.getProvenance());
-					wholeOrganism.appendTaxonConstraint(structure.getTaxonConstraint());
-					
-					LinkedHashSet<Character> characters = structure.getCharacters();
-					wholeOrganism.addCharacters(characters);
-					
-					wholeOrganism.setName("whole_organism");
-					
-					Character character = new Character();
-					character.setName("life_style");
-					character.setValue(name);
-					wholeOrganism.addCharacter(character);
-					modifiedWholeOrganism = true;
-					
-					resultIterator.remove();
-				}
-			}	
-		}
-		
-		if(modifiedWholeOrganism)
-			result.add(wholeOrganism);
-	}
-
-
+	
 	private List<Element> describeChunk(ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
 		
