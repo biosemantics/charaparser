@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.IDistributionMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.IEcologyMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.IElevationMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.IHabitatMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.IPhenologyMarkupCreator;
@@ -18,7 +19,8 @@ public class MarkupChain implements IMarkupCreator {
 	
 	@Inject
 	public MarkupChain(IDescriptionMarkupCreator descriptionMarkupCreator, IHabitatMarkupCreator habitatMarkupCreator, 
-			IPhenologyMarkupCreator phenlogyMarkupCreator, IElevationMarkupCreator elevationMarkupCreator, IDistributionMarkupCreator distributionMarkupCreator) {
+			IPhenologyMarkupCreator phenlogyMarkupCreator, IElevationMarkupCreator elevationMarkupCreator, 
+			IDistributionMarkupCreator distributionMarkupCreator, IEcologyMarkupCreator ecologyMarkupCreator) {
 		if(descriptionMarkupCreator != null)
 			markupCreators.add(descriptionMarkupCreator);
 		if(habitatMarkupCreator != null)
@@ -29,6 +31,8 @@ public class MarkupChain implements IMarkupCreator {
 			markupCreators.add(elevationMarkupCreator);
 		if(distributionMarkupCreator != null)
 			markupCreators.add(distributionMarkupCreator);
+		if(ecologyMarkupCreator != null)
+			markupCreators.add(ecologyMarkupCreator);
 	}
 
 	@Override
