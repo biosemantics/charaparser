@@ -182,7 +182,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				Structure structure = new Structure();
 				int structureIdString = processingContext.fetchAndIncrementStructureId(structure);
 				structure.setId("o" + String.valueOf(structureIdString));
-				String t = "";
 				Chunk constraintChunk = getConstraintOf(organChunk, subjectChunk);
 
 				if(constraintChunk != null) {

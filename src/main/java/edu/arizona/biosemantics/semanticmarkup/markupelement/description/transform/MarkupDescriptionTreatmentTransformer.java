@@ -193,7 +193,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
 				"Number of term synonym relations " + download.getSynonyms().size());
 		//storeInLocalDB(glossaryDownload, download, this.databasePrefix);
-		initGlossary(glossaryDownload, download);
+		initGlossary(glossaryDownload, download); //turn "_" in glossary terms to "-"
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place

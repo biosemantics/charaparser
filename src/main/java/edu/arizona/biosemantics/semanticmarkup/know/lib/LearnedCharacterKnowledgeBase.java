@@ -69,57 +69,60 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 
 	@Override
-	public Match getCharacterName(String word) {//hyphened or underscored word? 
+	public Match getCharacterName(String word) {//hyphened or underscored words. standardize "_" to "-".
 		String wo = word;
-		if(characterCache.get(wo)!=null) return characterCache.get(wo);
 
+		//rejected searches
 		if(word.matches("("+negWords+")")) return new Match(null);
+		if (word.trim().length() == 0 || word.matches("\\W+")) return new Match(null);
+		if(word.matches("at[-_]least")) return new Match(null);
 		
-		if (word.trim().length() == 0 || word.matches("\\W+"))
-			return new Match(null);
+		//check caches
+		if(characterCache.get(wo)!=null) return characterCache.get(wo);
 		if(this.addedCharacters.containsKey(word)) //"brownish red" from "brownish_c_red", terms created by the program
 			return addedCharacters.get(word);
 		
-		if (word.indexOf(" ") > 0)
-			word = word.substring(word.lastIndexOf(" ") + 1).trim();
-		word = word.replaceAll("\\d+[–-]", "_") //TODO check: use _ vs -
-				.replaceAll("–", "-")
-				./* replaceAll(" ", ""). */replaceAll("_+", "_"); //\\–\\- -
-		// "(3-)5-merous"/ =>_merous
-		word = word.replaceFirst(".*?_(?=[a-z]+$)", ""); 
-		// _or_ribbed
-		String wc = word;
-	
-		//TODO characterhash
-		if(word.matches("at[-_]least")) return new Match(null);
-		if (word.endsWith("shaped")) {
-			//return "shape";
-			word = word.replaceFirst("shaped", "-shaped");
-		}
-		
+        //normalize search term
 		String[] ws = word.split("-or-"); //palm_or_fern_like
 		word = ws[ws.length-1];
-
-		if(word.indexOf('-')>0 && !word.endsWith("like")){
-		    ws = word.split("-+");
-			word = ws[ws.length-1];
-		}
-
-		Match ch = new Match(lookup(word));
-		if(ch == null && word.endsWith("like")){//cup_like
+		ws = word.split("\\s+"); //brownish red
+		word = ws[ws.length-1];
+		if (word.endsWith("shaped")) word = word.replaceFirst("shaped", "-shaped");
+		
+		
+		//standarize "_" to "-"
+		word = word.replaceAll("[– ]+", "-").replaceAll("[_ ]+", "-");
+		// "(3-)5-merous"/ =>merous
+		word = word.replaceFirst(".*?_(?=[a-z]+$)", ""); 
+		String wc = word;
+	
+		//search
+		Set<Term> ch = lookup(word);
+		Match m = new Match(ch);
+		if(ch == null && word.endsWith("like")){//cup_like, cuplike
 			HashSet<Term> result = new HashSet<Term> ();
 			result.add(new Term(wo, "shape"));
-			ch = new Match(result);
-		}
-		if (ch == null && wc.indexOf('-') > 0) {// pani_culiform
-			ch = new Match(lookup(wc.replaceAll("-", "")));
-		}
-		if(ch == null && wc.indexOf('-') > 0) {
-			ch = new Match(lookup(ws[0]));
+			m = new Match(result);
+		}else if (ch == null && wc.indexOf('-') > 0) {// pani_culiform, primocane_foliage
+			ws = word.split("-+");
+			word = ws[ws.length-1];
+			ch = lookup(word);
+			if(ch == null){
+				ch = lookup(wc.replaceAll("-", ""));
+				if(ch == null){
+					ch = lookup(ws[0]);
+					m = new Match(ch);
+				}else{
+					m = new Match(ch);
+				}
+			}else{
+				m = new Match(ch);
+			}
+			
 		}
 		
-		characterCache.put(wo, ch);
-		return ch;
+		characterCache.put(wo, m);
+		return m;
 	}
 	
 	/*

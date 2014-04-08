@@ -93,9 +93,11 @@ public class NonOntologyBasedStandardizer {
 
 	private void createWholeOrganismDescription(List<Element> result) {
 		Structure wholeOrganism = new Structure();
+		boolean exist = false;
 		for(Element element : result) {
 			if(element.isStructure() && ((Structure)element).getName().equals("whole_organism")) {
 				wholeOrganism = (Structure)element;
+				exist = true;
 				break;
 			}
 		}
@@ -106,40 +108,43 @@ public class NonOntologyBasedStandardizer {
 			Element element = resultIterator.next();
 			if(element.isStructure()) {
 				Structure structure = (Structure)element;
-				String name = structure.getName();
-				if(lifeStyles.contains(name)) {
-					
-					/*if(element.containsAttribute("constraintType")) {
-						name = element.getAttribute("constraintType") + " " + name;
+				String name = (structure.getConstraint()+" "+structure.getName()).trim();
+				boolean isSimpleStructure = isSimpleStructure(structure);
+				if(lifeStyles.contains(name) && !isToOrgan(structure) && !isConstraintOrgan(structure, result)) {		
+					//wholeOrganism.appendAlterName(structure.getAlterName());
+					//wholeOrganism.appendConstraint(structure.getConstraint());
+					//wholeOrganism.appendConstraintId(structure.getConstraintId());
+					//wholeOrganism.appendGeographicalConstraint(structure.getGeographicalConstraint());
+					//wholeOrganism.appendId(structure.getId());
+					//wholeOrganism.appendInBracket(structure.getInBracket());
+					//wholeOrganism.appendInBrackets(structure.getInBrackets());
+					//wholeOrganism.appendNotes(structure.getNotes());
+					//wholeOrganism.appendOntologyId(structure.getOntologyId());
+					//wholeOrganism.appendParallelismConstraint(structure.getParallelismConstraint());
+					//wholeOrganism.appendProvenance(structure.getProvenance());
+					//wholeOrganism.appendTaxonConstraint(structure.getTaxonConstraint());
+					if(exist && isSimpleStructure){
+						LinkedHashSet<Character> characters = structure.getCharacters();
+						wholeOrganism.addCharacters(characters);
+					}else if(!exist){
+						wholeOrganism = structure;
+						exist = true;
+					}else if(!isSimpleStructure){
+						//in-place update of structure to whole_organism
+						structure.setName("whole_organism");
+						Character character = new Character();
+						character.setName("life_style");
+						character.setValue(name);
+						structure.addCharacter(character);
+						continue;
 					}
-					if(element.containsAttribute("constraintParentOrgan")) {
-						name = element.getAttribute("constraintParentOrgan") + " " + name;
-					}*/
-					
-					wholeOrganism.appendAlterName(structure.getAlterName());
-					wholeOrganism.appendConstraint(structure.getConstraint());
-					wholeOrganism.appendConstraintId(structure.getConstraintId());
-					wholeOrganism.appendGeographicalConstraint(structure.getGeographicalConstraint());
-					wholeOrganism.appendId(structure.getId());
-					wholeOrganism.appendInBracket(structure.getInBracket());
-					wholeOrganism.appendInBrackets(structure.getInBrackets());
-					wholeOrganism.appendNotes(structure.getNotes());
-					wholeOrganism.appendOntologyId(structure.getOntologyId());
-					wholeOrganism.appendParallelismConstraint(structure.getParallelismConstraint());
-					wholeOrganism.appendProvenance(structure.getProvenance());
-					wholeOrganism.appendTaxonConstraint(structure.getTaxonConstraint());
-					
-					LinkedHashSet<Character> characters = structure.getCharacters();
-					wholeOrganism.addCharacters(characters);
-					
 					wholeOrganism.setName("whole_organism");
-					
 					Character character = new Character();
 					character.setName("life_style");
 					character.setValue(name);
 					wholeOrganism.addCharacter(character);
 					modifiedWholeOrganism = true;
-					
+					updateFromStructureForRelations(structure, wholeOrganism);
 					resultIterator.remove();
 				}
 			}	
@@ -149,6 +154,42 @@ public class NonOntologyBasedStandardizer {
 			result.add(wholeOrganism);
 	}
 
+
+	private void updateFromStructureForRelations(Structure structure, Structure wholeOrganism) {
+		LinkedHashSet<Relation> relations = structure.getFromRelations();
+		for(Relation r: relations){
+			r.setFromStructure(wholeOrganism);
+		}
+	}
+
+	/**
+	 * if the structue is used in a character constraint
+	 * @param structure
+	 * @param xml
+	 * @return
+	 */
+	private boolean isConstraintOrgan(Structure structure, List<Element> xml) {
+		String oid = structure.getId();
+		for(Element element: xml){
+			if(element.isStructure()){
+				LinkedHashSet<Character> chars = ((Structure)element).getCharacters();
+				for(Character c: chars){
+					if(c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")) return true;
+				}				
+			}
+		}
+		return false;
+	}
+
+	private boolean isToOrgan(Structure structure) {
+		return structure.getToRelations().size()>0;
+	}
+
+	private boolean isSimpleStructure(Structure structure) {
+		String complex = structure.getGeographicalConstraint()+structure.getInBracket()+structure.getInBrackets()+structure.getNotes()+structure.getParallelismConstraint()+
+				structure.getProvenance()+structure.getTaxonConstraint();
+		return complex.trim().length()==0;
+	}
 
 	/**
 	 * 

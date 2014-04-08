@@ -43,6 +43,11 @@ public class ProcessingContext {
 	private HashMap<Integer, Set<Relation>> relationsToStructure = new HashMap<Integer, Set<Relation>>();
 	private List<Structure> lastSubjects = new LinkedList<Structure>();
 	
+	public ProcessingContext(int structureId, int relationId) {
+		this.structureId = structureId;
+		this.relationId = relationId;
+	}
+	
 	/**
 	 * @return the current processingContextState
 	 */
