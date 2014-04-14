@@ -43,10 +43,11 @@ public aspect StringifyInjectionAspect {
 	 */
 	
 	declare parents : edu.arizona.biosemantics.semanticmarkup.* implements IPrintable;
-	declare parents : edu.arizona.biosemantics.semanticmarkup.config..* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.config.* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.config.dataset.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.eval..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.model..* implements IPrintable;
-	declare parents : edu.arizona.biosemantics.semanticmarkup.gui..* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.gui.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.io..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.know..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.ling..* implements IPrintable;
