@@ -46,14 +46,20 @@ public aspect StringifyInjectionAspect {
 	declare parents : edu.arizona.biosemantics.semanticmarkup.config.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.config.dataset.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.eval..* implements IPrintable;
-	declare parents : edu.arizona.biosemantics.semanticmarkup.model..* implements IPrintable;
+	//declare parents : edu.arizona.biosemantics.semanticmarkup.model.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.gui.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.io..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.know..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.ling..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.markup..* implements IPrintable;
-	declare parents : edu.arizona.biosemantics.semanticmarkup.markupelement..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.run..* implements IPrintable;
+	
+	declare parents : edu.arizona.biosemantics.semanticmarkup.markupelement.description.* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.markupelement.description.io..* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling..* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup..* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.markupelement.description.run..* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform..* implements IPrintable;
 	
 	/*description.model..* implements IPrintable;
 	declare parents : semanticmarkup.markupelement.description.eval.model..* implements IPrintable;
