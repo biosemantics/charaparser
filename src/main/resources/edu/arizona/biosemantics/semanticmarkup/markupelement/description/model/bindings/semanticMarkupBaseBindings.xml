@@ -106,6 +106,7 @@
         </java-type>
 		<java-type name="Structure">
             <java-attributes>
+            	<xml-element java-attribute="characters" xml-path="character/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character" container-type="java.util.List"/>
 				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
 				<xml-element java-attribute="constraint" xml-path="@constraint"/>
 				<xml-element java-attribute="constraintId" xml-path="@constraintid"/>
