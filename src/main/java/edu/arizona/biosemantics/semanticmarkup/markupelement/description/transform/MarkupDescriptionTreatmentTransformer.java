@@ -272,7 +272,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
 			//Hong TODO need to add category info to synonym entry in OTOLite
 			
-			/*if(termSyn.getCategory().compareTo("structure")==0){
+			if(termSyn.getCategory().compareTo("structure")==0){
 				//take care of singular and plural forms
 				String syns = ""; 
 				String synp = "";
@@ -295,13 +295,13 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				}
 				glossary.addSynonym(syns, termSyn.getCategory(), terms);
 				glossary.addSynonym(synp, termSyn.getCategory(), termp);
-				gsyns.add(new Term(syns, termSyn.getCategory());
-				gsyns.add(new Term(synp, termSyn.getCategory());
-			}else{*/
+				gsyns.add(new Term(syns, termSyn.getCategory()));
+				gsyns.add(new Term(synp, termSyn.getCategory()));
+			}else{
 				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
 				//gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory());
 				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
-			//}
+			}
 		}
 		
 		//the glossary, excluding gsyns
@@ -315,40 +315,40 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		HashSet<Term> dsyns = new HashSet<Term>();
 		for(Synonym termSyn: download.getSynonyms()){
 			//Hong TODO need to add category info to synonym entry in OTOLite
-			/*if(termSyn.getCategory().compareTo("structure")==0){
-			//take care of singular and plural forms
-			String syns = ""; 
-			String synp = "";
-			String terms = "";
-			String termp = "";
-			if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
-				synp = termSyn.getSynonym().replaceAll("_",  "-");
-				syns = inflector.getSingular(synp);					
+			if(termSyn.getCategory().compareTo("structure")==0){
+				//take care of singular and plural forms
+				String syns = ""; 
+				String synp = "";
+				String terms = "";
+				String termp = "";
+				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
+					synp = termSyn.getSynonym().replaceAll("_",  "-");
+					syns = inflector.getSingular(synp);					
+				}else{
+					syns = termSyn.getSynonym().replaceAll("_",  "-");
+					synp = inflector.getPlural(syns);
+				}
+
+				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+					termp = termSyn.getTerm().replaceAll("_",  "-");
+					terms = inflector.getSingular(termp);					
+				}else{
+					terms = termSyn.getTerm().replaceAll("_",  "-");
+					termp = inflector.getPlural(terms);
+				}
+				//glossary.addSynonym(syns, termSyn.getCategory(), terms);
+				//glossary.addSynonym(synp, termSyn.getCategory(), termp);
+				//dsyns.add(new Term(syns, termSyn.getCategory());
+				//dsyns.add(new Term(synp, termSyn.getCategory());
+				glossary.addSynonym(syns, "structure", terms);
+				glossary.addSynonym(synp, "structure", termp);
+				dsyns.add(new Term(syns, "structure"));
+				dsyns.add(new Term(synp, "structure"));
 			}else{
-				syns = termSyn.getSynonym().replaceAll("_",  "-");
-				synp = inflector.getPlural(syns);
-			}
-			
-			if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
-				termp = termSyn.getTerm().replaceAll("_",  "-");
-				terms = inflector.getSingular(termp);					
-			}else{
-				terms = termSyn.getTerm().replaceAll("_",  "-");
-				termp = inflector.getPlural(terms);
-			}
-			//glossary.addSynonym(syns, termSyn.getCategory(), terms);
-			//glossary.addSynonym(synp, termSyn.getCategory(), termp);
-			//dsyns.add(new Term(syns, termSyn.getCategory());
-			//dsyns.add(new Term(synp, termSyn.getCategory());
-			glossary.addSynonym(syns, "structure", terms);
-			glossary.addSynonym(synp, "structure", termp);
-			dsyns.add(new Term(syns, "structure"));
-			dsyns.add(new Term(synp, "structure"));
-		//}else{*/
-			glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
-			//syns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory());
-			dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
-		//}					
+				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
+				//syns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory());
+				dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
+			}					
 		}
 
 		//term_category from OTO, excluding syns
