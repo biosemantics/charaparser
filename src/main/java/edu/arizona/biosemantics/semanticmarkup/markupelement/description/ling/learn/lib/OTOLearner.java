@@ -15,20 +15,19 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.oto.beans.TermCategory;
-import edu.arizona.biosemantics.oto.beans.TermSynonym;
-import edu.arizona.biosemantics.oto.beans.WordRole;
-import edu.arizona.biosemantics.oto.full.IOTOClient;
-import edu.arizona.biosemantics.oto.full.beans.GlossaryDownload;
-import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.lite.beans.Sentence;
-import edu.arizona.biosemantics.oto.lite.beans.Term;
-import edu.arizona.biosemantics.oto.lite.beans.Upload;
-import edu.arizona.biosemantics.oto.lite.beans.UploadResult;
+import edu.arizona.biosemantics.oto.client.WordRole;
+import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
+import edu.arizona.biosemantics.oto.common.model.GlossaryDownload;
+import edu.arizona.biosemantics.oto.common.model.TermCategory;
+import edu.arizona.biosemantics.oto.common.model.TermSynonym;
+import edu.arizona.biosemantics.oto.common.model.lite.Sentence;
+import edu.arizona.biosemantics.oto.common.model.lite.Term;
+import edu.arizona.biosemantics.oto.common.model.lite.Upload;
+import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;

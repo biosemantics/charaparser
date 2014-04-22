@@ -8,8 +8,8 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.oto.full.IOTOClient;
-import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;

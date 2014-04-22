@@ -21,16 +21,16 @@ import java.util.concurrent.Future;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.oto.beans.TermCategory;
-import edu.arizona.biosemantics.oto.beans.TermSynonym;
-import edu.arizona.biosemantics.oto.beans.WordRole;
-import edu.arizona.biosemantics.oto.full.IOTOClient;
-import edu.arizona.biosemantics.oto.full.beans.GlossaryDownload;
-import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.lite.beans.Decision;
-import edu.arizona.biosemantics.oto.lite.beans.Download;
-import edu.arizona.biosemantics.oto.lite.beans.Synonym;
-import edu.arizona.biosemantics.oto.lite.beans.UploadResult;
+import edu.arizona.biosemantics.oto.client.WordRole;
+import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
+import edu.arizona.biosemantics.oto.common.model.GlossaryDownload;
+import edu.arizona.biosemantics.oto.common.model.TermCategory;
+import edu.arizona.biosemantics.oto.common.model.TermSynonym;
+import edu.arizona.biosemantics.oto.common.model.lite.Decision;
+import edu.arizona.biosemantics.oto.common.model.lite.Download;
+import edu.arizona.biosemantics.oto.common.model.lite.Synonym;
+import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
@@ -42,8 +42,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta;
 
 
 /**

@@ -16,10 +16,10 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
-import edu.arizona.biosemantics.oto.full.IOTOClient;
-import edu.arizona.biosemantics.oto.full.OTOClient;
-import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.lite.OTOLiteClient;
+import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
+import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
