@@ -126,7 +126,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
  */
 public class BasicConfig extends AbstractModule {
 	
-	  private String version = "0.1.5";
+	  private String version = "0.1.6";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
 	  @Override 
