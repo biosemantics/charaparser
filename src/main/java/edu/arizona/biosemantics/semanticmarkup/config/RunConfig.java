@@ -109,8 +109,10 @@ public class RunConfig extends BasicConfig {
 	private String databaseTablePrefix = "myrun";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String otoLiteReviewFile = "TermReview.txt";
-	private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
-	private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	//private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	//private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
+	private String otoLiteTermReviewURL = "http://etc-dev.cs.umb.edu/otolite/";
+	private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/otolite/";
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
 	private String perlDirectory = "src/main/perl/edu/arizona/biosemantics/semanticmarkup/markupelement/description/ling/learn/lib/perl" ;
 	private String workspaceDirectory = "workspace";

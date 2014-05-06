@@ -21,17 +21,18 @@ import java.util.concurrent.Future;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.oto.beans.TermCategory;
-import edu.arizona.biosemantics.oto.beans.TermSynonym;
-import edu.arizona.biosemantics.oto.beans.WordRole;
-import edu.arizona.biosemantics.oto.full.IOTOClient;
-import edu.arizona.biosemantics.oto.full.beans.GlossaryDownload;
-import edu.arizona.biosemantics.oto.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.lite.beans.Decision;
-import edu.arizona.biosemantics.oto.lite.beans.Download;
-import edu.arizona.biosemantics.oto.lite.beans.Synonym;
-import edu.arizona.biosemantics.oto.lite.beans.UploadResult;
+import edu.arizona.biosemantics.oto.client.WordRole;
+import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
+import edu.arizona.biosemantics.oto.common.model.GlossaryDownload;
+import edu.arizona.biosemantics.oto.common.model.TermCategory;
+import edu.arizona.biosemantics.oto.common.model.TermSynonym;
+import edu.arizona.biosemantics.oto.common.model.lite.Decision;
+import edu.arizona.biosemantics.oto.common.model.lite.Download;
+import edu.arizona.biosemantics.oto.common.model.lite.Synonym;
+import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.ITerm;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
@@ -44,8 +45,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta;
 
 
 /**
@@ -168,7 +167,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		if(glossaryVersion == null)
 			glossaryVersion = "latest";
 		
-		GlossaryDownload glossaryDownload = otoClient.download(glossaryType, glossaryVersion); 
+		GlossaryDownload glossaryDownload = otoClient.download(glossaryType, glossaryVersion);
+		
 		glossaryVersion = glossaryDownload.getVersion();
 				
         UploadResult uploadResult;
@@ -256,22 +256,21 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	/**
-	 * TODO: OTO Webservice should probably only return one term category list.
+	 * notes: OTO Webservice should probably only return one term category list.
 	 * No need to return an extra term synonym list just because it might make sense to have them separate in a relational database schema
 	 * 
-	 * returning a term synonym list makes sense, but here we need to add syn info to the glossary.
+	 * notes: returning a term synonym list makes sense, but here we need to add syn info to the glossary.
 	 * 
-	 * Merge glossaryDownload and download to one glossary
+	 * Merge glossaryDownload and download to one glossary which holds both terms and synonyms
+	 * For structure terms, both singular and plural forms are included in the synonyms
 	 * @param otoGlossary
 	 */
 	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
-		//TODO deals with synonyms
 	
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
 		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
-			//Hong TODO need to add category info to synonym entry in OTOLite
-			
+
 			if(termSyn.getCategory().compareTo("structure")==0){
 				//take care of singular and plural forms
 				String syns = ""; 
@@ -293,14 +292,15 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 					terms = termSyn.getTerm().replaceAll("_",  "-");
 					termp = inflector.getPlural(terms);
 				}
-				glossary.addSynonym(syns, termSyn.getCategory(), terms);
+				glossary.addSynonym(syns, ((ITerm) termSyn).getCategory(), terms);
 				glossary.addSynonym(synp, termSyn.getCategory(), termp);
 				gsyns.add(new Term(syns, termSyn.getCategory()));
 				gsyns.add(new Term(synp, termSyn.getCategory()));
 			}else{
-				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
-				//gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory());
-				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
+				//glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
+				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
+				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
+				//gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
 			}
 		}
 		
@@ -344,16 +344,15 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				glossary.addSynonym(synp, "structure", termp);
 				dsyns.add(new Term(syns, "structure"));
 				dsyns.add(new Term(synp, "structure"));
-			}else{
-				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
-				//syns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory());
-				dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
+			}else{//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
+				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
+				dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
 			}					
 		}
 
-		//term_category from OTO, excluding syns
+		//term_category from OTO, excluding dsyns
 		for(Decision decision : download.getDecisions()) {
-			if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))
+			if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
 				glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 		}
 	}

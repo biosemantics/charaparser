@@ -10,38 +10,42 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
 	</properties>
-	
-	<profiles>
-	    <profile>
-	      <id>learn</id>
-	      <properties>
-	     	<mainName>learn</mainName>
-	        <mainClass>edu.arizona.biosemantics.semanticmarkup.LearnMain</mainClass>
-	      </properties>
-	    </profile>
-	    <profile>
-	      <id>markup</id>
-	      <properties>
-	      	<mainName>markup</mainName>
-	        <mainClass>edu.arizona.biosemantics.semanticmarkup.MarkupMain</mainClass>
-	      </properties>
-	    </profile>
-	</profiles>
 
+	<profiles>
+		<profile>
+			<id>learn</id>
+			<properties>
+				<mainName>learn</mainName>
+				<mainClass>edu.arizona.biosemantics.semanticmarkup.LearnMain</mainClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>markup</id>
+			<properties>
+				<mainName>markup</mainName>
+				<mainClass>edu.arizona.biosemantics.semanticmarkup.MarkupMain</mainClass>
+			</properties>
+		</profile>
+	</profiles>
 	<repositories>
-   		<repository>
-			<id>my</id>
-			<url>http://128.196.105.88:8081/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
+		<!-- <repository>
 			<id>swt-repo</id>
 			<url>https://swt-repo.googlecode.com/svn/repo/</url>
-		</repository>
+		</repository> -->
 		<!-- Necessary for eclipselink 2.5.1 -->
 		<repository>
 			<id>oss.sonatype.org</id>
 			<name>OSS Sonatype Staging</name>
 			<url>https://oss.sonatype.org/content/groups/staging</url>
+		</repository>
+		<repository>
+			<id>my</id>
+			<url>http://128.196.105.149:8081/nexus/content/repositories/releases/</url>
+		</repository>
+
+		<repository>
+			<id>my</id>
+			<url>http://128.196.105.149:8081/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
 
@@ -164,12 +168,13 @@
 			<version>1.7.3</version>
 		</dependency>
 
-		<dependency> 
+		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
 			<version>3.9</version>
 		</dependency>
-		<!-- depends on stax-api 1.0.1 but project already depends on 1.0.2 > clash causes problems -->
+		<!-- depends on stax-api 1.0.1 but project already depends on 1.0.2 > clash 
+			causes problems -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
@@ -207,7 +212,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
@@ -243,63 +248,57 @@
 					</execution>
 				</executions>
 			</plugin>
-			
-			<!-- plugin only added so eclipse can pick up the source and target java version, since it doesn't do it from
-				the aspectj-maven-plugin. Exclusion makes sure it doesn't actually process anything. However, then on the other
-				hand a java file is always considered "not part of source code" by eclipse, which is not nice either. -->
-			<!--<plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-			        <excludes>
-			          <exclude>**/*.java</exclude> 
-			        </excludes>
-			        <complianceLevel>${java.version}</complianceLevel>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>-->
-            
-            <plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-source-plugin</artifactId>
-			  <executions>
-			    <execution>
-			      <id>attach-sources</id>
-			      <goals>
-			        <goal>jar</goal>
-			      </goals>
-			    </execution>
-			  </executions>
-			</plugin>
-			
-			<plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-javadoc-plugin</artifactId>
-			  <executions>
-			    <execution>
-			      <id>attach-javadocs</id>
-			      <goals>
-			        <goal>jar</goal>
-			      </goals>
-			    </execution>
-			  </executions>
-			</plugin>   
 
-		    <plugin>
-		      <artifactId>maven-assembly-plugin</artifactId>
-		      <configuration>
-		        <archive>
-		          <manifest>
-		            <mainClass>${mainClass}</mainClass>
-		          </manifest>
-		        </archive>
-		        <descriptorRefs>
-		          <descriptorRef>jar-with-dependencies</descriptorRef>
-		        </descriptorRefs>
-		        <finalName>${project.artifactId}-${mainName}-${project.version}</finalName>
-		      </configuration>
-		    </plugin>
+			<!-- plugin only added so eclipse can pick up the source and target java 
+				version, since it doesn't do it from the aspectj-maven-plugin. Exclusion 
+				makes sure it doesn't actually process anything. However, then on the other 
+				hand a java file is always considered "not part of source code" by eclipse, 
+				which is not nice either. -->
+			<!--<plugin> <artifactId>maven-compiler-plugin</artifactId> <version>3.1</version> 
+				<configuration> <excludes> <exclude>**/*.java</exclude> </excludes> <complianceLevel>${java.version}</complianceLevel> 
+				<source>${java.version}</source> <target>${java.version}</target> </configuration> 
+				</plugin> -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>${mainClass}</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<finalName>${project.artifactId}-${mainName}-${project.version}</finalName>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

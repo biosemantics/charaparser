@@ -69,7 +69,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 
 	@Override
-	public Match getCharacterName(String word) {//hyphened or underscored words. standardize "_" to "-".
+	public Match getCharacterName(String word) {//hyphened words (standardized "_" to "-").
 		String wo = word;
 
 		//rejected searches
@@ -110,12 +110,15 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			if(ch == null){
 				ch = lookup(wc.replaceAll("-", ""));
 				if(ch == null){
-					ch = lookup(ws[0]);
+					//ch = lookup(ws[0]); //searching the first word in a "-"-connected phrase doesn't make sense hong 5/5/14
 					m = new Match(ch);
 				}else{
 					m = new Match(ch);
 				}
 			}else{
+				for(Term t: ch){
+					t.setLabel(wc);
+				}
 				m = new Match(ch);
 			}
 			
