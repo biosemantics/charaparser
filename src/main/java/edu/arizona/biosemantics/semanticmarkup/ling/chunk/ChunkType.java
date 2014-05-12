@@ -47,6 +47,7 @@ public enum ChunkType {
 	STATE,					// e.g. { } , will use this also for c[] because it is a state
 	
 	AREA,					// text only
+	AVERAGE,
 	BRACKETED,				// text only
 	CHROM,					// text only
 	COMMA,					// text only

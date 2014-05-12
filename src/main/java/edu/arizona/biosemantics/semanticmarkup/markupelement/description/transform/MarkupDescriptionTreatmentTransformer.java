@@ -256,6 +256,72 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	/**
+	 * for proibio_m33 only
+	 * @param glossaryDownload
+	 * @param download
+	 */
+	/*protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+		//glossary
+		//add the syn set of the glossary
+		HashSet<Term> gsyns = new HashSet<Term>();
+		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
+			if(termSyn.getCategory().compareTo("structure")==0){
+				//take care of singular and plural forms
+				String syns = ""; 
+				String synp = "";
+				String terms = "";
+				String termp = "";
+				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
+					synp = termSyn.getSynonym().replaceAll("_",  "-");
+					syns = inflector.getSingular(synp);					
+				}else{
+					syns = termSyn.getSynonym().replaceAll("_",  "-");
+					synp = inflector.getPlural(syns);
+				}
+
+				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+					termp = termSyn.getTerm().replaceAll("_",  "-");
+					terms = inflector.getSingular(termp);					
+				}else{
+					terms = termSyn.getTerm().replaceAll("_",  "-");
+					termp = inflector.getPlural(terms);
+				}
+				glossary.addSynonym(syns, ((ITerm) termSyn).getCategory(), terms);
+				glossary.addSynonym(synp, termSyn.getCategory(), termp);
+				gsyns.add(new Term(syns, termSyn.getCategory()));
+				gsyns.add(new Term(synp, termSyn.getCategory()));
+			}else{
+				//glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement", termSyn.getTerm());
+				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
+				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
+				//gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
+			}
+		}
+
+		//the glossary, excluding gsyns
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+			if(!gsyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
+				glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
+		}
+
+
+		//term category
+		String sql = "SELECT term, category from proibio_m33_term_category";
+		PreparedStatement preparedStatement;
+		try {
+			preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.execute();
+			ResultSet resultSet = preparedStatement.getResultSet();
+			while(resultSet.next()) {
+				glossary.addEntry(resultSet.getString("term").replaceAll("_", "-"),resultSet.getString("category"));				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}*/
+	/**
 	 * notes: OTO Webservice should probably only return one term category list.
 	 * No need to return an extra term synonym list just because it might make sense to have them separate in a relational database schema
 	 * 

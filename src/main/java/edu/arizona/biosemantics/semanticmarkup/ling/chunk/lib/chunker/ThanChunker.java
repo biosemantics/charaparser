@@ -109,8 +109,9 @@ public class ThanChunker extends AbstractChunker {
 						Chunk objectChunk = new Chunk(ChunkType.OBJECT);
 						for(i=i+1; i<terminals.size(); i++) {
 							AbstractParseTree possibleObjectTerminal = terminals.get(i);
-							if(possibleObjectTerminal.getTerminalsText().matches(prepositionWords + "|and|that|which|but") ||
-									possibleObjectTerminal.getTerminalsText().matches(".*?\\p{Punct}.*")) {
+							if((possibleObjectTerminal.getTerminalsText().matches(prepositionWords + "|and|that|which|but") ||
+									possibleObjectTerminal.getTerminalsText().matches(".*?\\p{Punct}.*"))&& 
+									!possibleObjectTerminal.getTerminalsText().matches(".*?\\d\\.\\d.*")) { //3.2
 								//should allow �, n[{shorter} than] � {campanulate} <throats>
 								
 								//create the collapse chunk

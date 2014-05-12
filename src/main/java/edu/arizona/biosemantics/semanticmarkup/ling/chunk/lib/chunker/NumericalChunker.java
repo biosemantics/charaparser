@@ -172,14 +172,16 @@ public class NumericalChunker extends AbstractChunker {
 			AbstractParseTree terminal = terminals.get(i);
 			String terminalsText = terminal.getTerminalsText();
 			
-			if(terminalsText.matches("l\\s*\\W\\s*w")){
+			if(terminalsText.matches("l/w")){
 				int j = i+1;
 				boolean foundRatio = false;
 				while(j < terminals.size()) {
 					AbstractParseTree lookAheadTerminal = terminals.get(j);
 					String lookAheadTerminalText = lookAheadTerminal.getTerminalsText();
 					if(lookAheadTerminalText.equals("=")) {
-						j++;
+						//j++;
+						i = j+1;
+						j = i;
 					} else if(lookAheadTerminalText.matches(".*?\\d.*")) {
 						foundRatio = true;
 						j++;
@@ -191,9 +193,47 @@ public class NumericalChunker extends AbstractChunker {
 					LinkedHashSet<Chunk> ratioChildren = new LinkedHashSet<Chunk>();
 					for(;i<j;i++) {
 						/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
-						ratioChildren.add(chunkCollector.getChunk(terminals.get(i)));
+						Chunk c = chunkCollector.getChunk(terminals.get(i));
+						c.setChunkType(ChunkType.RATIO);
+						ratioChildren.add(c);
 					}
-					Chunk ratioChunk = new Chunk(ChunkType.RATIO, ratioChildren);
+					Chunk ratioChunk = new Chunk(ChunkType.RATIO, ratioChildren); 
+					chunkCollector.addChunk(ratioChunk);
+				}
+			}
+		}
+		
+		//average values: av . 6 . 9 x 5 . 5 μm
+		for(int i=0; i<terminals.size(); i++) {
+			AbstractParseTree terminal = terminals.get(i);
+			String terminalsText = terminal.getTerminalsText();
+			
+			if(terminalsText.matches("av")){
+				int j = i+1;
+				boolean foundAV = false;
+				while(j < terminals.size()) {
+					AbstractParseTree lookAheadTerminal = terminals.get(j);
+					String lookAheadTerminalText = lookAheadTerminal.getTerminalsText();
+					if(lookAheadTerminalText.matches("[.=:]")) {
+						//j++;
+						i = j+1;
+						j = i;
+					} else if(lookAheadTerminalText.matches(".*?\\d.*")) {
+						foundAV = true;
+						j++;
+					} else {
+						break;
+					}
+				}
+				if(foundAV) {
+					LinkedHashSet<Chunk> ratioChildren = new LinkedHashSet<Chunk>();
+					for(;i<j;i++) {
+						/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
+						Chunk c = chunkCollector.getChunk(terminals.get(i));
+						c.setChunkType(ChunkType.AVERAGE);
+						ratioChildren.add(c);
+					}
+					Chunk ratioChunk = new Chunk(ChunkType.AVERAGE, ratioChildren); 
 					chunkCollector.addChunk(ratioChunk);
 				}
 			}

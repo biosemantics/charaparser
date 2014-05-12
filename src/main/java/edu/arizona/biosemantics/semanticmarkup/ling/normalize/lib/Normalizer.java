@@ -73,7 +73,9 @@ public abstract class Normalizer implements INormalizer {
 	private Pattern countptn = Pattern.compile("((?:^| )(?:"+countp+") (?:or|to) (?:"+countp+")(?: |$))");
 	private Pattern colorpattern = Pattern.compile("(.*?)((coloration|color)\\s+%\\s+(?:(?:coloration|color|@|%) )*(?:coloration|color))\\s((?![^,;()\\[\\]]*[#]).*)");
 	private Pattern distributePrepPattern = Pattern.compile("(^.*~list~)(.*?~with~)(.*?~or~)(.*)");
-	private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ ?[µucmd]?m?\\s*[x×]\\S*\\s*[\\d\\.()+-]+ [µucmd]?m\\s*[x×]?(\\S*\\s*[\\d\\.()+-]+ [µucmd]?m)?)(.*)");
+	private Pattern areapattern;
+	//private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ ?"+units+"?\\s*[x×]\\S*\\s*[\\d\\.()+-]+ "+units+"\\s*[x×]?(\\S*\\s*[\\d\\.()+-]+ "+units+")?)(.*)");
+	//private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ ?[μµucmd]?m?\\s*[x×]\\S*\\s*[\\d\\.()+-]+ [μµucmd]?m\\s*[x×]?(\\S*\\s*[\\d\\.()+-]+ [μµucmd]?m)?)(.*)");
 	//private Pattern areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ \\{?[cmd]?m\\}?×\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?×?(\\S*\\s*[\\d\\.()+-]+ \\{?[cmd]?m\\}?)?)(.*)");
 	private Pattern viewptn = Pattern.compile( "(.*?\\b)((?:in|at)\\s+[a-z_ -]*\\s*(?:view|profile|closure))(\\s.*)"); //to match in dorsal view and in profile
 	//private Pattern viewptn = Pattern.compile( "(.*?\\b)(in\\s+[a-z_<>{} -]*\\s*[<{]*(?:view|profile)[}>]*)(\\s.*)"); //to match in dorsal view and in profile
@@ -152,6 +154,7 @@ public abstract class Normalizer implements INormalizer {
 			IInflector inflector, 
 			@Named("CompoundPrepWords")String compoundPPptn) {
 		this.units = units;
+		this.areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ ?"+units+"?\\s*[x×]\\S*\\s*[\\d\\.()+-]+ "+units+"\\s*[x×]?(\\S*\\s*[\\d\\.()+-]+ "+units+")?)(.*)");
 		this.numberPattern = numberPattern;
 		this.glossary = glossary;
 		this.singulars = singulars;
@@ -226,7 +229,7 @@ public abstract class Normalizer implements INormalizer {
 		str = str.replaceAll("\\bshades of\\b", "shades_of");
 		str = str.replaceAll("\\bat least\\b", "at_least");
 		str = str.replaceAll("[ _-]+\\s*shaped", "-shaped");
-		str = str.replaceAll("(?<=\\s)µ\\s*m\\b", "um");
+		str = str.replaceAll("(?<=\\s)[µμ]\\s*m\\b", "um");
 		str = str.replaceAll("\\bdiam\\s*\\.(?=\\s?[,a-z])", "diam");
 		str = str.replaceAll("more or less", "moreorless");
 		str = str.replaceAll("&#176;", "°");
@@ -234,6 +237,7 @@ public abstract class Normalizer implements INormalizer {
 		str = str.replaceAll("(?<=\\d)(?=("+units+")\\b)", " "); //23mm => 23 mm
 		str = str.replaceAll("\\bten\\b", "10");
 		str = str.replaceAll("\\bca\\s*\\.\\s*", ""); //remove ca.
+		str = str.replaceAll("\\bq\\s*=", "l / w =");
 		
 		//str = stringColors(str);
 		str = connectColors(str);
@@ -716,7 +720,8 @@ public abstract class Normalizer implements INormalizer {
 				text = m.group(1)+m.group(2).replaceAll("[ \\{\\}]", "")+ m.group(4);
 				m = areapattern.matcher(text2); //match on text2 to keep the unit-free segment
 				m.matches();
-				text2 = m.group(1)+m.group(2).replaceAll("[cmd]?m", "").replaceAll("[ \\{\\}]", "")+ m.group(4);
+				//text2 = m.group(1)+m.group(2).replaceAll("[μµucmd]?m", "").replaceAll("[ \\{\\}]", "")+ m.group(4);
+				text2 = m.group(1)+m.group(2).replaceAll(units, "").replaceAll("[ \\{\\}]", "")+ m.group(4);
 				m = areapattern.matcher(text);
 			}else {//{pistillate} 9-47 ( -55 in <fruit> ) ×5.5-19 mm , {flowering} <branchlet> 0-4 mm ; m.group(2)= ) ×5.5-19 mm , {flowering} <branchlet> 0-4 mm ;
 				String left = "";
@@ -1272,7 +1277,7 @@ public abstract class Normalizer implements INormalizer {
 		//Pattern pattern4 = Pattern.compile("(?<!(ca[\\s]?|diam[\\s]?))([\\d]?[\\s]?\\.[\\s]?[\\d]+[\\s]?[\\�\\-]+[\\s]?[\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]+[\\s]?[\\�\\-]+[\\s]?[\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]/[\\d][\\s]?[\\�\\-][\\s]?[\\d]/[\\d])|(?<!(ca[\\s]?|diam[\\s]?))([\\d]?[\\s]?\\.[\\s]?[\\d]+)|([\\d]/[\\d])");
 		//Pattern pattern5 = Pattern.compile("[\\d�\\+\\�\\-\\���:�/�\"��\\_�\\׵%\\*\\{\\}\\[\\]=]+");
 		//Pattern pattern5 = Pattern.compile("[\\d\\+���/�\"���\\׵%\\*]+(?!~[a-z])");
-		Pattern pattern5 = Pattern.compile("[\\d\\+°²½/¼\"“”´\\×µ%\\*]+(?![a-z])"); //single numbers, not including individual "-", would turn 3-branched to 3 branched 
+		Pattern pattern5 = Pattern.compile("[\\d\\+°²½/¼\"“”´\\×µμ%\\*]+(?![a-z])"); //single numbers, not including individual "-", would turn 3-branched to 3 branched 
 		//Pattern pattern6 = Pattern.compile("([\\s]*0[\\s]*)+(?!~[a-z])"); //condense multiple 0s.
 		Pattern pattern6 = Pattern.compile("(?<=\\s)[0\\s]+(?=\\s)");
 		//Pattern pattern5 = Pattern.compile("((?<!(/|(\\.[\\s]?)))[\\d]+[\\-\\�]+[\\d]+(?!([\\�\\-]+/|([\\s]?\\.))))|((?<!(\\{|/))[\\d]+(?!(\\}|/)))");

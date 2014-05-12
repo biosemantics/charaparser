@@ -49,8 +49,6 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  */
 public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
-
-	
 	private IFirstChunkProcessor firstChunkProcessor;
 	private ILastChunkProcessor lastChunkProcessor;
 
@@ -118,10 +116,11 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		}
 		this.structureId = processingContext.getStructureId();
 		this.relationId = processingContext.getRelationId();
-		/*System.out.println("====1====");
+		
+		System.out.println("====1====");
 		for(Statement statement: description.getStatements()){
 		System.out.println(statement.toString());
-	    }*/
+	    }
 		
 		List<Element> xml = new LinkedList<Element>();
 		for(Statement s: description.getStatements()){
@@ -144,7 +143,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 		
 		List<Chunk> chunks = chunkCollector.getChunks();
-		ListIterator<Chunk> iterator = chunks.listIterator();
+		ListIterator<Chunk> iterator = chunks.listIterator(); 
 		processingContext.setChunkListIterator(iterator);
 		
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");

@@ -194,6 +194,7 @@ public class Character extends NamedElement {
 	}
 
 	public void setTo(String to) {
+		if(to.matches(".*?\\d-")) to = to.replaceFirst("-+$", "").trim(); //8- => 8
 		this.to = to;
 	}
 
@@ -274,6 +275,7 @@ public class Character extends NamedElement {
 	}
 
 	public void setFrom(String from) {
+		if(from.matches(".*?\\d-")) from = from.replaceFirst("-+$", "").trim(); //8- => 8
 		this.from = from;
 	}
 

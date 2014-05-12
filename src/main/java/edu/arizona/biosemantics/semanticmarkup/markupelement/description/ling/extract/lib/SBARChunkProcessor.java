@@ -75,13 +75,16 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			chunkIterator.previous();
 			
 			//int p = cs.getPointer()-2;
-			Chunk last = null; //the chunk before ck??
-			int i=2;
+			Chunk last = null; //the chunk before ck
+			//int i=2;
+			int i=1;
 			do {
 				last = chunkIterator.previous();
 				i++;
 			} while(!last.getTerminalsText().matches(".*?\\S.*"));
-			for(int j=0; j<i; j++) 
+			
+			
+			for(int j=0; j<i; j++)  //return chunkIterator to the original state
 				chunkIterator.next();
 			
 			int constraintId;
@@ -164,14 +167,16 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			chunkIterator.previous();
 			
 			Chunk last = null;
-			int i=2;
+			//int i=2;
+			int i=1;
 			do {
 				last = chunkIterator.previous();
 				i++;
 			} while(!last.getTerminalsText().matches(".*?\\w.*"));
-			for(int j=0; j<i; j++) 
-				chunkIterator.next();
-		
+			
+			for(int j=0; j<i; j++) //return chunkIterator to the original state
+				chunkIterator.next(); 
+			 
 			if(last.containsChunkType(ChunkType.ORGAN)) {
 				int constraintId = processingContext.getStructureId() - 1;				
 				processingContextState.setClauseModifierContraint(last.getTerminalsText());

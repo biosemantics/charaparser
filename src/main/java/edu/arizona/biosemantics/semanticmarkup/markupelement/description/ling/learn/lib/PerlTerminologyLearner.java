@@ -412,7 +412,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						
 						String osent = rs.getString("originalsent");
 						String text = sent;
-						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)µ\\s+m\\b", "um");
+						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)[μµ]\\s+m\\b", "um");
 						            text = text.replaceAll("&#176;", "°");
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
 						text = rs.getString("modifier")+"##"+tag+"##"+text;

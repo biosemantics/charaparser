@@ -82,6 +82,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.AndChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.AreaChunkProcessor;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.AverageChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.BracketedChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.CharacterNameChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.ChromChunkProcessor;
@@ -199,6 +200,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(IFirstChunkProcessor.class).to(SomeFirstChunkProcessor.class).in(Singleton.class);
 			  bind(ILastChunkProcessor.class).to(EosEolChunkProcessor.class).in(Singleton.class);
 			  bind(IChunkProcessorProvider.class).to(ChunkProcessorProvider.class).in(Singleton.class);
+			  bind(IChunkProcessor.class).annotatedWith(Names.named("Average")).to(AverageChunkProcessor.class).in(Singleton.class);
 			  bind(IChunkProcessor.class).annotatedWith(Names.named("Area")).to(AreaChunkProcessor.class).in(Singleton.class);
 			  bind(IChunkProcessor.class).annotatedWith(Names.named("Bracketed")).to(BracketedChunkProcessor.class).in(Singleton.class);
 			  bind(IChunkProcessor.class).annotatedWith(Names.named("CharacterState")).to(MyCharacterStateChunkProcessor.class).in(Singleton.class);
@@ -329,7 +331,10 @@ public class BasicConfig extends AbstractModule {
 
 	private String getUnits() {
 		//String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|µm|um";
-		String units= "pm|cm|mm|dm|m|meters|meter|microns|micron|unes|µm|um|centimeters|centimeter|millimeters|millimeter";
+		String units= "(?:pm|cm|mm|dm|m|meters|meter|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter)";
+		//String units = "[pμµucmd]?m?";
+		//micron => µm
+		
 		return units;
 	}
 

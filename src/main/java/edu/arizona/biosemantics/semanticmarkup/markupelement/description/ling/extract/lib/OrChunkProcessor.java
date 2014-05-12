@@ -66,13 +66,17 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		
 		if(chunkListIterator.hasNext()) {
-			chunkListIterator.previous();
-			Chunk  previousChunk = chunkListIterator.previous();
-			chunkListIterator.next();
-			chunkListIterator.next();
-			Chunk nextChunk = chunkListIterator.next();
+			chunkListIterator.previous(); //moved the cursor to ORChunk
+			if(!chunkListIterator.hasPrevious()){
+				chunkListIterator.next(); //skip this OR chunk and move the cursor to the next chunk.
+				return result;
+			}
+			Chunk  previousChunk = chunkListIterator.previous(); //previousChunk is the chunk before ORChunk
+			Chunk nextChunk = chunkListIterator.next(); //cursor moved back to previousChunk
+			nextChunk = chunkListIterator.next(); //cursor moved back to ORChunk
+			nextChunk = chunkListIterator.next();//get the chunk after the ORChunk
 			
-			if(nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE)) 
+			if(nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE) || nextChunk.isOfChunkType(ChunkType.END_OF_LINE)) //END_OF_LINE?
 				return result;
 			
 			if(!lastElements.isEmpty() && lastElements.getLast().isCharacter()) {
@@ -81,10 +85,12 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 				String characterName = character.getName();
 				if(nextChunk.isOfChunkType(ChunkType.PP)){
 					Structure parent = processingContext.getParentStructure(character);
-					List<Structure> parents = new LinkedList<Structure>();
-					parents.add(parent);
-					this.createCharacterElement(parents, new LinkedList<Chunk>(), nextChunk.getTerminalsText(), 
-							characterName, "", processingContextState);
+					if(parent != null){
+						List<Structure> parents = new LinkedList<Structure>();
+						parents.add(parent);
+						this.createCharacterElement(parents, new LinkedList<Chunk>(), nextChunk.getTerminalsText(), 
+								characterName, "", processingContextState);
+					}
 				}
 				
 				if(!nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && 
@@ -95,7 +101,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 						!nextChunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN) && 
 						!nextChunk.isOfChunkType(ChunkType.THAN_PHRASE) && 
 						!nextChunk.isOfChunkType(ChunkType.PP)) {
-					IChunkProcessor previousChunkProcessor = processingContext.getChunkProcessor(previousChunk.getChunkType());
+					IChunkProcessor previousChunkProcessor = processingContext.getChunkProcessor(previousChunk.getChunkType()); //WHEN
 					ProcessingContextState currentState = processingContext.getCurrentState();
 					processingContext.setCurrentState(previousChunk);
 					List<Element> previousResult = new LinkedList<Element>(

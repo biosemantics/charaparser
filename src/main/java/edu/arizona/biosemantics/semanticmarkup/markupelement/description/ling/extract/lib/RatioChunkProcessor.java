@@ -55,7 +55,6 @@ public class RatioChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> parents = lastStructures(processingContext, processingContextState);
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 		List<Character> characters = annotateNumericals(chunk.getTerminalsText(), "l_w_ratio", modifiers, 
 				lastStructures(processingContext, processingContextState), false, processingContextState);
