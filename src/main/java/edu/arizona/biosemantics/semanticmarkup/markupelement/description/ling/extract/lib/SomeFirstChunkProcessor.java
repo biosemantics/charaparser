@@ -63,11 +63,31 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		this.parentTagProvider = parentTagProvider;
 	}
 
+	/**
+	 * chunks has a chunk containing ":". 
+	 * If there is not a OrganChunk before ":", consider the chunks before ":" a heading and skip them (including the ":"). 
+	 * @param chunks
+	 */
+	public int skipHeading(List<Chunk> chunks){
+		boolean foundOrganChunk = false;
+		int skip = 0;
+		
+		for(Chunk c: chunks){
+			if(c.toString().equals(":")) break;
+			if(c.containsChunkType(ChunkType.ORGAN)){
+				foundOrganChunk = true;	
+				break;
+			}
+			skip++;
+		}
+		
+		if(!foundOrganChunk) ++skip;
+		return skip;
+	}
 	@Override
 	protected List<Structure> processChunk(Chunk firstChunk, ProcessingContext processingContext) {
 		skipFirstNChunk = 0;
 		List<Structure> result = new LinkedList<Structure>();
-		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		List<Chunk> chunks = processingContext.getChunkCollector().getChunks();
@@ -169,7 +189,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 						skipFirstNChunk = 1;
 						return result;
 					}else{
-						//didn't know why the above if was coded that way, because it is correct English syntax that a organ chunk follows a prep chunk,
+						//didn't know why the above 'if' was coded that way, because it is correct English syntax that a organ chunk follows a prep chunk,
 						//such as 'in spring flowers bloom'.
 						processingContextState.getUnassignedConstraints().add(firstChunk);
 						result.addAll(establishSubject(nextChunk, processingContext, processingContextState)); //skip the first prepChunk

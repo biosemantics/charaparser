@@ -101,7 +101,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			
 			processingContext.setChunkCollector(chunkCollector);
 			try {
-				List<Element> descriptiveElements = getDescriptiveElements(processingContext, chunkCollector.getSentence()); //chunk to xml
+				List<Element> descriptiveElements = getDescriptiveElements(processingContext, chunkCollector.getSentence(), i); //chunk to xml
 				for(Element element : descriptiveElements) {
 					if(element.isRelation())
 						statement.addRelation((Relation)element);
@@ -136,7 +136,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 
 
-	private List<Element> getDescriptiveElements(ProcessingContext processingContext, String sentence) {
+	private List<Element> getDescriptiveElements(ProcessingContext processingContext, String sentence, int sentIndex) {
 		List<Element> result = new LinkedList<Element>();
 		processingContext.setResult(result);
 
@@ -147,11 +147,17 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		processingContext.setChunkListIterator(iterator);
 		
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
-		addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext)); //process subject?
+		int skip = 0;
+		if(sentIndex==0 && sentence.contains(":")){
+			//identify and skip headings
+			skip = firstChunkProcessor.skipHeading(chunks);
+		}
+		//addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext)); //process subject
+		addToResult(result, firstChunkProcessor.process(chunks.get(skip), processingContext)); //process subject?
 		log(LogLevel.DEBUG, "result:\n" + result);
 		while(iterator.hasNext()) {
-			if(!iterator.hasPrevious() && firstChunkProcessor.skipFirstNChunk()>0) {
-				for(int i = 0; i < firstChunkProcessor.skipFirstNChunk(); i++)
+			if(!iterator.hasPrevious() && skip+firstChunkProcessor.skipFirstNChunk()>0) {
+				for(int i = 0; i < skip+firstChunkProcessor.skipFirstNChunk(); i++)
 					iterator.next();
 				continue;
 			}
