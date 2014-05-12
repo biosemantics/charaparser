@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.model;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
@@ -61,10 +62,14 @@ public class Relation extends NamedElement {
 	private String provenance;
 	@XmlPath("@" + RelationAttribute.notes)
 	private String notes;
+	@XmlTransient
 	private Structure toStructure;
+	@XmlTransient
 	private Structure fromStructure;
 	
-
+	/**
+	 * Need to use ALL applicable set methods to create a relation object
+	 */
 	public Relation() { }
 
 	public String getFrom() {
@@ -187,11 +192,13 @@ public class Relation extends NamedElement {
 	public void setFromStructure(Structure structure) {
 		this.fromStructure = structure;
 	}
-
+	
+	@XmlTransient
 	public Structure getToStructure() {
 		return toStructure;
 	}
-
+	
+	@XmlTransient
 	public Structure getFromStructure() {
 		return fromStructure;
 	}

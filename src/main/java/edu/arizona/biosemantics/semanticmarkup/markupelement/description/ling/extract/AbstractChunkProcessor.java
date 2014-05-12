@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 
 
 
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -53,6 +55,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected String numberPattern;
 	protected String times;
 	protected String compoundPreps;
+	protected Set<String> stopWords;
 
 
 	/**
@@ -81,7 +84,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			@Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			@Named("NumberPattern")String numberPattern, 
 			@Named("Times")String times, 
-			@Named("CompoundPrepWords") String compoundpreps) {
+			@Named("CompoundPrepWords") String compoundpreps, 
+			@Named("StopWords")Set<String> stopWords) {
 		this.inflector = inflector;
 		this.glossary = glossary;
 		this.characterKnowledgeBase = characterKnowledgeBase;
@@ -95,6 +99,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		this.numberPattern = numberPattern;
 		this.times = times;
 		this.compoundPreps = "("+compoundpreps.replaceAll("\\s+", "-")+")";
+		this.stopWords = stopWords;
 	}
 
 	/**
@@ -872,19 +877,21 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					negation = true;
 					relation = relation.replace("not", "").trim();
 				}
-				relationElements.add(addRelation(relation, modifiers, symmetric, o1id, o2id, negation, processingContext, processingContextState));
+				relationElements.add(addRelation(relation, modifiers, symmetric, o1id, o2id, fromStructures.get(i), toStructures.get(j), negation, processingContext, processingContextState));
 			}
 		}
 		return relationElements;
 	}
 
 	protected Relation addRelation(String relationName, List<Chunk> modifiers,
-			boolean symmetric, String o1id, String o2id, boolean negation, ProcessingContext processingContext, ProcessingContextState processingContextState) {
+			boolean symmetric, String o1id, String o2id,Structure fromStructure, Structure toStructure,  boolean negation, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		Relation relation = new Relation();
 		relation.setName(relationName);
 		relation.setFrom(o1id);
 		relation.setTo(o2id);
 		relation.setNegation(String.valueOf(negation));
+		relation.setFromStructure(fromStructure);
+		relation.setToStructure(toStructure);
 		relation.setId("r" + String.valueOf(processingContext.fetchAndIncrementRelationId(relation)));	
 
 		for(Chunk modifier : modifiers) {

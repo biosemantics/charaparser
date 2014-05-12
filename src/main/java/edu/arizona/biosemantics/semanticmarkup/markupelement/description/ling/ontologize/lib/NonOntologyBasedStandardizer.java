@@ -38,25 +38,25 @@ public class NonOntologyBasedStandardizer {
 	
 	public void standardize(LinkedList<Element>result){
 		createWholeOrganismDescription(result); 
-		createMayBeSameRelations(result, processingContext); 
+		//createMayBeSameRelations(result, processingContext);  //not sure we need this relation.
 		removeOrphenedUnknownElements(result);
 		normalizeNegatedOrgan(result, sentence);
 		normalizeZeroCount(result);
 	}
 	
-	private void createMayBeSameRelations(List<Element> result, ProcessingContext processingContext) {
+	/*private void createMayBeSameRelations(List<Element> result, ProcessingContext processingContext) {
 		HashMap<String, Set<String>> names = new HashMap<String, Set<String>>();
 		for (Element element : result) {
 			if (element.isStructure()) {
 				Structure structure = (Structure)element;
 				String name = structure.getName();
 				
-				/*if (element.containsAttribute("constraintType"))
-					name = element.getCongetAttribute("constraintType") + " " + name;
-				if (element.containsAttribute("constraintParentOrgan"))
-					name = element.getAttribute("constraintParentOrgan") + " " + name;
-				if (element.containsAttribute("constraint"))
-					name = element.getAttribute("constraint") + " " + name;*/
+				//if (element.containsAttribute("constraintType"))
+				//	name = element.getCongetAttribute("constraintType") + " " + name;
+				//if (element.containsAttribute("constraintParentOrgan"))
+				//	name = element.getAttribute("constraintParentOrgan") + " " + name;
+				//if (element.containsAttribute("constraint"))
+				//	name = element.getAttribute("constraint") + " " + name;
 				
 				if (structure.getConstraint() != null && !structure.getConstraint().isEmpty())
 					name = structure.getConstraint() + " " + name;
@@ -81,6 +81,8 @@ public class NonOntologyBasedStandardizer {
 							relationElement.setFrom(idA);
 							relationElement.setTo(idB);
 							relationElement.setNegation(String.valueOf(false));
+							relationElement.setToStructure(structure);
+							relationElement.setFromStructure(structure);
 							relationElement.setId("r" + String.valueOf(processingContext.fetchAndIncrementRelationId(relationElement)));	
 						}
 					}
@@ -88,7 +90,7 @@ public class NonOntologyBasedStandardizer {
 				}
 			}
 		}
-	}
+	}*/
 
 
 	private void createWholeOrganismDescription(List<Element> result) {
