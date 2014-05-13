@@ -61,7 +61,7 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 			ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
 		
-		processingContext.getCurrentState().clearUnassignedModifiers();
+		//processingContext.getCurrentState().clearUnassignedModifiers(); //hong 5/12/2014 "When young, leaflets purple."
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		processingContextState.setCommaAndOrEosEolAfterLastElements(true);

@@ -325,16 +325,20 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected void addClauseModifierConstraint(Element element, ProcessingContextState processingContextState) {
 		String clauseModifierConstraint = processingContextState.getClauseModifierContraint();
 		String clauseModifierConstraintId = processingContextState.getClauseModifierContraintId();
-		if (clauseModifierConstraint != null)
-			if(element.isCharacter())
+		if (clauseModifierConstraint != null){
+			if(element.isCharacter()){
 				((Character)element).setConstraint(clauseModifierConstraint);
-		if(element.isStructure())
-			((Structure)element).setConstraint(clauseModifierConstraint);
-		if (clauseModifierConstraintId != null)
+			}
+			if(element.isStructure()){
+				((Structure)element).setConstraint(clauseModifierConstraint);
+			}
+		}
+		if (clauseModifierConstraintId != null && !clauseModifierConstraintId.startsWith("-")){ //default id could be -1
 			if(element.isCharacter())
 				((Character)element).setConstraintId(clauseModifierConstraintId);
-		if(element.isStructure())
-			((Structure)element).setConstraintId(clauseModifierConstraintId);
+			if(element.isStructure())
+				((Structure)element).setConstraintId(clauseModifierConstraintId);
+		}
 		processingContextState.setClauseModifierContraint(null);
 		processingContextState.setClauseModifierContraintId(null);
 	}

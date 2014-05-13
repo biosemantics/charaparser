@@ -123,6 +123,7 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 		chunkProcessors.put(ChunkType.WHERE, whereChunkProcessor);
 		chunkProcessors.put(ChunkType.WHEN, sbarChunkProcessor);
 		chunkProcessors.put(ChunkType.AVERAGE, averageChunkProcessor);
+		chunkProcessors.put(ChunkType.THAT, sbarChunkProcessor);
 	}
 	
 	@Override

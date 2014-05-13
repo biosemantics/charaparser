@@ -45,7 +45,7 @@ public class ProcessingContextState implements Cloneable {
 	private ArrayList<Entry<String, String>> scopeProperties;
 
 	private int inBracketsLevel = 0;
-
+	
 	/**
 	 * Reset: clear unassignedCharacter and mainSubjectStructure
 	 */
