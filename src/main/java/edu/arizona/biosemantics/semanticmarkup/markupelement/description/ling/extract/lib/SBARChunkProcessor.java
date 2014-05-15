@@ -33,7 +33,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  * SBARChunkProcessor processes chunks of ChunkType.SBAR, ChunkType.THAT, ChunkType.WHERE, and ChunkType.WHEN
  * @author rodenhausen
  */
-public class SBARChunkProcessor extends AbstractChunkProcessor {
+public class SBARChunkProcessor extends AbstractChunkProcessor  {
 
 	/**
 	 * @param inflector
