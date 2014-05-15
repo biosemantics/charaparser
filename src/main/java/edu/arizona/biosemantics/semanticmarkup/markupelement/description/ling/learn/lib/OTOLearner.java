@@ -26,6 +26,7 @@ import java.util.List;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -45,6 +46,7 @@ import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.unsupervised.POS;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFileList;
 
 /**
@@ -391,9 +393,12 @@ public class OTOLearner implements ILearner {
 			if(word.length()==0) continue;
 			if(word.startsWith("[") && word.endsWith("]")) continue;
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
-			if(posKnowledgeBase.isVerb(word) || posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
+			//getMostLikelyPOS does stemming, while isVerb does not.
+			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
+				|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 					noneqwords.add(word);
+					log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
 				//}					
 				continue;
 			}
@@ -522,8 +527,10 @@ public class OTOLearner implements ILearner {
 
 		words = descriptorTerms4Curation();
 		for(String word: words){
-			if(this.posKnowledgeBase.isVerb(word) || posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
+			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
+					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
+				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
 				continue;
 			}
 			filteredwords.add(word);
@@ -550,8 +557,10 @@ public class OTOLearner implements ILearner {
 		words = contentTerms4Curation(words, inistructureterms, inicharacterterms);
 		
 		for(String word: words){
-			if(posKnowledgeBase.isVerb(word) || posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
+			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
+					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
+				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
 				continue;
 			}
 			filteredwords.add(word);

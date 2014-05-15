@@ -42,8 +42,29 @@ public class NonOntologyBasedStandardizer {
 		removeOrphenedUnknownElements(result);
 		normalizeNegatedOrgan(result, sentence);
 		normalizeZeroCount(result);
+		removeCircularCharacterConstraint(result);
 	}
 	
+	/**
+	 * if a character constraint refers to the same structure the character belongs to, remove the constraint
+	 * @param result
+	 */
+	private void removeCircularCharacterConstraint(LinkedList<Element> result) {
+		for(Element element: result){
+			if(element.isStructure()){
+				String oid = ((Structure)element).getId();
+				LinkedHashSet<Character> chars = ((Structure)element).getCharacters();
+				for(Character c: chars){
+					if(c.getConstraintId()!=null && c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")){
+						c.setConstraint(null);
+						c.setConstraintId(null);
+					}
+				}				
+			}
+		}
+		
+	}
+
 	/*private void createMayBeSameRelations(List<Element> result, ProcessingContext processingContext) {
 		HashMap<String, Set<String>> names = new HashMap<String, Set<String>>();
 		for (Element element : result) {

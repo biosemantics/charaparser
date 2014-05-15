@@ -24,8 +24,8 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 public class ProcessingContextState implements Cloneable {
 
 	private String unassignedCharacter;
-	private List<Chunk> unassignedModifiers = new ArrayList<Chunk>();
-	private List<Chunk> unassignedConstraints = new ArrayList<Chunk>();
+	private List<Chunk> unassignedModifiers = new ArrayList<Chunk>(); //character/relation modifiers
+	private List<Chunk> unassignedConstraints = new ArrayList<Chunk>();//structure constraint
 	private List<Character> unassignedCharacters = new ArrayList<Character>();
 
 	private Structure mainSubjectStructure = null;
@@ -184,14 +184,14 @@ public class ProcessingContextState implements Cloneable {
 	}
 
 	/**
-	 * @return unassigned Modifiers
+	 * @return unassigned character Modifiers
 	 */
 	public List<Chunk> getUnassignedModifiers() {
 		return unassignedModifiers;
 	}
 	
 	/**
-	 * @return unassigned constraints
+	 * @return unassigned structure constraints
 	 */
 	public List<Chunk> getUnassignedConstraints() {
 		return unassignedConstraints;

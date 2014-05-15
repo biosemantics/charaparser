@@ -51,7 +51,7 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 	 * @param toChunkProcessor
 	 * @param characterNameProcessor
 	 * @param andChunkProcessor
-	 * @param whereChunkProcessor
+	 *@param whereChunkProcessor
 	 */
 	@Inject
 	public ChunkProcessorProvider(@Named("Area") IChunkProcessor areaChunkProcessor,
@@ -86,7 +86,7 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 			@Named("To") IChunkProcessor toChunkProcessor, 
 			@Named("CharacterName") IChunkProcessor characterNameProcessor, 
 			@Named("And") IChunkProcessor andChunkProcessor, 
-			@Named("Where") IChunkProcessor whereChunkProcessor,
+			/*@Named("Where") IChunkProcessor whereChunkProcessor,*/
 			@Named("Average") IChunkProcessor averageChunkProcessor) {
 		chunkProcessors.put(ChunkType.AREA, areaChunkProcessor);
 		chunkProcessors.put(ChunkType.BRACKETED, bracketedChunkProcessor);
@@ -120,7 +120,7 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 		chunkProcessors.put(ChunkType.TO_PHRASE, toChunkProcessor);
 		chunkProcessors.put(ChunkType.CHARACTER_NAME, characterNameProcessor);
 		chunkProcessors.put(ChunkType.AND, andChunkProcessor);
-		chunkProcessors.put(ChunkType.WHERE, whereChunkProcessor);
+		chunkProcessors.put(ChunkType.WHERE, sbarChunkProcessor);
 		chunkProcessors.put(ChunkType.WHEN, sbarChunkProcessor);
 		chunkProcessors.put(ChunkType.AVERAGE, averageChunkProcessor);
 		chunkProcessors.put(ChunkType.THAT, sbarChunkProcessor);

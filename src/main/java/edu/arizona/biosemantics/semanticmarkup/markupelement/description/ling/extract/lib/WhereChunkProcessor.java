@@ -27,6 +27,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * ValuePercentageOrDegreeChunkProcessor processes chunks of ChunkType.WHERE
+ * not used anymore. Hong 5/14/2014
  * @author rodenhausen
  */
 public class WhereChunkProcessor extends AbstractChunkProcessor {
@@ -59,11 +60,11 @@ public class WhereChunkProcessor extends AbstractChunkProcessor {
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState contextState = processingContext.getCurrentState();
 		ListIterator<Chunk> iterator = processingContext.getChunkListIterator();
-		Chunk a = iterator.previous();
+		Chunk a = iterator.previous(); //chunk
 		Chunk previousChunk = iterator.previous();
-		Chunk b = iterator.next();
-		Chunk c = iterator.next();
-		Chunk nextChunk = iterator.next();
+		Chunk b = iterator.next(); //back to chunk
+		Chunk c = iterator.next(); //the chunk after chunk
+		Chunk nextChunk = iterator.next(); //???
 		Chunk d = iterator.previous();
 		if(previousChunk.isOfChunkType(ChunkType.PP) && processingContext.getChunkCollector().isPartOfChunkType(nextChunk.getTerminals().get(0), ChunkType.CHARACTER_STATE)) {
 			LinkedList<Structure> subjects = contextState.getSubjects();

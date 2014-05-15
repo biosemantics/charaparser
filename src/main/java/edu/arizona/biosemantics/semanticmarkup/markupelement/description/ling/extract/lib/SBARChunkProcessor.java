@@ -30,7 +30,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.S
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
- * SBARChunkProcessor processes chunks of ChunkType.SBAR
+ * SBARChunkProcessor processes chunks of ChunkType.SBAR, ChunkType.THAT, ChunkType.WHERE, and ChunkType.WHEN
  * @author rodenhausen
  */
 public class SBARChunkProcessor extends AbstractChunkProcessor {
@@ -62,16 +62,18 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
+		
+		//find the real subject of the clause, which is the last organ before the clause starts -- this may not be the case for some clauses like 'grey when young' or 'red where injured'. 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		//LinkedList<DescriptionTreatmentElement> subjectsCopy = processingContext.getSubjects();
+		LinkedList<Structure> savedSubjects = processingContextState.getSubjects();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
-		if(lastElements.getLast().isStructure()) {
+		if(lastElements.size()>0 && lastElements.getLast().isStructure()) {
 			List<Element> latestStructures = latest(Structure.class, lastElements);
 			LinkedList<Structure> subjects = new LinkedList<Structure>();
 			for(Element structure : latestStructures) 
 				subjects.add((Structure)structure);
 			processingContextState.setSubjects(subjects);
-		} else {
+		} else {//why need the follow block?
 			ListIterator<Chunk> chunkIterator = processingContext.getChunkListIterator();
 			chunkIterator.previous();
 			
@@ -92,9 +94,9 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			if(last.containsChunkType(ChunkType.ORGAN)) {
 				constraintId = processingContext.getStructureId() - 1;
 				Structure lastStructure = processingContext.getStructure(constraintId);
-				LinkedList<Structure> newSubjects = new LinkedList<Structure>();
-				newSubjects.add(lastStructure);
-				processingContextState.setSubjects(newSubjects);
+				LinkedList<Structure> subjects = new LinkedList<Structure>();
+				subjects.add(lastStructure);
+				processingContextState.setSubjects(subjects);
 			}else{
 				//do nothing
 				System.err.println("no structure element found for the SBARChunk, use subjects instead ");
@@ -103,36 +105,18 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			}
 		}
 		
-		Chunk connectorChunk = null;
+		//collect content of the chunk
 		List<Chunk> content = new ArrayList<Chunk>();
-		boolean selectFirst = true;
 		for(Chunk childChunk : chunk.getChunks()) {
-			if(selectFirst) {
-				connectorChunk = childChunk;
-				selectFirst = false;
-			} else
-				content.add(childChunk);
+			if(!childChunk.getTerminalsText().matches("which|that|where|when") )content.add(childChunk);
 		}
-		String connector = connectorChunk.getTerminals().get(0).getTerminalsText();
+
 		
-		if(connector.equals("when")) {
-			//rewrite content and its chunkedTokens
-			
-			List<Chunk> modifiers = new ArrayList<Chunk>();
-			content.clear();
-			boolean foundPunctuation = false;
-			for(Chunk childChunk : chunk.getChunks()) {
-				for(AbstractParseTree terminal : childChunk.getTerminals()) {
-					if(terminal.getTerminalsText().matches("[\\.,:;]")) {
-						foundPunctuation = true;
-						break;
-					}
-					if(!foundPunctuation)
-						modifiers.add(terminal);
-				}
-				if(foundPunctuation)
-					content.add(childChunk);
-			}
+		//when => all when clauses should be included as character modifiers.
+		//some should be the modifier of the last character
+		//others should be the unassignedmodifier of the next character 
+		if(chunk.isOfChunkType(ChunkType.WHEN)) {
+			List<Chunk> modifiers = assembleModifierContent(chunk, content);//reset content
 			
 			//int end = ck.toString().indexOf(",") > 0? ck.toString().indexOf(",") : ck.toString().indexOf(".");
 			//String modifier = chunk.getTerminalsText().substring(0, end).trim();//when mature, 
@@ -161,13 +145,16 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			}
 		}
 
-		if(connector.equals("where")) {
+		//where => 
+		//1. some should be used as the subject for the where clause to be process next (done at the beginning)
+		//2. some should be character unassignedconstraints for the next character
+		//3. some should be the modifier of the previous character
+		if(chunk.isOfChunkType(ChunkType.WHERE)) {
 			//retrieve the last non-comma, non-empty chunk					
-			
 			ListIterator<Chunk> chunkIterator = processingContext.getChunkListIterator();
 			chunkIterator.previous();
 			
-			Chunk last = null;
+			Chunk last = null; //the content-bearing chunk before 'chunk'
 			//int i=2;
 			int i=1;
 			do {
@@ -177,25 +164,53 @@ public class SBARChunkProcessor extends AbstractChunkProcessor {
 			
 			for(int j=0; j<i; j++) //return chunkIterator to the original state
 				chunkIterator.next(); 
-			 
+			
+			//update processingContextState for future processing
 			if(last.containsChunkType(ChunkType.ORGAN)) {
 				int constraintId = processingContext.getStructureId() - 1;				
-				processingContextState.setClauseModifierContraint(last.getTerminalsText());
-				processingContextState.setClauseModifierContraintId(String.valueOf(constraintId));
+				processingContextState.setClauseModifierContraint(last.getTerminalsText()); 
+				processingContextState.setClauseModifierContraintId("o"+constraintId);
+			}
+			//add modifier to the last elements that've already been generated
+			if(lastElements.size()>0 && lastElements.getLast().isCharacter()) {
+				List<Chunk> modifiers = assembleModifierContent(chunk, content);
+				Chunk modifierChunk = new Chunk(ChunkType.MODIFIER, modifiers);
+				for(Element lastElement : lastElements)
+					if(lastElement.isCharacter())
+						((Character)lastElement).setModifier(modifierChunk.getTerminalsText());
 			}
 		}
 		
+		//process content for that and which (maybe when or where in cases [.;,:] are involved)
 		for(Chunk contentChunk : content)
 			result.addAll(describeChunk(contentChunk, processingContext));
 		
-		//annotateByChunk(newcs, false); //no need to updateLatestElements				
-		//processingContext.setSubjects(subjectsCopy);//return to original status
-		processingContextState.setClauseModifierContraint(null);
-		processingContextState.setClauseModifierContraintId("-1"); 
-		//return to original status
-		//this.unassignedmodifiers = null;
+		
+		//processingContextState.setClauseModifierContraint(null);
+		//processingContextState.setClauseModifierContraintId("-1"); // or null?
+		//processingContextState.setSubjects(savedSubjects);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
+	}
+
+	private List<Chunk> assembleModifierContent(Chunk chunk, List<Chunk> content) {
+		//rewrite content and its chunkedTokens
+		List<Chunk> modifiers = new ArrayList<Chunk>();
+		content.clear(); //reset content to empty
+		boolean foundPunctuation = false;
+		for(Chunk childChunk : chunk.getChunks()) {
+			for(AbstractParseTree terminal : childChunk.getTerminals()) {
+				if(terminal.getTerminalsText().matches("[\\.,:;]")) { //terminals before  puncts are modifiers
+					foundPunctuation = true;
+					break;
+				}
+				if(!foundPunctuation)
+					modifiers.add(terminal);
+			}
+			if(foundPunctuation) //terminals after puncts, if there is any, need to be process further
+				content.add(childChunk);
+		}
+		return modifiers;
 	}
 
 	private List<? extends Element> describeChunk(Chunk chunk, ProcessingContext processingContext) {
