@@ -120,20 +120,24 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			if(characterKnowledgeBase.containsCharacterState(characterStateString)){
 				character = characterKnowledgeBase.getCharacterName(characterStateString).getCategories();
 				if(character==null){
-					character = characterStateString; //characterStateString not in glossary, should be added
+					character = "character";//characterStateString; //characterStateString not in glossary, should be added
 					log(LogLevel.INFO, characterStateString +" should be added to the glossary as a 'character' ");
 				}				
 			}
 		}
 		if(character.equals("character") && modifiers.size() == 0 &&!this.eqcharaExempt) {
 			//high relief: character=relief, reset the character of "high" to "relief"
+			boolean dealt = false;
 			if(processingContextState.getLastElements().size() > 0){
 				Element lastElement = processingContextState.getLastElements().getLast();
 				if(lastElement.isCharacter()) 
 					for(Element element : processingContextState.getLastElements()) 
-						if(element.isCharacter())
+						if(element.isCharacter()){
 							((Character)element).setName(characterStateString);
-			}else 
+							dealt = true;
+						}
+			}
+			if(!dealt)
 				processingContextState.setUnassignedCharacter(characterStateString);
 			results.addAll(processingContextState.getLastElements());
 		} else if(characterStateString.length() > 0) {
@@ -153,7 +157,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			if(characterStateString.contains(" to "))
 				results.addAll(createRangeCharacterElement(parents, modifiers, characterStateString, character, processingContextState));
 			else {
-				Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
+				Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState, false);
 				if(characterElement!=null)
 					results.add(characterElement);
 			}

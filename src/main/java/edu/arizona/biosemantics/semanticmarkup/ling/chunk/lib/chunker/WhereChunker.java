@@ -13,6 +13,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -142,12 +143,16 @@ public class WhereChunker extends AbstractChunker {
 		Chunk organ = null;
 
 		Chunk previous = null;
-		for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
-			Chunk chunk = chunkCollector.getChunk(terminal);
-			String text = terminal.getTerminalsText();
-			if(startTerminal.equals(terminal)){ 
+		//for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
+		//	Chunk chunk = chunkCollector.getChunk(terminal);
+		for(Chunk chunk: chunkCollector.getChunks()){
+			String text = chunk.getTerminalsText();
+			if(startTerminal.equals(chunk.getTerminals().get(0))){ 
 				collect = true;
-				terminals.add(terminal); //collected 'where'
+				if(previous.isOfChunkType(ChunkType.UNASSIGNED) && previous.getTerminalsText().matches(prepositionWords)){
+					terminals.addAll(previous.getTerminals());
+				}
+				terminals.addAll(chunk.getTerminals()); //collected 'where'
 				if(start && previous!=null && characters.contains(previous.getChunkType())){
 					followCharacter = true; //case 3
 				}else if(start && previous!=null && organs.contains(previous.getChunkType())){
@@ -158,7 +163,7 @@ public class WhereChunker extends AbstractChunker {
 				continue;
 			}
 			if(collect && start){
-				terminals.add(terminal); //save the first terminal after 'where'
+				terminals.addAll(chunk.getTerminals()); //save the first terminal after 'where'
 				start = false;	
 				if(!text.equals(",")) previous = chunk;
 				continue;
@@ -167,7 +172,7 @@ public class WhereChunker extends AbstractChunker {
 				if(((terminals.size() > 0 && organs.contains(chunk.getChunkType()) || text.matches("[\\.:;,]|but")))) {
 					break;
 				}else{
-					terminals.add(terminal);
+					terminals.addAll(chunk.getTerminals());
 				}
 			}else if(collect && followOrgan){//cases 1 and 2
 				for(int i = 1; i < terminals.size(); i++) //keep only 'where'

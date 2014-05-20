@@ -12,11 +12,13 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
@@ -214,7 +216,12 @@ public abstract class AbstractChunker implements IChunker {
 						chunkCollector.isPartOfChunkType(terminals.get(0), ChunkType.STATE)) {
 					alreadyAssignedToValidChunk = false;
 				}
-
+				for(AbstractParseTree terminal: terminals){//if containing a position term: midder, upper 2/3
+					Match m = learnedCharacterKnowledgeBase.getCharacterName(terminal.getTerminalsText());
+					if(m!=null && m.getCategories()!=null && m.getCategories().contains("position")){
+						alreadyAssignedToValidChunk = false;
+					}
+				}
 				if(!alreadyAssignedToValidChunk) {
 					List<Chunk> children = new ArrayList<Chunk>(firstNPTree.getTerminals());
 					chunkCollector.addChunk(new Chunk(ChunkType.ORGAN, children));

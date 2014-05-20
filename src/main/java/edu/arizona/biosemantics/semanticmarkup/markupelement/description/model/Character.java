@@ -90,6 +90,8 @@ public class Character extends NamedElement {
 	private String from;
 	@XmlTransient
 	private Structure structure;
+	@XmlTransient
+	private boolean isConstraintModifier; //red leaves, red is a modifier for leaves
 	
 	public Character() { }
 	
@@ -307,6 +309,16 @@ public class Character extends NamedElement {
 		this.constraint = newValue;
 	}
 
+	@XmlTransient
+	public boolean getIsConstraintModifier(){
+		return this.isConstraintModifier;
+	}
+	
+	@XmlTransient
+	public void setIsConstraintModifier(boolean isConstraintModifier){
+		this.isConstraintModifier = isConstraintModifier;
+	}
+	
 	@Override
 	public void removeElementRecursively(Element element) {
 		return;

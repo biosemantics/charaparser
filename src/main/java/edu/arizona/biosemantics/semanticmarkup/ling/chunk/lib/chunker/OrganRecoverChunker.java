@@ -155,9 +155,13 @@ public class OrganRecoverChunker extends AbstractChunker {
 		for(;i >= 0; i--){
 			AbstractParseTree lookBehindTerminal = terminals.get(i);
 			/*preventing "the" from blocking the organ following ",the" to being matched as a subject organ- mohan 10/19/2011*/
-			if(lookBehindTerminal.getTerminalsText().matches("the|a|an")){
-				if(i != 0) {
-					i--;
+			if(lookBehindTerminal.getTerminalsText().matches("the|a|an")){ //collect articles as part of organ chunks
+				List<Chunk> collectedTerminalsList = new ArrayList<Chunk>(collectedTerminals);
+				collectedTerminals.clear();
+				collectedTerminals.add(chunkCollector.getChunk(lookBehindTerminal));
+				collectedTerminals.addAll(collectedTerminalsList);
+				i--;
+				if(i >= 0) {					
 					lookBehindTerminal = terminals.get(i);
 				}
 			}

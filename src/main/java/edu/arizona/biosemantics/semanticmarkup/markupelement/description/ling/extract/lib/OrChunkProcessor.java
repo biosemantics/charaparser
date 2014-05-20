@@ -91,7 +91,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 						List<Structure> parents = new LinkedList<Structure>();
 						parents.add(parent);
 						this.createCharacterElement(parents, new LinkedList<Chunk>(), nextChunk.getTerminalsText(), 
-								characterName, "", processingContextState);
+								characterName, "", processingContextState, false);
 					}
 				}
 				

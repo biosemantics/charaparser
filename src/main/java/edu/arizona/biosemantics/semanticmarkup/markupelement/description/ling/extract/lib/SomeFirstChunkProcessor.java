@@ -9,6 +9,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -36,6 +37,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 
 	private int skipFirstNChunk = 0;
 	private ParentTagProvider parentTagProvider;
+	private boolean firstSentence = false;
 	
 	/**
 	 * @param inflector
@@ -200,9 +202,22 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 				}
 			}
 		} else {
-			if(firstChunk.isOfChunkType(ChunkType.MODIFIER) || firstChunk.isOfChunkType(ChunkType.CONSTRAINT))
+			if(firstChunk.isOfChunkType(ChunkType.MODIFIER) || firstChunk.isOfChunkType(ChunkType.CONSTRAINT)){
 				processingContextState.getUnassignedConstraints().add(firstChunk);
-			result.addAll(reestablishSubject(processingContext, processingContextState));
+			}
+			List<Structure> subjects = reestablishSubject(processingContext, processingContextState);
+			if(firstChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && subjects.size()==0 && this.firstSentence){
+				//use whole_organism
+				Structure structureElement = new Structure();
+				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
+				structureElement.setId("o" + String.valueOf(structureIdString));	
+				structureElement.setName("whole_organism"); 
+				List<Structure> structureElements = new LinkedList<Structure>();
+				structureElements.add(structureElement);
+				result.addAll(establishSubject(structureElements, processingContextState));
+			}else{
+				result.addAll(subjects);
+			}
 			skipFirstNChunk = 0;
 			return result;
 		}
@@ -280,6 +295,14 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 	
 	public int skipFirstNChunk() {
 		return this.skipFirstNChunk;
+	}
+	
+	public void setFirstSentence(){
+		this.firstSentence = true;
+	}
+	
+	public void unsetFirstSentence(){
+		this.firstSentence = false;
 	}
 
 }

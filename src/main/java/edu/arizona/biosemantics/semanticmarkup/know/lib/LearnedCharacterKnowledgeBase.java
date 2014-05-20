@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -30,22 +31,25 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private String c = "_c_";
 	
 	private String negWords; 
+	private String advModifiers;
 	//private ITerminologyLearner terminologyLearner;
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
 	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
 	private ConcurrentHashMap<String, Match> characterCache = new ConcurrentHashMap<String, Match> ();
 	private ConcurrentHashMap<String, Boolean> isOrganCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, Boolean> isStateCache = new ConcurrentHashMap<String, Boolean> ();
+	
 	/**
 	 * @param glossary
 	 * @param negWords
 	 */
 	@Inject
 	public LearnedCharacterKnowledgeBase(/*ITerminologyLearner terminologyLearner,*/ IGlossary glossary, 
-			@Named("NegationWords")String negWords) {
+			@Named("NegationWords")String negWords, @Named("AdvModifiers") String advModifiers) {
 		//this.terminologyLearner = terminologyLearner;
 		this.glossary = glossary;
 		this.negWords = negWords;
+		this.advModifiers = advModifiers+"|"+advModifiers.replaceAll(" ", "[_-]"); //at least|at[_-]least
 	}
 	
 	@Override
@@ -75,7 +79,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		//rejected searches
 		if(word.matches("("+negWords+")")) return new Match(null);
 		if (word.trim().length() == 0 || word.matches("\\W+")) return new Match(null);
-		if(word.matches("at[-_]least")) return new Match(null);
+		//if(word.matches("at[-_]least")) return new Match(null);//TODO: synchronize with Normalizer.modifierPhrases. move to configuration.
+		if(word.matches("(?:"+this.advModifiers+")")) return new Match(null);
 		
 		//check caches
 		if(characterCache.get(wo)!=null) return characterCache.get(wo);

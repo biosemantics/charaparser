@@ -171,12 +171,12 @@ public class OtherINsChunker extends AbstractChunker {
 					}
 					 */
 					
-					if(foundposition && (lookAheadTerminal.getTerminalsText().compareTo(",")==0 || isHardStop(terminals, j, chunkCollector))){
-						foundOrgan = true;
+					if(foundposition && (lookAheadTerminal.getTerminalsText().matches(",|and|or|but") || isHardStop(terminals, j, chunkCollector))){
+						//foundOrgan = true;
 						break;
 					}
 	
-					if(foundcharacter && (lookAheadTerminal.getTerminalsText().compareTo(",")==0 ||  isHardStop(terminals, j, chunkCollector))){
+					if(foundcharacter && (lookAheadTerminal.getTerminalsText().matches(",|and|or|but") ||  isHardStop(terminals, j, chunkCollector))){
 						foundOrgan = true;
 						break;
 					}
@@ -260,7 +260,7 @@ public class OtherINsChunker extends AbstractChunker {
 				
 				
 				//form a PP chunk to include terminals from index i to before j
-				if(foundOrgan || npCopy){
+				if(foundOrgan || npCopy ||foundposition){
 					LinkedHashSet<Chunk> function = new LinkedHashSet<Chunk>();
 					function.add(terminal); //add IN
 					
@@ -280,6 +280,12 @@ public class OtherINsChunker extends AbstractChunker {
 							}
 						} else {
 							Chunk chunk = chunkCollector.getChunk(lookAheadTerminal);
+							if(foundposition && k==j-1){
+								//turn position character chunk to an organ chunk by replace the chunk of lookAheadTerminal with a new organ chunk
+								chunk = new Chunk(ChunkType.ORGAN, lookAheadTerminal);
+								chunkCollector.addChunk(chunk);
+								
+							}
 							if(!chunk.isOfChunkType(ChunkType.END_OF_LINE) && !chunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE))
 								organTerminals.add(chunk); 
 						}
@@ -547,9 +553,14 @@ public class OtherINsChunker extends AbstractChunker {
 		if(terminal.getTerminalsText().matches("-[RL][SR]B-")){
 			return true;
 		}
-		if(chunkCollector.isPartOfANonTerminalChunk(terminal)) { //if encounter a chunk, return true
+		if(terminal.getTerminalsText().matches("when|where|that|which")){
+			return true;
+		}
+		
+		if(chunkCollector.isPartOfANonTerminalChunk(terminal)) { //if terminal_j starts a chunk, return true
 			Chunk nonTerminalChunk = chunkCollector.getChunk(terminal);
-			if(!nonTerminalChunk.isOfChunkType(ChunkType.COUNT) &&  //these chunks could be a component in a PP chunk, is this complete?
+            if(nonTerminalChunk.getTerminals().indexOf(terminal)==0 && //if terminal_j starts a chunk
+            		!nonTerminalChunk.isOfChunkType(ChunkType.COUNT) &&  //these chunks could be a component in a PP chunk, is this complete?
 					!nonTerminalChunk.isOfChunkType(ChunkType.CONSTRAINT) &&
 					!nonTerminalChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && 
 					!nonTerminalChunk.isOfChunkType(ChunkType.COMMA) && 

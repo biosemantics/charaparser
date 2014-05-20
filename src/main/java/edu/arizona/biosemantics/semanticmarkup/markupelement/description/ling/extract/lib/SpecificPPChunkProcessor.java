@@ -84,27 +84,30 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				nonModifiers.add(specifierChunk);
 		
 		//c: {loosely} {arachnoid}
-		
+		String unassignedChara = processingContextState.getUnassignedCharacter();
 		if(!nonModifiers.isEmpty()) {
-			if(posKnowledgeBase.isVerb(nonModifiers.get(nonModifiers.size()-1).getTerminalsText()) || preposition.getTerminalsText().equals("to")) {
+			if(unassignedChara==null && (posKnowledgeBase.isVerb(nonModifiers.get(nonModifiers.size()-1).getTerminalsText()) || preposition.getTerminalsText().equals("to"))) {
 				//t[c[{connected}] r[p[by] o[{conspicuous} {arachnoid} <trichomes>]]] TODO: what if c was not included in this chunk?
 				
 				String relation = "";
 				for(Chunk nonModifier : nonModifiers) 
 					relation += nonModifier.getTerminalsText() + " ";
 				relation += preposition.getTerminalsText();
+				LinkedList<Element> lastElements = processingContextState.getLastElements();
 				
 				List<Structure> structures = extractStructuresFromObject(object, processingContext, 
 						processingContextState);
 				
-				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) {
+				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) { //lastElement is growth.
 					List<Structure> entity1 = null;
-					Element lastElement = processingContextState.getLastElements().getLast();
+					//Element lastElement = processingContextState.getLastElements().getLast();
+					Element lastElement = lastElements.getLast();
 					if(lastElement.isCharacter() || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 						entity1 = processingContextState.getSubjects();
 					} else {
 						entity1 = new LinkedList<Structure>();
-						for(Element element : processingContextState.getLastElements()) {
+						//for(Element element : processingContextState.getLastElements()) {
+						for(Element element : lastElements) {
 							if(element.isStructure())
 								entity1.add((Structure)element);
 						}
@@ -120,15 +123,36 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				//String[] tokens = c.replaceAll("[{}]", "").split("\\s+");
 				//ArrayList<Element> charas = this.processCharacterText(tokens, this.subjects);
 
-				Chunk tempChunk = new Chunk(ChunkType.UNASSIGNED, nonModifiers);			
+				/*Chunk tempChunk = new Chunk(ChunkType.UNASSIGNED, nonModifiers);			
 				for(Chunk specifierChunk : specifierChunks) {
 					if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 						IChunkProcessor characterStateProcessor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
 						result.addAll(characterStateProcessor.process(specifierChunk, processingContext));
 					}
+				}*/
+				IChunkProcessor characterStateProcessor = processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE);
+				if(specifier.containsChunkType(ChunkType.CHARACTER_STATE)){ //could also contain modifiers etc.
+					result.addAll(characterStateProcessor.process(specifier, processingContext));
+				}else if(unassignedChara!=null){ //make the nonModifiers chunks CHARACTER_STATE chunks
+					/*for(Chunk nm: nonModifiers){
+						if(nm.isOfChunkType(ChunkType.UNASSIGNED)){
+							Chunk stateChunk = new Chunk(ChunkType.STATE, nm);
+							Chunk characterChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
+							characterChunk.setProperty("characterName", unassignedChara);
+							nm = characterChunk;
+						}else{
+							nm.setChunkType(ChunkType.CHARACTER_STATE);
+							nm.setProperty("characterName", unassignedChara);
+						}
+					}*/
+					Chunk stateChunk = new Chunk(ChunkType.STATE, nonModifiers); //lost modifiers. SPECIFIC_PP: [SPECIFIER: [changing], PP: [PREPOSITION: [with], OBJECT: [the, ORGAN: [growth]]]]
+					Chunk characterChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
+					characterChunk.setProperty("characterName", unassignedChara);
+					result.addAll(characterStateProcessor.process(characterChunk, processingContext));	//chunkCollector is not updated with characterChunk
 				}
 				IChunkProcessor ppProcessor = processingContext.getChunkProcessor(ChunkType.PP);
 				result.addAll(ppProcessor.process(pp, processingContext)); //not as a relation
+				
 			}
 		}
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

@@ -168,12 +168,17 @@ public class WhenChunker extends AbstractChunker {
 		boolean case2 = false;
 
 		Chunk previous = null;
-		for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
-			Chunk chunk = chunkCollector.getChunk(terminal);
-			String text = terminal.getTerminalsText();
-			if(startTerminal.equals(terminal)){ 
+		//for(AbstractParseTree terminal : chunkCollector.getTerminals()) {
+		for(Chunk chunk: chunkCollector.getChunks()){
+			//Chunk chunk = chunkCollector.getChunk(terminal);
+			//String text = terminal.getTerminalsText();
+			String text = chunk.getTerminalsText();
+			if(startTerminal.equals(chunk.getTerminals().get(0))){ 
 				collect = true;
-				terminals.add(terminal); //collected 'when'
+				if(previous!=null && previous.isOfChunkType(ChunkType.UNASSIGNED) && previous.getTerminalsText().matches(prepositionWords)){
+					terminals.addAll(previous.getTerminals());
+				}
+				terminals.addAll(chunk.getTerminals()); //collected 'when'
 				if(start && previous!=null && characters.contains(previous.getChunkType())){
 					followCharacter = true; //cases 3, 4
 				}
@@ -181,7 +186,7 @@ public class WhenChunker extends AbstractChunker {
 				continue;
 			}
 			if(collect && start){
-				terminals.add(terminal); //save the first terminal after 'when'
+				terminals.addAll(chunk.getTerminals()); //save the first terminal after 'when'
 				if(previous.getTerminalsText().compareTo("when")==0 && (organs.contains(chunk.getChunkType())||text.matches("it|the|they"))){
 					followedByOrgan = true; //case 1
 				}
@@ -196,7 +201,7 @@ public class WhenChunker extends AbstractChunker {
 				if(((terminals.size() > 0 && organs.contains(chunk.getChunkType()) || text.matches("[\\.:;,]|but")))) {
 					break;
 				}else{
-					terminals.add(terminal);
+					terminals.addAll(chunk.getTerminals());
 				}
 			}
 			

@@ -5,6 +5,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -69,6 +70,7 @@ public class FNAv19Normalizer extends Normalizer {
 			@Named("StopWords") Set<String> stopWords, 
 			@Named("PrepositionWords") String prepositionWords,
 			@Named("ModifierList") String modifierList, 
+			@Named("AdvModifiers") String advModifiers,
 			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			/*IOrganStateKnowledgeBase organStateKnowledgeBase, */
@@ -78,7 +80,7 @@ public class FNAv19Normalizer extends Normalizer {
 				lyAdverbPattern, p1, p2, p3, p4, p5, p6, p7, p75, p8,
 				terminologyLearner, viewPattern, countPattern, positionPattern,
 				romanRangePattern, romanPattern, romanNumbers, stopWords,
-				prepositionWords, modifierList, parentTagProvider,
+				prepositionWords, modifierList, advModifiers, parentTagProvider,
 				characterKnowledgeBase/*, organStateKnowledgeBase*/, inflector, compoundPPptn);
 		// TODO Auto-generated constructor stub
 	}

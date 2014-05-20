@@ -16,5 +16,9 @@ public interface IFirstChunkProcessor extends IChunkProcessor {
 	public int skipFirstNChunk();
 
 	public int skipHeading(List<Chunk> chunks);
+	
+	public void setFirstSentence();
+	
+	public void unsetFirstSentence();
 
 }

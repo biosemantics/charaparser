@@ -108,8 +108,8 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			} else if (word.compareTo("throughout") == 0
 					&& sentence.get(i + 1).getContent().matches("(,|or)")) {
 				posedSentence.add(new POSedToken(word, POS.RB));
-			} else if (word.compareTo("at-least") == 0) {
-				posedSentence.add(new POSedToken(word, POS.RB));
+			} else if (word.contains("#")) {
+				posedSentence.add(new POSedToken(word.replace('#','-'), POS.RB));
 			} else if (word.compareTo("plus") == 0
 					|| word.compareTo("and-or") == 0) {
 				posedSentence.add(new POSedToken(word, POS.CC));

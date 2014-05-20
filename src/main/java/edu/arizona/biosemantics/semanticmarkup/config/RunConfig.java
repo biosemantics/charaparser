@@ -20,6 +20,7 @@ import org.w3c.dom.Document;
 
 
 
+
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
@@ -46,6 +47,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputNoLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.PartOfFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupRun;
@@ -146,6 +149,7 @@ public class RunConfig extends BasicConfig {
 	private String runOutDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
 	private String runTemporaryDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
+	private Class<? extends IOntology> ontology = PartOfFile.class;
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTransformer.class;
@@ -183,6 +187,7 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("GlossaryType")).toInstance(glossaryType);
 			bind(IRun.class).to(run);
 			bind(IGlossary.class).to(glossary).in(Singleton.class);
+			bind(IOntology.class).to(ontology).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("PerlDirectory")).toInstance(this.perlDirectory);
 			bind(String.class).annotatedWith(Names.named("WorkspaceDirectory")).toInstance(this.workspaceDirectory);
 			bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(this.runRootDirectory);

@@ -277,7 +277,8 @@ public class BasicConfig extends AbstractModule {
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("CompoundPrepsWordsSet")).toInstance(compoundPrepWordsSet);
 			  String compoundPrepWords = this.getCompoundPreWords();
 			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("CompoundPrepWords")).toInstance(compoundPrepWords);
-			  
+			  Set<String> possessWords = getPossessWords();
+			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("PossessWords")).toInstance(possessWords);	
 			  
 			  Set<String> stopWords = getStopWords();
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("StopWords")).toInstance(stopWords);			  
@@ -313,7 +314,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(String.class).annotatedWith(Names.named("RomanRangePattern")).toInstance("(\\d+)-<?\\b("+roman+")\\b>?");
 			  bind(String.class).annotatedWith(Names.named("RomanPattern")).toInstance("(<(\\S+?)> <?\\{?\\b("+roman+")\\b\\}?>?)");
 			  bind(String.class).annotatedWith(Names.named("ModifierList")).toInstance("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");	
-
+			  bind(String.class).annotatedWith(Names.named("AdvModifiers")).toInstance("at least|at first|at times");	
 		  } catch(IOException e) {
 			  e.printStackTrace();
 		  }
@@ -418,6 +419,11 @@ public class BasicConfig extends AbstractModule {
 	private Set<String> getSetOfVBWords() {
 		String wordString = "";// "overtopping";
 		return this.getWordSet(wordString);
+	}
+	
+	private Set<String> getPossessWords(){
+		String possess = "with|has|have|having|possess|possessing|consist_of";
+		return this.getWordSet(possess);
 	}
 
 	private Set<String> getStopWords() {

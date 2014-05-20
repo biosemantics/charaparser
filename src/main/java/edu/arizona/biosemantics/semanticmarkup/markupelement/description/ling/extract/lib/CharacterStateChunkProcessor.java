@@ -103,7 +103,7 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 				processingContextState.setUnassignedCharacter(state);
 			results.addAll(processingContextState.getLastElements());
 		}else if(state.length()>0) {
-			Character characterElement = this.createCharacterElement(parents, modifiers, state, character, "", processingContextState);
+			Character characterElement = this.createCharacterElement(parents, modifiers, state, character, "", processingContextState, false);
 			if(characterElement!=null)
 				results.add(characterElement);
 		}

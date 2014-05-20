@@ -203,7 +203,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					for(int i=0; i<terminals.size(); i++) {
 						if(organChunk.containsOrEquals(terminals.get(i))) {
 							if(i-1>=0 && (terminals.get(i-1).getTerminalsText().equals("a") || terminals.get(i-1).getTerminalsText().equals("an"))) {
-								this.createCharacterElement(parents, null, "1", "count", "", processingContextState);
+								this.createCharacterElement(parents, null, "1", "count", "", processingContextState, false);
 							}
 							break;
 						}
@@ -219,7 +219,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						//List<Chunk> modifierChunks = characterStateChunk.getChunks(ChunkType.MODIFIER);
 						//modifierChunks.addAll(subjectChunk.getChunks(ChunkType.MODIFIER))
 
-						this.createCharacterElement(parents, modifierChunkList, state.getTerminalsText(), character, "", processingContextState);
+						this.createCharacterElement(parents, modifierChunkList, state.getTerminalsText(), character, "", processingContextState, true);
 
 						//Chunk modifierChunk = new Chunk(ChunkType.UNASSIGNED, modifierChunks);
 						//DescriptionTreatmentElement characterElement = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
@@ -477,8 +477,10 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					}
 				}
 			}
-			//processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
-			processCharacterText(twoParts.get(0), structures, null, processingContextState, processingContext);
+			if(!structures.isEmpty()){
+				//processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
+				processCharacterText(twoParts.get(0), structures, null, processingContextState, processingContext);
+			}
 			// 7-12-02 add cs //process part 1, which applies to all lateststructures, invisible
 			structures = structuresCopy;
 		}
@@ -548,7 +550,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						}else{
 							String[] characterValues = w.split("\\bor\\b|\\band\\b");
 							for(String characterValue : characterValues) 
-								results.add(createCharacterElement(parents, modifiers, characterValue.trim(), tokensCharacter, "", processingContextState)); 
+								results.add(createCharacterElement(parents, modifiers, characterValue.trim(), tokensCharacter, "", processingContextState, false)); 
 							//default type "" = individual vaues
 							modifiers.clear();
 						}
@@ -626,7 +628,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	protected Character createCharacterElement(List<Structure> parents, List<Chunk> modifiers, 
-			String characterValue, String characterName, String char_type, ProcessingContextState processingContextState) {
+			String characterValue, String characterName, String char_type, ProcessingContextState processingContextState, boolean isConstraintModifier) {
 		log(LogLevel.DEBUG, "create character element " + characterName + ": " +  characterValue + " for parent:\n "  + parents);
 		String modifierString = "";
 		if(modifiers != null) {
@@ -655,6 +657,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				String[] values = characterValue.split("-");
 				character.setCharType("range_value");
 				character.setName(characterName);
+				character.setIsConstraintModifier(isConstraintModifier);
 				character.setFrom(values[0]);
 				if(values[1].endsWith("+")) {
 					character.setTo(values[1].substring(0, values[1].length()-1));
@@ -683,6 +686,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				}
 				character.setName(characterName);
 				character.setValue(characterValue);
+				character.setIsConstraintModifier(isConstraintModifier);
 				if(!modifierString.isEmpty())
 					character.setModifier(modifierString);
 			}
@@ -2296,8 +2300,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				Element lastElement = lastElements.getLast();
 				if(lastElement.isCharacter()) {//shell oval in outline
 					for(Element element : lastElements) {
-						if(element.isNamedElement())
-							((NamedElement)element).setName(lastWord);
+						if(element.isNamedElement()){
+							String oldname = ((NamedElement)element).getName();
+							String name = "";
+							if(oldname.contains("atypical")) name = "atypical_";
+							if(oldname.contains("average")) name = "average_";
+							((NamedElement)element).setName(name+lastWord);
+						}
 					}
 					done = true;
 				}else if(lastElement.isStructure()) {//shell in oval outline
@@ -2306,7 +2315,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					//ckstring.replaceFirst(".*?\\]", "").replaceAll("\\w+\\[","").replaceAll(lastword, "").replaceAll("[{}\\]\\[]", "");
 					for(Element element : lastElements) {
 						if(element.isCharacter()) {
-							((Character)element).setName(lastWord);
+							String oldname = ((NamedElement)element).getName();
+							String name = "";
+							if(oldname.contains("atypical")) name = "atypical_";
+							if(oldname.contains("average")) name = "average_";
+							((Character)element).setName(name+lastWord);
 							((Character)element).setValue(characterValue.getTerminalsText());
 						}
 					}

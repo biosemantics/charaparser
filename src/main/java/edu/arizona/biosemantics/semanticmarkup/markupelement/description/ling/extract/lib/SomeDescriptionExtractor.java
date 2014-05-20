@@ -18,7 +18,10 @@ import java.util.Set;
 
 
 
+
+
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
@@ -33,6 +36,7 @@ import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.NonOntologyBasedStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.StructureNameStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
@@ -56,6 +60,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	private ICharacterKnowledgeBase characterKnowledgeBase;
 	private IGlossary glossary;
 	
+	private Set<String> possess;
+	private IOntology ontology;
+	
 	//necessary to obtain unique IDs in files with multiple descriptions
 	//return from a call to extract to some higher entity and inject back if ever required to
 	//e.g. have a stateless DescriptionExtractor to e.g. run multiple descriptionextractors alongside
@@ -71,12 +78,15 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	public SomeDescriptionExtractor(IGlossary glossary, 
 			IChunkProcessorProvider chunkProcessorProvider, 
 			IFirstChunkProcessor firstChunkProcessor, 
-			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase) {
+			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase,
+			@Named("PossessWords") Set<String> possessWords, IOntology ontology) {
 		this.glossary = glossary;
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
 		this.characterKnowledgeBase = characterKnowledgeBase;
+		this.possess = possessWords;
+		this.ontology = ontology;
 	}
 
 	
@@ -128,7 +138,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			xml.addAll(s.getRelations());
 		}
 		
-		new StructureNameStandardizer().standardize((LinkedList<Element>) xml);
+		new StructureNameStandardizer(ontology, characterKnowledgeBase, possess).standardize(description);
 		
 	}
 	
@@ -148,10 +158,13 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
 		int skip = 0;
-		if(sentIndex==0 && sentence.contains(":")){
+		if(/*sentIndex==0 &&*/ sentence.contains(":")){
 			//identify and skip headings
 			skip = firstChunkProcessor.skipHeading(chunks);
 		}
+		if(sentIndex==0) firstChunkProcessor.setFirstSentence();
+		else firstChunkProcessor.unsetFirstSentence();
+		
 		//addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext)); //process subject
 		addToResult(result, firstChunkProcessor.process(chunks.get(skip), processingContext)); //process subject?
 		log(LogLevel.DEBUG, "result:\n" + result);

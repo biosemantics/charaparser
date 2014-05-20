@@ -89,7 +89,7 @@ public abstract class Normalizer implements INormalizer {
 	//private Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
 	private Pattern vaguenumberptn1 = Pattern.compile("(.*?)\\b((?:equal[ _-]to|(?:more|greater|less|fewer) than|or| )+) ([\\d.]+)(.*)");
 	private Pattern vaguenumberptn2 = Pattern.compile("(.*?)0(-[\\d.]+)( \\w+ )(?:and|but) ([\\d.]+)\\+(.*)");
-	private String[] modifierphrases = new String[] {"at first"};
+	private String[] modifierphrases;
 	private HashSet<String> modifiertokens = new HashSet<String>();
 	private Pattern compoundPPptn;    
 	private ParentTagProvider parentTagProvider;
@@ -148,6 +148,7 @@ public abstract class Normalizer implements INormalizer {
 			@Named("StopWords") Set<String> stopWords, 
 			@Named("PrepositionWords") String prepositionWords,
 			@Named("ModifierList") String modifierList, 
+			@Named("AdvModifiers") String advModifiers,
 			@Named("ParentTagProvider")ParentTagProvider parentTagProvider,
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			/*IOrganStateKnowledgeBase organStateKnowledgeBase, */
@@ -186,7 +187,7 @@ public abstract class Normalizer implements INormalizer {
 		this.inflector = inflector;
 		this.parentTagProvider = parentTagProvider;
 		this.compoundPPptn = Pattern.compile("(.*?)\\b("+compoundPPptn+")\\b(.*)");	
-		
+		this.modifierphrases = advModifiers.split("\\s*\\|\\s*");		
 	}
 	
 	public void init(){
@@ -210,7 +211,7 @@ public abstract class Normalizer implements INormalizer {
 				terminologyLearner.getAdjectiveReplacementsForNouns();
 		
 		for(String mp: this.modifierphrases){
-			this.modifiertokens.add(mp.replaceAll("\\s+", "-"));
+			this.modifiertokens.add(mp.replaceAll("\\s+", "#"));
 		}
 		
 		cln = CharacterListNormalizer.getInstance(characterKnowledgeBase/*, organStateKnowledgeBase*/);
@@ -221,13 +222,16 @@ public abstract class Normalizer implements INormalizer {
 	}
 	@Override
 	public String normalize(String str, String tag, String modifier, String source) {	
+		for(String modifierphrase: modifierphrases){
+			str = str.replaceAll(modifierphrase, modifierphrase.replace(" ", "#"));
+		}
 		str = dataSetSpecificNormalization(str);
 		str = str.replaceFirst("^—\\s*", ""); //remove the leading "—" in a sentence
 		str = str.replaceAll("_", "-");//??
 
 		//sent = sent.replace("taxonname_", ""); //clean up the mark from the Transformer step
 		str = str.replaceAll("\\bshades of\\b", "shades_of");
-		str = str.replaceAll("\\bat least\\b", "at_least");
+		//str = str.replaceAll("\\bat least\\b", "at_least");
 		str = str.replaceAll("[ _-]+\\s*shaped", "-shaped");
 		str = str.replaceAll("(?<=\\s)[µμ]\\s*m\\b", "um");
 		str = str.replaceAll("\\bdiam\\s*\\.(?=\\s?[,a-z])", "diam");
@@ -372,9 +376,7 @@ public abstract class Normalizer implements INormalizer {
 				strnum = area[1]; //like str but with numerical expression normalized
 			}
 
-			for(String modifierphrase: modifierphrases){
-				str = str.replaceAll(modifierphrase, modifierphrase.replace(" ", "_"));
-			}
+
 			//str = handleBrackets(str);
 
 			//str = Utilities.handleBrackets(str);

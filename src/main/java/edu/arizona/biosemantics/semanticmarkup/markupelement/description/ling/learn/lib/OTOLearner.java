@@ -394,6 +394,11 @@ public class OTOLearner implements ILearner {
 			if(word.startsWith("[") && word.endsWith("]")) continue;
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
 			//getMostLikelyPOS does stemming, while isVerb does not.
+			if(word.compareTo("times")==0){//TODO: move to configuration
+				noneqwords.add(word);
+				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");				
+				continue;
+			}
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 				|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){

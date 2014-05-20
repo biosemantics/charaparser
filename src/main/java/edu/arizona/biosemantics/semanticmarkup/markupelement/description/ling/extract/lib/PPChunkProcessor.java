@@ -78,7 +78,6 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			chunkListIterator.previous();
 		}
 		
-		
 		if(!chunk.containsChunkType(ChunkType.ORGAN) && (nextChunk==null || nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE))) {
 			processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
 			return result;
@@ -86,6 +85,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
+		
 		
 		//r[{} {} p[of] o[.....]]
 		List<Chunk> modifier = new ArrayList<Chunk>();// chunk.getChunks(ChunkType.MODIFIER);
@@ -115,6 +115,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		if(lastElement != null) {
 			lastIsStructure = lastElement.isStructure();
 			lastIsCharacter = lastElement.isCharacter();
+			
 			
 			if(lastIsStructure && isNumerical(object)) {
 				List<Chunk> modifiers = new ArrayList<Chunk>();
@@ -181,8 +182,13 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					result.addAll(linkedResult); 
 					//result.addAll(structures);
 				} else {
-					if(lastIsStructure)
-						((Structure)lastElement).appendConstraint(chunk.getTerminalsText());
+					if(lastIsStructure){
+						//context on cutting first white
+						ArrayList<Chunk> mods = new ArrayList<Chunk> ();
+						mods.add(chunk);
+						processingContextState.setUnassignedModifiers(mods);
+						//((Structure)lastElement).appendConstraint(chunk.getTerminalsText()); //should not be a constraint on the structure, should be a modifier for a character
+					}
 					else if(lastIsCharacter) {
 						List<Structure> objectStructures = 
 								this.extractStructuresFromObject(object, processingContext, processingContextState); 

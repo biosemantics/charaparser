@@ -305,10 +305,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		}
 
 
-		//term category
-		String sql = "SELECT term, category from proibio_m33_term_category";
-		PreparedStatement preparedStatement;
+	
+		
 		try {
+			//term category
+			String sql = "SELECT term, category from proibio_m33_term_category";
+			PreparedStatement preparedStatement;
 			preparedStatement = connection.prepareStatement(sql);
 
 			preparedStatement.execute();
@@ -316,11 +318,26 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			while(resultSet.next()) {
 				glossary.addEntry(resultSet.getString("term").replaceAll("_", "-"),resultSet.getString("category"));				
 			}
+			
+			//syns
+			String sql = "SELECT term, category, synonym from proibio_m33_syns";
+			PreparedStatement preparedStatement;
+			preparedStatement = connection.prepareStatement(sql);
+
+			preparedStatement.execute();
+			ResultSet resultSet = preparedStatement.getResultSet();
+			while(resultSet.next()) {
+				glossary.addSynonym(resultSet.getString("synonym").replaceAll("_", "-"),resultSet.getString("category"), resultSet.getString("term"));				
+			}
+			
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}*/
+	
+	
 	/**
 	 * notes: OTO Webservice should probably only return one term category list.
 	 * No need to return an extra term synonym list just because it might make sense to have them separate in a relational database schema
