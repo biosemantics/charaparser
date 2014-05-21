@@ -196,7 +196,7 @@ public class Character extends NamedElement implements Cloneable {
 	}
 
 	public void setTo(String to) {
-		if(to.matches(".*?\\d-")) to = to.replaceFirst("-+$", "").trim(); //8- => 8
+		if(to!=null && to.matches(".*?\\d-")) to = to.replaceFirst("-+$", "").trim(); //8- => 8
 		this.to = to;
 	}
 
@@ -277,7 +277,7 @@ public class Character extends NamedElement implements Cloneable {
 	}
 
 	public void setFrom(String from) {
-		if(from.matches(".*?\\d-")) from = from.replaceFirst("-+$", "").trim(); //8- => 8
+		if(from!=null && from.matches(".*?\\d-")) from = from.replaceFirst("-+$", "").trim(); //8- => 8 //should be moved to calling functions.
 		this.from = from;
 	}
 
