@@ -129,7 +129,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
  */
 public class BasicConfig extends AbstractModule {
 	
-	  private String version = "0.1.5";
+	  private String version = "0.1.6";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
 	  @Override 
@@ -314,7 +314,19 @@ public class BasicConfig extends AbstractModule {
 			  bind(String.class).annotatedWith(Names.named("RomanRangePattern")).toInstance("(\\d+)-<?\\b("+roman+")\\b>?");
 			  bind(String.class).annotatedWith(Names.named("RomanPattern")).toInstance("(<(\\S+?)> <?\\{?\\b("+roman+")\\b\\}?>?)");
 			  bind(String.class).annotatedWith(Names.named("ModifierList")).toInstance("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");	
+//<<<<<<< HEAD
 			  bind(String.class).annotatedWith(Names.named("AdvModifiers")).toInstance("at least|at first|at times");	
+/*=======
+			  
+			  Set<String> simplePrepWordsSet = this.getSimplePrepsSet();
+			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("SimplePrepsWordsSet")).toInstance(simplePrepWordsSet);
+			  String simplePrepWords = this.getSimplePreWords();
+			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("SimplePrepWords")).toInstance(simplePrepWords);
+			  Set<String> compoundPrepWordsSet = this.getCompoundPrepsSet();
+			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("CompoundPrepsWordsSet")).toInstance(compoundPrepWordsSet);
+			  String compoundPrepWords = this.getCompoundPreWords();
+			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("CompoundPrepWords")).toInstance(compoundPrepWords);
+//>>>>>>> refs/heads/master*/
 		  } catch(IOException e) {
 			  e.printStackTrace();
 		  }
@@ -335,7 +347,6 @@ public class BasicConfig extends AbstractModule {
 		String units= "(?:pm|cm|mm|dm|m|meters|meter|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter)";
 		//String units = "[pμµucmd]?m?";
 		//micron => µm
-		
 		return units;
 	}
 
@@ -359,7 +370,6 @@ public class BasicConfig extends AbstractModule {
 	private Set<String> getClusterWords() {
 		//String clusterWords = "cluster|clusters|involucre|involucres|rosette|rosettes|pair|pairs|series|ornament|ornamentation|array|arrays";
 		String clusterWords="clusters|cluster|involucres|involucre|rosettes|rosette|pairs|pair|series|ornamentation|ornament|arrays|array|turfs|turf|multiples"; //pl before singular.
-
 		return this.getWordSet(clusterWords);
 	}
 
@@ -437,6 +447,7 @@ public class BasicConfig extends AbstractModule {
 				+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
 		return this.getWordSet(stopWordsString);
 	}
+
 
 	//keep this up to date with the glossary.
 	private HashMap<String, String> getEqualCharacters() {

@@ -139,7 +139,7 @@ public class CLIMain {
 		}
 			
 		try {
-		    CommandLine commandLine = parser.parse(options, args );
+		    CommandLine commandLine = parser.parse( options, args );
 		    if(commandLine.hasOption("h")) {
 		    	HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "what is this?", options );
@@ -250,3 +250,4 @@ public class CLIMain {
 		return null;
 	}
 }
+

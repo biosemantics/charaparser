@@ -228,3 +228,4 @@ public class ETCLearnMain extends CLIMain {
 		config.setMarkupCreator(MarkupChain.class);		
 	}
 }
+

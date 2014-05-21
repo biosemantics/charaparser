@@ -9,3 +9,4 @@ public interface IDistributionTransformer {
 	void transform(List<DistributionsFile> distributionsFiles);
 
 }
+

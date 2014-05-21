@@ -62,3 +62,4 @@ public class Processor extends Element {
 		resource.removeElementRecursively(element);
 	}
 }
+

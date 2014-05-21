@@ -60,8 +60,7 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 	protected List<Element> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
-		Chunk nextChunk = chunkListIterator.next();
-		chunkListIterator.previous();
+
 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
@@ -72,9 +71,13 @@ public class MyModifierChunkProcessor extends AbstractChunkProcessor {
 					&& !processingContextState.isUnassignedChunkAfterLastElements()) {
 				if(lastElement.isRelation()) 
 					((Relation)lastElement).appendModifier(chunk.getTerminalsText());
-				else if((!nextChunk.isOfChunkType(ChunkType.PP) && 
+				else if(chunkListIterator.hasNext()) {
+					Chunk nextChunk = chunkListIterator.next();
+					chunkListIterator.previous();
+					if((!nextChunk.isOfChunkType(ChunkType.PP) && 
 									lastElement.isCharacter())) {
-					((Character)lastElement).appendModifier(chunk.getTerminalsText());
+						((Character)lastElement).appendModifier(chunk.getTerminalsText());
+					}
 				}
 				
 			} else 

@@ -48,6 +48,11 @@ public class ProcessingContext {
 		this.relationId = relationId;
 	}
 	
+	/*public ProcessingContext(int structureId, int relationId) {
+		this.structureId = structureId;
+		this.relationId = relationId;
+	}*/
+	
 	/**
 	 * @return the current processingContextState
 	 */

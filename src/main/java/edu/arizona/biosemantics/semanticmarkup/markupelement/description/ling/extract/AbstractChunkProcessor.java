@@ -716,6 +716,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected List<Element> linkObjects(List<Structure> subjectStructures, List<Chunk> modifiers, 
 			Chunk preposition, Chunk object, boolean lastIsStruct, boolean lastIsChara, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation, Element lastE) {
+
 		LinkedList<Element> result = new LinkedList<Element>();
 		LinkedList<Element> lastElements = processingContextState.getLastElements(); //lastElements changed after extractStructuresFromObject
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
@@ -732,6 +733,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if(baseCountWords.contains(object.getTerminalsText())) {
 			base = "each";
 		}
+
 		if(lastIsChara && !lastElements.isEmpty() && !processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 			//Character lastElement = (Character)lastElements.getLast();
 			Character lastElement = (Character) lastE;
@@ -748,9 +750,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			for(Chunk modifier : modifiers) {
 				modifierString += modifier.getTerminalsText() + " ";
 			}
-
 			lastElement.setConstraint(modifierString + preposition.getTerminalsText() + " " + listStructureNames(object));
 			lastElement.setConstraintId(listStructureIds(structures));
+
 			/*if(!modifiers.isEmpty()) {
 				for(Chunk modifier : modifiers) {
 					lastElement.appendAttribute("modifier", modifier.getTerminalsText());
@@ -792,7 +794,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				} else if(!foundChunk)
 					beforePPChunk = chunk;
 			}
-			if(beforePPChunk.getChunkType().equals(ChunkType.PP)) {
+			if(beforePPChunk != null && beforePPChunk.getChunkType().equals(ChunkType.PP)) {
 				return "part_of";
 			}
 			if(afterPPChunk!=null && (afterPPChunk.isOfChunkType(ChunkType.END_OF_LINE) || afterPPChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE) ||

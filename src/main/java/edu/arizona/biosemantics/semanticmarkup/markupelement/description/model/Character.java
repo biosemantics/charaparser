@@ -40,7 +40,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
  *
  */
 @XmlRootElement
-public class Character extends NamedElement {
+public class Character extends NamedElement implements Cloneable {
 
 	@XmlPath("@" + CharacterAttribute.value)
 	private String value;
@@ -322,5 +322,36 @@ public class Character extends NamedElement {
 	@Override
 	public void removeElementRecursively(Element element) {
 		return;
+	}
+	
+	@Override
+	public Character clone() {
+		Character character = new Character();
+		character.setCharType(this.getCharType());
+		character.setConstraint(this.getConstraint());
+		character.setConstraintId(this.getConstraintId());
+		character.setFrom(this.getFrom());
+		character.setFromInclusive(this.getFromInclusive());
+		character.setFromUnit(this.getFromUnit());
+		character.setGeographicalConstraint(this.getGeographicalConstraint());
+		character.setInBrackets(this.getInBrackets());
+		character.setModifier(this.getModifier());
+		character.setName(this.getName());
+		character.setNotes(this.getNotes());
+		character.setOntologyId(this.getOntologyId());
+		character.setOrganConstraint(this.getOrganConstraint());
+		character.setOtherConstraint(this.getOtherConstraint());
+		character.setParallelismConstraint(this.getParallelismConstraint());
+		character.setProvenance(this.getProvenance());
+		character.setStructure(this.getStructure());
+		character.setTaxonConstraint(this.getTaxonConstraint());
+		character.setTo(this.getTo());
+		character.setToInclusive(this.getToInclusive());
+		character.setToUnit(this.getToUnit());
+		character.setType(this.getType());
+		character.setUnit(this.getUnit());
+		character.setUpperRestricted(this.getUpperRestricted());
+		character.setValue(this.getValue());
+		return character;
 	}
 }

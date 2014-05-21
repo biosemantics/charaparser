@@ -387,5 +387,4 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-
 </xs:schema>

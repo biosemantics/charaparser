@@ -126,7 +126,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		}
 		this.structureId = processingContext.getStructureId();
 		this.relationId = processingContext.getRelationId();
-		
+	
 		System.out.println("====1====");
 		for(Statement statement: description.getStatements()){
 		System.out.println(statement.toString());
@@ -140,6 +140,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		new StructureNameStandardizer(ontology, characterKnowledgeBase, possess).standardize(description);
 		
+
 	}
 	
 

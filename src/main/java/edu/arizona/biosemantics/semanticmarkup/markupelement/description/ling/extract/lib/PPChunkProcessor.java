@@ -77,7 +77,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			nextChunk = chunkListIterator.next();
 			chunkListIterator.previous();
 		}
-		
+
 		if(!chunk.containsChunkType(ChunkType.ORGAN) && (nextChunk==null || nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE))) {
 			processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
 			return result;
@@ -209,7 +209,8 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				processingContext.getCurrentState().setLastElements(newLastElements);
 				for(Chunk afterOrganChunk : afterOrganChunks) {
 					IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(afterOrganChunk.getChunkType());
-					result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
+					if(chunkProcessor != null) 
+						result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
 				}
 				processingContext.getCurrentState().setLastElements(lastElementsBackup);
 			}

@@ -7,3 +7,4 @@ public interface IElevationReader {
 	ElevationsFileList read(String inputDirectory) throws Exception;
 
 }
+

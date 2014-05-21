@@ -12,8 +12,6 @@ import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.CharaParser;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFileList;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor;
@@ -82,7 +80,7 @@ public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 			}
 			
 			log(LogLevel.DEBUG, "writing result using " + writer.getClass());
-			writer.write(descriptionsFileList, outputDirectory); //descriptionsFileList.getDescriptionsFiles().get(0).getDescriptions().get(0).getStatements().get(2)
+			writer.write(descriptionsFileList, outputDirectory);
 			
 			return new DescriptionMarkupResult(descriptionsFileList);
 		} catch(Exception e) {
@@ -96,3 +94,4 @@ public class DescriptionMarkupCreator implements IDescriptionMarkupCreator {
 		return this.getClass().toString();
 	}
 }
+

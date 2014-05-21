@@ -32,3 +32,4 @@
   <xs:element name="discussion" type="xs:string"/>
   <xs:element name="other_info" type="xs:string"/>
 </xs:schema>
+
