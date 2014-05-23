@@ -29,8 +29,8 @@ public class ChunkerChain {
 	 * @return the resulting chunkCollector
 	 */
 	public ChunkCollector chunk(AbstractParseTree parseTree, String subjectTag, Description description, AbstractDescriptionsFile descriptionsFile, 
-			String source, String sentenceString) {
-		ChunkCollector chunkCollector = new ChunkCollector(parseTree, subjectTag, description, descriptionsFile, source, sentenceString);
+			String source, String sentenceString, String originalSent) {
+		ChunkCollector chunkCollector = new ChunkCollector(parseTree, subjectTag, description, descriptionsFile, source, sentenceString, originalSent);
 		for(IChunker chunker : chunkers) {//TODO Hong: chunkers hold the list of predefined chunk types
 			log(LogLevel.DEBUG, "Chunker " + chunker.getName() + " is run ...");
 			chunkCollector.resetHasChanged();

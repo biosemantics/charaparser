@@ -72,6 +72,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 			log(LogLevel.DEBUG, "Process sentence: " + sentenceString);
 			
 			String[] sentenceArray = sentenceString.split("##");
+			String originalSent = sentenceArray[3];
 			sentenceString = sentenceArray[2];
 			String subjectTag = sentenceArray[1]; //TODO: Hong stop using subjectTag and modifier
 			String modifier = sentenceArray[0];
@@ -102,7 +103,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 			//parseTree.prettyPrint();
 			
 			// chunk sentence using chunkerChain
-			this.result = chunkerChain.chunk(parseTree, subjectTag, description, descriptionsFile, source, sentenceString);
+			this.result = chunkerChain.chunk(parseTree, subjectTag, description, descriptionsFile, source, sentenceString, originalSent);
 			log(LogLevel.DEBUG, "Sentence processing finished.\n");
 		} catch (Exception e) {
 			log(LogLevel.ERROR, "Problem chunking sentencence: " + sentenceString + "\nSentence is contained in file: " + source, e);

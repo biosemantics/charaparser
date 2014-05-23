@@ -320,17 +320,14 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			}
 			
 			//syns
-			String sql = "SELECT term, category, synonym from proibio_m33_syns";
-			PreparedStatement preparedStatement;
+			sql = "SELECT term, category, synonym from proibio_m33_syns";
 			preparedStatement = connection.prepareStatement(sql);
 
 			preparedStatement.execute();
-			ResultSet resultSet = preparedStatement.getResultSet();
+			resultSet = preparedStatement.getResultSet();
 			while(resultSet.next()) {
 				glossary.addSynonym(resultSet.getString("synonym").replaceAll("_", "-"),resultSet.getString("category"), resultSet.getString("term"));				
 			}
-			
-			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

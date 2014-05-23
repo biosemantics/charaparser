@@ -33,7 +33,7 @@ public class PartOfFile implements IOntology {
 		ObjectInputStream in = new ObjectInputStream(new FileInputStream(
 				file));
 		// Deserialize the object
-		if(partof !=null)
+		if(partof ==null)
 			partof = (Hashtable<String, ArrayList<String>>) in.readObject();  
 		}catch(Exception e){
 			e.printStackTrace();
@@ -47,7 +47,7 @@ public class PartOfFile implements IOntology {
 	 */
 	@Override
 	public boolean isPart(String part, String parent) {
-		
+		if(parent.compareTo("whole_organism")==0) parent = "organism";
 		return partof.get(part)==null? false : partof.get(part).contains(parent);
 	}
 

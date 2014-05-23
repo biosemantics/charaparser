@@ -73,7 +73,9 @@ public class WhereChunker extends AbstractChunker {
 		IParseTree parseTree = chunkCollector.getParseTree();
 		List<IParseTree> whenTerminals = parseTree.getTerminalsOfText("where");
 		for(IParseTree whenTerminal : whenTerminals) {	
-			
+			if(!chunkCollector.getChunk((AbstractParseTree)whenTerminal).getChunkType().equals(ChunkType.UNASSIGNED)){
+				continue; //e..g where is part of a THAT chunk.
+			}
 			List<AbstractParseTree> terminals = collectTerminals(whenTerminal, chunkCollector);
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 			for(AbstractParseTree terminal : terminals) {

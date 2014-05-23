@@ -38,43 +38,48 @@ public class StructureNameStandardizer {
 	}
 	
 	public void standardize(Description description){
-		
+		log(LogLevel.DEBUG, description.getText());
 		String parentorgan=null;
 		for(Statement s: description.getStatements()){
-			if(s.getText().matches("^[A-Z].*")){ //record parentorgan
-				Structure structure = s.getStructures().get(0); //get 1st structure
-				if(structure!=null){
-					//attach parent organ to other structures in this statement, return parentorgan used.
-					parentorgan = attachPOto(description, s, structure, "");	
+			if(s.getText()!=null && s.getText().matches("^[A-Z].*")){ //record parentorgan
+				if(s.getStructures().size()>0){
+					Structure structure = s.getStructures().get(0); //get 1st structure
+					if(structure!=null){
+						//attach parent organ to other structures in this statement, return parentorgan used.
+						parentorgan = attachPOto(description, s, structure, "");	
+					}
 				}
 			}else{//sentences not starting with a capitalized structure names => those structures after ';'
 				if(parentorgan!=null){
-					Structure struct = s.getStructures().get(0); //get 1st structure
-					if(struct!=null){
-						//apply parentorgan + localpo(struct) to other structures in the statement
-						attachPOto(description, s, struct, parentorgan);
+					if(s.getStructures().size()>0){
+						Structure struct = s.getStructures().get(0); //get 1st structure
+						if(struct!=null){
+							//apply parentorgan + localpo(struct) to other structures in the statement
+							attachPOto(description, s, struct, parentorgan);
 
-						//then apply parentorgan to the first structure 
-						String pocp = parentorgan;
-						String pchain = getStructureChain(description,struct, 3).replace(" of ", ",").trim(); //part of organ of organ
-						if(pchain.length()>0){ //use explicit part_of 
-							log(LogLevel.DEBUG, "===>[pchain] use '"+pchain+"' as constraint to '"+struct.getName()+"'");
-							struct.appendConstraint(formatParentOrgan(pchain)); 
-						}else{
-							String part = struct.getName();								
-							parentorgan = hasPart(parentorgan, part);
-							if(parentorgan.length()>0){
-								log(LogLevel.DEBUG,"===>[part of 2] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-								struct.appendConstraint(formatParentOrgan(parentorgan));
+							//then apply parentorgan to the first structure 
+							String pocp = parentorgan;
+							String pchain = getStructureChain(description,struct, 0).replace(" of ", ",").trim(); //part of organ of organ
+							if(pchain.length()>0){ //use explicit part_of 
+								//log(LogLevel.DEBUG, "===>[pchain] use '"+pchain+"' as constraint to '"+struct.getName()+"'");
+								struct.appendConstraint(formatParentOrgan(pchain)); 
 							}else{
-								//quite strong an assumption that the organ of the first clause is the parent organ of all following clauses.
-								//If this is not true, or the part_of hashtable is complete, comment out this part.
-								log(LogLevel.DEBUG,"===>[default] use '"+pocp+"' as constraint to '"+struct.getName()+"'");
-								struct.appendConstraint(formatParentOrgan(pocp));
-								parentorgan = pocp;
+								String part = struct.getName();								
+								parentorgan = hasPart(parentorgan, part);
+								if(parentorgan.length()>0){
+									//log(LogLevel.DEBUG,"===>[part of 2] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+									struct.appendConstraint(formatParentOrgan(parentorgan));
+									System.out.println();
+								}else{
+									//quite strong an assumption that the organ of the first clause is the parent organ of all following clauses.
+									//If this is not true, or the part_of hashtable is complete, comment out this part.
+									//log(LogLevel.DEBUG,"===>[default] use '"+pocp+"' as constraint to '"+struct.getName()+"'");
+									struct.appendConstraint(formatParentOrgan(pocp));
+									parentorgan = pocp;
+								}
 							}
-						}
 
+						}
 					}
 				}
 			}
@@ -96,10 +101,10 @@ public class StructureNameStandardizer {
 		String nonspecificparts = "apex|appendix|area|band|base|belt|body|cell|center|centre|component|content|crack|edge|element|end|face|layer|line|margin|part|pore|portion|protuberance|remnant|section|"
 				+ "side|stratum|surface|tip|wall|zone";
 		if(partorgans.matches("\\b("+nonspecificparts+")\\b.*")){
-			parentorgans = parentorgans.replaceAll("("+nonspecificparts+"|,)+", ""); //"base of surface, stem" does not make sense.
+			parentorgans.replaceFirst("(\\b("+nonspecificparts+")\\b,? ?)+", ""); //"base of surface, stem" does not make sense.
 			return parentorgans;
 		}
-		String[] parts = partorgans.replaceFirst(".*(\\b"+nonspecificparts+"\\b| |,)+", "").replaceFirst("^\\s*,", "").trim().split("\\s*,\\s*");
+		String[] parts = partorgans.replaceFirst(".*(\\b("+nonspecificparts+")\\b,? ?)+", "").replaceFirst("^\\s*,", "").trim().split("\\s*,\\s*");
 		String[] parents = parentorgans.split("\\s*,\\s*");
 		
 		int cut = -1;
@@ -160,7 +165,8 @@ public class StructureNameStandardizer {
 		for(Statement s: statements){
 			List<Relation> relations = s.getRelations();
 			for(Relation relation: relations){
-				if(relation.getFromStructure().equals(from) && relation.getName().matches("part_of")){
+				if(relation.getFromStructure()!=null && relation.getFromStructure().equals(from) 
+						&& relation.getName().matches("part_of") && relation.getToStructure()!=null){
 					Structure to = relation.getToStructure();
 					chain += to.getName()+ ",";
 					if(depth < 3){
@@ -188,7 +194,7 @@ public class StructureNameStandardizer {
 		String porgan = null;
 		if(parentstruct!=null){
 			//check for 'part_of' relation on parentstructure
-			String pchain = getStructureChain(description, parentstruct, 3).replace(" of ", ",").trim(); //part of organ of organ
+			String pchain = getStructureChain(description, parentstruct, 0).replace(" of ", ",").trim(); //part of organ of organ
 			if(pchain.length()>0){ //use explicit part_of 
 				parentofparentstructure = pchain;
 			}
@@ -208,23 +214,23 @@ public class StructureNameStandardizer {
 			//attach parentorgan to other 'structures' in this statement
 			List<Structure> structures = statement.getStructures(); //could include 'relation' too
 			for(Structure struct: structures){ 
-				if(struct.getName().compareTo("structure")==0){
+				//if(struct.getName().compareTo("structure")==0){
 					if(!struct.equals(parentstruct)){//skip the 1st structure which is parentstruct
 						String partpchain = getStructureChain(description, struct, 3).replace(" of ", ",").trim(); //part of organ of organ
 						String part = struct.getName()+","+partpchain;								
 						//
 						parentorgan = hasPart(porgan, part);
 						if(parentorgan.length()>0){
-							log(LogLevel.DEBUG,"===>[part of1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+							//log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
 							((Structure)struct).appendConstraint(formatParentOrgan(parentorgan));
 						}else if(possess(parentstruct, struct, description)){
 							parentorgan = formatParentOrgan(porgan);
-							log(LogLevel.DEBUG,"===>[possess] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+							//log(LogLevel.DEBUG,"===>[possess] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
 							((Structure)struct).appendConstraint(formatParentOrgan(parentorgan));
 						}
 
 					}
-				}
+				//}
 			}
 		}
 		return parentorgan !=null? parentorgan : porgan.replaceAll("(^,|,$)", "");
@@ -247,7 +253,7 @@ public class StructureNameStandardizer {
 			for(Relation r: relations){
 				if(possess.contains(r.getName()) && 
 						(r.getNegation()==null || r.getNegation().compareTo("false")==0) &&
-						(r.getFromStructure().equals(parentstruct) && r.getToStructure().equals(struct))){
+						(r.getFromStructure()!=null && r.getFromStructure().equals(parentstruct) && r.getToStructure()!=null && r.getToStructure().equals(struct))){
 					return true;
 				}
 						
@@ -264,9 +270,9 @@ public class StructureNameStandardizer {
 				Iterator<Character> it = characters.iterator();
 				while(it.hasNext()){
 					Character c = it.next();
-					if(c.getConstraintId().compareTo(idp)==0 &&
-							s.getId().compareTo(idw)==0 &&
-							c.getConstraint().matches("^(with\\b|consist[_ -]of\\b).*")){
+					if(c.getConstraintId()!=null && c.getConstraintId().compareTo(idp)==0 &&
+							s.getId().compareTo(idw)==0 && c.getConstraint()!=null &&
+							possess.contains(c.getConstraint())){
 						return true;
 
 					}

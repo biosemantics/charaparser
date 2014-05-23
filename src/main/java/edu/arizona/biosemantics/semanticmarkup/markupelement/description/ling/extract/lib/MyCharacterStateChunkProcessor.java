@@ -113,30 +113,40 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			return result;
 		}
 	
-		
-		String newState = equalCharacters.get(characterStateString);
-		if(newState != null && !this.eqcharaExempt){
-			characterStateString = newState;
-			if(characterKnowledgeBase.containsCharacterState(characterStateString)){
-				character = characterKnowledgeBase.getCharacterName(characterStateString).getCategories();
-				if(character==null){
-					character = "character";//characterStateString; //characterStateString not in glossary, should be added
-					log(LogLevel.INFO, characterStateString +" should be added to the glossary as a 'character' ");
-				}				
+		boolean characterrole = false;  
+		Element lastElement = null;
+		if(processingContextState.getLastElements().size() > 0){
+			lastElement = processingContextState.getLastElements().getLast();
+			if(lastElement.isCharacter()){ //last element is a character, it is possible for the
+				characterrole = true;      //state plays the character role. if the last element is a structure, then we need a state here.
+			}
+		}
+		if(characterrole && !this.eqcharaExempt){
+			String newState = equalCharacters.get(characterStateString);
+			if(newState != null){
+				characterStateString = newState;
+				if(characterKnowledgeBase.containsCharacterState(characterStateString)){
+					character = characterKnowledgeBase.getCharacterName(characterStateString).getCategories();
+					if(character==null){
+						character = "character";//characterStateString; //characterStateString not in glossary, should be added
+						log(LogLevel.INFO, characterStateString +" should be added to the glossary as a 'character' ");
+					}
+				}
 			}
 		}
 		if(character.equals("character") && modifiers.size() == 0 &&!this.eqcharaExempt) {
 			//high relief: character=relief, reset the character of "high" to "relief"
 			boolean dealt = false;
-			if(processingContextState.getLastElements().size() > 0){
-				Element lastElement = processingContextState.getLastElements().getLast();
-				if(lastElement.isCharacter()) 
+			//if(processingContextState.getLastElements().size() > 0){
+			//	Element lastElement = processingContextState.getLastElements().getLast();
+				if(lastElement.isCharacter()){ 
 					for(Element element : processingContextState.getLastElements()) 
 						if(element.isCharacter()){
 							((Character)element).setName(characterStateString);
 							dealt = true;
 						}
-			}
+				}
+			//}
 			if(!dealt)
 				processingContextState.setUnassignedCharacter(characterStateString);
 			results.addAll(processingContextState.getLastElements());

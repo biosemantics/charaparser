@@ -1,12 +1,16 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.transform.lib;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+
+
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
@@ -17,8 +21,8 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
  */
 public class SomeInflector implements IInflector {
 
-	private Hashtable<String, String> singulars = new Hashtable<String, String>();
-	private Hashtable<String, String> plurals = new Hashtable<String, String>();
+	private HashMap<String, String> singulars = new HashMap<String, String>();
+	private HashMap<String, String> plurals = new HashMap<String, String>();
 	private Pattern lyAdverbPattern = Pattern.compile("[a-z]{3,}ly");
 	private Pattern p1 = Pattern.compile("(.*?[^aeiou])ies$");
 	private Pattern p2 = Pattern.compile("(.*?)i$");
@@ -39,145 +43,10 @@ public class SomeInflector implements IInflector {
 	 * @param posKnowledgeBase
 	 */
 	@Inject
-	public SomeInflector(IPOSKnowledgeBase posKnowledgeBase) { //Hong TODO load in singular-plural mapping from those learned from perl step
+	public SomeInflector(IPOSKnowledgeBase posKnowledgeBase, @Named("Singulars") HashMap<String, String> singulars, @Named("Plurals") HashMap<String, String> plurals) { //Hong TODO load in singular-plural mapping from those learned from perl step
 		this.posKnowledgeBase = posKnowledgeBase;
-		singulars.put("rachis", "rachis");
-	    //special cases
-		singulars.put("anthocyathia", "anthocyathus");
-		singulars.put("axis", "axis");
-		singulars.put("axes", "axis");
-		singulars.put("bases", "base");
-		singulars.put("brit", "brit");
-		singulars.put("boss", "boss");
-		singulars.put("buttress", "buttress");
-		singulars.put("callus", "callus");
-		singulars.put("catenabe", "catena");
-		singulars.put("coremata", "corematis");
-		singulars.put("corpora", "corpus");
-		singulars.put("crepides", "crepis");
-		singulars.put("ephyre", "ephyra");
-		singulars.put("ephyrae", "ephyra");
-		singulars.put("ephyrula", "ephyra");
-		singulars.put("falces", "falx");
-		singulars.put("forceps", "forceps");
-		singulars.put("fusules", "fusula");
-		singulars.put("frons", "frons");
-		singulars.put("fry", "fry");
-		singulars.put("genera", "genus");
-		singulars.put("glochines", "glochis");
-		singulars.put("grooves", "groove");
-		singulars.put("incudes", "incus");
-		singulars.put("interstices", "interstice");
-		singulars.put("irises", "iris");
-		singulars.put("irides", "iris");
-		singulars.put("latera", "latus");
-		singulars.put("lens", "len");
-		singulars.put("malli", "malleus");
-		singulars.put("media", "media");
-		singulars.put("midnerves", "midnerve");
-		singulars.put("mollusks", "mollusca");
-		singulars.put("molluscs", "mollusca");
-		singulars.put("parasides", "parapsis");
-		singulars.put("perradia", "perradius");
-		singulars.put("pharynges", "pharynx");
-		singulars.put("pharynxes", "pharynx");
-		singulars.put("proboscises", "proboscis");
-		singulars.put("process", "process");
-		singulars.put("ptyxis", "ptyxis");
-		singulars.put("proglottides", "proglottis");
-		singulars.put("pseudocoelomata", "pseudocoelomates");
-		singulars.put("series", "series");
-		singulars.put("setules", "setula");
-		singulars.put("species", "species");
-		singulars.put("sperm", "sperm");
-		singulars.put("teeth", "tooth");
-		singulars.put("themselves", "themselves");
-		singulars.put("valves", "valve");
-
-		plurals.put("anthocyathus","anthocyathia");
-		plurals.put("axis", "axes");
-		plurals.put("base", "bases");
-		plurals.put("brit", "brit");
-		plurals.put("boss", "bosses");
-		plurals.put("buttress", "buttresses");
-		plurals.put("callus", "calluses");
-		plurals.put("catena","catenabe");
-		plurals.put("corematis","coremata");
-		plurals.put("corpus","corpora");
-		plurals.put("crepis","crepides");
-		plurals.put("ephyra","ephyre");
-		plurals.put("ephyra","ephyrae");
-		plurals.put("ephyra","ephyrula");
-		plurals.put("falx","falces");
-		plurals.put("forceps", "forceps");
-		plurals.put("frons", "fronses");
-		plurals.put("fry", "fry");
-		plurals.put("fusula","fusules");
-		plurals.put("genus","genera");
-		plurals.put("glochis","glochines");
-		plurals.put("groove", "grooves");
-		plurals.put("incus","incudes");
-		plurals.put("interstice", "interstices");
-		plurals.put("iris","irises");
-		plurals.put("iris","irides");
-		plurals.put("latus","latera");
-		plurals.put("len", "lens");
-		plurals.put("malleus","malli");
-		plurals.put("media", "media");
-		plurals.put("midnerve", "midnerves");
-		plurals.put("mollusca","mollusks");
-		plurals.put("mollusca","molluscs");
-		plurals.put("parapsis","parasides");
-		plurals.put("perradius","perradia");
-		plurals.put("pharynx","pharynges");
-		plurals.put("pharynx","pharynxes");
-		plurals.put("proboscis","proboscises");
-		plurals.put("proglottis","proglottides");
-		plurals.put("process", "processes");
-		plurals.put("pseudocoelomates","pseudocoelomata");
-		plurals.put("ptyxis", "ptyxis");
-		plurals.put("series", "series");
-		plurals.put("setula","setules");
-		plurals.put("species", "species");
-		plurals.put("sperm", "sperm");
-		plurals.put("tooth", "teeth");
-		plurals.put("valve", "valves");
-		/*singulars.put("axis", "axis");
-		singulars.put("axes", "axis");
-		singulars.put("bases", "base");
-		singulars.put("boss", "boss");
-		singulars.put("buttress", "buttress");
-		singulars.put("callus", "callus");
-		singulars.put("frons", "frons");
-		singulars.put("grooves", "groove");
-		singulars.put("interstices", "interstice");
-		singulars.put("lens", "len");
-		singulars.put("media", "media");
-		singulars.put("midnerves", "midnerve");
-		singulars.put("process", "process");
-		singulars.put("series", "series");
-		singulars.put("species", "species");
-		singulars.put("teeth", "tooth");
-		singulars.put("valves", "valve");
-		singulars.put("apices", "apex");
-		
-		plurals.put("axis", "axes");
-		plurals.put("base", "bases");
-		plurals.put("groove", "grooves");
-		plurals.put("interstice", "interstices");
-		plurals.put("len", "lens");
-		plurals.put("media", "media");
-		plurals.put("midnerve", "midnerves");
-		plurals.put("tooth", "teeth");
-		plurals.put("valve", "valves");
-		plurals.put("boss", "bosses");
-		plurals.put("buttress", "buttresses");
-		plurals.put("callus", "calluses");
-		plurals.put("frons", "fronses");
-		plurals.put("process", "processes");
-		plurals.put("series", "series");
-		plurals.put("species", "species");
-		plurals.put("apex", "apices");*/
+		this.singulars = singulars;
+		this.plurals = plurals;
 	}
 	
 	@Override

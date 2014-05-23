@@ -27,6 +27,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 
 	private boolean hasChanged = false;
 	private String sentence;
+	private String originalSent;
 	private AbstractParseTree parseTree;
 	private String subjectTag; //tag field in the sentence table
 	private AbstractDescriptionsFile descriptionsFile;
@@ -42,7 +43,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 * @param sentenceString
 	 */
 	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Description description, AbstractDescriptionsFile descriptionsFile, 
-			String source, String sentenceString) {
+			String source, String sentenceString, String originalSent) {
 		this.parseTree = parseTree;
 		/*log(LogLevel.DEBUG, "root before " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));
 		for(IParseTree terminal : parseTree.getTerminals()) {
@@ -53,6 +54,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		this.description = description;
 		this.source = source;
 		this.sentence = sentenceString;
+		this.originalSent = originalSent;
 	}
 	
 	/*@Override
@@ -88,6 +90,13 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 */
 	public String getSentence() {
 		return this.sentence;
+	}
+	
+	/**
+	 * @return the original sentence
+	 */
+	public String getOriginalSentence() {
+		return this.originalSent;
 	}
 	
 	/**

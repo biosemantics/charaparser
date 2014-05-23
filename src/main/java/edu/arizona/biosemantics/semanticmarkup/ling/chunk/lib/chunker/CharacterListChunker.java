@@ -185,7 +185,7 @@ public class CharacterListChunker extends AbstractChunker {
 	private void normalizeCharacterList(AbstractParseTree terminal, ChunkCollector chunkCollector) {
 		String terminalsText = terminal.getTerminalsText();
 		
-		//terminalsText = terminalsText.replaceAll("ttt", "");
+		terminalsText = terminalsText.replaceAll("(^\\{|\\}$)", "");
 		String[] characterListParts = terminalsText.split("~list~");
 		String character = characterListParts[0];
 		if(character.equals("colorationttt"))

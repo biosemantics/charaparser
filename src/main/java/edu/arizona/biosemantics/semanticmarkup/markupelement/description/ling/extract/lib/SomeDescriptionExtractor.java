@@ -58,10 +58,11 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 	private IChunkProcessorProvider chunkProcessorProvider;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
+	private StructureNameStandardizer structureNameStandardizer;
 	private IGlossary glossary;
 	
-	private Set<String> possess;
-	private IOntology ontology;
+	//private Set<String> possess;
+	//private IOntology ontology;
 	
 	//necessary to obtain unique IDs in files with multiple descriptions
 	//return from a call to extract to some higher entity and inject back if ever required to
@@ -85,8 +86,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
 		this.characterKnowledgeBase = characterKnowledgeBase;
-		this.possess = possessWords;
-		this.ontology = ontology;
+		this.structureNameStandardizer = new StructureNameStandardizer(ontology, characterKnowledgeBase, possessWords);
 	}
 
 	
@@ -105,7 +105,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			//processingContext.setChunkCollectors(chunkCollectors);
 			processingContext.reset();
 			Statement statement = new Statement();
-			statement.setText(chunkCollector.getSentence());
+			//statement.setText(chunkCollector.getSentence());
+			statement.setText(chunkCollector.getOriginalSentence());
 			statement.setId("d" + descriptionNumber + "_s" + i);
 			description.addStatement(statement);
 			
@@ -138,7 +139,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			xml.addAll(s.getRelations());
 		}
 		
-		new StructureNameStandardizer(ontology, characterKnowledgeBase, possess).standardize(description);
+		structureNameStandardizer.standardize(description);
+		//log(LogLevel.DEBUG, "StructureNameStandardizer:"+description.getText());
 		
 
 	}
@@ -159,7 +161,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
 		int skip = 0;
-		if(/*sentIndex==0 &&*/ sentence.contains(":")){
+		if(sentIndex==0 && sentence.contains(":")){
 			//identify and skip headings
 			skip = firstChunkProcessor.skipHeading(chunks);
 		}

@@ -286,9 +286,23 @@ public class OTOLearner implements ILearner {
 		upload.setUser(etcUser);
 		upload.setSource(sourceOfDescriptions);
 
-		upload.setPossibleStructures(getStructures());
-		upload.setPossibleCharacters(getCharacters());
-		upload.setPossibleOtherTerms(getOtherTerms());
+		List<Term> terms = getStructures();
+		//for(Term t: terms){
+		//	System.out.println(t.getTerm());
+		//}
+		upload.setPossibleStructures(terms);
+		
+		terms = getCharacters();
+		//for(Term t: terms){
+		//	System.out.println(t.getTerm());
+		//}
+		upload.setPossibleCharacters(terms);
+		
+		terms = getOtherTerms();
+		//for(Term t: terms){
+		//	System.out.println(t.getTerm());
+		//}
+		upload.setPossibleOtherTerms(terms);
 		upload.setSentences(getSentences());
 		upload.setGlossaryType(glossaryType);
 		

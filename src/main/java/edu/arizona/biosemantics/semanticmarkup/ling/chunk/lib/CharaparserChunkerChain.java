@@ -91,10 +91,10 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(organRecoverChunker);
 		this.add(orChunker);
 		this.add(andChunker);
-		//hong moved 3 clause chunkers here
-		this.add(thatChunker);
+		//hong moved 3 clause chunkers here, where/when before that
 	    this.add(whereChunker);
 		this.add(whenChunker);
+		this.add(thatChunker);
 		this.add(cleanupChunker);
 		
 	}

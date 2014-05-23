@@ -154,8 +154,8 @@ public abstract class Normalizer implements INormalizer {
 			/*IOrganStateKnowledgeBase organStateKnowledgeBase, */
 			IInflector inflector, 
 			@Named("CompoundPrepWords")String compoundPPptn) {
-		this.units = units;
-		this.areapattern = Pattern.compile("(.*?)([\\d\\.()+-]+ ?"+units+"?\\s*[x×]\\S*\\s*[\\d\\.()+-]+ "+units+"\\s*[x×]?(\\S*\\s*[\\d\\.()+-]+ "+units+")?)(.*)");
+		this.units = units; 
+		this.areapattern = Pattern.compile("(.*?)([²½¼\\d\\.()+-]+ ?"+units+"?\\s*[x×]\\S*\\s*[²½¼\\d\\.()+-]+ "+units+"\\s*[x×]?(\\S*\\s*[²½¼\\d\\.()+-]+ "+units+")?)(.*)");
 		this.numberPattern = numberPattern;
 		this.glossary = glossary;
 		this.singulars = singulars;
@@ -369,9 +369,9 @@ public abstract class Normalizer implements INormalizer {
 				}
 			}
 			
-			if(str.indexOf("×")>0 || str.matches(".*?\\d\\s*\\b?("+units+")?\\b?\\s*x\\s*\\d.*")){
-				containsArea = true;
-				String[] area = normalizeArea(str);
+			if(str.indexOf("×")>0 || str.matches(".*?[\\d)²½¼]\\s*\\b?("+units+")?\\b?\\s*x\\s*[(\\d²½¼].*")){ 
+				containsArea = true; //½ x
+				String[] area = normalizeArea(str); //here × and x are standardized to ×. 
 				str = area[0]; //with complete info
 				strnum = area[1]; //like str but with numerical expression normalized
 			}
@@ -936,6 +936,7 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("(- )+", "- ");// 2 - - 4 => 2 - 4
 		if(sent.contains("×")) sent = sent.replaceAll("(?<="+units+")\\s*\\.\\s*(?=×)", " "); //4 cm.x 6cm => 4 cm x 6cm
 		sent = sent.replaceAll("(?<=\\d)\\s*/\\s*(?=\\d)", "/");
+		sent = sent.replaceAll("(?<=\\d)\\s+(?=[²½¼])", ""); //6 ½ => 6½
 		sent = sent.replaceAll("(?<=\\d)\\s+(?=\\d)", "-"); //bhl: two numbers connected by a space
 		sent = sent.replaceAll("\\btwice\\b", "2 times");
 		sent = sent.replaceAll("\\bthrice\\b", "3 times");
@@ -944,6 +945,7 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("n\\s*=", "n=");
 		sent = sent.replaceAll("x\\s*=", "x=");
 		sent = sent.replaceAll("q\\s*=", "q=");
+		
 
 		//sent = sent.replaceAll("[–—-]", "-").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\[", " [ ").replaceAll("\\]", " ] ").replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").replaceAll("\\s+", " ").trim();
 		sent = sent.replaceAll("[~–—-]", "-").replaceAll("°", " ° ").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\s+", " ").trim();

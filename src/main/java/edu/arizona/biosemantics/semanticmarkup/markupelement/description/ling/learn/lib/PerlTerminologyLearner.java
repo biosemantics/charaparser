@@ -415,7 +415,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)[μµ]\\s+m\\b", "um");
 						            text = text.replaceAll("&#176;", "°");
 						text = text.replaceAll("\\bca\\s*\\.", "ca");
-						text = rs.getString("modifier")+"##"+tag+"##"+text;
+						text = rs.getString("modifier")+"##"+tag+"##"+text+"##"+osent;
 						
 						Description description = fileTreatments.get(treatmentId);
 						if(!sentences.containsKey(description))

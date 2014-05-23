@@ -118,6 +118,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.Learner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.OTOLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.StructureNameStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 
 /**
@@ -197,6 +198,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(IChunker.class).annotatedWith(Names.named("ChromosomeChunker")).to(ChromosomeChunker.class).in(Singleton.class);
 			  
 			  bind(IDescriptionExtractor.class).to(SomeDescriptionExtractor.class).in(Singleton.class);
+			  //bind(StructureNameStandardizer.class).to(StructureNameStandardizer.class).in(Singleton.class);
 			  bind(IFirstChunkProcessor.class).to(SomeFirstChunkProcessor.class).in(Singleton.class);
 			  bind(ILastChunkProcessor.class).to(EosEolChunkProcessor.class).in(Singleton.class);
 			  bind(IChunkProcessorProvider.class).to(ChunkProcessorProvider.class).in(Singleton.class);
@@ -452,6 +454,7 @@ public class BasicConfig extends AbstractModule {
 	//keep this up to date with the glossary.
 	private HashMap<String, String> getEqualCharacters() {
 		HashMap<String, String> equalCharacters = new HashMap<String, String>();
+		//these can be states ("leaves long") or be indications of a character ("2cm long" => length = 2cm)
 		equalCharacters.put("wide", "width");
 		equalCharacters.put("long", "length");
 		equalCharacters.put("broad", "width");
@@ -504,6 +507,7 @@ public class BasicConfig extends AbstractModule {
 		singulars.put("perradia", "perradius");
 		singulars.put("pharynges", "pharynx");
 		singulars.put("pharynxes", "pharynx");
+		singulars.put("pileipellis", "pileipellis");
 		singulars.put("proboscises", "proboscis");
 		singulars.put("process", "process");
 		singulars.put("ptyxis", "ptyxis");
@@ -575,6 +579,7 @@ public class BasicConfig extends AbstractModule {
 		plurals.put("perradius","perradia");
 		plurals.put("pharynx","pharynges");
 		plurals.put("pharynx","pharynxes");
+		plurals.put("pileipellis","pileipellis");		
 		plurals.put("proboscis","proboscises");
 		plurals.put("proglottis","proglottides");
 		plurals.put("process", "processes");

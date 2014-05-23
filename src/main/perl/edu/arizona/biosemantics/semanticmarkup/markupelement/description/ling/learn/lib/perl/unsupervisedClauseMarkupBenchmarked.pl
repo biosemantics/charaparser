@@ -4151,15 +4151,75 @@ sub singular{
  #print "in: $p\n";
  return "" if $p!~/\w/;
  my $s;
- if($p eq "valves"){ return "valve"};
- if($p eq "media"){ return "media"};
- if($p eq "species"){return "species"};
- if($p eq "axes"){return "axis"};
- if($p eq "calyces"){return "calyx"};
- if($p eq "frons"){return "frons"};
- if($p eq "grooves") {return "groove"};
- if($p eq "nerves") {return "nerve"};
- 
+ if($p eq "valves"){ return "valve"}
+ elsif($p eq "media"){ return "media"}
+ elsif($p eq "species"){return "species"}
+ elsif($p eq "axes"){return "axis"}
+ elsif($p eq "calyces"){return "calyx"}
+ elsif($p eq "frons"){return "frons"}
+ elsif($p eq "grooves") {return "groove"}
+ elsif($p eq "nerves") {return "nerve"}
+ elsif($p eq "valves"){ return "valve"}
+ elsif($p eq "media"){ return "media"}
+ elsif($p eq "species"){return "species"}
+ elsif($p eq "axes"){return "axis"}
+ elsif($p eq "calyces"){return "calyx"}
+ elsif($p eq "frons"){return "frons"}
+ elsif($p eq "grooves") {return "groove"}
+ elsif($p eq "nerves") {return "nerve"}
+elsif($p eq "rachis"){return  "rachis"}
+elsif($p eq "anthocyathia"){return  "anthocyathus"}
+elsif($p eq "axis"){return  "axis"}
+elsif($p eq "axes"){return  "axis"}
+elsif($p eq "bases"){return  "base"}
+elsif($p eq "brit"){return  "brit"}
+elsif($p eq "boss"){return  "boss"}
+elsif($p eq "buttress"){return  "buttress"}
+elsif($p eq "callus"){return  "callus"}
+elsif($p eq "catenabe"){return  "catena"}
+elsif($p eq "coremata"){return  "corematis"}
+elsif($p eq "corpora"){return  "corpus"}
+elsif($p eq "crepides"){return  "crepis"}
+elsif($p eq "ephyre"){return  "ephyra"}
+elsif($p eq "ephyrae"){return  "ephyra"}
+elsif($p eq "ephyrula"){return  "ephyra"}
+elsif($p eq "falces"){return  "falx"}
+elsif($p eq "forceps"){return  "forceps"}
+elsif($p eq "fusules"){return  "fusula"}
+elsif($p eq "frons"){return  "frons"}
+elsif($p eq "fry"){return  "fry"}
+elsif($p eq "genera"){return  "genus"}
+elsif($p eq "glochines"){return  "glochis"}
+elsif($p eq "grooves"){return  "groove"}
+elsif($p eq "incudes"){return  "incus"}
+elsif($p eq "interstices"){return  "interstice"}
+elsif($p eq "irises"){return  "iris"}
+elsif($p eq "irides"){return  "iris"}
+elsif($p eq "latera"){return  "latus"}
+elsif($p eq "lens"){return  "len"}
+elsif($p eq "malli"){return  "malleus"}
+elsif($p eq "media"){return  "media"}
+elsif($p eq "midnerves"){return  "midnerve"}
+elsif($p eq "mollusks"){return  "mollusca"}
+elsif($p eq "molluscs"){return  "mollusca"}
+elsif($p eq "parasides"){return  "parapsis"}
+elsif($p eq "perradia"){return  "perradius"}
+elsif($p eq "pharynges"){return  "pharynx"}
+elsif($p eq "pharynxes"){return  "pharynx"}
+elsif($p eq "pileipellis"){return  "pileipellis"}
+elsif($p eq "proboscises"){return  "proboscis"}
+elsif($p eq "process"){return  "process"}
+elsif($p eq "ptyxis"){return  "ptyxis"}
+elsif($p eq "proglottides"){return  "proglottis"}
+elsif($p eq "pseudocoelomata"){return  "pseudocoelomates"}
+elsif($p eq "series"){return  "series"}
+elsif($p eq "setules"){return  "setula"}
+elsif($p eq "species"){return  "species"}
+elsif($p eq "sperm"){return  "sperm"}
+elsif($p eq "teeth"){return  "tooth"}
+elsif($p eq "themselves"){return  "themselves"}
+elsif($p eq "valves"){return  "valve"}
+			
  if(getnumber($p) eq "p"){
     if($p =~ /(.*?[^aeiou])ies$/){
       $s = $1.'y';
@@ -6026,7 +6086,7 @@ while(defined ($file=readdir(IN))){
   		s#{[^{}]*?[a-zA-Z][^{}]*?}# #g; #remove {.a.}
 
     	#s#([^\d])\s*-\s*([^\d])#\1_\2#g;         #hyphened words: - =>_ to avoid space padding in the next step
-		s#([^/])[-]+\s*([a-z])#\1_\2#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+, exclude +/- hairy 
+		s#([^/])[-]+\s*([a-z])#$1_$2#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+, exclude +/- hairy 
 		s#(\W)# \1 #g;                            #add space around nonword char
     	#s#& (\w{1,5}) ;#&\1;#g;
     	s#\s+# #g;                                #multiple spaces => 1 space

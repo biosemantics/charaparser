@@ -79,6 +79,9 @@ public class WhenChunker extends AbstractChunker {
 		List<IParseTree> whenTerminals = parseTree.getTerminalsOfText("when");
 		for(IParseTree whenTerminal : whenTerminals) {	
 			
+			if(!chunkCollector.getChunk((AbstractParseTree)whenTerminal).getChunkType().equals(ChunkType.UNASSIGNED)){
+				continue; //e..g when is part of a THAT chunk.
+			}
 			List<AbstractParseTree> terminals = collectTerminals(whenTerminal, chunkCollector);
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 			for(AbstractParseTree terminal : terminals) {
