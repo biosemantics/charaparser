@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
+
+
 
 
 
@@ -87,7 +90,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationWriter;
-
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.lib.JDOMEcologyReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.lib.JDOMEcologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.IEcologyMarkupCreator;
@@ -131,6 +133,7 @@ public class RunConfig extends BasicConfig {
 	private List<InputStream> descriptionReaderBindingsList = createIOXMLBindingsList();
 	private List<InputStream> descriptionWriterBindingsList = createIOXMLBindingsList();
  	private String inputDirectory = "input";
+ 	private String ontologyFile = "ontopartof.bin";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
 	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplantOutputTreatment.xsd";
 	private Class<? extends IHabitatReader> habitatReader = JDOMHabitatReader.class;
@@ -153,8 +156,9 @@ public class RunConfig extends BasicConfig {
 	private String runRootDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix;
 	private String runOutDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
 	private String runTemporaryDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
+	private String runOntologyDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "onto";
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
-	private Class<? extends IOntology> ontology = PartOfFile.class;
+
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator = DescriptionMarkupCreator.class;
 	private Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTransformer.class;
@@ -195,12 +199,13 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("GlossaryType")).toInstance(glossaryType);
 			bind(IRun.class).to(run);
 			bind(IGlossary.class).to(glossary).in(Singleton.class);
-			bind(IOntology.class).to(ontology).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("PerlDirectory")).toInstance(this.perlDirectory);
 			bind(String.class).annotatedWith(Names.named("WorkspaceDirectory")).toInstance(this.workspaceDirectory);
 			bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(this.runRootDirectory);
 			bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(this.runOutDirectory);
 			bind(String.class).annotatedWith(Names.named("Run_TemporaryDirectory")).toInstance(this.runTemporaryDirectory);
+			bind(String.class).annotatedWith(Names.named("Run_OntologyDirectory")).toInstance(this.runOntologyDirectory);
+			bind(String.class).annotatedWith(Names.named("OntologyFile")).toInstance(this.ontologyFile);
 
 			bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator).in(Singleton.class);
 			bind(IDescriptionMarkupCreator.class).to(descriptionMarkupCreator).in(Singleton.class);

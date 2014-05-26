@@ -20,6 +20,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -40,6 +41,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.NonOntologyBasedStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.StructureNameStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.OntologyFactory;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
@@ -80,13 +82,17 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			IChunkProcessorProvider chunkProcessorProvider, 
 			IFirstChunkProcessor firstChunkProcessor, 
 			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase,
-			@Named("PossessWords") Set<String> possessWords, IOntology ontology) {
+			@Named("PossessWords") Set<String> possessWords, OntologyFactory ontologyFactory
+			, @Named("Run_OntologyDirectory") String ontologyDirectory, @Named("OntologyFile") String ontologyFile) {
 		this.glossary = glossary;
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
 		this.characterKnowledgeBase = characterKnowledgeBase;
-		this.structureNameStandardizer = new StructureNameStandardizer(ontology, characterKnowledgeBase, possessWords);
+		OntologyFactory of = new OntologyFactory(ontologyDirectory);
+		IOntology ontology = of.createOntology(ontologyFile);
+		if(ontology!=null)
+			this.structureNameStandardizer = new StructureNameStandardizer(ontology, characterKnowledgeBase, possessWords);
 	}
 
 	
@@ -139,15 +145,12 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			xml.addAll(s.getRelations());
 		}
 		
-		structureNameStandardizer.standardize(description);
+		if(structureNameStandardizer!=null)
+			structureNameStandardizer.standardize(description);
 		//log(LogLevel.DEBUG, "StructureNameStandardizer:"+description.getText());
 		
 
 	}
-	
-
-
-
 
 	private List<Element> getDescriptiveElements(ProcessingContext processingContext, String sentence, int sentIndex) {
 		List<Element> result = new LinkedList<Element>();

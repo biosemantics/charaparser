@@ -52,15 +52,12 @@ public class ChromosomeChunker extends AbstractChunker {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		for(int i=0; i<terminals.size()-1; i++) {
 			AbstractParseTree terminal = terminals.get(i);
-			AbstractParseTree nextTerminal = terminals.get(i+1);
 			
-			if(terminal.getTerminalsText().matches("\\d{0,1}[xn]=") && 
-					nextTerminal.getTerminalsText().matches("\\d+")) {
+			if(terminal.getTerminalsText().matches("\\d{0,1}[xn]=.*")) {
 				//chromosome count 2n=, FNA specific
 				Chunk chromosomeChunk = new Chunk(ChunkType.CHROM);
 				LinkedHashSet<Chunk> chromosomeChunkChildren = new LinkedHashSet<Chunk>();
 				chromosomeChunkChildren.add(terminal);
-				chromosomeChunkChildren.add(nextTerminal);
 				chromosomeChunk.setChunks(chromosomeChunkChildren);
 				chunkCollector.addChunk(chromosomeChunk);
 			}

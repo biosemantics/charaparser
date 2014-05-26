@@ -17,24 +17,32 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
 
 /**
  * @author Hong Cui
- *
+ * a serialized Hashtable<String, ArrayList<String>> holding part_of relations (part => parent)
+
  */
 
 public class PartOfFile implements IOntology {
 
 	private static Hashtable<String, ArrayList<String>> partof = null;
 	private File file;
+	private boolean success = false;
 	
 	@Inject
-	public PartOfFile(@Named("Run_OutDirectory") String runOutDirectory){
+	public PartOfFile(String directory, String partOfBin){
 		try{
-		file = new File("workspace/fungi/", "ontopartof.bin");
+		file = new File(directory, "ontopartof.bin");
+		if(!file.exists()){
+			log(LogLevel.DEBUG, "File containing part_of relations not found. Disabled related functions");
+			return;
+		}
 		//read in serialized partof hashtable
 		ObjectInputStream in = new ObjectInputStream(new FileInputStream(
 				file));
 		// Deserialize the object
-		if(partof ==null)
+		if(partof ==null){
 			partof = (Hashtable<String, ArrayList<String>>) in.readObject();  
+			success = true;
+		}
 		}catch(Exception e){
 			e.printStackTrace();
 			log(LogLevel.ERROR, e.toString());
@@ -42,6 +50,9 @@ public class PartOfFile implements IOntology {
 
 	}
 	
+	public boolean objectCreated(){
+		return success;
+	}
 	/* (non-Javadoc)
 	 * @see edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology#isPart(java.lang.String, java.lang.String)
 	 */

@@ -116,7 +116,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		processingContext.addState(chunk, processingContextState);
 		ProcessingContextState newState = (ProcessingContextState)processingContextState.clone();
 		processingContext.setCurrentState(newState);
-		return processChunk(chunk, processingContext);
+		List<? extends Element> results = processChunk(chunk, processingContext);
+		if(results.size()==0 && chunk!=null && chunk.getTerminalsText().compareTo(".")!=0)  processingContext.setLastChunkYieldElement(false); //ignore unprocessed '.', "15 cm. long"
+		else processingContext.setLastChunkYieldElement(true);
+		return results;
+		
 	}
 
 	/**
@@ -1356,7 +1360,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?"+units+"))");
 
 		matcher2 = pattern16.matcher(numberexp);
-		String unit = "";
 		while ( matcher2.find()){
 			iscount = true;
 			i=matcher2.start();
@@ -1604,7 +1607,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			matcher1.reset();*/
 		}
 		matcher2.reset();   
-		if(iscount && text.length()>0){
+		if(iscount && text.length()>0 && text.matches(".*?\\w.*")){//puncts can not be units
 			//add units to all counts. //Eh, why counts need to have units? TODO Hong
 			for(Character character: innertagstate){
 				//Iterator<Element> it = innertagstate.iterator();

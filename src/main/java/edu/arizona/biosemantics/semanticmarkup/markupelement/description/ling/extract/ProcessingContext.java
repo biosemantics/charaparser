@@ -42,6 +42,7 @@ public class ProcessingContext {
 	private HashMap<Integer, Set<Relation>> relationsFromStructure = new HashMap<Integer, Set<Relation>>();
 	private HashMap<Integer, Set<Relation>> relationsToStructure = new HashMap<Integer, Set<Relation>>();
 	private List<Structure> lastSubjects = new LinkedList<Structure>();
+	private boolean lastChunkYieldElement;
 	
 	public ProcessingContext(int structureId, int relationId) {
 		this.structureId = structureId;
@@ -307,5 +308,13 @@ public class ProcessingContext {
 	
 	public List<Structure> getLastSubjects() {
 		return this.lastSubjects;
+	}
+
+	public void setLastChunkYieldElement(boolean b) {
+		this.lastChunkYieldElement = b;	
+	}
+	
+	public boolean getLastChunkYieldElement() {
+		return this.lastChunkYieldElement;
 	}
 }

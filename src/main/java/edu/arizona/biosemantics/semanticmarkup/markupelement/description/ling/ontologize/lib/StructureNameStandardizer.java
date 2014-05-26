@@ -70,13 +70,13 @@ public class StructureNameStandardizer {
 									//log(LogLevel.DEBUG,"===>[part of 2] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
 									struct.appendConstraint(formatParentOrgan(parentorgan));
 									System.out.println();
-								}else{
+								}/*else{
 									//quite strong an assumption that the organ of the first clause is the parent organ of all following clauses.
 									//If this is not true, or the part_of hashtable is complete, comment out this part.
 									//log(LogLevel.DEBUG,"===>[default] use '"+pocp+"' as constraint to '"+struct.getName()+"'");
 									struct.appendConstraint(formatParentOrgan(pocp));
 									parentorgan = pocp;
-								}
+								}*/
 							}
 
 						}

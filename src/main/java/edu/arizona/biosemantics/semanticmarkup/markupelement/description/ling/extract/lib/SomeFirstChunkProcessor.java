@@ -173,7 +173,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		}*/
 		
 		//starts with a organ (subject)
-		if(firstChunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN)) {
+		if(firstChunk.isOfChunkType(ChunkType.MAIN_SUBJECT_ORGAN) || firstChunk.isOfChunkType(ChunkType.NON_SUBJECT_ORGAN) || firstChunk.isOfChunkType(ChunkType.NP_LIST)) {
 			result.addAll(establishSubject(firstChunk, processingContext, processingContextState));
 			skipFirstNChunk = 1;
 		} else if(firstChunk.isOfChunkType(ChunkType.PP)) {
@@ -206,7 +206,8 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 				processingContextState.getUnassignedConstraints().add(firstChunk);
 			}
 			List<Structure> subjects = reestablishSubject(processingContext, processingContextState);
-			if(firstChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && subjects.size()==0 && this.firstSentence){
+			//if(firstChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && subjects.size()==0 && this.firstSentence){
+			if(subjects.size()==0 && this.firstSentence){
 				//use whole_organism
 				Structure structureElement = new Structure();
 				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);

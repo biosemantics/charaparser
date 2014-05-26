@@ -24,7 +24,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
- * OrganRecoverChunker attempts to mark modified non-subject organs as a chunk
+ * OrganRecoverChunker attempts to mark main subject organs and modified non-subject organs as a chunk
  * @author rodenhausen
  */
 public class OrganRecoverChunker extends AbstractChunker {
@@ -195,14 +195,13 @@ public class OrganRecoverChunker extends AbstractChunker {
 				collectedTerminals.addAll(collectedTerminalsList);
 				lastCollectedModifier = false;
 			} else {
-				if(lookBehindTerminal.getTerminalsText().equals(",") && !lastCollectedModifier) 
+				if(lookBehindTerminal.getTerminalsText().equals(",") && !lastCollectedModifier) //need to use "," and not CommaChunk as the PuncuationChunker is not run yet at this time.
 					subjectOrgan = true;
 				break;
 			}
 		}
 		
 		//reformat this.chunkedtokens
-		
 		Chunk chunk;
 		Chunk collectedTerminalsChunk = new Chunk(ChunkType.UNASSIGNED, collectedTerminals);
 		if(subjectOrgan || i == firstOrgan - collectedTerminalsChunk.getTerminals().size() || i == -1) { 

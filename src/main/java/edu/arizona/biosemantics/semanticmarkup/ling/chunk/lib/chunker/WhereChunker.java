@@ -66,16 +66,20 @@ public class WhereChunker extends AbstractChunker {
                 (VP (VB be)
                   (ADJP (JJ elongate))))))))       
                   
-    
+
+            WHEREChunker and WHENChunker are quite similar. When making changes in either class, consider including the changes in the other. 
+
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		IParseTree parseTree = chunkCollector.getParseTree();
 		List<IParseTree> whenTerminals = parseTree.getTerminalsOfText("where");
 		for(IParseTree whenTerminal : whenTerminals) {	
-			if(!chunkCollector.getChunk((AbstractParseTree)whenTerminal).getChunkType().equals(ChunkType.UNASSIGNED)){
-				continue; //e..g where is part of a THAT chunk.
-			}
+			List<AbstractParseTree> ts = whenTerminal.getChildren();
+			if(!chunkCollector.getChunk((AbstractParseTree)whenTerminal).getChunkType().equals(ChunkType.UNASSIGNED) || //e..g when is part of a THAT chunk.
+					(ts.size()>0 && ts.get(ts.size()-1).getTerminalsText().compareTo("where")!=0)	){ //last terminal is not 'when'.
+					continue; 
+				}
 			List<AbstractParseTree> terminals = collectTerminals(whenTerminal, chunkCollector);
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 			for(AbstractParseTree terminal : terminals) {
@@ -177,8 +181,17 @@ public class WhereChunker extends AbstractChunker {
 					terminals.addAll(chunk.getTerminals());
 				}
 			}else if(collect && followOrgan){//cases 1 and 2
-				for(int i = 1; i < terminals.size(); i++) //keep only 'where'
-					terminals.remove(i);
+				/*for(int i = 1; i < terminals.size(); i++) //keep only 'where'
+					terminals.remove(i);*/
+				boolean remove = false;
+				for(int i =0; i<terminals.size(); i++){
+					if(terminals.get(i).getTerminalsText().compareTo("where")==0) {
+						remove = true;
+						continue;
+					}
+					
+					if(remove) terminals.remove(i);
+				}
 				break;
 			}
 			if(!text.equals(",")) previous = chunk;

@@ -114,13 +114,15 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		}
 	
 		boolean characterrole = false;  
+
 		Element lastElement = null;
 		if(processingContextState.getLastElements().size() > 0){
 			lastElement = processingContextState.getLastElements().getLast();
-			if(lastElement.isCharacter()){ //last element is a character, it is possible for the
-				characterrole = true;      //state plays the character role. if the last element is a structure, then we need a state here.
-			}
 		}
+		if(lastElement!=null && lastElement.isCharacter() && processingContext.getLastChunkYieldElement()){ //last element is a character, it is possible for the
+				characterrole = true;      //state plays the character role. if the last element is a structure, then we need a state here.
+		}
+		
 		if(characterrole && !this.eqcharaExempt){
 			String newState = equalCharacters.get(characterStateString);
 			if(newState != null){

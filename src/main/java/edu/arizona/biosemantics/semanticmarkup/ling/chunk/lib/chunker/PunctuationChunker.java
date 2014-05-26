@@ -58,13 +58,13 @@ public class PunctuationChunker extends AbstractChunker {
 				continue;
 			}
 			if(!chunkCollector.isPartOfANonTerminalChunk(terminal)) {
-				if(terminal.getTerminalsText().matches("\\.")) {
-					chunkCollector.addChunk(new Chunk(ChunkType.END_OF_SUBCLAUSE, terminal));
-				}
+				//if(terminal.getTerminalsText().matches("\\.")) {
+				//	chunkCollector.addChunk(new Chunk(ChunkType.END_OF_SUBCLAUSE, terminal));
+				//}
 				if(terminal.getTerminalsText().equals(";") || terminal.getTerminalsText().equals(".") || terminal.getTerminalsText().equals(",")) {
 					if(i==terminals.size()-1) 
 						chunkCollector.addChunk(new Chunk(ChunkType.END_OF_LINE, terminal));
-					else if(lastWasMainSubjectOrgan)
+					else if(lastWasMainSubjectOrgan && (terminal.getTerminalsText().equals(",")||terminal.getTerminalsText().equals(";"))) //'.' in the middle of a sentence is not a period.
 						chunkCollector.addChunk(new Chunk(ChunkType.END_OF_SUBCLAUSE, terminal));
 					else if(terminal.getTerminalsText().equals(","))
 						chunkCollector.addChunk(new Chunk(ChunkType.COMMA, terminal));

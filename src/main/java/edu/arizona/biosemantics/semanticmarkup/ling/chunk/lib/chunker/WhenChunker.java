@@ -71,16 +71,17 @@ public class WhenChunker extends AbstractChunker {
             ))))
         (. .))) 
         
-        
+        WHEREChunker and WHENChunker are quite similar. When making changes in either class, consider including the changes in the other. 
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		IParseTree parseTree = chunkCollector.getParseTree();
 		List<IParseTree> whenTerminals = parseTree.getTerminalsOfText("when");
 		for(IParseTree whenTerminal : whenTerminals) {	
-			
-			if(!chunkCollector.getChunk((AbstractParseTree)whenTerminal).getChunkType().equals(ChunkType.UNASSIGNED)){
-				continue; //e..g when is part of a THAT chunk.
+			List<AbstractParseTree> ts = whenTerminal.getChildren();
+			if(!chunkCollector.getChunk((AbstractParseTree)whenTerminal).getChunkType().equals(ChunkType.UNASSIGNED) || //e..g when is part of a THAT chunk.
+				(ts.size()>0 && ts.get(ts.size()-1).getTerminalsText().compareTo("when")!=0)	){ //last terminal is not 'when'.
+				continue; 
 			}
 			List<AbstractParseTree> terminals = collectTerminals(whenTerminal, chunkCollector);
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
@@ -216,14 +217,19 @@ public class WhenChunker extends AbstractChunker {
 			 //if terminals is of this kind: "when, cut, first, white",  reduce terminals to the first chunk after 'when'
 			//last chunk is a character and there are some chunks between 'when' and the last chunk.
 			if(characters.contains(chunkCollector.getChunk(terminals.get(terminals.size()-1)).getChunkType()) && terminals.size()>2){
-				for(int i =2; i<terminals.size(); i++){
-					terminals.remove(i);
+				boolean remove = false;
+				for(int i =0; i<terminals.size(); i++){
+					if(terminals.get(i).getTerminalsText().compareTo("when")==0) {
+						i++; //keep the first terminal after when. 
+						remove = true;
+						continue;
+					}
+					if(remove) terminals.remove(i);
 				}
 			}			
 		}
 		return terminals;
-		
-		
+
 		/* following text order, collect text for new element "when" until a [\\.:;,] is reached
 		 * List<AbstractParseTree> terminals = new ArrayList<AbstractParseTree>();
 		boolean collect = false;
