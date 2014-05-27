@@ -71,7 +71,7 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(areaChunker);
 		this.add(characterListChunker);
 		this.add(punctuationChunker);
-		this.add(chromosomeChunker);
+		//this.add(chromosomeChunker);
 		this.add(modifierChunker);
 		this.add(organChunker);
 		this.add(stateChunker);
@@ -91,6 +91,8 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(organRecoverChunker);
 		this.add(orChunker);
 		this.add(andChunker);
+		//hong moved chromosomeChunker after organChunker.
+		this.add(chromosomeChunker);
 		//hong moved 3 clause chunkers here, where/when before that
 	    this.add(whereChunker);
 		this.add(whenChunker);

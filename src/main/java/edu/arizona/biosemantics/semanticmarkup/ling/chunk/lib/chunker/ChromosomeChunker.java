@@ -57,9 +57,14 @@ public class ChromosomeChunker extends AbstractChunker {
 				//chromosome count 2n=, FNA specific
 				Chunk chromosomeChunk = new Chunk(ChunkType.CHROM);
 				LinkedHashSet<Chunk> chromosomeChunkChildren = new LinkedHashSet<Chunk>();
-				chromosomeChunkChildren.add(terminal);
-				chromosomeChunk.setChunks(chromosomeChunkChildren);
-				chunkCollector.addChunk(chromosomeChunk);
+				for(; i<terminals.size()-1; i++){
+					terminal = terminals.get(i);
+					if(!chunkCollector.getChunk(terminal).containsChunkType(ChunkType.ORGAN)){ //collect all subsequent terminals until an organ is encountered.
+						chromosomeChunkChildren.add(terminal);
+						chromosomeChunk.setChunks(chromosomeChunkChildren);
+						chunkCollector.addChunk(chromosomeChunk);
+					}
+				}
 			}
 		}
 	}

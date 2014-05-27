@@ -58,7 +58,7 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		String[] parts = chunk.getTerminalsText().split("=");
 		if(parts.length==2) {
-			String value = parts[1].replaceFirst("[.;, ]+\\s*$", "");
+			String value = parts[1].replaceFirst("[.;, ]+\\s*$", "").replaceAll("\\bor\\b", "");
 			//String content = chunk.getTerminalsText().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
 			//Element structure = new Element("chromosome");
 			Structure structure = new Structure();
