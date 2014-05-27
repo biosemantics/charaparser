@@ -1120,7 +1120,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 
 		////////////////////////////////////////////////////////////////////////////////////////////
-		//   size                                                                             /////
+		//   relative size                                                                             /////
 		Pattern pattern14 = Pattern.compile("[±\\d\\[\\]\\–\\-\\./\\s]+[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)");
 		matcher2 = pattern14.matcher(numberexp);
 		toval="";
@@ -2346,6 +2346,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String fromval="";
 		while ( matcher2.find()){
 			String unit = matcher2.group(1);
+			if(unit.matches(".*[2]$")) chara = "area";
+			if(unit.matches(".*[3]$")) chara = "volume";
 			if(plaincharset.charAt(matcher2.start())==' '){
 				i=matcher2.start()+1;
 			}
@@ -2484,6 +2486,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				unit="";
 				if ( matcher3.find()){
 					unit = extract.substring(matcher3.start(), matcher3.end());
+					if(unit.matches(".*[2]$")) chara = "area";
+					if(unit.matches(".*[3]$")) chara = "volume";
 				}
 				extract = matcher3.replaceAll("#");
 				matcher3.reset();
@@ -2516,6 +2520,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				unit="";
 				if ( matcher3.find()){
 					unit = extract.substring(matcher3.start(), matcher3.end());
+					if(unit.matches(".*[2]$")) chara = "area";
+					if(unit.matches(".*[3]$")) chara = "volume";
 				}
 				extract = matcher3.replaceAll("#");
 				matcher3.reset();
