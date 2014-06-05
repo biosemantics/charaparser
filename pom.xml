@@ -297,13 +297,14 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<distributionManagement>
-		<repository>
+		<snapshotRepository>
 			<id>playground</id>
 			<name>playground@SBS</name>
-			<url>http://128.196.105.88:8081/nexus/content/repositories/snapshots/</url>
-		</repository>
+			<url>http://128.196.105.149:8081/nexus/content/repositories/snapshots/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
 	</distributionManagement>
 
 </project>
