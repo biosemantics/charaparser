@@ -302,7 +302,7 @@
 		<repository>
 			<id>playground</id>
 			<name>playground@SBS</name>
-			<url>http://128.196.105.88:8081/nexus/content/repositories/releases/</url>
+			<url>http://128.196.105.88:8081/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</distributionManagement>
 
