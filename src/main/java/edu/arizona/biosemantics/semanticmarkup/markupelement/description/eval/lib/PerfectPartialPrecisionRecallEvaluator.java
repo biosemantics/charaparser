@@ -28,7 +28,11 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.DistributionMarkupResult;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.EcologyMarkupResult;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupResult;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.markup.HabitatMarkupResult;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.PhenologyMarkupResult;
 
 
 public class PerfectPartialPrecisionRecallEvaluator implements IDescriptionMarkupEvaluator {
@@ -211,4 +215,35 @@ public class PerfectPartialPrecisionRecallEvaluator implements IDescriptionMarku
 
 	@Override
 	public void visit(HabitatMarkupResult habitatMarkupResult) {	}
+
+	@Override
+	public void visit(DistributionMarkupResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(ElevationMarkupResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(PhenologyMarkupResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(EcologyMarkupResult result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(
+			edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.HabitatMarkupResult result) {
+		// TODO Auto-generated method stub
+		
+	}
 }

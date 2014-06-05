@@ -20,19 +20,13 @@ public class FossilConfig extends RunConfig {
 		// ENVIRONMENTAL 
 		//this.setDatabaseTablePrefix("treatise");
 		this.setDatabaseGlossaryTable("treatisehglossaryfixed");
-<<<<<<< HEAD
 		this.setGlossaryFile("edu/arizona/biosemantics/semanticmarkup/know/glossaries/treatisehglossaryfixed.csv");
 		
 		// IO
 		this.setInputDirectory("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
 		
-=======
 		this.setGlossaryFile("edu/arizona/biosemantics/semanticmarkup/know/glossaries/treatisehglossaryfixed.csv");
 		
-		// IO
-		this.setInputDirectory("evaluationData" + File.separator + "TIP_AnsKey_CharaParser_Evaluation");
-		
->>>>>>> refs/heads/master
 		// PROCESSING 
 		this.setGlossaryType(Glossary.Fossil.toString());
 		this.setNormalizer(TreatisehNormalizer.class);
