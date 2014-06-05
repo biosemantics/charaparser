@@ -48,8 +48,8 @@ and configure your Eclipse project to be a Maven and AspectJ Project.
 Sources are built for Java compiler compliance level 1.7.
 
 Please [configure your git](http://git-scm.com/book/en/Customizing-Git-Git-Configuration) for this repository as:
-* core.autocrlf true if you are on Windows 
-* or core.autocrlf input if you are on a Unix-type OS
+* `core.autocrlf` true if you are on Windows 
+* or `core.autocrlf input` if you are on a Unix-type OS
 
 Software Dependencies
 ----------
