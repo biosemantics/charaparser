@@ -1,6 +1,7 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			        Transformer transformer = transformerFactory.newTransformer();
 			        transformer.setOutputProperty("indent", "yes");
-			        transformer.transform(new DOMSource(document), new StreamResult(outputFile));
+			        transformer.transform(new DOMSource(document), new StreamResult(new FileOutputStream(outputFile)));
 
 				} else {
 					this.log(LogLevel.ERROR, "There is a descriptionsFile without a corresponding DOM Document");
