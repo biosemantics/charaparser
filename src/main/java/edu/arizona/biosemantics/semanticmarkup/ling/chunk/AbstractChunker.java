@@ -216,7 +216,7 @@ public abstract class AbstractChunker implements IChunker {
 						chunkCollector.isPartOfChunkType(terminals.get(0), ChunkType.STATE)) {
 					alreadyAssignedToValidChunk = false;
 				}
-				for(AbstractParseTree terminal: terminals){//if containing a position term: midder, upper 2/3
+				for(AbstractParseTree terminal: terminals){//if containing a position term: middle, upper 2/3
 					Match m = learnedCharacterKnowledgeBase.getCharacterName(terminal.getTerminalsText());
 					if(m!=null && m.getCategories()!=null && m.getCategories().contains("position")){
 						alreadyAssignedToValidChunk = false;

@@ -493,7 +493,7 @@ public class OTOLearner implements ILearner {
 		ResultSet rs = stmt.executeQuery("select category from "+this.glossaryTable+" where term ='"+word+"'");
 		if(rs.next()){
 			String cat = rs.getString("category");
-			if(cat.matches("(STRUCTURE|FEATURE|SUBSTANCE|PLANT|nominative|structure|life_style)")){
+			if(cat.matches("(substance|nominative|structure|life_style|growth_form|structure_subtype|structure_in_adjective_form|taxon_name)")){
 				add2WordRolesTable(word, "op");
 			}else{
 				add2WordRolesTable(word, "c");

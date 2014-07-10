@@ -32,6 +32,7 @@ public class NonOntologyBasedStandardizer {
 	
 	public NonOntologyBasedStandardizer(IGlossary glossary, String sentence, ProcessingContext processingContext){
 		lifeStyles = glossary.getWords("life_style");
+		lifeStyles.addAll(glossary.getWords("growth_form"));
 		this.sentence = sentence;
 		this.processingContext = processingContext;
 	}
@@ -131,7 +132,7 @@ public class NonOntologyBasedStandardizer {
 			Element element = resultIterator.next();
 			if(element.isStructure()) {
 				Structure structure = (Structure)element;
-				String name = (structure.getConstraint()+" "+structure.getName()).trim();
+				String name = ((structure.getConstraint()==null? "": structure.getConstraint()+" ")+structure.getName()).trim();
 				boolean isSimpleStructure = isSimpleStructure(structure);
 				if(lifeStyles.contains(name) && !isToOrgan(structure) && !isConstraintOrgan(structure, result)) {		
 					//wholeOrganism.appendAlterName(structure.getAlterName());
@@ -157,7 +158,7 @@ public class NonOntologyBasedStandardizer {
 						structure.setName("whole_organism");
 						structure.setNameOriginal("");
 						Character character = new Character();
-						character.setName("life_style");
+						character.setName("growth_form");
 						character.setValue(name);
 						structure.addCharacter(character);
 						continue;
@@ -165,7 +166,7 @@ public class NonOntologyBasedStandardizer {
 					wholeOrganism.setName("whole_organism");
 					wholeOrganism.setNameOriginal("");
 					Character character = new Character();
-					character.setName("life_style");
+					character.setName("growth_form");
 					character.setValue(name);
 					wholeOrganism.addCharacter(character);
 					modifiedWholeOrganism = true;
@@ -199,7 +200,7 @@ public class NonOntologyBasedStandardizer {
 			if(element.isStructure()){
 				LinkedHashSet<Character> chars = ((Structure)element).getCharacters();
 				for(Character c: chars){
-					if(c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")) return true;
+					if(c.getConstraintId()!=null && c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")) return true;
 				}				
 			}
 		}
@@ -211,8 +212,13 @@ public class NonOntologyBasedStandardizer {
 	}
 
 	private boolean isSimpleStructure(Structure structure) {
-		String complex = structure.getGeographicalConstraint()+structure.getInBracket()+structure.getInBrackets()+structure.getNotes()+structure.getParallelismConstraint()+
-				structure.getProvenance()+structure.getTaxonConstraint();
+		String complex = (structure.getGeographicalConstraint()==null? "":structure.getGeographicalConstraint()) + 
+				(structure.getInBracket()==null? "":structure.getInBracket())+
+				(structure.getInBrackets()==null? "":structure.getInBrackets())+
+				(structure.getNotes()==null? "":structure.getNotes())+
+				(structure.getParallelismConstraint()==null? "":structure.getParallelismConstraint())+
+				(structure.getProvenance()==null? "":structure.getProvenance())+
+				(structure.getTaxonConstraint()==null? "":structure.getTaxonConstraint());
 		return complex.trim().length()==0;
 	}
 

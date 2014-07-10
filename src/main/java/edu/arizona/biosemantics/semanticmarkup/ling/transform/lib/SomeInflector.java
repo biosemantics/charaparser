@@ -177,6 +177,10 @@ public class SomeInflector implements IInflector {
 	public String getPlural(String word) {
 		word = word.trim().toLowerCase();
 
+		String singular = getSingular(word);
+		if(singular.compareTo(word)!=0){ //word is already a plural form
+			return word;
+		}
 		if(plurals.containsKey(word))
 			return plurals.get(word);
 		if(word.endsWith("s"))

@@ -336,12 +336,12 @@ public class MyCleanupChunker extends AbstractChunker {
 	}
 
 	/**
-	 * translates character to constraint if characterstate of certani value or charactername of certain type
+	 * translates character to constraint if character state of certain value or charactername of certain type
 	 * or if next terminal is organ and previous characters are of comparison type
 	 * @param i
 	 * @param terminals
 	 * @param chunkCollector
-	 * @return true if translateion has been done
+	 * @return true if translation has been done
 	 */
 	private boolean translateCharacterToConstraintForPosition(int i, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
 		if(i+1<terminals.size()) {
@@ -364,7 +364,8 @@ public class MyCleanupChunker extends AbstractChunker {
 				 * translate character to constraint
 				 */
 				if(character!=null && !characterState.equals("low") &&
-						(character.contains("position") || character.contains("insertion") || character.contains("structure_type") ||
+						(character.contains("position") || character.contains("insertion") || character.contains("structure_type") || character.contains("structure_subtype") 
+								|| character.contains("structure_in_adjective_form") || character.contains("function") || character.contains("growth_order") ||
 								this.terminologyLearner.getTags().contains(characterState) || this.terminologyLearner.getModifiers().contains(characterState))
 						) {
 					characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));

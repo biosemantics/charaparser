@@ -201,6 +201,10 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			allowedCharacterNames.add("position");
 			allowedCharacterNames.add("insertion");
 			allowedCharacterNames.add("structure_type");
+			allowedCharacterNames.add("structure_subtype");
+			allowedCharacterNames.add("structure_in_adjective_form");
+			allowedCharacterNames.add("function");
+			allowedCharacterNames.add("growth_order");
 			
 			HashSet<String> notAllowedCharacterStates = new HashSet<String>();
 			notAllowedCharacterStates.add("low");
