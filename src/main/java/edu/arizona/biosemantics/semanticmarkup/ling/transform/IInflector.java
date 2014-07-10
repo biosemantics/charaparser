@@ -13,6 +13,7 @@ public interface IInflector {
 	public String getSingular(String word);
 	
 	/**
+	 * plural info exists only after singular form is processed
 	 * @param word
 	 * @return the plural form of the word
 	 */
@@ -28,6 +29,6 @@ public interface IInflector {
 	 * @param word
 	 * @return if the word is singular
 	 */
-	public boolean isSingular(String word);
+	//public boolean isSingular(String word);
 	
 }

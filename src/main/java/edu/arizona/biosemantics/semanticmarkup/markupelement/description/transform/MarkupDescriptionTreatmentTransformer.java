@@ -435,6 +435,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
 				glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 		}
+		glossary.addEntry("individual-head", "structure");
+		glossary.addEntry("posteriorly-directed", "character");
 	}
 	
 	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 

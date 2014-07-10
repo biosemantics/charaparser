@@ -63,6 +63,8 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
+import edu.arizona.biosemantics.semanticmarkup.ling.normalize.IPhraseMarker;
+import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.PhraseMarker;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParseTreeFactory;
@@ -150,6 +152,7 @@ public class BasicConfig extends AbstractModule {
 					  new TypeLiteral<HashMap<File, Binding>>() {}).in(Singleton.class);
 			  
 			  // PROCESSING
+			  bind(IPhraseMarker.class).to(PhraseMarker.class).in(Singleton.class);
 			  bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
 			  bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
 			  bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);

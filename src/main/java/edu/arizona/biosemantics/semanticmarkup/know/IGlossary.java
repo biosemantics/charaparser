@@ -1,5 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.know;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
@@ -49,7 +50,25 @@ public interface IGlossary {
 	 * @param category
 	 * @param label
 	 */
-	public void addSynonym(String synonym, String category, String term); 
+	public void addSynonym(String synonym, String category, String term);
+
+	/**
+	 * get all phrases with words connected by  "_".
+	 * @return
+	 */
+	public HashSet<String> getPhrases();
+
+	/**
+	 * get all entity phrases with words connected by  "_" and replace "_" with " ";
+	 * @return
+	 */
+	public HashSet<String> getStructurePhrasesWithSpaces(); 
+	
+	/**
+	 * get all quality phrases with words connected by  "_" and replace "_" with " ";
+	 * @return
+	 */
+	public HashSet<String> getNonStructurePhrasesWithSpaces(); 
 	
 	/*
 	public void addStructure(String structure);

@@ -199,6 +199,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 					String organName = organChunk.getTerminalsText();
 					structure.setName(inflector.getSingular(organName));
+					structure.setNameOriginal(organName);
 
 					List<Structure> parents = new LinkedList<Structure>();
 					parents.add(structure);

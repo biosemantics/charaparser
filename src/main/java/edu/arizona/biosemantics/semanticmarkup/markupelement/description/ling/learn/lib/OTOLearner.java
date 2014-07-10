@@ -53,6 +53,7 @@ public class OTOLearner implements ILearner {
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
 	private String glossaryType;
+	private IGlossary glossary;
 	private IOTOLiteClient otoLiteClient;
 	private String otoLiteTermReviewURL;
 	private String otoLiteReviewFile;
@@ -106,6 +107,7 @@ public class OTOLearner implements ILearner {
 		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
 		this.otoLiteReviewFile = otoLiteReviewFile;
 		this.glossaryType = glossaryType;
+		this.glossary = glossary;
 		this.databasePrefix = databasePrefix;
 		this.glossaryTable = glossaryTable;
 		this.posKnowledgeBase = posKnowledgeBase;
@@ -133,8 +135,8 @@ public class OTOLearner implements ILearner {
 			storeInLocalDB(glossaryDownload, this.databasePrefix);
 		//}
 		
-		//not really needed for learning part the in-memory glossary, not before markup step
-		//initGlossary(otoGlossary);
+		//glossary is needed to prematch phrases
+		initGlossary(glossaryDownload);
 		
 		terminologyLearner.learn(descriptionsFileList.getDescriptionsFiles(), glossaryTable);
 		
@@ -184,16 +186,14 @@ public class OTOLearner implements ILearner {
 
 	/**
 	 * Initialize the glossary passed to the learner, so that classes who share the glossary have access to an up-to-date version
-	 * TODO: OTO Webservice should probably only return one term category list.
-	 * No need to return an extra term synonym list just because it might make sense to have them seperate in a relational database schema
-	 * @param otoGlossary
+	 * @param GlossaryDownload
 	 */
-/*	private void initGlossary(OTOGlossary otoGlossary) {
-		for(TermCategory termCategory : otoGlossary.getTermCategories()) {
+	private void initGlossary(GlossaryDownload glossaryDownload) {
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			this.glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
 		}
 	}
-*/
+
 	
 	private void storeInLocalDB(GlossaryDownload glossaryDownload, String tablePrefix) {
 		List<WordRole> wordRoles = new LinkedList<WordRole>();

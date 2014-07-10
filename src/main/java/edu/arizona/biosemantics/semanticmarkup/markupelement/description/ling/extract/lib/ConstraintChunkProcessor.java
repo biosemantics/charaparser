@@ -75,6 +75,7 @@ public class ConstraintChunkProcessor extends AbstractChunkProcessor {
 				int structureId = processingContext.fetchAndIncrementStructureId(constraintStructure);
 				constraintStructure.setId("o" + structureId);
 				constraintStructure.setName(structure.getName());
+				constraintStructure.setNameOriginal(structure.getNameOriginal());
 				constraintStructure.setConstraint(chunk.getTerminalsText());
 				result.add(constraintStructure);
 				contextState.setLastElements(result);

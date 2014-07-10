@@ -25,11 +25,15 @@ import java.util.Set;
 import org.apache.commons.lang3.SystemUtils;
 
 
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
+import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.PhraseMarker;
+import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
@@ -48,7 +52,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
 	protected List<String> adjnouns;
 	protected Map<String, String> adjnounsent;
-	protected Map<Description, LinkedHashMap<String, String>> sentenceTags;
+	//protected Map<Description, LinkedHashMap<String, String>> sentenceTags;
 	protected Set<String> bracketTags;
 	protected Set<String> wordRoleTags;
 	protected Map<String, Set<String>> wordSources;
@@ -68,6 +72,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private String databasePassword;
 	private String databaseUser;
 	private IGlossary glossary;
+	private PhraseMarker pm;
+	private IInflector inflector;
 	private ITokenizer tokenizer;
 	private Set<String> stopWords;
 	private Set<String> selectedSources;
@@ -106,11 +112,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			IGlossary glossary, 
 			@Named("WordTokenizer") ITokenizer tokenizer,
 			@Named("ParentTagProvider") ParentTagProvider parentTagProvider,
-			@Named("PerlDirectory") String perlDirectory) throws Exception {
+			@Named("PerlDirectory") String perlDirectory,
+			IInflector inflector) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.markupMode = markupMode;
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
+		this.inflector = inflector;
 		this.tokenizer = tokenizer;
 		this.stopWords = stopWords;
 		this.selectedSources = selectedSources;
@@ -137,6 +145,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			inDirectory.mkdirs();
 			
 			//create the files
+			this.pm = new PhraseMarker(glossary, inflector);
 			writeTreatmentsToFiles(descriptionsFiles, inDirectory);
 			
 			//run the perl script	
@@ -343,7 +352,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return tags;
 	}
 
-	protected Map<Description, LinkedHashMap<String, String>> readSentenceTags(List<AbstractDescriptionsFile> descriptionsFiles) {
+	/*protected Map<Description, LinkedHashMap<String, String>> readSentenceTags(List<AbstractDescriptionsFile> descriptionsFiles) {
 		Map<Description, LinkedHashMap<String, String>> tags = new HashMap<Description, LinkedHashMap<String, String>>();
 		try {
 			Statement statement = connection.createStatement();
@@ -383,7 +392,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return tags;
-	}
+	}*/
 
 	protected HashMap<Description,  LinkedHashMap<String, String>> readSentencesForOrganStateMarker(List<AbstractDescriptionsFile> descriptionsFiles) {
 		HashMap<Description, LinkedHashMap<String, String>> sentences = new  HashMap<Description, LinkedHashMap<String, String>>();
@@ -646,6 +655,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 				log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
 				BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(treatmentFile), "UTF-8"));
+				description.setText(pm.markPhrases(description.getText()));
 	            fileWriter.write(description.getText() + "\n");
 	            fileWriter.close();
 				
@@ -667,10 +677,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 
 
-	@Override
+	/*@Override
 	public Map<Description, LinkedHashMap<String, String>> getSentenceTags() {
 		return this.sentenceTags;
-	}
+	}*/
 
 
 	@Override
@@ -703,7 +713,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.sentencesForOrganStateMarker = readSentencesForOrganStateMarker(descriptionsFiles);
 		this.adjnouns = readAdjNouns();
 		this.adjnounsent = readAdjNounSent();
-		this.sentenceTags = readSentenceTags(descriptionsFiles);
+		//this.sentenceTags = readSentenceTags(descriptionsFiles);
 		this.bracketTags = readBracketTags(descriptionsFiles);
 		this.wordRoleTags = readWordRoleTags(); 
 		this.wordSources = readWordToSourcesMap();

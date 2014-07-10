@@ -32,6 +32,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 <xs:attribute name="ontologyid" type="xs:string"/>
 <xs:attribute name="provenance" type="xs:string"/>
 <xs:attribute name="notes" type="xs:string"/>
+<xs:attribute name="name_original" type="xs:string" />
 </xs:complexType>
  * @author rodenhausen
  *
@@ -63,10 +64,13 @@ public class Structure extends NamedElement {
 	private String provenance;
 	@XmlPath("@" + StructureAttribute.notes)
 	private String notes;	
+	@XmlPath("@" + StructureAttribute.name_original)
+	private String nameOriginal;
 	@XmlPath("character")
 	private LinkedHashSet<Character> characters = new LinkedHashSet<Character>();
 	private LinkedHashSet<Relation> fromRelations = new LinkedHashSet<Relation>();
 	private LinkedHashSet<Relation> toRelations = new LinkedHashSet<Relation>();
+
 
 	public Structure() { }
 
@@ -173,6 +177,14 @@ public class Structure extends NamedElement {
 
 	public void setNotes(String notes) {
 		this.notes = notes;
+	}
+
+	public String getNameOriginal() {
+		return nameOriginal;
+	}
+
+	public void setNameOriginal(String originalName) {
+		this.nameOriginal = originalName;
 	}
 
 

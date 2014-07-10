@@ -198,9 +198,9 @@ public class SomeInflector implements IInflector {
 		return false;
 	}
 
-	@Override
+	/*@Override
 	public boolean isSingular(String word) {
 		return false;
-	}
+	}*/
 
 }

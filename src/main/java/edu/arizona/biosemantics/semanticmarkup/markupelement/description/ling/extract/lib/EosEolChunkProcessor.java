@@ -117,6 +117,7 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 				structureElement.setId("o" + String.valueOf(structureIdString));	
 				structureElement.setName("whole_organism"); 
+				structureElement.setNameOriginal("");
 				List<Structure> structureElements = new LinkedList<Structure>();
 				structureElements.add(structureElement);
 				result.addAll(establishSubject(structureElements, processingContextState));

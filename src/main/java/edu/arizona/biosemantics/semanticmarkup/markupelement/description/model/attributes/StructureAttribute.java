@@ -35,5 +35,5 @@ public class StructureAttribute {
 	
 	public static final String constraintParentOrgan = "constraintParentOrgan";
 	public static final String constraintType = "constraintType";
-	
+	public static final String name_original = "name_original";
 }

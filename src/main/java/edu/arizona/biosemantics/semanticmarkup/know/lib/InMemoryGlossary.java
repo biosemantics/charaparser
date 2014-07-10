@@ -11,6 +11,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 
 public class InMemoryGlossary implements IGlossary {
 
+
 /*	private Set<String> structures = new HashSet<String>();
 	private Set<String> characterCategories = new HashSet<String>();
 	private Map<String, Set<String>> characterCategoryStatesMap = new HashMap<String, Set<String>>();
@@ -195,5 +196,33 @@ public class InMemoryGlossary implements IGlossary {
 		reverseSyns.get(label).add(new Term(syn, category));
 	}
 
+	@Override
+	public HashSet<String> getPhrases() {
+		HashSet<String> phrases = new HashSet<String>();
+		for(String word: glossary.keySet()){
+			if(word.contains("_")) phrases.add(word);
+		}
+		return phrases;
+	}
+
+	@Override
+	public HashSet<String> getStructurePhrasesWithSpaces() {
+		HashSet<String> phrases = new HashSet<String>();
+		for(String word: this.getWords("structure")){
+			if(word.contains("_")) phrases.add(word.replaceAll("_", " ").trim());
+		}
+		return phrases;
+	}
+	
+	@Override
+	public HashSet<String> getNonStructurePhrasesWithSpaces() {
+		HashSet<String> phrases = new HashSet<String>();
+		Set<String> struct = new HashSet<String>();
+		struct.add("structure");
+		for(String word: this.getWordsNotInCategories(struct)){
+			if(word.contains("_")) phrases.add(word.replaceAll("_", " ").trim());
+		}
+		return phrases;
+	}
 
 }

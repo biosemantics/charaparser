@@ -80,7 +80,7 @@ public interface ITerminologyLearner {
 	/**
 	 * @return <treatment, <source, tag> map used in sentence table
 	 */
-	public Map<Description, LinkedHashMap<String, String>> getSentenceTags();
+	//public Map<Description, LinkedHashMap<String, String>> getSentenceTags();
 	
 	/**
 	 * @return <term, category set> map used in term_category table

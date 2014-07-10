@@ -155,6 +155,7 @@ public class NonOntologyBasedStandardizer {
 					}else if(!isSimpleStructure){
 						//in-place update of structure to whole_organism
 						structure.setName("whole_organism");
+						structure.setNameOriginal("");
 						Character character = new Character();
 						character.setName("life_style");
 						character.setValue(name);
@@ -162,6 +163,7 @@ public class NonOntologyBasedStandardizer {
 						continue;
 					}
 					wholeOrganism.setName("whole_organism");
+					wholeOrganism.setNameOriginal("");
 					Character character = new Character();
 					character.setName("life_style");
 					character.setValue(name);
