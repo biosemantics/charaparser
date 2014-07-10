@@ -27,18 +27,21 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  */
 public class NonOntologyBasedStandardizer {
 	private Set<String> lifeStyles;
+	private Set<String> durations;
 	private String sentence;
 	private ProcessingContext processingContext;
 	
 	public NonOntologyBasedStandardizer(IGlossary glossary, String sentence, ProcessingContext processingContext){
 		lifeStyles = glossary.getWords("life_style");
 		lifeStyles.addAll(glossary.getWords("growth_form"));
+		durations = glossary.getWords("duration");
 		this.sentence = sentence;
 		this.processingContext = processingContext;
 	}
 	
 	public void standardize(LinkedList<Element>result){
-		createWholeOrganismDescription(result); 
+		createWholeOrganismDescription(result, lifeStyles, "growth_form");
+		createWholeOrganismDescription(result, durations, "duration");
 		//createMayBeSameRelations(result, processingContext);  //not sure we need this relation.
 		removeOrphenedUnknownElements(result);
 		normalizeNegatedOrgan(result, sentence);
@@ -115,7 +118,7 @@ public class NonOntologyBasedStandardizer {
 	}*/
 
 
-	private void createWholeOrganismDescription(List<Element> result) {
+	private void createWholeOrganismDescription(List<Element> result, Set<String> targets, String category) {
 		Structure wholeOrganism = new Structure();
 		boolean exist = false;
 		for(Element element : result) {
@@ -134,7 +137,7 @@ public class NonOntologyBasedStandardizer {
 				Structure structure = (Structure)element;
 				String name = ((structure.getConstraint()==null? "": structure.getConstraint()+" ")+structure.getName()).trim();
 				boolean isSimpleStructure = isSimpleStructure(structure);
-				if(lifeStyles.contains(name) && !isToOrgan(structure) && !isConstraintOrgan(structure, result)) {		
+				if(targets.contains(name) && !isToOrgan(structure) && !isConstraintOrgan(structure, result)) {		
 					//wholeOrganism.appendAlterName(structure.getAlterName());
 					//wholeOrganism.appendConstraint(structure.getConstraint());
 					//wholeOrganism.appendConstraintId(structure.getConstraintId());
@@ -158,7 +161,7 @@ public class NonOntologyBasedStandardizer {
 						structure.setName("whole_organism");
 						structure.setNameOriginal("");
 						Character character = new Character();
-						character.setName("growth_form");
+						character.setName(category);
 						character.setValue(name);
 						structure.addCharacter(character);
 						continue;
@@ -166,7 +169,7 @@ public class NonOntologyBasedStandardizer {
 					wholeOrganism.setName("whole_organism");
 					wholeOrganism.setNameOriginal("");
 					Character character = new Character();
-					character.setName("growth_form");
+					character.setName(category);
 					character.setValue(name);
 					wholeOrganism.addCharacter(character);
 					modifiedWholeOrganism = true;
