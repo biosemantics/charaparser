@@ -29,6 +29,7 @@ public class CSVGlossary extends InMemoryGlossary {
 			String term = line[1];
 			String category = line[2];
 			
+			if(category.compareTo("quantity")==0) category = "count";
 			//if(term.equals("rhizome")) 
 			//	System.out.println("here");
 			

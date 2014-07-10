@@ -172,6 +172,7 @@ public class InMemoryGlossary implements IGlossary {
 
 	@Override
 	public void addEntry(String word, String category) {
+		if(category.compareTo("quantity")==0) category = "count";
 		word = word.toLowerCase().trim();
 		category = category.toLowerCase().trim();
 		if(!glossary.containsKey(word))
@@ -184,6 +185,7 @@ public class InMemoryGlossary implements IGlossary {
 	
 	@Override
 	public void addSynonym(String syn, String category, String label) {
+		if(category.compareTo("quantity")==0) category = "count";
 		syn = syn.toLowerCase().trim();
 		label = label.toLowerCase().trim();
 		category = category.toLowerCase().trim();
