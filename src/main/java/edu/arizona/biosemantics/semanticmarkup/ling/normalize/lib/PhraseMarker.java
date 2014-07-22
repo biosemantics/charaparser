@@ -120,11 +120,11 @@ public class PhraseMarker implements IPhraseMarker{
 				//System.out.println(this.phrasestr);
 				while(m.matches()){
 					//System.out.println(phrasepattern);
-					sentence = m.group(1)+m.group(2).replaceAll("[ _-]", "_")+m.group(3);
+					sentence = m.group(1)+m.group(2).replaceAll("[ _-]", "_#_")+m.group(3);
 					m = phrasepattern.matcher(sentence);
 				}				
 			}
-			return sentence;
+			return sentence.replaceAll("_#_", "_");
 		}
 
 	}
