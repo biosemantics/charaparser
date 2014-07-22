@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -22,8 +23,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.oto.client.WordRole;
-import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
+import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.oto.common.model.GlossaryDownload;
 import edu.arizona.biosemantics.oto.common.model.TermCategory;
 import edu.arizona.biosemantics.oto.common.model.TermSynonym;
@@ -65,12 +66,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected int sentenceChunkerRunMaximum;
 	protected Map<Description, Future<Description>> futureNewDescriptions = 
 			new HashMap<Description, Future<Description>>();
-	protected IOTOClient otoClient;
+	protected OTOClient otoClient;
 	protected String databasePrefix;
 	protected IGlossary glossary;
 	protected Connection connection;
 	protected String glossaryType;
-	protected IOTOLiteClient otoLiteClient;
+	protected OTOLiteClient otoLiteClient;
 	protected String otoLiteTermReviewURL;
 	protected Set<String> selectedSources;
 	private String glossaryTable;
@@ -109,8 +110,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
-			IOTOClient otoClient, 
-			IOTOLiteClient otoLiteClient, 
+			OTOClient otoClient, 
+			OTOLiteClient otoLiteClient, 
 			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,
@@ -167,17 +168,32 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		if(glossaryVersion == null)
 			glossaryVersion = "latest";
 		
-		GlossaryDownload glossaryDownload = otoClient.download(glossaryType, glossaryVersion);
+		otoClient.open();
+		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(glossaryType, glossaryVersion);
+		
+		GlossaryDownload glossaryDownload = new GlossaryDownload();
+		try {
+			glossaryDownload = futureGlossaryDownload.get();
+		} catch (Exception e) {
+			log(LogLevel.ERROR, "Couldn't download glossary " + glossaryType + " version: " + glossaryVersion, e);
+		}
+		otoClient.close();
 		
 		glossaryVersion = glossaryDownload.getVersion();
 				
-        UploadResult uploadResult;
+        UploadResult uploadResult = null;
         Download download;
 		try {
 			uploadResult = readUploadResult();
-			download = otoLiteClient.download(uploadResult);
+			otoLiteClient.open();
+			Future<Download> futureDownload = otoLiteClient.getDownload(uploadResult);
+			download = futureDownload.get();
+			otoLiteClient.close();
 		} catch (SQLException e) {
 			this.log(LogLevel.ERROR, "Problem reading upload result", e);
+			download = new Download();
+		} catch(InterruptedException | ExecutionException e) {
+			this.log(LogLevel.ERROR, "Problem downloading oto lite categorizations for upload " + uploadResult.getUploadId(), e);
 			download = new Download();
 		}
 

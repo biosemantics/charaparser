@@ -8,18 +8,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.w3c.dom.Document;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
-import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
-import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
-import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
@@ -162,8 +155,6 @@ public class BasicConfig extends AbstractModule {
 			  bind(IPOSKnowledgeBase.class).annotatedWith(Names.named("LearnedPOSKnowledgeBase")).to(LearnedPOSKnowledgeBase.class).in(Singleton.class);
 			  bind(ITokenizer.class).annotatedWith(Names.named("WordTokenizer")).to(WhitespaceTokenizer.class);
 			  bind(ITokenCombiner.class).annotatedWith(Names.named("WordCombiner")).to(WhitespaceTokenCombiner.class);
-			  bind(IOTOClient.class).to(OTOClient.class).in(Singleton.class);
-			  bind(IOTOLiteClient.class).to(OTOLiteClient.class).in(Singleton.class);
 			  bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 			  bind(String.class).annotatedWith(Names.named("MarkupMode")).toInstance("plain");
 			  bind(IPOSTagger.class).to(OrganCharacterPOSTagger.class); //NewOrganCharacterPOSTagger , OrganCharacterPOSTagger
