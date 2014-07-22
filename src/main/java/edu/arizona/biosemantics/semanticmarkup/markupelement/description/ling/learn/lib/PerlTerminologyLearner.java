@@ -649,13 +649,15 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		}
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
-				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3));			
+				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3));		
+				//System.out.println(prefix);
 				File treatmentFile = File.createTempFile(prefix  + ".", ".txt", directory);
 				treatmentFile.deleteOnExit();
 				//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 				log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
 				BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(treatmentFile), "UTF-8"));
 				description.setText(pm.markPhrases(description.getText()));
+			
 	            fileWriter.write(description.getText() + "\n");
 	            fileWriter.close();
 				
