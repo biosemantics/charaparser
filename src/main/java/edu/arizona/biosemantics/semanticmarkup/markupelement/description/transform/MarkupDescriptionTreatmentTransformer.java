@@ -388,7 +388,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 					terms = termSyn.getTerm().replaceAll("_",  "-");
 					termp = inflector.getPlural(terms);
 				}
-				glossary.addSynonym(syns, ((ITerm) termSyn).getCategory(), terms);
+				glossary.addSynonym(syns, termSyn.getCategory(), terms);
 				glossary.addSynonym(synp, termSyn.getCategory(), termp);
 				gsyns.add(new Term(syns, termSyn.getCategory()));
 				gsyns.add(new Term(synp, termSyn.getCategory()));
