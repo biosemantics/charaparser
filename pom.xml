@@ -209,7 +209,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
-			<version>0.0.10-SNAPSHOT</version>
+			<version>0.0.11-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
