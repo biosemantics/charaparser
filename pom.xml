@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.arizona.biosemantics.semanticmarkup</groupId>
 	<artifactId>semantic-markup</artifactId>
-	<version>0.1.26-SNAPSHOT</version>
+	<version>0.1.29-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -209,7 +209,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
-			<version>0.0.11-SNAPSHOT</version>
+			<version>0.0.12-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
