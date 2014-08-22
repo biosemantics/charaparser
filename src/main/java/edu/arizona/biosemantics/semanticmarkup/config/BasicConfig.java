@@ -3,6 +3,7 @@ package edu.arizona.biosemantics.semanticmarkup.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -126,14 +127,17 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
  */
 public class BasicConfig extends AbstractModule {
 	
-	  private String version;
+	  private String version = "0.1.6";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
 	  public BasicConfig() throws IOException {			
-			ClassLoader loader = Thread.currentThread().getContextClassLoader();
-			Properties properties = new Properties();
-			properties.load(loader.getResourceAsStream("config.properties"));
-			this.version = properties.getProperty("project.version");
+		  ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		  Properties properties = new Properties();
+		  properties.load(loader.getResourceAsStream("config.properties"));
+		  //this loads etc-site properties when added as dependency to etc-site.
+		  //TODO: find a way to load correct properties from inside jar
+		  //interestingly it works fine in the same manner for oto2, loading defaultCategories.csv
+		  //this.version = properties.getProperty("project.version");
 	  }
 	  
 	  @Override 
