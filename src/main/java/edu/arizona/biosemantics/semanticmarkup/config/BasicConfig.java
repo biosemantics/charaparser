@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import com.google.inject.AbstractModule;
@@ -125,8 +126,15 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
  */
 public class BasicConfig extends AbstractModule {
 	
-	  private String version = "0.1.6";
+	  private String version;
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
+	  
+	  public BasicConfig() throws IOException {			
+			ClassLoader loader = Thread.currentThread().getContextClassLoader();
+			Properties properties = new Properties();
+			properties.load(loader.getResourceAsStream("config.properties"));
+			this.version = properties.getProperty("project.version");
+	  }
 	  
 	  @Override 
 	  protected void configure() {	
