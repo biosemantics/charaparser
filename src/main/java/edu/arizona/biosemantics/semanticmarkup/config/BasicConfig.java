@@ -3,23 +3,18 @@ package edu.arizona.biosemantics.semanticmarkup.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
-
-import org.w3c.dom.Document;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
-import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
-import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
-import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
@@ -135,6 +130,16 @@ public class BasicConfig extends AbstractModule {
 	  private String version = "0.1.6";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
+	  public BasicConfig() throws IOException {			
+		  ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		  Properties properties = new Properties();
+		  properties.load(loader.getResourceAsStream("config.properties"));
+		  //this loads etc-site properties when added as dependency to etc-site.
+		  //TODO: find a way to load correct properties from inside jar
+		  //interestingly it works fine in the same manner for oto2, loading defaultCategories.csv
+		  //this.version = properties.getProperty("project.version");
+	  }
+	  
 	  @Override 
 	  protected void configure() {	
 		  try {
@@ -162,8 +167,6 @@ public class BasicConfig extends AbstractModule {
 			  bind(IPOSKnowledgeBase.class).annotatedWith(Names.named("LearnedPOSKnowledgeBase")).to(LearnedPOSKnowledgeBase.class).in(Singleton.class);
 			  bind(ITokenizer.class).annotatedWith(Names.named("WordTokenizer")).to(WhitespaceTokenizer.class);
 			  bind(ITokenCombiner.class).annotatedWith(Names.named("WordCombiner")).to(WhitespaceTokenCombiner.class);
-			  bind(IOTOClient.class).to(OTOClient.class).in(Singleton.class);
-			  bind(IOTOLiteClient.class).to(OTOLiteClient.class).in(Singleton.class);
 			  bind(ILearner.class).to(OTOLearner.class).in(Singleton.class);
 			  bind(String.class).annotatedWith(Names.named("MarkupMode")).toInstance("plain");
 			  bind(IPOSTagger.class).to(OrganCharacterPOSTagger.class); //NewOrganCharacterPOSTagger , OrganCharacterPOSTagger

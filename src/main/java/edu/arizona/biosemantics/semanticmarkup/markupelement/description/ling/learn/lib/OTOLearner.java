@@ -14,13 +14,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.oto.client.WordRole;
-import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
+import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.oto.common.model.GlossaryDownload;
 import edu.arizona.biosemantics.oto.common.model.TermCategory;
 import edu.arizona.biosemantics.oto.common.model.TermSynonym;
@@ -47,14 +48,14 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.D
 public class OTOLearner implements ILearner {
 
 	private ITerminologyLearner terminologyLearner;
-	private IOTOClient otoClient;
+	private OTOClient otoClient;
 	private String databasePrefix;
 	private Connection connection;
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
 	private String glossaryType;
 	private IGlossary glossary;
-	private IOTOLiteClient otoLiteClient;
+	private OTOLiteClient otoLiteClient;
 	private String otoLiteTermReviewURL;
 	private String otoLiteReviewFile;
 	private String runRootDirectory;
@@ -80,8 +81,8 @@ public class OTOLearner implements ILearner {
 	public OTOLearner(@Named("DescriptionMarkupCreator_DescriptionReader")IDescriptionReader descriptionReader, 
 			@Named("DescriptionReader_InputDirectory")String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
-			IOTOClient otoClient, 
-			IOTOLiteClient otoLiteClient,
+			OTOClient otoClient, 
+			OTOLiteClient otoLiteClient,
 			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
 			@Named("OTOLiteReviewFile") String otoLiteReviewFile,
 			@Named("DatabaseHost") String databaseHost,
@@ -130,8 +131,11 @@ public class OTOLearner implements ILearner {
 		//String tablePrefix = glossaryType + "_" + glossaryDownload.getVersion();
 		//String glossaryTable = tablePrefix + "_glossary";
 		//if(!glossaryExistsLocally(tablePrefix)) {
-			GlossaryDownload glossaryDownload = otoClient.download(glossaryType);
+			otoClient.open();
+			Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(glossaryType);
 			//initialize the glossary table that the actual learn part needs
+			GlossaryDownload glossaryDownload = futureGlossaryDownload.get();
+			otoClient.close();
 			storeInLocalDB(glossaryDownload, this.databasePrefix);
 		//}
 		
@@ -141,7 +145,10 @@ public class OTOLearner implements ILearner {
 		terminologyLearner.learn(descriptionsFileList.getDescriptionsFiles(), glossaryTable);
 		
 		//upload to OTO lite
-		UploadResult uploadResult = otoLiteClient.upload(readUpload());
+		otoLiteClient.open();
+		Future<UploadResult> futureUploadResult = otoLiteClient.putUpload(readUpload());
+		UploadResult uploadResult = futureUploadResult.get();
+		otoLiteClient.close();
 		
 		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
 		//iplant environment, hence the dependency on mysql can for iplant not completely be removed

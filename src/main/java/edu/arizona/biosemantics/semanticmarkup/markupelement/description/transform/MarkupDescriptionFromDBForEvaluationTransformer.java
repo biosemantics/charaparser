@@ -8,8 +8,8 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.oto.client.lite.IOTOLiteClient;
-import edu.arizona.biosemantics.oto.client.oto.IOTOClient;
+import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
@@ -46,8 +46,8 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 			@Named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")boolean parallelProcessing, 
 			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
-			IOTOClient otoClient, 
-			IOTOLiteClient otoLiteClient, 
+			OTOClient otoClient, 
+			OTOLiteClient otoLiteClient, 
 			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,

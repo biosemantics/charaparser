@@ -29,6 +29,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
+import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
+import edu.arizona.biosemantics.oto.client.oto2.Client;
 import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
@@ -144,11 +146,6 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDistributionWriter> distributionWriter = JDOMDistributionWriter.class;
 	private Class<? extends IElevationReader> elevationReader = JDOMElevationReader.class;
 	private Class<? extends IElevationWriter> elevationWriter = JDOMElevationWriter.class;
-/*<<<<<<< HEAD
-	private Class<? extends IEcologyReader> ecologyReader = JDOMEcologyReader.class;
-	private Class<? extends IEcologyWriter> ecologyWriter = JDOMEcologyWriter.class;
-=======
->>>>>>> refs/heads/master*/
 	
 	// PROCESSING 
 	private String glossaryType = "plant";
@@ -166,10 +163,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IElevationMarkupCreator> elevationMarkupCreator = ElevationMarkupCreator.class;
 	private Class<? extends IDistributionMarkupCreator> distributionMarkupCreator = DistributionMarkupCreator.class;
 	private Class<? extends IPhenologyMarkupCreator> phenologyMarkupCreator = PhenologyMarkupCreator.class;
-/*<<<<<<< HEAD
-	private Class<? extends IEcologyMarkupCreator> ecologyMarkupCreator = EcologyMarkupCreator.class;
-=======
->>>>>>> refs/heads/master*/
+	
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
@@ -226,11 +220,6 @@ public class RunConfig extends BasicConfig {
 			bind(IElevationTransformer.class).to(ElevationTransformer.class).in(Singleton.class);
 			bind(IPhenologyMarkupCreator.class).to(phenologyMarkupCreator).in(Singleton.class);
 			bind(IPhenologyTransformer.class).to(PhenologyTransformer.class).in(Singleton.class);
-/*<<<<<<< HEAD
-			bind(IEcologyMarkupCreator.class).to(ecologyMarkupCreator).in(Singleton.class);
-			bind(IEcologyTransformer.class).to(EcologyTransformer.class).in(Singleton.class);
-=======
->>>>>>> refs/heads/master*/
 			
 			//IO
 			bind(String.class).annotatedWith(Names.named("InputDirectory")).toInstance(inputDirectory);
@@ -256,15 +245,7 @@ public class RunConfig extends BasicConfig {
 			bind(IElevationReader.class).annotatedWith(Names.named("ElevationMarkupCreator_ElevationReader")).to(elevationReader).in(Singleton.class);
 			bind(IElevationWriter.class).annotatedWith(Names.named("ElevationMarkupCreator_ElevationWriter")).to(elevationWriter).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("ElevationReader_InputDirectory")).toInstance(runOutDirectory);
-			
-/*<<<<<<< HEAD
-			bind(IEcologyReader.class).annotatedWith(Names.named("EcologyMarkupCreator_EcologyReader")).to(ecologyReader).in(Singleton.class);
-			bind(IEcologyWriter.class).annotatedWith(Names.named("EcologyMarkupCreator_EcologyWriter")).to(ecologyWriter).in(Singleton.class);
-			bind(String.class).annotatedWith(Names.named("EcologyReader_InputDirectory")).toInstance(runOutDirectory);
-			
-=======
->>>>>>> refs/heads/master*/
-			
+						
 			//ENVIRONMENTAL
 			bind(String.class).annotatedWith(Names.named("DatabasePrefix")).toInstance(databaseTablePrefix); 
 			bind(String.class).annotatedWith(Names.named("DatabaseHost")).toInstance(databaseHost);
@@ -275,6 +256,7 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("OTOLiteReviewFile")).toInstance(otoLiteReviewFile);
 			bind(String.class).annotatedWith(Names.named("OTOLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
 			bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
+			bind(OTOLiteClient.class).to(Client.class);
 			bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 			bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 			bind(InputStream.class).annotatedWith(Names.named("CSVCorpus")).toInstance(inputStreamCreator.readStreamFromString(csvCorpusPath));

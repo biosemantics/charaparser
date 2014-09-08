@@ -245,9 +245,10 @@ public class CLIMain {
 		if(config.equals(Glossary.Fossil.toString())) {
 			return new FossilConfig();
 		}
-		log(LogLevel.ERROR, "Config unknown");
-		System.exit(0);
-		return null;
+		log(LogLevel.ERROR, "Config unknown, fall back to default config based on Plant");
+		RunConfig result = new PlantConfig();
+		result.setGlossaryType(config);
+		return result;
 	}
 }
 

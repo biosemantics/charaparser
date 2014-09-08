@@ -76,6 +76,11 @@ public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
 					}
 					binder.updateXML(descriptionsFile);
 					
+					//update schema
+					document.getDocumentElement().setAttributeNS("http://www.w3.org/2001/XMLSchema-instance",
+						    "xsi:schemaLocation", "http://www.github.com/biosemantics " +
+						    		"http://raw.githubusercontent.com/biosemantics/schemas/0.0.1/semanticMarkupOutput.xsd");
+					
 					File outputFile = new File(writeDirectory + File.separator + descriptionsFile.getFile().getName());
 					TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			        Transformer transformer = transformerFactory.newTransformer();
