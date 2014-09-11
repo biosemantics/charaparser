@@ -9,11 +9,13 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
@@ -81,7 +83,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			if(word.contains("~list~") || word.contains("_c_") || learnedCharacterKnowledgeBase.isState(word))
 				isState = true;
 			//isOrgan = organStateKnowledgeBase.isOrgan(word);
-			isOrgan = learnedCharacterKnowledgeBase.isOrgan(word);
+			isOrgan = learnedCharacterKnowledgeBase.isEntity(word);
 
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();
@@ -138,8 +140,9 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				posedSentence.add(new POSedToken(word, POS.NNS));
 			} else if(word.matches("\\d*.{0,1}\\d+")) {
 				posedSentence.add(new POSedToken(word, POS.CD));
-			}
-			else if (p.contains("c") || isState) {
+			} else if(p.contains("c") && learnedCharacterKnowledgeBase.getCharacterName(word).getCategories().matches(".*?(^|_)("+ElementRelationGroup.verbRelationElements+")(_|$).*") ){
+				posedSentence.add(new POSedToken(word, POS.VB));
+			} else if (p.contains("c") || isState) {
 				int wordFrequency = corpus.getFrequency(word);
 				if (wordFrequency > 79) {
 					posedSentence.add(new Token(word));

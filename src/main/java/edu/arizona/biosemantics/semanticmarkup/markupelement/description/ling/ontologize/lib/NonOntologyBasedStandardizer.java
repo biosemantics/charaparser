@@ -143,7 +143,6 @@ public class NonOntologyBasedStandardizer {
 					//wholeOrganism.appendConstraintId(structure.getConstraintId());
 					//wholeOrganism.appendGeographicalConstraint(structure.getGeographicalConstraint());
 					//wholeOrganism.appendId(structure.getId());
-					//wholeOrganism.appendInBracket(structure.getInBracket());
 					//wholeOrganism.appendInBrackets(structure.getInBrackets());
 					//wholeOrganism.appendNotes(structure.getNotes());
 					//wholeOrganism.appendOntologyId(structure.getOntologyId());
@@ -216,7 +215,6 @@ public class NonOntologyBasedStandardizer {
 
 	private boolean isSimpleStructure(Structure structure) {
 		String complex = (structure.getGeographicalConstraint()==null? "":structure.getGeographicalConstraint()) + 
-				(structure.getInBracket()==null? "":structure.getInBracket())+
 				(structure.getInBrackets()==null? "":structure.getInBrackets())+
 				(structure.getNotes()==null? "":structure.getNotes())+
 				(structure.getParallelismConstraint()==null? "":structure.getParallelismConstraint())+

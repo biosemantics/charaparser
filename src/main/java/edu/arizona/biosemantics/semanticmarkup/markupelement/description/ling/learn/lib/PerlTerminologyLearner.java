@@ -656,7 +656,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 				log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
 				BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(treatmentFile), "UTF-8"));
-				description.setText(pm.markPhrases(description.getText()));
+				description.setText(pm.markPhrases(description.getText().replaceAll("[\\n\\r]", " ").replaceAll("\\s+", " ").trim()));
 			
 	            fileWriter.write(description.getText() + "\n");
 	            fileWriter.close();

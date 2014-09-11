@@ -37,6 +37,8 @@ public interface ICharacterKnowledgeBase {
 
 	public boolean isState(String terminalsText);
 	
-	public boolean isOrgan(String terminalsText);
+	public boolean isEntity(String terminalsText);
+
+	public String getEntityType(String singular, String organName);
 	
 }

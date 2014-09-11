@@ -211,7 +211,7 @@ public abstract class AbstractChunker implements IChunker {
 				if(terminals.size() == 1 && 
 						//organStateKnowledgeBase.isOrgan(terminals.get(0).getTerminalsText()) && 
 						//organStateKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
-						learnedCharacterKnowledgeBase.isOrgan(terminals.get(0).getTerminalsText()) && 
+						learnedCharacterKnowledgeBase.isEntity(terminals.get(0).getTerminalsText()) && 
 						learnedCharacterKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
 						chunkCollector.isPartOfChunkType(terminals.get(0), ChunkType.STATE)) {
 					alreadyAssignedToValidChunk = false;

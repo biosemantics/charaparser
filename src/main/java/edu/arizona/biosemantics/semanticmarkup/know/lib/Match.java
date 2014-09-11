@@ -18,7 +18,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.IMatch;
  */
 public class Match implements IMatch {
 	private Set<Term> content = new HashSet<Term>();
-	private String categories = null;
+	private String categories = null; //or-contactnated categories
 	private String preferedTerm = null; //not null when all Terms has the same preferred term/label
 	private String or = "_or_";
 	

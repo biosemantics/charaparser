@@ -35,6 +35,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
       <xs:attribute name="ontologyid" type="xs:string"/>
       <xs:attribute name="provenance" type="xs:string"/>
       <xs:attribute name="notes" type="xs:string"/>
+      <xs:attribute name="is_modifier" type="xs:boolean"/>
     </xs:complexType>
  * @author rodenhausen
  *
@@ -88,10 +89,13 @@ public class Character extends NamedElement implements Cloneable {
 	private String fromInclusive;
 	@XmlPath("@" + CharacterAttribute.from)
 	private String from;
+	@XmlPath("@" + CharacterAttribute.is_modifier)
+	private String isModifier;
+	
 	@XmlTransient
 	private Structure structure;
-	@XmlTransient
-	private boolean isConstraintModifier; //red leaves, red is a modifier for leaves
+	//@XmlTransient
+	//private boolean isConstraintModifier; //red leaves, red is a modifier for leaves
 	
 	public Character() { }
 	
@@ -288,6 +292,14 @@ public class Character extends NamedElement implements Cloneable {
 	public Structure getStructure() {
 		return this.structure;
 	}
+	
+	public void setIsModifier(String isModifier){
+		this.isModifier = isModifier;
+	}
+	
+	public String getIsModifier(){
+		return isModifier;
+	}
 
 	public void appendModifier(String modifier) {
 		String newValue = "";
@@ -309,7 +321,7 @@ public class Character extends NamedElement implements Cloneable {
 		this.constraint = newValue;
 	}
 
-	@XmlTransient
+	/*@XmlTransient
 	public boolean getIsConstraintModifier(){
 		return this.isConstraintModifier;
 	}
@@ -317,7 +329,9 @@ public class Character extends NamedElement implements Cloneable {
 	@XmlTransient
 	public void setIsConstraintModifier(boolean isConstraintModifier){
 		this.isConstraintModifier = isConstraintModifier;
-	}
+	}*/
+	
+	
 	
 	@Override
 	public void removeElementRecursively(Element element) {
@@ -354,4 +368,5 @@ public class Character extends NamedElement implements Cloneable {
 		character.setValue(this.getValue());
 		return character;
 	}
+
 }

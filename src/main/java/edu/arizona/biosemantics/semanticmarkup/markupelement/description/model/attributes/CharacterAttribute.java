@@ -53,5 +53,6 @@ public class CharacterAttribute {
 	public static final String ontologyid = "ontologyid";
 	public static final String provenance = "provenance";
 	public static final String notes = "notes";
+	public static final String is_modifier="is_modifier";
 	
 }

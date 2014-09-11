@@ -198,8 +198,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						structure.setConstraint(constraintChunk.getTerminalsText());
 
 					String organName = organChunk.getTerminalsText();
-					structure.setName(inflector.getSingular(organName));
+					String singular = inflector.getSingular(organName);
+					structure.setName(singular);
 					structure.setNameOriginal(organName);
+					String entityType = characterKnowledgeBase.getEntityType(singular, organName);
+					if(entityType!=null && entityType.length()>0) structure.setNotes(entityType);
 
 					List<Structure> parents = new LinkedList<Structure>();
 					parents.add(structure);
@@ -662,14 +665,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				String[] values = characterValue.split("-");
 				character.setCharType("range_value");
 				character.setName(characterName);
-				character.setIsConstraintModifier(isConstraintModifier);
+				//character.setIsConstraintModifier(isConstraintModifier);
+				character.setIsModifier(isConstraintModifier+"");
 				character.setFrom(values[0]);
 				if(values[1].endsWith("+")) {
 					character.setTo(values[1].substring(0, values[1].length()-1));
 					character.setUpperRestricted("false");
 				} else
 					character.setTo(values[1]);
-
 			}else{
 				if (characterName.compareTo("size") == 0) {
 					String value = characterValue.replaceFirst("\\b(" + units + ")\\b", "").trim(); // 5-10 mm
@@ -691,7 +694,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				}
 				character.setName(characterName);
 				character.setValue(characterValue);
-				character.setIsConstraintModifier(isConstraintModifier);
+				//character.setIsConstraintModifier(isConstraintModifier);
+				character.setIsModifier(isConstraintModifier+"");
 				if(!modifierString.isEmpty())
 					character.setModifier(modifierString);
 			}

@@ -117,9 +117,8 @@ public class PhraseMarker implements IPhraseMarker{
 		public String markPhrases(String sentence){
 			if(this.phrasepattern!=null){
 				Matcher m = phrasepattern.matcher(sentence);
-				//System.out.println(this.phrasestr);
+				System.out.println(this.phrasepattern);
 				while(m.matches()){
-					//System.out.println(phrasepattern);
 					sentence = m.group(1)+m.group(2).replaceAll("[ _-]", "_#_")+m.group(3);
 					m = phrasepattern.matcher(sentence);
 				}				

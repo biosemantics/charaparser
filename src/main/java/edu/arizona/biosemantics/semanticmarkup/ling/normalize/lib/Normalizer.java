@@ -1767,16 +1767,16 @@ public abstract class Normalizer implements INormalizer {
 			String[] afterTokens = after.split(" ");
 			log(LogLevel.DEBUG, "before token " + beforeTokens[beforeTokens.length-1]);
 			//log(LogLevel.DEBUG, String.valueOf(organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1])));
-			log(LogLevel.DEBUG, String.valueOf(characterKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1])));
+			log(LogLevel.DEBUG, String.valueOf(characterKnowledgeBase.isEntity(beforeTokens[beforeTokens.length-1])));
 			//if(!organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]) &&
 			//		!organStateKnowledgeBase.isOrgan(afterTokens[0])) {
-			if(!characterKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]) &&
-						!characterKnowledgeBase.isOrgan(afterTokens[0])) {
+			if(!characterKnowledgeBase.isEntity(beforeTokens[beforeTokens.length-1]) &&
+						!characterKnowledgeBase.isEntity(afterTokens[0])) {
 				boolean beforeContainsOrgan = false;
 				String organ = "";
 				for(String beforeToken : beforeTokens) {
 					//if(organStateKnowledgeBase.isOrgan(beforeToken)) {
-					if(characterKnowledgeBase.isOrgan(beforeToken)) {
+					if(characterKnowledgeBase.isEntity(beforeToken)) {
 						beforeContainsOrgan = true;
 						organ = "";
 					}
@@ -1816,7 +1816,7 @@ public abstract class Normalizer implements INormalizer {
 					String fixedOrgan = "";
 					for(String fixedToken : fixedTokens) {
 						//if(this.organStateKnowledgeBase.isOrgan(fixedToken)) {
-						if(this.characterKnowledgeBase.isOrgan(fixedToken)) {
+						if(this.characterKnowledgeBase.isEntity(fixedToken)) {
 							fixedContainsOrgan = true;
 							fixedOrgan = fixedToken;
 						}

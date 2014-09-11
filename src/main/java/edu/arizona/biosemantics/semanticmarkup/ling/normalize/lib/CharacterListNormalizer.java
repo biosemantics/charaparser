@@ -148,7 +148,7 @@ public class CharacterListNormalizer{
 				String ch = word.substring(0, word.indexOf("~list~")).replaceAll("\\W", "").replaceFirst("ttt$", "");
 				characterTokensReversed.add(ch);
 			//}else if(organStateKnowledgeBase.isState(word) && !organStateKnowledgeBase.isOrgan(word)) {
-			}else if(characterKnowledgeBase.isState(word) && !characterKnowledgeBase.isOrgan(word)) {
+			}else if(characterKnowledgeBase.isState(word) && !characterKnowledgeBase.isEntity(word)) {
 				String ch = characterKnowledgeBase.getCharacterName(word).getCategories(); //remember the char for this word (this word is a word before (to|or|\\W)
 				if(ch==null){
 					characterTokensReversed.add(word); //
@@ -176,7 +176,7 @@ public class CharacterListNormalizer{
 					save = false;
 				}
 			//}else if (organStateKnowledgeBase.isOrgan(word)){
-			}else if (characterKnowledgeBase.isOrgan(word)){
+			}else if (characterKnowledgeBase.isEntity(word)){
 				characterTokensReversed.add("#");
 				save = true;
 			}else if(word.matches("(or|and-or|and/or|and_or)") || word.matches("\\S+ly~(or|and-or|and/or|and_or)~\\S+ly")){//loosely~to~densely 
@@ -385,7 +385,7 @@ public class CharacterListNormalizer{
 					if(chunkedTokens.get(i).length()>0){
 						//if(t.indexOf("<")>0){
 						//if(this.organStateKnowledgeBase.isOrgan(t)){	
-						if(this.characterKnowledgeBase.isOrgan(t)){		
+						if(this.characterKnowledgeBase.isEntity(t)){		
 							//case: {shape~list~ovate~to~lance-ovate~(~glabrous~or~sparsely~glandular-pubescent~punct~<apices>~acute~to~acuminate~)} 
 							//this is caused by adding more tokens to t to complete a open bracket
 							//solution: abort normalization
@@ -410,7 +410,7 @@ public class CharacterListNormalizer{
 						if(chunkedTokens.get(i).compareTo(")")==0) leftround--;
 						if(chunkedTokens.get(i).length()>0){
 							//if(this.organStateKnowledgeBase.isOrgan(t)/* t.indexOf("<")>0*/){
-							if(this.characterKnowledgeBase.isOrgan(t)/* t.indexOf("<")>0*/){
+							if(this.characterKnowledgeBase.isEntity(t)/* t.indexOf("<")>0*/){
 								//case: {shape~list~ovate~to~lance-ovate~(~glabrous~or~sparsely~glandular-pubescent~punct~<apices>~acute~to~acuminate~)} 
 								//this is caused by adding more tokens to t to complete a open bracket
 								//solution: abort normalization

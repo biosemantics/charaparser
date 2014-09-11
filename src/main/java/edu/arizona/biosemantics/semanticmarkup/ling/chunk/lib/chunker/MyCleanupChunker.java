@@ -7,11 +7,13 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
@@ -363,11 +365,17 @@ public class MyCleanupChunker extends AbstractChunker {
 				 * if the characterstate is not low and (tags or modifiers or the character is of the certain types 
 				 * translate character to constraint
 				 */
-				if(character!=null && !characterState.equals("low") &&
-						(character.contains("position") || character.contains("insertion") || character.contains("structure_type") || character.contains("structure_subtype") 
-								|| character.contains("structure_in_adjective_form") || character.contains("function") || character.contains("growth_order") ||
-								this.terminologyLearner.getTags().contains(characterState) || this.terminologyLearner.getModifiers().contains(characterState))
+				//if(character!=null && !characterState.equals("low") &&
+				//		(character.contains("position") || character.contains("insertion") || character.contains("structure_type") || character.contains("structure_subtype") 
+				//				|| character.contains("structure_in_adjective_form") || character.contains("function") || character.contains("growth_order") ||
+				//				this.terminologyLearner.getTags().contains(characterState) || this.terminologyLearner.getModifiers().contains(characterState))
+				//		) {
+
+				if(character!=null && !characterState.equals("low") && (
+						character.matches(".*?(^|_)("+ElementRelationGroup.entityConstraintElements+")(_|$).*") ||
+						this.terminologyLearner.getTags().contains(characterState) || this.terminologyLearner.getModifiers().contains(characterState))
 						) {
+				
 					characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));
 					characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
 					characterStateChunk.clearProperties();

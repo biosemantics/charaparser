@@ -24,7 +24,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 <xs:attribute name="constraintid" type="xs:NCName"/>
 <xs:attribute name="geographical_constraint"/>
 <xs:attribute name="id" use="required" type="xs:NCName"/>
-<xs:attribute name="in_bracket" type="xs:boolean"/>
+<!--<xs:attribute name="in_bracket" type="xs:boolean"/>-->
 <xs:attribute name="in_brackets" type="xs:boolean"/>
 <xs:attribute name="name" use="required"/>
 <xs:attribute name="parallelism_constraint" type="xs:NCName"/>
@@ -50,8 +50,8 @@ public class Structure extends NamedElement {
 	private String geographicalConstraint;
 	@XmlPath("@" + StructureAttribute.id)
 	private String id;
-	@XmlPath("@" + StructureAttribute.in_bracket)
-	private String inBracket;
+	//@XmlPath("@" + StructureAttribute.in_bracket)
+	//private String inBracket;
 	@XmlPath("@" + StructureAttribute.in_brackets)
 	private String inBrackets;
 	@XmlPath("@" + StructureAttribute.parallelism_constraint)
@@ -123,13 +123,13 @@ public class Structure extends NamedElement {
 		this.id = id;
 	}
 
-	public String getInBracket() {
+	/*public String getInBracket() {
 		return inBracket;
 	}
 
 	public void setInBracket(String inBracket) {
 		this.inBracket = inBracket;
-	}
+	}*/
 
 	public String getInBrackets() {
 		return inBrackets;
@@ -293,7 +293,7 @@ public class Structure extends NamedElement {
 	}
 
 
-	public void appendInBracket(String inBracket) {
+	/*public void appendInBracket(String inBracket) {
 		String newValue = "";
 		if(this.inBracket == null || this.inBracket.isEmpty()) {
 			newValue = inBracket;
@@ -301,7 +301,7 @@ public class Structure extends NamedElement {
 			newValue = this.inBracket + "; " + inBracket;
 		}
 		this.inBracket = newValue;
-	}
+	}*/
 
 
 	public void appendId(String id) {

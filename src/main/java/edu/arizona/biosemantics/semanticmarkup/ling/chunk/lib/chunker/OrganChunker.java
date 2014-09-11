@@ -61,7 +61,7 @@ public class OrganChunker extends AbstractChunker {
 			//terminalParent = terminal.getParent(parseTree);
 			Chunk chunk = chunkCollector.getChunk(terminal);
 			//if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && organStateKnowledgeBase.isOrgan(terminal.getTerminalsText())) {
-			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && learnedCharacterKnowledgeBase.isOrgan(terminal.getTerminalsText())) {
+			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && learnedCharacterKnowledgeBase.isEntity(terminal.getTerminalsText())) {
 				Chunk organ = new Chunk(ChunkType.ORGAN, terminal);
 				if(previousOrgan!=null) {
 					previousOrgan.setChunkType(ChunkType.CONSTRAINT);

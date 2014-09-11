@@ -7,6 +7,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -14,6 +15,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
@@ -97,8 +99,8 @@ public class OtherINsChunker extends AbstractChunker {
 				//List<Chunk> ctcopy = null;
 				String npcopy = null;
 				String np = "";
-				boolean foundposition = false;
-				boolean foundcharacter = false;
+				boolean foundStructureRef = false;
+				boolean foundCharacter = false;
 				
 				boolean startNoun = false;
 				boolean foundOrgan = false;
@@ -171,12 +173,12 @@ public class OtherINsChunker extends AbstractChunker {
 					}
 					 */
 					
-					if(foundposition && (lookAheadTerminal.getTerminalsText().matches(",|and|or|but") || isHardStop(terminals, j, chunkCollector))){
+					if(foundStructureRef && (lookAheadTerminal.getTerminalsText().matches(",|and|or|but") || isHardStop(terminals, j, chunkCollector))){
 						//foundOrgan = true;
 						break;
 					}
 	
-					if(foundcharacter && (lookAheadTerminal.getTerminalsText().matches(",|and|or|but") ||  isHardStop(terminals, j, chunkCollector))){
+					if(foundCharacter && (lookAheadTerminal.getTerminalsText().matches(",|and|or|but") ||  isHardStop(terminals, j, chunkCollector))){
 						foundOrgan = true;
 						break;
 					}
@@ -233,12 +235,13 @@ public class OtherINsChunker extends AbstractChunker {
 					
 					
 					String character = characterKnowledgeBase.getCharacterName(lookAheadTerminal.getTerminalsText()).getCategories();
-					if(!foundposition && character!=null && character.contains("position")){
-						foundposition = true;
+					//if(!foundStructureRef && character!=null && character.contains("position")){
+					if(!foundStructureRef && character!=null && character.matches(".*?(^|_)("+ElementRelationGroup.entityRefElements+")(_|$).*")){
+						foundStructureRef = true;
 					}
 
-					if(!foundcharacter && character!=null && character.contains("character")){ //in diameter
-						foundcharacter = true;
+					if(!foundCharacter && character!=null && character.contains("character")){ //in diameter
+						foundCharacter = true;
 					}
 					
 					if(!foundOrgan && posKnowledgeBase.isNoun(lookAheadTerminal.getTerminalsText())){ 
@@ -260,7 +263,7 @@ public class OtherINsChunker extends AbstractChunker {
 				
 				
 				//form a PP chunk to include terminals from index i to before j
-				if(foundOrgan || npCopy ||foundposition){
+				if(foundOrgan || npCopy ||foundStructureRef){
 					LinkedHashSet<Chunk> function = new LinkedHashSet<Chunk>();
 					function.add(terminal); //add IN
 					
@@ -280,7 +283,7 @@ public class OtherINsChunker extends AbstractChunker {
 							}
 						} else {
 							Chunk chunk = chunkCollector.getChunk(lookAheadTerminal);
-							if(foundposition && k==j-1){
+							if(foundStructureRef && k==j-1){
 								//turn position character chunk to an organ chunk by replace the chunk of lookAheadTerminal with a new organ chunk
 								chunk = new Chunk(ChunkType.ORGAN, lookAheadTerminal);
 								chunkCollector.addChunk(chunk);

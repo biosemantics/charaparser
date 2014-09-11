@@ -14,21 +14,10 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
-
-
-
-
-
-
-
-
-
-
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-
 import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto2.Client;
 import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
@@ -120,8 +109,9 @@ public class RunConfig extends BasicConfig {
 	private String otoLiteReviewFile = "TermReview.txt";
 	//private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	//private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
-	private String otoLiteTermReviewURL = "http://etc-dev.cs.umb.edu/otolite/";
-	private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/otolite/";
+	//http://etc-dev.cs.umb.edu/etcsite/
+	private String otoLiteTermReviewURL = "http://etc.cs.umb.edu/otolite/";
+	private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/etcsite/";
 	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
 	private String perlDirectory = "src/main/perl/edu/arizona/biosemantics/semanticmarkup/markupelement/description/ling/learn/lib/perl" ;
 	private String workspaceDirectory = "workspace";

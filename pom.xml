@@ -211,6 +211,7 @@
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
 			<version>0.0.20-SNAPSHOT</version>
+			
 			<exclusions>
 				<exclusion>
 					<artifactId>gxt</artifactId>
@@ -218,7 +219,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 	</dependencies>
 
 	<build>

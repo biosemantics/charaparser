@@ -10,12 +10,14 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor;
@@ -179,9 +181,11 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		} else if(firstChunk.isOfChunkType(ChunkType.PP)) {
 			lastElements.clear();
 			List<AbstractParseTree> chunkTerminals = firstChunk.getTerminals();
-			if(chunkTerminals.get(0).equals("with")) {
-				Chunk organChunk = firstChunk.getChunkDFS(ChunkType.ORGAN);
-				result.addAll(establishSubject(organChunk, processingContext, processingContextState));
+			//if(chunkTerminals.get(0).equals("with")) {//with stems green => subject="stems"
+			//	Chunk organChunk = firstChunk.getChunkDFS(ChunkType.ORGAN);
+			//	result.addAll(establishSubject(organChunk, processingContext, processingContextState));
+			if(chunkTerminals.get(0).toString().matches(ElementRelationGroup.possessPreps)) {
+				result.addAll(reestablishSubject(processingContext, processingContextState));
 			} else {
 				if(chunks.size()>1){
 					Chunk nextChunk = chunks.get(1);

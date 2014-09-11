@@ -56,7 +56,7 @@ public class OrganRecoverChunker extends AbstractChunker {
 			
 			if(chunkCollector.isOfChunkType(terminal, ChunkType.CONSTRAINT) && !previousOrgan) { 
 				//if(organStateKnowledgeBase.isOrgan(terminal.getTerminalsText())) {
-				if(learnedCharacterKnowledgeBase.isOrgan(terminal.getTerminalsText())) {
+				if(learnedCharacterKnowledgeBase.isEntity(terminal.getTerminalsText())) {
 					Chunk organ = new Chunk(ChunkType.ORGAN, terminal);
 					chunkCollector.addChunk(organ);
 					previousOrgan = true;

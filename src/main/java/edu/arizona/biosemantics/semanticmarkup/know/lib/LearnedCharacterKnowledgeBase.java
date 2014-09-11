@@ -1,11 +1,13 @@
 package edu.arizona.biosemantics.semanticmarkup.know.lib;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 
 
@@ -36,8 +38,9 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
 	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
 	private ConcurrentHashMap<String, Match> characterCache = new ConcurrentHashMap<String, Match> ();
-	private ConcurrentHashMap<String, Boolean> isOrganCache = new ConcurrentHashMap<String, Boolean> ();
+	private ConcurrentHashMap<String, Boolean> isEntityCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, Boolean> isStateCache = new ConcurrentHashMap<String, Boolean> ();
+	private ConcurrentHashMap<String, ArrayList<String>> entityTypeCache = new ConcurrentHashMap<String, ArrayList<String>> (); //term => entity type (structure, taxon_name, etc.)
 	
 	/**
 	 * @param glossary
@@ -53,21 +56,43 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 	
 	@Override
-	public boolean isOrgan(String word){
-		if(isOrganCache.get(word)!=null) return isOrganCache.get(word);
+	public boolean isEntity(String word){
+		if(isEntityCache.get(word)!=null) return isEntityCache.get(word);
 				
 		String cats = this.getCharacterName(word).getCategories();
-		boolean isorgan = cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
-		isOrganCache.put(word, isorgan);
-		return isorgan;
+		//boolean isEntity = cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
+		boolean isEntity = cats !=null && cats.matches(".*?(^|_)("+ElementRelationGroup.entityElements+")(_|$).*");
+		isEntityCache.put(word, isEntity);
+		if(isEntity){
+			String[] catArray = cats.split(or);
+			for(String cat: catArray){
+				ArrayList<String> types = entityTypeCache.get(cat);
+				if(types==null)	types = new ArrayList<String>();
+				types.add(cat);
+				entityTypeCache.put(word, types);
+			}
+		}
+		return isEntity;
 	}
 	
+	@Override
+	public String getEntityType(String singular, String original){
+		ArrayList<String> types = new ArrayList<String>();
+		if(entityTypeCache.get(original)!=null) types = entityTypeCache.get(original); 
+		else if(entityTypeCache.get(singular)!=null) types = entityTypeCache.get(singular);
+		String typeString = "";
+		for(String type: types){
+			typeString += type+this.or;
+		}
+		return typeString.replaceFirst(or+"$", "");
+	}
 	@Override
 	public boolean isState(String word){
 		if(isStateCache.get(word)!=null) return isStateCache.get(word);
 		
 		String cats = this.getCharacterName(word).getCategories();
-		boolean isstate = cats!=null && !cats.matches(".*?(^|_)structure(_|$).*");
+		//boolean isstate = cats!=null && !cats.matches(".*?(^|_)structure(_|$).*");
+		boolean isstate = cats!=null && !cats.matches(".*?(^|_)("+ElementRelationGroup.entityElements+")(_|$).*");
 		isStateCache.put(word, isstate);
 		return isstate;
 	}

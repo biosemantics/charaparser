@@ -201,7 +201,7 @@ public class StructureNameStandardizer {
 			//add constraint organ to parentorgan list 
 			String constraint = parentstruct.getConstraint() !=null? parentstruct.getConstraint() : null;
 			if(constraint!=null){ 
-				if(learnedCharacterKnowledgeBase.isOrgan(constraint)){
+				if(learnedCharacterKnowledgeBase.isEntity(constraint)){
 					//parentorgan = constraint; //use the constraint of parentstruct as parentorgan, e.g. leaf blade ..., petiole ..., vein ....
 					parentofparentstructure = constraint +","+parentofparentstructure; //blade, leaf
 				}
