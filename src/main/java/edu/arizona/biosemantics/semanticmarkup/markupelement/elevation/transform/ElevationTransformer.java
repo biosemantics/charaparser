@@ -1,36 +1,49 @@
-package edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform;
+/**
+ * 
+ */
+package edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Distribution;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFile;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Treatment;
+
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Elevation;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Treatment;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFile;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.IElevationTransformer;
 
-public class DistributionTransformer implements IDistributionTransformer {
+/**
+ * @author Hong Cui
+ *
+ */
+public class ElevationTransformer implements IElevationTransformer {
 
+	/* (non-Javadoc)
+	 * @see edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.transform.IElevationTransformer#transform(java.util.List)
+	 */
 	@Override
-	public void transform(List<DistributionsFile> distributionsFiles) {
-		for(DistributionsFile distributionsFile : distributionsFiles) {
+	public void transform(List<ElevationsFile> elevationsFiles) {
+		for(ElevationsFile elevationsFile : elevationsFiles) {
 			int i = 0;
-			for(Treatment treatment : distributionsFile.getTreatments()) {
-				for(Distribution distribution : treatment.getDistributions()) {
+			for(Treatment treatment : elevationsFile.getTreatments()) {
+				for(Elevation elevation : treatment.getElevations()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
 					statement.setId("distribution" + i++);
-					statement.setText(distribution.getText());
-					statement.setValues(parse(distribution.getText()));
+					statement.setText(elevation.getText());
+					statement.setValues(parse(elevation.getText()));
 					statements.add(statement);				
-					distribution.setStatements(statements);
+					elevation.setStatements(statements);
 				}
 			}
 		}
-	}
 
+	}
+	
 	@Override
 	public List<Value> parse(String text) {
 		//format text, hide [,;] in parentheses
@@ -84,6 +97,4 @@ public class DistributionTransformer implements IDistributionTransformer {
 		 }
 	
 	
-
 }
-

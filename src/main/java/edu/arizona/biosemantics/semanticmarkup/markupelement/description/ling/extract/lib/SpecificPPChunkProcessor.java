@@ -98,7 +98,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				List<Structure> structures = extractStructuresFromObject(object, processingContext, 
 						processingContextState);
 				
-				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) { //lastElement is growth.
+				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) {
 					List<Structure> entity1 = null;
 					//Element lastElement = processingContextState.getLastElements().getLast();
 					Element lastElement = lastElements.getLast();
@@ -117,6 +117,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 					result.addAll(relationElement);
 					processingContextState.setLastElements(relationElement);
 					result.addAll(structures);
+					processingContextState.setLastElements(structures);//Hong 9/11/14
 				}
 			} else {
 				//c: {loosely} {arachnoid} : should be m[loosly] architecture[arachnoid]

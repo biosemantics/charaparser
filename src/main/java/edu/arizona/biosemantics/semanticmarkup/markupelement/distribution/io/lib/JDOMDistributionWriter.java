@@ -16,6 +16,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFileList;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Treatment;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
 
 public class JDOMDistributionWriter implements IDistributionWriter {
 
@@ -48,6 +49,11 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 					textElement.setText(statement.getText());
 					statementElement.setAttribute("id", statement.getId());
 					statementElement.addContent(textElement);
+					for(Value value: statement.getValues()){
+						Element valueElement = new Element("value");
+						valueElement.setText(value.getText());
+						statementElement.addContent(valueElement);
+					}
 					currentElement.addContent(statementElement);
 				}
 			}

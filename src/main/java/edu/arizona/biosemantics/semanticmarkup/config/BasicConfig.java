@@ -151,7 +151,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(InputStream.class).annotatedWith(Names.named("iPlantXML_SchemaFile")).toInstance(inputStreamCreator.readStreamFromString(
 					  "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplant.xsd"));
 			  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
-			  
+			  bind(String.class).annotatedWith(Names.named("HabitatParser_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishFactored.ser.gz");
 			  // IO
 			  bind(new TypeLiteral<Map<File, Binding>>() {}).annotatedWith(Names.named("MOXyBinderDescriptionReaderWriter_FileDocumentMappings")).to(
 					  new TypeLiteral<HashMap<File, Binding>>() {}).in(Singleton.class);

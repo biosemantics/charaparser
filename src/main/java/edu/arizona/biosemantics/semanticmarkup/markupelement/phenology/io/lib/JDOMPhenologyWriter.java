@@ -10,6 +10,7 @@ import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.PhenologiesFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.PhenologiesFileList;
@@ -48,6 +49,11 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 					textElement.setText(statement.getText());
 					statementElement.setAttribute("id", statement.getId());
 					statementElement.addContent(textElement);
+					for(Value value: statement.getValues()){
+						Element valueElement = new Element("value");
+						valueElement.setText(value.getText());
+						statementElement.addContent(valueElement);
+					}
 					currentElement.addContent(statementElement);
 				}
 			}

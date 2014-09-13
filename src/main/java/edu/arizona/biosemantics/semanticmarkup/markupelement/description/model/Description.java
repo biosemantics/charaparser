@@ -47,7 +47,6 @@ public class Description extends Element {
 	public void addStatement(Statement statement) {
 		this.statements.add(statement);
 	}
-
 	/*@Override
 	public Object clone(){
 		Description d = new Description();

@@ -7,7 +7,7 @@ import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFileList;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.transform.IElevationTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.IElevationTransformer;
 
 public class ElevationMarkupCreator implements IElevationMarkupCreator {
 

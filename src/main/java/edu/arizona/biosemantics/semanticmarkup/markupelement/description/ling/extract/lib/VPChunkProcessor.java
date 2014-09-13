@@ -110,7 +110,13 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 				}
 			}
 			
-			results.addAll(this.createRelationElements(relation, processingContextState.getSubjects(), toStructures, modifiers, false, processingContext, processingContextState));
+			/*List<Structure> fromStructures = new LinkedList<Structure>();
+			for(Element element : processingContextState.getLastElements()) {
+				if(element.isStructure())
+					fromStructures.add((Structure)element);
+			}
+			if(fromStructures.isEmpty()) fromStructures = processingContextState.getSubjects();*/
+			results.addAll(this.createRelationElements(relation, parents, toStructures, modifiers, false, processingContext, processingContextState));
 		}
 		return results;
 	}

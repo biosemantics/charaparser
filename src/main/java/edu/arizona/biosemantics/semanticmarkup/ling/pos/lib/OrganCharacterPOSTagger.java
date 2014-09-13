@@ -84,7 +84,6 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				isState = true;
 			//isOrgan = organStateKnowledgeBase.isOrgan(word);
 			isOrgan = learnedCharacterKnowledgeBase.isEntity(word);
-
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();
 			if (word.length() > 0 && !word.matches("\\W")
@@ -140,8 +139,6 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				posedSentence.add(new POSedToken(word, POS.NNS));
 			} else if(word.matches("\\d*.{0,1}\\d+")) {
 				posedSentence.add(new POSedToken(word, POS.CD));
-			} else if(p.contains("c") && learnedCharacterKnowledgeBase.getCharacterName(word).getCategories().matches(".*?(^|_)("+ElementRelationGroup.verbRelationElements+")(_|$).*") ){
-				posedSentence.add(new POSedToken(word, POS.VB));
 			} else if (p.contains("c") || isState) {
 				int wordFrequency = corpus.getFrequency(word);
 				if (wordFrequency > 79) {

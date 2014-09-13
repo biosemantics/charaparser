@@ -42,6 +42,10 @@ public class StanfordParserWrapper implements IParser {
 			stanfordSentence.add(hasWord);
 		}
 		Tree tree = parser.parseTree(stanfordSentence);
+		
 		return new StanfordParseTree(tree);
 	}
+	
+	
+	
 }

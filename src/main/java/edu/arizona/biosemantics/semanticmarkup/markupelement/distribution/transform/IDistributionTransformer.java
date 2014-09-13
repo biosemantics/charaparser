@@ -3,10 +3,12 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.trans
 import java.util.List;
 
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFile;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
 
 public interface IDistributionTransformer {
 
 	void transform(List<DistributionsFile> distributionsFiles);
+	List<Value> parse(String text);
 
 }
 

@@ -61,8 +61,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.HabitatTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.IHabitatTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupCreator;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.transform.ElevationTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.transform.IElevationTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.ElevationTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.IElevationTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.DistributionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.DistributionTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.IDistributionTransformer;

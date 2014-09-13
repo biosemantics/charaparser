@@ -80,6 +80,7 @@
 				<xml-element java-attribute="ontologyId" xml-path="@ontologyid"/>
 				<xml-element java-attribute="provenance" xml-path="@provenance"/>
 				<xml-element java-attribute="notes" xml-path="@notes"/>
+				<xml-element java-attribute="isModifier" xml-path="@is_modifier"/>
             </java-attributes>
         </java-type>
 		<java-type name="Structure">
@@ -89,7 +90,6 @@
 				<xml-element java-attribute="constraintId" xml-path="@constraintid"/>
 				<xml-element java-attribute="geographicalConstraint" xml-path="@geographical_constraint"/>
 				<xml-element java-attribute="id" xml-path="@id"/>
-				<xml-element java-attribute="inBracket" xml-path="@in_bracket"/>
 				<xml-element java-attribute="inBrackets" xml-path="@in_brackets"/>
 				<xml-element java-attribute="name" xml-path="@name"/>
 				<xml-element java-attribute="parallelismConstraint" xml-path="@parallelism_constraint"/>

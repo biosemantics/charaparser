@@ -10,6 +10,7 @@ import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Elevation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFile;
@@ -48,6 +49,11 @@ public class JDOMElevationWriter implements IElevationWriter {
 					textElement.setText(statement.getText());
 					statementElement.setAttribute("id", statement.getId());
 					statementElement.addContent(textElement);
+					for(Value value: statement.getValues()){
+						Element valueElement = new Element("value");
+						valueElement.setText(value.getText());
+						statementElement.addContent(valueElement);
+					}
 					currentElement.addContent(statementElement);
 				}
 			}
