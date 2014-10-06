@@ -127,17 +127,17 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
  */
 public class BasicConfig extends AbstractModule {
 	
-	  private String version = "0.1.6";
+	  private String version = "N/A";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
 	  public BasicConfig() throws IOException {			
 		  ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		  Properties properties = new Properties();
-		  properties.load(loader.getResourceAsStream("config.properties"));
+		  properties.load(loader.getResourceAsStream("edu/arizona/biosemantics/semanticmarkup/config.properties"));
 		  //this loads etc-site properties when added as dependency to etc-site.
 		  //TODO: find a way to load correct properties from inside jar
 		  //interestingly it works fine in the same manner for oto2, loading defaultCategories.csv
-		  //this.version = properties.getProperty("project.version");
+		  this.version = properties.getProperty("project.version");
 	  }
 	  
 	  @Override 
