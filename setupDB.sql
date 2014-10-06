@@ -5,4 +5,4 @@ CREATE TABLE IF NOT EXISTS `datasetprefixes` (
 	oto_secret varchar(100) NOT NULL DEFAULT '',
 	created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (prefix)
-) CHARACTER SET utf8 engine=innodb";
+) CHARACTER SET utf8 engine=innodb;
