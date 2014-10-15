@@ -107,11 +107,13 @@ public class ETCLearnMain extends CLIMain {
 				config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
 			}
 			String workspace = config.getWorkspaceDirectory();
-            if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
+            /* Don't setup logging for etc related charparser, it will hijack the logging from etc-site's logging configuration
+             * Output not needed for user anwyay
+			if(commandLine.hasOption("b") && commandLine.hasOption("e")) {
             	this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
 	        } else {
 	        	setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
-	        }
+	        }*/
 		    
             if(commandLine.hasOption("f")) {
                 config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
