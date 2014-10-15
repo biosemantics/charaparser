@@ -44,6 +44,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 
@@ -95,6 +96,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * @param databasePassword
 	 * @param databasePrefix
 	 * @param glossary
+	 * @throws ClassNotFoundException 
+	 * @throws SQLException 
 	 * @throws Exception
 	 */
 	@Inject
@@ -124,7 +127,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("SelectedSources")Set<String> selectedSources, 
 			@Named("GlossaryTable")String glossaryTable,
 			@Named("termCategorizationRequired")boolean termCategorizationRequired,
-			IInflector inflector) throws Exception {
+			IInflector inflector) throws ClassNotFoundException, SQLException {
 		super(version, parallelProcessing);
 		this.inflector = inflector;
 		this.parser = parser;
@@ -154,7 +157,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	@Override
-	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) {
+	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException {
 		//download gloss again from real OTO because the last download is no longer in memory
 		//it is possible for gloss o change from last run, make sure to grab the correct version.
 		//when remove MYSQL, take care of this issue
@@ -175,31 +178,41 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		try {
 			glossaryDownload = futureGlossaryDownload.get();
 		} catch (Exception e) {
+			otoClient.close();
 			log(LogLevel.ERROR, "Couldn't download glossary " + glossaryType + " version: " + glossaryVersion, e);
+			throw new TransformationException();
 		}
 		otoClient.close();
 		
 		glossaryVersion = glossaryDownload.getVersion();
 				
         UploadResult uploadResult = null;
-        Download download;
+        Download download = null;
 		try {
 			uploadResult = readUploadResult();
-			otoLiteClient.open();
-			Future<Download> futureDownload = otoLiteClient.getDownload(uploadResult);
-			download = futureDownload.get();
-			otoLiteClient.close();
 		} catch (SQLException e) {
 			this.log(LogLevel.ERROR, "Problem reading upload result", e);
-			download = new Download();
-		} catch(InterruptedException | ExecutionException e) {
-			this.log(LogLevel.ERROR, "Problem downloading oto lite categorizations for upload " + uploadResult.getUploadId(), e);
-			download = new Download();
+			throw new TransformationException();
+		}
+		
+		if(uploadResult != null) {
+			try {
+				otoLiteClient.open();
+				Future<Download> futureDownload = otoLiteClient.getDownload(uploadResult);
+				download = futureDownload.get();
+				otoLiteClient.close();
+			} catch(InterruptedException | ExecutionException e) {
+				otoLiteClient.close();
+				this.log(LogLevel.ERROR, "Problem downloading oto lite categorizations for upload " + uploadResult.getUploadId(), e);
+				throw new TransformationException();
+			}
 		}
 
+		if(download == null)
+			throw new TransformationException();
         if(!download.isFinalized() && termCategorizationRequired) {
         	log(LogLevel.ERROR, "The term categorization has to be finalized to run markup. Please return to categorizing terms and finalize first.");
-        	System.exit(0);
+        	throw new TransformationException();
         }
 		
 		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
@@ -346,7 +359,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log(LogLevel.ERROR, "Exception", e);
 		}
 	}*/
 	

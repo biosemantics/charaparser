@@ -4,7 +4,7 @@ package edu.arizona.biosemantics.semanticmarkup.log;
  * LogInjectionAspect specifies ILoggables and adds them a log method
  * @author rodenhausen
  */
-public aspect LogInjectionAspect {
+public aspect LogInjection {
 	
 	/**
 	 * log method is defined for ILoggables

@@ -45,7 +45,7 @@ public class GenericDescriptionReader implements IDescriptionReader {
 	}
 
 	@Override
-	public DescriptionsFileList read(String inputDirectory) throws Exception {
+	public DescriptionsFileList read(String inputDirectory) {
 		Map<ValidationRun, IDescriptionReader> validationRuns = new HashMap<ValidationRun, IDescriptionReader>();
 		validationRuns.put(new ValidationRun(new XMLVolumeValidator(new File(xmlSchemaFile)), new File(inputDirectory)), 
 				new MOXyDescriptionReader(xmlBindingsFile));
@@ -75,7 +75,7 @@ public class GenericDescriptionReader implements IDescriptionReader {
 		}
 		if(descriptionReader == null) {
 			log(LogLevel.ERROR, "No valid format for any of the description readers found. Will exit");
-			System.exit(0);
+			throw new IllegalArgumentException();
 		}
 		
 		log(LogLevel.DEBUG, "delegate reading treatments to " + descriptionReader.getClass());

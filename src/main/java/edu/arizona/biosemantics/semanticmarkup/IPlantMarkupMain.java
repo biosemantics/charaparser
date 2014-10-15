@@ -30,8 +30,9 @@ public class IPlantMarkupMain extends CLIMain {
 	
 	/**
 	 * @param args
+	 * @throws Throwable 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		CLIMain cliMain = new IPlantMarkupMain();
 		cliMain.parse(args);
 		cliMain.run();

@@ -44,8 +44,7 @@ public class PartOfFile implements IOntology {
 			success = true;
 		}
 		}catch(Exception e){
-			e.printStackTrace();
-			log(LogLevel.ERROR, e.toString());
+			log(LogLevel.ERROR, "Couldn't read `part of` file", e);
 		}
 
 	}

@@ -25,15 +25,16 @@ public class EvaluationMain extends CLIMain {
 	
 	/**
 	 * @param args
+	 * @throws Throwable 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		CLIMain cliMain = new EvaluationMain();
 		cliMain.parse(args);
 		cliMain.run();
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parse(String[] args) throws IOException {
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
 		
@@ -58,32 +59,32 @@ public class EvaluationMain extends CLIMain {
 			config = new RunConfig();
 		} catch(IOException e) {
 			log(LogLevel.ERROR, "Couldn't instantiate default config", e);
-			System.exit(0);
+			throw e;
 		}
 		try {
 		    CommandLine commandLine = parser.parse( options, args );
 		    if(commandLine.hasOption("h")) {
 		    	HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "what is this?", options );
-				System.exit(0);
+				return;
 		    }
 		    if(commandLine.hasOption("c")) {
 		    	try {
 		    		config = getConfig(commandLine.getOptionValue("c"));
 		    	} catch(IOException e) {
 					log(LogLevel.ERROR, "Couldn't instantiate default config", e);
-					System.exit(0);
+					throw e;
 				}
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a configuration to use");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    	//use standard config RunConfig
 		    }
 		    
 		    config.setDescriptionReader(EvaluationDBDescriptionReader.class);
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    } else {
 		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    }
@@ -96,7 +97,7 @@ public class EvaluationMain extends CLIMain {
 		    	String[] parallelParameters = parallelParameter.split(",");
 		    	if(parallelParameters.length != 2) {
 		    		log(LogLevel.ERROR, "You have to specify 2 values for parameter t");
-		    		System.exit(0);
+		    		throw new IllegalArgumentException();
 		    	} else {
 		    		try {
 		    			int threadsPerDescriptionExtractor = Integer.parseInt(parallelParameters[0]);
@@ -105,7 +106,7 @@ public class EvaluationMain extends CLIMain {
 		    			config.setMarkupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum(threadsPerDescriptionExtractor);
 		    		} catch(Exception e) {
 		    			log(LogLevel.ERROR, "Problem to convert parameter to Integer", e);
-		    			System.exit(0);
+		    			throw e;
 		    		}
 		    	}
 		    }
@@ -113,35 +114,35 @@ public class EvaluationMain extends CLIMain {
 		    	config.setDatabaseHost(commandLine.getOptionValue("n"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server hostname");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("p")) {
 		    	config.setDatabasePort(commandLine.getOptionValue("p"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a MySQL server port");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("d")) {
 		    	config.setDatabaseName(commandLine.getOptionValue("d"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database name");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("u")) {
 		    	config.setDatabaseUser(commandLine.getOptionValue("u"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database user");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    	//use standard value from RunConfig
 		    }
 		    if(commandLine.hasOption("s")) {
 		    	config.setDatabasePassword(commandLine.getOptionValue("s"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database password");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    	//use standard value from RunConfig
 		    }
 			//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
@@ -151,7 +152,7 @@ public class EvaluationMain extends CLIMain {
 		    	config.setDatabaseTablePrefix(commandLine.getOptionValue("z"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a database table prefix");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    }
 		} catch(ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);

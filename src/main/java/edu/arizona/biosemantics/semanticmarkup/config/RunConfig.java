@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 
 
 
+
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
@@ -271,8 +272,9 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("BioportalAPIKey")).toInstance(bioportalAPIKey);
 			bind(String.class).annotatedWith(Names.named("BioportalUserId")).toInstance(bioportalUserId);
 		
-		} catch(IOException e) {
-			e.printStackTrace();
+		} catch(IOException | JAXBException e) {
+			log(LogLevel.ERROR, "Exception loading configuration", e);
+			throw new IllegalArgumentException();
 		}
 	}
 	
@@ -290,24 +292,22 @@ public class RunConfig extends BasicConfig {
 		return result;
 	}
 
-	private IDescriptionMarkupResultReader constructEvaluationTestReader() {
+	private IDescriptionMarkupResultReader constructEvaluationTestReader() throws JAXBException, IOException {
 		try {
 			return new MOXyDescriptionMarkupResultReader(createEvaluationTestReaderBindingsList());
-		} catch(Exception e) {
+		} catch(JAXBException | IOException e) {
 			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
-			System.exit(0);
+			throw e;
 		}
-		return null;
 	}
 
-	private IDescriptionMarkupResultReader constructEvaluationCorrectReader() {
+	private IDescriptionMarkupResultReader constructEvaluationCorrectReader() throws JAXBException, IOException {
 		try {
 			return new MOXyDescriptionMarkupResultReader(createEvaluationCorrectReaderBindingsList());
-		} catch(Exception e) {
+		} catch(JAXBException | IOException e) {
 			log(LogLevel.ERROR, "Exception instantiating MOXyDescriptionMarkupResultReader", e);
-			System.exit(0);
+			throw e;
 		}
-		return null;
 	}
 
 	protected HashSet<String> getSelectedSources(String path) {
@@ -743,7 +743,7 @@ public class RunConfig extends BasicConfig {
 	
 	
 
-	public void setIODescriptionBindingsList(String volumeReader) throws IllegalArgumentException, IOException {
+	public void setIODescriptionBindingsList(String volumeReader) throws IOException {
 		if(volumeReader.equals("XML")) {
 			this.descriptionReaderBindingsList = createIOXMLBindingsList();
 			this.descriptionWriterBindingsList = createIOXMLBindingsList();

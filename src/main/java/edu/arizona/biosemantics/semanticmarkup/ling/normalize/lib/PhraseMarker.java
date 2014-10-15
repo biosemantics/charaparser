@@ -19,6 +19,7 @@ import com.google.inject.name.Named;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.IPhraseMarker;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
+import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 
 /**
  * @author Hong Cui
@@ -84,7 +85,7 @@ public class PhraseMarker implements IPhraseMarker{
 			} catch (Exception e) {
 				//LOGGER.error("Load the updated TaxonIndexer failed.", e);
 				//StringWriter sw = new StringWriter();PrintWriter pw = new PrintWriter(sw);e.printStackTrace(pw);LOGGER.error(ApplicationUtilities.getProperty("CharaParser.version")+System.getProperty("line.separator")+sw.toString());
-				e.printStackTrace();
+				log(LogLevel.ERROR, "Load the updated TaxonIndexer failed.", e);
 			}
 		}
 

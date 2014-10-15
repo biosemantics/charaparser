@@ -36,7 +36,7 @@ public abstract class AbstractRun implements IRun {
 		this.runOutDirectory = runOutDirectory;
 	}
 	
-	public void run() throws Exception {	
+	public void run() throws Throwable {	
 		StringBuilder config = new StringBuilder();
 		appendConfigFile(config);
 				
@@ -70,7 +70,7 @@ public abstract class AbstractRun implements IRun {
 		bwSetup.close();
 	}
 
-	protected abstract void doRun() throws Exception;
+	protected abstract void doRun() throws Throwable;
 
 	public String getDescription() {
 		return this.getClass().toString();

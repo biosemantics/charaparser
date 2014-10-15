@@ -11,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -27,6 +28,9 @@ import org.apache.commons.lang3.SystemUtils;
 
 
 
+
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -39,6 +43,7 @@ import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.AdjectiveReplacementForNoun;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 
@@ -137,7 +142,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	
 	
 	@Override
-	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) {
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) throws LearnException {
 		File directory = new File(temporaryPath);
 		
 		try {
@@ -153,8 +158,9 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			
 			this.readResults(descriptionsFiles);
 			
-		}catch(Exception e) {
+		}catch(IOException e) {
 			log(LogLevel.ERROR, "Problem with output/input or calling of perl", e);
+			throw new LearnException();
 		}
 	}
 
@@ -168,7 +174,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				String modifier = resultSet.getString("modifier");
 				modifiers.add(modifier);
 			}
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return modifiers;
@@ -184,7 +190,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				String tag = resultSet.getString("tag");
 				tags.add(tag);
 			}
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return tags;
@@ -203,7 +209,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					termCategories.put(term, new HashSet<String>());
 				termCategories.get(term).add(category);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing term_category table", e);
 		}
 		return termCategories;
@@ -221,7 +227,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					categoryNames.put(category, new HashSet<String>());
 				categoryNames.get(category).add(term);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing term_category table", e);
 		}
 		return categoryNames;
@@ -242,7 +248,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					wordsToRoles.put(word, new HashSet<String>());
 				wordsToRoles.get(word).add(semanticRole);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing wordroles table", e);
 		}
 		return wordsToRoles;
@@ -256,7 +262,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			while(resultSet.next()) {
 				heuristicNouns.put(resultSet.getString("word"), resultSet.getString("type"));
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing heuristicnouns table", e);
 		}
 		return heuristicNouns;
@@ -278,7 +284,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					roleToWords.put(semanticRole, new HashSet<String>());
 				roleToWords.get(semanticRole).add(word);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing wordroles table", e);
 		}
 		return roleToWords;
@@ -300,7 +306,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					wordToSources.get(word).add(source);
 				}
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return wordToSources;
@@ -319,7 +325,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				if(!tag.isEmpty())
 					tags.add(tag);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing wordrole table", e);
 		}
 		return tags;
@@ -346,7 +352,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						tags.add(tag);
 				}
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return tags;
@@ -433,7 +439,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		
@@ -466,7 +472,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				
 				result.put(tag, modifier);
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return result;
@@ -481,7 +487,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				String modifier = resultSet.getString(1).replaceAll("\\[.*?\\]", "").trim();
 				result.add(modifier);
 			}
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return result;
@@ -497,7 +503,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				String sentence = resultSet.getString(1);
 				result.add(sentence);
 			}
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return result;
@@ -549,7 +555,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		return this.heuristicNouns;
 	}
 	
-	private void runPerl(File inDirectory, List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) throws Exception {
+	private void runPerl(File inDirectory, List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) throws IOException, LearnException {
 		
 		String inDirectoryPath = inDirectory.getAbsolutePath() + "/"; //yes "/", not File.seperator; perl wants "/"
 		
@@ -568,7 +574,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		runCommand(command);
 	}
 	
-	private void createTablesNeededForPerl(List<AbstractDescriptionsFile> descriptionsFiles) {
+	private void createTablesNeededForPerl(List<AbstractDescriptionsFile> descriptionsFiles) throws LearnException {
         try {
             Statement stmt = connection.createStatement();
             String cleanupQuery = "DROP TABLE IF EXISTS " + 
@@ -591,13 +597,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
     		allWordsLearner.learn(descriptionsFiles);
     		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), "
     				             + "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");     
-        } catch(Exception e) {
-        	e.printStackTrace();
+        } catch(SQLException | ClassNotFoundException e) {
         	log(LogLevel.ERROR, "problem initalizing tables", e);
+        	throw new LearnException();
 	    }
 	}
 
-	private void runCommand(String command) throws Exception {
+	private void runCommand(String command) throws IOException {
 		long time = System.currentTimeMillis();
 		
 		Process p = Runtime.getRuntime().exec(command);
@@ -746,7 +752,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				
 				result.put(source, new AdjectiveReplacementForNoun(modifier, tag, source));
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		return result;
@@ -774,7 +780,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				else if(tag == null)
 					parentTag = "";
 			}
-		} catch(Exception e) {
+		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
 		}
 		this.parentTagProvider.init(parentTags, grandParentTags);

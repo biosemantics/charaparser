@@ -124,7 +124,7 @@ public class OTOLearner implements ILearner {
 	}
 	
 	@Override
-	public void learn() throws Exception {
+	public void learn() throws Throwable {
 		DescriptionsFileList descriptionsFileList = descriptionReader.read(inputDirectory);
 		
 		//TODO: String version = otoClient.getLatestVersion();
@@ -350,7 +350,6 @@ public class OTOLearner implements ILearner {
 			for(String characterTerm : characterTerms) 
 				result.add(new Term(characterTerm));
 		} catch (Exception e) {
-			e.printStackTrace();
 			log(LogLevel.ERROR, "Problem fetching character terms", e);
 		}
 		return result;

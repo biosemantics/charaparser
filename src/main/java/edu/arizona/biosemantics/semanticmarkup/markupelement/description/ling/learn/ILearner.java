@@ -10,7 +10,7 @@ public interface ILearner {
 	 * learns
 	 * @throws Exception
 	 */
-	public void learn() throws Exception;
+	public void learn() throws Throwable;
 
 	/**
 	 * @return a description of this ILearner implementation

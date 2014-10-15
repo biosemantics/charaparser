@@ -9,7 +9,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
  * StringifyInjectionAspect specifies IPrintables and adds them a toString method
  * @author rodenhausen
  */
-public aspect StringifyInjectionAspect {
+public aspect StringifyInjection {
 	
 	@XmlTransient
 	@Transient

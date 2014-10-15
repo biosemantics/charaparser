@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -51,7 +50,7 @@ public class ETCLearnRun extends AbstractRun {
 	}
 
 	@Override
-	protected void doRun() throws Exception {
+	protected void doRun() throws Throwable {
 		if(!isValidRun()) {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has already been used.");
 			return;
