@@ -12,6 +12,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.Logger;
 
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.InMemoryGlossary;
@@ -107,14 +108,11 @@ public class ETCMarkupMain extends CLIMain {
 				config.setWorkspaceDirectory(commandLine.getOptionValue("a"));
 			}
 			String workspace = config.getWorkspaceDirectory();
-			
-			/* Don't setup logging for etc related charparser, it will hijack the logging from etc-site's logging configuration
-             * Output not needed for user anwyay
 			if (commandLine.hasOption("b") && commandLine.hasOption("e")) {
 				this.setupLogging(commandLine.getOptionValue("b"), commandLine.getOptionValue("e"));
 			} else {
 				setupLogging(workspace + File.separator +"debug.log", workspace + File.separator + "error.log");
-			}*/
+			}
 			if (commandLine.hasOption("f")) {
 				config.setSourceOfDescriptions(commandLine.getOptionValue("f"));
 			}
@@ -226,5 +224,11 @@ public class ETCMarkupMain extends CLIMain {
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
 		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 		config.setMarkupCreator(MarkupChain.class);
+	}
+	
+	protected void setupLogging(String debugLog, String errorLog) {
+		Logger rootLogger = Logger.getRootLogger();
+		//rootLogger.getLoggerRepository().resetConfiguration(); //don't reset to keep log4j.properties configured logger for etc-wide logging
+		addDebugErrorLoggers(rootLogger, debugLog, errorLog);
 	}
 }

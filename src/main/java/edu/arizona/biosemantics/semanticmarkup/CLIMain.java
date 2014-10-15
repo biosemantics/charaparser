@@ -54,7 +54,10 @@ public class CLIMain {
 	protected void setupLogging(String debugLog, String errorLog) {
 		Logger rootLogger = Logger.getRootLogger();
 		rootLogger.getLoggerRepository().resetConfiguration();
-		
+		addDebugErrorLoggers(rootLogger, debugLog, errorLog);
+	}
+
+	protected void addDebugErrorLoggers(Logger rootLogger, String debugLog, String errorLog) {
 		PatternLayout layout = new PatternLayout();
 		layout.setConversionPattern("%d [%t] %-5p %c:%L - %m%n");
 		
