@@ -53,7 +53,7 @@ public class ETCLearnRun extends AbstractRun {
 	protected void doRun() throws Throwable {
 		if(!isValidRun()) {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has already been used.");
-			return;
+			throw new IllegalArgumentException();
 		}
 		
 		log(LogLevel.INFO, "Learning using " + learner.getDescription() + "...");

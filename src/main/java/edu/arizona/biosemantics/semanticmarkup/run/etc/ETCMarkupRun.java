@@ -46,10 +46,10 @@ public class ETCMarkupRun extends AbstractRun {
 	}
 
 	@Override
-	protected void doRun() throws Exception {
+	protected void doRun() throws Throwable {
 		if(!isValidRun()) {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has not been found as having successfully completed learning.");
-			return;
+			throw new IllegalArgumentException();
 		}
 		
 		log(LogLevel.INFO, "Creating markup using " + creator.getDescription() + "...");

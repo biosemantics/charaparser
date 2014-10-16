@@ -106,8 +106,9 @@ public class CLIMain {
 		log(LogLevel.INFO, "running " + run.getDescription() + "...");
 		try {
 			run.run();
-		} catch (Exception e) {
-			log(LogLevel.ERROR, "Problem to execute the run", e);
+		} catch (Throwable t) {
+			log(LogLevel.ERROR, "Problem to execute the run", t);
+			throw t;
 		}
 	}
 
