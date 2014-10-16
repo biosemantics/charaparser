@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import com.google.inject.Inject;
@@ -25,7 +26,10 @@ import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.oto.common.model.GlossaryDownload;
 import edu.arizona.biosemantics.oto.common.model.TermCategory;
 import edu.arizona.biosemantics.oto.common.model.TermSynonym;
+import edu.arizona.biosemantics.oto.common.model.lite.Decision;
+import edu.arizona.biosemantics.oto.common.model.lite.Download;
 import edu.arizona.biosemantics.oto.common.model.lite.Sentence;
+import edu.arizona.biosemantics.oto.common.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.common.model.lite.Term;
 import edu.arizona.biosemantics.oto.common.model.lite.Upload;
 import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
@@ -65,6 +69,7 @@ public class OTOLearner implements ILearner {
 	private String bioportalUserId;
 	private String etcUser;
 	private String sourceOfDescriptions;
+	private boolean useOtoCommuntiyDownload;
 	
 	/**
 	 * @param volumeReader
@@ -99,7 +104,8 @@ public class OTOLearner implements ILearner {
 			@Named("BioportalAPIKey")String bioportalAPIKey, 
 			@Named("BioportalUserId")String bioportalUserId, 
 			@Named("EtcUser")String etcUser, 
-			@Named("SourceOfDescriptions")String sourceOfDescriptions) throws Exception {  
+			@Named("SourceOfDescriptions")String sourceOfDescriptions,
+			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload) throws Exception {  
 		this.inputDirectory = inputDirectory;
 		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
@@ -117,6 +123,7 @@ public class OTOLearner implements ILearner {
 		this.bioportalUserId = bioportalUserId;
 		this.etcUser = etcUser;
 		this.sourceOfDescriptions = sourceOfDescriptions;
+		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
@@ -136,8 +143,34 @@ public class OTOLearner implements ILearner {
 			//initialize the glossary table that the actual learn part needs
 			GlossaryDownload glossaryDownload = futureGlossaryDownload.get();
 			otoClient.close();
-			storeInLocalDB(glossaryDownload, this.databasePrefix);
 		//}
+		log(LogLevel.INFO, "Loaded oto glossary with term-categories: " + glossaryDownload.getTermCategories().size() + " and "
+				+ "synonyms: " + glossaryDownload.getTermSynonyms().size());
+		
+				
+		if(useOtoCommuntiyDownload) {
+			log(LogLevel.INFO, "Will download oto community decisions to add additionally to glossary used");
+			otoLiteClient.open();
+			Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload();
+			Download communityDownload = futureCommunityDownload.get();
+			otoLiteClient.close();
+						
+			log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
+					+ "" + communityDownload.getDecisions().size() + " and "
+					+ "synonyms: " + communityDownload.getSynonyms().size());
+			
+			for(Decision decision : communityDownload.getDecisions()) {
+				glossaryDownload.getTermCategories().add(new TermCategory(decision.getTerm(), decision.getCategory(), 
+						decision.isHasSynonym(), decision.getSourceDataset(), decision.getId()));
+			}
+
+			for(Synonym synonym : communityDownload.getSynonyms()) {
+				glossaryDownload.getTermSynonyms().add(new TermSynonym(
+						synonym.getTerm(), synonym.getCategory(), synonym.getSynonym(), synonym.getId()));
+			}
+		}
+		
+		storeInLocalDB(glossaryDownload, this.databasePrefix);
 		
 		//glossary is needed to prematch phrases
 		initGlossary(glossaryDownload);
@@ -199,8 +232,7 @@ public class OTOLearner implements ILearner {
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			this.glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
 		}
-	}
-
+	}	
 	
 	private void storeInLocalDB(GlossaryDownload glossaryDownload, String tablePrefix) {
 		List<WordRole> wordRoles = new LinkedList<WordRole>();

@@ -224,6 +224,7 @@ public class ETCMarkupMain extends CLIMain {
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
 		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 		config.setMarkupCreator(MarkupChain.class);
+		config.setUseOtoCommuntiyDownload(true);
 	}
 	
 	protected void setupLogging(String debugLog, String errorLog) {

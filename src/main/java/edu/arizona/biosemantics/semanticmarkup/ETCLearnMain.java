@@ -227,7 +227,8 @@ public class ETCLearnMain extends CLIMain {
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
 		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 		config.setOtoLiteReviewFile("nextStep.html");
-		config.setMarkupCreator(MarkupChain.class);		
+		config.setMarkupCreator(MarkupChain.class);	
+		config.setUseOtoCommuntiyDownload(true);
 	}
 	
 	protected void setupLogging(String debugLog, String errorLog) {

@@ -172,6 +172,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
 	private boolean termCategorizationRequired = false;
+	private boolean useOtoCommuntiyDownload = false;
 		
 	// MISC
 	//required for bioportal submission of oto lite
@@ -212,6 +213,7 @@ public class RunConfig extends BasicConfig {
 			bind(INormalizer.class).to(normalizer).in(Singleton.class);
 			bind(IDescriptionMarkupEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
 			bind(Boolean.class).annotatedWith(Names.named("termCategorizationRequired")).toInstance(termCategorizationRequired);
+			bind(Boolean.class).annotatedWith(Names.named("UseOtoCommunityDownload")).toInstance(useOtoCommuntiyDownload);
 			
 			bind(IHabitatMarkupCreator.class).to(habitatMarkupCreator).in(Singleton.class);
 			bind(IHabitatTransformer.class).to(HabitatTransformer.class).in(Singleton.class);
@@ -731,6 +733,14 @@ public class RunConfig extends BasicConfig {
 
 	public void setTermCategorizationRequired(boolean termCategorizationRequired) {
 		this.termCategorizationRequired = termCategorizationRequired;
+	}
+	
+	public boolean isUseOtoCommuntiyDownload() {
+		return useOtoCommuntiyDownload;
+	}
+
+	public void setUseOtoCommuntiyDownload(boolean useOtoCommuntiyDownload) {
+		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
 	}
 
 	public String getMarkupRunValidateSchemaFile() {
