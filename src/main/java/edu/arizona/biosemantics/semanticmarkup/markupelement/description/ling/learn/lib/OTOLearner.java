@@ -153,21 +153,23 @@ public class OTOLearner implements ILearner {
 			otoLiteClient.open();
 			Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload(glossaryType);
 			Download communityDownload = futureCommunityDownload.get();
+			if(communityDownload != null) {
+				log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
+						+ "" + communityDownload.getDecisions().size() + " and "
+						+ "synonyms: " + communityDownload.getSynonyms().size());
+				
+				for(Decision decision : communityDownload.getDecisions()) {
+					glossaryDownload.getTermCategories().add(new TermCategory(decision.getTerm(), decision.getCategory(), 
+							decision.isHasSynonym(), decision.getSourceDataset(), decision.getId()));
+				}
+				for(Synonym synonym : communityDownload.getSynonyms()) {
+					glossaryDownload.getTermSynonyms().add(new TermSynonym(
+							synonym.getTerm(), synonym.getCategory(), synonym.getSynonym(), synonym.getId()));
+				}
+			} else {
+				throw new Exception("Couldn't download community decision");
+			}
 			otoLiteClient.close();
-						
-			log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
-					+ "" + communityDownload.getDecisions().size() + " and "
-					+ "synonyms: " + communityDownload.getSynonyms().size());
-			
-			for(Decision decision : communityDownload.getDecisions()) {
-				glossaryDownload.getTermCategories().add(new TermCategory(decision.getTerm(), decision.getCategory(), 
-						decision.isHasSynonym(), decision.getSourceDataset(), decision.getId()));
-			}
-
-			for(Synonym synonym : communityDownload.getSynonyms()) {
-				glossaryDownload.getTermSynonyms().add(new TermSynonym(
-						synonym.getTerm(), synonym.getCategory(), synonym.getSynonym(), synonym.getId()));
-			}
 		}
 		
 		storeInLocalDB(glossaryDownload, this.databasePrefix);
