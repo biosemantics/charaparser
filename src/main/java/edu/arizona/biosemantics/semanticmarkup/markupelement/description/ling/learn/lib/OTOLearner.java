@@ -151,7 +151,7 @@ public class OTOLearner implements ILearner {
 		if(useOtoCommuntiyDownload) {
 			log(LogLevel.INFO, "Will download oto community decisions to add additionally to glossary used");
 			otoLiteClient.open();
-			Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload();
+			Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload(glossaryType);
 			Download communityDownload = futureCommunityDownload.get();
 			otoLiteClient.close();
 						
