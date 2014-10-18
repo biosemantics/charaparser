@@ -7,7 +7,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import edu.arizona.biosemantics.semanticmarkup.io.validate.IVolumeValidator;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 
 
 /**

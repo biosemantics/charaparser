@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 
 
 /**

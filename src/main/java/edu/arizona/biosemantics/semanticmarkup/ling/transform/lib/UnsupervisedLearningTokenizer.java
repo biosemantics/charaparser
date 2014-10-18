@@ -9,7 +9,7 @@ import java.util.List;
 
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.InvalidFormatException;

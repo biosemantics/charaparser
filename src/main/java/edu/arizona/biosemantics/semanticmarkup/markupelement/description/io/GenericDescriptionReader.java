@@ -13,7 +13,7 @@ import edu.arizona.biosemantics.semanticmarkup.io.validate.ValidationRun;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.IPlantXmlVolumeValidator;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.TaxonxVolumeValidator;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.XMLVolumeValidator;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFileList;
 

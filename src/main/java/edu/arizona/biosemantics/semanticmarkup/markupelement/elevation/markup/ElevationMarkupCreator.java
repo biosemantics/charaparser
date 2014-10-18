@@ -3,7 +3,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFileList;

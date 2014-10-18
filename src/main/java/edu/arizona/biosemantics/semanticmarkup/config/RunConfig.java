@@ -39,7 +39,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.lib.CSVGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.FNAv19Normalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.TreatisehNormalizer;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.IDescriptionMarkupResultReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.io.IDescriptionMarkupEvaluator;

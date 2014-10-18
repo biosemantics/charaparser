@@ -3,7 +3,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.marku
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFileList;

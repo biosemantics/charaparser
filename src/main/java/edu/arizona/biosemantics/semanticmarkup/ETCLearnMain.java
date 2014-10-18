@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.InMemoryGlossary;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markup.MarkupChain;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionReader;

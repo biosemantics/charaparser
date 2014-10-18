@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.arizona.biosemantics.semanticmarkup.eval.matcher.IMatcher;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 

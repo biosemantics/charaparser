@@ -3,7 +3,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.PhenologiesFileList;

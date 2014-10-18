@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 
 
 /**

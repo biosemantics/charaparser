@@ -76,7 +76,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.SomeInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WhitespaceTokenCombiner;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WhitespaceTokenizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WordStanfordParserTokenTransformer;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.Binding;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;

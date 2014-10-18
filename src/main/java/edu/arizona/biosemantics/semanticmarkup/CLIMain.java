@@ -29,7 +29,7 @@ import edu.arizona.biosemantics.semanticmarkup.config.dataset.HymenopteraConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.dataset.PlantConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.dataset.PoriferaConfig;
 import edu.arizona.biosemantics.semanticmarkup.know.Glossary;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.GenericDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.run.IRun;
 

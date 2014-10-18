@@ -2,7 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.markup;
 
 import java.util.List;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 
 
 public class MarkupCreatorChainResult implements IMarkupResult {

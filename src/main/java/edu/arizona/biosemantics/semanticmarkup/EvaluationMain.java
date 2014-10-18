@@ -13,7 +13,7 @@ import org.apache.commons.cli.ParseException;
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.CSVGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.InMemoryGlossary;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.EvaluationDBDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputFromEvaluationNoLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupRun;
