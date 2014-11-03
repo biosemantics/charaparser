@@ -10,7 +10,7 @@ public interface IRun {
 	 * Run
 	 * @throws Exception
 	 */
-	public void run() throws Exception;
+	public void run() throws Throwable;
 	
 	/**
 	 * @return a descriptive String of the IRun

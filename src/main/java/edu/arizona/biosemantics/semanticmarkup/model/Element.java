@@ -7,8 +7,8 @@ import javax.xml.bind.Marshaller;
 
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.log.Logger;
+import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.common.log.Logger;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta;

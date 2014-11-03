@@ -5,42 +5,10 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-/**
- * StringifyInjectionAspect specifies IPrintables and adds them a toString method
- * @author rodenhausen
- */
-public aspect StringifyInjectionAspect {
-	
-	@XmlTransient
-	@Transient
-	@JsonIgnore
-	private IPrintable IPrintable.thisObject;
-	
-	/**
-	 * toString method is defined for IPrintables
-	 */
-	public String IPrintable.toString() {
-		return ObjectStringifier.getInstance().stringify(thisObject);
-	}
-	
-	/**
-	 * Pointcut specification for object construction of an IPrintable
-	 * @param object
-	 */
-	pointcut objectConstruction(IPrintable object) : 
-		initialization(IPrintable+.new(..)) && this(object);
+import edu.arizona.biosemantics.common.log.AbstractStringifyInjection;
+import edu.arizona.biosemantics.common.log.IPrintable;
 
-	/**
-	 * Advice for after object construction lets an IPrintable have a reference of his own for use in toString()
-	 * @param object
-	 */
-	after(IPrintable object) : objectConstruction(object) {
-		object.thisObject = object;
-	}
-	
-	/**
-	 * IPrintables are specified
-	 */
+public aspect StringifyInjection extends AbstractStringifyInjection {
 	
 	declare parents : edu.arizona.biosemantics.semanticmarkup.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.config.* implements IPrintable;

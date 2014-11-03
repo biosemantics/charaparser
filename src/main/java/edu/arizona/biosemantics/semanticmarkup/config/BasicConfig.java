@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.xml.bind.JAXBException;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -74,6 +76,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.SomeInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WhitespaceTokenCombiner;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WhitespaceTokenizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WordStanfordParserTokenTransformer;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.Binding;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
@@ -127,17 +130,17 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
  */
 public class BasicConfig extends AbstractModule {
 	
-	  private String version = "0.1.6";
+	  private String version = "N/A";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
 	  public BasicConfig() throws IOException {			
 		  ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		  Properties properties = new Properties();
-		  properties.load(loader.getResourceAsStream("config.properties"));
+		  properties.load(loader.getResourceAsStream("edu/arizona/biosemantics/semanticmarkup/config.properties"));
 		  //this loads etc-site properties when added as dependency to etc-site.
 		  //TODO: find a way to load correct properties from inside jar
 		  //interestingly it works fine in the same manner for oto2, loading defaultCategories.csv
-		  //this.version = properties.getProperty("project.version");
+		  this.version = properties.getProperty("project.version");
 	  }
 	  
 	  @Override 
@@ -322,22 +325,11 @@ public class BasicConfig extends AbstractModule {
 			  bind(String.class).annotatedWith(Names.named("RomanRangePattern")).toInstance("(\\d+)-<?\\b("+roman+")\\b>?");
 			  bind(String.class).annotatedWith(Names.named("RomanPattern")).toInstance("(<(\\S+?)> <?\\{?\\b("+roman+")\\b\\}?>?)");
 			  bind(String.class).annotatedWith(Names.named("ModifierList")).toInstance("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");	
-//<<<<<<< HEAD
 			  bind(String.class).annotatedWith(Names.named("AdvModifiers")).toInstance("at least|at first|at times");	
-/*=======
-			  
-			  Set<String> simplePrepWordsSet = this.getSimplePrepsSet();
-			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("SimplePrepsWordsSet")).toInstance(simplePrepWordsSet);
-			  String simplePrepWords = this.getSimplePreWords();
-			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("SimplePrepWords")).toInstance(simplePrepWords);
-			  Set<String> compoundPrepWordsSet = this.getCompoundPrepsSet();
-			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("CompoundPrepsWordsSet")).toInstance(compoundPrepWordsSet);
-			  String compoundPrepWords = this.getCompoundPreWords();
-			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("CompoundPrepWords")).toInstance(compoundPrepWords);
-//>>>>>>> refs/heads/master*/
-		  } catch(IOException e) {
-			  e.printStackTrace();
-		  }
+		} catch(IOException e) {
+			log(LogLevel.ERROR, "Exception loading configuration", e);
+			throw new IllegalArgumentException();
+		}
   	}
 
 	private Set<String> getDelimiters() {

@@ -4,7 +4,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.markup;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.io.IHabitatReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.io.IHabitatWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.model.HabitatsFileList;

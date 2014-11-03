@@ -35,7 +35,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.AdjectiveReplacementForNoun;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
@@ -221,7 +221,7 @@ public abstract class Normalizer implements INormalizer {
 		return this.modifiertokens;
 	}
 	@Override
-	public String normalize(String str, String tag, String modifier, String source) {	
+	public String normalize(String str, String tag, String modifier, String source) {			
 		for(String modifierphrase: modifierphrases){
 			str = str.replaceAll(modifierphrase, modifierphrase.replace(" ", "#"));
 		}
@@ -242,6 +242,7 @@ public abstract class Normalizer implements INormalizer {
 		str = str.replaceAll("\\bten\\b", "10");
 		str = str.replaceAll("\\bca\\s*\\.\\s*", ""); //remove ca.
 		str = str.replaceAll("\\bq\\s*=", "l / w =");
+		str = str.replaceAll("(?<=\\d)\\s*,\\s*(?=\\d{3,3}\\b)", ""); //remove commas in large numbers such as 1,234
 		
 		//str = stringColors(str);
 		str = connectColors(str);

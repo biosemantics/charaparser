@@ -9,7 +9,7 @@ import java.util.List;
 
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
-
+import edu.arizona.biosemantics.common.log.LogLevel;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import opennlp.tools.util.InvalidFormatException;
@@ -26,16 +26,9 @@ public class UnsupervisedLearningTokenizer implements ITokenizer {
 			tokenModelIn = new FileInputStream(OpenNLPTokenizerDir);
 			TokenizerModel model = new TokenizerModel(tokenModelIn);
 			this.myTokenizer = new TokenizerME(model);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			log(LogLevel.ERROR, "Couldn't read tokenizer model", e);
+		} 
 	}
 
 	@Override

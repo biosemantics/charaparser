@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 
 /**
  * An AbstractRun implements some shared functionality of concrete Run implementations such as time string formating, config reporting,..
@@ -36,7 +36,7 @@ public abstract class AbstractRun implements IRun {
 		this.runOutDirectory = runOutDirectory;
 	}
 	
-	public void run() throws Exception {	
+	public void run() throws Throwable {	
 		StringBuilder config = new StringBuilder();
 		appendConfigFile(config);
 				
@@ -70,7 +70,7 @@ public abstract class AbstractRun implements IRun {
 		bwSetup.close();
 	}
 
-	protected abstract void doRun() throws Exception;
+	protected abstract void doRun() throws Throwable;
 
 	public String getDescription() {
 		return this.getClass().toString();

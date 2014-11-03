@@ -19,6 +19,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
+
 
 /**
  * @author Hong Cui
@@ -34,7 +36,6 @@ public class PartOfSerialization {
 	 */
 	public PartOfSerialization(String input, String output) {
 		try{
-
 			FileInputStream fstream = new FileInputStream(input);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -58,7 +59,7 @@ public class PartOfSerialization {
 			out.writeObject(parts);
 			out.close();
 		}catch(Exception e){
-			e.printStackTrace();
+			log(LogLevel.ERROR, "Couldn't read in or write output", e);
 		}
 	}
 

@@ -12,7 +12,7 @@ import java.util.Hashtable;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
 
 /**
@@ -44,8 +44,7 @@ public class PartOfFile implements IOntology {
 			success = true;
 		}
 		}catch(Exception e){
-			e.printStackTrace();
-			log(LogLevel.ERROR, e.toString());
+			log(LogLevel.ERROR, "Couldn't read `part of` file", e);
 		}
 
 	}

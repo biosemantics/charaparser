@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-	    <project.version>0.1.42-SNAPSHOT</project.version>
+	    <project.version>0.1.58-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -35,7 +35,7 @@
 			<id>swt-repo</id>
 			<url>https://swt-repo.googlecode.com/svn/repo/</url>
 		</repository> -->
-		<!-- Necessary for eclipselink 2.5.1 -->
+		<!-- Necessary for eclipselink moxy -->
 		<repository>
 			<id>oss.sonatype.org</id>
 			<name>OSS Sonatype Staging</name>
@@ -128,12 +128,12 @@
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
-			<version>1.9.9</version>
+			<version>1.9.13</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.9</version>
+			<version>1.9.13</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -168,7 +168,7 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.7.3</version>
+			<version>1.7.4</version>
 		</dependency>
 
 		<dependency>
@@ -197,8 +197,8 @@
 
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>eclipselink</artifactId>
-			<version>2.5.1</version>
+			<artifactId>org.eclipse.persistence.moxy</artifactId>
+			<version>2.6.0-M3</version>
 		</dependency>
 
 		<dependency>
@@ -210,14 +210,19 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
-			<version>0.0.20-SNAPSHOT</version>
-			
+			<version>0.0.31-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>gxt</artifactId>
 					<groupId>com.sencha.gxt</groupId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>edu.arizona.biosemantics.common</groupId>
+			<artifactId>log</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -232,7 +237,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.5</version>
+				<version>1.7</version>
 				<configuration>
 					<proceedOnError>true</proceedOnError>
 					<complianceLevel>${java.version}</complianceLevel>
@@ -244,7 +249,7 @@
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjrt</artifactId>
-						<version>1.7.3</version>
+						<version>1.7.4</version>
 					</dependency>
 				</dependencies>
 				<executions>

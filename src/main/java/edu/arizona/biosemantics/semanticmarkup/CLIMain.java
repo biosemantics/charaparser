@@ -19,7 +19,6 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.Priority;
 import org.apache.log4j.RollingFileAppender;
 
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -30,7 +29,7 @@ import edu.arizona.biosemantics.semanticmarkup.config.dataset.HymenopteraConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.dataset.PlantConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.dataset.PoriferaConfig;
 import edu.arizona.biosemantics.semanticmarkup.know.Glossary;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.GenericDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.run.IRun;
 
@@ -44,8 +43,9 @@ public class CLIMain {
 	
 	/**
 	 * @param args
+	 * @throws Throwable 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		CLIMain cliMain = new CLIMain();
 		cliMain.parse(args);
 		cliMain.run();
@@ -54,7 +54,10 @@ public class CLIMain {
 	protected void setupLogging(String debugLog, String errorLog) {
 		Logger rootLogger = Logger.getRootLogger();
 		rootLogger.getLoggerRepository().resetConfiguration();
-		
+		addDebugErrorLoggers(rootLogger, debugLog, errorLog);
+	}
+
+	protected void addDebugErrorLoggers(Logger rootLogger, String debugLog, String errorLog) {
 		PatternLayout layout = new PatternLayout();
 		layout.setConversionPattern("%d [%t] %-5p %c:%L - %m%n");
 		
@@ -92,8 +95,9 @@ public class CLIMain {
 
 	/**
 	 * Run the Main
+	 * @throws Throwable 
 	 */
-	public void run() {
+	public void run() throws Throwable {
 		log(LogLevel.DEBUG, "run using config:");
 		log(LogLevel.DEBUG, config.toString());
 		Injector injector = Guice.createInjector(config);
@@ -102,15 +106,16 @@ public class CLIMain {
 		log(LogLevel.INFO, "running " + run.getDescription() + "...");
 		try {
 			run.run();
-		} catch (Exception e) {
-			log(LogLevel.ERROR, "Problem to execute the run", e);
+		} catch (Throwable t) {
+			log(LogLevel.ERROR, "Problem to execute the run", t);
+			throw t;
 		}
 	}
 
 	/**
 	 * @param args to parse to set config appropriately
 	 */
-	public void parse(String[] args) {
+	public void parse(String[] args) throws Throwable {
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
 		options.addOption("c", "config", true, "config to use");
@@ -135,7 +140,7 @@ public class CLIMain {
 			config = new RunConfig();
 		} catch(IOException e) {
 			log(LogLevel.ERROR, "Couldn't instantiate default config", e);
-			System.exit(0);
+			throw e;
 		}
 			
 		try {
@@ -143,20 +148,21 @@ public class CLIMain {
 		    if(commandLine.hasOption("h")) {
 		    	HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp( "what is this?", options );
-				System.exit(0);
+				return;
 		    }
 		    if(commandLine.hasOption("c")) {
 		    	try {
 		    		config = getConfig(commandLine.getOptionValue("c"));
 		    	} catch(IOException e) {
 		    		log(LogLevel.ERROR, "Couldn't instantiate selected config", e);
+		    		throw e;
 		    	}
 		    } else {
 		    	//use standard config RunConfig
 		    }
 		    if(!commandLine.hasOption("i")) {
 		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    }
 		    if(commandLine.hasOption("r")) {
 		    	setReaderSpecificConfigValues(config, commandLine.getOptionValue("r"), commandLine.getOptionValue("i"));
@@ -171,7 +177,7 @@ public class CLIMain {
 		    	String[] parallelParameters = parallelParameter.split(",");
 		    	if(parallelParameters.length != 2) {
 		    		log(LogLevel.ERROR, "You have to specify 2 values for parameter p");
-		    		System.exit(0);
+		    		throw new IllegalArgumentException();
 		    	} else {
 		    		try {
 		    			int threadsPerDescriptionExtractor = Integer.parseInt(parallelParameters[0]);
@@ -180,7 +186,7 @@ public class CLIMain {
 		    			config.setMarkupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum(threadsPerDescriptionExtractor);
 		    		} catch(Exception e) {
 		    			log(LogLevel.ERROR, "Problem to convert parameter to Integer", e);
-		    			System.exit(0);
+		    			throw e;
 		    		}
 		    	}
 		    }
@@ -213,19 +219,19 @@ public class CLIMain {
 		    	config.setGlossaryFile(commandLine.getOptionValue("g"));
 		    } else {
 		    	log(LogLevel.ERROR, "You have to specify a glossary file");
-		    	System.exit(0);
+		    	throw new IllegalArgumentException();
 		    }
 		} catch(ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 	}
 
-	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) {
+	protected void setReaderSpecificConfigValues(RunConfig config, String volumeReader, String input) throws IOException {
 		try {
 			config.setIODescriptionBindingsList(volumeReader);
-		} catch(IllegalArgumentException | IOException e) {
+		} catch(IOException e) {
 			log(LogLevel.ERROR, "DescriptionReader unknown or couldn't read bindings");
-			System.exit(0);
+			throw e;
 		}
 	}
 

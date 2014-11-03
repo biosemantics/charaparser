@@ -2,12 +2,13 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.transf
 
 import java.util.List;
 
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 
 
 public interface IDescriptionTransformer {
 	
-	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles);
+	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException;
 	
 }

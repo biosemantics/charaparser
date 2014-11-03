@@ -6,7 +6,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.IEcologyReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.IEcologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.model.EcologyFileList;

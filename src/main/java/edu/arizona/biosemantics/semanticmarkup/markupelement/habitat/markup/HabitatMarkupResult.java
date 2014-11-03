@@ -1,6 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.markup;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupResult;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupResultVisitor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.model.HabitatsFileList;

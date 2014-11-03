@@ -20,7 +20,7 @@ import edu.arizona.biosemantics.semanticmarkup.eval.result.IEvaluationResult;
 import edu.arizona.biosemantics.semanticmarkup.eval.result.PerfectPartialPrecisionRecallEvaluationResult;
 import edu.arizona.biosemantics.semanticmarkup.eval.result.PrecisionRecallEvaluationResult;
 import edu.arizona.biosemantics.semanticmarkup.eval.result.PrecisionRecallResult;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupResult;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.io.IDescriptionMarkupEvaluator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.model.Description;

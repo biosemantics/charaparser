@@ -8,7 +8,7 @@ import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.io.validate.IVolumeValidator;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.XMLVolumeValidator;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.run.AbstractRun;
 

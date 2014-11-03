@@ -1,18 +1,14 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.unsupervised;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import edu.arizona.biosemantics.semanticmarkup.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
-
+import edu.arizona.biosemantics.common.log.LogLevel;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
-import opennlp.tools.tokenize.TokenizerME;
-import opennlp.tools.tokenize.TokenizerModel;
-import opennlp.tools.util.InvalidFormatException;
 
 public class Utility {
 
@@ -31,8 +27,7 @@ public class Utility {
 		try {
 			this.myWN = new WordNetPOSKnowledgeBase(configuration.getWordNetDictDir(), false);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log(LogLevel.ERROR, "Couldn't instantate wordnet pos knowledgebase", e);
 		}
 		
 		this.myTokenizer = tokenizer;
@@ -43,18 +38,9 @@ public class Utility {
 			sentModelIn = new FileInputStream(configuration.getOpenNLPSentenceDetectorDir());
 			SentenceModel model = new SentenceModel(sentModelIn);
 			this.mySentenceDetector = new SentenceDetectorME(model);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvalidFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		
+		} catch (Exception e) {
+			log(LogLevel.ERROR, "Couldn't read open nlp sentence detector files", e);
+		}	
 		
 		this.myPopulateSentenceUtility = new PopulateSentenceUtility(this.mySentenceDetector);
 		this.myWordFormUtility = new WordFormUtility(this.myWN);

@@ -2,7 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.eval.matcher;
 
 import java.util.Objects;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 

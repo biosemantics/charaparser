@@ -6,11 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner;
 import edu.arizona.biosemantics.semanticmarkup.run.AbstractRun;
 
@@ -51,10 +50,10 @@ public class ETCLearnRun extends AbstractRun {
 	}
 
 	@Override
-	protected void doRun() throws Exception {
+	protected void doRun() throws Throwable {
 		if(!isValidRun()) {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has already been used.");
-			return;
+			throw new IllegalArgumentException();
 		}
 		
 		log(LogLevel.INFO, "Learning using " + learner.getDescription() + "...");

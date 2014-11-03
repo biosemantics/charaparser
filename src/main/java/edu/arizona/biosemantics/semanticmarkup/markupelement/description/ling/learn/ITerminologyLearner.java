@@ -18,8 +18,9 @@ public interface ITerminologyLearner {
 	/**
 	 * Learns the terminology used in the treatments
 	 * @param treatments
+	 * @throws LearnException 
 	 */
-	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable);
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) throws LearnException;
 	
 	/**
 	 * Reads the results for the treatments, so that any other function returns the 'freshest' results

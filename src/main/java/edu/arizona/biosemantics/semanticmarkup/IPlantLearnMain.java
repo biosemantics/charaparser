@@ -13,7 +13,7 @@ import org.apache.commons.cli.ParseException;
 
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.InMemoryGlossary;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputNoLearner;
@@ -30,8 +30,9 @@ public class IPlantLearnMain extends CLIMain {
 
 	/**
 	 * @param args
+	 * @throws Throwable 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Throwable {
 		CLIMain cliMain = new IPlantLearnMain();
 		cliMain.parse(args);
 		cliMain.run();

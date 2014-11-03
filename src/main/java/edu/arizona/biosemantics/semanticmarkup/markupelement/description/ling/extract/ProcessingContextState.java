@@ -10,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;

@@ -2,10 +2,10 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.l
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
-
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -13,7 +13,7 @@ import com.google.inject.name.Named;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 
@@ -36,8 +36,8 @@ public class AllWordsLearner {
 			@Named("DatabaseName") String databaseName,
 			@Named("DatabasePrefix") String databasePrefix,
 			@Named("DatabaseUser") String databaseUser,
-			@Named("DatabasePassword") String databasePassword)
-			throws Exception {
+			@Named("DatabasePassword") String databasePassword) throws SQLException, ClassNotFoundException
+			 {
 		this.tokenizer = tokenizer;
 		this.glossary = glossary;
 		this.tablename = databasePrefix + "_allwords";
@@ -48,7 +48,7 @@ public class AllWordsLearner {
 				databaseUser, databasePassword);
 	}
 	
-	public void learn(List<AbstractDescriptionsFile> descriptionsFiles) throws Exception {
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles) throws SQLException {
 		createAllWordsTable();
 		countWords(descriptionsFiles);
 		
@@ -68,7 +68,7 @@ public class AllWordsLearner {
 		}
 	}
 
-	private void createAllWordsTable() throws Exception {
+	private void createAllWordsTable() throws SQLException {
         Statement statement = connection.createStatement();
         statement.execute("drop table if exists " + tablename);
         String query = "create table if not exists " + tablename + " (word varchar(150) unique not null primary key, count int, dhword varchar(150), inbrackets int default 0)"

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.log.LogLevel;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
