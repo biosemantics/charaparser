@@ -208,7 +208,7 @@ public class OTOLearner implements ILearner {
 		fw.write("<!DOCTYPE html>");
 		fw.write("<html>");
 		fw.write("<head>");
-		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + this.otoLiteTermReviewURL + "?uploadID=" + uploadResult.getUploadId() + "&secret=" + uploadResult.getSecret() + 
+		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + this.otoLiteTermReviewURL + "?id=" + uploadResult.getUploadId() + "&secret=" + uploadResult.getSecret() + 
 				"&origin=iplant\" charset=\"UTF-8\">");
 		fw.write("<title>Term categorization</title>");
 		fw.write("</head>");
