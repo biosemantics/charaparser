@@ -39,9 +39,14 @@ public class ETCMarkupMain extends CLIMain {
 	 * @throws Throwable 
 	 */
 	public static void main(String[] args) throws Throwable {
-		CLIMain cliMain = new ETCMarkupMain();
-		cliMain.parse(args);
-		cliMain.run();
+		try {
+			CLIMain cliMain = new ETCMarkupMain();
+			cliMain.parse(args);
+			cliMain.run();
+		} catch(Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 	@Override
