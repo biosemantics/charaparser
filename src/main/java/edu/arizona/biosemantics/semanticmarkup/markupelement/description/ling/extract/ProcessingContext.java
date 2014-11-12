@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
@@ -24,9 +26,10 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  * @author rodenhausen
  */
 public class ProcessingContext {
-
+	
 	private IChunkProcessorProvider chunkProcessorProvider;
 	private List<Element> result;
+	@JsonIgnore
 	private ListIterator<Chunk> chunkListIterator;
 	//private List<ChunkCollector> chunkCollectors; //chunkCollectors of all sentences in one description
 	private ChunkCollector chunkCollector; //the chunkCollector of the current sentence
