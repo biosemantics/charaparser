@@ -14,9 +14,11 @@ Logging & Stringifying
 Caveat
 -------
 If not carefully configured, the Stringify aspect may cause undesirable results with Jackson as underlying library. 
-Per default, to turn an object into a String representation, Jackson is configured as described <a href="http://wiki.fasterxml.com/JacksonFeaturesSerialization">here</a>. That means, if an object would change an internal state by a method call that is by Jackson considered as a property getter, the internal state may be changed.
+Per default, to turn an object into a String representation, Jackson is configured as described <a href="http://wiki.fasterxml.com/JacksonFeaturesSerialization">here</a>. Specifically problematic is the  "AUTO_DETECT_GETTERS" feature, which considers all public non-static no-argument methods as getters to obtain a serializable pice of information to use upon stringifying. That means, if an object would change an internal state by a method call that is by Jackson considered as a property getter, the internal state may be changed.
 
-To overcome this
+E.g. consider serialization of a <a href="https://docs.oracle.com/javase/7/docs/api/java/util/ListIterator.html?is-external=true">java.util.ListIterator</a>. Jackson would use the next method of the iterator for serialization causing a state change in the iterator.
+
+To overcome the issue
 - The Stringify aspect has to be configured to only be injected into safe classes
 - Unsafe classes that are still to be injected the aspect may use @JsonIgnore on those methods
 - the Jackson serialization configuration could overall be changed, however more annotation effort would be necessary on really strinifyable properties
