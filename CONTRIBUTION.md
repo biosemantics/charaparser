@@ -1,5 +1,5 @@
 AOP
----------------------
+=====================
 AspectJ is used to reduce the amount of code for cross-cutting concerns.
 For example, this is the case for logging, stringifying objects.
 
