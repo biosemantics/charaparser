@@ -23,3 +23,5 @@ To overcome the issue
 - Unsafe classes that are still to be injected the aspect may use @JsonIgnore on those methods
 - the Jackson serialization configuration could overall be changed, however more annotation effort would be necessary on really strinifyable properties
 - A number of other possiblities to configurate Jackson for own liking is for example described <a href="http://www.cowtowncoder.com/blog/archives/2011/02/entry_443.html">here</a>
+- Maybe there exists a serialization library that manages to act more carefully?
+- A toString method could be added manually on all classes contrary to using AOP
