@@ -1,7 +1,9 @@
 package edu.arizona.biosemantics.semanticmarkup.io.validate.lib;
 
 import java.io.File;
+import java.util.List;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.AbstractXMLVolumeValidator;
 
 
@@ -20,7 +22,7 @@ public class XMLVolumeValidator extends AbstractXMLVolumeValidator {
 		this.xmlSchemaFile = xmlSchemaFile;
 	}
 	
-	@Override
+	/*@Override
 	public boolean validate(File directory) {
 		if(!directory.isDirectory())
 			return false;
@@ -31,9 +33,30 @@ public class XMLVolumeValidator extends AbstractXMLVolumeValidator {
 		boolean result = true;
 		for(int i = 0; i<total; i++) {
 			File file = files[i];
-			result &= validateXMLFileWithSchema(file, xmlSchemaFile);
+			boolean r = validateXMLFileWithSchema(file, xmlSchemaFile);
+			result &= r;
+			if(!r){
+				log(LogLevel.ERROR, "Invalid xml output file "+file.getAbsolutePath());
+				return result;
+			}
+
+		}
+		return result;
+	}*/
+
+	
+	@Override
+	public boolean validate(List<File> files) {
+		boolean result = true;
+		for(File file: files) {
+			boolean r = validateXMLFileWithSchema(file, xmlSchemaFile);
+			result &= r;
+			if(!r){
+				log(LogLevel.ERROR, "Invalid xml output file "+file.getAbsolutePath());
+				return result;
+			}
+
 		}
 		return result;
 	}
-
 }

@@ -105,7 +105,7 @@ public class MyStateChunker extends AbstractChunker {
 				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);
 				chunkCollector.addChunk(stateChunk);
 				Chunk characterChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
-				characterChunk.setProperty("characterName", "presence");
+				characterChunk.setProperty("characterName", "count");
 				chunkCollector.addChunk(characterChunk);
 			}
 			

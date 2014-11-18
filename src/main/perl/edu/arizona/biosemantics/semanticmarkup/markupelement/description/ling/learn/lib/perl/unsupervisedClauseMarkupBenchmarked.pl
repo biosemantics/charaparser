@@ -104,7 +104,7 @@
 
 # April 11, 2009
 # fix problems seen in test18
-# addnumbers() to "b" list
+# addnumbers() to "b" lis
 
 #...
 
@@ -222,7 +222,9 @@ my $ANDORPTN = "^(?:".$SEGANDORPTN."[,&]+)*".$SEGANDORPTN.$bptn;
 my $IGNOREPTN = "(assignment|resemb[a-z]+|like [A-Z]|similar|differs|differ|revision|genus|family|suborder|species|specimen|order|superfamily|class|known|characters|characteristics|prepared|subphylum|assign[a-z]*|available|nomen dubium|said|topotype|1[5-9][0-9][0-9])";
 
 my $stop = $NounHeuristics::STOP;
-my $adv = "often|sometimes|seldom|always|never";
+my $adv = "often|sometimes|seldom|always|never"; #advs not ending with -ly
+
+my $entityCategories = "('structure', 'structure_in_adjective_form', 'taxon_name', 'substance', 'process')";
 
 #prepare database
 my $haskb = 0;
@@ -244,6 +246,7 @@ populatesents();
 #print stdout "Read sentences:\n";
 
 addheuristicsnouns();
+addTaxonNames();
 #print stdout "Reading sentences 1:\n";
 addstopwords();
 #print stdout "Reading sentences 2:\n";
@@ -524,9 +527,10 @@ sub importfromkb{
 		$sth2->execute();
 	}
 
-
+	#collect boundary words
 	#$stmt1 = "select distinct word from ".$kb.".learnedboundarywords where word !='' and not isnull(word)";
-	$stmt1 = "select distinct term from ".$kb." where category !='structure'";
+	#$stmt1 = "select distinct term from ".$kb." where category !='structure'";
+	$stmt1 = "select distinct term from ".$kb." where category not in ".$entityCategories;
 	$sth1 = $dbh->prepare($stmt1);
 	$sth1->execute() or die $sth1->errstr."\n";
 	while($w = $sth1->fetchrow_array()){
@@ -557,8 +561,10 @@ sub importfromkb{
 	#	$sth2->execute();
 	#}
 
+	#collect entity words
 	#$stmt1 = "select distinct structure from ".$kb.".learnedstructures where structure !='' and not isnull(structure)";
-	$stmt1 = "select distinct term from ".$kb." where category='structure'";
+	#$stmt1 = "select distinct term from ".$kb." where category='structure'";
+	$stmt1 = "select distinct term from ".$kb." where category in ".$entityCategories;
 	$sth1 = $dbh->prepare($stmt1);
 	$sth1->execute() or die $sth1->errstr."\n";
 	while($w = $sth1->fetchrow_array()){
@@ -761,6 +767,15 @@ sub addNouns{
 		my $w = $_;
 		if($w =~/\b(?:$FORBIDDEN)\b/){next;}
 		update($w, "n", "", "wordpos", 1);
+	}
+}
+
+sub addTaxonNames{
+	my $stmt = "select name from ".$prefix."_taxonnames";
+	my $sth = $dbh->prepare($stmt);
+	$sth->execute() or warn $sth->errstr."\n";
+	while(my $taxonname = $sth->fetchrow_array()){
+		update($taxonname, "n", "", "wordpos", 1);
 	}
 }
 

@@ -242,7 +242,8 @@ public abstract class Normalizer implements INormalizer {
 		str = str.replaceAll("\\bten\\b", "10");
 		str = str.replaceAll("\\bca\\s*\\.\\s*", ""); //remove ca.
 		str = str.replaceAll("\\bq\\s*=", "l / w =");
-		str = str.replaceAll("(?<=\\d)\\s*,\\s*(?=\\d{3,3}\\b)", ""); //remove commas in large numbers such as 1,234
+		//str = str.replaceAll("(?<=\\d)\\s*,\\s*(?=\\d{3,3}\\b)", ""); //remove commas in large numbers such as 1,234 -- this is now done in perl code
+		str = PhraseNomralizer.shorten(str);
 		
 		//str = stringColors(str);
 		str = connectColors(str);

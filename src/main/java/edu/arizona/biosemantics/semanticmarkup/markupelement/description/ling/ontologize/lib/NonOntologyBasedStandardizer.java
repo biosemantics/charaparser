@@ -13,7 +13,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.google.inject.name.Named;
+
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
@@ -24,31 +27,38 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  * @author Hong Cui
  * Perform standarizations that does not need an ontology
  * such as presence = absent => count = 0
+ *        
  */
 public class NonOntologyBasedStandardizer {
 	private Set<String> lifeStyles;
 	private Set<String> durations;
-	private String sentence;
+	//private String sentence;
 	private ProcessingContext processingContext;
-	
-	public NonOntologyBasedStandardizer(IGlossary glossary, String sentence, ProcessingContext processingContext){
+	private IPOSKnowledgeBase posKnowledgeBase;
+
+	public NonOntologyBasedStandardizer(IGlossary glossary, String sentence, ProcessingContext processingContext, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase){
 		lifeStyles = glossary.getWords("life_style");
 		lifeStyles.addAll(glossary.getWords("growth_form"));
 		durations = glossary.getWords("duration");
-		this.sentence = sentence;
+		//this.sentence = sentence;
 		this.processingContext = processingContext;
+		this.posKnowledgeBase = posKnowledgeBase;
 	}
-	
+
 	public void standardize(LinkedList<Element>result){
 		createWholeOrganismDescription(result, lifeStyles, "growth_form");
 		createWholeOrganismDescription(result, durations, "duration");
 		//createMayBeSameRelations(result, processingContext);  //not sure we need this relation.
 		removeOrphenedUnknownElements(result);
-		normalizeNegatedOrgan(result, sentence);
+		noOrgan2AdvConstraintedOrgan(result);
+		normalizeAdvConstraintedOrgan(result);	
 		normalizeZeroCount(result);
 		removeCircularCharacterConstraint(result);
 	}
-	
+
+
+
+
 	/**
 	 * if a character constraint refers to the same structure the character belongs to, remove the constraint
 	 * @param result
@@ -66,7 +76,7 @@ public class NonOntologyBasedStandardizer {
 				}				
 			}
 		}
-		
+
 	}
 
 	/*private void createMayBeSameRelations(List<Element> result, ProcessingContext processingContext) {
@@ -75,24 +85,24 @@ public class NonOntologyBasedStandardizer {
 			if (element.isStructure()) {
 				Structure structure = (Structure)element;
 				String name = structure.getName();
-				
+
 				//if (element.containsAttribute("constraintType"))
 				//	name = element.getCongetAttribute("constraintType") + " " + name;
 				//if (element.containsAttribute("constraintParentOrgan"))
 				//	name = element.getAttribute("constraintParentOrgan") + " " + name;
 				//if (element.containsAttribute("constraint"))
 				//	name = element.getAttribute("constraint") + " " + name;
-				
+
 				if (structure.getConstraint() != null && !structure.getConstraint().isEmpty())
 					name = structure.getConstraint() + " " + name;
-				
+
 				String id = structure.getId();
 				if(!names.containsKey(name)) 
 					names.put(name, new HashSet<String>());
 				names.get(name).add(id);
 			}
 		}
-		
+
 		for(Entry<String, Set<String>> nameEntry : names.entrySet()) {
 			Set<String> ids = nameEntry.getValue();
 			if(ids.size() > 1) {
@@ -128,7 +138,7 @@ public class NonOntologyBasedStandardizer {
 				break;
 			}
 		}
-		
+
 		boolean modifiedWholeOrganism = false;
 		Iterator<Element> resultIterator = result.iterator();
 		while(resultIterator.hasNext()) {
@@ -177,7 +187,7 @@ public class NonOntologyBasedStandardizer {
 				}
 			}	
 		}
-		
+
 		if(modifiedWholeOrganism)
 			result.add(wholeOrganism);
 	}
@@ -224,104 +234,181 @@ public class NonOntologyBasedStandardizer {
 	}
 
 	/**
-	 * 
+	 * turn "no organ" markup to advConstraintedOrgan format
 	 * 
 	 * <statement id="1_1.txtp4.txt-0">
             <text>No winged queens are known.</text>
-            <structure id="o42" name="queen">
-              <character name="presence" value="no" />
-              <character name="architecture" value="winged" />
-            </structure>
+      		<structure name="queen" id="o77" notes="structure" name_original="queens">
+   			<character name="count" value="no" is_modifier="true"/>
+   			<character name="architecture" value="winged" is_modifier="true"/>
+			</structure>
           </statement>
 	 * 
 	 * =>
 	 * 
 	 * <statement id="1_1.txtp4.txt-0">
             <text>No winged queens are known.</text>
-            <structure id="o42" name="queen">
-               <character name="architecture" value="winged" modifer="not" />
+           <structure name="queen" id="o77" notes="structure" name_original="queens" constraint="no">
+   			<character name="architecture" value="winged" is_modifier="true"/>
             </structure>
           </statement>
 	 * 
-	 * no organ present => organ count = "0"
-	 * no red organ => organ red modifier = "not"
-	 * a has no organ => a has organ negation = "true"
-	 * no organ touched a => organ touched a negation = "true"
+	 * move "no" to structure constraint
 	 * 
-	 * 
-	 * 1. if a relation is involved, negate the relation (not the character)
-	 * 2. if not, negate the characters of the structure
-	 * 3. if no characters, add count=0
-	 * 
-	 * run this before normalizeZeroCount.
+	 * then call normalizeAdvConstraintedOrgan
+	 * run these two before normalizeZeroCount.
 	 * 
 	 * @param xml
 	 */
-	private void normalizeNegatedOrgan(List<Element> result, String sentence) {
+	private void noOrgan2AdvConstraintedOrgan(List<Element> result) {
 		List<Character> remove = new ArrayList<Character>();
 		for(Element element: result){
 			if(element.isStructure()){
-				String structurename = ((Structure)element).getName();
-				String constraint = ((Structure)element).getConstraint();
-				if(constraint!=null) structurename = constraint +" "+ structurename;
 				LinkedHashSet<Character> characters = ((Structure)element).getCharacters();
 				int i = 0;
 				for(Character character: characters){
-					if(i==0 && character.getName()!=null && character.getName().compareTo("presence")==0 && character.getValue()!=null
-							&& character.getValue().compareTo("no") ==0 && sentence.toLowerCase().matches(".*?\\bno\\b.*?"+structurename+".*")){//Hong TODO the matching is shaky
-						//normalize
-						boolean negatedRelation = false;
-						boolean negatedCharacter = false;
-						 //1. add negation = true for relations
-						List<Relation> relations = this.getRelationsInvolve(((Structure)element), result);
-						for(Relation relation: relations){
-							negatedRelation = true;
-							if(relation.getNegation() !=null &&
-									relation.getNegation().compareTo("true") == 0) relation.setNegation("false");
-							else relation.setNegation("true");
-						
-						}
-						if(!negatedRelation){
-							if(characters.size()>1){ 
-								//has characters other than presence="no"
-								//2. negate character
-								int j = 0;
-								for(Character chara: characters){
-									if(j>0){
-										chara.setModifier("not");
-										negatedCharacter = true;
-									}
-									j++;
-								}
-								if(negatedCharacter) remove.add(character);
-							}
-							if(!negatedCharacter){
-								//3. structure count = 0
-								Character count = new Character();
-								count.setName("count");
-								count.setValue("0");
-								((Structure)element).addCharacter(count);
-							}
-						}
-						
-					}else{
-						break;
+					if(i==0 && character.getName()!=null && character.getName().compareTo("count")==0 && character.getValue()!=null
+							&& character.getValue().compareTo("no") ==0 && character.getIsModifier()!=null && character.getIsModifier().compareTo("true") == 0){
+						String constraint = ((Structure)element).getConstraint()==null? "" :  ((Structure)element).getConstraint();
+						((Structure)element).setConstraint(("no "+constraint).trim());
+						remove.add(character);
 					}
-					i++;
 				}
 				characters.removeAll(remove);
 			}
-			
 		}
-		
+	}
+
+	/**
+	 * 
+	 *1.  <structure constraint="never" id="o3" name="sterraster" name_original="sterrasters" notes="structure" /> => no character: count=0, with character: negate modifier for all non-is_modifier characters:add is_modifier character to structure constraint
+	 *2.  <structure constraint="usually" id="o3" name="sterraster" name_original="sterrasters" notes="structure" /> => no character: count=present, modifier=usually, with character: add usually to all characters
+	 *3. relation: Never microscleres touches euasters
+	 *<structure name="microsclere" constraint="never" id="o1" notes="structure" name_original="microscleres"/>
+<structure name="euaster" id="o2" notes="structure" name_original="euasters"/>
+<relation name="touches" from="o1" id="r0" negation="false" to="o2"/>
+	 *
+	 *turn is_modifier characters to structure constraint.
+	 *negate relation and all true characters (characters that are not is_modifier characters).
+	 *if none of the above (relation/true characters) exist, set count=0;
+	 *
+	 * run that this before normalizeZeroCount.
+	 * @param result
+	 */
+
+	private void normalizeAdvConstraintedOrgan(LinkedList<Element> result) {
+		ArrayList<Character> remove = new ArrayList<Character>();
+		for(Element element: result){
+			if(element.isStructure()){
+				String constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint();
+				if(((Structure)element).getNotes()!=null && ((Structure)element).getNotes().compareTo("structure")==0
+						&& ((Structure)element).getConstraint()!=null && ((Structure)element).getConstraint().matches("^(no|not|never)\\b.*")){
+					//adv is negation
+					//handle is_modifier characters and true characters
+					boolean hasTrueCharacters = false;
+					LinkedHashSet<Character> characters = ((Structure)element).getCharacters();
+					for(Character character: characters){
+						if(character.getIsModifier()!=null && character.getIsModifier().compareTo("true")==0){
+							//turn this character to structure constraint			
+							constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint();
+							((Structure)element).setConstraint((constraint+ " "+character.getValue()).trim());
+							remove.add(character);
+						}else{
+							//negate true characters
+							hasTrueCharacters = true;
+							String modifier = character.getModifier();
+							if(modifier==null){
+								character.setModifier("not");
+							}else if(modifier.matches(".*\\bnot\\b.*")){//double negation 
+								modifier = modifier.replaceFirst("\\bnot\\b", "");
+								character.setModifier(modifier.replaceAll("\\s+", " ").trim());
+							}else{
+								modifier ="not "+modifier;
+								character.setModifier(modifier.trim());
+							}
+						}
+					}
+					//negate relations
+					boolean negatedRelation = false;
+					List<Relation> relations = this.getRelationsInvolve(((Structure)element), result);
+					for(Relation relation: relations){
+						negatedRelation = true;
+						if(relation.getNegation() !=null &&
+								relation.getNegation().compareTo("true") == 0) relation.setNegation("false");
+						else relation.setNegation("true");
+					}
+					
+					//no relation and no true character, set count to 0
+					if(!negatedRelation && !hasTrueCharacters){
+						Character count = new Character();
+						count.setName("count");
+						count.setValue("0");
+						((Structure) element).addCharacter(count);
+					}
+					
+					//remove unneeded stuff
+					characters.removeAll(remove);
+					//remove no|not|never from the structure constraint
+					constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint().replaceFirst("^no|not|never\\b", "");
+					((Structure)element).setConstraint(constraint.trim());
+				}else if(((Structure)element).getNotes()!=null && ((Structure)element).getNotes().compareTo("structure")==0 
+						&& ((Structure)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
+					//other advs, mirrors the process above
+					String mod = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
+					//handle is_modifier characters and true characters
+					boolean hasTrueCharacters = false;
+					LinkedHashSet<Character> characters = ((Structure)element).getCharacters();
+					for(Character character: characters){
+						if(character.getIsModifier()!=null && character.getIsModifier().compareTo("true")==0){
+							//turn this character to structure constraint			
+							constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint();
+							((Structure)element).setConstraint((constraint+ " "+character.getValue()).trim());
+							remove.add(character);
+						}else{
+							//modify true characters
+							hasTrueCharacters = true;
+							String modifier = character.getModifier()==null? "": character.getModifier();
+							modifier =mod+" "+modifier;
+							character.setModifier(modifier.trim());
+						}
+					}
+					
+					//negate relations
+					boolean modifiedRelation = false;
+					List<Relation> relations = this.getRelationsInvolve(((Structure)element), result);
+					for(Relation relation: relations){
+						modifiedRelation = true;
+						String modifier = relation.getModifier()==null? "": relation.getModifier();
+						modifier =mod+" "+modifier;
+						relation.setModifier(modifier.trim());
+					}
+					
+					//no relation and no true character, set count to 0
+					if(!modifiedRelation && !hasTrueCharacters){
+						Character count = new Character();
+						count.setName("count");
+						count.setValue("present");
+						count.setModifier(mod);
+						((Structure) element).addCharacter(count);
+					}
+					
+					//remove unneeded stuff
+					characters.removeAll(remove);
+					//remove no|not|never from the structure constraint
+					constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint().replaceFirst("^"+mod+"\\b", "");
+					((Structure)element).setConstraint(constraint.trim());
+				}
+			}
+		}
 	}
 
 
 	/**
 	 * 	nomarlization count
-     *  count = "none" =>count = 0; 
-     *  count = "absent" =>count = 0;
-     *  count = "present", modifier = "no|not|never" =>count = 0;
+	 *  count = "none" =>count = 0; 
+	 *  count = "absent" =>count = 0;
+	 *  count = "present", modifier = "no|not|never" =>count = 0;
+	 *  
 	 * @param xml
 	 */
 
@@ -342,17 +429,18 @@ public class NonOntologyBasedStandardizer {
 								character.setModifier("");
 							}
 						}
-					}
-					
+					}	
 				}
 			}
 		}
-		
-        /*List<Element> es = path1.selectNodes(this.statement);
+
+
+
+		/*List<Element> es = path1.selectNodes(this.statement);
         for (Element e : es) {
             e.setAttribute("value", "0");
         }*/
-		
+
 	}
 
 
@@ -379,8 +467,8 @@ public class NonOntologyBasedStandardizer {
 						unknown.setAttribute("name_original", ""); //name_original = "" as it was not in the original text
 					}
 				}	
-		*/		
-				
+		 */		
+
 	}
 
 
@@ -395,6 +483,6 @@ public class NonOntologyBasedStandardizer {
 		return relations;
 	}
 
-	
+
 
 }

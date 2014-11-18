@@ -21,11 +21,13 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
@@ -62,6 +64,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	private ICharacterKnowledgeBase characterKnowledgeBase;
 	private StructureNameStandardizer structureNameStandardizer;
 	private IGlossary glossary;
+	private IPOSKnowledgeBase posKnowledgeBase;
 	
 	//private Set<String> possess;
 	//private IOntology ontology;
@@ -83,7 +86,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			IFirstChunkProcessor firstChunkProcessor, 
 			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase,
 			@Named("PossessWords") Set<String> possessWords, OntologyFactory ontologyFactory
-			, @Named("Run_OntologyDirectory") String ontologyDirectory, @Named("OntologyFile") String ontologyFile) {
+			, @Named("Run_OntologyDirectory") String ontologyDirectory, @Named("OntologyFile") String ontologyFile, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase) {
 		this.glossary = glossary;
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
@@ -93,6 +96,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		IOntology ontology = of.createOntology(ontologyFile);
 		if(ontology!=null)
 			this.structureNameStandardizer = new StructureNameStandardizer(ontology, characterKnowledgeBase, possessWords);
+		
+		this.posKnowledgeBase = posKnowledgeBase;
 	}
 
 	
@@ -176,8 +181,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		log(LogLevel.DEBUG, "result:\n" + result);
 		while(iterator.hasNext()) {
 			if(!iterator.hasPrevious() && skip+firstChunkProcessor.skipFirstNChunk()>0) {
-				for(int i = 0; i < skip+firstChunkProcessor.skipFirstNChunk(); i++)
+				for(int i = 0; i < skip+firstChunkProcessor.skipFirstNChunk(); i++){
 					iterator.next();
+				}
 				continue;
 			}
 			if(iterator.hasNext()) {
@@ -194,7 +200,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		RelationTreatmentElement relationElement = new RelationTreatmentElement("relationName", "id", "from", "to", false);
 		result.add(structureElement);
 		result.add(relationElement);*/
-		new NonOntologyBasedStandardizer(glossary, sentence, processingContext).standardize((LinkedList<Element>) result);
+		new NonOntologyBasedStandardizer(glossary, sentence, processingContext, posKnowledgeBase).standardize((LinkedList<Element>) result);
 		new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result);
 		return result;
 	}
@@ -210,12 +216,13 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	
 	private List<Element> describeChunk(ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
-		
+
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
 		Chunk chunk = chunkListIterator.next();
 		ChunkType chunkType = chunk.getChunkType();
-		
+	
 		IChunkProcessor chunkProcessor = chunkProcessorProvider.getChunkProcessor(chunkType);
+
 		if(chunkProcessor!=null) {
 			log(LogLevel.DEBUG, "chunk processor for chunkType " + chunkType + " found; proceed using " + chunkProcessor.getDescription() + " ...");
 			result.addAll(chunkProcessor.process(chunk, processingContext));
@@ -224,7 +231,6 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			processingContext.getCurrentState().setUnassignedChunkAfterLastElements(true);
 		else
 			processingContext.getCurrentState().setUnassignedChunkAfterLastElements(false);
-		
 		return result;
 	}
 	

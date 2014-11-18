@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.io.validate;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -19,8 +20,8 @@ import edu.arizona.biosemantics.common.log.LogLevel;
  */
 public abstract class AbstractXMLVolumeValidator implements IVolumeValidator {
 
-	public abstract boolean validate(File file);
-
+	//public abstract boolean validate(File file);
+	public abstract boolean validate(List<File> file);
 	protected boolean validateXMLFileWithSchema(File xmlFile, File schemaFile) {
 		try {			
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

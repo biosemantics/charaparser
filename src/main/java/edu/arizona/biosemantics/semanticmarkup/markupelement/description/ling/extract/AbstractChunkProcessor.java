@@ -119,6 +119,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		List<? extends Element> results = processChunk(chunk, processingContext);
 		if(results.size()==0 && chunk!=null && chunk.getTerminalsText().compareTo(".")!=0)  processingContext.setLastChunkYieldElement(false); //ignore unprocessed '.', "15 cm. long"
 		else processingContext.setLastChunkYieldElement(true);
+		
 		return results;
 		
 	}
@@ -528,8 +529,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				} else {
 					tokensCharacter = characterKnowledgeBase.getCharacterName(w).getCategories();
 				}
+				//Hong test
 				if(tokensCharacter==null && w.matches("no")){
-					tokensCharacter = "presence";
+					tokensCharacter = "count";
 				}
 				if(tokensCharacter==null && posKnowledgeBase.isAdverb(w) && !modifiers.contains(token)) {
 					//TODO: can be made more efficient, since sometimes character is already given

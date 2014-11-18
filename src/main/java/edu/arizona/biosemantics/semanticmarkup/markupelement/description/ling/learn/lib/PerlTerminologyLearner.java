@@ -31,6 +31,8 @@ import org.apache.commons.lang3.SystemUtils;
 
 
 
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -46,13 +48,16 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonIdentification;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonName;
 
 /**
  * PerlTerminologyLearner learns using the previous charaparser perl part
  * @author rodenhausen
  */
 public class PerlTerminologyLearner implements ITerminologyLearner {
-
+	
+	protected Set<String> taxonNames;
 	protected Set<String> sentences;
 	protected Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
 	protected List<String> adjnouns;
@@ -161,6 +166,35 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		}catch(IOException e) {
 			log(LogLevel.ERROR, "Problem with output/input or calling of perl", e);
 			throw new LearnException();
+		}
+	}
+
+	/**
+	 * save all taxon names to the database and the taxonNames field 
+	 * @param descriptionsFiles
+	 */
+	private void collectTaxonIdentifications(
+			List<AbstractDescriptionsFile> descriptionsFiles) {
+		this.taxonNames = new HashSet<String>();
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
+			List<TaxonIdentification> tis = descriptionsFile.getTaxonIdentifications();
+			for(TaxonIdentification ti: tis){
+				for(TaxonName name: ti.getTaxonNames()){
+					String[] nameparts = name.getText().split("\\s+"); //name should be one word long, but just in case 
+					for(String namepart: nameparts){
+					taxonNames.add(namepart.toLowerCase());
+					}
+				}
+			}
+		}
+		
+		try {
+			Statement statement = connection.createStatement();
+			for(String taxonName: taxonNames){
+				statement.execute("insert into "+this.databasePrefix+"_taxonnames (name) value ('"+taxonName+"')");
+			}
+		} catch(SQLException e) {
+			log(LogLevel.ERROR, "problem inserting taxon name to the taxonnames table", e);
 		}
 	}
 
@@ -571,6 +605,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				+ this.databaseUser + " " + this.databasePassword + " " + this.databasePrefix + " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
 		createTablesNeededForPerl(descriptionsFiles);
+		collectTaxonIdentifications(descriptionsFiles);
 		runCommand(command);
 	}
 	
@@ -589,6 +624,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 									this.databasePrefix + "_substructure, " + 
 									this.databasePrefix + "_unknownwords, " + 
 									this.databasePrefix + "_wordpos, " + 
+									this.databasePrefix + "_taxonnames, " + 
 									this.databasePrefix + "_wordroles;";
             stmt.execute(cleanupQuery);
             stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, "
@@ -596,7 +632,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
             AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, this.databaseHost, this.databasePort, this.databaseName, this.databasePrefix, this.databaseUser, this.databasePassword);
     		allWordsLearner.learn(descriptionsFiles);
     		stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), "
-    				             + "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");     
+    				             + "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");  
+    		stmt.execute("create table if not exists " + this.databasePrefix + "_taxonnames (name varchar(100), primary key(name)) CHARACTER SET utf8 engine=innodb");
         } catch(SQLException | ClassNotFoundException e) {
         	log(LogLevel.ERROR, "problem initalizing tables", e);
         	throw new LearnException();

@@ -10,13 +10,16 @@
 			At this time it is not known how to specify xml-transient for java type instead of a java attribute in a bindings file. Hence this annotation here. 
 	  -->
         <java-type name="AbstractDescriptionsFile" xml-transient="true"/>
-   		<java-type name="DescriptionsFile">
+   		<java-type name="DescriptionsFile"> 
 			<xml-root-element name="treatment"/>
 			<xml-type namespace="http://www.github.com/biosemantics" />
-			<xml-type prop-order="meta treatmentRoot treatmentRoots" />
+			<xml-type prop-order="meta taxonIdentification taxonIdentifications treatmentRoot treatmentRoots" />
             <java-attributes>
             	<xml-transient java-attribute="file"/>
                 <xml-element java-attribute="meta" xml-path="meta" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta"/>
+ 				<xml-element java-attribute="taxonIdentification" xml-path="taxon_identification" 
+ 				    type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonIdentification"/>
+                <xml-transient java-attribute="taxonIdentifications" />        
 				<xml-element java-attribute="treatmentRoot" xml-path="." type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot" />
 				<xml-transient java-attribute="treatmentRoots"/>
             </java-attributes>

@@ -1,6 +1,7 @@
 package edu.arizona.biosemantics.semanticmarkup.io.validate;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
@@ -30,7 +31,7 @@ public class ValidationRun implements Callable<Boolean> {
 	@Override
 	public Boolean call() throws Exception {
 		log(LogLevel.DEBUG, "Start validating using " + volumeValidator.getClass());
-		this.result = volumeValidator.validate(file);
+		this.result = volumeValidator.validate(Arrays.asList(file.listFiles()));
 		log(LogLevel.DEBUG, "Done validating using " + volumeValidator.getClass());
 		latch.countDown();
 		return result;

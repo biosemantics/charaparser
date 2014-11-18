@@ -3,6 +3,8 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.run;
 import java.io.File;
 
 
+import java.util.Arrays;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -38,7 +40,7 @@ public class DescriptionMarkupRun extends AbstractRun {
 		creator.create();
 		
 		IVolumeValidator volumeValidator = new XMLVolumeValidator(new File(validateSchemaFile));
-		boolean result = volumeValidator.validate(new File(runOutDirectory));
+		boolean result = volumeValidator.validate(Arrays.asList(new File(runOutDirectory).listFiles()));
 		if(!result)
 			throw new Exception("Created output is not valid against the schema: " + validateSchemaFile);
 	}

@@ -326,12 +326,18 @@ public class OTOLearner implements ILearner {
 		upload.setBioportalUserId(bioportalUserId);
 		upload.setUser(etcUser);
 		upload.setSource(sourceOfDescriptions);
-
-		List<Term> terms = getStructures();
+		
+		List<Term> taxonNames = getTaxonNames();
+		//upload.setPossibleTaxonNames();
+		
+		
+		List<Term> terms = getStructures(taxonNames);
 		//for(Term t: terms){
 		//	System.out.println(t.getTerm());
 		//}
 		upload.setPossibleStructures(terms);
+		
+		
 		
 		terms = getCharacters();
 		//for(Term t: terms){
@@ -389,12 +395,50 @@ public class OTOLearner implements ILearner {
 		return result;
 	}
 
-	private List<Term> getStructures() {
+	private List<Term> getTaxonNames() {
+		List<Term> result = new ArrayList<Term>();
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		try {
+			stmt = connection.createStatement(); 
+			rs = stmt.executeQuery("select name from "+this.databasePrefix+"_taxonnames");
+			while(rs.next())
+				result.add(new Term(rs.getString("name")));
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			log(LogLevel.ERROR, "Problem fetching taxon names", e);
+		}finally{
+			if(rs==null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if(stmt==null)
+				try {
+					stmt.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return result;
+	}
+	
+	
+	private List<Term> getStructures(List<Term> remove) {
 		List<Term> result = new ArrayList<Term>();
 		try {
 			List<String> structureTerms = this.fetchStructureTerms();
-			for(String structureTerm : structureTerms) 
-				result.add(new Term(structureTerm));
+			for(String structureTerm : structureTerms) {
+				Term t = new Term(structureTerm);
+				if(!remove.contains(t)){
+					result.add(t);
+				}
+			}
 		} catch (Exception e) {
 			log(LogLevel.ERROR, "Problem fetching structure terms", e);
 		}
@@ -436,7 +480,7 @@ public class OTOLearner implements ILearner {
 			if(word.startsWith("[") && word.endsWith("]")) continue;
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
 			//getMostLikelyPOS does stemming, while isVerb does not.
-			if(word.compareTo("times")==0){//TODO: move to configuration
+			if(word.compareTo("times")==0 || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
 				noneqwords.add(word);
 				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");				
 				continue;

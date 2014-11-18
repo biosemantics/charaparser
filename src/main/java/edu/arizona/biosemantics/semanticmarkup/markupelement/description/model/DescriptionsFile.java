@@ -11,7 +11,25 @@ import java.util.List;
 public class DescriptionsFile extends AbstractDescriptionsFile {
 	
 	private List<TreatmentRoot> treatmentRoots = new LinkedList<TreatmentRoot>();
+	private List<TaxonIdentification> taxonIdentifications = new LinkedList<TaxonIdentification> ();
+	
+	public List<TaxonIdentification> getTaxonIdentifications(){
+		return this.taxonIdentifications;
+	}
 
+	public void setTaxonIdentifications(List<TaxonIdentification> taxonIdentifications){
+		this.taxonIdentifications = taxonIdentifications;
+	}
+	
+	
+	public TaxonIdentification getTaxonIdentification(){
+		return this.taxonIdentifications.get(0);
+	}
+
+	public void setTaxonIdentification(TaxonIdentification taxonIdentification){
+		this.taxonIdentifications.add(taxonIdentification);
+	}
+	
 	public List<TreatmentRoot> getTreatmentRoots() {
 		return treatmentRoots;
 	}
@@ -52,6 +70,7 @@ public class DescriptionsFile extends AbstractDescriptionsFile {
 		}
 		return result;
 	}
+
 
 }
 

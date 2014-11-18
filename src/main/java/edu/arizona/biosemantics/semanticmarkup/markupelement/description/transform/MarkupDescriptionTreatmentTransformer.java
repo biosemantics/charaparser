@@ -289,7 +289,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * @param glossaryDownload
 	 * @param download
 	 */
-	/*protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
 		//glossary
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
@@ -339,7 +339,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		try {
 			//term category
 			//String sql = "SELECT term, category from proibio_m33_term_category";
-			String sql = "SELECT term, category from bob_small_term_category";
+			String sql = "SELECT term, category from bob_porifera_term_category";
 			PreparedStatement preparedStatement;
 			preparedStatement = connection.prepareStatement(sql);
 
@@ -351,7 +351,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			
 			//syns
 			//sql = "SELECT term, category, synonym from proibio_m33_syns";
-			sql = "SELECT term, category, synonym from bob_small_syns";
+			sql = "SELECT term, category, synonym from bob_porifera_syns";
 			preparedStatement = connection.prepareStatement(sql);
 
 			preparedStatement.execute();
@@ -364,7 +364,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			log(LogLevel.ERROR, "Exception", e);
 		}
 	}
-	*/
+	
 	
 	/**
 	 * notes: OTO Webservice should probably only return one term category list.
@@ -376,7 +376,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * For structure terms, both singular and plural forms are included in the synonyms
 	 * @param otoGlossary
 	 */
-	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+	/*protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
 	
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
@@ -466,7 +466,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
 				glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 		}
-	}
+	}*/
 	
 	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 
 			String tablePrefix) {

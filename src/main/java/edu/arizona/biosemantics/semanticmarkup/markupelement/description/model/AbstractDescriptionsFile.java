@@ -31,5 +31,6 @@ public abstract class AbstractDescriptionsFile {
 	}
 	
 	public abstract List<Description> getDescriptions();
+	public abstract List<TaxonIdentification> getTaxonIdentifications();
 	
 }

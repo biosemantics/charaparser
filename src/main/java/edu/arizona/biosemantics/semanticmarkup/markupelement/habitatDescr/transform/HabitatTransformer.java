@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,17 +18,10 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Treatment;
 import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.process.Tokenizer;
-import edu.stanford.nlp.trees.Dependency;
-import edu.stanford.nlp.trees.GrammaticalRelation;
-import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalStructureFactory;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.trees.TypedDependency;
-import edu.stanford.nlp.util.Filter;
 
 public class HabitatTransformer implements IHabitatTransformer {
 	private LexicalizedParser parser;

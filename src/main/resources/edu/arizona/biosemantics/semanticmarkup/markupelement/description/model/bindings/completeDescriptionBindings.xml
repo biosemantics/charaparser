@@ -7,6 +7,7 @@
 			<xml-root-element name="treatments"/>
             <java-attributes>
                 <xml-element java-attribute="meta" xml-path="meta" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta"/>
+				<xml-element java-attribute="taxonIdentifications" xml-path="taxon_identification" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonIdentification" container-type="java.util.List"/>        
 				<xml-element java-attribute="treatmentRoots" xml-path="treatment" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot" container-type="java.util.List" />
             </java-attributes>
         </java-type>

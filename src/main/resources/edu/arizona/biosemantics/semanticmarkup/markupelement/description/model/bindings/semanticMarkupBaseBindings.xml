@@ -9,6 +9,66 @@
         http://wiki.eclipse.org/EclipseLink/Development/339373
         -->
         
+       	 <java-type name="TaxonIdentification">
+       	    <!-- <xml-type prop-order="taxonName strainNumber placeOfPublication taxonHierarchy otherInfoOnName"/>-->
+       	     <java-attributes>
+				<xml-element java-attribute="status" xml-path="@status"  />
+				<xml-element java-attribute="taxonNames" xml-path="taxon_name" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonName" container-type="java.util.List"/>
+				<!--  <xml-element java-attribute="strainNumber" xml-path="strain_number" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.StrainNumber" container-type="java.util.List"/>
+				<xml-element java-attribute="placeOfPublication" xml-path="place_of_publication" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.PlaceOfPublication" container-type="java.util.List"/>
+				<xml-element java-attribute="taxonHierarchy" xml-path="taxon_hierarchy" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonHierarchy" />
+				<xml-element java-attribute="otherInfoOnName" xml-path="other_info_on_name" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.OtherInfoOnName" container-type="java.util.List"/>
+				-->							
+			</java-attributes>
+       	 </java-type>
+        
+       	 <java-type name="TaxonName">
+       	   <java-attributes>
+                <xml-element java-attribute="text" xml-path="text()"/>
+				<xml-element java-attribute="rank" xml-path="@rank"/>
+				<xml-element java-attribute="authority" xml-path="@authority"/>
+            </java-attributes>
+        </java-type>
+        <!--  
+       	<java-type name="StrainNumber">
+       	    <xml-type prop-order="equivalentStrainNumber accessionNumber16sRRNA" />
+			<java-attributes>
+        		<xml-element java-attribute="equivalentStrainNumbers" xml-path="equivalent_strain_numbers" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.EquivalentStrainNumber" />
+        		<xml-element java-attribute="accessionNumber16sRRNA" xml-path="accession_number_16s_rrna" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AccessionNumber16sRRNA" />
+        	</java-attributes>
+        </java-type>
+         
+       	<java-type name="PlaceOfPublication">
+       	    <xml-type prop-order="publicationTitle placeInPublication otherInfoOnPub" />
+			<java-attributes>
+        		<xml-element java-attribute="publicationTitle" xml-path="publication_title" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.PublicationTitle" />
+        		<xml-element java-attribute="placeInPublication" xml-path="place_in_publication" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.PlaceInPublication" />
+        		<xml-element java-attribute="otherInfoOnPub" xml-path="other_info_on_pub" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.OtherInfoOnPub" container-type="java.util.List"/>
+        	</java-attributes>
+        </java-type>
+        
+       	 <java-type name="TaxonHierarchy">
+       	   <java-attributes>
+                <xml-element java-attribute="text" xml-path="text()"/>
+            </java-attributes>
+        </java-type>
+       	  
+       	 <java-type name="OtherInfoOnName">
+       	   <java-attributes>
+                <xml-element java-attribute="text" xml-path="text()"/>
+				<xml-element java-attribute="type" xml-path="@type"/>
+            </java-attributes>
+        </java-type>
+       	  
+       	  
+       	  <java-type name="OtherInfoOnPub">
+       	   <java-attributes>
+                <xml-element java-attribute="text" xml-path="text()"/>
+				<xml-element java-attribute="type" xml-path="@type"/>
+            </java-attributes>
+        </java-type>
+       	-->
+       	
        	<java-type name="Meta">
        	    <xml-type prop-order="source processedBy otherInfoOnMeta" />
 			<java-attributes>
@@ -17,6 +77,7 @@
         		<xml-element java-attribute="otherInfoOnMeta" xml-path="other_info_on_meta" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.OtherInfoOnMeta" container-type="java.util.List" />
         	</java-attributes>
         </java-type>
+       	
        	<java-type name="Source">
        		<xml-type prop-order="author date title pages" />
         	<java-attributes>
@@ -103,6 +164,7 @@
 				<xml-element java-attribute="ontologyId" xml-path="@ontologyid"/>
 				<xml-element java-attribute="provenance" xml-path="@provenance"/>
 				<xml-element java-attribute="notes" xml-path="@notes"/>
+				<xml-element java-attribute="isModifier" xml-path="@is_modifier"/>
             </java-attributes>
         </java-type>
 		<java-type name="Structure">

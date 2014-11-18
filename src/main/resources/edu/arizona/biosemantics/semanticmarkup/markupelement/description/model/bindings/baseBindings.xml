@@ -20,6 +20,8 @@
         		<xml-element java-attribute="otherInfoOnMeta" xml-path="other_info_on_meta/text()" container-type="java.util.List" />
         	</java-attributes>
         </java-type>
+   
+  
         <java-type name="Processor">
         	<java-attributes>
         		<xml-element java-attribute="process_type" xml-path="@process_type" />

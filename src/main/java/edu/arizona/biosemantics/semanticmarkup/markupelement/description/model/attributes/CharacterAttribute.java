@@ -27,6 +27,7 @@ public class CharacterAttribute {
       <xs:attribute name="ontologyid" type="xs:string"/>
       <xs:attribute name="provenance" type="xs:string"/>
       <xs:attribute name="notes" type="xs:string"/>
+      <xs:attribute name="is_modifier" type="xs:boolean"/>
 	 */
 	
 	public static final String char_type = "char_type";
