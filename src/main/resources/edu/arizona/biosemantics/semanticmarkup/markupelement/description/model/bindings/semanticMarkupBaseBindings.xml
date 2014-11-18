@@ -59,8 +59,8 @@
         </java-type>
         <java-type name="TreatmentRoot">
             <java-attributes>
-           		<xml-element java-attribute="descriptionDescriptions" xml-path="key/key_statement/statement" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description" container-type="java.util.List" />
-				<xml-element java-attribute="keyStatementDescriptions" xml-path="description[@type='morphology']" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description" container-type="java.util.List" />
+           		<xml-element java-attribute="descriptionDescriptions" xml-path="description[@type='morphology']" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description" container-type="java.util.List" />
+				<xml-element java-attribute="keyStatementDescriptions" xml-path="key/key_statement/statement" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description" container-type="java.util.List" />
             </java-attributes>
         </java-type>
         <java-type name="Description">
