@@ -72,7 +72,7 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 			nextChunk = chunkListIterator.next();
 			chunkListIterator.previous();
 		}
-		if(nextChunk.isOfChunkType(ChunkType.COMMA) || nextChunk.isOfChunkType(ChunkType.END_OF_LINE)||nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE)){
+		if(nextChunk==null || nextChunk.isOfChunkType(ChunkType.COMMA) || nextChunk.isOfChunkType(ChunkType.END_OF_LINE)||nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE)){
 			//LinkedList<Element> lastElements = processingContextState.getLastElements();
 			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 			chunks.add(chunk);

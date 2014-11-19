@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -28,7 +30,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.common.taxonomy.Rank;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.IVolumeValidator;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.XMLVolumeValidator;
 
@@ -65,7 +66,6 @@ public class PostRun {
 		XPathExpression<Element> keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
 		XPathExpression<Element> detPath = fac.compile("//key//determination", Filters.element());
 		XPathExpression<Element> nextIdPath = fac.compile("//key//next_statement_id", Filters.element());
-		XPathExpression<Element> statementWIdPath = fac.compile("//key_statement//statement[@id]", Filters.element());
 		XPathExpression<Element> namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
 		SAXBuilder builder = new SAXBuilder();
 		Document document;
@@ -77,8 +77,9 @@ public class PostRun {
 				Element ti = (Element) namePath.evaluate(root).get(0);
 				String name = "";
 				for(Element tn: ti.getChildren("taxon_name")){
-					name += tn.getAttributeValue("rank")+"_"+tn.getTextTrim()+" ";
+					name += tn.getAttributeValue("rank")+"_"+tn.getTextTrim().toLowerCase()+" ";
 				}
+				name = name.trim();
 				if(!name.isEmpty()){
 					taxa2doc.put(name, document);
 					doc2file.put(document, file);
@@ -103,13 +104,13 @@ public class PostRun {
 				for(Object determination: detPath.evaluate(key)){
 					String taxonName = getName((Element) determination, docWKey);
 					Element description = new Element("description");
-					description.setAttribute("type", "key");
+					description.setAttribute("type", "morphology_from_key");
 					wrapCharacter(description, nextIdPath, (Element)determination, (Element)key);
 					
 					Document doc = locateTaxonDocument(taxonName, taxa2doc);
 					if(doc!=null){
 						//add a new description element of type 'key' to the doc for the taxon
-						doc.addContent(description);
+						doc.getRootElement().addContent(description);
 						writeFile(doc, doc2file.get(doc));
 					}else{
 						//create a new file holding the description
@@ -157,11 +158,12 @@ public class PostRun {
 		ti.removeContent();
 		String[] names = taxonName.split("\\s+");
 		for(String name: names){
-			String [] rankname = name.split("_");
+			String [] rankname = name.split("_"); //some name may not contain the rank
 			Element tn = new Element("taxon_name");
-			tn.setAttribute("rank", rankname[0]);
+			tn.setAttribute("rank", rankname.length>1? rankname[0]:"unranked");
 			tn.setAttribute("authority", "unknown");
 			tn.setAttribute("date", "unknown");
+			tn.setText(rankname.length>1? rankname[1]:rankname[0]);
 			ti.addContent(tn);
 		}
 		
@@ -191,43 +193,123 @@ public class PostRun {
 	}
 
 
+	/**
+	 * 
+	 * @param taxonName: may not have complete info about lower ranks, e.g., order_astrophorida ancorinidaes
+	 * @param taxa2doc order_astrophorida family_ancorinidae=>
+	 * @return
+	 */
 	private Document locateTaxonDocument(String taxonName,
 			Hashtable<String, Document> taxa2doc) {
+		//exact match
 		Document doc = taxa2doc.get(taxonName);
 		if(doc!=null) return doc;
 		
+		//try to find the best match
 		Enumeration<String> en = taxa2doc.keys();
+		int max = 0;
+		String matchName = null;
 		while(en.hasMoreElements()){
+			int score = 0;
 			String name = en.nextElement();
-			if(name.endsWith(taxonName)) return taxa2doc.get(name);
-		}		
-		return null;
+			List<String> parts1 = Arrays.asList(name.split("\\s+"));
+			String[] parts2 = taxonName.split("\\s+");
+			if(isMatch(parts1.get(parts1.size()-1), parts2[parts2.length-1])){//the name of the lowest rank must match
+				for(String part1: parts1){
+					for(String part2: parts2){
+						if(isMatch(part1, part2)) score++;
+					}
+				}
+			}
+			if(score>max){
+				max = score;
+				matchName = name;
+			}
+		}	
+		return matchName!=null? taxa2doc.get(matchName): null;
 	}
 
 
 	/**
-	 * trace from determination up the key to collect all statements applicable to the determination
-	 * save the statements in description
-	 * need also update the ids for the statements.
+	 * @param part1 contains rank info e.g., family_ancorinidae
+	 * @param part2 rank info optional e.g., ancorinidaes
+	 * @return
+	 */
+	private boolean isMatch(String part1, String part2) {
+		return part1.compareTo(part2)==0 || part1.endsWith("_"+part2);
+	}
+
+
+	/**
+	 * trace from determination up the key to collect all parsed descriptions applicable to the determination
+	 * save the statements in the description
+	 * need also update the ids for all the statements, structures, relations and references to them. 
 	 * 
 	 * @param description
 	 * @param determination
 	 * @param key
 	 */
-	private void wrapCharacter(Element description, XPathExpression nextIdPath, Element determination,
+	private void wrapCharacter(Element description, XPathExpression<Element> nextIdPath, Element determination,
 			Element key) {
 		String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
-		Element stmt = determination.getParentElement().getChild("statement").clone();
-		description.addContent(stmt);
+		Element desc = determination.getParentElement().getChild("description").clone();
+		Collection<Element> statements = prepStatmentsFrom(desc);
+		if(statements!=null) description.addContent(statements);
 		
 		Element nextId = getNextId(stmtid, key, nextIdPath);
 		while(nextId!=null){
-			stmt = ((Element)nextId).getParentElement().getChild("statement").clone();
-			stmt.setAttribute("id", "from_key_"+stmt.getAttributeValue("id"));
-			description.addContent(stmt);
+			desc = ((Element)nextId).getParentElement().getChild("description").clone();
+			statements = prepStatmentsFrom(desc);
+			if(statements!=null) description.addContent(statements);
 			stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
 			nextId = getNextId(stmtid, key, nextIdPath);
 		}
+	}
+
+
+	/**
+	 * collect all parsed statements
+	 * update the ids for all the statements, structures, relations and references to them
+	 * @param desc
+	 * @return
+	 */
+	
+	
+	private Collection<Element> prepStatmentsFrom(Element description) {
+		ArrayList<Element> statements = new ArrayList<Element>();
+		for(Element statement: description.getChildren("statement")){
+			statement.detach();
+			updateIds(statement);
+			statements.add(statement);
+		}
+		return statements;
+	}
+
+	
+	/**
+	 * append "from_key_" to all ids and references to ids in the statement
+	 * @param statement
+	 */
+
+	private void updateIds(Element statement) {
+		
+		if(statement.getAttribute("id")!=null)
+			statement.setAttribute("id", "from_key_"+statement.getAttributeValue("id"));
+		
+		for(Element elem: statement.getChildren()){
+			if(elem.getAttribute("id")!=null){
+				elem.setAttribute("id", "from_key_"+elem.getAttributeValue("id"));
+			}
+			if(elem.getName().compareTo("relation")==0){
+				if(elem.getAttribute("from")!=null){
+					elem.setAttribute("from", "from_key_"+elem.getAttributeValue("from"));
+				}
+				if(elem.getAttribute("to")!=null){
+					elem.setAttribute("to", "from_key_"+elem.getAttributeValue("to"));
+				}
+			}
+		}
+		
 	}
 
 
@@ -302,18 +384,6 @@ public class PostRun {
 			}
 		}
 		return name.trim();
-	}
-
-
-	/**
-	 * https://github.com/biosemantics/common/blob/master/taxonomy/src/main/java/edu/arizona/biosemantics/common/taxonomy/Rank.java
-	 * @param lastRank
-	 * @return
-	 */
-	private String getRankLowerThan(String rank) {
-		Rank r = Rank.valueOf(rank.toUpperCase());
-		Rank l = Rank.nextRank(r);
-		return l.toString().toLowerCase();
 	}
 
 
