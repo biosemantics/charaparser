@@ -98,7 +98,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		
 		boolean lastIsStructure = false;
 		boolean lastIsCharacter = false;
-		boolean lastIsComma = false;
+		//boolean lastIsComma = false;
 		
 		if (lastElements.isEmpty()) {
 			unassignedModifiers.add(chunk);

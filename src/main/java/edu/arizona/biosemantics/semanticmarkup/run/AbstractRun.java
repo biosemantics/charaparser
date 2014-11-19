@@ -9,6 +9,8 @@ import java.util.Calendar;
 import org.apache.commons.io.FileUtils;
 
 
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -50,6 +52,7 @@ public abstract class AbstractRun implements IRun {
 		FileUtils.copyDirectory(new File(inputDirectory), new File(runOutDirectory));
 		
 		doRun();
+		
 		
 		long endTime = Calendar.getInstance().getTimeInMillis();
 		String wasDone = "was done at " + endTime;

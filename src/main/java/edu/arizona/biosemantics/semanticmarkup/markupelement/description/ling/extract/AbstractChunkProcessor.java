@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -167,12 +168,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		log(LogLevel.DEBUG, "reestablish subject");
 		List<Structure> result = new LinkedList<Structure>();
 
-		LinkedList<Element> lastElements = processingContextState.getLastElements();
+		
 		List<Structure> subjects = processingContextState.getSubjects();
 		if(subjects.size()==0){
 			subjects = processingContext.getLastSubjects();
 		}
+		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		lastElements.clear();
+		
 		for(Structure structure : subjects) {
 			lastElements.add(structure);
 			//element.detach();
@@ -182,6 +185,20 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return result;
 	}
 
+	protected void establishWholeOrganismAsSubject(
+			ProcessingContext processingContext, List<Structure> result,
+			ProcessingContextState processingContextState) {
+		//use whole_organism
+		Structure structureElement = new Structure();
+		int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
+		structureElement.setId("o" + String.valueOf(structureIdString));	
+		structureElement.setName("whole_organism"); 
+		structureElement.setNameOriginal("");
+		List<Structure> structureElements = new LinkedList<Structure>();
+		structureElements.add(structureElement);
+		result.addAll(establishSubject(structureElements, processingContextState));
+	}
+	
 	protected List<Structure> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<Structure> results = new LinkedList<Structure>();	
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);

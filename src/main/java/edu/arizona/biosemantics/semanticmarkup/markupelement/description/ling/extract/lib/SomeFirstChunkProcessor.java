@@ -185,7 +185,15 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			//	Chunk organChunk = firstChunk.getChunkDFS(ChunkType.ORGAN);
 			//	result.addAll(establishSubject(organChunk, processingContext, processingContextState));
 			if(chunkTerminals.get(0).toString().matches(ElementRelationGroup.possessPreps)) {
-				result.addAll(reestablishSubject(processingContext, processingContextState));
+				//result.addAll(reestablishSubject(processingContext, processingContextState));
+				List<Structure> subjects = reestablishSubject(processingContext, processingContextState);
+				if(subjects.size()==0 && this.firstSentence){
+					establishWholeOrganismAsSubject(processingContext, result,
+							processingContextState);
+				}else{
+					result.addAll(subjects);
+				}
+				skipFirstNChunk = 0;
 			} else {
 				if(chunks.size()>1){
 					Chunk nextChunk = chunks.get(1);
@@ -212,15 +220,8 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			List<Structure> subjects = reestablishSubject(processingContext, processingContextState);
 			//if(firstChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && subjects.size()==0 && this.firstSentence){
 			if(subjects.size()==0 && this.firstSentence){
-				//use whole_organism
-				Structure structureElement = new Structure();
-				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
-				structureElement.setId("o" + String.valueOf(structureIdString));	
-				structureElement.setName("whole_organism"); 
-				structureElement.setNameOriginal("");
-				List<Structure> structureElements = new LinkedList<Structure>();
-				structureElements.add(structureElement);
-				result.addAll(establishSubject(structureElements, processingContextState));
+				establishWholeOrganismAsSubject(processingContext, result,
+						processingContextState);
 			}else{
 				result.addAll(subjects);
 			}
@@ -298,6 +299,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}
+
 	
 	public int skipFirstNChunk() {
 		return this.skipFirstNChunk;

@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jdom2.Document;
+import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
@@ -40,16 +41,16 @@ import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.XMLVolumeValidato
  */
 public class PostRun {
 	String runOutDirectory;
-	String validateSchemaFile;
+	//String validateSchemaFile;
 	static XMLOutputter out = new XMLOutputter();
 
 	/**
 	 * 
 	 */
 	@Inject
-	public PostRun(@Named("Run_OutDirectory")String runOutDirectory, @Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile) {
+	public PostRun(@Named("Run_OutDirectory")String runOutDirectory /*, @Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile*/) {
 			this.runOutDirectory = runOutDirectory;
-			this.validateSchemaFile = validateSchemaFile;
+			//this.validateSchemaFile = validateSchemaFile;
 	}
 
 	
@@ -61,10 +62,11 @@ public class PostRun {
 		ArrayList<Document> containsKey = new ArrayList<Document>();
 		
 		XPathFactory fac = XPathFactory.instance();
-		XPathExpression<Element> keyPath = fac.compile("bio:treatment/key", Filters.element());
-		XPathExpression<Element> detPath = fac.compile("key//determination", Filters.element());
-		XPathExpression<Element> nextIdPath = fac.compile("key//next_statement_id", Filters.element());
-		XPathExpression<Element> namePath = fac.compile("bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element());
+		XPathExpression<Element> keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+		XPathExpression<Element> detPath = fac.compile("//key//determination", Filters.element());
+		XPathExpression<Element> nextIdPath = fac.compile("//key//next_statement_id", Filters.element());
+		XPathExpression<Element> statementWIdPath = fac.compile("//key_statement//statement[@id]", Filters.element());
+		XPathExpression<Element> namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
 		SAXBuilder builder = new SAXBuilder();
 		Document document;
 		File [] files = new File(runOutDirectory).listFiles();
@@ -77,8 +79,11 @@ public class PostRun {
 				for(Element tn: ti.getChildren("taxon_name")){
 					name += tn.getAttributeValue("rank")+"_"+tn.getTextTrim()+" ";
 				}
-				taxa2doc.put(name, document);
-				doc2file.put(document, file);
+				if(!name.isEmpty()){
+					taxa2doc.put(name, document);
+					doc2file.put(document, file);
+				}
+				
 						
 				if(!keyPath.evaluate(root).isEmpty()){
 					containsKey.add(document);
@@ -115,12 +120,12 @@ public class PostRun {
 			}
 		}
 		//validate new files
-		XMLVolumeValidator volumeValidator = new XMLVolumeValidator(new File(validateSchemaFile));
+		/*XMLVolumeValidator volumeValidator = new XMLVolumeValidator(new File(validateSchemaFile));
 		Boolean valid = volumeValidator.validate(newFiles);
 		if(!valid){
 			log(LogLevel.ERROR, "One or more newly created output xml files are not valid");
 			throw new Exception("Created output is not valid against the schema: " + validateSchemaFile);
-		}
+		}*/
 	}
 
 	
@@ -161,7 +166,7 @@ public class PostRun {
 		}
 		
 		//insert description
-		doc.addContent(description);
+		root.addContent(description);
 		
 		//write out
 		writeFile(doc, out);
@@ -289,8 +294,9 @@ public class PostRun {
 				if(nameRank.get(token)==null){
 					if(name.endsWith("_")) name += token+" ";
 					else{
-						String thisRank = getRankLowerThan(lastRank); //return the major rank that is lower than lastRank
-						name += thisRank+"_"+token+" ";
+						//String thisRank = getRankLowerThan(lastRank); //return the major rank that is lower than lastRank
+						//name += thisRank+"_"+token+" ";
+						name += token+" ";
 					}
 				}
 			}

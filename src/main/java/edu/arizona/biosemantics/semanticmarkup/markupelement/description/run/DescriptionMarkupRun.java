@@ -13,6 +13,7 @@ import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.XMLVolumeValidato
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.run.AbstractRun;
+import edu.arizona.biosemantics.semanticmarkup.run.PostRun;
 
 /**
  * A MarkupRun creates a markup of treatments using an IMarkupCreator
@@ -38,6 +39,9 @@ public class DescriptionMarkupRun extends AbstractRun {
 	protected void doRun() throws Exception {
 		log(LogLevel.INFO, "Creating markup using " + creator.getDescription() + "...");
 		creator.create();
+		
+		PostRun r = new PostRun(runOutDirectory/*, validateSchemaFile*/);
+		r.absorbKeys();
 		
 		IVolumeValidator volumeValidator = new XMLVolumeValidator(new File(validateSchemaFile));
 		boolean result = volumeValidator.validate(Arrays.asList(new File(runOutDirectory).listFiles()));

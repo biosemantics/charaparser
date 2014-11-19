@@ -12,6 +12,7 @@ import com.google.inject.name.Named;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.run.AbstractRun;
+import edu.arizona.biosemantics.semanticmarkup.run.PostRun;
 
 
 public class ETCMarkupRun extends AbstractRun {
@@ -51,9 +52,14 @@ public class ETCMarkupRun extends AbstractRun {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has not been found as having successfully completed learning.");
 			throw new IllegalArgumentException();
 		}
+
 		
 		log(LogLevel.INFO, "Creating markup using " + creator.getDescription() + "...");
 		creator.create();
+		
+		
+		PostRun r = new PostRun(runOutDirectory/*, validateSchemaFile*/);
+		r.absorbKeys();
 	}
 	
 	private boolean isValidRun() throws ClassNotFoundException, SQLException {

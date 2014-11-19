@@ -327,8 +327,14 @@ public class OTOLearner implements ILearner {
 		upload.setUser(etcUser);
 		upload.setSource(sourceOfDescriptions);
 		
-		List<Term> taxonNames = getTaxonNames();
-		//upload.setPossibleTaxonNames();
+		List<String> taxonNames = getTaxonNames();
+		/*
+		List<Term> taxonNameTerms = new ArrayList<Term>();
+		for(String name: taxonNames){
+			taxonNameTerms.add(new Term(name));
+		}
+		upload.setPossibleTaxonNames(taxonNameTerms);
+		*/
 		
 		
 		List<Term> terms = getStructures(taxonNames);
@@ -395,8 +401,8 @@ public class OTOLearner implements ILearner {
 		return result;
 	}
 
-	private List<Term> getTaxonNames() {
-		List<Term> result = new ArrayList<Term>();
+	private List<String> getTaxonNames() {
+		List<String> result = new ArrayList<String>();
 		Statement stmt = null;
 		ResultSet rs = null;
 		
@@ -404,20 +410,20 @@ public class OTOLearner implements ILearner {
 			stmt = connection.createStatement(); 
 			rs = stmt.executeQuery("select name from "+this.databasePrefix+"_taxonnames");
 			while(rs.next())
-				result.add(new Term(rs.getString("name")));
+				result.add(rs.getString("name"));
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			log(LogLevel.ERROR, "Problem fetching taxon names", e);
 		}finally{
-			if(rs==null)
+			if(rs!=null)
 				try {
 					rs.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			if(stmt==null)
+			if(stmt!=null)
 				try {
 					stmt.close();
 				} catch (SQLException e) {
@@ -429,13 +435,13 @@ public class OTOLearner implements ILearner {
 	}
 	
 	
-	private List<Term> getStructures(List<Term> remove) {
+	private List<Term> getStructures(List<String> remove) {
 		List<Term> result = new ArrayList<Term>();
 		try {
 			List<String> structureTerms = this.fetchStructureTerms();
 			for(String structureTerm : structureTerms) {
-				Term t = new Term(structureTerm);
-				if(!remove.contains(t)){
+				if(!remove.contains(structureTerm)){
+					Term t = new Term(structureTerm);
 					result.add(t);
 				}
 			}
