@@ -208,14 +208,14 @@ public class OTOLearner implements ILearner {
 		fw.write("<!DOCTYPE html>");
 		fw.write("<html>");
 		fw.write("<head>");
-		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + this.otoLiteTermReviewURL + "?uploadID=" + uploadResult.getUploadId() + "&secret=" + uploadResult.getSecret() + 
-				"&origin=iplant\" charset=\"UTF-8\">");
+		String link = this.otoLiteTermReviewURL + "?id=" + uploadResult.getUploadId() + "&secret=" +
+				uploadResult.getSecret() + "&origin=iplant";
+		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + link + "\" charset=\"UTF-8\">");
 		fw.write("<title>Term categorization</title>");
 		fw.write("</head>");
 		fw.write("<body>");
-		fw.write("If you are not redirected automatically, please click the link <a href=\"" + this.otoLiteTermReviewURL + "?uploadID=" + uploadResult.getUploadId() + 
-				"&secret=" + uploadResult.getSecret() + "&origin=iplant\">" 
-				+ this.otoLiteTermReviewURL + "?uploadID=" + uploadResult.getUploadId() + "&secret=" + uploadResult.getSecret() + "&origin=iplant</a> " +
+		fw.write("If you are not redirected automatically, please click the link <a href=\"" + link + "\">" 
+				+ link + "</a> " +
 				"to categorize a selection of terms that appeared in the descriptions you provided as input. Categorizing these terms will ensure you obtain the best " +
 				"results possible from CharaParser Markup.");
 		//fw.write("<br /><br />");

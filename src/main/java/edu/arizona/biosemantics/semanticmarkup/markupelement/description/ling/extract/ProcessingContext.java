@@ -26,7 +26,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  * @author rodenhausen
  */
 public class ProcessingContext {
-
+	
 	private IChunkProcessorProvider chunkProcessorProvider;
 	private List<Element> result;
 	@JsonIgnore

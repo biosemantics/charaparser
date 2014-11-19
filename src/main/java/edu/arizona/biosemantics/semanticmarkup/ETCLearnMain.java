@@ -39,9 +39,14 @@ public class ETCLearnMain extends CLIMain {
 	 * @throws Throwable 
 	 */
 	public static void main(String[] args) throws Throwable {
-		CLIMain cliMain = new ETCLearnMain();
-		cliMain.parse(args);
-		cliMain.run();
+		try {
+			CLIMain cliMain = new ETCLearnMain();
+			cliMain.parse(args);
+			cliMain.run();
+		} catch(Throwable t) {
+			t.printStackTrace();
+			throw t;
+		}
 	}
 
 	@Override
@@ -84,6 +89,7 @@ public class ETCLearnMain extends CLIMain {
 			log(LogLevel.ERROR, "Couldn't instantiate default config", e);
 			throw e;
 		}
+
 		try {
 		    CommandLine commandLine = parser.parse( options, args );
 		    if(commandLine.hasOption("h")) {
@@ -207,8 +213,8 @@ public class ETCLearnMain extends CLIMain {
 		    	throw new IllegalArgumentException();
 		    }
 		    
-            if (commandLine.hasOption("w")) {
-                config.setWordNetSource(commandLine.getOptionValue("w"));
+		    if (commandLine.hasOption("w")) {
+    		    config.setWordNetSource(commandLine.getOptionValue("w"));
             }
 			if (commandLine.hasOption("l")) {
 				config.setPerlDirectory(commandLine.getOptionValue("l"));
