@@ -110,7 +110,6 @@ public class RunConfig extends BasicConfig {
 	//private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	//private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	//for general use
-
 	//http://etc-dev.cs.umb.edu/etcsite/
 	private String otoLiteTermReviewURL = "http://etc.cs.umb.edu/otolite/";
 	private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/etcsite/";
@@ -167,7 +166,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
 	private boolean termCategorizationRequired = false;
-	private boolean useOtoCommuntiyDownload = false;
+	private boolean useOtoCommuntiyDownload = true;
 		
 	// MISC
 	//required for bioportal submission of oto lite

@@ -328,7 +328,7 @@ public class OTOLearner implements ILearner {
 		upload.setSource(sourceOfDescriptions);
 		
 		List<String> taxonNames = getTaxonNames();
-		/*
+		/* Thomas, please uncommon this comment after adding setPossbileTaxonNames(List<Term>) method in upload
 		List<Term> taxonNameTerms = new ArrayList<Term>();
 		for(String name: taxonNames){
 			taxonNameTerms.add(new Term(name));
