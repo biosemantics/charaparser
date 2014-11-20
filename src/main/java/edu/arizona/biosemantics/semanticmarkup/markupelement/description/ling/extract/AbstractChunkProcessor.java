@@ -505,7 +505,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 			if(!structures.isEmpty()){
 				//processingContext.getCurrentState().setCommaAndOrEosEolAfterLastElements(false);
-				processCharacterText(twoParts.get(0), structures, null, processingContextState, processingContext);
+				processCharacterText(twoParts.get(0), structures, null, processingContextState, processingContext, true);
 			}
 			// 7-12-02 add cs //process part 1, which applies to all lateststructures, invisible
 			structures = structuresCopy;
@@ -519,7 +519,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param parents
 	 */
 	protected List<Element> processCharacterText(List<Chunk> tokens, List<Structure> parents, 
-			String character, ProcessingContextState processingContextState, ProcessingContext processingContext) {
+			String character, ProcessingContextState processingContextState, ProcessingContext processingContext, boolean isModifier) {
 		LinkedList<Element> results = new LinkedList<Element>();
 		//determine characters and modifiers
 		List<Chunk> modifiers = new LinkedList<Chunk>();
@@ -577,7 +577,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						}else{
 							String[] characterValues = w.split("\\bor\\b|\\band\\b");
 							for(String characterValue : characterValues) 
-								results.add(createCharacterElement(parents, modifiers, characterValue.trim(), tokensCharacter, "", processingContextState, false)); 
+								results.add(createCharacterElement(parents, modifiers, characterValue.trim(), tokensCharacter, "", processingContextState, isModifier)); 
 							//default type "" = individual vaues
 							modifiers.clear();
 						}

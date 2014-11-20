@@ -107,7 +107,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			List<Chunk> characters = new ArrayList<Chunk>();
 			characters.add(content);
 			List<Element> result = this.processCharacterText(characters, parents, character, processingContextState, 
-					processingContext);
+					processingContext, false);
 			//results = this.processCharacterList(content, parents, processingContextState);
 			//return results;
 			return result;
