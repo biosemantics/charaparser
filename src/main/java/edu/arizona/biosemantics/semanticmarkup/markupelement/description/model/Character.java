@@ -366,6 +366,7 @@ public class Character extends NamedElement implements Cloneable {
 		character.setUnit(this.getUnit());
 		character.setUpperRestricted(this.getUpperRestricted());
 		character.setValue(this.getValue());
+		character.setIsModifier(this.getIsModifier());
 		return character;
 	}
 

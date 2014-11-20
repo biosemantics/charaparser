@@ -24,6 +24,7 @@ public class ETCMarkupRun extends AbstractRun {
 	private String databaseUser;
 	private String databasePassword;
 	private String databasePrefix;
+	private String validateSchemaFile;
 
 	@Inject
 	public ETCMarkupRun(@Named("GuiceModuleFile")String guiceModuleFile,
@@ -35,7 +36,8 @@ public class ETCMarkupRun extends AbstractRun {
 			@Named("DatabaseName") String databaseName,
 			@Named("DatabaseUser") String databaseUser, 
 			@Named("DatabasePassword") String databasePassword,
-			@Named("DatabasePrefix") String databasePrefix) {
+			@Named("DatabasePrefix") String databasePrefix,
+			@Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile) {
 		super(guiceModuleFile, inputDirectory, runOutDirectory);
 		this.creator = creator;
 		this.databaseHost = databaseHost;
@@ -44,6 +46,8 @@ public class ETCMarkupRun extends AbstractRun {
 		this.databaseUser = databaseUser;
 		this.databasePassword = databasePassword;
 		this.databasePrefix = databasePrefix;
+		this.validateSchemaFile = validateSchemaFile;
+		
 	}
 
 	@Override
@@ -58,7 +62,7 @@ public class ETCMarkupRun extends AbstractRun {
 		creator.create();
 		
 		
-		PostRun r = new PostRun(runOutDirectory/*, validateSchemaFile*/);
+		PostRun r = new PostRun(runOutDirectory);
 		r.absorbKeys();
 	}
 	
