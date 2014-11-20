@@ -25,7 +25,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * @author Hong Cui
- * Perform standarizations that does not need an ontology
+ * Perform standarizations of a description paragraph without using an ontology
  * such as presence = absent => count = 0
  *        
  */
@@ -46,6 +46,7 @@ public class NonOntologyBasedStandardizer {
 	}
 
 	public void standardize(LinkedList<Element>result){
+		taxonName2WholeOrganism(result);
 		createWholeOrganismDescription(result, lifeStyles, "growth_form");
 		createWholeOrganismDescription(result, durations, "duration");
 		//createMayBeSameRelations(result, processingContext);  //not sure we need this relation.
@@ -58,6 +59,24 @@ public class NonOntologyBasedStandardizer {
 
 
 
+	/**
+	 * some description paragraphs start to name the taxon the organism belongs to. 
+	 * e.g. a description about 'Persian cats' starts with 'cats with long hairs and ...'
+	 * the markup of such usage of taxon name is normalized to whole_organism here
+	 * @param result
+	 */
+	private void taxonName2WholeOrganism(LinkedList<Element> result) {
+		Element firstElement =result.get(0);
+		if(firstElement.isStructure()){
+			String notes = ((Structure)firstElement).getNotes();
+			if(notes!=null && notes.compareTo("taxon_name")==0 && ( 
+					((Structure)firstElement).getConstraint()==null ||((Structure)firstElement).getConstraint().isEmpty())){
+				((Structure)firstElement).setName("whole_organism");
+				((Structure)firstElement).setNameOriginal("");
+				((Structure)firstElement).setNotes("structure");
+			}
+		}
+	}
 
 	/**
 	 * if a character constraint refers to the same structure the character belongs to, remove the constraint

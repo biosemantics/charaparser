@@ -779,10 +779,8 @@ sub addTaxonNames{
 	}
 }
 
-###lateral/laterals terminal/terminals: blades of mid cauline spatulate or oblong to obovate or lanceolate , 6 Ãƒâ€šÃ¢â‚¬â€œ 35 ÃƒÆ’Ã¢â‚¬â€� 1 Ãƒâ€šÃ¢â‚¬â€œ 15 cm , bases auriculate , auricles deltate to lanceolate , Ãƒâ€šÃ‚Â± straight , acute , margins usually pinnately lobed , lobes Ãƒâ€šÃ‚Â± deltate to lanceolate , not constricted at bases , terminals usually larger than laterals , entire or dentate .
 sub addheuristicsnouns{
 	my @nouns = NounHeuristics::heurnouns($dir, "");
-	#EOL:@nouns = ("angle[s]", "angles[p]", "base[s]", "bases[p]", "cell[s]", "cells[p]", "depression[s]", "depressions[p]", "ellipsoid[s]", "ellipsoids[p]", "eyespot[s]", "eyespots[p]", "face[s]", "faces[p]", "flagellum[s]", "flagella[p]", "flange[s]", "flanges[p]", "globule[s]", "globules[p]", "groove[s]", "grooves[p]", "line[s]", "lines[p]", "lobe[s]", "lobes[p]", "margin[s]", "margins[p]", "membrane[s]", "membranes[p]", "notch[s]", "notches[p]", "plastid[s]", "plastids[p]", "pore[s]", "pores[p]", "pyrenoid[s]", "pyrenoids[p]", "quarter[s]", "quarters[p]", "ridge[s]", "ridges[p]", "rod[s]", "rods[p]", "row[s]", "rows[p]", "sample[s]", "samples[p]", "sediment[s]", "sediments[p]", "side[s]", "sides[p]", "vacuole[s]", "vacuoles[p]", "valve[s]", "valves[p]");
 	print  "nouns learnt from heuristics:\n@nouns\n" if $debug;
 
 	#characterHeuristics is not reliable
@@ -1783,7 +1781,7 @@ sub getpartsfromparenttag{
 #<cypsela_or_palea_unit> cypsela / palea unit Ãƒâ€šÃ‚Â± obovate, 2 . 5 Ãƒâ€šÃ¢â‚¬â€œ 4 mm</cypsela_or_palea_unit>
 #<biennial_or_short_lived_perennial> biennials or short_lived , usually monocarpic perennials , 10 Ãƒâ€šÃ¢â‚¬â€œ 100 cm ; cf:
 #<biennial_or_monocarpic_perennial> biennials or monocarpic perennials , 100 Ãƒâ€šÃ¢â‚¬â€œ 220 cm ;
-#<(leaf) blade_or_lobe> leaf blades or lobes orbiculate to linear , 1 Ãƒâ€šÃ¢â‚¬â€œ 5 ÃƒÆ’Ã¢â‚¬â€� 1 Ãƒâ€šÃ¢â‚¬â€œ 5 mm .
+#<(leaf) blade_or_lobe> leaf blades or lobes orbiculate to linear , 
 #<(outer)floret> and (3) outer florets pistillate, ???
 #staminate or bisexual paleae readily falling , ( 1 Ãƒâ€šÃ¢â‚¬â€œ ) 3 Ãƒâ€šÃ¢â‚¬â€œ 5 , erect to apically somewhat spreading or incurved in fruit , slightly surpassing pistillate paleae ;
 #annuals , biennials , or short_lived perennials , 20 Ãƒâ€šÃ¢â‚¬â€œ 100 cm .
