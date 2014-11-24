@@ -6,7 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -47,6 +50,9 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Resource;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Software;
 
 
 /**
@@ -78,6 +84,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	private String glossaryTable;
 	private boolean termCategorizationRequired;
 	private IInflector inflector;
+	private String etcUser;
 	
 	/**
 	 * @param wordTokenizer
@@ -127,7 +134,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("SelectedSources")Set<String> selectedSources, 
 			@Named("GlossaryTable")String glossaryTable,
 			@Named("termCategorizationRequired")boolean termCategorizationRequired,
-			IInflector inflector) throws ClassNotFoundException, SQLException {
+			IInflector inflector, 
+			@Named("EtcUser")String etcUser) throws ClassNotFoundException, SQLException {
 		super(version, parallelProcessing);
 		this.inflector = inflector;
 		this.parser = parser;
@@ -148,6 +156,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.selectedSources = selectedSources;
 		this.glossaryTable = glossaryTable;
 		this.termCategorizationRequired = termCategorizationRequired;
+		this.etcUser = etcUser;
 		
 		normalizer.init();
 		
@@ -157,7 +166,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	@Override
-	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException {
+	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException {
 		//download gloss again from real OTO because the last download is no longer in memory
 		//it is possible for gloss o change from last run, make sure to grab the correct version.
 		//when remove MYSQL, take care of this issue
@@ -208,6 +217,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			}
 		}
 
+		
 		if(download == null)
 			throw new TransformationException();
         if(!download.isFinalized() && termCategorizationRequired) {
@@ -218,9 +228,10 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
 				"Number of term categoy relations " + glossaryDownload.getTermCategories().size() + "\n" +
 				"Number of term synonym relations " + glossaryDownload.getTermSynonyms().size());
-		log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
-				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
-				"Number of term synonym relations " + download.getSynonyms().size());
+		if(download != null) 
+			log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
+					"Number of term categoy relations " + download.getDecisions().size() + "\n" +
+					"Number of term synonym relations " + download.getSynonyms().size());
 		//storeInLocalDB(glossaryDownload, download, this.databasePrefix);
 		initGlossary(glossaryDownload, download); //turn "_" in glossary terms to "-"
 		
@@ -235,7 +246,22 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		// do the actual markup
 		markupDescriptions(descriptionsFiles, sentencesForOrganStateMarker);		
 
-		return new TransformationReport(version, glossaryType, glossaryVersion);
+		Processor processor = new Processor();
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		processor.setDate(dateFormat.format(new Date()));
+		processor.setOperator(etcUser);
+		Resource resource = new Resource();
+		resource.setName(glossaryType);
+		resource.setType("OTO Glossary");
+		resource.setVersion(glossaryVersion);
+		Software software = new Software();
+		software.setName("CharaParser");
+		software.setType("Semantic Markup");
+		software.setVersion(version);
+		processor.setSoftware(software);
+		processor.setResource(resource);
+		
+		return processor;
 	}
 	
     private UploadResult readUploadResult() throws SQLException {
@@ -424,47 +450,49 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		
 		//add syn set of term_category
 		HashSet<Term> dsyns = new HashSet<Term>();
-		for(Synonym termSyn: download.getSynonyms()){
-			//Hong TODO need to add category info to synonym entry in OTOLite
-			if(termSyn.getCategory().compareTo("structure")==0){
-				//take care of singular and plural forms
-				String syns = ""; 
-				String synp = "";
-				String terms = "";
-				String termp = "";
-				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
-					synp = termSyn.getSynonym().replaceAll("_",  "-");
-					syns = inflector.getSingular(synp);					
-				}else{
-					syns = termSyn.getSynonym().replaceAll("_",  "-");
-					synp = inflector.getPlural(syns);
-				}
+		if(download != null) {
+			for(Synonym termSyn: download.getSynonyms()){
+				//Hong TODO need to add category info to synonym entry in OTOLite
+				if(termSyn.getCategory().compareTo("structure")==0){
+					//take care of singular and plural forms
+					String syns = ""; 
+					String synp = "";
+					String terms = "";
+					String termp = "";
+					if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
+						synp = termSyn.getSynonym().replaceAll("_",  "-");
+						syns = inflector.getSingular(synp);					
+					}else{
+						syns = termSyn.getSynonym().replaceAll("_",  "-");
+						synp = inflector.getPlural(syns);
+					}
+	
+					if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+						termp = termSyn.getTerm().replaceAll("_",  "-");
+						terms = inflector.getSingular(termp);					
+					}else{
+						terms = termSyn.getTerm().replaceAll("_",  "-");
+						termp = inflector.getPlural(terms);
+					}
+					//glossary.addSynonym(syns, termSyn.getCategory(), terms);
+					//glossary.addSynonym(synp, termSyn.getCategory(), termp);
+					//dsyns.add(new Term(syns, termSyn.getCategory());
+					//dsyns.add(new Term(synp, termSyn.getCategory());
+					glossary.addSynonym(syns, "structure", terms);
+					glossary.addSynonym(synp, "structure", termp);
+					dsyns.add(new Term(syns, "structure"));
+					dsyns.add(new Term(synp, "structure"));
+				}else{//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
+					glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
+					dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
+				}					
+			}
 
-				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
-					termp = termSyn.getTerm().replaceAll("_",  "-");
-					terms = inflector.getSingular(termp);					
-				}else{
-					terms = termSyn.getTerm().replaceAll("_",  "-");
-					termp = inflector.getPlural(terms);
-				}
-				//glossary.addSynonym(syns, termSyn.getCategory(), terms);
-				//glossary.addSynonym(synp, termSyn.getCategory(), termp);
-				//dsyns.add(new Term(syns, termSyn.getCategory());
-				//dsyns.add(new Term(synp, termSyn.getCategory());
-				glossary.addSynonym(syns, "structure", terms);
-				glossary.addSynonym(synp, "structure", termp);
-				dsyns.add(new Term(syns, "structure"));
-				dsyns.add(new Term(synp, "structure"));
-			}else{//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
-				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
-				dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
-			}					
-		}
-
-		//term_category from OTO, excluding dsyns
-		for(Decision decision : download.getDecisions()) {
-			if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
-				glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
+			//term_category from OTO, excluding dsyns
+			for(Decision decision : download.getDecisions()) {
+				if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
+					glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
+			}
 		}
 	}
 	

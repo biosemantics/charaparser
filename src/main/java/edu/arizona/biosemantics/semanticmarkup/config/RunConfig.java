@@ -4,20 +4,24 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collection;
 
 import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
+
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
+
 import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto2.Client;
 import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
@@ -44,6 +48,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.PartOfFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupAndOntologyMappingCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupRun;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.GUIDescriptionTransformer;
@@ -124,6 +129,7 @@ public class RunConfig extends BasicConfig {
 	private String csvCorpusPath = "edu/arizona/biosemantics/semanticmarkup/know/corpora/brown.csv";
 	private String wordNetSource = "wordnet/wn31/dict";
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
+	private String ontologiesDirectory = "ontologies";
 	
 	// IO
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
@@ -152,8 +158,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
 
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
-	private Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator = DescriptionMarkupCreator.class;
-	private Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer = GUIDescriptionTransformer.class;
+	private Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator = DescriptionMarkupAndOntologyMappingCreator.class;
 	private Class<? extends IHabitatMarkupCreator> habitatMarkupCreator = HabitatMarkupCreator.class;
 	private Class<? extends IElevationMarkupCreator> elevationMarkupCreator = ElevationMarkupCreator.class;
 	private Class<? extends IDistributionMarkupCreator> distributionMarkupCreator = DistributionMarkupCreator.class;
@@ -167,6 +172,8 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
 	private boolean termCategorizationRequired = false;
 	private boolean useOtoCommuntiyDownload = true;
+			
+	private Collection<String> ontologies = Arrays.asList(new String[] { "pato", "po", "poro", "bspo", "ext", "hao" });
 		
 	// MISC
 	//required for bioportal submission of oto lite
@@ -199,7 +206,6 @@ public class RunConfig extends BasicConfig {
 
 			bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator).in(Singleton.class);
 			bind(IDescriptionMarkupCreator.class).to(descriptionMarkupCreator).in(Singleton.class);
-			bind(IDescriptionTransformer.class).to(markupDescriptionTreatmentTransformer).in(Singleton.class);
 			bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 			bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
 			bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
@@ -217,6 +223,9 @@ public class RunConfig extends BasicConfig {
 			bind(IElevationTransformer.class).to(ElevationTransformer.class).in(Singleton.class);
 			bind(IPhenologyMarkupCreator.class).to(phenologyMarkupCreator).in(Singleton.class);
 			bind(IPhenologyTransformer.class).to(PhenologyTransformer.class).in(Singleton.class);
+			
+			bind(new TypeLiteral<Collection<String>>() {}).annotatedWith(Names.named("OntologyMappingTreatmentTransformer_OntologyNames")).toInstance(ontologies);
+			bind(String.class).annotatedWith(Names.named("OntologyMappingTreatmentTransformer_OntologyDirectory")).toInstance(ontologiesDirectory);
 			
 			//IO
 			bind(String.class).annotatedWith(Names.named("InputDirectory")).toInstance(inputDirectory);
@@ -436,15 +445,6 @@ public class RunConfig extends BasicConfig {
 
 	public void setMarkupCreator(Class<? extends IMarkupCreator> markupCreator) {
 		this.markupCreator = markupCreator;
-	}
-
-	public Class<? extends IDescriptionTransformer> getMarkupDescriptionTreatmentTransformer() {
-		return markupDescriptionTreatmentTransformer;
-	}
-
-	public void setMarkupDescriptionTreatmentTransformer(
-			Class<? extends IDescriptionTransformer> markupDescriptionTreatmentTransformer) {
-		this.markupDescriptionTreatmentTransformer = markupDescriptionTreatmentTransformer;
 	}
 
 	public boolean isMarkupDescriptionTreatmentTransformerParallelProcessing() {
@@ -785,6 +785,16 @@ public class RunConfig extends BasicConfig {
 
 	public void setWordNetSource(String wordNetSource) {
 		this.wordNetSource = wordNetSource;
+	}
+
+	public void setOntologiesDirectory(String ontologiesDirectory) {
+		this.ontologiesDirectory = ontologiesDirectory;
+	}
+
+	public void setOntologies(Collection<String> ontologies) {
+		this.ontologies = ontologies;
 	}	
+	
+	
 	
 }

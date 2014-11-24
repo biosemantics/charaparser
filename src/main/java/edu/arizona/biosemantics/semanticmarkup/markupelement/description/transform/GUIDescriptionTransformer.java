@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -26,6 +25,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor;
 
 /**
  * Transforms the treatments by semantically marking up the description treatment element of a treatment
@@ -97,7 +97,7 @@ public class GUIDescriptionTransformer extends AbstractDescriptionTransformer {
 	}
 
 	@Override
-	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) {
+	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) {
 		// prepare main form (e.g. needs to create certain database tables) 
 		mainForm.startMarkup(descriptionsFiles);
 		

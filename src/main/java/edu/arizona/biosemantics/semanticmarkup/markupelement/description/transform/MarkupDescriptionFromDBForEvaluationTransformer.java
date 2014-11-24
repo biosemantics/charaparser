@@ -21,6 +21,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor;
 
 
 /**
@@ -71,7 +72,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 
 
 	@Override
-	public TransformationReport transform(List<AbstractDescriptionsFile> descriptionsFiles) {
+	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) {
 		//evaluation runs with .csv glossaries as gold standard uses the
 		//character categories used in the csvs.
 		//OTOs character categories varies at times, which makes evaluation difficult.
