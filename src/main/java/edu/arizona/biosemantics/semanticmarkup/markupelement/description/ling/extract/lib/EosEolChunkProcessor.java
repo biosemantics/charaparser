@@ -9,6 +9,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -16,6 +17,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor;
@@ -130,9 +132,13 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 			}
 		}
 		unassignedCharacters.clear();
-
 		processingContextState.clearUnassignedModifiers();
-
+		
+		//reset processingContextState?. Hong 11/20/14
+		//if(chunk.isOfChunkType(ChunkType.END_OF_LINE)){//end of a sentence
+		//	processingContextState.reset();
+		//}
+		
 		return result;
 	}
 

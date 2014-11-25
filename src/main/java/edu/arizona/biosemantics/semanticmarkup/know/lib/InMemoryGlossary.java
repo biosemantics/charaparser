@@ -210,7 +210,13 @@ public class InMemoryGlossary implements IGlossary {
 	@Override
 	public HashSet<String> getStructurePhrasesWithSpaces() {
 		HashSet<String> phrases = new HashSet<String>();
-		for(String word: this.getWords("structure")){
+		HashSet<String> entities = new HashSet<String>();
+		String[] list = ElementRelationGroup.entityElements.split("\\|");
+		for(String entity : list){
+			entities.addAll(this.getWords(entity));
+		}
+		//for(String word: this.getWords("structure")){
+		for(String word: entities){
 			if(word.contains("_")) phrases.add(word.replaceAll("_", " ").trim());
 		}
 		return phrases;
@@ -220,7 +226,11 @@ public class InMemoryGlossary implements IGlossary {
 	public HashSet<String> getNonStructurePhrasesWithSpaces() {
 		HashSet<String> phrases = new HashSet<String>();
 		Set<String> struct = new HashSet<String>();
-		struct.add("structure");
+		String[] list = ElementRelationGroup.entityElements.split("\\|");
+		for(String entity : list){
+			//struct.add("structure");
+			struct.add(entity);
+		}
 		for(String word: this.getWordsNotInCategories(struct)){
 			if(word.contains("_")) phrases.add(word.replaceAll("_", " ").trim());
 		}

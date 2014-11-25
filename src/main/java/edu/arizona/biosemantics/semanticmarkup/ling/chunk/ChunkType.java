@@ -62,8 +62,8 @@ public enum ChunkType {
 	COUNT,					// text only
 	BASED_COUNT,			// text only
 	
-	END_OF_LINE,			// no text, end of line (sentence)
-	END_OF_SUBCLAUSE,		// no text, end of a clause (subsentence e.g. given by semicolon?)
+	END_OF_LINE,			// no text, end of line (sentence, period or semicolon)
+	END_OF_SUBCLAUSE,		// no text, end of a clause (subsentence e.g. given by comma)
 	
 	// o stands for object not organ and can be more than just a simple organ
 	

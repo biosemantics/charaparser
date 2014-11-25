@@ -35,6 +35,7 @@ import edu.arizona.biosemantics.oto.common.model.lite.Upload;
 import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner;
@@ -248,7 +249,8 @@ public class OTOLearner implements ILearner {
 			WordRole wordRole = new WordRole();
 			wordRole.setWord(termCategory.getTerm());
 			String semanticRole = "c";
-			if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+			//if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+			if(termCategory.getCategory().toLowerCase().matches(ElementRelationGroup.entityElements)){
 				semanticRole = "op";
 			}
 			wordRole.setSemanticRole(semanticRole);
@@ -273,8 +275,6 @@ public class OTOLearner implements ILearner {
 					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`)) CHARACTER SET utf8 engine=innodb;");
 			stmt.execute("CREATE TABLE IF NOT EXISTS " + glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
 					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL) CHARACTER SET utf8 engine=innodb");
-			
-			PreparedStatement statement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
 			
 			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");

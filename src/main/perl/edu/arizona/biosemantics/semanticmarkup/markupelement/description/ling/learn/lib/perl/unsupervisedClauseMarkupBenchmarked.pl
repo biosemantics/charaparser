@@ -779,7 +779,6 @@ sub addTaxonNames{
 	}
 }
 
-###lateral/laterals terminal/terminals: blades of mid cauline spatulate or oblong to obovate or lanceolate , 6 Ãƒâ€šÃ¢â‚¬â€œ 35 ÃƒÆ’Ã¢â‚¬â€� 1 Ãƒâ€šÃ¢â‚¬â€œ 15 cm , bases auriculate , auricles deltate to lanceolate , Ãƒâ€šÃ‚Â± straight , acute , margins usually pinnately lobed , lobes Ãƒâ€šÃ‚Â± deltate to lanceolate , not constricted at bases , terminals usually larger than laterals , entire or dentate .
 sub addheuristicsnouns{
 	my @nouns = NounHeuristics::heurnouns($dir, "");
 	#EOL:@nouns = ("angle[s]", "angles[p]", "base[s]", "bases[p]", "cell[s]", "cells[p]", "depression[s]", "depressions[p]", "ellipsoid[s]", "ellipsoids[p]", "eyespot[s]", "eyespots[p]", "face[s]", "faces[p]", "flagellum[s]", "flagella[p]", "flange[s]", "flanges[p]", "globule[s]", "globules[p]", "groove[s]", "grooves[p]", "line[s]", "lines[p]", "lobe[s]", "lobes[p]", "margin[s]", "margins[p]", "membrane[s]", "membranes[p]", "notch[s]", "notches[p]", "plastid[s]", "plastids[p]", "pore[s]", "pores[p]", "pyrenoid[s]", "pyrenoids[p]", "quarter[s]", "quarters[p]", "ridge[s]", "ridges[p]", "rod[s]", "rods[p]", "row[s]", "rows[p]", "sample[s]", "samples[p]", "sediment[s]", "sediments[p]", "side[s]", "sides[p]", "vacuole[s]", "vacuoles[p]", "valve[s]", "valves[p]");
@@ -1780,10 +1779,10 @@ sub getpartsfromparenttag{
 ############################################################################################
 #deal with "herbs or lianas" cases
 #examples:
-#<cypsela_or_palea_unit> cypsela / palea unit Ãƒâ€šÃ‚Â± obovate, 2 . 5 Ãƒâ€šÃ¢â‚¬â€œ 4 mm</cypsela_or_palea_unit>
-#<biennial_or_short_lived_perennial> biennials or short_lived , usually monocarpic perennials , 10 Ãƒâ€šÃ¢â‚¬â€œ 100 cm ; cf:
-#<biennial_or_monocarpic_perennial> biennials or monocarpic perennials , 100 Ãƒâ€šÃ¢â‚¬â€œ 220 cm ;
-#<(leaf) blade_or_lobe> leaf blades or lobes orbiculate to linear , 1 Ãƒâ€šÃ¢â‚¬â€œ 5 ÃƒÆ’Ã¢â‚¬â€� 1 Ãƒâ€šÃ¢â‚¬â€œ 5 mm .
+#<cypsela_or_palea_unit> cypsela / palea unit Ãƒâ€šÃ‚Â± obovate, 2 . 5 - 4 mm</cypsela_or_palea_unit>
+#<biennial_or_short_lived_perennial> biennials or short_lived , usually monocarpic perennials , 10 - 100 cm ; cf:
+#<biennial_or_monocarpic_perennial> biennials or monocarpic perennials , 100 - 220 cm ;
+#<(leaf) blade_or_lobe> leaf blades or lobes orbiculate to linear , 
 #<(outer)floret> and (3) outer florets pistillate, ???
 #staminate or bisexual paleae readily falling , ( 1 Ãƒâ€šÃ¢â‚¬â€œ ) 3 Ãƒâ€šÃ¢â‚¬â€œ 5 , erect to apically somewhat spreading or incurved in fruit , slightly surpassing pistillate paleae ;
 #annuals , biennials , or short_lived perennials , 20 Ãƒâ€šÃ¢â‚¬â€œ 100 cm .
@@ -6051,11 +6050,13 @@ while(defined ($file=readdir(IN))){
 	if($file !~ /\w/){next;}
 	$text = ReadFile::readfile("$dir$file");
 	$text =~ s#["']##g;
-	$text =~ s#\s*-\s*to\s+# to #g; #4/7/09 plano - to
+	$text =~ s#\s*-\s*to\s+# to #g; #4/7/09 plano- to
 	$text =~ s#[-_]+shaped#-shaped#g; #5/30/09
 	$text =~ s#<.*?>##g; #remove html tags
 	$text =~ s#<# less than #g; #remove <
 	$text =~ s#># greater than #g; #remove >
+	#normalize $line: "plagio-, dicho-, and trichotriaenes" => "plagiotriaenes, dichotriaenes, and trichotriaenes"
+	$text = normalizeBrokenWords($text);
 
 	$text =~ s#^\s*\d+[a-z].\s*##; #remove 2a. (key marks)
 
@@ -6123,7 +6124,7 @@ while(defined ($file=readdir(IN))){
 
     	my $line = $sentences[$_];	
 
-#print STDOUT "$SENTID 1\n";
+		#print STDOUT "$SENTID 1\n";
     	my $oline = $sentcopy[$_];
     	$oline =~ s#(\d)\s*\[\s*DOT\s*\]\s*(\d)#$1.$2#g;
     	$oline =~ s#\[\s*DOT\s*\]#.#g; #a space may have been introduced
@@ -6131,19 +6132,22 @@ while(defined ($file=readdir(IN))){
 		$oline =~ s#\[\s*SQL\s*\]#;#g;
 		$oline =~ s#\[\s*QLN\s*\]#:#g;
 		$oline =~ s#\[\s*EXM\s*\]#!#g;
-    	$line =~ s#'# #g; #remove all ' to avoid escape problems
-	
+    	$line =~ s#'# #g; #remove all ' to avoid escape problems	
     	$oline =~ s#'# #g;
-#print STDOUT "$SENTID 2\n";
+		#print STDOUT "$SENTID 2\n";
+		
+		#normalize $line: "plagio - , dicho - , and trichotriaenes" => "plagiotriaenes , dichotriaenes , and trichotriaenes"
+	    #$line = normalizeBrokenWords($line); #after allwords have been collected
+		
     	@words = getfirstnwords($line, $N); # "w1 w2 w3"
-#print STDOUT "$SENTID 3\n";
+		#print STDOUT "$SENTID 3\n";
     	$status = "";
 		if(getnumber($words[0]) eq "p"){
 		     $status = "start";
 		}else{
 		     $status = "normal";
 		}
-#print STDOUT "$SENTID 4\n";		
+		#print STDOUT "$SENTID 4\n";		
 		$lead = "@words";
 		$lead =~ s#\s+$##;
 		$lead =~ s#^\s*##;
@@ -6153,12 +6157,12 @@ while(defined ($file=readdir(IN))){
 
     	#s#\(#\\(#g;
     	#s#\)#\\)#g;
-#print STDOUT "$SENTID 5\n";
+		#print STDOUT "$SENTID 5\n";
     	my $source = $file."-".$count++;
     	if(length($oline) >=2000 ){#EOL
     		$oline = $line;
     	}
-#print STDOUT "$SENTID 6\n";
+		#print STDOUT "$SENTID 6\n";
     	#checked in DeHyenAFolder.java
 		#if(hasUnmatchedBrackets($oline)){
 		#	print STDOUT "Warning: sentence [id = $SENTID] has unmatched brackets\n";
@@ -6178,6 +6182,70 @@ while(defined ($file=readdir(IN))){
 	#chop($PROPERNOUNS);
 print stdout "Total sentences = $SENTID\n";
 populateunknownwordstable();
+}
+
+#normalize $line: "... plagio-, dicho-, and/or/plus trichotriaenes ..." => "... plagiotriaenes, dichotriaenes, and trichotriaenes ..."
+#normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
+sub normalizeBrokenWords{
+	my $line = shift;
+	while($line=~/(.*?\b)(\w+\s*-\s*,.*?\b(and|or|plus|to)\s+([\w-]+))(.*)/ || $line=~/(.*?\b)(\w+\s*-\s+(and|or|plus|to)\s+([\w-]+))(.*)/){
+		$line = $1.completeWords($2, $4).$5;	
+	}
+	return $line;
+}
+
+#normalize $text: "plagio - , dicho - , and/or/plus/to trichotriaenes" => "plagiotriaenes, dichotriaenes, and trichotriaenes"
+#normalize $text: "plagio - and/or/plus/to trichotriaenes" => "plagiotriaenes and trichotriaenes"
+sub completeWords{
+	my $text = shift;
+	my $completeword = shift;
+	
+	my $missing = "";
+	if($completeword=~/[_-]/){
+		$missing = $completeword;
+		$missing =~ s#^.*?[_-]\s*##;
+		$text =~ s#[_-]\s*$missing#-#g; #turn the "- $missing " to  - in the original text
+		$text =~ s#\s*[_-]#$missing#g; #turn all - to the word 
+		return $text;
+	}
+	#figure out what the missing piece is.
+	#collect "-"-ended words: ortho/plagio/pro/meso/anatriaenes
+	my $incompletes = $text;
+	$incompletes =~ s#\s+(and|or|plus|to)\s+$completeword##; #plagio - , dicho - ,
+	my @incompletewords = split(/\s*-\s*,?/, $incompletes);
+	for(my $i = 1; $i < length($completeword); $i++){#shrink completeword letter by letter from the front
+		$missing = substr($completeword, $i);
+		if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){
+			$text =~ s#\s*-#$missing#g;
+			return $text;
+		}
+	}
+	
+	return $text;
+}
+
+sub oneFixedWordExists{
+	my $missing =shift;
+	my @incompletewords = @_;
+	for my $incword (@incompletewords){
+		if(inCorpus($incword.$missing)){
+			return 1;
+		}
+	}
+	return 0;
+}
+
+sub inCorpus{
+	my $word = shift;
+	my ($stmt, $sth);
+	$stmt = "select count(*) from ".$prefix."_allwords where word ='".$word."'";
+	$sth = $dbh->prepare($stmt);
+	$sth->execute() or die $sth->errstr."\n";
+	my ($count) = $sth->fetchrow_array();
+	if($count >=1){
+		return 1;
+	}
+	return 0;
 }
 
 sub hasUnmatchedBrackets{

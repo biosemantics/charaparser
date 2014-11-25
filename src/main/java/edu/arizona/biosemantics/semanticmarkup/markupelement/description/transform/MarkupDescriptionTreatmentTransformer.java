@@ -34,6 +34,7 @@ import edu.arizona.biosemantics.oto.common.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.ITerm;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
@@ -194,7 +195,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			this.log(LogLevel.ERROR, "Problem reading upload result", e);
 			throw new TransformationException();
 		}
-		
+		/*until oto becomes available
 		if(uploadResult != null) {
 			try {
 				otoLiteClient.open();
@@ -222,6 +223,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
 				"Number of term synonym relations " + download.getSynonyms().size());
 		//storeInLocalDB(glossaryDownload, download, this.databasePrefix);
+		 */
 		initGlossary(glossaryDownload, download); //turn "_" in glossary terms to "-"
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
@@ -294,7 +296,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
 		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
-			if(termSyn.getCategory().compareTo("structure")==0){
+			//if(termSyn.getCategory().compareTo("structure")==0){
+			if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
 				//take care of singular and plural forms
 				String syns = ""; 
 				String synp = "";
@@ -382,7 +385,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		HashSet<Term> gsyns = new HashSet<Term>();
 		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
 
-			if(termSyn.getCategory().compareTo("structure")==0){
+			//if(termSyn.getCategory().compareTo("structure")==0){
+			if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
 				//take care of singular and plural forms
 				String syns = ""; 
 				String synp = "";
@@ -426,7 +430,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		HashSet<Term> dsyns = new HashSet<Term>();
 		for(Synonym termSyn: download.getSynonyms()){
 			//Hong TODO need to add category info to synonym entry in OTOLite
-			if(termSyn.getCategory().compareTo("structure")==0){
+			//if(termSyn.getCategory().compareTo("structure")==0){
+			if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
 				//take care of singular and plural forms
 				String syns = ""; 
 				String synp = "";
@@ -451,10 +456,10 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				//glossary.addSynonym(synp, termSyn.getCategory(), termp);
 				//dsyns.add(new Term(syns, termSyn.getCategory());
 				//dsyns.add(new Term(synp, termSyn.getCategory());
-				glossary.addSynonym(syns, "structure", terms);
-				glossary.addSynonym(synp, "structure", termp);
-				dsyns.add(new Term(syns, "structure"));
-				dsyns.add(new Term(synp, "structure"));
+				glossary.addSynonym(syns, termSyn.getCategory(), terms);
+				glossary.addSynonym(synp, termSyn.getCategory(), termp);
+				dsyns.add(new Term(syns, termSyn.getCategory()));
+				dsyns.add(new Term(synp, termSyn.getCategory()));
 			}else{//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
 				glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
 				dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
@@ -507,7 +512,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			WordRole wordRole = new WordRole();
 			wordRole.setWord(termCategory.getTerm());
 			String semanticRole = "c";
-			if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+			//if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+			if(termCategory.getCategory().toLowerCase().matches(ElementRelationGroup.entityElements)) {
 				semanticRole = "op";
 			}
 			wordRole.setSemanticRole(semanticRole);

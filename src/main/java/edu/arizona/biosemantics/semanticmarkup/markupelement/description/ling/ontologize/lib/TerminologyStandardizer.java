@@ -30,7 +30,8 @@ public class TerminologyStandardizer {
 			if(element.isStructure()){
 				//standardize structure
 				Structure struct = (Structure)element;
-				String preferedName = characterKnowledgeBase.getCharacterName(struct.getName()).getLabel("structure");
+				//String preferedName = characterKnowledgeBase.getCharacterName(struct.getName()).getLabel("structure");
+				String preferedName = characterKnowledgeBase.getCharacterName(struct.getName()).getLabel(((Structure)element).getNotes());
 				if(preferedName!=null) struct.setName(preferedName);
 				
 				//standardize character

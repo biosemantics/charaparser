@@ -8,11 +8,13 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
@@ -198,13 +200,17 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			String characterState = characterStateChunk.getChunkBFS(ChunkType.STATE).getTerminalsText();
 			
 			HashSet<String> allowedCharacterNames = new HashSet<String>();
-			allowedCharacterNames.add("position");
+			String[] list = ElementRelationGroup.entityConstraintElements.split("\\|");
+			for(String cat: list){
+				allowedCharacterNames.add(cat);
+			}
+			/*allowedCharacterNames.add("position");
 			allowedCharacterNames.add("insertion");
 			allowedCharacterNames.add("structure_type");
 			allowedCharacterNames.add("structure_subtype");
 			allowedCharacterNames.add("structure_in_adjective_form");
 			allowedCharacterNames.add("function");
-			allowedCharacterNames.add("growth_order");
+			allowedCharacterNames.add("growth_order");*/
 			
 			HashSet<String> notAllowedCharacterStates = new HashSet<String>();
 			notAllowedCharacterStates.add("low");
