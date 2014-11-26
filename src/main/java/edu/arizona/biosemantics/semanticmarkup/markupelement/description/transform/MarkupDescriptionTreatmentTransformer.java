@@ -195,7 +195,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			this.log(LogLevel.ERROR, "Problem reading upload result", e);
 			throw new TransformationException();
 		}
-		/*until etc-dev is fixed
+		
 		 
 		if(uploadResult != null) {
 			try {
@@ -224,7 +224,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				"Number of term categoy relations " + download.getDecisions().size() + "\n" +
 				"Number of term synonym relations " + download.getSynonyms().size());
 		//storeInLocalDB(glossaryDownload, download, this.databasePrefix);
-		 */
+		 
 		initGlossary(glossaryDownload, download); //turn "_" in glossary terms to "-"
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
