@@ -25,7 +25,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -86,9 +86,9 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 				Character character = (Character)lastElements.getLast();
 				String characterName = character.getName();
 				if(nextChunk.isOfChunkType(ChunkType.PP)){
-					Structure parent = processingContext.getParentStructure(character);
+					BiologicalEntity parent = processingContext.getParentStructure(character);
 					if(parent != null){
-						List<Structure> parents = new LinkedList<Structure>();
+						List<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
 						parents.add(parent);
 						this.createCharacterElement(parents, new LinkedList<Chunk>(), nextChunk.getTerminalsText(), 
 								characterName, "", processingContextState, false);
@@ -121,7 +121,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					if(!previousResult.isEmpty()) {
 						if(previousResult.get(0).isCharacter()) {
 							Character previousCharacter = (Character)previousResult.get(0);
-							Structure structure = processingContext.getParentStructure(previousCharacter);				
+							BiologicalEntity structure = processingContext.getParentStructure(previousCharacter);				
 							if(structure != null) {
 								Character newElement = new Character();
 								structure.addCharacter(newElement);
@@ -146,7 +146,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					//	processingContextState.setLastElements(result);
 					
 					if(!result.isEmpty() && result.get(0).isCharacter()) {
-						Structure parent = processingContext.getParentStructure((Character)result.get(0));
+						BiologicalEntity parent = processingContext.getParentStructure((Character)result.get(0));
 						List<Element> newLastElements = new LinkedList<Element>();
 						newLastElements.add(parent);
 						processingContextState.setLastElements(newLastElements);
@@ -183,7 +183,7 @@ public class OrChunkProcessor extends AbstractChunkProcessor {
 					processingContextState.setLastElements(result);
 				return result;
 			} else if(previousChunk.isOfChunkType(ChunkType.PP)) {
-				LinkedList<Structure> subjects = processingContextState.getSubjects();
+				LinkedList<BiologicalEntity> subjects = processingContextState.getSubjects();
 				if(!subjects.isEmpty()) {
 					lastElements.clear();
 					lastElements.add(subjects.getLast());

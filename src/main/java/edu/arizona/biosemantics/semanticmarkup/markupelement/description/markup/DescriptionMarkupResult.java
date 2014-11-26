@@ -11,7 +11,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.D
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFileList;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 
 
 public class DescriptionMarkupResult implements IMarkupResult {
@@ -29,10 +29,10 @@ public class DescriptionMarkupResult implements IMarkupResult {
 				Description newDescription = new Description();
 				newDescription.setSource(descriptionsFile.getName());
 				List<Relation> relations = new LinkedList<Relation>();
-				List<Structure> structures = new LinkedList<Structure>();
+				List<BiologicalEntity> structures = new LinkedList<BiologicalEntity>();
 				for(Statement statement : description.getStatements()) {
 					relations.addAll(statement.getRelations());
-					structures.addAll(statement.getStructures());
+					structures.addAll(statement.getBiologicalEntities());
 				}
 				newDescription.setRelations(relations);
 				newDescription.setStructures(structures);

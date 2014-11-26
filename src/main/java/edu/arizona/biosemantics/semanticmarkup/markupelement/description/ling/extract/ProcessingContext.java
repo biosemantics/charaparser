@@ -16,7 +16,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 
@@ -39,12 +39,12 @@ public class ProcessingContext {
 	
 	/** these can't be reset for each new statement, Ids have to be unique over the whole xml schema. Also references by relations can be accross statements **/
 	private int structureId;
-	private HashMap<Integer, Structure> structures = new HashMap<Integer, Structure>();
+	private HashMap<Integer, BiologicalEntity> structures = new HashMap<Integer, BiologicalEntity>();
 	private int relationId;
 	private HashMap<Integer, Relation> relations = new HashMap<Integer, Relation>();
 	private HashMap<Integer, Set<Relation>> relationsFromStructure = new HashMap<Integer, Set<Relation>>();
 	private HashMap<Integer, Set<Relation>> relationsToStructure = new HashMap<Integer, Set<Relation>>();
-	private List<Structure> lastSubjects = new LinkedList<Structure>();
+	private List<BiologicalEntity> lastSubjects = new LinkedList<BiologicalEntity>();
 	private boolean lastChunkYieldElement;
 	
 	public ProcessingContext(int structureId, int relationId) {
@@ -192,10 +192,10 @@ public class ProcessingContext {
 	 * or null if none exists
 	 */
 	///at creation time it should be possible to assign them their parent?
-	public Structure getParentStructure(Character character) {
+	public BiologicalEntity getParentStructure(Character character) {
 		for(Element element : result) {
 			if(element.isStructure()) {
-				Structure structure = (Structure)element;
+				BiologicalEntity structure = (BiologicalEntity)element;
 				if(structure.getCharacters().contains(character)) {
 					return structure;
 				}
@@ -215,7 +215,7 @@ public class ProcessingContext {
 	 * @param structureId
 	 * @return the structure with the structureId
 	 */
-	public Structure getStructure(int structureId) {
+	public BiologicalEntity getStructure(int structureId) {
 		return structures.get(structureId);
 	}
 	
@@ -300,16 +300,16 @@ public class ProcessingContext {
 	 * @param structure
 	 * @return and increase the current structure id
 	 */
-	public int fetchAndIncrementStructureId(Structure structure) {
+	public int fetchAndIncrementStructureId(BiologicalEntity structure) {
 		structures.put(structureId, structure);
 		return structureId++;
 	}
 
-	public void setLastSubjects(List<Structure> subjectStructures) {
+	public void setLastSubjects(List<BiologicalEntity> subjectStructures) {
 		this.lastSubjects = subjectStructures;
 	}
 	
-	public List<Structure> getLastSubjects() {
+	public List<BiologicalEntity> getLastSubjects() {
 		return this.lastSubjects;
 	}
 

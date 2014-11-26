@@ -14,7 +14,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.D
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.model.Habitat;
 
 
@@ -25,7 +25,7 @@ public abstract class Element {
 	static {
 		try {
 			JAXBContext jaxbContext = JAXBContextFactory.createContext(
-					new Class[] {Element.class, Statement.class, Structure.class, Character.class, Relation.class }, 
+					new Class[] {Element.class, Statement.class, BiologicalEntity.class, Character.class, Relation.class }, 
 					null);
 			marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -44,7 +44,7 @@ public abstract class Element {
 	}
 	
 	public boolean isStructure() {
-		return this instanceof Structure;
+		return this instanceof BiologicalEntity;
 	}
 	
 	public boolean isDescription() {

@@ -25,7 +25,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -95,21 +95,21 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				relation += preposition.getTerminalsText();
 				LinkedList<Element> lastElements = processingContextState.getLastElements();
 				
-				List<Structure> structures = extractStructuresFromObject(object, processingContext, 
+				List<BiologicalEntity> structures = extractStructuresFromObject(object, processingContext, 
 						processingContextState);
 				
 				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) {
-					List<Structure> entity1 = null;
+					List<BiologicalEntity> entity1 = null;
 					//Element lastElement = processingContextState.getLastElements().getLast();
 					Element lastElement = lastElements.getLast();
 					if(lastElement.isCharacter() || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 						entity1 = processingContextState.getSubjects();
 					} else {
-						entity1 = new LinkedList<Structure>();
+						entity1 = new LinkedList<BiologicalEntity>();
 						//for(Element element : processingContextState.getLastElements()) {
 						for(Element element : lastElements) {
 							if(element.isStructure())
-								entity1.add((Structure)element);
+								entity1.add((BiologicalEntity)element);
 						}
 					}
 					

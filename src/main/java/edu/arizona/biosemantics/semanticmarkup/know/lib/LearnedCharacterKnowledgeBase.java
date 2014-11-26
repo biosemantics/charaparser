@@ -12,12 +12,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
+import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
@@ -41,18 +43,19 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private ConcurrentHashMap<String, Boolean> isEntityCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, Boolean> isStateCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, ArrayList<String>> entityTypeCache = new ConcurrentHashMap<String, ArrayList<String>> (); //term => entity type (structure, taxon_name, etc.)
-	
+	private IInflector inflector;
 	/**
 	 * @param glossary
 	 * @param negWords
 	 */
 	@Inject
 	public LearnedCharacterKnowledgeBase(/*ITerminologyLearner terminologyLearner,*/ IGlossary glossary, 
-			@Named("NegationWords")String negWords, @Named("AdvModifiers") String advModifiers) {
+			@Named("NegationWords")String negWords, @Named("AdvModifiers") String advModifiers, IInflector inflector) {
 		//this.terminologyLearner = terminologyLearner;
 		this.glossary = glossary;
 		this.negWords = negWords;
 		this.advModifiers = advModifiers+"|"+advModifiers.replaceAll(" ", "[_-]"); //at least|at[_-]least
+		this.inflector = inflector;
 	}
 	
 	@Override
@@ -86,6 +89,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		}
 		return typeString.replaceFirst(or+"$", "");
 	}
+	
 	@Override
 	public boolean isState(String word){
 		if(isStateCache.get(word)!=null) return isStateCache.get(word);
@@ -135,23 +139,28 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			m = new Match(result);
 		}else if (ch == null && wc.indexOf('-') > 0) {// pani_culiform, primocane_foliage
 			ws = word.split("-+");
-			word = ws[ws.length-1];
+			word = word.replaceFirst(ws[ws.length-1]+"$", inflector.getSingular(ws[ws.length-1])); //pl -> singular, to get a match for the added pl form of phrases in PhraseMarker
 			ch = lookup(word);
-			if(ch == null){
-				ch = lookup(wc.replaceAll("-", ""));
+			if(ch==null){
+				word = ws[ws.length-1];//search last word in the phrase
+				ch = lookup(word);
 				if(ch == null){
-					//ch = lookup(ws[0]); //searching the first word in a "-"-connected phrase doesn't make sense hong 5/5/14
-					m = new Match(ch);
+					ch = lookup(wc.replaceAll("-", ""));
+					if(ch == null){
+						//ch = lookup(ws[0]); //searching the first word in a "-"-connected phrase doesn't make sense hong 5/5/14
+						m = new Match(ch);
+					}else{
+						m = new Match(ch);
+					}
 				}else{
+					for(Term t: ch){
+						t.setLabel(wc);
+					}
 					m = new Match(ch);
 				}
 			}else{
-				for(Term t: ch){
-					t.setLabel(wc);
-				}
 				m = new Match(ch);
 			}
-			
 		}
 		
 		characterCache.put(wo, m);

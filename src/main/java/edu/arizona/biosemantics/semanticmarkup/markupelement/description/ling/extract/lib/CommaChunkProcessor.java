@@ -23,7 +23,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -68,7 +68,7 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		if(!processingContextState.getLastElements().isEmpty()) {
 			Element lastElement = processingContextState.getLastElements().get(0);
 			if(lastElement.isCharacter()) {
-				Structure parent = processingContext.getParentStructure((Character)lastElement);
+				BiologicalEntity parent = processingContext.getParentStructure((Character)lastElement);
 				if(parent!=null) {
 					List<Element> newLastElements = new LinkedList<Element>();
 					newLastElements.add(parent);
@@ -79,17 +79,18 @@ public class CommaChunkProcessor extends AbstractChunkProcessor {
 		
 		List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters();
 		if(!unassignedCharacters.isEmpty() && nextChunkIsOrgan(processingContext)) {
-			Structure structureElement = new Structure();
+			BiologicalEntity structureElement = new BiologicalEntity();
 			int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 			structureElement.setId("o" + String.valueOf(structureIdString));	
 			structureElement.setName("whole_organism"); 
 			structureElement.setNameOriginal("");
-			List<Structure> structureElements = new LinkedList<Structure>();
+			structureElement.setType("structure");
+			List<BiologicalEntity> structureElements = new LinkedList<BiologicalEntity>();
 			structureElements.add(structureElement);
 			result.addAll(establishSubject(structureElements, processingContextState));
 			
 			for(Character character : unassignedCharacters) {
-				for(Structure parent : structureElements) {
+				for(BiologicalEntity parent : structureElements) {
 					parent.addCharacter(character);
 				}
 			}

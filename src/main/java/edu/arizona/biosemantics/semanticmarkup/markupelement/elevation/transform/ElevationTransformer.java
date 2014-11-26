@@ -4,14 +4,16 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Elevation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Treatment;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.IElevationTransformer;
@@ -33,9 +35,15 @@ public class ElevationTransformer implements IElevationTransformer {
 				for(Elevation elevation : treatment.getElevations()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
-					statement.setId("distribution" + i++);
+					statement.setId("elevation_" + i++);
 					statement.setText(elevation.getText());
-					statement.setValues(parse(elevation.getText()));
+					BiologicalEntity be = new BiologicalEntity();
+					be.setName("whole_organism");
+					be.setType("structure");
+					be.setNameOriginal("");
+					be.addCharacters(parse(elevation.getText()));
+					statement.addBiologicalEntity(be);
+
 					statements.add(statement);				
 					elevation.setStatements(statements);
 				}
@@ -45,9 +53,9 @@ public class ElevationTransformer implements IElevationTransformer {
 	}
 	
 	@Override
-	public List<Value> parse(String text) {
+	public LinkedHashSet<Character> parse(String text) {
 		//format text, hide [,;] in parentheses
-		ArrayList<Value> values = new ArrayList<Value>();
+		LinkedHashSet<Character> values = new LinkedHashSet<Character>();
 		text = format(text); 
 		//collect value
 		String[] areas = text.split("[;,]");
@@ -56,14 +64,17 @@ public class ElevationTransformer implements IElevationTransformer {
 			if(area.indexOf("@")>=0){
 				values.addAll(allValues(area));
 			}else{
-				values.add(new Value(area));
+				Character c = new Character();
+				c.setName("elevation");
+				c.setValue(area);
+				values.add(c);
 			}
 		}
 		return values;
 	}
 	
-	private ArrayList<Value> allValues(String area) {
-		  ArrayList<Value> values = new ArrayList<Value>();
+	private LinkedHashSet<Character> allValues(String area) {
+		LinkedHashSet<Character> values = new LinkedHashSet<Character>();
 		  Pattern p = Pattern.compile("(.*?)\\(([^)]*?@[^)]*?)\\)(.*)");
 		  Matcher m = p.matcher(area);
 		  if(m.matches()){
@@ -74,7 +85,10 @@ public class ElevationTransformer implements IElevationTransformer {
 			   String[] parts = partstr.split("\\s*@\\s*");
 			   
 			   for(int i = 0; i<parts.length; i++){
-				    values.add(new Value(com+"("+parts[i]+")"+rest));
+				   Character c = new Character();
+					c.setName("elevation");
+					c.setValue(com+"("+parts[i]+")"+rest);
+					values.add(c);
 				   }
 			  }
 		  return values;

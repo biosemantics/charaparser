@@ -28,7 +28,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -62,8 +62,8 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Structure> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<Structure> result = new ArrayList<Structure>();
+	protected List<BiologicalEntity> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<BiologicalEntity> result = new ArrayList<BiologicalEntity>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
@@ -76,7 +76,7 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 			//LinkedList<Element> lastElements = processingContextState.getLastElements();
 			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 			chunks.add(chunk);
-			List<Structure> structures = this.createStructureElements(chunks, processingContext, processingContextState);
+			List<BiologicalEntity> structures = this.createStructureElements(chunks, processingContext, processingContextState);
 			result.addAll(structures);
 			//Element lastElement = lastElements.isEmpty() ? null : lastElements.getLast();
 			//if(lastElement != null && lastElement.isOfDescriptionType(DescriptionTreatmentElementType.STRUCTURE))

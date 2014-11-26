@@ -24,7 +24,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -60,7 +60,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
 		LinkedList<Element> characters = processComparativeValue(chunk, 
 				parents, processingContext, processingContextState);
 		
@@ -81,7 +81,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	 	subjects2
 	 */
 	private LinkedList<Element> processComparativeValue(Chunk content,
-			List<Structure> parents, ProcessingContext processingContext, 
+			List<BiologicalEntity> parents, ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		List<Chunk> beforeTimes = new ArrayList<Chunk>();
 		List<Chunk> onAndAfterTimes = new ArrayList<Chunk>();
@@ -146,7 +146,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			//childChunks.add(sizeChunk);
 			//childChunks.add(comparisonChunk);
 			//content.setChunks(childChunks);
-			List<Structure> structures = 
+			List<BiologicalEntity> structures = 
 					this.extractStructuresFromObject(comparisonChunk, processingContext, processingContextState);
 			processingContextState = processingContext.getCurrentState();
 			processingContextState.setClauseModifierContraint(comparisonChunk.getTerminalsText());

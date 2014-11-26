@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.StructureAttribute;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.BiologicalEntityAttribute;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 
@@ -33,46 +33,50 @@ import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 <xs:attribute name="provenance" type="xs:string"/>
 <xs:attribute name="notes" type="xs:string"/>
 <xs:attribute name="name_original" type="xs:string" />
+<xs:attribute name="type" type="biological_entity_type" />
 </xs:complexType>
  * @author rodenhausen
  *
  */
 @XmlRootElement
-public class Structure extends NamedElement {
+public class BiologicalEntity extends NamedElement {
 
-	@XmlPath("@" + StructureAttribute.alter_name)
+	@XmlPath("@" + BiologicalEntityAttribute.alter_name)
 	private String alterName;
-	@XmlPath("@" + StructureAttribute.constraint)
+	@XmlPath("@" + BiologicalEntityAttribute.constraint)
 	private String constraint;
-	@XmlPath("@" + StructureAttribute.constraintid)
+	@XmlPath("@" + BiologicalEntityAttribute.constraintid)
 	private String constraintId;
-	@XmlPath("@" + StructureAttribute.geographical_constraint)
+	@XmlPath("@" + BiologicalEntityAttribute.geographical_constraint)
 	private String geographicalConstraint;
-	@XmlPath("@" + StructureAttribute.id)
+	@XmlPath("@" + BiologicalEntityAttribute.id)
 	private String id;
 	//@XmlPath("@" + StructureAttribute.in_bracket)
 	//private String inBracket;
-	@XmlPath("@" + StructureAttribute.in_brackets)
+	@XmlPath("@" + BiologicalEntityAttribute.in_brackets)
 	private String inBrackets;
-	@XmlPath("@" + StructureAttribute.parallelism_constraint)
+	@XmlPath("@" + BiologicalEntityAttribute.parallelism_constraint)
 	private String parallelismConstraint;
-	@XmlPath("@" + StructureAttribute.taxon_constraint)
+	@XmlPath("@" + BiologicalEntityAttribute.taxon_constraint)
 	private String taxonConstraint;
-	@XmlPath("@" + StructureAttribute.ontologyid)
+	@XmlPath("@" + BiologicalEntityAttribute.ontologyid)
 	private String ontologyId;
-	@XmlPath("@" + StructureAttribute.provenance)
+	@XmlPath("@" + BiologicalEntityAttribute.provenance)
 	private String provenance;
-	@XmlPath("@" + StructureAttribute.notes)
+	@XmlPath("@" + BiologicalEntityAttribute.notes)
 	private String notes;	
-	@XmlPath("@" + StructureAttribute.name_original)
+	@XmlPath("@" + BiologicalEntityAttribute.name_original)
 	private String nameOriginal;
+	@XmlPath("@" + BiologicalEntityAttribute.type)
+	private String type;
+
 	@XmlPath("character")
 	private LinkedHashSet<Character> characters = new LinkedHashSet<Character>();
 	private LinkedHashSet<Relation> fromRelations = new LinkedHashSet<Relation>();
 	private LinkedHashSet<Relation> toRelations = new LinkedHashSet<Relation>();
 
 
-	public Structure() { }
+	public BiologicalEntity() { }
 
 
 	public String getConstraint() {
@@ -347,6 +351,15 @@ public class Structure extends NamedElement {
 		this.alterName = newValue;
 	}
 
+	
+	public String getType() {
+		return type;
+	}
+
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	@Override
 	public void removeElementRecursively(Element element) {

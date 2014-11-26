@@ -267,7 +267,8 @@ public abstract class AbstractChunker implements IChunker {
 	}
 
 	private boolean hasSeparatedNNs(AbstractParseTree tree) {
-		//(NP (JJ caudate) (NN acumination) (JJ 1.5-2.5) (NNS cm))
+		//(NP (JJ caudate) (NN acumination) (JJ 1.5-2.5) (NNS cm)) => true
+		//(NP (NN euasters) (, ,) (NN spherules) (CC or) (NN microrhabds)) =>false
 		List<AbstractParseTree> terminals = tree.getTerminals();
 		boolean findNN = false;
 		boolean findSep = false;
@@ -278,9 +279,11 @@ public abstract class AbstractChunker implements IChunker {
 				findNN = true;
 				index = tree.getTerminalID(t);
 			}else if(findNN && (pos.equals(POS.NN) || pos.equals(POS.NNS) || pos.equals(POS.NNP))){
-				if(tree.getTerminalID(t) - index > 1 && findSep) return true;
+				if(tree.getTerminalID(t) - index > 1 && findSep){
+					return true;
+				}
 				else index = tree.getTerminalID(t);
-			}else if(findNN && t.getTerminalsText().matches("[^a-zA-Z]+")){ //a token contains no letters
+			}else if(findNN && t.getTerminalsText().matches("[^a-zA-Z]+") && t.getTerminalsText().compareTo(",")!=0){ //a token contains no letters and is not a comma
 				findSep = true;
 			}
 		}

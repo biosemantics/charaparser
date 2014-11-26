@@ -30,8 +30,9 @@
 				<xml-element java-attribute="notes" xml-path="@notes"/>
             </java-attributes>
         </java-type>
-		<java-type name="Structure">
+        <java-type name="BiologicalEntity">
             <java-attributes>
+            	<xml-element java-attribute="characters" xml-path="character/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character" container-type="java.util.List"/>
 				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
 				<xml-element java-attribute="constraint" xml-path="@constraint"/>
 				<xml-element java-attribute="constraintId" xml-path="@constraintid"/>
@@ -45,8 +46,27 @@
 				<xml-element java-attribute="ontologyId" xml-path="@ontologyid"/>
 				<xml-element java-attribute="provenance" xml-path="@provenance"/>
 				<xml-element java-attribute="notes" xml-path="@notes"/>
+				<xml-element java-attribute="type" xml-path="@type"/>
             </java-attributes>
         </java-type>
+        
+		<!--  <java-type name="Structure">
+            <java-attributes>
+				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
+				<xml-element java-attribute="constraint" xml-path="@constraint"/>
+				<xml-element java-attribute="constraintId" xml-path="@constraintid"/>
+				<xml-element java-attribute="geographicalConstraint" xml-path="@geographical_constraint"/>
+				<xml-element java-attribute="id" xml-path="@id"/>
+				<xml-element java-attribute="inBrackets" xml-path="@in_brackets"/>
+				<xml-element java-attribute="name" xml-path="@name"/>
+				<xml-element java-attribute="parallelismConstraint" xml-path="@parallelism_constraint"/>
+				<xml-element java-attribute="taxonConstraint" xml-path="@taxon_constraint"/>
+				<xml-element java-attribute="ontologyId" xml-path="@ontologyid"/>
+				<xml-element java-attribute="provenance" xml-path="@provenance"/>
+				<xml-element java-attribute="notes" xml-path="@notes"/>
+            </java-attributes>
+        </java-type>
+        -->
 		<java-type name="Relation">
             <java-attributes>
 				<xml-element java-attribute="alterName" xml-path="@alter_name"/>

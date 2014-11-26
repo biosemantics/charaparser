@@ -13,7 +13,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 
@@ -28,10 +28,10 @@ public class ProcessingContextState implements Cloneable {
 	private List<Chunk> unassignedConstraints = new ArrayList<Chunk>();//structure constraint
 	private List<Character> unassignedCharacters = new ArrayList<Character>();
 
-	private Structure mainSubjectStructure = null;
+	//private Structure mainSubjectStructure = null;
 	private Character previousCharacter = null;
 	
-	private LinkedList<Structure> subjects = new LinkedList<Structure>();
+	private LinkedList<BiologicalEntity> subjects = new LinkedList<BiologicalEntity>();
 	private LinkedList<Element> lastElements = new LinkedList<Element>();
 	
 	private boolean commaAndOrEosEolAfterLastElements = false; 
@@ -47,13 +47,61 @@ public class ProcessingContextState implements Cloneable {
 	private int inBracketsLevel = 0;
 	
 	/**
-	 * Reset: clear unassignedCharacter and mainSubjectStructure
+	 * Reset to the initial state
 	 */
 	public void reset() {
 		unassignedCharacter = null;
-		mainSubjectStructure = null;
+		unassignedModifiers = new ArrayList<Chunk>();
+		unassignedConstraints = new ArrayList<Chunk>();
+		unassignedCharacters = new ArrayList<Character>();
+		previousCharacter = null;
+		//mainSubjectStructure = null;
+		subjects = new LinkedList<BiologicalEntity>();
+		lastElements = new LinkedList<Element>();
+		commaAndOrEosEolAfterLastElements = false; 
+		unassignedChunkAfterLastElements = false;
+		notInModifier = null;
+		clauseModifierContraintId = null;
+		clauseModifierContraint = null;
+		scopeProperties = null;
+		inBracketsLevel = 0;
 	}
 
+	@Override
+	public Object clone() {
+		try {
+			ProcessingContextState clone = (ProcessingContextState)super.clone();
+			clone.unassignedCharacter = this.unassignedCharacter==null ? null : new String(this.unassignedCharacter);
+			clone.unassignedModifiers = new ArrayList<Chunk>();
+			clone.unassignedModifiers.addAll(this.unassignedModifiers);
+			clone.unassignedConstraints = new ArrayList<Chunk>();
+			clone.unassignedConstraints.addAll(this.unassignedConstraints);
+			clone.unassignedCharacters = new ArrayList<Character>();
+			clone.unassignedCharacters.addAll(this.unassignedCharacters);
+			//clone.mainSubjectStructure = this.mainSubjectStructure;
+			clone.previousCharacter = this.previousCharacter==null? null: this.previousCharacter;
+			clone.subjects = new LinkedList<BiologicalEntity>();
+			clone.subjects.addAll(this.subjects);
+			clone.lastElements = new LinkedList<Element>(this.lastElements);
+			clone.commaAndOrEosEolAfterLastElements = this.commaAndOrEosEolAfterLastElements; 
+			clone.unassignedChunkAfterLastElements = this.unassignedChunkAfterLastElements;
+			clone.notInModifier = this.notInModifier==null ? null : new String(this.notInModifier);
+			//clone.chunkListIterator = chunkCollector.getChunks().listIterator(this.chunkListIterator.nextIndex());
+			//clone.chunkCollector = this.chunkCollector;
+			clone.clauseModifierContraintId = this.clauseModifierContraintId==null ? null : new String(this.clauseModifierContraintId);
+			clone.clauseModifierContraint = this.clauseModifierContraint==null ? null : new String(this.clauseModifierContraint);
+			clone.scopeProperties = new ArrayList<Entry<String, String>>();
+			if(scopeProperties!=null)
+				clone.scopeProperties.addAll(scopeProperties);
+			clone.inBracketsLevel = new Integer(this.inBracketsLevel);
+			//clone.chunkProcessorProvider = this.chunkProcessorProvider;
+			//clone.result = this.result;
+			return clone;
+		} catch (CloneNotSupportedException e) {
+			log(LogLevel.ERROR, "Problem cloning ProcessingContext", e);
+		}
+		return null;
+	}
 	/**
 	 * @return if there was an unassigned chunk after the last elements
 	 */
@@ -130,9 +178,9 @@ public class ProcessingContextState implements Cloneable {
 	/**
 	 * @return the mainSubjectStructure
 	 */
-	public Structure getMainSubjectStructure() {
+	/*public Structure getMainSubjectStructure() {
 		return mainSubjectStructure;
-	}
+	}*/
 
 	/**
 	 * @return the previousCharacter
@@ -144,7 +192,7 @@ public class ProcessingContextState implements Cloneable {
 	/**
 	 * @return the subjects
 	 */
-	public LinkedList<Structure> getSubjects() {
+	public LinkedList<BiologicalEntity> getSubjects() {
 		return subjects;
 	}
 	
@@ -152,7 +200,7 @@ public class ProcessingContextState implements Cloneable {
 	 * set the subjects
 	 * @param subjects
 	 */
-	public void setSubjects(LinkedList<Structure> subjects) {
+	public void setSubjects(LinkedList<BiologicalEntity> subjects) {
 		this.subjects = subjects;
 	}
 
@@ -288,35 +336,7 @@ public class ProcessingContextState implements Cloneable {
 		this.commaAndOrEosEolAfterLastElements = commaAndOrEosEolAfterLastElements;
 	}
 
-	@Override
-	public Object clone() {
-		try {
-			ProcessingContextState clone = (ProcessingContextState)super.clone();
-			clone.unassignedCharacter = this.unassignedCharacter==null ? null : new String(this.unassignedCharacter);
-			clone.unassignedModifiers = new ArrayList<Chunk>();
-			clone.unassignedModifiers.addAll(this.unassignedModifiers);
-			clone.mainSubjectStructure = this.mainSubjectStructure;
-			clone.previousCharacter = this.previousCharacter;
-			clone.subjects = new LinkedList<Structure>();
-			clone.subjects.addAll(this.subjects);
-			clone.lastElements = new LinkedList<Element>(this.lastElements);
-			clone.notInModifier = this.notInModifier==null ? null : new String(this.notInModifier);
-			//clone.chunkListIterator = chunkCollector.getChunks().listIterator(this.chunkListIterator.nextIndex());
-			//clone.chunkCollector = this.chunkCollector;
-			clone.clauseModifierContraintId = this.clauseModifierContraintId==null ? null : new String(this.clauseModifierContraintId);
-			clone.clauseModifierContraint = this.clauseModifierContraint==null ? null : new String(this.clauseModifierContraint);
-			clone.scopeProperties = new ArrayList<Entry<String, String>>();
-			if(scopeProperties!=null)
-				clone.scopeProperties.addAll(scopeProperties);
-			clone.inBracketsLevel = new Integer(this.inBracketsLevel);
-			//clone.chunkProcessorProvider = this.chunkProcessorProvider;
-			//clone.result = this.result;
-			return clone;
-		} catch (CloneNotSupportedException e) {
-			log(LogLevel.ERROR, "Problem cloning ProcessingContext", e);
-		}
-		return null;
-	}
+
 
 
 }

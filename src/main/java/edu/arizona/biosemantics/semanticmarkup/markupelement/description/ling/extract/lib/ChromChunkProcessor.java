@@ -20,7 +20,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 
 /**
  * ChromChunkProcessor processes chunks of ChunkType.CHROM
@@ -53,17 +53,18 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Structure> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		List<Structure> result = new LinkedList<Structure>();
+	protected List<BiologicalEntity> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		String[] parts = chunk.getTerminalsText().split("=");
 		if(parts.length==2) {
 			String value = parts[1].replaceFirst("[.;, ]+\\s*$", "").replaceAll("\\bor\\b", "");
 			//String content = chunk.getTerminalsText().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
 			//Element structure = new Element("chromosome");
-			Structure structure = new Structure();
+			BiologicalEntity structure = new BiologicalEntity();
 			structure.setName("chromosome");
 			structure.setNameOriginal("");
+			structure.setType("structure");
 			structure.setId("o" + String.valueOf(processingContext.fetchAndIncrementStructureId(structure)));
 			result.add(structure);
 			

@@ -23,7 +23,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -69,7 +69,7 @@ public class AverageChunkProcessor extends AbstractChunkProcessor {
 			  last = ((Character)e).getName();
 		  }
 		  if(e.isStructure()){
-			 LinkedHashSet<Character> chs = ((Structure)e).getCharacters();
+			 LinkedHashSet<Character> chs = ((BiologicalEntity)e).getCharacters();
 			 for(Character c: chs){
 				 characterNames.add(c.getName());
 				 last = c.getName();

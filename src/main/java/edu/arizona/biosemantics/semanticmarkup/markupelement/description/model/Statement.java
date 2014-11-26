@@ -25,14 +25,14 @@ public class Statement extends Element {
 	private String notes;
 
 	
-	private List<Structure> structures = new LinkedList<Structure>();
+	private List<BiologicalEntity> biologicalEntities = new LinkedList<BiologicalEntity>();
 	private List<Relation> relations = new LinkedList<Relation>();
 	
-	public List<Structure> getStructures() {
-		return structures;
+	public List<BiologicalEntity> getBiologicalEntities() {
+		return biologicalEntities;
 	}
-	public void setStructures(List<Structure> structures) {
-		this.structures = structures;
+	public void setBiologicalEntities(List<BiologicalEntity> structures) {
+		this.biologicalEntities = structures;
 	}
 
 	public List<Relation> getRelations() {
@@ -69,14 +69,14 @@ public class Statement extends Element {
 	public void addRelation(Relation relation) {
 		this.relations.add(relation);
 	}
-	public void addStructure(Structure structure) {
-		this.structures.add(structure);
+	public void addBiologicalEntity(BiologicalEntity structure) {
+		this.biologicalEntities.add(structure);
 	}
 	@Override
 	public void removeElementRecursively(Element element) {
-		Iterator<Structure> structuresIterator = structures.iterator();
+		Iterator<BiologicalEntity> structuresIterator = biologicalEntities.iterator();
 		while(structuresIterator.hasNext()) {
-			Structure structure = structuresIterator.next();
+			BiologicalEntity structure = structuresIterator.next();
 			if(structure.equals(element))
 				structuresIterator.remove();
 			else

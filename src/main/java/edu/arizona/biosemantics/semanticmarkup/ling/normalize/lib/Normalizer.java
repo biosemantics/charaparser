@@ -285,8 +285,7 @@ public abstract class Normalizer implements INormalizer {
 		Matcher m = hyphenedtoorpattern.matcher(str); //TODO: _ribbed not in local learned terms set. why?
 		while(m.matches()){
 			String possibleCharacterState = m.group(5);
-			//boolean isCharacterState = this.organStateKnowledgeBase.isState(possibleCharacterState); //TODO should also check perm. gloss.
-			boolean isCharacterState = this.characterKnowledgeBase.isState(possibleCharacterState); //TODO should also check perm. gloss.
+			boolean isCharacterState = this.characterKnowledgeBase.isState(possibleCharacterState); 
 			if(isCharacterState) {
 				str = m.group(1) + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-") + m.group(6);
 				//str = m.group(1) + "{" + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-").replaceAll("\\{$", "")+ "}" + m.group(6);
@@ -295,8 +294,11 @@ public abstract class Normalizer implements INormalizer {
 			} else 
 				break;
 		}
+		
+
+		
 		str = str.replaceAll("-+", "-");
-		str = str.replaceAll("(?<![\\d(\\[–—-]\\s?)[–—-]+\\s*(?="+numberpattern+"\\s+\\W?("+units+")\\W?)", " to "); //fna: tips>-2.5 {mm}
+		str = str.replaceAll("(?<![\\d(\\[–—-]\\s?)[–—-]+\\s*(?="+numberpattern+"\\s+\\W?("+units+")\\W?)", " to "); //fna: tips -2.5 {mm}
 		//if(!scp.equals(str)){
 		//	log(LogLevel.DEBUG, );
 		//}
@@ -408,7 +410,12 @@ public abstract class Normalizer implements INormalizer {
 		/*if(!tag.equals("ditto"))
 			this.parentTag = tag;
 		this.previousSentenceParentTag = this.parentTag;*/
-			
+			str = str.trim();
+			if(str.startsWith("with or without ") && str.endsWith(";")){
+				//this sentence can not be terminated with a semicolon. If it does, Standford Parser will tag the first with/RB (should be with/IN). 
+				//Use period, comma, or non punct can avoid the problem. 
+				str = str.replaceFirst(";$", "").trim();
+			}
 		return str;
 	}
 	

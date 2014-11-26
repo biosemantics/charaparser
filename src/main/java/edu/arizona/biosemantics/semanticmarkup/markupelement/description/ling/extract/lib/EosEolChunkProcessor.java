@@ -9,6 +9,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -16,6 +17,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor;
@@ -24,7 +26,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -69,7 +71,7 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 			if(!lastElements.isEmpty() && lastElements.getLast().isStructure()) {
 				for(Element element : lastElements) {
 					if(element.isStructure()) {
-						int structureId = Integer.valueOf(((Structure)element).getId().substring(1));
+						int structureId = Integer.valueOf(((BiologicalEntity)element).getId().substring(1));
 						
 						Set<Relation> relations = processingContext.getRelationsTo(structureId);
 						int greatestId = 0;
@@ -104,35 +106,40 @@ public class EosEolChunkProcessor extends AbstractChunkProcessor implements ILas
 		
 		List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters(); //TODO: Hong ???
 		if(!unassignedCharacters.isEmpty()) {
-			List<Structure> lastSubjects = processingContext.getLastSubjects();
+			List<BiologicalEntity> lastSubjects = processingContext.getLastSubjects();
 			if(lastSubjects.size()>0){
 				for(Character character : unassignedCharacters) {
-					for(Structure parent : lastSubjects) {
+					for(BiologicalEntity parent : lastSubjects) {
 						parent.addCharacter(character);
 					}
 				}
 				result.addAll(lastSubjects);
 			}else{
-				Structure structureElement = new Structure();
+				BiologicalEntity structureElement = new BiologicalEntity();
 				int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 				structureElement.setId("o" + String.valueOf(structureIdString));	
 				structureElement.setName("whole_organism"); 
 				structureElement.setNameOriginal("");
-				List<Structure> structureElements = new LinkedList<Structure>();
+				structureElement.setType("structure");
+				List<BiologicalEntity> structureElements = new LinkedList<BiologicalEntity>();
 				structureElements.add(structureElement);
 				result.addAll(establishSubject(structureElements, processingContextState));
 
 				for(Character character : unassignedCharacters) {
-					for(Structure parent : structureElements) {
+					for(BiologicalEntity parent : structureElements) {
 						parent.addCharacter(character);
 					}
 				}
 			}
 		}
 		unassignedCharacters.clear();
-
 		processingContextState.clearUnassignedModifiers();
-
+		
+		//reset processingContextState?. Hong 11/20/14
+		//if(chunk.isOfChunkType(ChunkType.END_OF_LINE)){//end of a sentence
+		//	processingContextState.reset();
+		//}
+		
 		return result;
 	}
 

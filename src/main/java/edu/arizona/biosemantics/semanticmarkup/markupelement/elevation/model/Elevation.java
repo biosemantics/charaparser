@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 
 public class Elevation extends Element {
 	

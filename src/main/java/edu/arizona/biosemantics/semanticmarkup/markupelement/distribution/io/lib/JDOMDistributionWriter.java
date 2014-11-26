@@ -14,9 +14,10 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDi
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Distribution;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFileList;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Treatment;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
 
 public class JDOMDistributionWriter implements IDistributionWriter {
 
@@ -49,11 +50,24 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 					textElement.setText(statement.getText());
 					statementElement.setAttribute("id", statement.getId());
 					statementElement.addContent(textElement);
-					for(Value value: statement.getValues()){
+					for(BiologicalEntity be: statement.getBiologicalEntities()){
+						Element beElement = new Element("biological_entity");
+						beElement.setAttribute("name", be.getName());
+						beElement.setAttribute("name_original", be.getNameOriginal());
+						beElement.setAttribute("type", be.getType());
+						for(Character ch: be.getCharacters()){
+							Element chElement = new Element("character");
+							chElement.setAttribute("name", ch.getName());
+							chElement.setAttribute("value", ch.getValue());
+							beElement.addContent(chElement);
+						}
+						statementElement.addContent(beElement);						
+					}
+					/*for(Value be: statement.getValues()){
 						Element valueElement = new Element("value");
 						valueElement.setText(value.getText());
 						statementElement.addContent(valueElement);
-					}
+					}*/
 					currentElement.addContent(statementElement);
 				}
 			}

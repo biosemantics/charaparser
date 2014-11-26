@@ -23,7 +23,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 
 /**
  * AreaChunkProcessor processes chunks of ChunkType.AREA
@@ -58,7 +58,7 @@ public class AreaChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
 		List<Chunk> modifiers = new ArrayList<Chunk>();
 		List<Character> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
 				parents, false, processingContextState);

@@ -21,7 +21,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -61,13 +61,13 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> modifiers = processingContextState.getUnassignedModifiers();
 		
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
-		LinkedList<Structure> subjects = processingContextState.getSubjects();
-		LinkedList<Structure> parents = new LinkedList<Structure>();
+		LinkedList<BiologicalEntity> subjects = processingContextState.getSubjects();
+		LinkedList<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
 		if(lastElements.isEmpty() || !lastElements.getLast().isStructure()) {
 			if(!subjects.isEmpty())
 				parents.add(subjects.getLast());
 		} else {
-			parents.add((Structure)lastElements.getLast()); 
+			parents.add((BiologicalEntity)lastElements.getLast()); 
 		}
 		
 		if(!parents.isEmpty() && parents.getLast().isStructure()) {

@@ -21,7 +21,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -64,19 +64,20 @@ public class ConstraintChunkProcessor extends AbstractChunkProcessor {
 		//for(DescriptionTreatmentElement lastElement : lastElements) {
 		if(!lastElements.isEmpty()) {
 			Element lastElement = lastElements.get(0);
-			Structure structure = null;
+			BiologicalEntity structure = null;
 			if(lastElement.isCharacter()) {
 				structure = processingContext.getParentStructure((Character)lastElements.get(0));
 			} else if(lastElement.isStructure()) {
-				structure = (Structure)lastElement;
+				structure = (BiologicalEntity)lastElement;
 			}
 			if(structure!=null) {
-				Structure constraintStructure = new Structure();
+				BiologicalEntity constraintStructure = new BiologicalEntity();
 				int structureId = processingContext.fetchAndIncrementStructureId(constraintStructure);
 				constraintStructure.setId("o" + structureId);
 				constraintStructure.setName(structure.getName());
 				constraintStructure.setNameOriginal(structure.getNameOriginal());
 				constraintStructure.setConstraint(chunk.getTerminalsText());
+				constraintStructure.setType("structure");
 				result.add(constraintStructure);
 				contextState.setLastElements(result);
 			}

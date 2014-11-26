@@ -34,7 +34,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.D
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFileList;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 
 public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
@@ -65,7 +65,7 @@ public class MOXyBinderDescriptionWriter implements IDescriptionWriter {
 					// workaround until EclipseLink bug fixed: https://bugs.eclipse.org/bugs/show_bug.cgi?id=432763
 					for(Description description : descriptionsFile.getDescriptions()) {
 						for(Statement statement : description.getStatements()) {
-							for(Structure structure : statement.getStructures()) {
+							for(BiologicalEntity structure : statement.getBiologicalEntities()) {
 								LinkedHashSet<Character> charaterClones = new LinkedHashSet<Character>();
 								for(Character character : structure.getCharacters()) {
 									charaterClones.add(character.clone());

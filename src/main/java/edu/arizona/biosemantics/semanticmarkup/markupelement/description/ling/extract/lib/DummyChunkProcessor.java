@@ -20,7 +20,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -63,8 +63,8 @@ public class DummyChunkProcessor extends AbstractChunkProcessor {
 			if(index>0){
 				Chunk prevChunk = processingContext.getChunkCollector().getChunks().get(index-1);
 				if(prevChunk.getTerminalsText().compareTo("the")==0){ //the latter
-					Element lastStructure = processingContext.getLastResult(Structure.class); 
-					Set<Relation> relations = processingContext.getRelationsTo(Integer.parseInt(((Structure)(lastStructure)).getId().replaceAll("[^\\d]", "")));
+					Element lastStructure = processingContext.getLastResult(BiologicalEntity.class); 
+					Set<Relation> relations = processingContext.getRelationsTo(Integer.parseInt(((BiologicalEntity)(lastStructure)).getId().replaceAll("[^\\d]", "")));
 					int minRId = -1;
 					for(Relation r: relations){
 						if(r.getName().compareTo("part_of")==0){

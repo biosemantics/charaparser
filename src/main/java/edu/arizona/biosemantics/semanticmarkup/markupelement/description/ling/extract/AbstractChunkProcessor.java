@@ -33,7 +33,7 @@ import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 
@@ -132,51 +132,51 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 */
 	protected abstract List<? extends Element> processChunk(Chunk chunk, ProcessingContext processingContext);
 
-	protected List<Structure> establishSubject(List<Structure> subjectStructures, 
+	protected List<BiologicalEntity> establishSubject(List<BiologicalEntity> subjectStructures, 
 			ProcessingContextState processingContextState) {
-		List<Structure> result = new LinkedList<Structure>();
+		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 		result.addAll(subjectStructures);
 
-		LinkedList<Structure> subjects = processingContextState.getSubjects();
+		LinkedList<BiologicalEntity> subjects = processingContextState.getSubjects();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		subjects.clear();
 		lastElements.clear();
 
-		for(Structure structure : subjectStructures) {
+		for(BiologicalEntity structure : subjectStructures) {
 			subjects.add(structure);
 			lastElements.add(structure);
 		}
 		return result;
 	}
 
-	protected List<Structure> establishSubject(
+	protected List<BiologicalEntity> establishSubject(
 			Chunk subjectChunk, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		log(LogLevel.DEBUG, "establish subject from " + subjectChunk);
-		List<Structure> result = new LinkedList<Structure>();
+		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 
 		List<Chunk> subjectChunks = new LinkedList<Chunk>();
 		subjectChunks.addAll(processingContextState.getUnassignedConstraints());
 		subjectChunks.add(subjectChunk);
 		processingContextState.clearUnassignedConstraints();
-		List<Structure> subjectStructures = createStructureElements(subjectChunks, processingContext, processingContextState);
+		List<BiologicalEntity> subjectStructures = createStructureElements(subjectChunks, processingContext, processingContextState);
 		processingContext.setLastSubjects(subjectStructures); //remember last subjects and update it whenever new subjects are established
 		return this.establishSubject(subjectStructures, processingContextState);
 	}
 
 
-	protected List<Structure> reestablishSubject(ProcessingContext processingContext, ProcessingContextState processingContextState) {
+	protected List<BiologicalEntity> reestablishSubject(ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		log(LogLevel.DEBUG, "reestablish subject");
-		List<Structure> result = new LinkedList<Structure>();
+		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 
 		
-		List<Structure> subjects = processingContextState.getSubjects();
+		List<BiologicalEntity> subjects = processingContextState.getSubjects();
 		if(subjects.size()==0){
 			subjects = processingContext.getLastSubjects();
 		}
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		lastElements.clear();
 		
-		for(Structure structure : subjects) {
+		for(BiologicalEntity structure : subjects) {
 			lastElements.add(structure);
 			//element.detach();
 			//result.remove(element);
@@ -186,27 +186,28 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	protected void establishWholeOrganismAsSubject(
-			ProcessingContext processingContext, List<Structure> result,
+			ProcessingContext processingContext, List<BiologicalEntity> result,
 			ProcessingContextState processingContextState) {
 		//use whole_organism
-		Structure structureElement = new Structure();
+		BiologicalEntity structureElement = new BiologicalEntity();
 		int structureIdString = processingContext.fetchAndIncrementStructureId(structureElement);
 		structureElement.setId("o" + String.valueOf(structureIdString));	
 		structureElement.setName("whole_organism"); 
 		structureElement.setNameOriginal("");
-		List<Structure> structureElements = new LinkedList<Structure>();
+		structureElement.setType("structure");
+		List<BiologicalEntity> structureElements = new LinkedList<BiologicalEntity>();
 		structureElements.add(structureElement);
 		result.addAll(establishSubject(structureElements, processingContextState));
 	}
 	
-	protected List<Structure> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, ProcessingContextState processingContextState) {
-		LinkedList<Structure> results = new LinkedList<Structure>();	
+	protected List<BiologicalEntity> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, ProcessingContextState processingContextState) {
+		LinkedList<BiologicalEntity> results = new LinkedList<BiologicalEntity>();	
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
 		log(LogLevel.DEBUG, "create structure element from subjectChunks:\n" + subjectChunks);
 		List<Chunk> organChunks = subjectChunk.getChunks(ChunkType.ORGAN);
 		if(!organChunks.isEmpty()) {
 			for(Chunk organChunk : organChunks) {
-				Structure structure = new Structure();
+				BiologicalEntity structure = new BiologicalEntity();
 				int structureIdString = processingContext.fetchAndIncrementStructureId(structure);
 				structure.setId("o" + String.valueOf(structureIdString));
 				Chunk constraintChunk = getConstraintOf(organChunk, subjectChunk);
@@ -220,9 +221,10 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					structure.setName(singular);
 					structure.setNameOriginal(organName);
 					String entityType = characterKnowledgeBase.getEntityType(singular, organName);
-					if(entityType!=null && entityType.length()>0) structure.setNotes(entityType);
+					if(entityType!=null && entityType.length()>0) structure.setType(entityType);
+					else structure.setType("structure");
 
-					List<Structure> parents = new LinkedList<Structure>();
+					List<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
 					parents.add(structure);
 
 					List<AbstractParseTree> terminals = subjectChunk.getTerminals();
@@ -356,14 +358,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				((Character)element).setConstraint(clauseModifierConstraint);
 			}
 			if(element.isStructure()){
-				((Structure)element).setConstraint(clauseModifierConstraint);
+				((BiologicalEntity)element).setConstraint(clauseModifierConstraint);
 			}
 		}
 		if (clauseModifierConstraintId != null && !clauseModifierConstraintId.startsWith("-")){ //default id could be -1
 			if(element.isCharacter())
 				((Character)element).setConstraintId(clauseModifierConstraintId);
 			if(element.isStructure())
-				((Structure)element).setConstraintId(clauseModifierConstraintId);
+				((BiologicalEntity)element).setConstraintId(clauseModifierConstraintId);
 		}
 		processingContextState.setClauseModifierContraint(null);
 		processingContextState.setClauseModifierContraintId(null);
@@ -371,16 +373,16 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 
 
-	protected List<Structure> lastStructures(ProcessingContext processingContext, 
+	protected List<BiologicalEntity> lastStructures(ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
-		LinkedList<Structure> parents = new LinkedList<Structure>();
+		LinkedList<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
 
 		boolean newSegment = processingContext.getCurrentState().isCommaAndOrEosEolAfterLastElements();
 		if(!newSegment && (processingContextState.getLastElements().size()> 0 && 
 				processingContextState.getLastElements().getLast().isStructure())) {
 			for(Element lastElement : processingContextState.getLastElements())
 				if(lastElement.isStructure())
-					parents.add((Structure)lastElement);
+					parents.add((BiologicalEntity)lastElement);
 		}else{
 			parents.addAll(processingContextState.getSubjects());
 		}
@@ -476,11 +478,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param object
 	 * @return the extracted structures
 	 */
-	protected List<Structure> extractStructuresFromObject(Chunk object, ProcessingContext processingContext, 
+	protected List<BiologicalEntity> extractStructuresFromObject(Chunk object, ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 
-		List<Structure> structures;		
+		List<BiologicalEntity> structures;		
 		List<LinkedList<Chunk>> twoParts = separate(object);  
 		//find the organs in object o[.........{m} {m} (o1) and {m} (o2)]
 
@@ -488,7 +490,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		structures = createStructureElements(twoParts.get(1), processingContext, processingContextState);
 		// 7-12-02 add cs//to be added structures found in 2nd part, not rewrite this.latestelements yet
 		if(!twoParts.get(0).isEmpty()) {
-			LinkedList<Structure> structuresCopy = new LinkedList<Structure>(structures);
+			LinkedList<BiologicalEntity> structuresCopy = new LinkedList<BiologicalEntity>(structures);
 
 			LinkedHashSet<Chunk> beforePlus = plusFollowsOrgan(twoParts.get(1), chunkCollector);
 			if(beforePlus != null) {
@@ -518,7 +520,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param tokens
 	 * @param parents
 	 */
-	protected List<Element> processCharacterText(List<Chunk> tokens, List<Structure> parents, 
+	protected List<Element> processCharacterText(List<Chunk> tokens, List<BiologicalEntity> parents, 
 			String character, ProcessingContextState processingContextState, ProcessingContext processingContext, boolean isModifier) {
 		LinkedList<Element> results = new LinkedList<Element>();
 		//determine characters and modifiers
@@ -606,7 +608,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param characterValue 
 	 * @param cname
 	 */
-	protected List<Character> createRangeCharacterElement(List<Structure> parents,
+	protected List<Character> createRangeCharacterElement(List<BiologicalEntity> parents,
 			List<Chunk> modifiers, String characterValue, String characterName, ProcessingContextState processingContextState) {
 		LinkedList<Character> results = new  LinkedList<Character>();
 		if(characterValue.indexOf(" to ") < 0) return results;
@@ -630,7 +632,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 		if(parents.isEmpty())
 			processingContextState.getUnassignedCharacters().add(character);
-		for(Structure parentStructure : parents) {
+		for(BiologicalEntity parentStructure : parents) {
 			parentStructure.addCharacter(character);
 		}
 		results.add(character); 
@@ -654,7 +656,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return result.trim();
 	}
 
-	protected Character createCharacterElement(List<Structure> parents, List<Chunk> modifiers, 
+	protected Character createCharacterElement(List<BiologicalEntity> parents, List<Chunk> modifiers, 
 			String characterValue, String characterName, String char_type, ProcessingContextState processingContextState, boolean isConstraintModifier) {
 		log(LogLevel.DEBUG, "create character element " + characterName + ": " +  characterValue + " for parent:\n "  + parents);
 		String modifierString = "";
@@ -719,7 +721,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					character.setModifier(modifierString);
 			}
 
-			for(Structure parent : parents) {
+			for(BiologicalEntity parent : parents) {
 				parent.addCharacter(character);
 			}
 
@@ -741,7 +743,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 
-	protected List<Element> linkObjects(List<Structure> subjectStructures, List<Chunk> modifiers, 
+	protected List<Element> linkObjects(List<BiologicalEntity> subjectStructures, List<Chunk> modifiers, 
 			Chunk preposition, Chunk object, boolean lastIsStruct, boolean lastIsChara, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation, Element lastE) {
 
@@ -753,7 +755,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		modifiers.addAll(unassignedModifiers);
 		unassignedModifiers.clear();
 
-		List<Structure> structures;
+		List<BiologicalEntity> structures;
 		structures = extractStructuresFromObject(object, processingContext, processingContextState); //extractStructuresFromObject changed lastElements
 		result.addAll(structures);
 		String base = "";
@@ -802,8 +804,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	protected String relationLabel(Chunk preposition, 
-			List<Structure> organsbeforepp, 
-			List<Structure> organsafterpp, Chunk object, ChunkCollector chunkCollector) {		
+			List<BiologicalEntity> organsbeforepp, 
+			List<BiologicalEntity> organsafterpp, Chunk object, ChunkCollector chunkCollector) {		
 		if(preposition.getTerminalsText().equals("of")) {			
 
 			List<Chunk> chunks = chunkCollector.getChunks();
@@ -840,7 +842,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return preposition.getTerminalsText();
 	}
 
-	protected String differentiateOf(List<Structure> organsBeforeOf, List<Structure> organsAfterOf) {
+	protected String differentiateOf(List<BiologicalEntity> organsBeforeOf, List<BiologicalEntity> organsAfterOf) {
 		String result = "part_of";
 
 		for (int i = 0; i<organsBeforeOf.size(); i++){
@@ -879,7 +881,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	protected List<Relation> createRelationElements(String relation, 
-			List<Structure> fromStructures, List<Structure> toStructures, 
+			List<BiologicalEntity> fromStructures, List<BiologicalEntity> toStructures, 
 			List<Chunk> modifiers, boolean symmetric, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		//compoundprep relations have "-" in them, remove '-' before output
@@ -922,7 +924,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	protected Relation addRelation(String relationName, List<Chunk> modifiers,
-			boolean symmetric, String o1id, String o2id,Structure fromStructure, Structure toStructure,  boolean negation, ProcessingContext processingContext, ProcessingContextState processingContextState) {
+			boolean symmetric, String o1id, String o2id,BiologicalEntity fromStructure, BiologicalEntity toStructure,  boolean negation, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		Relation relation = new Relation();
 		relation.setName(relationName);
 		relation.setFrom(o1id);
@@ -946,7 +948,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 
 	protected List<Character> annotateNumericals(String text, String characterString, List<Chunk> modifiers, 
-			List<Structure> parents, boolean resetFrom, ProcessingContextState processingContextState) {
+			List<BiologicalEntity> parents, boolean resetFrom, ProcessingContextState processingContextState) {
 		LinkedList<Character> result = new LinkedList<Character>();
 		boolean average = characterString.startsWith("average_");
 		List<Character> characters = parseNumericals(text, characterString);
@@ -971,7 +973,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 
 			addClauseModifierConstraint(character, processingContextState);
-			for(Structure parent : parents) {//TODO Hong parents could be empty, character is only add to result
+			for(BiologicalEntity parent : parents) {//TODO Hong parents could be empty, character is only add to result
 				parent.addCharacter(character);
 			}
 			result.add(character);
@@ -2302,9 +2304,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return organString.trim().replaceFirst(",$", "");
 	}
 
-	protected String listStructureIds(List<Structure> structures) {
+	protected String listStructureIds(List<BiologicalEntity> structures) {
 		StringBuffer list = new StringBuffer();
-		for(Structure structure : structures)
+		for(BiologicalEntity structure : structures)
 			list.append(structure.getId()).append(", ");
 		return list.toString().trim().replaceFirst(",$", "");
 	}

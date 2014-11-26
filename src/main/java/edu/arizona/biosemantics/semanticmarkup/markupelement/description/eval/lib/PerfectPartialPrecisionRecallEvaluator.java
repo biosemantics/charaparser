@@ -27,7 +27,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.mo
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupResult;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.DistributionMarkupResult;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.EcologyMarkupResult;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupResult;
@@ -167,23 +167,23 @@ public class PerfectPartialPrecisionRecallEvaluator implements IDescriptionMarku
 		return new PrecisionRecallResult(precision, recall);
 	}
 
-	private PrecisionRecallResult evaluatePartialStructure(List<Structure> testStructures, List<Structure> correctStructures) {
+	private PrecisionRecallResult evaluatePartialStructure(List<BiologicalEntity> testStructures, List<BiologicalEntity> correctStructures) {
 		log(LogLevel.DEBUG, "evaluate partial structures");
-		IMatcher<Structure> partialStructureMatcher = 
+		IMatcher<BiologicalEntity> partialStructureMatcher = 
 				new edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.partial.StructureMatcher();
-		PrecisionCalculator<Structure> precisionCalculator = new PrecisionCalculator<Structure>(partialStructureMatcher);
-		RecallCalculator<Structure> recallCalculator = new RecallCalculator<Structure>(partialStructureMatcher);
+		PrecisionCalculator<BiologicalEntity> precisionCalculator = new PrecisionCalculator<BiologicalEntity>(partialStructureMatcher);
+		RecallCalculator<BiologicalEntity> recallCalculator = new RecallCalculator<BiologicalEntity>(partialStructureMatcher);
 		double precision = precisionCalculator.getResult(testStructures, correctStructures);
 		double recall = recallCalculator.getResult(testStructures, correctStructures);
 		return new PrecisionRecallResult(precision, recall);	
 	}
 
-	private PrecisionRecallResult evaluatePerfectStructure(List<Structure> testStructures, List<Structure> correctStructures) {
+	private PrecisionRecallResult evaluatePerfectStructure(List<BiologicalEntity> testStructures, List<BiologicalEntity> correctStructures) {
 		log(LogLevel.DEBUG, "evaluate perfect structures");
-		IMatcher<Structure> perfectStructureMatcher =
+		IMatcher<BiologicalEntity> perfectStructureMatcher =
 				new edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.perfect.StructureMatcher();
-		PrecisionCalculator<Structure> precisionCalculator = new PrecisionCalculator<Structure>(perfectStructureMatcher);
-		RecallCalculator<Structure> recallCalculator = new RecallCalculator<Structure>(perfectStructureMatcher);
+		PrecisionCalculator<BiologicalEntity> precisionCalculator = new PrecisionCalculator<BiologicalEntity>(perfectStructureMatcher);
+		RecallCalculator<BiologicalEntity> recallCalculator = new RecallCalculator<BiologicalEntity>(perfectStructureMatcher);
 		double precision = precisionCalculator.getResult(testStructures, correctStructures);
 		double recall = recallCalculator.getResult(testStructures, correctStructures);
 		return new PrecisionRecallResult(precision, recall);

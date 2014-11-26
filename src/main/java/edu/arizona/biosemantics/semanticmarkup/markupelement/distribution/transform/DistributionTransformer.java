@@ -1,15 +1,19 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Distribution;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFile;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Treatment;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
 
 public class DistributionTransformer implements IDistributionTransformer {
 
@@ -21,9 +25,17 @@ public class DistributionTransformer implements IDistributionTransformer {
 				for(Distribution distribution : treatment.getDistributions()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
-					statement.setId("distribution" + i++);
+					statement.setId("distribution_" + i++);
 					statement.setText(distribution.getText());
-					statement.setValues(parse(distribution.getText()));
+					
+					BiologicalEntity be = new BiologicalEntity();
+					be.setName("whole_organism");
+					be.setType("structure");
+					be.setNameOriginal("");
+					be.addCharacters(parse(distribution.getText()));
+					//statement.setValues();
+					statement.addBiologicalEntity(be);
+					
 					statements.add(statement);				
 					distribution.setStatements(statements);
 				}
@@ -32,9 +44,9 @@ public class DistributionTransformer implements IDistributionTransformer {
 	}
 
 	@Override
-	public List<Value> parse(String text) {
+	public LinkedHashSet<Character> parse(String text) {
 		//format text, hide [,;] in parentheses
-		ArrayList<Value> values = new ArrayList<Value>();
+		LinkedHashSet<Character> values = new LinkedHashSet<Character>();
 		text = format(text); 
 		//collect value
 		String[] areas = text.split("[;,]");
@@ -43,14 +55,17 @@ public class DistributionTransformer implements IDistributionTransformer {
 			if(area.indexOf("@")>=0){
 				values.addAll(allValues(area));
 			}else{
-				values.add(new Value(area));
+				Character c = new Character();
+				c.setName("distribution");
+				c.setValue(area);
+				values.add(c);
 			}
 		}
 		return values;
 	}
 	
-	private ArrayList<Value> allValues(String area) {
-		  ArrayList<Value> values = new ArrayList<Value>();
+	private LinkedHashSet<Character> allValues(String area) {
+		LinkedHashSet<Character> values = new LinkedHashSet<Character>();
 		  Pattern p = Pattern.compile("(.*?)\\(([^)]*?@[^)]*?)\\)(.*)");
 		  Matcher m = p.matcher(area);
 		  if(m.matches()){
@@ -61,7 +76,10 @@ public class DistributionTransformer implements IDistributionTransformer {
 			   String[] parts = partstr.split("\\s*@\\s*");
 			   
 			   for(int i = 0; i<parts.length; i++){
-				    values.add(new Value(com+"("+parts[i]+")"+rest));
+				   Character c = new Character();
+					c.setName("distribution");
+					c.setValue(com+"("+parts[i]+")"+rest);
+					values.add(c);
 				   }
 			  }
 		  return values;
@@ -82,8 +100,6 @@ public class DistributionTransformer implements IDistributionTransformer {
 		  formated +=text;
 		  return formated;
 		 }
-	
-	
 
 }
 
