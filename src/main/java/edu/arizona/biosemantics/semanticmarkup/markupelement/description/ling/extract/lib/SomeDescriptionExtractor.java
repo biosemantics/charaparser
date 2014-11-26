@@ -48,7 +48,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.C
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -128,7 +128,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 					if(element.isRelation())
 						statement.addRelation((Relation)element);
 					if(element.isStructure())
-						statement.addStructure((Structure)element);
+						statement.addBiologicalEntity((BiologicalEntity)element);
 				}
 			} catch (Exception e) {
 				log(LogLevel.ERROR, "Problem extracting markup elements from sentence: " + chunkCollector.getSentence() + "\n" +
@@ -146,7 +146,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		List<Element> xml = new LinkedList<Element>();
 		for(Statement s: description.getStatements()){
-			xml.addAll(s.getStructures());
+			xml.addAll(s.getBiologicalEntities());
 			xml.addAll(s.getRelations());
 		}
 		

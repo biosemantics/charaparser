@@ -39,6 +39,12 @@ public interface ICharacterKnowledgeBase {
 	
 	public boolean isEntity(String terminalsText);
 
+	/**
+	 * must call isEntity(String) before calling getEntityType
+	 * @param singular
+	 * @param organName
+	 * @return
+	 */
 	public String getEntityType(String singular, String organName);
 	
 }

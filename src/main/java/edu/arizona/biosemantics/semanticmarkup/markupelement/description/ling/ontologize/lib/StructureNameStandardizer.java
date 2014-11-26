@@ -17,7 +17,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
@@ -42,8 +42,8 @@ public class StructureNameStandardizer {
 		String parentorgan=null;
 		for(Statement s: description.getStatements()){
 			if(s.getText()!=null && s.getText().matches("^[A-Z].*")){ //record parentorgan
-				if(s.getStructures().size()>0){
-					Structure structure = s.getStructures().get(0); //get 1st structure
+				if(s.getBiologicalEntities().size()>0){
+					BiologicalEntity structure = s.getBiologicalEntities().get(0); //get 1st structure
 					if(structure!=null){
 						//attach parent organ to other structures in this statement, return parentorgan used.
 						parentorgan = attachPOto(description, s, structure, "");	
@@ -51,8 +51,8 @@ public class StructureNameStandardizer {
 				}
 			}else{//sentences not starting with a capitalized structure names => those structures after ';'
 				if(parentorgan!=null){
-					if(s.getStructures().size()>0){
-						Structure struct = s.getStructures().get(0); //get 1st structure
+					if(s.getBiologicalEntities().size()>0){
+						BiologicalEntity struct = s.getBiologicalEntities().get(0); //get 1st structure
 						if(struct!=null){
 							//apply parentorgan + localpo(struct) to other structures in the statement
 							attachPOto(description, s, struct, parentorgan);
@@ -157,7 +157,7 @@ public class StructureNameStandardizer {
 	 * @count number of rounds in the iteration
 	 * @return ,-separated organs from part to whole
 	 */
-	public static String getStructureChain(Description description, Structure from, int depth) {
+	public static String getStructureChain(Description description, BiologicalEntity from, int depth) {
 		String chain = "";
 		
 		List<Statement> statements = description.getStatements();
@@ -167,7 +167,7 @@ public class StructureNameStandardizer {
 			for(Relation relation: relations){
 				if(relation.getFromStructure()!=null && relation.getFromStructure().equals(from) 
 						&& relation.getName().matches("part_of") && relation.getToStructure()!=null){
-					Structure to = relation.getToStructure();
+					BiologicalEntity to = relation.getToStructure();
 					chain += to.getName()+ ",";
 					if(depth < 3){
 						chain += getStructureChain(description, to, ++depth);
@@ -189,7 +189,7 @@ public class StructureNameStandardizer {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private String attachPOto(Description description, Statement statement, Structure parentstruct, String parentofparentstructure) {
+	private String attachPOto(Description description, Statement statement, BiologicalEntity parentstruct, String parentofparentstructure) {
 		String parentorgan = null;
 		String porgan = null;
 		if(parentstruct!=null){
@@ -212,8 +212,8 @@ public class StructureNameStandardizer {
 			
 			//parentorgan = parentorgan.trim();
 			//attach parentorgan to other 'structures' in this statement
-			List<Structure> structures = statement.getStructures(); //could include 'relation' too
-			for(Structure struct: structures){ 
+			List<BiologicalEntity> structures = statement.getBiologicalEntities(); //could include 'relation' too
+			for(BiologicalEntity struct: structures){ 
 				//if(struct.getName().compareTo("structure")==0){
 					if(!struct.equals(parentstruct)){//skip the 1st structure which is parentstruct
 						String partpchain = getStructureChain(description, struct, 3).replace(" of ", ",").trim(); //part of organ of organ
@@ -222,11 +222,11 @@ public class StructureNameStandardizer {
 						parentorgan = hasPart(porgan, part);
 						if(parentorgan.length()>0){
 							//log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-							((Structure)struct).appendConstraint(formatParentOrgan(parentorgan));
+							((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
 						}else if(possess(parentstruct, struct, description)){
 							parentorgan = formatParentOrgan(porgan);
 							//log(LogLevel.DEBUG,"===>[possess] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-							((Structure)struct).appendConstraint(formatParentOrgan(parentorgan));
+							((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
 						}
 
 					}
@@ -243,7 +243,7 @@ public class StructureNameStandardizer {
 	 * @param description
 	 * @return @return true if structure possess [with, has, posses] struct. This could be expressed as relation or as character constraint
 	 */
-	private boolean possess(Structure parentstruct, Structure struct,
+	private boolean possess(BiologicalEntity parentstruct, BiologicalEntity struct,
 			Description description) {
 	
 		List<Statement> statements = description.getStatements();
@@ -264,8 +264,8 @@ public class StructureNameStandardizer {
 		String idw = parentstruct.getId();
 		String idp = struct.getId();
 		for(Statement statement: statements){
-			List<Structure> structures = statement.getStructures();
-			for(Structure s: structures){
+			List<BiologicalEntity> structures = statement.getBiologicalEntities();
+			for(BiologicalEntity s: structures){
 				LinkedHashSet<Character> characters = s.getCharacters();
 				Iterator<Character> it = characters.iterator();
 				while(it.hasNext()){

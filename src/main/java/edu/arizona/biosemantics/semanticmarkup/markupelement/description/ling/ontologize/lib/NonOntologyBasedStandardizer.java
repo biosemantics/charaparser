@@ -20,7 +20,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -66,8 +66,8 @@ public class NonOntologyBasedStandardizer {
 	private void removeCircularCharacterConstraint(LinkedList<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
-				String oid = ((Structure)element).getId();
-				LinkedHashSet<Character> chars = ((Structure)element).getCharacters();
+				String oid = ((BiologicalEntity)element).getId();
+				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
 				for(Character c: chars){
 					if(c.getConstraintId()!=null && c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")){
 						c.setConstraint(null);
@@ -129,11 +129,11 @@ public class NonOntologyBasedStandardizer {
 
 
 	private void createWholeOrganismDescription(List<Element> result, Set<String> targets, String category) {
-		Structure wholeOrganism = new Structure();
+		BiologicalEntity wholeOrganism = new BiologicalEntity();
 		boolean exist = false;
 		for(Element element : result) {
-			if(element.isStructure() && ((Structure)element).getName().equals("whole_organism")) {
-				wholeOrganism = (Structure)element;
+			if(element.isStructure() && ((BiologicalEntity)element).getName().equals("whole_organism")) {
+				wholeOrganism = (BiologicalEntity)element;
 				exist = true;
 				break;
 			}
@@ -144,7 +144,7 @@ public class NonOntologyBasedStandardizer {
 		while(resultIterator.hasNext()) {
 			Element element = resultIterator.next();
 			if(element.isStructure()) {
-				Structure structure = (Structure)element;
+				BiologicalEntity structure = (BiologicalEntity)element;
 				String name = ((structure.getConstraint()==null? "": structure.getConstraint()+" ")+structure.getName()).trim();
 				boolean isSimpleStructure = isSimpleStructure(structure);
 				if(targets.contains(name) && !isToOrgan(structure) && !isConstraintOrgan(structure, result)) {		
@@ -169,6 +169,7 @@ public class NonOntologyBasedStandardizer {
 						//in-place update of structure to whole_organism
 						structure.setName("whole_organism");
 						structure.setNameOriginal("");
+						structure.setType("structure");
 						Character character = new Character();
 						character.setName(category);
 						character.setValue(name);
@@ -177,6 +178,7 @@ public class NonOntologyBasedStandardizer {
 					}
 					wholeOrganism.setName("whole_organism");
 					wholeOrganism.setNameOriginal("");
+					wholeOrganism.setType("structure");
 					Character character = new Character();
 					character.setName(category);
 					character.setValue(name);
@@ -193,7 +195,7 @@ public class NonOntologyBasedStandardizer {
 	}
 
 
-	private void updateFromStructureForRelations(Structure structure, Structure wholeOrganism) {
+	private void updateFromStructureForRelations(BiologicalEntity structure, BiologicalEntity wholeOrganism) {
 		LinkedHashSet<Relation> relations = structure.getFromRelations();
 		for(Relation r: relations){
 			r.setFromStructure(wholeOrganism);
@@ -206,11 +208,11 @@ public class NonOntologyBasedStandardizer {
 	 * @param xml
 	 * @return
 	 */
-	private boolean isConstraintOrgan(Structure structure, List<Element> xml) {
+	private boolean isConstraintOrgan(BiologicalEntity structure, List<Element> xml) {
 		String oid = structure.getId();
 		for(Element element: xml){
 			if(element.isStructure()){
-				LinkedHashSet<Character> chars = ((Structure)element).getCharacters();
+				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
 				for(Character c: chars){
 					if(c.getConstraintId()!=null && c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")) return true;
 				}				
@@ -219,11 +221,11 @@ public class NonOntologyBasedStandardizer {
 		return false;
 	}
 
-	private boolean isToOrgan(Structure structure) {
+	private boolean isToOrgan(BiologicalEntity structure) {
 		return structure.getToRelations().size()>0;
 	}
 
-	private boolean isSimpleStructure(Structure structure) {
+	private boolean isSimpleStructure(BiologicalEntity structure) {
 		String complex = (structure.getGeographicalConstraint()==null? "":structure.getGeographicalConstraint()) + 
 				(structure.getInBrackets()==null? "":structure.getInBrackets())+
 				(structure.getNotes()==null? "":structure.getNotes())+
@@ -264,13 +266,13 @@ public class NonOntologyBasedStandardizer {
 		List<Character> remove = new ArrayList<Character>();
 		for(Element element: result){
 			if(element.isStructure()){
-				LinkedHashSet<Character> characters = ((Structure)element).getCharacters();
+				LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
 				int i = 0;
 				for(Character character: characters){
 					if(i==0 && character.getName()!=null && character.getName().compareTo("count")==0 && character.getValue()!=null
 							&& character.getValue().compareTo("no") ==0 && character.getIsModifier()!=null && character.getIsModifier().compareTo("true") == 0){
-						String constraint = ((Structure)element).getConstraint()==null? "" :  ((Structure)element).getConstraint();
-						((Structure)element).setConstraint(("no "+constraint).trim());
+						String constraint = ((BiologicalEntity)element).getConstraint()==null? "" :  ((BiologicalEntity)element).getConstraint();
+						((BiologicalEntity)element).setConstraint(("no "+constraint).trim());
 						remove.add(character);
 					}
 				}
@@ -300,18 +302,18 @@ public class NonOntologyBasedStandardizer {
 		ArrayList<Character> remove = new ArrayList<Character>();
 		for(Element element: result){
 			if(element.isStructure()){
-				String constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint();
-				if(((Structure)element).getNotes()!=null && ((Structure)element).getNotes().compareTo("structure")==0
-						&& ((Structure)element).getConstraint()!=null && ((Structure)element).getConstraint().matches("^(no|not|never)\\b.*")){
+				String constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint();
+				if(((BiologicalEntity)element).getType()!=null && ((BiologicalEntity)element).getType().compareTo("structure")==0
+						&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("^(no|not|never)\\b.*")){
 					//adv is negation
 					//handle is_modifier characters and true characters
 					boolean hasTrueCharacters = false;
-					LinkedHashSet<Character> characters = ((Structure)element).getCharacters();
+					LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
 					for(Character character: characters){
 						if(character.getIsModifier()!=null && character.getIsModifier().compareTo("true")==0){
 							//turn this character to structure constraint			
-							constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint();
-							((Structure)element).setConstraint((constraint+ " "+character.getValue()).trim());
+							constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint();
+							((BiologicalEntity)element).setConstraint((constraint+ " "+character.getValue()).trim());
 							remove.add(character);
 						}else{
 							//negate true characters
@@ -330,7 +332,7 @@ public class NonOntologyBasedStandardizer {
 					}
 					//negate relations
 					boolean negatedRelation = false;
-					List<Relation> relations = this.getRelationsInvolve(((Structure)element), result);
+					List<Relation> relations = this.getRelationsInvolve(((BiologicalEntity)element), result);
 					for(Relation relation: relations){
 						negatedRelation = true;
 						if(relation.getNegation() !=null &&
@@ -343,26 +345,26 @@ public class NonOntologyBasedStandardizer {
 						Character count = new Character();
 						count.setName("count");
 						count.setValue("0");
-						((Structure) element).addCharacter(count);
+						((BiologicalEntity) element).addCharacter(count);
 					}
 					
 					//remove unneeded stuff
 					characters.removeAll(remove);
 					//remove no|not|never from the structure constraint
-					constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint().replaceFirst("^no|not|never\\b", "");
-					((Structure)element).setConstraint(constraint.trim());
-				}else if(((Structure)element).getNotes()!=null && ((Structure)element).getNotes().compareTo("structure")==0 
-						&& ((Structure)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
+					constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint().replaceFirst("^no|not|never\\b", "");
+					((BiologicalEntity)element).setConstraint(constraint.trim());
+				}else if(((BiologicalEntity)element).getType()!=null && ((BiologicalEntity)element).getType().compareTo("structure")==0 
+						&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
 					//other advs, mirrors the process above
 					String mod = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
 					//handle is_modifier characters and true characters
 					boolean hasTrueCharacters = false;
-					LinkedHashSet<Character> characters = ((Structure)element).getCharacters();
+					LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
 					for(Character character: characters){
 						if(character.getIsModifier()!=null && character.getIsModifier().compareTo("true")==0){
 							//turn this character to structure constraint			
-							constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint();
-							((Structure)element).setConstraint((constraint+ " "+character.getValue()).trim());
+							constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint();
+							((BiologicalEntity)element).setConstraint((constraint+ " "+character.getValue()).trim());
 							remove.add(character);
 						}else{
 							//modify true characters
@@ -375,7 +377,7 @@ public class NonOntologyBasedStandardizer {
 					
 					//negate relations
 					boolean modifiedRelation = false;
-					List<Relation> relations = this.getRelationsInvolve(((Structure)element), result);
+					List<Relation> relations = this.getRelationsInvolve(((BiologicalEntity)element), result);
 					for(Relation relation: relations){
 						modifiedRelation = true;
 						String modifier = relation.getModifier()==null? "": relation.getModifier();
@@ -389,14 +391,14 @@ public class NonOntologyBasedStandardizer {
 						count.setName("count");
 						count.setValue("present");
 						count.setModifier(mod);
-						((Structure) element).addCharacter(count);
+						((BiologicalEntity) element).addCharacter(count);
 					}
 					
 					//remove unneeded stuff
 					characters.removeAll(remove);
 					//remove no|not|never from the structure constraint
-					constraint = ((Structure)element).getConstraint()==null? "":  ((Structure)element).getConstraint().replaceFirst("^"+mod+"\\b", "");
-					((Structure)element).setConstraint(constraint.trim());
+					constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint().replaceFirst("^"+mod+"\\b", "");
+					((BiologicalEntity)element).setConstraint(constraint.trim());
 				}
 			}
 		}
@@ -415,7 +417,7 @@ public class NonOntologyBasedStandardizer {
 	private void normalizeZeroCount(List<Element> xml) {
 		for(Element element: xml){
 			if(element.isStructure()){
-				LinkedHashSet<Character> characters = ((Structure)element).getCharacters();
+				LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
 				for(Character character: characters){
 					if(character.getName()!=null && character.getName().compareTo("count")==0){
 						if(character.getValue()!=null){
@@ -448,11 +450,11 @@ public class NonOntologyBasedStandardizer {
 	private void removeOrphenedUnknownElements(List<Element> xml) {
 		List<Element> remove = new ArrayList<Element> (); 
 		for(Element element: xml){
-			if(element.isStructure() && ((Structure)element).getName()!=null &&
-					((Structure)element).getName().compareTo("whole_organism") == 0 && 
-					((Structure)element).getCharacters()!=null && ((Structure)element).getCharacters().size()==0){
+			if(element.isStructure() && ((BiologicalEntity)element).getName()!=null &&
+					((BiologicalEntity)element).getName().compareTo("whole_organism") == 0 && 
+					((BiologicalEntity)element).getCharacters()!=null && ((BiologicalEntity)element).getCharacters().size()==0){
 				//String id = ((Structure)element).getId();
-				List<Relation> relations = getRelationsInvolve((Structure)element, xml);
+				List<Relation> relations = getRelationsInvolve((BiologicalEntity)element, xml);
 				if(relations.size()==0) remove.add(element);				
 			}
 		}
@@ -472,7 +474,7 @@ public class NonOntologyBasedStandardizer {
 	}
 
 
-	private List<Relation> getRelationsInvolve(Structure struct, List<Element> xml) {
+	private List<Relation> getRelationsInvolve(BiologicalEntity struct, List<Element> xml) {
 		List<Relation> relations = new ArrayList<Relation>();
 		for(Element element: xml){
 			if(element.isRelation() && ((((Relation)element).getFromStructure()!=null && ((Relation)element).getFromStructure().equals(struct)) || 

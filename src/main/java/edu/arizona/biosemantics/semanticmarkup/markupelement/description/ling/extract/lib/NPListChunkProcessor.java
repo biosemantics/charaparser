@@ -20,7 +20,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 
 /**
  * NPListChunkProcessor processes chunks of ChunkType.NP_LIST
@@ -53,9 +53,9 @@ public class NPListChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Structure> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<BiologicalEntity> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> result = new LinkedList<Structure>();
+		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 		result.addAll(establishSubject(chunk, processingContext, processingContextState));		
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;

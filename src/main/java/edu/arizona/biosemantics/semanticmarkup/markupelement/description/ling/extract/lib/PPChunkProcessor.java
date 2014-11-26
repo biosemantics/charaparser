@@ -30,7 +30,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -105,10 +105,10 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			return result;
 		}
 		
-		List<Structure> lastElementStructures = new LinkedList<Structure>();
+		List<BiologicalEntity> lastElementStructures = new LinkedList<BiologicalEntity>();
 		for(Element element : lastElements) {
 			if(element.isStructure())
-				lastElementStructures.add((Structure)element);
+				lastElementStructures.add((BiologicalEntity)element);
 		}
 		
 		Element lastElement = lastElements.getLast();
@@ -130,7 +130,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				objects.add(object);
 			}
 			
-			List<Structure> subjectStructures = lastElementStructures;
+			List<BiologicalEntity> subjectStructures = lastElementStructures;
 			if(!lastIsStructure || processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 				subjectStructures = processingContextState.getSubjects();
 			}
@@ -190,7 +190,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 						//((Structure)lastElement).appendConstraint(chunk.getTerminalsText()); //should not be a constraint on the structure, should be a modifier for a character
 					}
 					else if(lastIsCharacter) {
-						List<Structure> objectStructures = 
+						List<BiologicalEntity> objectStructures = 
 								this.extractStructuresFromObject(object, processingContext, processingContextState); 
 						((Character)lastElement).appendConstraint(chunk.getTerminalsText());
 						if(!objectStructures.isEmpty()) {
@@ -229,7 +229,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	private List<Character> connectCharacters(
-			List<Structure> subjectStructures, List<Chunk> modifiers, 
+			List<BiologicalEntity> subjectStructures, List<Chunk> modifiers, 
 			Chunk preposition, LinkedHashSet<Chunk> beforeOrganChunks,
 			ProcessingContext processingContext) {
 		List<Character> result = new LinkedList<Character>();

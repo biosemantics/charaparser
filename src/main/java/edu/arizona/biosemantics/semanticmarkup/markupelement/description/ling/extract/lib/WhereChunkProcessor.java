@@ -22,7 +22,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -67,12 +67,12 @@ public class WhereChunkProcessor extends AbstractChunkProcessor {
 		Chunk nextChunk = iterator.next(); //???
 		Chunk d = iterator.previous();
 		if(previousChunk.isOfChunkType(ChunkType.PP) && processingContext.getChunkCollector().isPartOfChunkType(nextChunk.getTerminals().get(0), ChunkType.CHARACTER_STATE)) {
-			LinkedList<Structure> subjects = contextState.getSubjects();
+			LinkedList<BiologicalEntity> subjects = contextState.getSubjects();
 			LinkedList<Element> lastElements = contextState.getLastElements();
 			
 			if(!subjects.isEmpty() && lastElements.getLast().isStructure()) {
 				contextState.setClauseModifierContraint(previousChunk.getTerminalsText());
-				contextState.setClauseModifierContraintId(((Structure)lastElements.getLast()).getId());
+				contextState.setClauseModifierContraintId(((BiologicalEntity)lastElements.getLast()).getId());
 				lastElements.clear();
 				lastElements.add(subjects.getLast());
 			}

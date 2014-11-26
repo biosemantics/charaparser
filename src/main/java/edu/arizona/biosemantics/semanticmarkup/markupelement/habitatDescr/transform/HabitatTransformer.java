@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -12,10 +13,12 @@ import java.util.regex.Pattern;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
+
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Habitat;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.HabitatsFile;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Treatment;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
@@ -44,9 +47,16 @@ public class HabitatTransformer implements IHabitatTransformer {
 				for(Habitat habitat : treatment.getHabitats()) {
 					List<Statement> statements = new LinkedList<Statement>();
 					Statement statement = new Statement();
-					statement.setId("habitat" + i++);
+					statement.setId("habitat_" + i++);
 					statement.setText(habitat.getText());
-					statement.setValues(parse(habitat.getText()));
+					
+					BiologicalEntity be = new BiologicalEntity();
+					be.setName("whole_organism");
+					be.setType("structure");
+					be.setNameOriginal("");
+					be.addCharacters(parse(habitat.getText()));
+					statement.addBiologicalEntity(be);
+
 					statements.add(statement);
 					habitat.setStatements(statements);
 				}
@@ -55,11 +65,12 @@ public class HabitatTransformer implements IHabitatTransformer {
 	}
 
 	@Override
-	public List<Value> parse(String text) {
+	public LinkedHashSet<Character> parse(String text) {
 		TreebankLanguagePack tlp = parser.getOp().langpack();
 		Tokenizer<? extends HasWord> toke = tlp.getTokenizerFactory().getTokenizer(new StringReader(text));
 		List<? extends HasWord> sentence = toke.tokenize();
 		Tree parse = parser.apply(sentence);
+		text = parse.toString().replaceAll("(\\([A-Z]+ |\\)|\\([,:.])", "").trim().replaceAll("\\s+", " ");
 		ArrayList<Tree> saved = new ArrayList<Tree> ();
 		//ArrayList<Tree> left = new ArrayList<Tree>();
 		ArrayList<Tree> savedleft = new ArrayList<Tree>();
@@ -127,18 +138,18 @@ public class HabitatTransformer implements IHabitatTransformer {
 		}
 
 		element = element.replaceAll("\\s+", " ").replaceAll("\\s+(?=<)", "").replaceAll("(?<=>)\\s+", "").trim();			
-		List<Value> values = new ArrayList<Value>();
+		LinkedHashSet<Character> values = new LinkedHashSet<Character>();
 		String[] habitats = element.split("(</?habitat>)+");
 		for(String habitat: habitats){
 			if(habitat.trim().length()>0){
 				habitat = habitat.trim();
-				values.add(new Value(habitat));
+				Character c = new Character();
+				c.setName("habitat");
+				c.setValue(habitat);
+				values.add(c);
 			}
 		}
 		
-
-
-
 
 
 /*TreebankLanguagePack tlp = parser.getOp().langpack();

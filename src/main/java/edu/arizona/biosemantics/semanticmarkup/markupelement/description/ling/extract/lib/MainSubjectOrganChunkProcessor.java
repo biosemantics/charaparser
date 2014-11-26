@@ -19,7 +19,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 
 /**
  * MainSubjectOrganChunkProcessor processes chunks of ChunkType.MAIN_SUBJECT_ORGAN
@@ -52,10 +52,10 @@ public class MainSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Structure> processChunk(Chunk chunk,
+	protected List<BiologicalEntity> processChunk(Chunk chunk,
 			ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> result = this.establishSubject(chunk, processingContext, processingContextState);
+		List<BiologicalEntity> result = this.establishSubject(chunk, processingContext, processingContextState);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;
 	}

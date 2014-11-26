@@ -195,7 +195,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			this.log(LogLevel.ERROR, "Problem reading upload result", e);
 			throw new TransformationException();
 		}
-		/*until oto becomes available
+		/*until etc-dev is fixed
+		 
 		if(uploadResult != null) {
 			try {
 				otoLiteClient.open();

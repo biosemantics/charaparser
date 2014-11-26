@@ -63,9 +63,9 @@ public class Relation extends NamedElement {
 	@XmlPath("@" + RelationAttribute.notes)
 	private String notes;
 	@XmlTransient
-	private Structure toStructure;
+	private BiologicalEntity toStructure;
 	@XmlTransient
-	private Structure fromStructure;
+	private BiologicalEntity fromStructure;
 	
 	/**
 	 * Need to use ALL applicable set methods to create a relation object
@@ -184,22 +184,22 @@ public class Relation extends NamedElement {
 		this.notes = notes;
 	}
 
-	public void setToStructure(Structure structure) {
+	public void setToStructure(BiologicalEntity structure) {
 		this.toStructure = structure;
 		
 	}
 
-	public void setFromStructure(Structure structure) {
+	public void setFromStructure(BiologicalEntity structure) {
 		this.fromStructure = structure;
 	}
 	
 	@XmlTransient
-	public Structure getToStructure() {
+	public BiologicalEntity getToStructure() {
 		return toStructure;
 	}
 	
 	@XmlTransient
-	public Structure getFromStructure() {
+	public BiologicalEntity getFromStructure() {
 		return fromStructure;
 	}
 	

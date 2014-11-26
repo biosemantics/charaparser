@@ -21,7 +21,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 
 /**
  * NPListChunkProcessor processes chunks of ChunkType.NUMERICALS
@@ -66,7 +66,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			resetFrom = true;
 		}
 		
-		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
 		
 		/*String modifier1 = "";
 		//m[mostly] [4-]8�12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint

@@ -28,7 +28,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -90,9 +90,9 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		return skip;
 	}
 	@Override
-	protected List<Structure> processChunk(Chunk firstChunk, ProcessingContext processingContext) {
+	protected List<BiologicalEntity> processChunk(Chunk firstChunk, ProcessingContext processingContext) {
 		skipFirstNChunk = 0;
-		List<Structure> result = new LinkedList<Structure>();
+		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		List<Chunk> chunks = processingContext.getChunkCollector().getChunks();
@@ -186,7 +186,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			//	result.addAll(establishSubject(organChunk, processingContext, processingContextState));
 			if(chunkTerminals.get(0).toString().matches(ElementRelationGroup.possessPreps)) {
 				//result.addAll(reestablishSubject(processingContext, processingContextState));
-				List<Structure> subjects = reestablishSubject(processingContext, processingContextState);
+				List<BiologicalEntity> subjects = reestablishSubject(processingContext, processingContextState);
 				if(subjects.size()==0 && this.firstSentence){
 					establishWholeOrganismAsSubject(processingContext, result,
 							processingContextState);
@@ -217,7 +217,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			if(firstChunk.isOfChunkType(ChunkType.MODIFIER) || firstChunk.isOfChunkType(ChunkType.CONSTRAINT)){
 				processingContextState.getUnassignedConstraints().add(firstChunk);
 			}
-			List<Structure> subjects = reestablishSubject(processingContext, processingContextState);
+			List<BiologicalEntity> subjects = reestablishSubject(processingContext, processingContextState);
 			//if(firstChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && subjects.size()==0 && this.firstSentence){
 			if(subjects.size()==0 && this.firstSentence){
 				establishWholeOrganismAsSubject(processingContext, result,

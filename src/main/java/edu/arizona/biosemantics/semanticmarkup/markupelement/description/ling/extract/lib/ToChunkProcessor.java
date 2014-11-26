@@ -22,7 +22,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -61,7 +61,7 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 			ProcessingContext processingContext) {
 		List<Element> results = new LinkedList<Element>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		modifiers.addAll(unassignedModifiers);

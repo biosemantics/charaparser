@@ -9,7 +9,7 @@ import java.util.List;
 import com.google.inject.Inject;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 /**
@@ -29,9 +29,9 @@ public class TerminologyStandardizer {
 		for(Element element: input){
 			if(element.isStructure()){
 				//standardize structure
-				Structure struct = (Structure)element;
+				BiologicalEntity struct = (BiologicalEntity)element;
 				//String preferedName = characterKnowledgeBase.getCharacterName(struct.getName()).getLabel("structure");
-				String preferedName = characterKnowledgeBase.getCharacterName(struct.getName()).getLabel(((Structure)element).getNotes());
+				String preferedName = characterKnowledgeBase.getCharacterName(struct.getName()).getLabel(struct.getType());
 				if(preferedName!=null) struct.setName(preferedName);
 				
 				//standardize character

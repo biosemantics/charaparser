@@ -6,7 +6,8 @@
         <java-type name="Description">
             <xml-root-element name="treatment"/>
             <java-attributes>
-                <xml-element java-attribute="structures" xml-path="description/description_statement/structure/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure" container-type="java.util.List"/>
+                <!-- <xml-element java-attribute="structures" xml-path="description/description_statement/structure/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure" container-type="java.util.List"/> -->
+                <xml-element java-attribute="structures" xml-path="description/description_statement/biologicalEntity/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity" container-type="java.util.List"/>
 				<xml-element java-attribute="relations" xml-path="description/description_statement/relation/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation" container-type="java.util.List"/>
             </java-attributes>
         </java-type>

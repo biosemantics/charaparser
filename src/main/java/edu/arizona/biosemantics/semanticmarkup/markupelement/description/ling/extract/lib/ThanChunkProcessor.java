@@ -26,7 +26,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -73,7 +73,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 	 * size[{longer}] constraint[than (object)]";
 	 * shape[{lobed} constraint[than (proximal)]]
 	 */
-	private List<Element> processTHAN(Chunk content, List<Structure> parents, 
+	private List<Element> processTHAN(Chunk content, List<BiologicalEntity> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		List<Element> result = new LinkedList<Element>();
 		
@@ -96,10 +96,10 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				Chunk constraint = thanChunk.getChunks(ChunkType.CONSTRAINT).get(0);
 				IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(ChunkType.CONSTRAINT);
 				List<? extends Element> elements = chunkProcessor.process(constraint, processingContext);
-				List<Structure> structures = new LinkedList<Structure>();
+				List<BiologicalEntity> structures = new LinkedList<BiologicalEntity>();
 				for(Element element : elements)
 					if(element.isStructure())
-						structures.add((Structure)element);
+						structures.add((BiologicalEntity)element);
 				result.addAll(structures);
 				this.createConstraintedCharacters(content, beforeChunk, structures, processingContext);
 		} else {
@@ -116,7 +116,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				objectChunks.addAll(beforeOrganChunks);
 				objectChunks.addAll(organChunks);
 				Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
-				List<Structure> structures = extractStructuresFromObject(objectChunk, processingContext, processingContextState);
+				List<BiologicalEntity> structures = extractStructuresFromObject(objectChunk, processingContext, processingContextState);
 				result.addAll(structures);
 				result.addAll(this.createConstraintedCharacters(content, beforeChunk, structures, processingContext));
 			} else {
@@ -159,7 +159,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					}
 					if(!foundCharacter && !thanObject.getChunks().isEmpty()) {
 						result.addAll(this.createConstraintedCharacters(content, beforeChunk, 
-									 	new LinkedList<Structure>(), processingContext));
+									 	new LinkedList<BiologicalEntity>(), processingContext));
 					}
 				}
 			}
@@ -279,7 +279,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 	}
 	
 	private List<Element> createConstraintedCharacters(Chunk content, Chunk beforeChunk, 
-			/*Chunk thanObject,*/ List<Structure> structures, 
+			/*Chunk thanObject,*/ List<BiologicalEntity> structures, 
 			ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
 		List<? extends Element> characters = new LinkedList<Character>();

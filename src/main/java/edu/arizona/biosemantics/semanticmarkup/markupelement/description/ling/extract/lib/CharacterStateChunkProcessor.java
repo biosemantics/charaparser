@@ -22,7 +22,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -58,7 +58,7 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
 		List<Element> characters = processCharacterState(chunk, parents, 
 				processingContextState);//apices of basal leaves spread 
 		
@@ -72,7 +72,7 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	 * @param parents: of the character states
 	 */
 	protected List<Element> processCharacterState(Chunk content,
-			List<Structure> parents, ProcessingContextState processingContextState) {
+			List<BiologicalEntity> parents, ProcessingContextState processingContextState) {
 		List<Element> results = new LinkedList<Element>();
 
 		List<Chunk> modifiers = content.getChunks(ChunkType.MODIFIER);

@@ -22,7 +22,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -58,7 +58,7 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<Structure> parents = lastStructures(processingContext, processingContextState);
+		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
 		List<Element> es = processVP(chunk, parents, processingContext, processingContextState); //apices of basal leaves spread 
 		
 		processingContextState.setLastElements(es);
@@ -71,7 +71,7 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	 * 
 	 * m[usually] v[comprising] o[a {surrounding} (involucre)]
 	 */
-	private List<Element> processVP(Chunk content, List<Structure> parents, 
+	private List<Element> processVP(Chunk content, List<BiologicalEntity> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		List<Element> results = new LinkedList<Element>();
 		//String object = content.substring(content.indexOf("o["));
@@ -93,8 +93,8 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 		//String modifier = rest.replace(relation, "").trim().replaceAll("(m\\[|\\])", "");
 		
 		if(object.containsChunkType(ChunkType.ORGAN)) { 
-			List<Structure> toStructures = this.extractStructuresFromObject(object, processingContext, processingContextState); 
-			for(Structure toStructure : toStructures)
+			List<BiologicalEntity> toStructures = this.extractStructuresFromObject(object, processingContext, processingContextState); 
+			for(BiologicalEntity toStructure : toStructures)
 				for(Character character : processingContextState.getUnassignedCharacters())
 					toStructure.addCharacter(character);
 			processingContextState.getUnassignedCharacters().clear();

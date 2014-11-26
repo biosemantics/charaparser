@@ -13,7 +13,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 
@@ -31,7 +31,7 @@ public class ProcessingContextState implements Cloneable {
 	//private Structure mainSubjectStructure = null;
 	private Character previousCharacter = null;
 	
-	private LinkedList<Structure> subjects = new LinkedList<Structure>();
+	private LinkedList<BiologicalEntity> subjects = new LinkedList<BiologicalEntity>();
 	private LinkedList<Element> lastElements = new LinkedList<Element>();
 	
 	private boolean commaAndOrEosEolAfterLastElements = false; 
@@ -56,7 +56,7 @@ public class ProcessingContextState implements Cloneable {
 		unassignedCharacters = new ArrayList<Character>();
 		previousCharacter = null;
 		//mainSubjectStructure = null;
-		subjects = new LinkedList<Structure>();
+		subjects = new LinkedList<BiologicalEntity>();
 		lastElements = new LinkedList<Element>();
 		commaAndOrEosEolAfterLastElements = false; 
 		unassignedChunkAfterLastElements = false;
@@ -80,7 +80,7 @@ public class ProcessingContextState implements Cloneable {
 			clone.unassignedCharacters.addAll(this.unassignedCharacters);
 			//clone.mainSubjectStructure = this.mainSubjectStructure;
 			clone.previousCharacter = this.previousCharacter==null? null: this.previousCharacter;
-			clone.subjects = new LinkedList<Structure>();
+			clone.subjects = new LinkedList<BiologicalEntity>();
 			clone.subjects.addAll(this.subjects);
 			clone.lastElements = new LinkedList<Element>(this.lastElements);
 			clone.commaAndOrEosEolAfterLastElements = this.commaAndOrEosEolAfterLastElements; 
@@ -192,7 +192,7 @@ public class ProcessingContextState implements Cloneable {
 	/**
 	 * @return the subjects
 	 */
-	public LinkedList<Structure> getSubjects() {
+	public LinkedList<BiologicalEntity> getSubjects() {
 		return subjects;
 	}
 	
@@ -200,7 +200,7 @@ public class ProcessingContextState implements Cloneable {
 	 * set the subjects
 	 * @param subjects
 	 */
-	public void setSubjects(LinkedList<Structure> subjects) {
+	public void setSubjects(LinkedList<BiologicalEntity> subjects) {
 		this.subjects = subjects;
 	}
 

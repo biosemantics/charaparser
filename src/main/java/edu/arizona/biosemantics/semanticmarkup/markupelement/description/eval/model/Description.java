@@ -11,21 +11,21 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
 
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 
 
 
 @XmlRootElement(name="description")
-//@XmlType(propOrder={"source", "structures", "relations"})
+//@XmlType(propOrder={"source", "biologicalEntities", "relations"})
 public class Description {
 	
 	private String source;
 
 	private Map<String, Relation> idRelationMap = new HashMap<String, Relation>();
-	private Map<String, Structure> idStructureMap = new HashMap<String, Structure>();
+	private Map<String, BiologicalEntity> idStructureMap = new HashMap<String, BiologicalEntity>();
 	
-	@XmlPath("statement/structure")
-	private List<Structure> structures = new LinkedList<Structure>();
+	@XmlPath("statement/biological_entity")
+	private List<BiologicalEntity> biologicalEntities = new LinkedList<BiologicalEntity>();
 	
 	@XmlPath("statement/relation")
 	private List<Relation> relations = new LinkedList<Relation>();
@@ -34,13 +34,13 @@ public class Description {
 	
 	public Description() { } 
 	
-	public List<Structure> getStructures() {
+	public List<BiologicalEntity> getStructures() {
 		initializeModel();
-		return structures;
+		return biologicalEntities;
 	}
-	public void setStructures(List<Structure> structures) {
+	public void setStructures(List<BiologicalEntity> structures) {
 		initializeModel();
-		this.structures = structures;
+		this.biologicalEntities = structures;
 	}
 
 	public List<Relation> getRelations() {
@@ -68,7 +68,7 @@ public class Description {
 
 	private void initializeModel() {
 		this.characters = new LinkedList<Character>();
-		for(Structure structure : structures) {
+		for(BiologicalEntity structure : biologicalEntities) {
 			this.idStructureMap.put(structure.getId(), structure);
 			for(Character character : structure.getCharacters()) 
 				character.setStructure(structure);

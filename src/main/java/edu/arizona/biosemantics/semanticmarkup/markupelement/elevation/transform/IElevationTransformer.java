@@ -3,9 +3,10 @@
  */
 package edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Value;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFile;
 
 /**
@@ -14,5 +15,5 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Ele
  */
 public interface IElevationTransformer {
 	void transform(List<ElevationsFile> elevationsFiles);
-	List<Value> parse(String text);
+	LinkedHashSet<Character> parse(String text);
 }

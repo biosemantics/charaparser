@@ -93,7 +93,7 @@ public class Character extends NamedElement implements Cloneable {
 	private String isModifier;
 	
 	@XmlTransient
-	private Structure structure;
+	private BiologicalEntity structure;
 	//@XmlTransient
 	//private boolean isConstraintModifier; //red leaves, red is a modifier for leaves
 	
@@ -285,11 +285,11 @@ public class Character extends NamedElement implements Cloneable {
 		this.from = from;
 	}
 
-	public void setStructure(Structure structure) {
+	public void setStructure(BiologicalEntity structure) {
 		this.structure = structure;
 	}	
 	
-	public Structure getStructure() {
+	public BiologicalEntity getStructure() {
 		return this.structure;
 	}
 	

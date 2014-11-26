@@ -26,7 +26,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -65,13 +65,13 @@ public class SBARChunkProcessor extends AbstractChunkProcessor  {
 		
 		//find the real subject of the clause, which is the last organ before the clause starts -- this may not be the case for some clauses like 'grey when young' or 'red where injured'. 		
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		LinkedList<Structure> savedSubjects = processingContextState.getSubjects();
+		LinkedList<BiologicalEntity> savedSubjects = processingContextState.getSubjects();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		if(lastElements.size()>0 && lastElements.getLast().isStructure()) {
-			List<Element> latestStructures = latest(Structure.class, lastElements);
-			LinkedList<Structure> subjects = new LinkedList<Structure>();
+			List<Element> latestStructures = latest(BiologicalEntity.class, lastElements);
+			LinkedList<BiologicalEntity> subjects = new LinkedList<BiologicalEntity>();
 			for(Element structure : latestStructures) 
-				subjects.add((Structure)structure);
+				subjects.add((BiologicalEntity)structure);
 			processingContextState.setSubjects(subjects);
 		} else {//why need the follow block?
 			ListIterator<Chunk> chunkIterator = processingContext.getChunkListIterator();
@@ -93,8 +93,8 @@ public class SBARChunkProcessor extends AbstractChunkProcessor  {
 			int constraintId;
 			if(last.containsChunkType(ChunkType.ORGAN)) {
 				constraintId = processingContext.getStructureId() - 1;
-				Structure lastStructure = processingContext.getStructure(constraintId);
-				LinkedList<Structure> subjects = new LinkedList<Structure>();
+				BiologicalEntity lastStructure = processingContext.getStructure(constraintId);
+				LinkedList<BiologicalEntity> subjects = new LinkedList<BiologicalEntity>();
 				subjects.add(lastStructure);
 				processingContextState.setSubjects(subjects);
 			}else{

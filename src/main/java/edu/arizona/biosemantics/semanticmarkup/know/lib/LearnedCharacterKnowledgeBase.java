@@ -89,6 +89,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		}
 		return typeString.replaceFirst(or+"$", "");
 	}
+	
 	@Override
 	public boolean isState(String word){
 		if(isStateCache.get(word)!=null) return isStateCache.get(word);

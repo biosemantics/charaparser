@@ -29,45 +29,6 @@
 				<xml-element java-attribute="authority" xml-path="@authority"/>
             </java-attributes>
         </java-type>
-        <!--  
-       	<java-type name="StrainNumber">
-       	    <xml-type prop-order="equivalentStrainNumber accessionNumber16sRRNA" />
-			<java-attributes>
-        		<xml-element java-attribute="equivalentStrainNumbers" xml-path="equivalent_strain_numbers" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.EquivalentStrainNumber" />
-        		<xml-element java-attribute="accessionNumber16sRRNA" xml-path="accession_number_16s_rrna" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AccessionNumber16sRRNA" />
-        	</java-attributes>
-        </java-type>
-         
-       	<java-type name="PlaceOfPublication">
-       	    <xml-type prop-order="publicationTitle placeInPublication otherInfoOnPub" />
-			<java-attributes>
-        		<xml-element java-attribute="publicationTitle" xml-path="publication_title" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.PublicationTitle" />
-        		<xml-element java-attribute="placeInPublication" xml-path="place_in_publication" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.PlaceInPublication" />
-        		<xml-element java-attribute="otherInfoOnPub" xml-path="other_info_on_pub" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.OtherInfoOnPub" container-type="java.util.List"/>
-        	</java-attributes>
-        </java-type>
-        
-       	 <java-type name="TaxonHierarchy">
-       	   <java-attributes>
-                <xml-element java-attribute="text" xml-path="text()"/>
-            </java-attributes>
-        </java-type>
-       	  
-       	 <java-type name="OtherInfoOnName">
-       	   <java-attributes>
-                <xml-element java-attribute="text" xml-path="text()"/>
-				<xml-element java-attribute="type" xml-path="@type"/>
-            </java-attributes>
-        </java-type>
-       	  
-       	  
-       	  <java-type name="OtherInfoOnPub">
-       	   <java-attributes>
-                <xml-element java-attribute="text" xml-path="text()"/>
-				<xml-element java-attribute="type" xml-path="@type"/>
-            </java-attributes>
-        </java-type>
-       	-->
        	
        	<java-type name="Meta">
        	    <xml-type prop-order="source processedBy otherInfoOnMeta" />
@@ -130,11 +91,21 @@
 				<xml-element java-attribute="statements" xml-path="statement/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement" container-type="java.util.List"/>
             </java-attributes>
         </java-type>
-   		<java-type name="Statement">
+   		<!-- <java-type name="Statement">
    		    <xml-type prop-order="text structures relations id" />
             <java-attributes>			
                 <xml-element java-attribute="text" xml-path="text/text()"/>
 				<xml-element java-attribute="structures" xml-path="structure/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Structure" container-type="java.util.List"/>
+				<xml-element java-attribute="relations" xml-path="relation/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation" container-type="java.util.List"/>
+				<xml-element java-attribute="id" xml-path="@id"/>
+            </java-attributes>
+        </java-type>
+        -->
+        <java-type name="Statement">
+   		    <xml-type prop-order="text biologicalEntities relations id" />
+            <java-attributes>			
+                <xml-element java-attribute="text" xml-path="text/text()"/>
+				<xml-element java-attribute="biologicalEntities" xml-path="biological_entity/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity" container-type="java.util.List"/>
 				<xml-element java-attribute="relations" xml-path="relation/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation" container-type="java.util.List"/>
 				<xml-element java-attribute="id" xml-path="@id"/>
             </java-attributes>
@@ -167,7 +138,7 @@
 				<xml-element java-attribute="isModifier" xml-path="@is_modifier"/>
             </java-attributes>
         </java-type>
-		<java-type name="Structure">
+		<!--  <java-type name="Structure">
             <java-attributes>
             	<xml-element java-attribute="characters" xml-path="character/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character" container-type="java.util.List"/>
 				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
@@ -184,7 +155,28 @@
 				<xml-element java-attribute="provenance" xml-path="@provenance"/>
 				<xml-element java-attribute="notes" xml-path="@notes"/>
             </java-attributes>
+        </java-type> -->
+        
+        <java-type name="BiologicalEntity">
+            <java-attributes>
+            	<xml-element java-attribute="characters" xml-path="character/" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character" container-type="java.util.List"/>
+				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
+				<xml-element java-attribute="constraint" xml-path="@constraint"/>
+				<xml-element java-attribute="constraintId" xml-path="@constraintid"/>
+				<xml-element java-attribute="geographicalConstraint" xml-path="@geographical_constraint"/>
+				<xml-element java-attribute="id" xml-path="@id"/>
+				<xml-element java-attribute="inBracket" xml-path="@in_bracket"/>
+				<xml-element java-attribute="inBrackets" xml-path="@in_brackets"/>
+				<xml-element java-attribute="name" xml-path="@name"/>
+				<xml-element java-attribute="parallelismConstraint" xml-path="@parallelism_constraint"/>
+				<xml-element java-attribute="taxonConstraint" xml-path="@taxon_constraint"/>
+				<xml-element java-attribute="ontologyId" xml-path="@ontologyid"/>
+				<xml-element java-attribute="provenance" xml-path="@provenance"/>
+				<xml-element java-attribute="notes" xml-path="@notes"/>
+				<xml-element java-attribute="type" xml-path="@type"/>
+            </java-attributes>
         </java-type>
+        
 		<java-type name="Relation">
             <java-attributes>
 				<xml-element java-attribute="alterName" xml-path="@alter_name"/>
