@@ -457,6 +457,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		if(download != null) {
 			for(Synonym termSyn: download.getSynonyms()){
 				//Hong TODO need to add category info to synonym entry in OTOLite
+<<<<<<< HEAD
 				//if(termSyn.getCategory().compareTo("structure")==0){
 				if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
 					//take care of singular and plural forms
@@ -471,7 +472,44 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 						syns = termSyn.getSynonym().replaceAll("_",  "-");
 						synp = inflector.getPlural(syns);
 					}
+=======
+				if(termSyn.getCategory().compareTo("structure")==0){
+					//take care of singular and plural forms
+					String syns = ""; 
+					String synp = "";
+					String terms = "";
+					String termp = "";
+					if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
+						synp = termSyn.getSynonym().replaceAll("_",  "-");
+						syns = inflector.getSingular(synp);					
+					}else{
+						syns = termSyn.getSynonym().replaceAll("_",  "-");
+						synp = inflector.getPlural(syns);
+					}
+	
+					if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+						termp = termSyn.getTerm().replaceAll("_",  "-");
+						terms = inflector.getSingular(termp);					
+					}else{
+						terms = termSyn.getTerm().replaceAll("_",  "-");
+						termp = inflector.getPlural(terms);
+					}
+					//glossary.addSynonym(syns, termSyn.getCategory(), terms);
+					//glossary.addSynonym(synp, termSyn.getCategory(), termp);
+					//dsyns.add(new Term(syns, termSyn.getCategory());
+					//dsyns.add(new Term(synp, termSyn.getCategory());
+					glossary.addSynonym(syns, "structure", terms);
+					glossary.addSynonym(synp, "structure", termp);
+					dsyns.add(new Term(syns, "structure"));
+					dsyns.add(new Term(synp, "structure"));
+				}else{//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
+					glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
+					dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
+				}					
+			}
+>>>>>>> branch 'master' of https://github.com/biosemantics/charaparser.git
 
+<<<<<<< HEAD
 					if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
 						termp = termSyn.getTerm().replaceAll("_",  "-");
 						terms = inflector.getSingular(termp);					
@@ -493,6 +531,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				}					
 			}
 
+=======
+>>>>>>> branch 'master' of https://github.com/biosemantics/charaparser.git
 			//term_category from OTO, excluding dsyns
 			for(Decision decision : download.getDecisions()) {
 				if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
