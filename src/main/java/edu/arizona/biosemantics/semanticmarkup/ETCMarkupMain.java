@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputNoLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupAndOntologyMappingCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.iplant.IPlantMarkupRun;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.MarkupDescriptionTreatmentTransformer;
 import edu.arizona.biosemantics.semanticmarkup.run.etc.ETCMarkupRun;
@@ -78,6 +80,8 @@ public class ETCMarkupMain extends CLIMain {
 		options.addOption("d", "database-name", true, "name of database to use");
 		options.addOption("u", "database-user", true, "database user to use");
 		options.addOption("s", "database-password", true, "database password to use");
+		options.addOption("q", "ontologies directory", true, "directory with ontology owl files for ontology id mapping");
+		options.addOption("r", "onotlogies to use", true, "ontologies to use for ontology id mapping");
 		Option threadingOption = new Option("t", "multi-threading", true, "use multi-threading to compute the result");
 		//threadingOption.setValueSeparator(',');
 		options.addOption(threadingOption);
@@ -218,12 +222,23 @@ public class ETCMarkupMain extends CLIMain {
 			if (commandLine.hasOption("l")) {
 				config.setPerlDirectory(commandLine.getOptionValue("l"));
 			}
+			
+			if (commandLine.hasOption("q")) {
+				config.setOntologiesDirectory(commandLine.getOptionValue("q"));
+			}
+			if (commandLine.hasOption("r")) {
+				String ontologies = commandLine.getOptionValue("r");
+				if(!ontologies.isEmpty()) {
+					config.setOntologies(Arrays.asList(ontologies.split(",")));
+				}
+			}
+			
 		} catch(ParseException e) {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
-		
+
+		config.setDescriptionMarkupCreator(DescriptionMarkupAndOntologyMappingCreator.class);
 		config.setRun(ETCMarkupRun.class);
-		config.setMarkupDescriptionTreatmentTransformer(MarkupDescriptionTreatmentTransformer.class);
 		config.setGlossary(InMemoryGlossary.class);
 		//no learning required, already passed learning and reviewed terms in OTO Lite 
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);

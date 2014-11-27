@@ -120,6 +120,10 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.StructureNameStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.IDescriptionTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.MarkupDescriptionTreatmentTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.OntologyMappingTreatmentTransformer;
 
 /**
  * Guice config file for basic parameters
@@ -177,6 +181,11 @@ public class BasicConfig extends AbstractModule {
 			  bind(IStanfordParserTokenTransformer.class).to(WordStanfordParserTokenTransformer.class).in(Singleton.class);
 			  bind(IParseTreeFactory.class).to(StanfordParseTreeFactory.class).in(Singleton.class);
 			  bind(ParentTagProvider.class).annotatedWith(Names.named("ParentTagProvider")).to(ParentTagProvider.class).in(Singleton.class);
+			  
+			  bind(IDescriptionTransformer.class).annotatedWith(Names.named("DescriptionMarkupCreator_MarkupDescription"))
+			  	.to(MarkupDescriptionTreatmentTransformer.class).in(Singleton.class);
+			  bind(IDescriptionTransformer.class).annotatedWith(Names.named("DescriptionMarkupCreator_OntologyMapping"))
+			  	.to(OntologyMappingTreatmentTransformer.class).in(Singleton.class);
 			  
 			  bind(ChunkerChain.class).annotatedWith(Names.named("ChunkerChain")).to(CharaparserChunkerChain.class).in(Singleton.class);
 			  bind(IChunker.class).annotatedWith(Names.named("AreaChunker")).to(AreaChunker.class).in(Singleton.class);
