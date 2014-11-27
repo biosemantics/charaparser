@@ -68,12 +68,12 @@ public class NonOntologyBasedStandardizer {
 	private void taxonName2WholeOrganism(LinkedList<Element> result) {
 		Element firstElement =result.get(0);
 		if(firstElement.isStructure()){
-			String notes = ((Structure)firstElement).getNotes();
-			if(notes!=null && notes.compareTo("taxon_name")==0 && ( 
-					((Structure)firstElement).getConstraint()==null ||((Structure)firstElement).getConstraint().isEmpty())){
-				((Structure)firstElement).setName("whole_organism");
-				((Structure)firstElement).setNameOriginal("");
-				((Structure)firstElement).setNotes("structure");
+			String type = ((BiologicalEntity)firstElement).getType();
+			if(type!=null && type.compareTo("taxon_name")==0 && ( 
+					((BiologicalEntity)firstElement).getConstraint()==null ||((BiologicalEntity)firstElement).getConstraint().isEmpty())){
+				((BiologicalEntity)firstElement).setName("whole_organism");
+				((BiologicalEntity)firstElement).setNameOriginal("");
+				((BiologicalEntity)firstElement).setType("structure");
 			}
 		}
 	}
