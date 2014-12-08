@@ -77,7 +77,6 @@ public class NonOntologyBasedStandardizer {
 			}
 		}
 	}
-
 	/**
 	 * if a character constraint refers to the same structure the character belongs to, remove the constraint
 	 * @param result

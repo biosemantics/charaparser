@@ -40,7 +40,6 @@ import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.unsupervised.POS;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFileList;
 
 /**
@@ -335,8 +334,7 @@ public class OTOLearner implements ILearner {
 		}
 		upload.setPossibleTaxonNames(taxonNameTerms);
 		*/
-		
-		
+
 		List<Term> terms = getStructures(taxonNames);
 		//for(Term t: terms){
 		//	System.out.println(t.getTerm());

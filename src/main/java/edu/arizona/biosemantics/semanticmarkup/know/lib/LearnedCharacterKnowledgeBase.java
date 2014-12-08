@@ -77,7 +77,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		}
 		return isEntity;
 	}
-	
+		
 	@Override
 	public String getEntityType(String singular, String original){
 		ArrayList<String> types = new ArrayList<String>();
