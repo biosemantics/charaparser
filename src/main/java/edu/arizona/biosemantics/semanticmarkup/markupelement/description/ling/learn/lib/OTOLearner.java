@@ -335,8 +335,7 @@ public class OTOLearner implements ILearner {
 		}
 		upload.setPossibleTaxonNames(taxonNameTerms);
 		*/
-		
-		
+
 		List<Term> terms = getStructures(taxonNames);
 		//for(Term t: terms){
 		//	System.out.println(t.getTerm());
