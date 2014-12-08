@@ -128,11 +128,17 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 				for(Statement statement : description.getStatements()) {
 					for(BiologicalEntity structure : statement.getBiologicalEntities()) {
 						Set<String> iris = new HashSet<String>();
-						for(Searcher searcher : searchers) { 
-							List<OntologyEntry> ontologyEntries = searcher.getEntries(structure.getName());
+						for(Searcher searcher : searchers) {
+							String searchTerm = (structure.getConstraint() + " " + structure.getName()).trim();
+							List<OntologyEntry> ontologyEntries = searcher.getEntries(searchTerm);
+							if(ontologyEntries.isEmpty()) {
+								searchTerm = structure.getName();
+								ontologyEntries = searcher.getEntries(searchTerm);
+							}
 							for(OntologyEntry entry : ontologyEntries) {
 								if(entry.getClassIRI() != null)
-									iris.add(entry.getClassIRI());							}
+									iris.add(entry.getClassIRI());	
+							}
 						}
 
 						String accumulatedIRIs = "";
