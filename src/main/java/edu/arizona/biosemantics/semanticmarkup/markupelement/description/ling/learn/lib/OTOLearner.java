@@ -484,16 +484,16 @@ public class OTOLearner implements ILearner {
 			if(word.startsWith("[") && word.endsWith("]")) continue;
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
 			//getMostLikelyPOS does stemming, while isVerb does not.
-			if(word.compareTo("times")==0 || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
+			if(word.matches("times|and or|i e|e g") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
 				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");				
+				log(LogLevel.DEBUG, word+" [times, and/or, abbreviations] is considered an non-eq term and removed");				
 				continue;
 			}
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 				|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 					noneqwords.add(word);
-					log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
+					log(LogLevel.DEBUG, word+" [non-ed-ending verb/adv] is considered an non-eq term and removed");
 				//}					
 				continue;
 			}
@@ -625,7 +625,7 @@ public class OTOLearner implements ILearner {
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
+				log(LogLevel.DEBUG, word+"[non-ed-ending verb/adv] is considered an non-eq term and removed");
 				continue;
 			}
 			filteredwords.add(word);
@@ -655,7 +655,7 @@ public class OTOLearner implements ILearner {
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
+				log(LogLevel.DEBUG, word+"[non-ed-ending verb/adv] is considered an non-eq term and removed");
 				continue;
 			}
 			filteredwords.add(word);
