@@ -238,7 +238,7 @@ public class CLIMain {
 	}
 
 	protected RunConfig getConfig(String config) throws IOException {
-		TaxonGroup taxonGroup = TaxonGroup.valueOf(config);
+		TaxonGroup taxonGroup = TaxonGroup.valueOf(config.toUpperCase());
 		switch(taxonGroup) {
 		case ALGAE:
 			return new AlgaeConfig();
