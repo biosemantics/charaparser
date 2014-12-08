@@ -45,9 +45,12 @@ import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.common.ontology.search.FileSearcher;
 import edu.arizona.biosemantics.common.ontology.search.Searcher;
+import edu.arizona.biosemantics.common.ontology.search.TaxonGroupOntology;
+import edu.arizona.biosemantics.common.ontology.search.model.Ontology;
 import edu.arizona.biosemantics.common.ontology.search.model.OntologyEntry;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
@@ -71,22 +74,23 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 
 	private String etcUser;
 	private Collection<Searcher> searchers;
-	private Collection<String> ontologyNames;
+	private TaxonGroup taxonGroup;
 
 	@Inject
 	public OntologyMappingTreatmentTransformer(
 			@Named("Version") String version,
 			@Named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")boolean parallelProcessing, 
 			@Named("EtcUser")String etcUser, 
-			@Named("OntologyMappingTreatmentTransformer_OntologyNames")Collection<String> ontologyNames,
+			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			@Named("OntologyMappingTreatmentTransformer_OntologyDirectory")String ontologyDirectory,
 			@Named("WordNetAPI_Sourcefile")String wordNetSource) {
 		super(version, parallelProcessing);
-		searchers = new LinkedList<Searcher>();
-		for(String ontologyName : ontologyNames) 
-			searchers.add(new FileSearcher(ontologyName, ontologyDirectory, wordNetSource));
 		this.etcUser = etcUser;
-		this.ontologyNames = ontologyNames;
+		this.taxonGroup = taxonGroup;
+		
+		searchers = new LinkedList<Searcher>();
+		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
+			searchers.add(new FileSearcher(ontology, ontologyDirectory, wordNetSource));
 	}
 
 	@Override
@@ -100,8 +104,8 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		
 		//TODO: Allow multiple reosures per processor in schema
 		String ontologies = "";
-		for(String ontologyName : ontologyNames) {
-			ontologies += ontologyName + ",  ";
+		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) {
+			ontologies += ontology.toString() + ",  ";
 		}
 		ontologies = ontologies.substring(0, ontologies.length() - 2);
 		Resource resource = new Resource();
@@ -126,31 +130,29 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				for(Statement statement : description.getStatements()) {
-					for(BiologicalEntity structure : statement.getBiologicalEntities()) {
-						Set<String> iris = new HashSet<String>();
-						for(Searcher searcher : searchers) {
-							String searchTerm = (structure.getConstraint() + " " + structure.getName()).trim();
-							List<OntologyEntry> ontologyEntries = searcher.getEntries(searchTerm);
-							if(ontologyEntries.isEmpty()) {
-								searchTerm = structure.getName();
-								ontologyEntries = searcher.getEntries(searchTerm);
-							}
-							for(OntologyEntry entry : ontologyEntries) {
-								if(entry.getClassIRI() != null)
-									iris.add(entry.getClassIRI());	
-							}
+					for(BiologicalEntity structure : statement.getBiologicalEntities()) {			
+						String searchTerm = (structure.getConstraint() + " " + structure.getName()).trim();
+						String iri = getIRI(searchTerm);
+						if(iri == null) {
+							searchTerm = structure.getName();
+							iri = getIRI(searchTerm);
 						}
-
-						String accumulatedIRIs = "";
-						for(String iri : iris) {
-							accumulatedIRIs += iri + ", ";
-						}
-						if(accumulatedIRIs.length() >= 2)
-							structure.setOntologyId(accumulatedIRIs.substring(0, accumulatedIRIs.length() - 2));
+						if(iri != null)
+							structure.setOntologyId(iri);
 					}
 				}
 			}
 		}
+	}
+
+	private String getIRI(String searchTerm) {
+		for(Searcher searcher : searchers) {
+			List<OntologyEntry> ontologyEntries = searcher.getEntries(searchTerm);
+			if(ontologyEntries.get(0).getScore() == 1.0) {
+				return ontologyEntries.get(0).getClassIRI();
+			}
+		}
+		return null;
 	}
 
 }

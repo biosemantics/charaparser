@@ -36,6 +36,7 @@ import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner;
@@ -57,7 +58,7 @@ public class OTOLearner implements ILearner {
 	private Connection connection;
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
-	private String glossaryType;
+	private TaxonGroup taxonGroup;
 	private IGlossary glossary;
 	private OTOLiteClient otoLiteClient;
 	private String otoLiteTermReviewURL;
@@ -96,7 +97,7 @@ public class OTOLearner implements ILearner {
 			@Named("DatabaseUser")String databaseUser,
 			@Named("DatabasePassword")String databasePassword,
 			@Named("DatabasePrefix")String databasePrefix, 
-			@Named("GlossaryType")String glossaryType,
+			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
 			IPOSKnowledgeBase posKnowledgeBase, 
@@ -113,7 +114,7 @@ public class OTOLearner implements ILearner {
 		this.otoLiteClient = otoLiteClient;
 		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
 		this.otoLiteReviewFile = otoLiteReviewFile;
-		this.glossaryType = glossaryType;
+		this.taxonGroup = taxonGroup;
 		this.glossary = glossary;
 		this.databasePrefix = databasePrefix;
 		this.glossaryTable = glossaryTable;
@@ -139,7 +140,7 @@ public class OTOLearner implements ILearner {
 		//String glossaryTable = tablePrefix + "_glossary";
 		//if(!glossaryExistsLocally(tablePrefix)) {
 			otoClient.open();
-			Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(glossaryType);
+			Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());
 			//initialize the glossary table that the actual learn part needs
 			GlossaryDownload glossaryDownload = futureGlossaryDownload.get();
 			otoClient.close();
@@ -151,7 +152,7 @@ public class OTOLearner implements ILearner {
 		if(useOtoCommuntiyDownload) {
 			log(LogLevel.INFO, "Will download oto community decisions to add additionally to glossary used");
 			otoLiteClient.open();
-			Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload(glossaryType);
+			Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload(taxonGroup.getDisplayName());
 			Download communityDownload = futureCommunityDownload.get();
 			if(communityDownload != null) {
 				log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
@@ -355,7 +356,7 @@ public class OTOLearner implements ILearner {
 		//}
 		upload.setPossibleOtherTerms(terms);
 		upload.setSentences(getSentences());
-		upload.setGlossaryType(glossaryType);
+		upload.setGlossaryType(taxonGroup.getDisplayName());
 		
 		return upload;
 	}
@@ -484,16 +485,16 @@ public class OTOLearner implements ILearner {
 			if(word.startsWith("[") && word.endsWith("]")) continue;
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
 			//getMostLikelyPOS does stemming, while isVerb does not.
-			if(word.compareTo("times")==0 || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
+			if(word.matches("times|and or|i e|e g") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
 				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");				
+				log(LogLevel.DEBUG, word+" [times, and/or, abbreviations] is considered an non-eq term and removed");				
 				continue;
 			}
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 				|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 					noneqwords.add(word);
-					log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
+					log(LogLevel.DEBUG, word+" [non-ed-ending verb/adv] is considered an non-eq term and removed");
 				//}					
 				continue;
 			}
@@ -625,7 +626,7 @@ public class OTOLearner implements ILearner {
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
+				log(LogLevel.DEBUG, word+"[non-ed-ending verb/adv] is considered an non-eq term and removed");
 				continue;
 			}
 			filteredwords.add(word);
@@ -655,7 +656,7 @@ public class OTOLearner implements ILearner {
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" is considered an non-eq term and removed");
+				log(LogLevel.DEBUG, word+"[non-ed-ending verb/adv] is considered an non-eq term and removed");
 				continue;
 			}
 			filteredwords.add(word);

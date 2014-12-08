@@ -3,11 +3,10 @@ package edu.arizona.biosemantics.semanticmarkup;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import edu.arizona.biosemantics.semanticmarkup.config.dataset.PlantConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PlantConfig;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.unsupervised.UnsupervisedClauseMarkup;

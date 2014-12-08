@@ -1,10 +1,10 @@
-package edu.arizona.biosemantics.semanticmarkup.config.dataset;
+package edu.arizona.biosemantics.semanticmarkup.config.taxongroup;
 
 import java.io.File;
 import java.io.IOException;
 
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
-import edu.arizona.biosemantics.semanticmarkup.know.Glossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.FNAv19Normalizer;
 
 
@@ -21,7 +21,7 @@ public class PoriferaConfig extends RunConfig {
 		//this.setDescriptionReaderInputDirectory("evaluationData" + File.separator + "Ant_CharaParser_Evaluation");
 		
 		// PROCESSING 
-		this.setGlossaryType(Glossary.Porifera.toString());
+		this.setTaxonGroup(TaxonGroup.PORIFERA);
 		//this.setNormalizer(FNAv19Normalizer.class);
 
 		// MISC

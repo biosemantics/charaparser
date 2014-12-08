@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
@@ -55,7 +56,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 			@Named("DatabaseUser")String databaseUser,
 			@Named("DatabasePassword")String databasePassword,
 			@Named("DatabasePrefix")String databasePrefix, 
-			@Named("GlossaryType")String glossaryType,
+			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
 			@Named("SelectedSources")Set<String> selectedSources, 
 			@Named("GlossaryTable")String glossaryTable)
@@ -65,7 +66,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 				descriptionExtractorRunMaximum, sentenceChunkerRunMaximum, otoClient,
 				otoLiteClient, otoLiteTermReviewURL, databaseHost, databasePort,
 				databaseName, databaseUser, databasePassword, databasePrefix,
-				glossaryType, glossary, selectedSources, glossaryTable);
+				taxonGroup, glossary, selectedSources, glossaryTable);
 		this.glossaryTable = glossaryTable;
 	}
 

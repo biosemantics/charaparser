@@ -226,15 +226,8 @@ public class ETCLearnMain extends CLIMain {
 			if (commandLine.hasOption("o")) {
 				config.setOtoLiteClientURL(commandLine.getOptionValue("o"));
 			}
-			
 			if (commandLine.hasOption("q")) {
 				config.setOntologiesDirectory(commandLine.getOptionValue("q"));
-			}
-			if (commandLine.hasOption("r")) {
-				String ontologies = commandLine.getOptionValue("r");
-				if(!ontologies.isEmpty()) {
-					config.setOntologies(Arrays.asList(ontologies.split(",")));
-				}
 			}
 
 		} catch (ParseException e) {
