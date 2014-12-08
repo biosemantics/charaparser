@@ -23,12 +23,14 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
-import edu.arizona.biosemantics.semanticmarkup.config.dataset.AlgaeConfig;
-import edu.arizona.biosemantics.semanticmarkup.config.dataset.FossilConfig;
-import edu.arizona.biosemantics.semanticmarkup.config.dataset.HymenopteraConfig;
-import edu.arizona.biosemantics.semanticmarkup.config.dataset.PlantConfig;
-import edu.arizona.biosemantics.semanticmarkup.config.dataset.PoriferaConfig;
-import edu.arizona.biosemantics.semanticmarkup.know.Glossary;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.AlgaeConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.CnidariaConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.FossilConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.GastropodsConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.HymenopteraConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PlantConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PoriferaConfig;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.GenericDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.run.IRun;
@@ -236,25 +238,26 @@ public class CLIMain {
 	}
 
 	protected RunConfig getConfig(String config) throws IOException {
-		if(config.equals(Glossary.Plant.toString())) {
+		TaxonGroup taxonGroup = TaxonGroup.valueOf(config);
+		switch(taxonGroup) {
+		case ALGAE:
+			return new AlgaeConfig();
+		case CNIDARIA:
+			return new CnidariaConfig();
+		case FOSSIL:
+			return new FossilConfig();
+		case GASTROPODS:
+			return new GastropodsConfig();
+		case HYMENOPTERA:
+			return new HymenopteraConfig();
+		case PLANT:
+			return new PlantConfig();
+		case PORIFERA:
+			return new PoriferaConfig();
+		default:
+			log(LogLevel.ERROR, "Config unknown, fall back to default config based on Plant");
 			return new PlantConfig();
 		}
-		if(config.equals(Glossary.Hymenoptera.toString())) {
-			return new HymenopteraConfig();
-		}
-		if(config.equals(Glossary.Algae.toString())) {
-			return new AlgaeConfig();
-		}
-		if(config.equals(Glossary.Porifera.toString())) {
-			return new PoriferaConfig();
-		}
-		if(config.equals(Glossary.Fossil.toString())) {
-			return new FossilConfig();
-		}
-		log(LogLevel.ERROR, "Config unknown, fall back to default config based on Plant");
-		RunConfig result = new PlantConfig();
-		result.setGlossaryType(config);
-		return result;
 	}
 }
 
