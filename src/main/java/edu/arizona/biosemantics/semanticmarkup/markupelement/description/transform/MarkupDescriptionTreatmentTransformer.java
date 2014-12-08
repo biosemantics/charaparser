@@ -45,6 +45,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
@@ -78,7 +79,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected String databasePrefix;
 	protected IGlossary glossary;
 	protected Connection connection;
-	protected String glossaryType;
+	protected TaxonGroup taxonGroup;
 	protected OTOLiteClient otoLiteClient;
 	protected String otoLiteTermReviewURL;
 	protected Set<String> selectedSources;
@@ -130,7 +131,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("DatabaseUser")String databaseUser,
 			@Named("DatabasePassword")String databasePassword,
 			@Named("DatabasePrefix")String databasePrefix, 
-			@Named("GlossaryType")String glossaryType,
+			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
 			@Named("SelectedSources")Set<String> selectedSources, 
 			@Named("GlossaryTable")String glossaryTable,
@@ -153,7 +154,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
-		this.glossaryType = glossaryType;
+		this.taxonGroup = taxonGroup;
 		this.selectedSources = selectedSources;
 		this.glossaryTable = glossaryTable;
 		this.termCategorizationRequired = termCategorizationRequired;
@@ -182,14 +183,14 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			glossaryVersion = "latest";
 		
 		otoClient.open();
-		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(glossaryType, glossaryVersion);
+		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
 		
 		GlossaryDownload glossaryDownload = new GlossaryDownload();
 		try {
 			glossaryDownload = futureGlossaryDownload.get();
 		} catch (Exception e) {
 			otoClient.close();
-			log(LogLevel.ERROR, "Couldn't download glossary " + glossaryType + " version: " + glossaryVersion, e);
+			log(LogLevel.ERROR, "Couldn't download glossary " + taxonGroup.getDisplayName() + " version: " + glossaryVersion, e);
 			throw new TransformationException();
 		}
 		otoClient.close();
@@ -254,7 +255,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		processor.setDate(dateFormat.format(new Date()));
 		processor.setOperator(etcUser);
 		Resource resource = new Resource();
-		resource.setName(glossaryType);
+		resource.setName(taxonGroup.getDisplayName());
 		resource.setType("OTO Glossary");
 		resource.setVersion(glossaryVersion);
 		Software software = new Software();

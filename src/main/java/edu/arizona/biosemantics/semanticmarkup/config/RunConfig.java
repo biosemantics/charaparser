@@ -94,6 +94,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.transform.E
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.transform.IEcologyTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.IEcologyReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.IEcologyWriter;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 
 
 
@@ -149,7 +150,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IElevationWriter> elevationWriter = JDOMElevationWriter.class;
 	
 	// PROCESSING 
-	private String glossaryType = "plant";
+	private TaxonGroup taxonGroup = TaxonGroup.PLANT;
 	private Class<? extends IRun> run = DescriptionMarkupRun.class;
 	private String runRootDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix;
 	private String runOutDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
@@ -172,8 +173,6 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
 	private boolean termCategorizationRequired = false;
 	private boolean useOtoCommuntiyDownload = true;
-			
-	private Collection<String> ontologies = Arrays.asList(new String[] { "pato", "po", "poro", "bspo", "ext", "hao" });
 		
 	// MISC
 	//required for bioportal submission of oto lite
@@ -193,7 +192,7 @@ public class RunConfig extends BasicConfig {
 		
 		try {
 			// PROCESSING 
-			bind(String.class).annotatedWith(Names.named("GlossaryType")).toInstance(glossaryType);
+			bind(TaxonGroup.class).annotatedWith(Names.named("TaxonGroup")).toInstance(taxonGroup);
 			bind(IRun.class).to(run);
 			bind(IGlossary.class).to(glossary).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("PerlDirectory")).toInstance(this.perlDirectory);
@@ -223,8 +222,7 @@ public class RunConfig extends BasicConfig {
 			bind(IElevationTransformer.class).to(ElevationTransformer.class).in(Singleton.class);
 			bind(IPhenologyMarkupCreator.class).to(phenologyMarkupCreator).in(Singleton.class);
 			bind(IPhenologyTransformer.class).to(PhenologyTransformer.class).in(Singleton.class);
-			
-			bind(new TypeLiteral<Collection<String>>() {}).annotatedWith(Names.named("OntologyMappingTreatmentTransformer_OntologyNames")).toInstance(ontologies);
+
 			bind(String.class).annotatedWith(Names.named("OntologyMappingTreatmentTransformer_OntologyDirectory")).toInstance(ontologiesDirectory);
 			
 			//IO
@@ -575,12 +573,12 @@ public class RunConfig extends BasicConfig {
 		this.databasePort = databasePort;
 	}
 
-	public String getGlossaryType() {
-		return glossaryType;
+	public TaxonGroup getTaxonGroup() {
+		return taxonGroup;
 	}
 
-	public void setGlossaryType(String glossaryType) {
-		this.glossaryType = glossaryType;
+	public void setTaxonGroup(TaxonGroup taxonGroup) {
+		this.taxonGroup = taxonGroup;
 	}
 
 	public String getOtoLiteReviewFile() {
@@ -790,12 +788,6 @@ public class RunConfig extends BasicConfig {
 
 	public void setOntologiesDirectory(String ontologiesDirectory) {
 		this.ontologiesDirectory = ontologiesDirectory;
-	}
-
-	public void setOntologies(Collection<String> ontologies) {
-		this.ontologies = ontologies;
 	}	
-	
-	
 	
 }
