@@ -133,10 +133,16 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 					for(BiologicalEntity structure : statement.getBiologicalEntities()) {			
 						String searchTerm = (structure.getConstraint() + " " + structure.getName()).trim();
 						String iri = getIRI(searchTerm);
+						if(iri != null)
+							log(LogLevel.DEBUG, "Found IRI: " + iri + " for term " + searchTerm);
+						
 						if(iri == null) {
 							searchTerm = structure.getName();
 							iri = getIRI(searchTerm);
+							if(iri != null)
+								log(LogLevel.DEBUG, "Found IRI: " + iri + " for term " + searchTerm);
 						}
+						
 						if(iri != null)
 							structure.setOntologyId(iri);
 					}
@@ -146,10 +152,14 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 	}
 
 	private String getIRI(String searchTerm) {
+		log(LogLevel.DEBUG, "Search " + searchTerm);
 		for(Searcher searcher : searchers) {
 			List<OntologyEntry> ontologyEntries = searcher.getEntries(searchTerm);
-			if(ontologyEntries.get(0).getScore() == 1.0) {
-				return ontologyEntries.get(0).getClassIRI();
+			if(!ontologyEntries.isEmpty()) {
+				log(LogLevel.DEBUG, "Highest scored ontology entity" + ontologyEntries.get(0).getScore());
+				if(ontologyEntries.get(0).getScore() == 1.0) {
+					return ontologyEntries.get(0).getClassIRI();
+				}
 			}
 		}
 		return null;
