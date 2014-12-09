@@ -308,5 +308,4 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
->>>>>>> refs/heads/master
 </xs:schema>
