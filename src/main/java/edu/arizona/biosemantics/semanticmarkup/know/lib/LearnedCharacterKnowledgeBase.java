@@ -42,7 +42,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private ConcurrentHashMap<String, Match> characterCache = new ConcurrentHashMap<String, Match> ();
 	private ConcurrentHashMap<String, Boolean> isEntityCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, Boolean> isStateCache = new ConcurrentHashMap<String, Boolean> ();
-	private ConcurrentHashMap<String, ArrayList<String>> entityTypeCache = new ConcurrentHashMap<String, ArrayList<String>> (); //term => entity type (structure, taxon_name, etc.)
+	private ConcurrentHashMap<String, HashSet<String>> entityTypeCache = new ConcurrentHashMap<String, HashSet<String>> (); //term => entity type (structure, taxon_name, etc.)
 	private IInflector inflector;
 	/**
 	 * @param glossary
@@ -64,14 +64,13 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 				
 		String cats = this.getCharacterName(word).getCategories();
 		//boolean isEntity = cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
-		//boolean isEntity = cats !=null && cats.matches(".*?(^|_)("+ElementRelationGroup.entityElements+")(_|$).*");
 		boolean isEntity = cats !=null && cats.matches(".*?(^|"+or+")("+ElementRelationGroup.entityElements+")("+or+"|$).*");
 		isEntityCache.put(word, isEntity);
 		if(isEntity){
 			String[] catArray = cats.split(or);
 			for(String cat: catArray){
-				ArrayList<String> types = entityTypeCache.get(cat);
-				if(types==null)	types = new ArrayList<String>();
+				HashSet<String> types = entityTypeCache.get(cat);
+				if(types==null)	types = new HashSet<String>();
 				types.add(cat);
 				entityTypeCache.put(word, types);
 			}
@@ -81,14 +80,13 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		
 	@Override
 	public String getEntityType(String singular, String original){
-		ArrayList<String> types = new ArrayList<String>();
-		if(entityTypeCache.get(original)!=null) types = entityTypeCache.get(original); 
-		else if(entityTypeCache.get(singular)!=null) types = entityTypeCache.get(singular);
-		String typeString = "";
-		for(String type: types){
-			typeString += type+this.or;
-		}
-		return typeString.replaceFirst(or+"$", "");
+		HashSet<String> types = new HashSet<String>();
+		if(entityTypeCache.get(original)!=null) types.addAll(entityTypeCache.get(original)); 
+		else if(entityTypeCache.get(singular)!=null) types.addAll(entityTypeCache.get(singular));
+		
+		if(types.contains(ElementRelationGroup.entityTypes.get(0))) return ElementRelationGroup.entityTypes.get(0);
+		else if(types.contains(ElementRelationGroup.entityTypes.get(1))) return ElementRelationGroup.entityTypes.get(1);
+		else return ElementRelationGroup.entityTypes.get(2);
 	}
 	
 	@Override
