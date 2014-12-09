@@ -25,6 +25,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
+ * not being used
  * MyCleanupChunker reformats the chunks after all other chunkers have been run to obtain an overall consistent chunking result
  * Specifically modifier, character, constraint and organ chunks are reconsidered
  * @author rodenhausen
@@ -338,6 +339,7 @@ public class MyCleanupChunker extends AbstractChunker {
 	}
 
 	/**
+	 * is not being used
 	 * translates character to constraint if character state of certain value or charactername of certain type
 	 * or if next terminal is organ and previous characters are of comparison type
 	 * @param i
@@ -372,7 +374,7 @@ public class MyCleanupChunker extends AbstractChunker {
 				//		) {
 
 				if(character!=null && !characterState.equals("low") && (
-						character.matches(".*?(^|_)("+ElementRelationGroup.entityConstraintElements+")(_|$).*") ||
+						character.matches(".*?(^|_or_)("+ElementRelationGroup.entityConstraintElements+")(_or_|$).*") ||
 						this.terminologyLearner.getTags().contains(characterState) || this.terminologyLearner.getModifiers().contains(characterState))
 						) {
 				

@@ -64,7 +64,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 				
 		String cats = this.getCharacterName(word).getCategories();
 		//boolean isEntity = cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
-		boolean isEntity = cats !=null && cats.matches(".*?(^|_)("+ElementRelationGroup.entityElements+")(_|$).*");
+		//boolean isEntity = cats !=null && cats.matches(".*?(^|_)("+ElementRelationGroup.entityElements+")(_|$).*");
+		boolean isEntity = cats !=null && cats.matches(".*?(^|"+or+")("+ElementRelationGroup.entityElements+")("+or+"|$).*");
 		isEntityCache.put(word, isEntity);
 		if(isEntity){
 			String[] catArray = cats.split(or);

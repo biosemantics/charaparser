@@ -89,8 +89,9 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		this.taxonGroup = taxonGroup;
 		
 		searchers = new LinkedList<Searcher>();
-		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
-			searchers.add(new FileSearcher(ontology, ontologyDirectory, wordNetSource));
+		/*wait for Thomas to test
+		 * for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
+			searchers.add(new FileSearcher(ontology, ontologyDirectory, wordNetSource));*/
 	}
 
 	@Override
