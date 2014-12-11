@@ -1,7 +1,13 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -15,6 +21,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import com.google.inject.Inject;
@@ -33,6 +40,9 @@ import edu.arizona.biosemantics.oto.common.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.common.model.lite.Term;
 import edu.arizona.biosemantics.oto.common.model.lite.Upload;
 import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
+import edu.arizona.biosemantics.oto2.oto.shared.model.community.Categorization;
+import edu.arizona.biosemantics.oto2.oto.shared.model.community.Synonymization;
+import edu.arizona.biosemantics.semanticmarkup.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
@@ -135,25 +145,12 @@ public class OTOLearner implements ILearner {
 	public void learn() throws Throwable {
 		DescriptionsFileList descriptionsFileList = descriptionReader.read(inputDirectory);
 		
-		//TODO: String version = otoClient.getLatestVersion();
-		//String tablePrefix = glossaryType + "_" + glossaryDownload.getVersion();
-		//String glossaryTable = tablePrefix + "_glossary";
-		//if(!glossaryExistsLocally(tablePrefix)) {
-			otoClient.open();
-			Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());
-			//initialize the glossary table that the actual learn part needs
-			GlossaryDownload glossaryDownload = futureGlossaryDownload.get();
-			otoClient.close();
-		//}
+		GlossaryDownload glossaryDownload = getGlossaryDownload();
 		log(LogLevel.INFO, "Loaded oto glossary with term-categories: " + glossaryDownload.getTermCategories().size() + " and "
 				+ "synonyms: " + glossaryDownload.getTermSynonyms().size());
 		
-				
 		if(useOtoCommuntiyDownload) {
-			log(LogLevel.INFO, "Will download oto community decisions to add additionally to glossary used");
-			otoLiteClient.open();
-			Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload(taxonGroup.getDisplayName());
-			Download communityDownload = futureCommunityDownload.get();
+			Download communityDownload = getCommunityDownload(glossaryDownload);
 			if(communityDownload != null) {
 				log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
 						+ "" + communityDownload.getDecisions().size() + " and "
@@ -167,35 +164,20 @@ public class OTOLearner implements ILearner {
 					glossaryDownload.getTermSynonyms().add(new TermSynonym(
 							synonym.getTerm(), synonym.getCategory(), synonym.getSynonym(), synonym.getId()));
 				}
-			} else {
-				throw new Exception("Couldn't download community decision");
 			}
-			otoLiteClient.close();
 		}
 		
 		storeInLocalDB(glossaryDownload, this.databasePrefix);
-		
 		//glossary is needed to prematch phrases
 		initGlossary(glossaryDownload);
-		
 		terminologyLearner.learn(descriptionsFileList.getDescriptionsFiles(), glossaryTable);
-		
-		//upload to OTO lite
-		otoLiteClient.open();
-		Future<UploadResult> futureUploadResult = otoLiteClient.putUpload(readUpload());
-		UploadResult uploadResult = futureUploadResult.get();
-		otoLiteClient.close();
-		
-		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
-		//iplant environment, hence the dependency on mysql can for iplant not completely be removed
-		String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, oto_secret = ?, glossary_version = ? WHERE prefix = ?";
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		preparedStatement.setInt(1, uploadResult.getUploadId());
-		preparedStatement.setString(2, uploadResult.getSecret());
-		preparedStatement.setString(3, glossaryDownload.getVersion());
-		preparedStatement.setString(4, databasePrefix);
-		preparedStatement.execute();
-		
+		UploadResult uploadResult = sendLearnedResultToOtoLite();
+		storeUploadToDB(uploadResult, glossaryDownload);
+		storeReviewToFile(uploadResult);
+	}
+
+
+	private void storeReviewToFile(UploadResult uploadResult) throws IOException {
 		//store URL that uses upload id in a local file so that user can look it up
 		/*FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
 		fw.write("Please visit the link [1] below to categorize a selection of terms that appeared in the descriptions you provided as input. ");
@@ -203,7 +185,6 @@ public class OTOLearner implements ILearner {
 		fw.write("The categorization can be done by selecting terms on the left and dragging and dropping the arrow into the corresponding category on the right-hand side.\n\n");
 		fw.write("[1]: " + this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
 		fw.close();*/
-		
 		
 		FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
 		fw.write("<!DOCTYPE html>");
@@ -226,6 +207,111 @@ public class OTOLearner implements ILearner {
 		fw.close();
 	}
 
+	private void storeUploadToDB(UploadResult uploadResult, GlossaryDownload glossaryDownload) throws SQLException {
+		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
+		//iplant environment, hence the dependency on mysql can for iplant not completely be removed
+		String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, oto_secret = ?, glossary_version = ? WHERE prefix = ?";
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		preparedStatement.setInt(1, uploadResult.getUploadId());
+		preparedStatement.setString(2, uploadResult.getSecret());
+		preparedStatement.setString(3, glossaryDownload.getVersion());
+		preparedStatement.setString(4, databasePrefix);
+		preparedStatement.execute();
+	}
+
+	private UploadResult sendLearnedResultToOtoLite() throws InterruptedException, ExecutionException {
+		otoLiteClient.open();
+		Future<UploadResult> futureUploadResult = otoLiteClient.putUpload(readUpload());
+		UploadResult uploadResult = futureUploadResult.get();
+		otoLiteClient.close();
+		return uploadResult;
+	}
+
+	private Download getCommunityDownload(GlossaryDownload glossaryDownload) {
+		log(LogLevel.INFO, "Will download oto community decisions to add additionally to glossary used");
+		otoLiteClient.open();
+		Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload(taxonGroup.getDisplayName());
+		
+		boolean downloadSuccessful = false;
+		Download communityDownload = null;
+		try {
+			communityDownload = futureCommunityDownload.get();
+			downloadSuccessful = communityDownload != null;
+		} catch(Throwable t) {
+			log(LogLevel.ERROR, "Couldn't download glossary will fallback to locally stored glossary", t);
+		}
+
+		otoLiteClient.close();
+		if(downloadSuccessful) 
+			storeToLocalCommunityDownload(communityDownload, taxonGroup);
+		else
+			try {
+				communityDownload = getLocalCommunityDownload(taxonGroup);
+			} catch (ClassNotFoundException | IOException e) {
+				log(LogLevel.ERROR, "Couldn't get local community download for taxon group " + taxonGroup, e);
+				return null;
+			}
+		return communityDownload;
+	}
+
+	private void storeToLocalCommunityDownload(Download communityDownload, TaxonGroup taxonGroup) {
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Configuration.glossariesDownloadDirectory + File.separator + 
+					"CommunityDownload." + taxonGroup.getDisplayName() + ".ser"));
+			out.writeObject(communityDownload);
+		    out.close();
+		} catch(Exception e) {
+			log(LogLevel.ERROR, "Couldn't store glossaryDownload locally", e);
+		}
+	}
+
+	private Download getLocalCommunityDownload(TaxonGroup taxonGroup) throws ClassNotFoundException, IOException {
+		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator + 
+				"CommunityDownload." + taxonGroup.getDisplayName() + ".ser"));
+		Download communityDownload = (Download) objectIn.readObject();
+		objectIn.close();
+		return communityDownload;
+	}
+
+	private GlossaryDownload getGlossaryDownload() throws ClassNotFoundException, IOException {
+		otoClient.open();
+		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());
+		
+		boolean downloadSuccessful = false;
+		GlossaryDownload glossaryDownload = null;
+		try {
+			glossaryDownload = futureGlossaryDownload.get();
+			downloadSuccessful = glossaryDownload != null;
+		} catch(Throwable t) {
+			log(LogLevel.ERROR, "Couldn't download glossary will fallback to locally stored glossary", t);
+		}
+		
+		otoClient.close();
+		if(downloadSuccessful) 
+			storeToLocalGlossaryDownload(glossaryDownload, taxonGroup);
+		else 
+			glossaryDownload = getLocalGlossaryDownload(taxonGroup);
+		return glossaryDownload;
+	}
+
+	private void storeToLocalGlossaryDownload(GlossaryDownload glossaryDownload, TaxonGroup taxonGroup) {
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Configuration.glossariesDownloadDirectory + File.separator + 
+					"GlossaryDownload." + taxonGroup.getDisplayName() + ".ser"));
+			out.writeObject(glossaryDownload);
+		    out.close();
+		} catch(Exception e) {
+			log(LogLevel.ERROR, "Couldn't store glossaryDownload locally", e);
+		}
+	}
+
+	private GlossaryDownload getLocalGlossaryDownload(TaxonGroup taxonGroup) throws FileNotFoundException, IOException, ClassNotFoundException {
+		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator + 
+				"GlossaryDownload." + taxonGroup.getDisplayName() + ".ser"));
+		GlossaryDownload glossaryDownload = (GlossaryDownload) objectIn.readObject();
+		objectIn.close();
+		return glossaryDownload;
+	}
 
 	/**
 	 * Initialize the glossary passed to the learner, so that classes who share the glossary have access to an up-to-date version
@@ -328,13 +414,12 @@ public class OTOLearner implements ILearner {
 		upload.setSource(sourceOfDescriptions);
 		
 		List<String> taxonNames = getTaxonNames();
-		/* Thomas, please uncommon this comment after adding setPossbileTaxonNames(List<Term>) method in upload
+		
 		List<Term> taxonNameTerms = new ArrayList<Term>();
 		for(String name: taxonNames){
 			taxonNameTerms.add(new Term(name));
 		}
 		upload.setPossibleTaxonNames(taxonNameTerms);
-		*/
 
 		List<Term> terms = getStructures(taxonNames);
 		//for(Term t: terms){
