@@ -12,6 +12,7 @@ public class Configuration {
 	private final static Logger logger = Logger.getLogger(Configuration.class);
 
 	public static String glossariesDownloadDirectory;
+	public static String otoUrl;
 
 	private static Properties properties;
 	
@@ -22,6 +23,7 @@ public class Configuration {
 			properties.load(loader.getResourceAsStream("edu/arizona/biosemantics/semanticmarkup/config.properties"));
 			
 			glossariesDownloadDirectory = properties.getProperty("glossariesDownloadDirectory");
+			otoUrl = properties.getProperty("otoUrl");
 
 		} catch(Exception e) {
 			logger.error("Couldn't read configuration", e);

@@ -123,7 +123,7 @@ public class RunConfig extends BasicConfig {
 	//private String otoLiteTermReviewURL = "http://etc-dev.cs.umb.edu/oto2/";
 	//private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/oto2/";
 
-	private String otoClientUrl = "http://biosemantics.arizona.edu:8080/OTO/";
+	private String otoClientUrl = Configuration.otoUrl;
 	private String perlDirectory = "src/main/perl/edu/arizona/biosemantics/semanticmarkup/markupelement/description/ling/learn/lib/perl" ;
 	private String workspaceDirectory = "workspace";
 	private String glossaryFile = "edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv";
