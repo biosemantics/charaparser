@@ -140,7 +140,7 @@ public class BasicConfig extends AbstractModule {
 	  public BasicConfig() throws IOException {			
 		  ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		  Properties properties = new Properties();
-		  properties.load(loader.getResourceAsStream("edu/arizona/biosemantics/semanticmarkup/config.properties"));
+		  properties.load(loader.getResourceAsStream("edu/arizona/biosemantics/semanticmarkup/static.properties"));
 		  //this loads etc-site properties when added as dependency to etc-site.
 		  //TODO: find a way to load correct properties from inside jar
 		  //interestingly it works fine in the same manner for oto2, loading defaultCategories.csv
