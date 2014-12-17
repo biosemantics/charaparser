@@ -111,7 +111,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 		for(Entry<String, String> sentenceEntry : selectedSentences) {
 			String sentenceString = sentenceEntry.getValue();
 			String source = sentenceEntry.getKey();
-			
+			System.out.println(source+ "PROCESSED");
 			// start a SentenceChunkerRun for the treatment to process as a separate thread
 			SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString, 
 					description, descriptionsFile, normalizer, wordTokenizer, 

@@ -125,7 +125,7 @@ public class SBARChunkProcessor extends AbstractChunkProcessor  {
 			//Chunk contentChunk = new Chunk(ChunkType.UNASSIGNED, content);
 			
 			//attach modifier to the last characters
-			if(lastElements.getLast().isCharacter()) {
+			if(!lastElements.isEmpty() && lastElements.getLast().isCharacter()) {
 				for(Element lastElement : lastElements)
 					if(lastElement.isCharacter())
 						((Character)lastElement).setModifier(modifierChunk.getTerminalsText());
