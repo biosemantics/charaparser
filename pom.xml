@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-		<project.version>0.1.78-SNAPSHOT</project.version>
+		<project.version>0.1.90-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -202,7 +202,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
-			<version>0.0.37-SNAPSHOT</version>
+			<version>0.0.40-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>gxt</artifactId>
@@ -225,12 +225,12 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common.ontology</groupId>
 			<artifactId>search</artifactId>
-			<version>0.0.8-SNAPSHOT</version>
+			<version>0.0.15-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>biology</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
