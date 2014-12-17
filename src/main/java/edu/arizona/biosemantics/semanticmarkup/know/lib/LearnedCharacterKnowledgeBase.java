@@ -106,7 +106,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 
 		//rejected searches
 		if(word.matches("("+negWords+")")) return new Match(null);
-		if (word.trim().length() == 0 || word.matches("\\W+")) return new Match(null);
+		if (word.trim().length() == 0 || !word.matches(".*[a-z].*")) return new Match(null);
 		//if(word.matches("at[-_]least")) return new Match(null);//TODO: synchronize with Normalizer.modifierPhrases. move to configuration.
 		if(word.matches("(?:"+this.advModifiers+")")) return new Match(null);
 		
