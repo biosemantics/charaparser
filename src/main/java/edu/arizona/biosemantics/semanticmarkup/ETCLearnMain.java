@@ -228,6 +228,9 @@ public class ETCLearnMain extends CLIMain {
 			}
 			if (commandLine.hasOption("q")) {
 				config.setOntologiesDirectory(commandLine.getOptionValue("q"));
+			}else{
+				log(LogLevel.ERROR, "You have to specify the directory holding the ontologies");
+		    	throw new IllegalArgumentException();
 			}
 
 		} catch (ParseException e) {
