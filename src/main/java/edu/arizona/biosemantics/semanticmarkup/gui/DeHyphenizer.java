@@ -89,11 +89,11 @@ public class DeHyphenizer {
 		//out put term
 		String term = "";
 		for(int i =0; i<terms.length; i++){
-			if(terms[i] != null){
+			if(terms[i] != null && !terms[i].isEmpty()){
 				term += terms[i]+"-";
 			}
 		}
-		return term.replaceFirst("-$", "");
+		return term.replaceFirst("-$", "").trim();
 	}
 
 	protected void collectTerms(String[] segs, String[] terms, int[][] matrix) {

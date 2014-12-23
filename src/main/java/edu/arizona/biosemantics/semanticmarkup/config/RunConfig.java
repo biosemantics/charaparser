@@ -117,11 +117,11 @@ public class RunConfig extends BasicConfig {
 	//private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
 	//for general use
 	//http://etc-dev.cs.umb.edu/etcsite/
-	private String otoLiteTermReviewURL = "http://etc.cs.umb.edu/otolite/";
-	private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/etcsite/";
+	//private String otoLiteTermReviewURL = "http://etc.cs.umb.edu/otolite/";
+	//private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/etcsite/";
 	//for local test
-	//private String otoLiteTermReviewURL = "http://etc-dev.cs.umb.edu/oto2/";
-	//private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/oto2/";
+	private String otoLiteTermReviewURL = "http://etc-dev.cs.umb.edu/oto2/";
+	private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/oto2/";
 
 	private String otoClientUrl = Configuration.otoUrl;
 	private String perlDirectory = "src/main/perl/edu/arizona/biosemantics/semanticmarkup/markupelement/description/ling/learn/lib/perl" ;
