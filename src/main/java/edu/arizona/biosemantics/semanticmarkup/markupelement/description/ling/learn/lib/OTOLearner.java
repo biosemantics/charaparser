@@ -570,11 +570,7 @@ public class OTOLearner implements ILearner {
 			if(word.startsWith("[") && word.endsWith("]")) continue;
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
 			//getMostLikelyPOS does stemming, while isVerb does not.
-			if(word.matches("times|and or|i e|e g") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
-				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" [times, and/or, abbreviations] is considered an non-eq term and removed");				
-				continue;
-			}
+			if(isNoise(word)) continue;
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 				|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
@@ -708,6 +704,7 @@ public class OTOLearner implements ILearner {
 
 		words = descriptorTerms4Curation();
 		for(String word: words){
+			if(isNoise(word)) continue;
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
@@ -721,6 +718,13 @@ public class OTOLearner implements ILearner {
 		return filteredwords;	
 	}
 	
+	private boolean isNoise(String word){
+		if(word.length()==1 || word.matches("times|and or|i e|e g") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
+			log(LogLevel.DEBUG, word+" is considered a noise and removed");		
+			return true;
+		}
+		return false;
+	}
 	private ArrayList<String> fetchContentTerms() throws Exception {
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList <String> filteredwords = new ArrayList<String>();
@@ -738,6 +742,7 @@ public class OTOLearner implements ILearner {
 		words = contentTerms4Curation(words, inistructureterms, inicharacterterms);
 		
 		for(String word: words){
+			if(isNoise(word)) continue;
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
