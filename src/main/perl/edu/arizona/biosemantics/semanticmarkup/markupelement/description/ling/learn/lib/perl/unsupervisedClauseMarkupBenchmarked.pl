@@ -6185,6 +6185,7 @@ populateunknownwordstable();
 
 #normalize $line: "... plagio-, dicho-, and/or/plus trichotriaenes ..." => "... plagiotriaenes, dichotriaenes, and trichotriaenes ..."
 #normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
+#normalize $line: "... palm- to/or fern-like ..."
 sub normalizeBrokenWords{
 	my $line = shift;
 	while($line=~/(.*?\b)(\w+\s*-\s*,.*?\b(and|or|plus|to)\s+([\w-]+))(.*)/ || $line=~/(.*?\b)(\w+\s*-\s+(and|or|plus|to)\s+([\w-]+))(.*)/){
@@ -6200,6 +6201,7 @@ sub completeWords{
 	my $completeword = shift;
 	
 	my $missing = "";
+	#"... palm- to/or fern-like ..."
 	if($completeword=~/[_-]/){
 		$missing = $completeword;
 		$missing =~ s#^.*?[_-]\s*##;

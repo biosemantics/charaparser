@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gwt.gen2.logging.shared.Log;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -54,8 +55,16 @@ public class AllWordsLearner {
 		
 		for(String word : wordCounts.keySet()) {
 			if(word.contains("-")) {
-				String deHyphenizedWord = normalFormat(word).replaceAll("-", "_");
+				String deHyphenizedWord = word.replaceAll("-", "_");
+				
+				if(!word.matches("\\w+-(like|shaped|sized|facing)"))
+					deHyphenizedWord = normalFormat(word).replaceAll("-", "_");
+				
 				deHyphenizedWords.put(word, deHyphenizedWord);
+				
+				if(word.replaceAll("-", "_").compareTo(deHyphenizedWord)!=0)
+					log(LogLevel.INFO, word +" is dehyphened as "+deHyphenizedWord);
+				
 			} else {
 				deHyphenizedWords.put(word,  word);
 			}
@@ -115,30 +124,33 @@ public class AllWordsLearner {
             int lcurly = 0;
             int inbracket = 0;
             for(Token token : tokens){
-            	String word = token.getContent().trim().toLowerCase();
-                if(word.equals("(")) lround++;
-                else if(word.equals(")")) lround--;
-                else if(word.equals("[")) lsquare++;
-                else if(word.equals("]")) lsquare--;
-                else if(word.equals("{")) lcurly++;
-                else if(word.equals("}")) lcurly--;
+            	String wordcp = token.getContent().trim().toLowerCase();
+                if(wordcp.equals("(")) lround++;
+                else if(wordcp.equals(")")) lround--;
+                else if(wordcp.equals("[")) lsquare++;
+                else if(wordcp.equals("]")) lsquare--;
+                else if(wordcp.equals("{")) lcurly++;
+                else if(wordcp.equals("}")) lcurly--;
                 else{
-                	word = word.replaceAll("[^-a-z]", " ").trim();
-                    if(word.matches(".*?\\w.*")) {
-                    	if(lround+lsquare+lcurly > 0)
-                    		inbracket = 1;
-                    	else 
-                    		inbracket = 0;
-                        
-                    	int count = 1;
-                    	if(wordCounts.containsKey(word))
-                    		count += wordCounts.get(word);
-                        wordCounts.put(word, count);
-                        
-                        if(wordInBracketsCounts.containsKey(word)) 
-                        	inbracket *= wordInBracketsCounts.get(word);
-                        wordInBracketsCounts.put(word, inbracket);
-                    }
+                	wordcp = wordcp.replaceAll("[^-a-z]", " ").trim();
+                	String[] ws = wordcp.split("\\s+");
+                	for(String word: ws){
+	                    if(word.matches(".*?\\w.*")) {
+	                    	if(lround+lsquare+lcurly > 0)
+	                    		inbracket = 1;
+	                    	else 
+	                    		inbracket = 0;
+	                        
+	                    	int count = 1;
+	                    	if(wordCounts.containsKey(word))
+	                    		count += wordCounts.get(word);
+	                        wordCounts.put(word, count);
+	                        
+	                        if(wordInBracketsCounts.containsKey(word)) 
+	                        	inbracket *= wordInBracketsCounts.get(word);
+	                        wordInBracketsCounts.put(word, inbracket);
+	                    }
+                	}
                 }
             }
 		}

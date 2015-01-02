@@ -200,6 +200,7 @@ public class DeHyphenAFolder {
                         else if(w.compareTo("{")==0) lcurly++;
                         else if(w.compareTo("}")==0) lcurly--;
                         else{
+                        	String wc = w;
                         	w = w.replaceAll("[^-a-z]", " ").trim();
                             if(w.matches(".*?\\w.*")){
                             	if(lround+lsquare+lcurly > 0){
