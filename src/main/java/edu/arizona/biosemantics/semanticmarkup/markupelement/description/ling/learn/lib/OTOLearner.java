@@ -719,7 +719,7 @@ public class OTOLearner implements ILearner {
 	}
 	
 	private boolean isNoise(String word){
-		if(word.length()==1 || word.matches("times|and or|i e|e g|cm|mm|dm") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
+		if(word.length()==1 || word.matches("times|and or|i e|e g|cm|dm|mm|they|their|it|its|others|\\w+selves|\\w+self") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
 			log(LogLevel.DEBUG, word+" is considered a noise and removed");		
 			return true;
 		}
