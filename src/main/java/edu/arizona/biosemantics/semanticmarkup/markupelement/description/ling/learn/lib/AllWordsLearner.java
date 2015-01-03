@@ -123,7 +123,7 @@ public class AllWordsLearner {
                 else if(wordcp.equals("{")) lcurly++;
                 else if(wordcp.equals("}")) lcurly--;
                 else{
-                	wordcp = wordcp.replaceAll("[^-a-z]", " ").trim();
+                	wordcp = wordcp.replaceAll("[^-a-z_]", " ").trim();
                 	String[] ws = wordcp.split("\\s+");
                 	for(String word: ws){
                 		if(word.matches(".*?\\w.*")) {
