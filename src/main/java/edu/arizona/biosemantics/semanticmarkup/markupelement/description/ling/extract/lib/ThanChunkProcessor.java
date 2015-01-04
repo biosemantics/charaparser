@@ -117,9 +117,9 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				objectChunks.addAll(organChunks);
 				Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
 				List<BiologicalEntity> structures = extractStructuresFromObject(objectChunk, processingContext, processingContextState);
-				result.addAll(structures);
 				List<Element> characters = this.createConstraintedCharacters(content, parents, beforeChunk, structures, processingContext);
 				result.addAll(characters);
+				result.addAll(structures);
 			} else {
 				if(thanObject.containsChildOfChunkType(ChunkType.COUNT) || thanObject.containsChildOfChunkType(ChunkType.BASED_COUNT) ||
 						thanObject.containsChildOfChunkType(ChunkType.AREA) || thanObject.containsChildOfChunkType(ChunkType.NUMERICALS) ||

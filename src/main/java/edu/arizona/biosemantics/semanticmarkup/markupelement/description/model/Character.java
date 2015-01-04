@@ -302,6 +302,7 @@ public class Character extends NamedElement implements Cloneable {
 	}
 
 	public void appendModifier(String modifier) {
+		if(!modifier.contains(" ") && modifier.contains("-")) modifier = modifier.replaceAll("-+", " ");
 		String newValue = "";
 		if(this.modifier == null || this.modifier.isEmpty()) {
 			newValue = modifier;
