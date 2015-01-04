@@ -12,6 +12,7 @@ import com.google.inject.Singleton;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 
 /**
  * 
@@ -154,7 +155,7 @@ public class CharacterListNormalizer{
 					characterTokensReversed.add(word); //
 				}else{
 					//deal with cases where a position is used as a structure: {outer} {lance-ovate} to {narrowly} {lanceolate} 
-					if(ch.compareTo("position")==0 && !word.matches(noadjorg) && characterTokensReversed.size()>0){//word = {outer}
+					if(/*ch.compareTo("position")==0 */ch.matches(".*?(^|_)("+ElementRelationGroup.entityRefElements+")(_|$).*") && !word.matches(noadjorg) && characterTokensReversed.size()>0){//word = {outer}
 						String character = characterTokensReversed.get(characterTokensReversed.size()-1); //character of the phrase following word in the str.
 						if(character.matches("\\w+") && !hasModifiedStructure(characterTokensReversed) ){//not #, %, `,@
 							//change {outer} to <outer>

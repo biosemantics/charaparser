@@ -353,7 +353,7 @@ public class BasicConfig extends AbstractModule {
 
 	private String getUnits() {
 		//String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|µm|um";
-		String units= "(?:(?:pm|cm|mm|dm|m|meters|meter|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter)[23]?)";
+		String units= "(?:(?:pm|cm|mm|dm|m|meters|meter|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter|transdiameters|transdiameter)[23]?)"; //squared or cubed
 		//String units = "[pμµucmd]?m?";
 		//micron => µm
 		return units;

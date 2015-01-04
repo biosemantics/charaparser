@@ -6061,7 +6061,7 @@ while(defined ($file=readdir(IN))){
 	$text =~ s#^\s*\d+[a-z].\s*##; #remove 2a. (key marks)
 
 	$original = $text;
-	#$text =~ s#\\b(is|are)\\b##g;
+	#$text =~ s#\\b(is|are)\\b##g; #don't need this.
 	$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
 	$text =~ s#[-]+#-#g; #- => -
 	$text =~ s#\+/-# moreorless #g;

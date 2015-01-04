@@ -80,6 +80,7 @@ public class OTOLearner implements ILearner {
 	private String bioportalUserId;
 	private String etcUser;
 	private String sourceOfDescriptions;
+	private String units;
 	private boolean useOtoCommuntiyDownload;
 	
 	/**
@@ -116,7 +117,8 @@ public class OTOLearner implements ILearner {
 			@Named("BioportalUserId")String bioportalUserId, 
 			@Named("EtcUser")String etcUser, 
 			@Named("SourceOfDescriptions")String sourceOfDescriptions,
-			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload) throws Exception {  
+			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload,
+			@Named("Units")String units) throws Exception {  
 		this.inputDirectory = inputDirectory;
 		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
@@ -135,6 +137,7 @@ public class OTOLearner implements ILearner {
 		this.etcUser = etcUser;
 		this.sourceOfDescriptions = sourceOfDescriptions;
 		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
+		this.units = units;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
@@ -719,7 +722,7 @@ public class OTOLearner implements ILearner {
 	}
 	
 	private boolean isNoise(String word){
-		if(word.length()==1 || word.matches("times|and or|i e|e g|cm|dm|mm|they|their|it|its|others|\\w+selves|\\w+self") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
+		if(word.length()==1 || word.matches("times|and or|i e|e g|they|their|it|its|others|\\w+selves|\\w+self") || word.matches(units)|| word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
 			log(LogLevel.DEBUG, word+" is considered a noise and removed");		
 			return true;
 		}

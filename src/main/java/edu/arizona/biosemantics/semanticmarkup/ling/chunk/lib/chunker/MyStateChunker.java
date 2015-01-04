@@ -101,7 +101,7 @@ public class MyStateChunker extends AbstractChunker {
 				continue;
 			}
 			
-			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && terminal.getTerminalsText().equals("no")) {
+			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && terminal.getTerminalsText().compareTo("no")==0) {
 				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);
 				chunkCollector.addChunk(stateChunk);
 				Chunk characterChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
