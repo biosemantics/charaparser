@@ -97,12 +97,14 @@ public class StructureNameStandardizer {
 		partorgans = partorgans.trim().replaceAll("(^,|,$)", "");
 		
 		//non-specific organ parts
-		String nonspecificparts = "apex|appendix|area|band|base|belt|body|cell|center|centre|component|content|crack|edge|element|end|face|layer|line|margin|part|pore|portion|protuberance|remnant|section|"
+		String nonspecificparts = "apex|appendix|area|band|base|belt|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|face|groove|layer|line|margin|notch|part|pore|portion|protuberance|remnant|section|"
 				+ "side|stratum|surface|tip|wall|zone";
-		if(partorgans.matches("\\b("+nonspecificparts+")\\b.*")){
-			parentorgans.replaceFirst("(\\b("+nonspecificparts+")\\b,? ?)+", ""); //"base of surface, stem" does not make sense.
+		if(partorgans.matches("\\b("+nonspecificparts+")\\b.*") && !partorgans.contains(",")){
+			parentorgans = parentorgans.replaceFirst("(\\b("+nonspecificparts+")\\b,? ?)+", ""); //"base of surface, stem" does not make sense.
 			return parentorgans;
 		}
+		
+		//cross check btw parts and parents using the ontology
 		String[] parts = partorgans.replaceFirst(".*(\\b("+nonspecificparts+")\\b,? ?)+", "").replaceFirst("^\\s*,", "").trim().split("\\s*,\\s*");
 		String[] parents = parentorgans.split("\\s*,\\s*");
 		
@@ -126,6 +128,15 @@ public class StructureNameStandardizer {
 			return po.replaceFirst(" , $", "");
 		}
 
+		//otherwise, return the first specific parental structure in partorgans
+		if(partorgans.contains(",")){
+			for(int i = parts.length-1; i >=0; i-- ){
+				if(parts[i].replaceFirst("^\\b("+nonspecificparts+")\\b", "").length()>0)
+					return parts[i];
+			}
+		}
+		
+		
 		return "";
 	}
 
@@ -200,7 +211,7 @@ public class StructureNameStandardizer {
 			//add constraint organ to parentorgan list 
 			String constraint = parentstruct.getConstraint() !=null? parentstruct.getConstraint() : null;
 			if(constraint!=null){ 
-				if(learnedCharacterKnowledgeBase.isEntity(constraint)){
+				if(learnedCharacterKnowledgeBase.isEntityReference(constraint)){
 					//parentorgan = constraint; //use the constraint of parentstruct as parentorgan, e.g. leaf blade ..., petiole ..., vein ....
 					parentofparentstructure = constraint +","+parentofparentstructure; //blade, leaf
 				}
@@ -215,17 +226,19 @@ public class StructureNameStandardizer {
 			for(BiologicalEntity struct: structures){ 
 				//if(struct.getName().compareTo("structure")==0){
 					if(!struct.equals(parentstruct)){//skip the 1st structure which is parentstruct
-						String partpchain = getStructureChain(description, struct, 3).replace(" of ", ",").trim(); //part of organ of organ
-						String part = struct.getName()+","+partpchain;								
-						//
-						parentorgan = hasPart(porgan, part);
-						if(parentorgan.length()>0){
-							//log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-							((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
-						}else if(possess(parentstruct, struct, description)){
-							parentorgan = formatParentOrgan(porgan);
-							//log(LogLevel.DEBUG,"===>[possess] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-							((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
+						if(!hasStructuralConstraint(struct)){
+							String partpchain = getStructureChain(description, struct, 3).replace(" of ", ",").trim(); //part of organ of organ
+							String part = struct.getName()+","+partpchain;								
+							//
+							parentorgan = hasPart(porgan, part);
+							if(parentorgan.length()>0){
+								//log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+								((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
+							}else if(possess(parentstruct, struct, description)){
+								parentorgan = formatParentOrgan(porgan);
+								//log(LogLevel.DEBUG,"===>[possess] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+								((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
+							}
 						}
 
 					}
@@ -233,6 +246,18 @@ public class StructureNameStandardizer {
 			}
 		}
 		return parentorgan !=null? parentorgan : porgan.replaceAll("(^,|,$)", "");
+	}
+
+	/**
+	 * 
+	 * @param struct
+	 * @return true if the structure element has a constraint that refers to a(nother) structure
+	 */
+	private boolean hasStructuralConstraint(BiologicalEntity struct) {
+		String constraint = struct.getConstraint();
+		if(constraint==null || constraint.isEmpty()) return false;
+		if(learnedCharacterKnowledgeBase.isEntityReference(constraint)) return true;
+		return false;
 	}
 
 	/**

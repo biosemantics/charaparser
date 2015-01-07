@@ -26,29 +26,29 @@ public class PartOfFile implements IOntology {
 	private static Hashtable<String, ArrayList<String>> partof = null;
 	private File file;
 	private boolean success = false;
-	
+
 	@Inject
 	public PartOfFile(String directory, String partOfBin){
 		try{
-		file = new File(directory, "ontopartof.bin");
-		if(!file.exists()){
-			log(LogLevel.DEBUG, "File containing part_of relations not found. Disabled related functions");
-			return;
-		}
-		//read in serialized partof hashtable
-		ObjectInputStream in = new ObjectInputStream(new FileInputStream(
-				file));
-		// Deserialize the object
-		if(partof ==null){
-			partof = (Hashtable<String, ArrayList<String>>) in.readObject();  
-			success = true;
-		}
+			//file = new File(directory, "ontopartof.bin");
+			file = new File(directory, partOfBin);
+			if(!file.exists()){
+				log(LogLevel.DEBUG, "File containing part_of relations not found. Disabled related functions");
+				return;
+			}
+			//read in serialized partof hashtable
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(
+					file));
+			// Deserialize the object
+			if(partof ==null){
+				partof = (Hashtable<String, ArrayList<String>>) in.readObject();  
+				success = true;
+			}
 		}catch(Exception e){
 			log(LogLevel.ERROR, "Couldn't read `part of` file", e);
 		}
-
 	}
-	
+
 	public boolean objectCreated(){
 		return success;
 	}
