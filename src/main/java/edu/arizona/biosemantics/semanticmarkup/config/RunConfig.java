@@ -154,7 +154,6 @@ public class RunConfig extends BasicConfig {
 	private String runRootDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix;
 	private String runOutDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
 	private String runTemporaryDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
-	private String runOntologyDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "onto";
 	private Class<? extends IGlossary> glossary = CSVGlossary.class;
 
 	private Class<? extends IMarkupCreator> markupCreator = DescriptionMarkupCreator.class;
@@ -199,7 +198,6 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("Run_RootDirectory")).toInstance(this.runRootDirectory);
 			bind(String.class).annotatedWith(Names.named("Run_OutDirectory")).toInstance(this.runOutDirectory);
 			bind(String.class).annotatedWith(Names.named("Run_TemporaryDirectory")).toInstance(this.runTemporaryDirectory);
-			bind(String.class).annotatedWith(Names.named("Run_OntologyDirectory")).toInstance(this.runOntologyDirectory);
 			bind(String.class).annotatedWith(Names.named("OntologyFile")).toInstance(this.ontologyFile);
 
 			bind(IMarkupCreator.class).annotatedWith(Names.named("MarkupCreator")).to(markupCreator).in(Singleton.class);

@@ -23,18 +23,18 @@ public class OntologyFactory {
 	 * 
 	 */
 	@Inject
-	public OntologyFactory(@Named("Run_OntologyDirectory") String ontologyDirectory) {
+	public OntologyFactory(String ontologyDirectory) {
 		this.ontologyDirectory = ontologyDirectory;
 	}
 	
-	public IOntology createOntology(Object locator){
-		if(locator instanceof URI){
+	public IOntology createOntology(Object ontoLocator){
+		if(ontoLocator instanceof URI){
 			return null; //for now
-		}else if(locator instanceof String && ((String) locator).endsWith(".bin")){
-			IOntology partOfBin = new PartOfFile(ontologyDirectory, (String)locator);
+		}else if(ontoLocator instanceof String && ((String) ontoLocator).endsWith(".bin")){
+			IOntology partOfBin = new PartOfFile(ontologyDirectory, (String)ontoLocator);
 			if(partOfBin.objectCreated()) return partOfBin;
-		}/*else if(locator instanceof String && ((String) locator).endsWith(".owl")){
-			IOntology owlOntology = new OWLOntology(ontologyDirectory, (String)locator);
+		}/*else if(ontoLocator instanceof String && ((String) ontoLocator).endsWith(".owl")){
+			IOntology owlOntology = new PartOfOntology(ontologyDirectory, (String)ontoLocator);
 			if(owlOntology.objectCreated()) return owlOntology;
 		}*/
 		return null;

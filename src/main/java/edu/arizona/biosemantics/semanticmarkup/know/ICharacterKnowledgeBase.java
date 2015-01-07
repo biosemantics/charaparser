@@ -46,5 +46,7 @@ public interface ICharacterKnowledgeBase {
 	 * @return
 	 */
 	public String getEntityType(String singular, String organName);
+
+	public boolean isEntityReference(String constraint);
 	
 }

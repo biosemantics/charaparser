@@ -22,6 +22,9 @@ import java.util.Set;
 
 
 
+
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -35,7 +38,10 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.common.ontology.search.TaxonGroupOntology;
+import edu.arizona.biosemantics.common.ontology.search.model.Ontology;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
@@ -44,6 +50,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.StructureNameStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.OntologyFactory;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.TaxonGroupPartOfOntology;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
@@ -85,15 +92,20 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			IChunkProcessorProvider chunkProcessorProvider, 
 			IFirstChunkProcessor firstChunkProcessor, 
 			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase,
-			@Named("PossessWords") Set<String> possessWords, OntologyFactory ontologyFactory
-			, @Named("Run_OntologyDirectory") String ontologyDirectory, @Named("OntologyFile") String ontologyFile, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase) {
+			@Named("PossessWords") Set<String> possessWords, OntologyFactory ontologyFactory, @Named("TaxonGroup")TaxonGroup taxonGroup,
+			@Named("OntologyMappingTreatmentTransformer_OntologyDirectory")String ontologyDirectory, @Named("OntologyFile") String ontologyFile, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase) {
 		this.glossary = glossary;
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
 		this.characterKnowledgeBase = characterKnowledgeBase;
 		OntologyFactory of = new OntologyFactory(ontologyDirectory);
-		IOntology ontology = of.createOntology(ontologyFile);
+		
+		Ontology ontologyEnum  = TaxonGroupPartOfOntology.getOntologies(taxonGroup);
+		IOntology ontology = of.createOntology(ontologyEnum.toString().toLowerCase()+".owl");
+		if(ontology == null)
+			ontology = of.createOntology(ontologyFile);
+		
 		if(ontology!=null)
 			this.structureNameStandardizer = new StructureNameStandardizer(ontology, characterKnowledgeBase, possessWords);
 		

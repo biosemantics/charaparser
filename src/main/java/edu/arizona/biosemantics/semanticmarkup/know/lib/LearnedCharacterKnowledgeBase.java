@@ -41,6 +41,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
 	private ConcurrentHashMap<String, Match> characterCache = new ConcurrentHashMap<String, Match> ();
 	private ConcurrentHashMap<String, Boolean> isEntityCache = new ConcurrentHashMap<String, Boolean> ();
+	private ConcurrentHashMap<String, Boolean> isEntityStructuralConstraintCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, Boolean> isStateCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, HashSet<String>> entityTypeCache = new ConcurrentHashMap<String, HashSet<String>> (); //term => entity type (structure, taxon_name, etc.)
 	private IInflector inflector;
@@ -76,6 +77,16 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			}
 		}
 		return isEntity;
+	}
+	
+	@Override
+	public boolean isEntityReference(String word){
+		if(isEntityStructuralConstraintCache.get(word)!=null) return isEntityStructuralConstraintCache.get(word);
+		String cats = this.getCharacterName(word).getCategories();
+		//boolean isEntity = cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
+		boolean isEntityStructuralConstraint = cats !=null && cats.matches(".*?(^|"+or+")("+ElementRelationGroup.entityStructuralConstraintElements+")("+or+"|$).*");
+		isEntityStructuralConstraintCache.put(word, isEntityStructuralConstraint);
+		return isEntityStructuralConstraint;
 	}
 		
 	@Override
