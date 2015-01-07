@@ -146,6 +146,8 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				posedSentence.add(new POSedToken(word, POS.NNS));
 			} else if(word.matches("\\d*.{0,1}\\d+")) {
 				posedSentence.add(new POSedToken(word, POS.CD));
+			} else if(isVerb){
+				posedSentence.add(new POSedToken(word, POS.VB));
 			} else if (p.contains("c") || isState) {
 				int wordFrequency = corpus.getFrequency(word);
 				if (wordFrequency > 79) {
@@ -153,9 +155,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				} else {
 					posedSentence.add(new POSedToken(token.getContent(), POS.JJ));
 				}
-			} else if(isVerb){
-				posedSentence.add(new POSedToken(word, POS.VB));
-			}else {
+			} else {
 				posedSentence.add(new Token(token.getContent()));
 			}
 		}
