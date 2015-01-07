@@ -8,6 +8,8 @@ import java.util.Set;
 
 
 
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -15,11 +17,13 @@ import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
@@ -63,6 +67,22 @@ public class ValuePercentageOrDegreeChunkProcessor extends AbstractChunkProcesso
 			Character lastElement = (Character)lastElements.getLast();
 			lastElement.setModifier(content);
 			result.add(lastElement);
+		} else if(!lastElements.isEmpty() && lastElements.getLast().isStructure() && chunk.isOfChunkType(ChunkType.VALUE_DEGREE)){
+			
+			
+			Character degree = new Character();
+			degree.setName("degree");
+			degree.setValue(content);
+			for(Element element: lastElements){
+				if(element.isStructure()){
+					((BiologicalEntity)element).addCharacter(degree);
+				}			
+			}
+			result.add(degree);
+			processingContextState.setLastElements(result);
+			
+			 //discard the unassigned character, which is longer accessible by later chunks
+			processingContextState.setUnassignedCharacter(null);
 		} else {
 			processingContextState.getUnassignedModifiers().add(chunk);
 		}	

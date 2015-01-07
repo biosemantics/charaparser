@@ -6055,11 +6055,13 @@ while(defined ($file=readdir(IN))){
 	$text =~ s#<# less than #g; #remove <
 	$text =~ s#># greater than #g; #remove >
 	#normalize $line: "plagio-, dicho-, and trichotriaenes" => "plagiotriaenes, dichotriaenes, and trichotriaenes"
-	$text = normalizeBrokenWords($text);
+	$text = normalizeBrokenWords($text); #it is not quite 'original' anymore with this normalization, but it is convenient to do it here without having to change a lot of other code. 
+	                                      
 
 	$text =~ s#^\s*\d+[a-z].\s*##; #remove 2a. (key marks)
 
 	$original = $text;
+	#$text =~ s#\\b(is|are)\\b##g; #don't need this.
 	$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
 	$text =~ s#[-]+#-#g; #- => -
 	$text =~ s#\+/-# moreorless #g;
@@ -6185,6 +6187,7 @@ populateunknownwordstable();
 
 #normalize $line: "... plagio-, dicho-, and/or/plus trichotriaenes ..." => "... plagiotriaenes, dichotriaenes, and trichotriaenes ..."
 #normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
+#normalize $line: "palm- or fern-like" => "palm-like or fern-like"
 sub normalizeBrokenWords{
 	my $line = shift;
 	while($line=~/(.*?\b)(\w+\s*-\s*,.*?\b(and|or|plus|to)\s+([\w-]+))(.*)/ || $line=~/(.*?\b)(\w+\s*-\s+(and|or|plus|to)\s+([\w-]+))(.*)/){
@@ -6201,6 +6204,7 @@ sub completeWords{
 	
 	my $missing = "";
 	if($completeword=~/[_-]/){
+		#normalize $line: "palm- or fern-like" => "palm-like or fern-like"
 		$missing = $completeword;
 		$missing =~ s#^.*?[_-]\s*##;
 		$text =~ s#[_-]\s*$missing#-#g; #turn the "- $missing " to  - in the original text

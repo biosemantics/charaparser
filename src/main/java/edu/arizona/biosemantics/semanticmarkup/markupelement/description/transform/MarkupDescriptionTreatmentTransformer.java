@@ -394,8 +394,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			// TODO Auto-generated catch block
 			log(LogLevel.ERROR, "Exception", e);
 		}
-	}*/
-	
+	}
+	*/
 	
 	/**
 	 * notes: OTO Webservice should probably only return one term category list.

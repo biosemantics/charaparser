@@ -131,7 +131,7 @@ public class PPListChunker extends AbstractChunker {
 					if(i==ppChildren.size()-1) {
 						IParseTree lastPPChild = ppChild;
 						for(AbstractParseTree lastPPChildChild : lastPPChild.getChildren()) {
-							if(lastPPChildChild.getPOS().equals(POS.NP)) {
+							if(lastPPChildChild.getPOS()!=null && lastPPChildChild.getPOS().equals(POS.NP)) {
 								np = lastPPChildChild;
 							} else {
 								newIN.addChildren(lastPPChildChild.getTerminals());

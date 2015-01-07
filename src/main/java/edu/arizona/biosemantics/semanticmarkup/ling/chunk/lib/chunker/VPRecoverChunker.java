@@ -8,6 +8,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -15,6 +16,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
@@ -98,7 +100,7 @@ public class VPRecoverChunker extends AbstractChunker {
 				AbstractParseTree nextTerminal = terminals.get(i+1);
 				if(!chunkCollector.isOfChunkType(terminal, ChunkType.VP) && 
 						chunkCollector.isOfChunkType(terminal, ChunkType.CHARACTER_STATE) &&
-						(chunkCollector.getChunk(terminal).getProperty("characterName").contains("position") ||
+						(chunkCollector.getChunk(terminal).getProperty("characterName").matches(".*?(^|_)("+ElementRelationGroup.entityRefElements+")(_|$).*") /*.contains("position")*/ ||
 								chunkCollector.getChunk(terminal).getProperty("characterName").contains("size")) && 
 								posKnowledgeBase.isVerb(terminal.getTerminalsText())) {
 					if(chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.PP)) {

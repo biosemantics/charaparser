@@ -80,6 +80,7 @@ public class OTOLearner implements ILearner {
 	private String bioportalUserId;
 	private String etcUser;
 	private String sourceOfDescriptions;
+	private String units;
 	private boolean useOtoCommuntiyDownload;
 	
 	/**
@@ -116,7 +117,8 @@ public class OTOLearner implements ILearner {
 			@Named("BioportalUserId")String bioportalUserId, 
 			@Named("EtcUser")String etcUser, 
 			@Named("SourceOfDescriptions")String sourceOfDescriptions,
-			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload) throws Exception {  
+			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload,
+			@Named("Units")String units) throws Exception {  
 		this.inputDirectory = inputDirectory;
 		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
@@ -135,6 +137,7 @@ public class OTOLearner implements ILearner {
 		this.etcUser = etcUser;
 		this.sourceOfDescriptions = sourceOfDescriptions;
 		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
+		this.units = units;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
@@ -570,11 +573,7 @@ public class OTOLearner implements ILearner {
 			if(word.startsWith("[") && word.endsWith("]")) continue;
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
 			//getMostLikelyPOS does stemming, while isVerb does not.
-			if(word.matches("times|and or|i e|e g") || word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
-				noneqwords.add(word);
-				log(LogLevel.DEBUG, word+" [times, and/or, abbreviations] is considered an non-eq term and removed");				
-				continue;
-			}
+			if(isNoise(word)) continue;
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 				|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
@@ -708,6 +707,7 @@ public class OTOLearner implements ILearner {
 
 		words = descriptorTerms4Curation();
 		for(String word: words){
+			if(isNoise(word)) continue;
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
@@ -721,6 +721,13 @@ public class OTOLearner implements ILearner {
 		return filteredwords;	
 	}
 	
+	private boolean isNoise(String word){
+		if(word.length()==1 || word.matches("times|and or|i e|e g|they|their|it|its|others|\\w+selves|\\w+self") || word.matches(units)|| word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
+			log(LogLevel.DEBUG, word+" is considered a noise and removed");		
+			return true;
+		}
+		return false;
+	}
 	private ArrayList<String> fetchContentTerms() throws Exception {
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList <String> filteredwords = new ArrayList<String>();
@@ -738,6 +745,7 @@ public class OTOLearner implements ILearner {
 		words = contentTerms4Curation(words, inistructureterms, inicharacterterms);
 		
 		for(String word: words){
+			if(isNoise(word)) continue;
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
@@ -778,7 +786,7 @@ public class OTOLearner implements ILearner {
 		PreparedStatement stmt = connection.prepareStatement(sql);
 		ResultSet rs = stmt.executeQuery();
 		while (rs.next()) {
-			String word = rs.getString("dhword");
+			String word = rs.getString("dhword").trim();
 			if(!structures.contains(word) && !characters.contains(word)){
 				populateCurationList(curationList, word);
 			}

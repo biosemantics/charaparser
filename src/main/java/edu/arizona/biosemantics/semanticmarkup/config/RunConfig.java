@@ -131,8 +131,7 @@ public class RunConfig extends BasicConfig {
 	private String wordNetSource = "wordnet/wn31/dict";
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
 	private String ontologiesDirectory = "ontologies";
-	
-	// IO
+
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
 	private List<InputStream> descriptionReaderBindingsList = createIOXMLBindingsList();
 	private List<InputStream> descriptionWriterBindingsList = createIOXMLBindingsList();

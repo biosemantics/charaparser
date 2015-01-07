@@ -26,7 +26,7 @@ public interface IMatch {
 	
 	/**
 	 * 
-	 * @return all the categories in the match
+	 * @return all the categories in the match, connected by "_or_"
 	 */
 	public String getCategories();
 

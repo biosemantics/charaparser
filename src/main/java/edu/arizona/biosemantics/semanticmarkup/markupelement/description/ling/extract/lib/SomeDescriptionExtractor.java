@@ -141,7 +141,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	
 		System.out.println("====1====");
 		for(Statement statement: description.getStatements()){
-		System.out.println(statement.toString());
+			System.out.println(statement.toString());
 	    }
 		
 		List<Element> xml = new LinkedList<Element>();

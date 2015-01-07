@@ -10,12 +10,14 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
@@ -79,11 +81,16 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			
 			boolean isState = false;
 			boolean isOrgan = false;
+			boolean isVerb = false;
 			//if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
 			if(word.contains("~list~") || word.contains("_c_") || learnedCharacterKnowledgeBase.isState(word))
 				isState = true;
 			//isOrgan = organStateKnowledgeBase.isOrgan(word);
 			isOrgan = learnedCharacterKnowledgeBase.isEntity(word);
+			Match m = learnedCharacterKnowledgeBase.getCharacterName(word);
+			if(m!=null &&  m.getCategories()!=null && m.getCategories().matches("(^|.*?_)position_relational(_.*|$)")){
+				isVerb = true;
+			}
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();
 			if (word.length() > 0 && !word.matches("\\W")
@@ -146,7 +153,9 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				} else {
 					posedSentence.add(new POSedToken(token.getContent(), POS.JJ));
 				}
-			} else {
+			} else if(isVerb){
+				posedSentence.add(new POSedToken(word, POS.VB));
+			}else {
 				posedSentence.add(new Token(token.getContent()));
 			}
 		}

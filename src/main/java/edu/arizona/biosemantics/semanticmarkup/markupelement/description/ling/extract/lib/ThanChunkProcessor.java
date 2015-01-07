@@ -101,7 +101,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					if(element.isStructure())
 						structures.add((BiologicalEntity)element);
 				result.addAll(structures);
-				this.createConstraintedCharacters(content, beforeChunk, structures, processingContext);
+				this.createConstraintedCharacters(content, parents, beforeChunk, structures, processingContext);
 		} else {
 			Chunk thanObject = thanChunk.getChunkDFS(ChunkType.OBJECT);
 			//Chunk thanObject = thanChunk.getChildChunk(ChunkType.PP).getChildChunk(ChunkType.OBJECT);
@@ -117,8 +117,9 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				objectChunks.addAll(organChunks);
 				Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
 				List<BiologicalEntity> structures = extractStructuresFromObject(objectChunk, processingContext, processingContextState);
+				List<Element> characters = this.createConstraintedCharacters(content, parents, beforeChunk, structures, processingContext);
+				result.addAll(characters);
 				result.addAll(structures);
-				result.addAll(this.createConstraintedCharacters(content, beforeChunk, structures, processingContext));
 			} else {
 				if(thanObject.containsChildOfChunkType(ChunkType.COUNT) || thanObject.containsChildOfChunkType(ChunkType.BASED_COUNT) ||
 						thanObject.containsChildOfChunkType(ChunkType.AREA) || thanObject.containsChildOfChunkType(ChunkType.NUMERICALS) ||
@@ -158,7 +159,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 						}
 					}
 					if(!foundCharacter && !thanObject.getChunks().isEmpty()) {
-						result.addAll(this.createConstraintedCharacters(content, beforeChunk, 
+						result.addAll(this.createConstraintedCharacters(content, parents, beforeChunk, 
 									 	new LinkedList<BiologicalEntity>(), processingContext));
 					}
 				}
@@ -278,7 +279,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		} */
 	}
 	
-	private List<Element> createConstraintedCharacters(Chunk content, Chunk beforeChunk, 
+	private List<Element> createConstraintedCharacters(Chunk content, List<BiologicalEntity> parents, Chunk beforeChunk, 
 			/*Chunk thanObject,*/ List<BiologicalEntity> structures, 
 			ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
@@ -287,12 +288,14 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 			IChunkProcessor processor = processingContext.getChunkProcessor(child.getChunkType());
 			if(processor != null) {
 				characters = processor.process(child, processingContext);
-				result.addAll(characters);
+				result.addAll(characters); 
 			}
 		}
 		for(Element element : characters) {
-			if(element.isCharacter())
-				((Character)element).setValue(beforeChunk.getTerminalsText());
+			if(element.isCharacter()){
+				((Character)element).setValue(beforeChunk.getTerminalsText()); //why rewrite character value? 
+				((Character)element).setModifier(null);
+			}
 		}
 		
 		for(Element element : characters) {
@@ -318,6 +321,21 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				//}
 			}
 		}
+		
+		//correct parent elements for characters from structures to parents, Hong 1/2015
+		for(BiologicalEntity structure: structures){
+			for(Element character: characters){
+				structure.removeElementRecursively(character);
+			}
+		}
+		
+		for(BiologicalEntity structure: parents){
+			for(Element character: characters){
+				if(character.isCharacter())
+					structure.addCharacter((Character)character);
+			}
+		}
+		
 		return result;
 	}
 

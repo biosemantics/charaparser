@@ -13,11 +13,13 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
@@ -218,7 +220,7 @@ public abstract class AbstractChunker implements IChunker {
 				}
 				for(AbstractParseTree terminal: terminals){//if containing a position term: middle, upper 2/3
 					Match m = learnedCharacterKnowledgeBase.getCharacterName(terminal.getTerminalsText());
-					if(m!=null && m.getCategories()!=null && m.getCategories().contains("position")){
+					if(m!=null && m.getCategories()!=null && m.getCategories().matches(".*?(^|_)("+ElementRelationGroup.entityRefElements+")(_|$).*")/*.contains("position")*/){
 						alreadyAssignedToValidChunk = false;
 					}
 				}

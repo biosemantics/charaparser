@@ -46,6 +46,7 @@ public class NonOntologyBasedStandardizer {
 	}
 
 	public void standardize(LinkedList<Element>result){
+		if(result.isEmpty()) return;
 		taxonName2WholeOrganism(result);
 		createWholeOrganismDescription(result, lifeStyles, "growth_form");
 		createWholeOrganismDescription(result, durations, "duration");

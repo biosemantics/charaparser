@@ -115,30 +115,33 @@ public class AllWordsLearner {
             int lcurly = 0;
             int inbracket = 0;
             for(Token token : tokens){
-            	String word = token.getContent().trim().toLowerCase();
-                if(word.equals("(")) lround++;
-                else if(word.equals(")")) lround--;
-                else if(word.equals("[")) lsquare++;
-                else if(word.equals("]")) lsquare--;
-                else if(word.equals("{")) lcurly++;
-                else if(word.equals("}")) lcurly--;
+            	String wordcp = token.getContent().trim().toLowerCase();
+                if(wordcp.equals("(")) lround++;
+                else if(wordcp.equals(")")) lround--;
+                else if(wordcp.equals("[")) lsquare++;
+                else if(wordcp.equals("]")) lsquare--;
+                else if(wordcp.equals("{")) lcurly++;
+                else if(wordcp.equals("}")) lcurly--;
                 else{
-                	word = word.replaceAll("[^-a-z]", " ").trim();
-                    if(word.matches(".*?\\w.*")) {
-                    	if(lround+lsquare+lcurly > 0)
-                    		inbracket = 1;
-                    	else 
-                    		inbracket = 0;
-                        
-                    	int count = 1;
-                    	if(wordCounts.containsKey(word))
-                    		count += wordCounts.get(word);
-                        wordCounts.put(word, count);
-                        
-                        if(wordInBracketsCounts.containsKey(word)) 
-                        	inbracket *= wordInBracketsCounts.get(word);
-                        wordInBracketsCounts.put(word, inbracket);
-                    }
+                	wordcp = wordcp.replaceAll("[^-a-z_]", " ").trim();
+                	String[] ws = wordcp.split("\\s+");
+                	for(String word: ws){
+                		if(word.matches(".*?\\w.*")) {
+                			if(lround+lsquare+lcurly > 0)
+                				inbracket = 1;
+                			else 
+                				inbracket = 0;
+
+                			int count = 1;
+                			if(wordCounts.containsKey(word))
+                				count += wordCounts.get(word);
+                			wordCounts.put(word, count);
+
+                			if(wordInBracketsCounts.containsKey(word)) 
+                				inbracket *= wordInBracketsCounts.get(word);
+                			wordInBracketsCounts.put(word, inbracket);
+                		}
+                	}
                 }
             }
 		}

@@ -527,6 +527,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 
 		for(Chunk token : tokens) {
+			if(stopWords.contains(token.getTerminalsText())) continue;
 			processingContextState = processingContext.getCurrentState();
 			if(token.isOfChunkType(ChunkType.TO_PHRASE)) {
 				processingContextState.setLastElements(new LinkedList<Element>(parents));
@@ -540,13 +541,19 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				modifiers.addAll(chunkModifiers);
 
 				String w = token.getTerminalsText();
+				
 				if(token.containsChunkType(ChunkType.STATE))
 					w = token.getChunkBFS(ChunkType.STATE).getTerminalsText();
 				String tokensCharacter = null;
-				if(token.isOfChunkType(ChunkType.CHARACTER_STATE)) {
-					tokensCharacter = token.getProperty("characterName");
-				} else {
-					tokensCharacter = characterKnowledgeBase.getCharacterName(w).getCategories();
+				if(processingContextState.getUnassignedCharacter()!=null) { //override character with unassigned character
+					tokensCharacter = processingContextState.getUnassignedCharacter();
+					processingContextState.setUnassignedCharacter(null);
+				}else{
+					if(token.isOfChunkType(ChunkType.CHARACTER_STATE)) {
+						tokensCharacter = token.getProperty("characterName");
+					} else {
+						tokensCharacter = characterKnowledgeBase.getCharacterName(w).getCategories();
+					}
 				}
 				//Hong test
 				if(tokensCharacter==null && w.matches("no")){
@@ -696,7 +703,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					character.setTo(values[1]);
 			}else{
 				if (characterName.compareTo("size") == 0) {
-					String value = characterValue.replaceFirst("\\b(" + units + ")\\b", "").trim(); // 5-10 mm
+					String value = characterValue.replaceFirst("(\\b" + units + "\\b)", "").trim(); // 5-10 mm
 					String unit = characterValue.replace(value, "").trim();
 					if (unit.length() > 0) {
 						character.setUnit(unit);
@@ -1030,7 +1037,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		
 
 		//Pattern pattern19 = Pattern.compile("([ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m?))\\s*[×x]?(\\s*[ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m?))?\\s*[×x]\\s*([ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m))");
-		Pattern pattern19 = Pattern.compile("([ \\d\\.\\[\\]+-]+\\s*("+units+"?))\\s*[×x]?(\\s*[ \\d\\.\\[\\]+-]+\\s*("+units+"?))?\\s*[×x]\\s*([ \\d\\.\\[\\]+-]+\\s*("+units+"))");
+		Pattern pattern19 = Pattern.compile("([ \\d\\.\\[\\]+-]+\\s*("+units+"?))\\s*[×x]?(\\s*[ \\d\\.\\[\\]+-]+\\s*("+units+"?))?\\s*[×x]\\s*([ \\d\\.\\[\\]+-]+\\s*("+units+")\\b)");
 		Matcher matcher2 = pattern19.matcher(numberexp);
 		if(matcher2.matches()){
 			//get l, w, and h
@@ -1072,9 +1079,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			//length = length.matches(".*[cmdµu]?m$")? length : length + " "+lunit;
 			//width = width.matches(".*[cmdµu]?m$")? width : width + " "+wunit;
 			//if(height.length()>0) height = height.matches(".*[cmdµu]?m$")? height : height + " "+hunit;
-			length = length.matches(".*"+units+"$")? length : length + " "+lunit;
-			width = width.matches(".*"+units+"$")? width : width + " "+wunit;
-			if(height.length()>0) height = height.matches(".*"+units+"$")? height : height + " "+hunit;
+			length = length.matches(".*\\b"+units+"$")? length : length + " "+lunit;
+			width = width.matches(".*\\b"+units+"$")? width : width + " "+wunit;
+			if(height.length()>0) height = height.matches(".*\\b"+units+"$")? height : height + " "+hunit;
 
 			
 			//annotation
@@ -1383,7 +1390,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?)*|[±]?[\\d]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
 		//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|[±]?[\\d\\./%]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
 		//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµu]?m))");
-		Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?"+units+"))");
+		Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?\\b"+units+"\\b))");
 
 		matcher2 = pattern16.matcher(numberexp);
 		while ( matcher2.find()){
@@ -2366,7 +2373,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		int j;
 		Matcher matcher2;
 		//Pattern pattern13 = Pattern.compile("[xX\\×±\\d\\[\\]\\–\\-\\.\\s\\+]+[\\s]?([dcmµu]?m)(?![\\w])(([\\s]diam)?([\\s]wide)?)");
-		Pattern pattern13 = Pattern.compile("[xX\\×±\\d\\[\\]\\–\\-\\.\\s\\+]+[\\s]?("+units+")(?![\\w])(([\\s]diam)?([\\s]wide)?)");
+		Pattern pattern13 = Pattern.compile("[xX\\×±\\d\\[\\]\\–\\-\\.\\s\\+]+[\\s]?(\\b"+units+"\\b)(?![\\w])(([\\s]diam)?([\\s]wide)?)");
 		matcher2 = pattern13.matcher(plaincharset);
 		String toval="";
 		String fromval="";
@@ -2507,7 +2514,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			if(extreme.substring(i,j).contains("–")|extreme.substring(i,j).contains("-") && !extreme.substring(i,j).contains("×") && !extreme.substring(i,j).contains("x") && !extreme.substring(i,j).contains("X")){
 				String extract = extreme.substring(i,j);
 				//Pattern pattern18 = Pattern.compile("[\\s]?[dcmµu]?m(([\\s]diam)?([\\s]wide)?)");
-				Pattern pattern18 = Pattern.compile("[\\s]?"+units+"(([\\s]diam)?([\\s]wide)?)");
+				Pattern pattern18 = Pattern.compile("[\\s]?\\b"+units+"\\b(([\\s]diam)?([\\s]wide)?)");
 				Matcher matcher3 = pattern18.matcher(extract);
 				unit="";
 				if ( matcher3.find()){
@@ -2541,7 +2548,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			else {
 				String extract = extreme.substring(i,j);
 				//Pattern pattern18 = Pattern.compile("[\\s]?[dcmµμu]?m(([\\s]diam)?([\\s]wide)?)");
-				Pattern pattern18 = Pattern.compile("[\\s]?"+units+"(([\\s]diam)?([\\s]wide)?)");
+				Pattern pattern18 = Pattern.compile("[\\s]?\\b"+units+"\\b(([\\s]diam)?([\\s]wide)?)");
 				Matcher matcher3 = pattern18.matcher(extract);
 				unit="";
 				if ( matcher3.find()){
