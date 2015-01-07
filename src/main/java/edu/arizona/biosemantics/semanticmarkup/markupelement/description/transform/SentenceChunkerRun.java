@@ -105,8 +105,8 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 			// chunk sentence using chunkerChain
 			this.result = chunkerChain.chunk(parseTree, subjectTag, description, descriptionsFile, source, sentenceString, originalSent);
 			log(LogLevel.DEBUG, "Sentence processing finished.\n");
-		} catch (Exception e) {
-			log(LogLevel.ERROR, "Problem chunking sentencence: " + sentenceString + "\nSentence is contained in file: " + source, e);
+		} catch (Throwable t) {
+			log(LogLevel.ERROR, "Problem chunking sentencence: " + sentenceString + "\nSentence is contained in file: " + source, t);
 		} 
 		this.sentencesLatch.countDown();
 		return result;
