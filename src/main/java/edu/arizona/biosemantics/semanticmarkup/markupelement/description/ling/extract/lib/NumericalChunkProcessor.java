@@ -86,12 +86,17 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> modifiers = chunk.getChunks(ChunkType.MODIFIER);
 		modifiers.addAll(processingContextState.getUnassignedModifiers());
 		
-		String character = text.indexOf("size") >= 0 || content.indexOf('/') > 0 || content.indexOf('%') > 0 || content.indexOf('.') > 0 ? "size" : null;
-		character = "size";
+		String character = text.indexOf("size") >= 0 ? "size" : null;
+		if(character ==null)
+			character = processingContextState.getUnassignedCharacter();
+		if(character ==null)
+			character = content.indexOf('/') > 0 || content.indexOf('%') > 0 || content.indexOf('.') > 0 ? "size_or_shape" : "unknown_character";
+
 		List<Character> characters = annotateNumericals(content, character,
 				modifiers, lastStructures(processingContext, processingContextState), resetFrom, processingContextState);
 		processingContextState.setLastElements(characters);
 		processingContextState.clearUnassignedModifiers();
+		processingContextState.setUnassignedCharacter(null); //consumed
 		
 		if(parents.isEmpty()) {
 			processingContextState.getUnassignedCharacters().addAll(characters);
