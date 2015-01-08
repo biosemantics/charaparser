@@ -17,6 +17,7 @@ import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
@@ -56,9 +57,37 @@ public class NonOntologyBasedStandardizer {
 		normalizeAdvConstraintedOrgan(result);	
 		normalizeZeroCount(result);
 		removeCircularCharacterConstraint(result);
+		character2structureContraint(result);
 	}
 
 
+	/**
+	 * if character name  = entity structural constraint type 
+	 * and is_modifier = true
+	 * then make the character a structure constraint
+	 * @param result
+	 */
+	private void character2structureContraint(LinkedList<Element> result) {
+		for(Element element: result){
+			if(element.isStructure()){
+				String oid = ((BiologicalEntity)element).getId();
+				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
+				List<Character> removes = new ArrayList<Character>();
+				for(Character c: chars){
+					if(c.getIsModifier().compareTo("true")==0 &&
+							c.getName().matches(".*?(^|_or_)("+ElementRelationGroup.entityStructuralConstraintElements+")(_or_|$).*")){
+						((BiologicalEntity) element).appendConstraint(c.getValue());
+						removes.add(c);
+					}
+				}	
+				chars.removeAll(removes);
+				/*for(Character c: removes){
+					((BiologicalEntity)element).removeElementRecursively(c);
+				}*/
+			}
+		}
+		
+	}
 
 	/**
 	 * some description paragraphs start to name the taxon the organism belongs to. 
