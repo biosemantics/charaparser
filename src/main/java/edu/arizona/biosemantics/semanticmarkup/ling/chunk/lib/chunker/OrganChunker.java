@@ -1,7 +1,10 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
+
 
 
 
@@ -73,7 +76,23 @@ public class OrganChunker extends AbstractChunker {
 				}
 				chunkCollector.addChunk(organ);
 				previousOrgan = organ;
-			} else {
+			} else if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && learnedCharacterKnowledgeBase.isEntityStructuralContraint(terminal.getTerminalsText())){
+				String character = null;
+				if(learnedCharacterKnowledgeBase.containsCharacterState(terminal.getTerminalsText())) {
+					character = learnedCharacterKnowledgeBase.getCharacterName(terminal.getTerminalsText()).getCategories();
+				}
+				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);
+				chunkCollector.addChunk(stateChunk); //forking => STATE: [forking]
+				List<Chunk> characterStateChildChunks = new ArrayList<Chunk>();
+				characterStateChildChunks.add(stateChunk);
+				Chunk characterStateChunk = new Chunk(ChunkType.CHARACTER_STATE, characterStateChildChunks);
+				
+				if(character != null) {//forking => CHARACTER_STATE: characterName->arrangement; [MODIFIER: [mostly], STATE: [forking]]
+					characterStateChunk.setProperty("characterName", character);
+					chunkCollector.addChunk(characterStateChunk);
+				} 
+				previousOrgan = characterStateChunk; //a potential constraint chunk
+			} else {	
 				previousOrgan = null;
 			}
 		}

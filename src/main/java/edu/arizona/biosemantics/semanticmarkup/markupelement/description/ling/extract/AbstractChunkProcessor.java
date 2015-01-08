@@ -455,7 +455,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 			else {
 				nonOrgan.add(chunk);
-				constraintCandidates.clear();
+				//constraintCandidates.clear(); Hong Jan 2015, "a primary ascending skeleton"
 			}
 		}
 

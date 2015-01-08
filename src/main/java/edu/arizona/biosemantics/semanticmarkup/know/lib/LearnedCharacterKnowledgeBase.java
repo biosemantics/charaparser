@@ -80,7 +80,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 	
 	@Override
-	public boolean isEntityReference(String word){
+	public boolean isEntityStructuralContraint(String word){
 		if(isEntityStructuralConstraintCache.get(word)!=null) return isEntityStructuralConstraintCache.get(word);
 		String cats = this.getCharacterName(word).getCategories();
 		//boolean isEntity = cats !=null && cats.matches(".*?(^|_)structure(_|$).*");
