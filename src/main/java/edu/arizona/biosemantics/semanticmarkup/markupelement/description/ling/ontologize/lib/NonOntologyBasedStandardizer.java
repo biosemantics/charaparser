@@ -74,10 +74,13 @@ public class NonOntologyBasedStandardizer {
 				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
 				List<Character> removes = new ArrayList<Character>();
 				for(Character c: chars){
-					if(c.getIsModifier().compareTo("true")==0 &&
+					if(c.getIsModifier()!=null && c.getIsModifier().compareTo("true")==0 && c.getName()!=null &&
 							c.getName().matches(".*?(^|_or_)("+ElementRelationGroup.entityStructuralConstraintElements+")(_or_|$).*")){
-						((BiologicalEntity) element).appendConstraint(c.getValue());
-						removes.add(c);
+						if(c.getValue()!=null){
+							((BiologicalEntity) element).appendConstraint(c.getValue());
+							removes.add(c);
+						}
+						
 					}
 				}	
 				chars.removeAll(removes);
