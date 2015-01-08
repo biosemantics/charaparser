@@ -22,8 +22,10 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+
 
 
 //import edu.arizona.biosemantics.oto.lite.beans.Term;
@@ -59,6 +61,7 @@ public abstract class Normalizer implements INormalizer {
 	private String prepositionWords;
 	private Pattern modifierList;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
+	private Pattern omitUnits;
 	private Pattern range = Pattern.compile("(.*?)\\b(?:from|between)\\s*([\\d\\. /\\(\\)\\?+-]+)\\s*(?:to|and|-)\\s*([\\d\\. /\\(\\)\\?+-]+)(.*)");
 	private Pattern numbergroup = Pattern.compile("(.*?)([()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d]?[()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{1,}(?![a-z]))(.*)"); //added , and ? for chromosome counts, used {1, } to include single digit expressions such as [rarely 0]
 	//private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-,\\s*)+ (to|or) \\d-\\{)(.*)");	
@@ -187,7 +190,8 @@ public abstract class Normalizer implements INormalizer {
 		this.inflector = inflector;
 		this.parentTagProvider = parentTagProvider;
 		this.compoundPPptn = Pattern.compile("(.*?)\\b("+compoundPPptn+")\\b(.*)");	
-		this.modifierphrases = advModifiers.split("\\s*\\|\\s*");		
+		this.modifierphrases = advModifiers.split("\\s*\\|\\s*");	
+		this.omitUnits = Pattern.compile("(.*?\\b)([\\d\\.]+\\s+)((?:and|or|,)\\s+[\\d\\.]+\\s*("+units+")\\b.*)");
 	}
 	
 	public void init(){
@@ -244,7 +248,8 @@ public abstract class Normalizer implements INormalizer {
 		str = str.replaceAll("\\bq\\s*=", "l / w =");
 		//str = str.replaceAll("(?<=\\d)\\s*,\\s*(?=\\d{3,3}\\b)", ""); //remove commas in large numbers such as 1,234 -- this is now done in perl code
 		str = PhraseNomralizer.shorten(str);
-		
+
+
 		//str = stringColors(str);
 		str = connectColors(str);
         //deal with numbers
@@ -263,12 +268,13 @@ public abstract class Normalizer implements INormalizer {
 		//if(!modifier.trim().isEmpty())
 		//	str = addModifier(str, modifier, tag);
 		
-		
-		
-		//===========================================================================
 		boolean containsArea = false;
 		String strcp = str;
 		str = normalizeSpacesRoundNumbers(str);
+		
+		
+		//32 and 21 microns => 32 microns and 21 microns
+		str = restoreOmittedUnits(str); //done after normalizeSpacesRoundNumbers
 		
 		/*str = str.replaceAll("\\b(?<=\\d+) \\. (?=\\d+)\\b", "."); //2 . 5 =>2.5
 		str = str.replaceAll("(?<=\\d)\\s+/\\s+(?=\\d)", "/"); // 1 / 2 => 1/2
@@ -419,7 +425,21 @@ public abstract class Normalizer implements INormalizer {
 		return str;
 	}
 	
-    /**
+	/**
+	 * 32 and 21 microns => 32 microns and 21 microns
+	 * @param str
+	 * @return
+	 */
+    private String restoreOmittedUnits(String str) {
+		while(str.matches(this.omitUnits.toString())){ //= Pattern.compile("(.*?\\b)([\\d\\.]+\\s+)((?:and|or|,)\\s+[\\d\\.]+\\s*("+units+")\\b.*)");
+			Matcher m = omitUnits.matcher(str);
+			if(m.matches())
+				str = m.group(1)+m.group(2)+m.group(4)+" "+m.group(3);
+		}
+		return str;
+	}
+
+	/**
 	 * more|greater than 5 => 5+
 	 * more than or equal to 5 => 5+
 	 * less|fewer than 5 => 0-5	
