@@ -834,7 +834,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			if(beforePPChunk != null && beforePPChunk.getChunkType().equals(ChunkType.PP)) {
 				return "part_of";
 			}
-			if(afterPPChunk!=null && (afterPPChunk.isOfChunkType(ChunkType.END_OF_LINE) || afterPPChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE) ||
+			if(afterPPChunk!=null && (/*afterPPChunk.isOfChunkType(ChunkType.END_OF_LINE) || afterPPChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE) ||*/
 					afterPPChunk.isOfChunkType(ChunkType.COUNT) || 
 					(afterPPChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && afterPPChunk.getProperty("characterName").contains("count"))))
 				return "consist_of";
@@ -851,13 +851,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 	protected String differentiateOf(List<BiologicalEntity> organsBeforeOf, List<BiologicalEntity> organsAfterOf) {
 		String result = "part_of";
-
+		
 		for (int i = 0; i<organsBeforeOf.size(); i++){
 			String b = organsBeforeOf.get(i).getName();
+			if(b.compareTo("part")==0) return "part_of";
 			if(clusters.contains(b)){
 				result = "consist_of";
 				break;
 			}
+			
 			for(int j = 0; j<organsAfterOf.size(); j++){
 				String a = organsAfterOf.get(j).getName();
 				//String pattern = a+"[ ]+of[ ]+[0-9]+.*"+b+"[,\\.]"; //consists-of
