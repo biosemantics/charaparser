@@ -240,7 +240,8 @@ public class ETCMarkupMain extends CLIMain {
 		config.setTerminologyLearner(DatabaseInputNoLearner.class);
 		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
 		config.setMarkupCreator(MarkupChain.class);
-		config.setUseOtoCommuntiyDownload(true);
+		//config.setUseOtoCommuntiyDownload(true);
+		config.setUseOtoCommuntiyDownload(false);
 	}
 	
 	protected void setupLogging(String debugLog, String errorLog) {
