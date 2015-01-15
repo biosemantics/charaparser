@@ -131,21 +131,15 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				for(Statement statement : description.getStatements()) {
-					for(BiologicalEntity structure : statement.getBiologicalEntities()) {			
-						String searchTerm = (structure.getConstraint() + " " + structure.getName()).trim();
+					for(BiologicalEntity structure : statement.getBiologicalEntities()) {
+						String searchTerm = structure.getName().trim();
+						if(structure.getConstraint() != null) 
+							searchTerm = structure.getConstraint().trim() + " " + searchTerm;
 						String iri = getIRI(searchTerm);
-						if(iri != null)
+						if(iri != null) {
 							log(LogLevel.DEBUG, "Found IRI: " + iri + " for term " + searchTerm);
-						
-						if(iri == null) {
-							searchTerm = structure.getName();
-							iri = getIRI(searchTerm);
-							if(iri != null)
-								log(LogLevel.DEBUG, "Found IRI: " + iri + " for term " + searchTerm);
-						}
-						
-						if(iri != null)
 							structure.setOntologyId(iri);
+						}
 					}
 				}
 			}
