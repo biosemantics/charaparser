@@ -33,10 +33,10 @@ public class OntologyFactory {
 		}else if(ontoLocator instanceof String && ((String) ontoLocator).endsWith(".bin")){
 			IOntology partOfBin = new PartOfFile(ontologyDirectory, (String)ontoLocator);
 			if(partOfBin.objectCreated()) return partOfBin;
-		}/*else if(ontoLocator instanceof String && ((String) ontoLocator).endsWith(".owl")){
+		}else if(ontoLocator instanceof String && ((String) ontoLocator).endsWith(".owl")){
 			IOntology owlOntology = new PartOfOntology(ontologyDirectory, (String)ontoLocator);
 			if(owlOntology.objectCreated()) return owlOntology;
-		}*/
+		}
 		return null;
 	}
 

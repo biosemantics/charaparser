@@ -29,20 +29,26 @@ public class StructureNameStandardizer {
 	IOntology ontology;
 	ICharacterKnowledgeBase learnedCharacterKnowledgeBase;
 	Set<String> possess = new HashSet<String>(); //with, has, consist_of, possess
+	String nonspecificParts = null;
 	
 	public StructureNameStandardizer(IOntology ontology, ICharacterKnowledgeBase learnedCharacterKnowledgeBase, Set<String> possess){
 		this.ontology = ontology;
 		this.learnedCharacterKnowledgeBase = learnedCharacterKnowledgeBase;
 		this.possess = possess;
+		this.nonspecificParts = "apex|appendix|area|band|base|belt|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|face|groove|layer|line|margin|notch|part|pore|portion|protuberance|remnant|section|"
+				+ "side|stratum|surface|tip|wall|zone";
+		
 	}
 	
 	public void standardize(Description description){
 		log(LogLevel.DEBUG, description.getText());
+		filterNonspecificParts(description);
 		String parentorgan=null;
+		BiologicalEntity structure = null;
 		for(Statement s: description.getStatements()){
 			if(s.getText()!=null && s.getText().matches("^[A-Z].*")){ //record parentorgan
 				if(s.getBiologicalEntities().size()>0){
-					BiologicalEntity structure = s.getBiologicalEntities().get(0); //get 1st structure
+					structure = s.getBiologicalEntities().get(0); //get 1st structure
 					if(structure!=null){
 						//attach parent organ to other structures in this statement, return parentorgan used.
 						parentorgan = attachPOto(description, s, structure, "");	
@@ -60,22 +66,24 @@ public class StructureNameStandardizer {
 							String pocp = parentorgan;
 							String pchain = getStructureChain(description,struct, 0).replace(" of ", ",").trim(); //part of organ of organ
 							if(pchain.length()>0){ //use explicit part_of 
-								//log(LogLevel.DEBUG, "===>[pchain] use '"+pchain+"' as constraint to '"+struct.getName()+"'");
+								log(LogLevel.DEBUG, "===>[pchain] use '"+pchain+"' as constraint to '"+struct.getName()+"'");
 								struct.appendConstraint(formatParentOrgan(pchain)); 
 							}else{
-								String part = struct.getName();								
-								parentorgan = hasPart(parentorgan, part);
-								if(parentorgan.length()>0){
-									//log(LogLevel.DEBUG,"===>[part of 2] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-									struct.appendConstraint(formatParentOrgan(parentorgan));
-									System.out.println();
-								}/*else{
-									//quite strong an assumption that the organ of the first clause is the parent organ of all following clauses.
-									//If this is not true, or the part_of hashtable is complete, comment out this part.
-									//log(LogLevel.DEBUG,"===>[default] use '"+pocp+"' as constraint to '"+struct.getName()+"'");
-									struct.appendConstraint(formatParentOrgan(pocp));
-									parentorgan = pocp;
-								}*/
+								String part = struct.getName();				
+								if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",")){
+									parentorgan = hasPart(structure, struct, description, parentorgan, part);
+									if(parentorgan.length()>0){
+										log(LogLevel.DEBUG,"===>[part of 2] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+										struct.appendConstraint(formatParentOrgan(parentorgan));
+										System.out.println();
+									}/*else{
+										//quite strong an assumption that the organ of the first clause is the parent organ of all following clauses.
+										//If this is not true, or the part_of hashtable is complete, comment out this part.
+										//log(LogLevel.DEBUG,"===>[default] use '"+pocp+"' as constraint to '"+struct.getName()+"'");
+										struct.appendConstraint(formatParentOrgan(pocp));
+										parentorgan = pocp;
+									}*/
+								}
 							}
 
 						}
@@ -87,25 +95,41 @@ public class StructureNameStandardizer {
 	}
 
 	/**
+	 * remove parts from this.nonspecificParts if parts start a sentence in the description. 
+	 * for example "Body ellipsoidal" suggests that the organism has one body, and it is not a unspecific part of some other organ.
+	 * @param text
+	 */
+	private void filterNonspecificParts(Description description) {
+		
+		for(Statement s: description.getStatements()){
+			String sentence = s.getText();
+			if(sentence!=null && sentence.matches("^[A-Z].*")){ //record parentorgan
+				String word1 = sentence.substring(0, sentence.indexOf(" ")).toLowerCase();
+				this.nonspecificParts = this.nonspecificParts.replaceFirst("(^|\\|)"+word1+"(\\||$)", "|").replaceFirst("(^\\||\\|$)", "");
+			}
+		}
+	}
+
+	/**
 	 * 
 	 * @param parentorgan a list of organ, separated by ',', listed from suborgan to parent organ.
 	 * @param partorgans a list of organ, separated by ',', listed from suborgan to parent organ.
-	 * @return appropriate parentorgan for 'name' of <structure>. The parentorgan may be from the parentorgan list or an empty string. Format: leaf blade.
+	 * @return appropriate parentorgan for 'name' of <structure>. The parentorgan may be from the parentorgan list or an empty string. Format: "blade,leaf".
 	 */
 	private String hasPart(String parentorgans, String partorgans){
 		parentorgans = parentorgans.trim().replaceAll("(^,|,$)", "");
 		partorgans = partorgans.trim().replaceAll("(^,|,$)", "");
 		
 		//non-specific organ parts
-		String nonspecificparts = "apex|appendix|area|band|base|belt|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|face|groove|layer|line|margin|notch|part|pore|portion|protuberance|remnant|section|"
-				+ "side|stratum|surface|tip|wall|zone";
-		if(partorgans.matches("\\b("+nonspecificparts+")\\b.*") && !partorgans.contains(",")){
-			parentorgans = parentorgans.replaceFirst("(\\b("+nonspecificparts+")\\b,? ?)+", ""); //"base of surface, stem" does not make sense.
+		
+		if(partorgans.matches("\\b("+nonspecificParts+")\\b.*") && !partorgans.contains(",")){
+			parentorgans = parentorgans.replaceFirst("(\\b("+nonspecificParts+")\\b,? ?)+", ""); //"base of surface, stem" does not make sense.
 			return parentorgans;
 		}
 		
+		/* need work */
 		//cross check btw parts and parents using the ontology
-		String[] parts = partorgans.replaceFirst(".*(\\b("+nonspecificparts+")\\b,? ?)+", "").replaceFirst("^\\s*,", "").trim().split("\\s*,\\s*");
+		String[] parts = partorgans.replaceFirst(".*(\\b("+nonspecificParts+")\\b,? ?)+", "").replaceFirst("^\\s*,", "").trim().split("\\s*,\\s*");
 		String[] parents = parentorgans.split("\\s*,\\s*");
 		
 		int cut = -1;
@@ -131,7 +155,7 @@ public class StructureNameStandardizer {
 		//otherwise, return the first specific parental structure in partorgans
 		if(partorgans.contains(",")){
 			for(int i = parts.length-1; i >=0; i-- ){
-				if(parts[i].replaceFirst("^\\b("+nonspecificparts+")\\b", "").length()>0)
+				if(parts[i].replaceFirst("^\\b("+nonspecificParts+")\\b", "").length()>0)
 					return parts[i];
 			}
 		}
@@ -228,16 +252,18 @@ public class StructureNameStandardizer {
 					if(!struct.equals(parentstruct)){//skip the 1st structure which is parentstruct
 						if(!hasStructuralConstraint(struct)){
 							String partpchain = getStructureChain(description, struct, 3).replace(" of ", ",").trim(); //part of organ of organ
-							String part = struct.getName()+","+partpchain;								
-							//
-							parentorgan = hasPart(porgan, part);
-							if(parentorgan.length()>0){
-								//log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-								((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
-							}else if(possess(parentstruct, struct, description)){
-								parentorgan = formatParentOrgan(porgan);
-								//log(LogLevel.DEBUG,"===>[possess] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
-								((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
+							String part = struct.getName()+(partpchain.isEmpty()? "" : ","+partpchain);								
+							
+							if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",")){
+								parentorgan = hasPart(parentstruct, struct, description, porgan, part);
+								if(parentorgan.length()>0){
+									log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+									((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
+								}else if(possess(parentstruct, struct, description)){
+									parentorgan = formatParentOrgan(porgan);
+									log(LogLevel.DEBUG,"===>[possess] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
+									((BiologicalEntity)struct).appendConstraint(formatParentOrgan(parentorgan));
+								}
 							}
 						}
 
@@ -246,6 +272,68 @@ public class StructureNameStandardizer {
 			}
 		}
 		return parentorgan !=null? parentorgan : porgan.replaceAll("(^,|,$)", "");
+	}
+
+	/**
+	 * if parentStruct and partStruct has a non-possessing relation, return "" (e.g., The nucleus situated in the posterior part of the body. => Body is not part of Nucleus.)
+	 * otherwise (i.e. has no relation, or has a possessing relation), return parent structure name as a string
+	 * @param parentStruct
+	 * @param partStruct
+	 * @param description
+	 * @param parentName a list of organ, separated by ',', listed from suborgan to parent organ.
+	 * @param partName a list of organ, separated by ',', listed from suborgan to parent organ.
+	 * @return the name of parent structure (Format: "blade,leaf"), or "" if parentStruct is not a parent 
+	 */
+	private String hasPart(BiologicalEntity parentStruct,
+			BiologicalEntity partStruct, Description description, String parentName, String partName) {
+		
+		if(partName.contains(",")){
+			return partName.substring(partName.indexOf(",")).trim();
+		}
+		
+		List<Statement> statements = description.getStatements();
+		//check relations for evidence
+		boolean hasRelation = false;
+		boolean hasPossessRelation = false;
+		for(Statement s: statements){
+			List<Relation> relations = s.getRelations();
+			for(Relation r: relations){
+				if((r.getFromStructure()!=null && r.getFromStructure().equals(parentStruct) && r.getToStructure()!=null && r.getToStructure().equals(partStruct))){
+					hasRelation = true;
+					if(possess.contains(r.getName()))
+						hasPossessRelation = true;
+						
+				}
+			}
+		}
+		
+		//check character constraints for evidence
+		String idw = parentStruct.getId();
+		String idp = partStruct.getId();
+		for(Statement statement: statements){
+			List<BiologicalEntity> structures = statement.getBiologicalEntities();
+			for(BiologicalEntity s: structures){
+				LinkedHashSet<Character> characters = s.getCharacters();
+				Iterator<Character> it = characters.iterator();
+				while(it.hasNext()){
+					Character c = it.next();
+					if(c.getConstraintId()!=null && c.getConstraintId().compareTo(idp)==0 &&
+							s.getId().compareTo(idw)==0 && c.getConstraint()!=null){
+						hasRelation = true;
+						if(possess.contains(c.getConstraint().substring(0, c.getConstraint().indexOf(" ")))) //first word in constraint string is in possess
+							hasPossessRelation = true;
+					}
+				}
+			}
+		}
+		
+		if(!hasRelation || (hasRelation && hasPossessRelation)){		
+			if(partName.matches("\\b("+nonspecificParts+")\\b.*") && !partName.contains(",")){
+				parentName = parentName.replaceFirst("(\\b("+nonspecificParts+")\\b,? ?)+", ""); //"base of surface, stem" does not make sense.
+				return parentName;
+			}
+		}
+		return "";
 	}
 
 	/**
