@@ -23,7 +23,8 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * @author Hong Cui
- * using part_of relations from ontologies to attach appropriate parent organ to structures such as 'blade' and 'apex'
+ * 
+ * use clues from text to attach appropriate parent organ to non-specific structures such as "apex" and "side"
  */
 public class StructureNameStandardizer {
 	IOntology ontology;

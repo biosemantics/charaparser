@@ -24,6 +24,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
+
 
 /**
  * ToChunkProcessor processes chunks of ChunkType.TO
@@ -91,13 +93,23 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 				characterName = characterStateChunks.get(0).getProperty("characterName");
 			
 			String character = chunk.getTerminalsText();
-			results.addAll(createRangeCharacterElement(parents, modifiers, character, characterName, processingContextState));
+			List<Character> rangeCharacter = createRangeCharacterElement(parents, modifiers, character, characterName, processingContextState);
+			
+			if(!rangeCharacter.isEmpty()){ //to [not or]
+				for(Element element: results){ //add notes: "[duplicate value]" for the characters as they repeats what is in the rangeCharacter
+					if(element.isCharacter()){
+						((Character)element).setNotes("[duplicate value]");
+					}
+				}
+			}
+			results.addAll(rangeCharacter);
 			
 		}
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		processingContextState.setUnassignedCharacter(null);
 		processingContextState.setLastElements(results);
 		
-		return new LinkedList<Element>();
+		//return new LinkedList<Element>(); //why?
+		return results;
 	}
 }

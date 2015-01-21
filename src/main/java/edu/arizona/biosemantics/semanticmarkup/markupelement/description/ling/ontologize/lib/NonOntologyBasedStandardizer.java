@@ -57,13 +57,30 @@ public class NonOntologyBasedStandardizer {
 		normalizeAdvConstraintedOrgan(result);	
 		normalizeZeroCount(result);
 		removeCircularCharacterConstraint(result);
-		character2structureContraint(result);
+		character2structureContraint(result);//is_modifier => constraint
+		renameCharacter(result, "count", "quantity");
 	}
 
 
+
+
+	private void renameCharacter(LinkedList<Element> result, String oldName,
+			String newName) {
+		for(Element element: result){
+			if(element.isStructure()){
+				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
+				for(Character c: chars){
+					if(c.getName().compareTo(oldName)==0){
+						c.setName(newName);
+					}
+				}
+			}
+		}
+	}
+
 	/**
-	 * if character name  = entity structural constraint type 
-	 * and is_modifier = true
+	 * 
+	 * if character's is_modifier attribute = true and (the structure has some other is_modifier = false characters || character is an entityStructuralConstraintElement)
 	 * then make the character a structure constraint
 	 * @param result
 	 */
@@ -73,16 +90,40 @@ public class NonOntologyBasedStandardizer {
 				String oid = ((BiologicalEntity)element).getId();
 				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
 				List<Character> removes = new ArrayList<Character>();
+				boolean hasIsModifierCharacter = false;
+				boolean hasIsNotModifierCharacter = false;
+				ArrayList<Character> constraints = new ArrayList<Character> ();
 				for(Character c: chars){
-					if(c.getIsModifier()!=null && c.getIsModifier().compareTo("true")==0 && c.getName()!=null &&
-							c.getName().matches(".*?(^|_or_)("+ElementRelationGroup.entityStructuralConstraintElements+")(_or_|$).*")){
-						if(c.getValue()!=null){
-							((BiologicalEntity) element).appendConstraint(c.getValue());
-							removes.add(c);
+					if(c.getIsModifier()!=null && c.getIsModifier().compareTo("true")==0){
+						hasIsModifierCharacter = true;
+						constraints.add(c);
+						if(c.getName()!=null && c.getName().matches(".*?(^|_or_)("+ElementRelationGroup.entityStructuralConstraintElements+")(_or_|$).*")){
+							if(c.getValue()!=null){ //convert to constraint
+								String newConstraint = c.getValue();
+								String existingConstraint = ((BiologicalEntity) element).getConstraint();
+								((BiologicalEntity) element).setConstraint(newConstraint+ (existingConstraint!=null? ";"+existingConstraint: ""));
+								removes.add(c);
+							}
 						}
-						
+					}else{
+						hasIsNotModifierCharacter = true;
 					}
 				}	
+				if(hasIsModifierCharacter && hasIsNotModifierCharacter){
+					for(Character c: constraints){
+						if(c.getValue()!=null && c.getValue().matches("[a-zA-Z]+.*")&& !c.getName().matches("count|quantity ") && c.getUnit()==null){//convert to constraint
+							String newConstraint = c.getValue();
+							String existingConstraint = ((BiologicalEntity) element).getConstraint();
+							((BiologicalEntity) element).setConstraint(newConstraint+ (existingConstraint!=null? ";"+existingConstraint: ""));
+							removes.add(c);
+						}
+					}
+				}else{
+					//do nothing
+					for(Character c: constraints){
+						System.out.println("character "+c.toString()+" is not converted");
+					}
+				}
 				chars.removeAll(removes);
 				/*for(Character c: removes){
 					((BiologicalEntity)element).removeElementRecursively(c);
