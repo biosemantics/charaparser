@@ -231,7 +231,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					for(int i=0; i<terminals.size(); i++) {
 						if(organChunk.containsOrEquals(terminals.get(i))) {
 							if(i-1>=0 && (terminals.get(i-1).getTerminalsText().equals("a") || terminals.get(i-1).getTerminalsText().equals("an"))) {
-								this.createCharacterElement(parents, null, "1", "count", "", processingContextState, false);
+								this.createCharacterElement(parents, null, "1", "count", "", processingContextState, true);
 							}
 							break;
 						}
@@ -534,6 +534,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 				IChunkProcessor processor = processingContext.getChunkProcessor(ChunkType.TO_PHRASE);
 				List<? extends Element> result = processor.process(token, processingContext);
+				for(Element c: result){
+					if(c.isCharacter()){
+						((Character)c).setIsModifier(isModifier+"");
+					}
+				}
 				results.addAll(result);
 				//results = this.processCharacterList(token, parents, processingContextState, processingContext);
 			} else {
@@ -563,7 +568,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					//TODO: can be made more efficient, since sometimes character is already given
 					modifiers.add(token);
 				}else if(w.matches(".*?\\d.*") && !w.matches(".*?[a-z].*")){//TODO: 2 times =>2-times?
-					results.addAll(this.annotateNumericals(w, "count", modifiers, parents, false, processingContextState));
+					List<Character> charas = this.annotateNumericals(w, "count", modifiers, parents, false, processingContextState);
+					for(Element c: charas){
+						if(c.isCharacter()){
+							((Character)c).setIsModifier(isModifier+"");
+						}
+					}
+					results.addAll(charas);
+					
 					//annotateCount(parents, w, modifiers);
 					modifiers.clear();
 				}else{
@@ -597,6 +609,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 						if(processor != null) {
 							List<? extends Element> result = processor.process(token, processingContext);
+							for(Element c: result){
+								if(c.isCharacter()){
+									((Character)c).setIsModifier(isModifier+"");
+								}
+							}
 							results.addAll(result);
 						}
 					}

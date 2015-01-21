@@ -23,7 +23,8 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * @author Hong Cui
- * using part_of relations from ontologies to attach appropriate parent organ to structures such as 'blade' and 'apex'
+ * 
+ * use clues from text to attach appropriate parent organ to non-specific structures such as "apex" and "side"
  */
 public class StructureNameStandardizer {
 	IOntology ontology;
@@ -70,7 +71,7 @@ public class StructureNameStandardizer {
 								struct.appendConstraint(formatParentOrgan(pchain)); 
 							}else{
 								String part = struct.getName();				
-								if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",")){
+								if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",") && parentorgan.compareTo("whole_organism")!=0){
 									parentorgan = hasPart(structure, struct, description, parentorgan, part);
 									if(parentorgan.length()>0){
 										log(LogLevel.DEBUG,"===>[part of 2] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
@@ -254,7 +255,7 @@ public class StructureNameStandardizer {
 							String partpchain = getStructureChain(description, struct, 3).replace(" of ", ",").trim(); //part of organ of organ
 							String part = struct.getName()+(partpchain.isEmpty()? "" : ","+partpchain);								
 							
-							if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",")){
+							if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",") && parentorgan.compareTo("whole_organism")!=0){
 								parentorgan = hasPart(parentstruct, struct, description, porgan, part);
 								if(parentorgan.length()>0){
 									log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");

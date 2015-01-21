@@ -116,6 +116,9 @@ public class VPRecoverChunker extends AbstractChunker {
 	private void recoverVPChunkFromVerbAndOrgan(
 			List<AbstractParseTree> terminals, int i,
 			ChunkCollector chunkCollector) {
+		if(terminals.get(i-1).getTerminalsText().matches("a|an|the|this|that|these|those|its|their"))
+			return;
+		
 		AbstractParseTree verbTerminal = terminals.get(i);
 		AbstractParseTree organTerminal = terminals.get(i+1);
 		Chunk verbChunk = chunkCollector.getChunk(verbTerminal);
