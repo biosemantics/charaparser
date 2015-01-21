@@ -255,7 +255,7 @@ public class StructureNameStandardizer {
 							String partpchain = getStructureChain(description, struct, 3).replace(" of ", ",").trim(); //part of organ of organ
 							String part = struct.getName()+(partpchain.isEmpty()? "" : ","+partpchain);								
 							
-							if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",") && parentorgan.compareTo("whole_organism")!=0){
+							if(part.matches("\\b("+nonspecificParts+")\\b.*") && !part.contains(",") && porgan.compareTo("whole_organism")!=0){
 								parentorgan = hasPart(parentstruct, struct, description, porgan, part);
 								if(parentorgan.length()>0){
 									log(LogLevel.DEBUG,"===>[part of 1] use '"+parentorgan+"' as constraint to '"+struct.getName()+"'");
