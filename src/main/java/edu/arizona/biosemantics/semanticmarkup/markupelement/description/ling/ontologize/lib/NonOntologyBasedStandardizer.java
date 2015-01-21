@@ -101,7 +101,9 @@ public class NonOntologyBasedStandardizer {
 							if(c.getValue()!=null){ //convert to constraint
 								String newConstraint = c.getValue();
 								String existingConstraint = ((BiologicalEntity) element).getConstraint();
-								((BiologicalEntity) element).setConstraint(newConstraint+ (existingConstraint!=null? ";"+existingConstraint: ""));
+								if(existingConstraint==null || (!existingConstraint.matches(".*?(^|; )"+newConstraint+"($|;).*"))){
+									((BiologicalEntity) element).setConstraint(newConstraint+ (existingConstraint!=null? ";"+existingConstraint: ""));
+								}
 								removes.add(c);
 							}
 						}
@@ -114,7 +116,9 @@ public class NonOntologyBasedStandardizer {
 						if(c.getValue()!=null && c.getValue().matches("[a-zA-Z]+.*")&& !c.getName().matches("count|quantity ") && c.getUnit()==null){//convert to constraint
 							String newConstraint = c.getValue();
 							String existingConstraint = ((BiologicalEntity) element).getConstraint();
-							((BiologicalEntity) element).setConstraint(newConstraint+ (existingConstraint!=null? ";"+existingConstraint: ""));
+							if(existingConstraint==null || (!existingConstraint.matches(".*?(^|; )"+newConstraint+"($|;).*"))){
+								((BiologicalEntity) element).setConstraint(newConstraint+ (existingConstraint!=null? ";"+existingConstraint: ""));
+							}
 							removes.add(c);
 						}
 					}

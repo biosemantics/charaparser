@@ -219,7 +219,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.constraint == null || this.constraint.isEmpty()) {
 			newValue = constraint;
-		} else {
+		} else if(!this.constraint.matches(".*?(^|; )"+constraint+"($|;).*")){
 			newValue = this.constraint + "; " + constraint;
 		}
 		this.constraint = newValue;
@@ -235,7 +235,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.taxonConstraint == null || this.taxonConstraint.isEmpty()) {
 			newValue = taxonConstraint;
-		} else {
+		} else if(!this.taxonConstraint.matches(".*?(^|; )"+taxonConstraint+"($|;).*")){
 			newValue = this.taxonConstraint + "; " + taxonConstraint;
 		}
 		this.taxonConstraint = newValue;
@@ -246,7 +246,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.provenance == null || this.provenance.isEmpty()) {
 			newValue = provenance;
-		} else {
+		} else if(!this.provenance.matches(".*?(^|; )"+provenance+"($|;).*")){
 			newValue = this.provenance + "; " + provenance;
 		}
 		this.provenance = newValue;
@@ -257,7 +257,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.parallelismConstraint == null || this.parallelismConstraint.isEmpty()) {
 			newValue = parallelismConstraint;
-		} else {
+		} else if(!this.parallelismConstraint.matches(".*?(^|; )"+parallelismConstraint+"($|;).*")){
 			newValue = this.parallelismConstraint + "; " + parallelismConstraint;
 		}
 		this.parallelismConstraint = newValue;
@@ -268,7 +268,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.ontologyId == null || this.ontologyId.isEmpty()) {
 			newValue = ontologyId;
-		} else {
+		} else if(!this.ontologyId.matches(".*?(^|; )"+ontologyId+"($|;).*")){
 			newValue = this.ontologyId + "; " + ontologyId;
 		}
 		this.ontologyId = newValue;
@@ -279,7 +279,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.notes == null || this.notes.isEmpty()) {
 			newValue = notes;
-		} else {
+		} else if(!this.notes.matches(".*?(^|; )"+notes+"($|;).*")){
 			newValue = this.notes + "; " + notes;
 		}
 		this.notes = newValue;
@@ -290,7 +290,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.inBrackets == null || this.inBrackets.isEmpty()) {
 			newValue = inBrackets;
-		} else {
+		} else if(!this.inBrackets.matches(".*?(^|; )"+inBrackets+"($|;).*")){
 			newValue = this.inBrackets + "; " + inBrackets;
 		}
 		this.inBrackets = newValue;
@@ -312,7 +312,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.id == null || this.id.isEmpty()) {
 			newValue = id;
-		} else {
+		} else if(!this.id.matches(".*?(^|; )"+id+"($|;).*")){
 			newValue = this.id + "; " + id;
 		}
 		this.id = newValue;
@@ -323,7 +323,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.geographicalConstraint == null || this.geographicalConstraint.isEmpty()) {
 			newValue = geographicalConstraint;
-		} else {
+		} else if(!this.geographicalConstraint.matches(".*?(^|; )"+geographicalConstraint+"($|;).*")){
 			newValue = this.geographicalConstraint + "; " + geographicalConstraint;
 		}
 		this.geographicalConstraint = newValue;
@@ -334,7 +334,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.constraintId == null || this.constraintId.isEmpty()) {
 			newValue = constraintId;
-		} else {
+		} else if(!this.constraintId.matches(".*?(^|; )"+constraintId+"($|;).*")){
 			newValue = this.constraintId + "; " + constraintId;
 		}
 		this.constraintId = newValue;
@@ -345,7 +345,7 @@ public class BiologicalEntity extends NamedElement {
 		String newValue = "";
 		if(this.alterName == null || this.alterName.isEmpty()) {
 			newValue = alterName;
-		} else {
+		} else if(!this.alterName.matches(".*?(^|; )"+alterName+"($|;).*")){ 
 			newValue = this.alterName + "; " + alterName;
 		}
 		this.alterName = newValue;
