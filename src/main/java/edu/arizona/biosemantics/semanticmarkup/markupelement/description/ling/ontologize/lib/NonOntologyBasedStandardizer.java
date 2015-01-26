@@ -59,9 +59,27 @@ public class NonOntologyBasedStandardizer {
 		removeCircularCharacterConstraint(result);
 		character2structureContraint(result);//is_modifier => constraint
 		renameCharacter(result, "count", "quantity");
+		quantityVsPresence(result); //after count => quantity
 	}
 
-
+	/**
+	 * separate quantity from presence
+	 * @param result
+	 */
+	private void quantityVsPresence(LinkedList<Element> result) {
+		for(Element element: result){
+			if(element.isStructure()){
+				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
+				for(Character c: chars){
+					if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches(".*?\\b(absent|present|0)\\b.*")){
+						c.setName("presence");
+						c.setValue(c.getValue().replaceAll("\\b0\\b", "absent"));
+					}
+					
+				}
+			}
+		}
+	}
 
 
 	private void renameCharacter(LinkedList<Element> result, String oldName,

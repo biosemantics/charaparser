@@ -969,7 +969,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	protected boolean isNumerical(Chunk object) {
-		return object.getTerminalsText().matches("\\d+");
+		if(object.getTerminalsText()!=null)
+			return object.getTerminalsText().matches("\\d+");
+		return false;
 	}
 
 
