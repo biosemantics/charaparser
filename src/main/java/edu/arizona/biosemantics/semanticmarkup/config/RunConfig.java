@@ -150,6 +150,7 @@ public class RunConfig extends BasicConfig {
 	
 	// PROCESSING 
 	private TaxonGroup taxonGroup = TaxonGroup.PLANT;
+	private boolean useEmptyGlossary = false;
 	private Class<? extends IRun> run = DescriptionMarkupRun.class;
 	private String runRootDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix;
 	private String runOutDirectory = workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
@@ -191,6 +192,7 @@ public class RunConfig extends BasicConfig {
 		try {
 			// PROCESSING 
 			bind(TaxonGroup.class).annotatedWith(Names.named("TaxonGroup")).toInstance(taxonGroup);
+			bind(Boolean.class).annotatedWith(Names.named("UseEmptyGlossary")).toInstance(useEmptyGlossary);
 			bind(IRun.class).to(run);
 			bind(IGlossary.class).to(glossary).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("PerlDirectory")).toInstance(this.perlDirectory);
@@ -785,6 +787,10 @@ public class RunConfig extends BasicConfig {
 
 	public void setOntologiesDirectory(String ontologiesDirectory) {
 		this.ontologiesDirectory = ontologiesDirectory;
+	}
+
+	public void setUseEmptyGlossary(boolean value) {
+		this.useEmptyGlossary = value;
 	}	
 	
 }

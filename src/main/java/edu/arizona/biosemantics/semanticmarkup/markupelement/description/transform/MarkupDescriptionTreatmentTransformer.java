@@ -87,6 +87,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	private boolean termCategorizationRequired;
 	private IInflector inflector;
 	private String etcUser;
+	private boolean useEmptyGlossary;
 	
 	/**
 	 * @param wordTokenizer
@@ -137,7 +138,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("GlossaryTable")String glossaryTable,
 			@Named("termCategorizationRequired")boolean termCategorizationRequired,
 			IInflector inflector, 
-			@Named("EtcUser")String etcUser) throws ClassNotFoundException, SQLException {
+			@Named("EtcUser")String etcUser, 
+			@Named("UseEmptyGlossary") boolean useEmptyGlossary) throws ClassNotFoundException, SQLException {
 		super(version, parallelProcessing);
 		this.inflector = inflector;
 		this.parser = parser;
@@ -159,6 +161,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.glossaryTable = glossaryTable;
 		this.termCategorizationRequired = termCategorizationRequired;
 		this.etcUser = etcUser;
+		this.useEmptyGlossary = useEmptyGlossary;
 		
 		normalizer.init();
 		
@@ -178,24 +181,27 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		//String glossaryTable = tablePrefix + "_glossary";
 		//if(!glossaryExistsLocally(tablePrefix)) {
 		
-		String glossaryVersion = getGlossaryVersionOfLearn();
-		if(glossaryVersion == null)
-			glossaryVersion = "latest";
-		
-		otoClient.open();
-		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
-		
 		GlossaryDownload glossaryDownload = new GlossaryDownload();
-		try {
-			glossaryDownload = futureGlossaryDownload.get();
-		} catch (Exception e) {
+		String glossaryVersion = "N/A";
+		if(!useEmptyGlossary) {
+			glossaryVersion = getGlossaryVersionOfLearn();
+			if(glossaryVersion == null)
+				glossaryVersion = "latest";
+			
+			otoClient.open();
+			Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
+			
+			try {
+				glossaryDownload = futureGlossaryDownload.get();
+			} catch (Exception e) {
+				otoClient.close();
+				log(LogLevel.ERROR, "Couldn't download glossary " + taxonGroup.getDisplayName() + " version: " + glossaryVersion, e);
+				throw new TransformationException();
+			}
 			otoClient.close();
-			log(LogLevel.ERROR, "Couldn't download glossary " + taxonGroup.getDisplayName() + " version: " + glossaryVersion, e);
-			throw new TransformationException();
+			
+			glossaryVersion = glossaryDownload.getVersion();
 		}
-		otoClient.close();
-		
-		glossaryVersion = glossaryDownload.getVersion();
 				
         UploadResult uploadResult = null;
         Download download = null;
@@ -263,7 +269,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		software.setType("Semantic Markup");
 		software.setVersion(version);
 		processor.setSoftware(software);
-		processor.setResource(resource);
+		if(!useEmptyGlossary)
+			processor.setResource(resource);
 		
 		return processor;
 	}
