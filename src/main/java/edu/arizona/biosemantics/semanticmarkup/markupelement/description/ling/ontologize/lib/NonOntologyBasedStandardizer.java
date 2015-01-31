@@ -56,13 +56,13 @@ public class NonOntologyBasedStandardizer {
 		//createMayBeSameRelations(result, processingContext);  //not sure we need this relation.
 		removeOrphenedUnknownElements(result);
 		noOrgan2AdvConstraintedOrgan(result);
-		normalizeAdvConstraintedOrgan(result);	
 		normalizeZeroCount(result);
 		removeCircularCharacterConstraint(result);
 		character2structureContraint(result);//is_modifier => constraint
 		renameCharacter(result, "count", "quantity");
 		quantityVsPresence(result); //after count => quantity
-		phraseUpConstraints(result); //put constraints in the order as appeared in the original text 
+		phraseUpConstraints(result); //put constraints in the order as appeared in the original text, should be among the last normalization steps
+		normalizeAdvConstraintedOrgan(result);	//after phraseUpConstraints
 	}
 
 	/**
@@ -515,7 +515,8 @@ public class NonOntologyBasedStandardizer {
 			if(element.isStructure()){
 				String constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint();
 				if(((BiologicalEntity)element).getType()!=null && ((BiologicalEntity)element).getType().compareTo("structure")==0
-						&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("^(no|not|never)\\b.*")){
+						//&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("^(no|not|never)\\b.*")){
+						&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("(no|not|never)")){//constraint is a single adv
 					//adv is negation
 					//handle is_modifier characters and true characters
 					boolean hasTrueCharacters = false;
@@ -565,7 +566,9 @@ public class NonOntologyBasedStandardizer {
 					constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint().replaceFirst("^no|not|never\\b", "");
 					((BiologicalEntity)element).setConstraint(constraint.trim());
 				}else if(((BiologicalEntity)element).getType()!=null && ((BiologicalEntity)element).getType().compareTo("structure")==0 
-						&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
+						//&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
+						&& ((BiologicalEntity)element).getConstraint()!=null && !constraint.contains(" ") &&!constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)){ //constraint is a single adverb
+
 					//other advs, mirrors the process above
 					String mod = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
 					//handle is_modifier characters and true characters
