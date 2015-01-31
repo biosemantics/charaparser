@@ -59,6 +59,7 @@ public class ETCLearnMain extends CLIMain {
 		//for iplant user shown configuration options
 		options.addOption("i", "input", true, "input file or directory");
 		options.addOption("c", "config", true, "config to use"); 
+		options.addOption("x", "empty glossary", false, "use an empty glossary");
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
 		options.addOption("m", "style mapping", true, "Optional style mapping to use for Word file input");
 		options.addOption("y", "categorize terms", false, "If specified, indicates that one does not intend to categorize newly discovered terms to improve markup");
@@ -112,6 +113,9 @@ public class ETCLearnMain extends CLIMain {
 		    	log(LogLevel.ERROR, "You have to specify a configuration to use");
 		    	throw new IllegalArgumentException();
 		    	//use standard config RunConfig
+		    }
+		    if(commandLine.hasOption("x")) {
+		    	config.setUseEmptyGlossary(true);
 		    }
 		    
 			if (commandLine.hasOption("a")) {

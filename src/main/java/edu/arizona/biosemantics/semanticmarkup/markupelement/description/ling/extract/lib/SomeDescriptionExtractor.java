@@ -101,13 +101,16 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		this.characterKnowledgeBase = characterKnowledgeBase;
 		OntologyFactory of = new OntologyFactory(ontologyDirectory);
 		
-		Ontology ontologyEnum  = TaxonGroupPartOfOntology.getOntologies(taxonGroup);
-		IOntology ontology = of.createOntology(ontologyEnum.toString().toLowerCase()+".owl");
-		if(ontology == null)
-			ontology = of.createOntology(ontologyFile);
+		Set<Ontology> ontologyEnums  = TaxonGroupPartOfOntology.getOntologies(taxonGroup);
+		Set<IOntology> ontologies = new HashSet<IOntology>();
+		for(Ontology ontologyEnum : ontologyEnums) {
+			IOntology ontology = of.createOntology(ontologyEnum.toString().toLowerCase()+".owl");
+			if(ontology == null)
+				ontology = of.createOntology(ontologyFile);
+		}
 		
-		if(ontology!=null)
-			this.structureNameStandardizer = new StructureNameStandardizer(ontology, characterKnowledgeBase, possessWords);
+		if(!ontologies.isEmpty())
+			this.structureNameStandardizer = new StructureNameStandardizer(ontologies, characterKnowledgeBase, possessWords);
 		
 		this.posKnowledgeBase = posKnowledgeBase;
 	}

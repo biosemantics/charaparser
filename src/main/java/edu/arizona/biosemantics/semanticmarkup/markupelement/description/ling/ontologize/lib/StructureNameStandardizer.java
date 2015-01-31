@@ -27,13 +27,13 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  * use clues from text to attach appropriate parent organ to non-specific structures such as "apex" and "side"
  */
 public class StructureNameStandardizer {
-	IOntology ontology;
+	Set<IOntology> ontologies;
 	ICharacterKnowledgeBase learnedCharacterKnowledgeBase;
 	Set<String> possess = new HashSet<String>(); //with, has, consist_of, possess
 	String nonspecificParts = null;
 	
-	public StructureNameStandardizer(IOntology ontology, ICharacterKnowledgeBase learnedCharacterKnowledgeBase, Set<String> possess){
-		this.ontology = ontology;
+	public StructureNameStandardizer(Set<IOntology> ontologies, ICharacterKnowledgeBase learnedCharacterKnowledgeBase, Set<String> possess){
+		this.ontologies = ontologies;
 		this.learnedCharacterKnowledgeBase = learnedCharacterKnowledgeBase;
 		this.possess = possess;
 		this.nonspecificParts = "apex|appendix|area|band|base|belt|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|face|groove|layer|line|margin|notch|part|pore|portion|protuberance|remnant|section|"
@@ -136,9 +136,11 @@ public class StructureNameStandardizer {
 		int cut = -1;
 		for(String part:  parts){
 			for(int i = 0; i < parents.length; i++){
-				if(ontology.isPart(part, parents[i])){
-					cut = i;
-					break;
+				for(IOntology ontology : ontologies) {
+					if(ontology.isPart(part, parents[i])){
+						cut = i;
+						break;
+					}
 				}
 			}
 			if(cut>=0) break;

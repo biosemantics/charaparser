@@ -82,6 +82,7 @@ public class OTOLearner implements ILearner {
 	private String sourceOfDescriptions;
 	private String units;
 	private boolean useOtoCommuntiyDownload;
+	private boolean useEmptyGlossary;
 	
 	/**
 	 * @param volumeReader
@@ -118,7 +119,8 @@ public class OTOLearner implements ILearner {
 			@Named("EtcUser")String etcUser, 
 			@Named("SourceOfDescriptions")String sourceOfDescriptions,
 			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload,
-			@Named("Units")String units) throws Exception {  
+			@Named("Units")String units,
+			@Named("UseEmptyGlossary")boolean useEmptyGlossary) throws Exception {  
 		this.inputDirectory = inputDirectory;
 		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
@@ -138,6 +140,7 @@ public class OTOLearner implements ILearner {
 		this.sourceOfDescriptions = sourceOfDescriptions;
 		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
 		this.units = units;
+		this.useEmptyGlossary = useEmptyGlossary;
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
@@ -148,24 +151,28 @@ public class OTOLearner implements ILearner {
 	public void learn() throws Throwable {
 		DescriptionsFileList descriptionsFileList = descriptionReader.read(inputDirectory);
 		
-		GlossaryDownload glossaryDownload = getGlossaryDownload();
-		log(LogLevel.INFO, "Loaded oto glossary with term-categories: " + glossaryDownload.getTermCategories().size() + " and "
-				+ "synonyms: " + glossaryDownload.getTermSynonyms().size());
-		
-		if(useOtoCommuntiyDownload) {
-			Download communityDownload = getCommunityDownload(glossaryDownload);
-			if(communityDownload != null) {
-				log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
-						+ "" + communityDownload.getDecisions().size() + " and "
-						+ "synonyms: " + communityDownload.getSynonyms().size());
-				
-				for(Decision decision : communityDownload.getDecisions()) {
-					glossaryDownload.getTermCategories().add(new TermCategory(decision.getTerm(), decision.getCategory(), 
-							decision.isHasSynonym(), decision.getSourceDataset(), decision.getId()));
-				}
-				for(Synonym synonym : communityDownload.getSynonyms()) {
-					glossaryDownload.getTermSynonyms().add(new TermSynonym(
-							synonym.getTerm(), synonym.getCategory(), synonym.getSynonym(), synonym.getId()));
+		GlossaryDownload glossaryDownload = new GlossaryDownload();
+		glossaryDownload.setVersion("N/A");
+		if(!useEmptyGlossary) {
+			glossaryDownload = getGlossaryDownload();
+			log(LogLevel.INFO, "Loaded oto glossary with term-categories: " + glossaryDownload.getTermCategories().size() + " and "
+					+ "synonyms: " + glossaryDownload.getTermSynonyms().size());
+			
+			if(useOtoCommuntiyDownload) {
+				Download communityDownload = getCommunityDownload(glossaryDownload);
+				if(communityDownload != null) {
+					log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
+							+ "" + communityDownload.getDecisions().size() + " and "
+							+ "synonyms: " + communityDownload.getSynonyms().size());
+					
+					for(Decision decision : communityDownload.getDecisions()) {
+						glossaryDownload.getTermCategories().add(new TermCategory(decision.getTerm(), decision.getCategory(), 
+								decision.isHasSynonym(), decision.getSourceDataset(), decision.getId()));
+					}
+					for(Synonym synonym : communityDownload.getSynonyms()) {
+						glossaryDownload.getTermSynonyms().add(new TermSynonym(
+								synonym.getTerm(), synonym.getCategory(), synonym.getSynonym(), synonym.getId()));
+					}
 				}
 			}
 		}

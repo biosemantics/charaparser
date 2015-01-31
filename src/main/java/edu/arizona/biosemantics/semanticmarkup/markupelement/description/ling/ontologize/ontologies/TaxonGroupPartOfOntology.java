@@ -14,24 +14,24 @@ import edu.arizona.biosemantics.common.ontology.search.model.Ontology;
  */
 public class TaxonGroupPartOfOntology {
 
-		public static Ontology getOntologies(TaxonGroup taxonGroup) {
+		public static Set<Ontology> getOntologies(TaxonGroup taxonGroup) {
 			switch(taxonGroup) {
 			case ALGAE:
-				return null;
+				return new HashSet<Ontology>();
 			case CNIDARIA:
-				return null;
+				return new HashSet<Ontology>();
 			case FOSSIL:
-				return null;
+				return new HashSet<Ontology>();
 			case GASTROPODS:
-				return null;
+				return new HashSet<Ontology>();
 			case HYMENOPTERA:
-				return Ontology.HAO;
+				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.HAO }));
 			case PLANT:
-				return Ontology.PO;
+				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.PO }));
 			case PORIFERA:
-				return Ontology.PORO;
+				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.PORO }));
 			}
-			return null;
+			return new HashSet<Ontology>();
 		}	
 	
 
