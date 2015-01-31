@@ -4,6 +4,7 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,6 +16,7 @@ import java.util.Map.Entry;
 
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
@@ -33,7 +35,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 public class NonOntologyBasedStandardizer {
 	private Set<String> lifeStyles;
 	private Set<String> durations;
-	//private String sentence;
+	private String sentence;
 	private ProcessingContext processingContext;
 	private IPOSKnowledgeBase posKnowledgeBase;
 
@@ -41,7 +43,7 @@ public class NonOntologyBasedStandardizer {
 		lifeStyles = glossary.getWords("life_style");
 		lifeStyles.addAll(glossary.getWords("growth_form"));
 		durations = glossary.getWords("duration");
-		//this.sentence = sentence;
+		this.sentence = sentence;
 		this.processingContext = processingContext;
 		this.posKnowledgeBase = posKnowledgeBase;
 	}
@@ -60,6 +62,77 @@ public class NonOntologyBasedStandardizer {
 		character2structureContraint(result);//is_modifier => constraint
 		renameCharacter(result, "count", "quantity");
 		quantityVsPresence(result); //after count => quantity
+		phraseUpConstraints(result); //put constraints in the order as appeared in the original text 
+	}
+
+	/**
+	 * if a structure has multiple constraints, put them in the natural order they occur in the text
+	 * @param result
+	 */
+	private void phraseUpConstraints(LinkedList<Element> result) {
+		for(Element element: result){
+			if(element.isStructure()){
+				String constraints = ((BiologicalEntity)element).getConstraint();
+				if(constraints!=null && (constraints.contains(";")||constraints.contains(" "))){
+					constraints = order(constraints, sentence, ((BiologicalEntity)element).getNameOriginal());
+					((BiologicalEntity)element).setConstraint(constraints);
+				}
+			}
+		}
+	}
+
+	/**
+	 * this method removes any distributed constraints (primary basal stems and [primary basal] leaves) 
+	 * it does not taken into consideration of possible punctuation marks that may separate contraint from structure name in the sentence.
+	 * @param constraints
+	 * @param sentence
+	 * @param nameOriginal
+	 * @return
+	 */
+	private String order(String constraints, String sentence,
+			String nameOriginal) {
+		ArrayList<String> sent = new ArrayList<String>(Arrays.asList(sentence.split("\\s+")));
+		ArrayList<String> constr = new ArrayList<String>(Arrays.asList(constraints.split("\\s*?[; ]\\s*")));
+		ArrayList<String> orderedCandidates = new ArrayList<String>();
+
+		int i = sent.indexOf(nameOriginal); //i could be 0
+		do{
+			String ordered = "";
+			if(i>=constr.size()){
+				for(int j = i - constr.size(); j<i; j++){
+					int sizeBefore = constr.size();
+					constr.remove(sent.get(j));
+					if(constr.size()<sizeBefore)
+						ordered = ordered +" " + sent.get(j);
+				}
+			}
+			if(constr.isEmpty()){
+				if(constraints.compareTo(ordered)!=0)
+					log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] perfectly normalized to "+ ordered);
+				return ordered.trim();
+			}else{
+				orderedCandidates.add(ordered.trim());
+			}
+			//index of the next occurrence of the nameOrginal
+			for(int j = 0; j <=i; j++){
+				sent.set(j, " ");
+			}
+
+			i = sent.indexOf(nameOriginal);
+		}while(i>=constr.size());
+
+		int max = 0;
+		String selected = "";
+		for(String ordered: orderedCandidates){
+			//return the longest
+			if(max < ordered.trim().split("\\s+").length){
+				max = ordered.trim().split("\\s+").length;
+				selected = ordered;
+			}
+		}
+		if(constraints.compareTo(selected)!=0)
+			log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] somehow normalized to "+ selected);
+		return selected.trim();
 	}
 
 	/**
@@ -75,7 +148,7 @@ public class NonOntologyBasedStandardizer {
 						c.setName("presence");
 						c.setValue(c.getValue().replaceAll("\\b0\\b", "absent"));
 					}
-					
+
 				}
 			}
 		}
@@ -96,12 +169,39 @@ public class NonOntologyBasedStandardizer {
 		}
 	}
 
+	private void character2structureContraint(LinkedList<Element> result) {
+		for(Element element: result){
+			if(element.isStructure()){
+				String oid = ((BiologicalEntity)element).getId();
+				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
+				List<Character> removes = new ArrayList<Character>();
+				for(Character c: chars){
+					if(c.getIsModifier()!=null && c.getIsModifier().compareTo("true")==0 && c.getName()!=null &&
+							c.getName().matches(".*?(^|_or_)("+ElementRelationGroup.entityStructuralConstraintElements+")(_or_|$).*")){
+						if(c.getValue()!=null){
+							((BiologicalEntity) element).appendConstraint(c.getValue());
+							removes.add(c);
+						}
+
+					}
+				}	
+				chars.removeAll(removes);
+				/*for(Character c: removes){
+					((BiologicalEntity)element).removeElementRecursively(c);
+				}*/
+			}
+		}
+
+	}
+
 	/**
 	 * 
 	 * if character's is_modifier attribute = true and (the structure has some other is_modifier = false characters || character is an entityStructuralConstraintElement)
 	 * then make the character a structure constraint
 	 * @param result
 	 */
+
+	/*
 	private void character2structureContraint(LinkedList<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
@@ -147,13 +247,10 @@ public class NonOntologyBasedStandardizer {
 					}
 				}
 				chars.removeAll(removes);
-				/*for(Character c: removes){
-					((BiologicalEntity)element).removeElementRecursively(c);
-				}*/
 			}
 		}
-		
-	}
+
+	}*/
 
 	/**
 	 * some description paragraphs start to name the taxon the organism belongs to. 
@@ -453,7 +550,7 @@ public class NonOntologyBasedStandardizer {
 								relation.getNegation().compareTo("true") == 0) relation.setNegation("false");
 						else relation.setNegation("true");
 					}
-					
+
 					//no relation and no true character, set count to 0
 					if(!negatedRelation && !hasTrueCharacters){
 						Character count = new Character();
@@ -461,7 +558,7 @@ public class NonOntologyBasedStandardizer {
 						count.setValue("0");
 						((BiologicalEntity) element).addCharacter(count);
 					}
-					
+
 					//remove unneeded stuff
 					characters.removeAll(remove);
 					//remove no|not|never from the structure constraint
@@ -488,7 +585,7 @@ public class NonOntologyBasedStandardizer {
 							character.setModifier(modifier.trim());
 						}
 					}
-					
+
 					//negate relations
 					boolean modifiedRelation = false;
 					List<Relation> relations = this.getRelationsInvolve(((BiologicalEntity)element), result);
@@ -498,7 +595,7 @@ public class NonOntologyBasedStandardizer {
 						modifier =mod+" "+modifier;
 						relation.setModifier(modifier.trim());
 					}
-					
+
 					//no relation and no true character, set count to 0
 					if(!modifiedRelation && !hasTrueCharacters){
 						Character count = new Character();
@@ -507,7 +604,7 @@ public class NonOntologyBasedStandardizer {
 						count.setModifier(mod);
 						((BiologicalEntity) element).addCharacter(count);
 					}
-					
+
 					//remove unneeded stuff
 					characters.removeAll(remove);
 					//remove no|not|never from the structure constraint

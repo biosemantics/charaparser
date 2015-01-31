@@ -90,7 +90,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		if(character ==null)
 			character = processingContextState.getUnassignedCharacter();
 		if(character ==null)
-			character = content.indexOf('/') > 0 || content.indexOf('%') > 0 || content.indexOf('.') > 0 ? "size_or_shape" : "unknown_character";
+			character = content.indexOf('/') > 0 || content.indexOf('%') > 0 || content.indexOf('.') > 0 ? "size_or_shape" : "size";
 
 		List<Character> characters = annotateNumericals(content, character,
 				modifiers, lastStructures(processingContext, processingContextState), resetFrom, processingContextState);

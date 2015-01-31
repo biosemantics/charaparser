@@ -97,7 +97,9 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		
 		if(types.contains(ElementRelationGroup.entityTypes.get(0))) return ElementRelationGroup.entityTypes.get(0);
 		else if(types.contains(ElementRelationGroup.entityTypes.get(1))) return ElementRelationGroup.entityTypes.get(1);
-		else return ElementRelationGroup.entityTypes.get(2);
+		else if(types.contains(ElementRelationGroup.entityTypes.get(2)))  return ElementRelationGroup.entityTypes.get(2);
+		else return "";
+		
 	}
 	
 	@Override
