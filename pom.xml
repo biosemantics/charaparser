@@ -208,6 +208,10 @@
 					<artifactId>gxt</artifactId>
 					<groupId>com.sencha.gxt</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>oto-common</artifactId>
+					<groupId>edu.arizona.biosemantics.oto</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
