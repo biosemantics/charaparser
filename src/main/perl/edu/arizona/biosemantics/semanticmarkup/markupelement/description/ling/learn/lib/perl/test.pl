@@ -19,8 +19,8 @@ my $stmt = "select count(*) from ".$prefix."_allwords where word ='my'";
 	my $sth = $dbh->prepare($stmt);
 	$sth->execute() or die "error: ". $dbh->errstr."\n"; 
 
-my $line = "Cypselae mostly columnar, ellipsoid, obpyramidal, or prismatic, seldom clavate ( if clavate, not distally stipitate_glandular ).";
-#my $line = "blades (1 or obscurely 3-nerved) obovate to oblanceolate, blah blah blah";
+#my $line = "Cypselae mostly columnar, ellipsoid, obpyramidal, or prismatic, seldom clavate ( if clavate, not distally stipitate_glandular ).";
+my $line = "blades (1- or obscurely rought 3(-5)-nerved) obovate to oblanceolate, blah blah blah";
 #my $line = "plagio- , dicho- , or tricho-triaenes";
 print stdout $line."\n";
 $line = normalizeBrokenWords($line);
@@ -32,8 +32,8 @@ print stdout $line."\n";
 #"blades (1- or obscurely 3-nerved) obovate to oblanceolate, blah blah blah";
 sub normalizeBrokenWords{
 	my $line = shift;
-	$line =~ s#([(\[{])#$1 #g;
-	$line =~ s#([)\]}])# $1#g;
+	$line =~ s#([(\[{])(?=[a-zA-Z])#$1 #g; #add space to () that enclose text strings (not numbers such as 3-(5))
+	$line =~ s#(?<=[a-zA-Z])([)\]}])# $1#g;
 	my $result = "";
 	while($line=~/(.*?\b)((\w+\s*-\s*,.*?\b)((?:and|or|plus|to)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:and|or|plus|to)\s+.*))/){
 		my @completed = completeWords($2, $3, $4);
@@ -62,13 +62,13 @@ sub completeWords{
 	#search through the tokens one by one
 	my @tokens = split(/\s+/, $later);
 	for(my $i = 0; $i<@tokens; $i++){
-		if($tokens[$i]!~/\w/){
+		if($tokens[$i]!~/\w/){#encounter a punct mark
 			last;
 		}elsif($tokens[$i] =~/and|or|plus|to/){
 			next;
 		}elsif($tokens[$i]=~/-/){ #use token to complete the segment
 			my $missing = $tokens[$i];
-			$missing =~ s#.*?-##;
+			$missing =~ s#.*-##; #greedy to find the last "-" in the token
 			$seg =~ s#-#-$missing#g; #attach the missing part to all segs
 			$result[0] = join(' ', $seg, splice(@tokens, 0, $i));
 			$result[1] = join(' ', @tokens);

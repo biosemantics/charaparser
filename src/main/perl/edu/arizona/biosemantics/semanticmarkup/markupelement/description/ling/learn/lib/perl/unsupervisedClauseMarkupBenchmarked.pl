@@ -6195,8 +6195,8 @@ populateunknownwordstable();
 sub normalizeBrokenWords{
 	my $line = shift;
 	my $cline = $line;
-	$line =~ s#([(\[{])#$1 #g;
-	$line =~ s#([)\]},;\.])# $1#g;
+	$line =~ s#([(\[{])(?=[a-zA-Z])#$1 #g; #add space to () that enclose text strings (not numbers such as 3-(5))
+	$line =~ s#(?<=[a-zA-Z])([)\]}])# $1#g;
 	my $result = "";
 	my $needsfix = 0;
 	while($line=~/(.*?\b)((\w+\s*-\s*,.*?\b)((?:and|or|plus|to)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:and|or|plus|to)\s+.*))/){
@@ -6232,13 +6232,13 @@ sub completeWords{
 	#search through the tokens one by one
 	my @tokens = split(/\s+/, $later);
 	for(my $i = 0; $i<@tokens; $i++){
-		if($tokens[$i]!~/\w/){
+		if($tokens[$i]!~/\w/){#encounter a punct mark
 			last;
 		}elsif($tokens[$i] =~/and|or|plus|to/){
 			next;
 		}elsif($tokens[$i]=~/-/){ #use token to complete the segment
 			my $missing = $tokens[$i];
-			$missing =~ s#.*?-##;
+			$missing =~ s#.*-##; #greedy to find the last "-" in the token
 			$seg =~ s#-#-$missing#g; #attach the missing part to all segs
 			$result[0] = join(' ', $seg, splice(@tokens, 0, $i));
 			$result[1] = join(' ', @tokens);
