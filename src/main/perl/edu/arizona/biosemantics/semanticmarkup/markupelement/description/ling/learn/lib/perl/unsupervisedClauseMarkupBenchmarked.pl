@@ -225,6 +225,8 @@ my $IGNOREPTN = "(assignment|resemb[a-z]+|like [A-Z]|similar|differs|differ|revi
 my $stop = $NounHeuristics::STOP;
 my $adv = "often|sometimes|seldom|always|never"; #advs not ending with -ly
 
+my $connectors = "and|or|plus|to|sometimes";
+
 my $entityCategories = "('structure', 'structure_in_adjective_form', 'taxon_name', 'substance', 'process')";
 
 #prepare database
@@ -5991,6 +5993,7 @@ sub plural{
 
 }
 
+#hide [\.\?\;\:\!] if they are in brackets
 sub hideBrackets{
 	my $text = shift;
 	$text =~ s/([\(\)\[\]\{\}])/ \1 /g;
@@ -6036,6 +6039,8 @@ sub hideBrackets{
 			$hidden .= " ";
 		}
 	}	
+	$hidden =~ s/([\(\[\{]\s+)/\1/g;
+	$hidden =~ s/\s+([\)\]\}])/\1/g;
 	return $hidden;
 }
 
@@ -6063,8 +6068,8 @@ while(defined ($file=readdir(IN))){
 
 	$original = $text;
 	$text =~ s#\b(is|are|was|were|be|being)\b##g; #remove aux.verbs
-	$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
-	$text =~ s#[-]+#-#g; #- => -
+	#$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
+	$text =~ s#[-]+#-#g; #-- => -
 	$text =~ s#\+/-# moreorless #g;
   	$text =~ s/&[;#\w\d]+;/ /g; #remove HTML entities
   	$text =~ s# & # and #g;
@@ -6094,7 +6099,7 @@ while(defined ($file=readdir(IN))){
 		s#\[\s*SQL\s*\]#;#g;
 		s#\[\s*QLN\s*\]#:#g;
 		s#\[\s*EXM\s*\]#!#g;
-		$_ = normalizeBrokenWords($_);			  #do this before getallwords and creates @sentcopy (for context searching)
+		$_ = normalizeBrokenWords($_);			  #do this before getallwords and creates @sentcopy (for context searching). Spacing around punct marks is of the standard English style.
 		push(@sentcopy, $_);
 
 		#remove bracketed text from sentence (keep those in originalsent);
@@ -6192,14 +6197,17 @@ populateunknownwordstable();
 #normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
 #normalize $line: "palm- or fern-like" => "palm-like or fern-like"
 #"blades (1- or obscurely 3-nerved) obovate to oblanceolate, blah blah blah";
+
+
 sub normalizeBrokenWords{
+	
 	my $line = shift;
 	my $cline = $line;
 	$line =~ s#([(\[{])(?=[a-zA-Z])#$1 #g; #add space to () that enclose text strings (not numbers such as 3-(5))
 	$line =~ s#(?<=[a-zA-Z])([)\]}])# $1#g;
 	my $result = "";
 	my $needsfix = 0;
-	while($line=~/(.*?\b)((\w+\s*-\s*,.*?\b)((?:and|or|plus|to)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:and|or|plus|to)\s+.*))/){
+	while($line=~/(.*?\b)((\w+\s*-\s*\)?,.*?\b)((?:$connectors)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:$connectors)\s+.*))/){
 		my @completed = completeWords($2, $3, $4);
 		$result .= $1.$completed[0]." ";
 		$line = $completed[1];
@@ -6233,23 +6241,28 @@ sub completeWords{
 	my @incompletewords = split(/\s*-\s*,?/, $seg);
 	#search through the tokens one by one
 	my @tokens = split(/\s+/, $later);
+	my $last = 0;
 	for(my $i = 0; $i<@tokens; $i++){
-		if($tokens[$i]!~/\w/){#encounter a punct mark
-			last;
-		}elsif($tokens[$i] =~/^(and|or|plus|to)$/){
+		if($last){ last;}
+		if($tokens[$i]=~/[,\.;:?!]/){#encounter a punct mark, then this is the last token tested
+			$last=1;
+		}
+		if($tokens[$i] =~/^($connectors)$/){
 			next;
 		}elsif($tokens[$i]=~/-/){ #use token to complete the segment
 			my $missing = $tokens[$i];
 			$missing =~ s#.*-##; #greedy to find the last "-" in the token
 			$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
+			$missing =~ s#^[[:punct:]]+##; #remove leading punct marks
 			$seg =~ s#-#-$missing#g; #attach the missing part to all segs
 			$result[0] = join(' ', $seg, splice(@tokens, 0, $i));
 			$result[1] = join(' ', @tokens);
 			return @result;			
 		}else{
-			for(my $j = 1; $j < length($tokens[$i]); $j++){#shrink token letter by letter from the front
+			for(my $j = 1; $j < length($tokens[$i])-4; $j++){#shrink token letter by letter from the front
 				my $missing = substr($tokens[$i], $j);
 				$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
+				$missing =~ s#^[[:punct:]]+##; #remove leading punct marks: (5-)nerved )nerved
 				if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){#found missing part
 					$seg =~ s#-#$missing#g; #attach the missing part to all segs
 					$result[0] = join(' ', $seg,splice(@tokens, 0, $i)) ;
@@ -6291,53 +6304,111 @@ sub inCorpus{
 	return 0;
 }
 
-##############################################################################
-#normalize $line: "... plagio-, dicho-, and/or/plus trichotriaenes ..." => "... plagiotriaenes, dichotriaenes, and trichotriaenes ..."
-#normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
-#normalize $line: "palm- or fern-like" => "palm-like or fern-like"
+
+##normalize $line: "... plagio-, dicho-, and/or/plus trichotriaenes ..." => "... plagiotriaenes, dichotriaenes, and trichotriaenes ..."
+##normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
+##normalize $line: "palm- or fern-like" => "palm-like or fern-like"
+##"blades (1- or obscurely 3-nerved) obovate to oblanceolate, blah blah blah";
 #sub normalizeBrokenWords{
 #	my $line = shift;
+#	my $cline = $line;
+#	$line =~ s#([(\[{])(?=[a-zA-Z])#$1 #g; #add space to () that enclose text strings (not numbers such as 3-(5))
+#	$line =~ s#(?<=[a-zA-Z])([)\]}])# $1#g;
 #	my $result = "";
-#	while($line=~/(.*?\b)(\w+\s*-\s*,.*?\b(and|or|plus|to)\s+([\w-]+))(.*)/ || $line=~/(.*?\b)(\w+\s*-\s+(and|or|plus|to)\s+([\w-]+))(.*)/){
-#		$result .= $1.completeWords($2, $4);
-#		$line = $5;	
-#		#$line = $1.completeWords($2, $4).$5;	
+#	my $needsfix = 0;
+#	while($line=~/(.*?\b)((\w+\s*-\s*,.*?\b)((?:and|or|plus|to)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:and|or|plus|to)\s+.*))/){
+#		my @completed = completeWords($2, $3, $4);
+#		$result .= $1.$completed[0]." ";
+#		$line = $completed[1];
+#		$needsfix = 1;	
 #	}
 #	$result .= $line;
-#	
+#	$result =~ s#\s+# #g;
+#	$result =~ s#([(\[{])\s+#$1#g;
+#	$result =~ s#\s+([)\]},;\.])#$1#g;
+#	$result =~ s#(^\s+|\s+$)##g; #trim
+#	$cline =~ s#(^\s+|\s+$)##g; #trim
+#	if($needsfix and $cline ne $result){
+#		 print STDOUT "broken words normalization: [$cline] to \n";
+#		 print STDOUT "broken words normalization: [$result] \n";
+#	};
 #	return $result;
 #}
-
-#normalize $text: "plagio - , dicho - , and/or/plus/to trichotriaenes" => "plagiotriaenes, dichotriaenes, and trichotriaenes"
-#normalize $text: "plagio - and/or/plus/to trichotriaenes" => "plagiotriaenes and trichotriaenes"
+#
+##normalize $text: "plagio- , dicho- , and/or/plus/to trichotriaenes" => "plagiotriaenes, dichotriaenes, and trichotriaenes"
+##normalize $text: "plagio- and/or/plus/to trichotriaenes" => "plagiotriaenes and trichotriaenes"
+##"blades (1- or obscurely 3-nerved) obovate to oblanceolate, blah blah blah";
+##return [0]: completed token, [1]: rest of the text to be processed
 #sub completeWords{
-#	my $text = shift;
-#	my $completeword = shift;
+#	my $text = shift; #text starting with the segments.
+#	my $seg = shift; #segments
+#	my $later = shift; #text starting with and|or|plus|to 
+#	my @result = ();
+#	$result[0] = $seg;
+#	$result[1] = $later;
 #	
-#	my $missing = "";
-#	if($completeword=~/[_-]/){
-#		#normalize $line: "palm- or fern-like" => "palm-like or fern-like"
-#		$missing = $completeword;
-#		$missing =~ s#^.*?[_-]\s*##;
-#		$text =~ s#[_-]\s*$missing#-#g; #turn the "- $missing " to  - in the original text
-#		$text =~ s#\s*[_-]#$missing#g; #turn all - to the word 
-#		return $text;
+#	my @incompletewords = split(/\s*-\s*,?/, $seg);
+#	#search through the tokens one by one
+#	my @tokens = split(/\s+/, $later);
+#	for(my $i = 0; $i<@tokens; $i++){
+#		if($tokens[$i]!~/\w/){#encounter a punct mark
+#			last;
+#		}elsif($tokens[$i] =~/^(and|or|plus|to)$/){
+#			next;
+#		}elsif($tokens[$i]=~/-/){ #use token to complete the segment
+#			my $missing = $tokens[$i];
+#			$missing =~ s#.*-##; #greedy to find the last "-" in the token
+#			$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
+#			$seg =~ s#-#-$missing#g; #attach the missing part to all segs
+#			$result[0] = join(' ', $seg, splice(@tokens, 0, $i));
+#			$result[1] = join(' ', @tokens);
+#			return @result;			
+#		}else{
+#			for(my $j = 1; $j <= length($tokens[$i])-4; $j++){#shrink token letter by letter from the front
+#				my $missing = substr($tokens[$i], $j); #$missing must be longer than 4 characters, to be on the safe side
+#				$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
+#				if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){#found missing part
+#					$seg =~ s#-#$missing#g; #attach the missing part to all segs
+#					$result[0] = join(' ', $seg,splice(@tokens, 0, $i)) ;
+#					$result[1] = join(' ', @tokens);
+#					return @result;	
+#				}
+#			}
+#		}	
 #	}
-#	#figure out what the missing piece is.
-#	#collect "-"-ended words: ortho/plagio/pro/meso/anatriaenes
-#	my $incompletes = $text;
-#	$incompletes =~ s#\s+(and|or|plus|to)\s+$completeword##; #plagio - , dicho - ,
-#	my @incompletewords = split(/\s*-\s*,?/, $incompletes);
-#	for(my $i = 1; $i < length($completeword); $i++){#shrink completeword letter by letter from the front
-#		$missing = substr($completeword, $i);
-#		if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){
-#			$text =~ s#\s*-#$missing#g;
-#			return $text;
+#	#failed
+#	return @result;
+#}
+#
+#sub oneFixedWordExists{
+#	my $missing =shift;
+#	my @incompletewords = @_;
+#	for my $incword (@incompletewords){
+#		if(inCorpus($incword.$missing)){
+#			return 1;
 #		}
 #	}
-#	
-#	return $text;
+#	return 0;
 #}
+#
+#sub inCorpus{
+#	my $word = shift;
+#	my ($stmt, $sth);
+#	$stmt = "select count(*) from ".$prefix."_allwords where word ='".$word."'";
+#	$sth = $dbh->prepare($stmt);
+#	$sth->execute(); 
+#	if ($dbh->err){
+#		print STDOUT "db error in querying allwords table: ".$dbh->errstr."\n";
+#	}else{
+#		my ($count) = $sth->fetchrow_array();
+#		if($count >=1){
+#			return 1;
+#		}
+#	}
+#	return 0;
+#}
+
+
 
 
 

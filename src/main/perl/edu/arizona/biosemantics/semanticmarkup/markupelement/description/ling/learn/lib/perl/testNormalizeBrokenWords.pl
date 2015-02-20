@@ -34,9 +34,16 @@ my $stmt = "select count(*) from ".$prefix."_allwords where word ='my'";
 #my $line ="adaxial minutely stipitate- or sessile-glandular, otherwise glabrous or glabrate";
 #my $line = "usually stipitate- or sessile-glandular as well ";
 #my $line ="both faces usually stipitate- or sessile-glandular.";
-my $line ="blades (1- or obscurely 3-nerved )obovate to oblanceolate, 20ΓÇô35 ├ù 3ΓÇô15 mm, distally reduced and narrowed, bases cuneate, margins irregularly incised to coarsely serrate or 2-serrate, faces glabrous, gland-dotted, resinous.";
-
+#my $line ="Cypselae obpyramidal (4-, sometimes 5-angled, each face usually)";
+#my $line ="blades (1-), 3-, or (5-)nerved, elliptic to lanceolate,";
+#my $line ="arrays (wand-, club-, or secund cone-shaped )or in axillary clusters.";
+#my $line="sometimes with weakly developed, non- or weakly spinulose projection, gland-dotted,"; #didn't handle
+#my $line ="blades (1- or obscurely 3-nerved )obovate to oblanceolate, 20ΓÇô35 ├ù 3ΓÇô15 mm, distally reduced and narrowed, bases cuneate, margins irregularly incised to coarsely serrate or 2-serrate, faces glabrous, gland-dotted, resinous.";
+#my $line = "blades (1-), 3-, or (5-)nerved, elliptic to lanceolate, 7â€“30 Ã— 0.5â€“2.5 (â€“4)cm, bases cuneate to attenuate, margins entire (usually ciliate ).";
+#my $line = "(corollas lemon- or golden yellow)laminae narrowly oblong, 6â€“7 mm.";
+my $line = "Cypselae (black or brown)± compressed or flattened, often 3- or 4-angled or biconvex, ± cuneiform in silhouette";
 #print stdout $line."\n";
+my $connectors = "and|or|plus|to|sometimes";
 $line = normalizeBrokenWords($line);
 #print stdout $line."\n";
 
@@ -44,14 +51,16 @@ $line = normalizeBrokenWords($line);
 #normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
 #normalize $line: "palm- or fern-like" => "palm-like or fern-like"
 #"blades (1- or obscurely 3-nerved) obovate to oblanceolate, blah blah blah";
+
 sub normalizeBrokenWords{
+	
 	my $line = shift;
 	my $cline = $line;
 	$line =~ s#([(\[{])(?=[a-zA-Z])#$1 #g; #add space to () that enclose text strings (not numbers such as 3-(5))
 	$line =~ s#(?<=[a-zA-Z])([)\]}])# $1#g;
 	my $result = "";
 	my $needsfix = 0;
-	while($line=~/(.*?\b)((\w+\s*-\s*,.*?\b)((?:and|or|plus|to)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:and|or|plus|to)\s+.*))/){
+	while($line=~/(.*?\b)((\w+\s*-\s*\)?,.*?\b)((?:$connectors)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:$connectors)\s+.*))/){
 		my @completed = completeWords($2, $3, $4);
 		$result .= $1.$completed[0]." ";
 		$line = $completed[1];
@@ -85,23 +94,28 @@ sub completeWords{
 	my @incompletewords = split(/\s*-\s*,?/, $seg);
 	#search through the tokens one by one
 	my @tokens = split(/\s+/, $later);
+	my $last = 0;
 	for(my $i = 0; $i<@tokens; $i++){
-		if($tokens[$i]!~/\w/){#encounter a punct mark
-			last;
-		}elsif($tokens[$i] =~/^(and|or|plus|to)$/){
+		if($last){ last;}
+		if($tokens[$i]=~/[,\.;:?!]/){#encounter a punct mark, then this is the last token tested
+			$last=1;
+		}
+		if($tokens[$i] =~/^($connectors)$/){
 			next;
 		}elsif($tokens[$i]=~/-/){ #use token to complete the segment
 			my $missing = $tokens[$i];
 			$missing =~ s#.*-##; #greedy to find the last "-" in the token
 			$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
+			$missing =~ s#^[[:punct:]]+##; #remove leading punct marks
 			$seg =~ s#-#-$missing#g; #attach the missing part to all segs
 			$result[0] = join(' ', $seg, splice(@tokens, 0, $i));
 			$result[1] = join(' ', @tokens);
 			return @result;			
 		}else{
-			for(my $j = 1; $j < length($tokens[$i]); $j++){#shrink token letter by letter from the front
+			for(my $j = 1; $j < length($tokens[$i])-4; $j++){#shrink token letter by letter from the front
 				my $missing = substr($tokens[$i], $j);
 				$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
+				$missing =~ s#^[[:punct:]]+##; #remove leading punct marks: (5-)nerved )nerved
 				if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){#found missing part
 					$seg =~ s#-#$missing#g; #attach the missing part to all segs
 					$result[0] = join(' ', $seg,splice(@tokens, 0, $i)) ;
