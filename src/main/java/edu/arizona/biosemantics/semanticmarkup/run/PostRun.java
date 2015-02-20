@@ -30,8 +30,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.io.validate.IVolumeValidator;
-import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.XMLVolumeValidator;
+import edu.arizona.biosemantics.common.validation.key.KeyElementValidator;
+
 
 /**
  * @author Hong Cui
@@ -46,29 +46,41 @@ public class PostRun {
 	String runOutDirectory;
 	//String validateSchemaFile;
 	static XMLOutputter out = new XMLOutputter();
+	static XPathFactory fac = null;
+	static XPathExpression<Element> keyPath = null;
+	static XPathExpression<Element> detPath = null;
+	static XPathExpression<Element> nextIdPath = null;
+	static XPathExpression<Element> stateIdPath = null;
+	static XPathExpression<Element> namePath = null;
+	static XPathExpression<Element> keyStatePath = null;
+
+	static{
+		fac = XPathFactory.instance();
+		keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+		detPath = fac.compile("//key//determination", Filters.element());
+		nextIdPath = fac.compile("//key//next_statement_id", Filters.element());
+		stateIdPath = fac.compile("//key//statement_id", Filters.element());
+		namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+		keyStatePath = fac.compile("//key//key_statement", Filters.element());
+	}
 
 	/**
 	 * 
 	 */
 	@Inject
 	public PostRun(@Named("Run_OutDirectory")String runOutDirectory /*, @Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile*/) {
-			this.runOutDirectory = runOutDirectory;
-			//this.validateSchemaFile = validateSchemaFile;
+		this.runOutDirectory = runOutDirectory;
+		//this.validateSchemaFile = validateSchemaFile;
 	}
 
-	
+
 	public void absorbKeys() throws Exception {
 		//walk through files in runOutDirectory to find keys
 		//create hashtables to link taxa to file names
 		Hashtable<String, Document> taxa2doc = new Hashtable<String, Document>();
 		Hashtable<Document, File> doc2file = new Hashtable<Document, File>();
 		ArrayList<Document> containsKey = new ArrayList<Document>();
-		
-		XPathFactory fac = XPathFactory.instance();
-		XPathExpression<Element> keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		XPathExpression<Element> detPath = fac.compile("//key//determination", Filters.element());
-		XPathExpression<Element> nextIdPath = fac.compile("//key//next_statement_id", Filters.element());
-		XPathExpression<Element> namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+
 		SAXBuilder builder = new SAXBuilder();
 		Document document;
 		File [] files = new File(runOutDirectory).listFiles();
@@ -86,8 +98,7 @@ public class PostRun {
 					taxa2doc.put(name, document);
 					doc2file.put(document, file);
 				}
-				
-						
+
 				if(!keyPath.evaluate(root).isEmpty()){
 					containsKey.add(document);
 				}
@@ -95,29 +106,38 @@ public class PostRun {
 				log(LogLevel.ERROR, "Failed to read xml file: "+file);
 				throw e;
 			}
-		
+
 		}
-		
+		log(LogLevel.DEBUG, "Collected "+containsKey.size()+" files with a key");
 		//absorb characters in keys into taxon descriptions (existing or new)
 		//leaving the original key unchanged in the source document
+		KeyElementValidator kev = new KeyElementValidator();
+		ArrayList<String> keyErrors = new ArrayList<String>();
 		ArrayList<File> newFiles = new ArrayList<File> ();
 		for(Document docWKey: containsKey){
-			for(Object key: keyPath.evaluate(docWKey.getRootElement())){
+			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
+				//check if the key is formatted properly, break if not
+				if(! kev.validate(key, keyErrors)){
+					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+" ");
+					continue;
+				}
 				for(Object determination: detPath.evaluate(key)){
 					String taxonName = getName((Element) determination, docWKey);
 					Element description = new Element("description");
 					description.setAttribute("type", "morphology_from_key");
 					wrapCharacter(description, nextIdPath, (Element)determination, (Element)key);
-					
+
 					Document doc = locateTaxonDocument(taxonName, taxa2doc);
 					if(doc!=null){
 						//add a new description element of type 'key' to the doc for the taxon
 						doc.getRootElement().addContent(description);
 						writeFile(doc, doc2file.get(doc));
+						log(LogLevel.DEBUG, "Add info from a key in "+docWKey.getBaseURI()+" to morph. description in "+doc.getBaseURI());
 					}else{
 						//create a new file holding the description
 						File file = createFileFor(taxonName, description, docWKey);
 						newFiles.add(file);
+						log(LogLevel.DEBUG, "create new file "+file.getAbsolutePath()+" to hold info from a key in "+docWKey.getBaseURI());
 					}
 				}
 			}
@@ -131,8 +151,9 @@ public class PostRun {
 		}*/
 	}
 
+
 	
-	
+
 	/**
 	 * create a new file using the file naming convention
 	 * and save it in the output directory 
@@ -150,11 +171,11 @@ public class PostRun {
 			String name = child.getName();
 			if(!name.matches("meta|taxon_identification")) removes.add(child);
 		}
-		
+
 		for(Element remove: removes){
 			root.removeChildren(remove.getName());
 		}
-		
+
 		//update taxon_identification
 		Element ti = root.getChild("taxon_identification");
 		ti.removeContent();
@@ -168,10 +189,10 @@ public class PostRun {
 			tn.setText(rankname.length>1? rankname[1]:rankname[0]);
 			ti.addContent(tn);
 		}
-		
+
 		//insert description
 		root.addContent(description);
-		
+
 		//write out
 		writeFile(doc, out);
 		return out;
@@ -206,7 +227,7 @@ public class PostRun {
 		//exact match
 		Document doc = taxa2doc.get(taxonName);
 		if(doc!=null) return doc;
-		
+
 		//try to find the best match
 		Enumeration<String> en = taxa2doc.keys();
 		int max = 0;
@@ -257,14 +278,14 @@ public class PostRun {
 		Element desc = determination.getParentElement().getChild("description").clone();
 		Collection<Element> statements = prepStatmentsFrom(desc);
 		if(statements!=null) description.addContent(statements);
-		
-		Element nextId = getNextId(stmtid, key, nextIdPath);
+
+		Element nextId = getNextIdStatement(stmtid, key);
 		while(nextId!=null){
 			desc = ((Element)nextId).getParentElement().getChild("description").clone();
 			statements = prepStatmentsFrom(desc);
 			if(statements!=null) description.addContent(statements);
 			stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
-			nextId = getNextId(stmtid, key, nextIdPath);
+			nextId = getNextIdStatement(stmtid, key);
 		}
 	}
 
@@ -275,11 +296,14 @@ public class PostRun {
 	 * @param desc
 	 * @return
 	 */
-	
-	
+
+
 	private Collection<Element> prepStatmentsFrom(Element description) {
+		ArrayList<Element> states = new ArrayList<Element>(description.getChildren("statement"));		
 		ArrayList<Element> statements = new ArrayList<Element>();
-		for(Element statement: description.getChildren("statement")){
+		for(int i = 0; i < states.size(); i++){
+			//for(Element statement: description.getChildren("statement")){ //concurrent modification issue
+			Element statement = states.get(i);
 			statement.detach();
 			updateIds(statement);
 			statements.add(statement);
@@ -287,17 +311,17 @@ public class PostRun {
 		return statements;
 	}
 
-	
+
 	/**
 	 * append "from_key_" to all ids and references to ids in the statement
 	 * @param statement
 	 */
 
 	private void updateIds(Element statement) {
-		
+
 		if(statement.getAttribute("id")!=null)
 			statement.setAttribute("id", "from_key_"+statement.getAttributeValue("id"));
-		
+
 		for(Element elem: statement.getChildren()){
 			if(elem.getAttribute("id")!=null){
 				elem.setAttribute("id", "from_key_"+elem.getAttributeValue("id"));
@@ -311,11 +335,11 @@ public class PostRun {
 				}
 			}
 		}
-		
+
 	}
 
 
-	private Element getNextId(String stmtid, Element key, XPathExpression nextIdPath) {
+	private Element getNextIdStatement(String stmtid, Element key) {
 		for(Object nextId: nextIdPath.evaluate(key)){
 			// only one element has the correct id
 			if(((Element)nextId).getTextTrim().compareTo(stmtid)==0){
@@ -324,6 +348,8 @@ public class PostRun {
 		}
 		return null;
 	}
+
+	
 
 
 	/**
@@ -345,18 +371,18 @@ public class PostRun {
 		if(m.matches()){
 			det = m.group(1);
 		}
-		
+
 		String name = "";
 		String lastRank = "";
 		//collect name/rank info from document
 		Hashtable<String, String> nameRank = new Hashtable<String, String>();
 		Element ti = document.getRootElement().getChild("taxon_identification");
-		for(Element tn: ti.getChildren()){
+		for(Element tn: ti.getChildren("taxon_name")){
 			nameRank.put(tn.getTextTrim(), tn.getAttributeValue("rank"));
 			name += tn.getAttributeValue("rank")+"_"+tn.getTextTrim().toLowerCase()+" ";
 			lastRank = tn.getAttributeValue("rank");
 		}
-		
+
 		//now taking name related tokens only
 		String [] tokens = det.toLowerCase().split("\\s+");
 		for(String token: tokens){
@@ -371,7 +397,7 @@ public class PostRun {
 			}else if(token.matches("sect") && !name.contains(" section_")){
 				name += "section_";
 			}else if(token.matches(".")){
-					if(!name.endsWith("_")) break;
+				if(!name.endsWith("_")) break;
 			}else if(token.matches("\\W") || token.matches("\\d.*")){
 				break;
 			}else{

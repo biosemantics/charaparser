@@ -20,11 +20,25 @@ my $stmt = "select count(*) from ".$prefix."_allwords where word ='my'";
 	$sth->execute() or die "error: ". $dbh->errstr."\n"; 
 
 #my $line = "Cypselae mostly columnar, ellipsoid, obpyramidal, or prismatic, seldom clavate ( if clavate, not distally stipitate_glandular ).";
-my $line = "blades (1- or obscurely rought 3(-5)-nerved) obovate to oblanceolate, blah blah blah";
+#my $line = "blades (1- or obscurely rought 3(-5)-nerved) obovate to oblanceolate, blah blah blah";
 #my $line = "plagio- , dicho- , or tricho-triaenes";
-print stdout $line."\n";
+#my $line = "Stems usually 1, thinly to densely gray- or white-tomentose, sometimes ï¿½ glabrate;";
+#my $line = " abaxial faces usually Â± densely gray- or white-tomentose with felted arachnoid trichomes,";
+#my $line = "Corollas white to faintly pink- or lilac-tinged.";
+#my $line ="some not readily assignable to usual ray- and disc-floret categories,";
+#my $line =" (rarely with 2 teeth opposite the 3- or 4-toothed laminae ).";
+#my $line = "Corollas white, sometimes abaxially rose- or purple-veined;";
+#my $line ="abaxial faces densely gray- or white-tomentose, adaxial faces green, glandular-scabrous.";
+#my $line ="procumbent (ï¿½ woolly-tomentose, sometimes stipitate- or sessile-glandular ).";
+#my $line ="minutely stipitate- or sessile-glandular beneath other in-duments.";
+#my $line ="adaxial minutely stipitate- or sessile-glandular, otherwise glabrous or glabrate";
+#my $line = "usually stipitate- or sessile-glandular as well ";
+#my $line ="both faces usually stipitate- or sessile-glandular.";
+my $line ="blades (1- or obscurely 3-nerved )obovate to oblanceolate, 20ΓÇô35 ├ù 3ΓÇô15 mm, distally reduced and narrowed, bases cuneate, margins irregularly incised to coarsely serrate or 2-serrate, faces glabrous, gland-dotted, resinous.";
+
+#print stdout $line."\n";
 $line = normalizeBrokenWords($line);
-print stdout $line."\n";
+#print stdout $line."\n";
 
 #normalize $line: "... plagio-, dicho-, and/or/plus trichotriaenes ..." => "... plagiotriaenes, dichotriaenes, and trichotriaenes ..."
 #normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
@@ -32,18 +46,27 @@ print stdout $line."\n";
 #"blades (1- or obscurely 3-nerved) obovate to oblanceolate, blah blah blah";
 sub normalizeBrokenWords{
 	my $line = shift;
+	my $cline = $line;
 	$line =~ s#([(\[{])(?=[a-zA-Z])#$1 #g; #add space to () that enclose text strings (not numbers such as 3-(5))
 	$line =~ s#(?<=[a-zA-Z])([)\]}])# $1#g;
 	my $result = "";
+	my $needsfix = 0;
 	while($line=~/(.*?\b)((\w+\s*-\s*,.*?\b)((?:and|or|plus|to)\s+.*))/ || $line=~/(.*?\b)((\w+\s*-\s+)((?:and|or|plus|to)\s+.*))/){
 		my @completed = completeWords($2, $3, $4);
 		$result .= $1.$completed[0]." ";
-		$line = $completed[1];	
+		$line = $completed[1];
+		$needsfix = 1;	
 	}
 	$result .= $line;
 	$result =~ s#\s+# #g;
 	$result =~ s#([(\[{])\s+#$1#g;
-	$result =~ s#\s+([)\]}])#$1#g;
+	$result =~ s#\s+([)\]},;\.])#$1#g;
+	$result =~ s#(^\s+|\s+$)##g; #trim
+	$cline =~ s#(^\s+|\s+$)##g; #trim
+	if($needsfix and $cline ne $result){
+		 print STDOUT "broken words normalization: [$cline] to \n";
+		 print STDOUT "borken words normalization: [$result] \n";
+	};
 	return $result;
 }
 
@@ -58,17 +81,19 @@ sub completeWords{
 	my @result = ();
 	$result[0] = $seg;
 	$result[1] = $later;
+	
 	my @incompletewords = split(/\s*-\s*,?/, $seg);
 	#search through the tokens one by one
 	my @tokens = split(/\s+/, $later);
 	for(my $i = 0; $i<@tokens; $i++){
 		if($tokens[$i]!~/\w/){#encounter a punct mark
 			last;
-		}elsif($tokens[$i] =~/and|or|plus|to/){
+		}elsif($tokens[$i] =~/^(and|or|plus|to)$/){
 			next;
 		}elsif($tokens[$i]=~/-/){ #use token to complete the segment
 			my $missing = $tokens[$i];
 			$missing =~ s#.*-##; #greedy to find the last "-" in the token
+			$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
 			$seg =~ s#-#-$missing#g; #attach the missing part to all segs
 			$result[0] = join(' ', $seg, splice(@tokens, 0, $i));
 			$result[1] = join(' ', @tokens);
@@ -76,6 +101,7 @@ sub completeWords{
 		}else{
 			for(my $j = 1; $j < length($tokens[$i]); $j++){#shrink token letter by letter from the front
 				my $missing = substr($tokens[$i], $j);
+				$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
 				if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){#found missing part
 					$seg =~ s#-#$missing#g; #attach the missing part to all segs
 					$result[0] = join(' ', $seg,splice(@tokens, 0, $i)) ;
