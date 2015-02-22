@@ -6012,19 +6012,19 @@ sub hideBrackets{
 			$hidden .= "(";	
 		}elsif($_ eq ")"){
 			$lround--;
-			$hidden .= ")";
+			$hidden .= ") ";
 		}elsif($_ eq "["){
 			$lsquare++;
 			$hidden .= "[";
 		}elsif($_ eq "]"){
 			$lsquare--;
-			$hidden .= "]";
+			$hidden .= "] ";
 		}elsif($_ eq "{"){
 			$lcurly++;
 			$hidden .= "{";
 		}elsif($_ eq "}"){
 			$lcurly--;
-			$hidden .= "}";
+			$hidden .= "} ";
 		}else{
 			if($lround+$lsquare+$lcurly>0){
 				if(/.*?[\.\?\;\:\!].*?/){
@@ -6039,8 +6039,8 @@ sub hideBrackets{
 			$hidden .= " ";
 		}
 	}	
-	$hidden =~ s/([\(\[\{]\s+)/\1/g;
-	$hidden =~ s/\s+([\)\]\}])/\1/g;
+	$hidden =~ s/([\(\[\{]\s+)/$1/g;
+	$hidden =~ s/\s+([\)\]\}])/$1/g;
 	return $hidden;
 }
 
@@ -6055,11 +6055,12 @@ while(defined ($file=readdir(IN))){
 	if($file !~ /\w/){next;}
 	$text = ReadFile::readfile("$dir$file");
 	$text =~ s#["']##g;
-	$text =~ s#\s*-\s*to\s+# to #g; #4/7/09 plano- to
 	$text =~ s#[-_]+shaped#-shaped#g; #5/30/09
 	$text =~ s#<.*?>##g; #remove html tags
 	$text =~ s#<# less than #g; #remove <
 	$text =~ s#># greater than #g; #remove >
+	$text =~ s#(?<=[a-zA-Z])([)}\]])(?=[a-zA-Z])#$1 #g; # a)a => a) a purple)ovate-
+	$text =~ s#(?<=[a-zA-Z])([(\[{])(?=[a-zA-Z])# $1#g; # a(a => a (a
 	#normalize $line: "plagio-, dicho-, and trichotriaenes" => "plagiotriaenes, dichotriaenes, and trichotriaenes"
 	#$text = normalizeBrokenWords($text); #it is not quite 'original' anymore with this normalization, but it is convenient to do it here without having to change a lot of other code. 
 	                                      
@@ -6221,7 +6222,7 @@ sub normalizeBrokenWords{
 	$cline =~ s#(^\s+|\s+$)##g; #trim
 	if($needsfix and $cline ne $result){
 		 print STDOUT "broken words normalization: [$cline] to \n";
-		 print STDOUT "borken words normalization: [$result] \n";
+		 print STDOUT "broken words normalization: [$result] \n";
 	};
 	return $result;
 }
@@ -6263,7 +6264,8 @@ sub completeWords{
 				my $missing = substr($tokens[$i], $j);
 				$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
 				$missing =~ s#^[[:punct:]]+##; #remove leading punct marks: (5-)nerved )nerved
-				if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){#found missing part
+				#if(inCorpus($missing) || oneFixedWordExists($missing, @incompletewords)){#found missing part. narrowly => arrowly is in corpus, but not the missing part
+				if(oneFixedWordExists($missing, @incompletewords)){#found missing part 
 					$seg =~ s#-#$missing#g; #attach the missing part to all segs
 					$result[0] = join(' ', $seg,splice(@tokens, 0, $i)) ;
 					$result[1] = join(' ', @tokens);
@@ -6280,13 +6282,14 @@ sub oneFixedWordExists{
 	my $missing =shift;
 	my @incompletewords = @_;
 	for my $incword (@incompletewords){
-		if(inCorpus($incword.$missing)){
+		if(inCorpus($incword.$missing) || inCorpus($incword."-".$missing)){
 			return 1;
 		}
 	}
 	return 0;
 }
 
+#or in kb
 sub inCorpus{
 	my $word = shift;
 	my ($stmt, $sth);
@@ -6294,13 +6297,26 @@ sub inCorpus{
 	$sth = $dbh->prepare($stmt);
 	$sth->execute(); 
 	if ($dbh->err){
-		print STDOUT "db error in querying allwords table: ".$dbh->errstr."\n";
+		print STDOUT "db error in querying allwords table: ".$sth->errstr."\n";
 	}else{
 		my ($count) = $sth->fetchrow_array();
 		if($count >=1){
 			return 1;
 		}
 	}
+	
+	$stmt = "select count(*) from ".$kb." where term ='".$word."'";
+	$sth = $dbh->prepare($stmt);
+	$sth->execute(); 
+	if ($dbh->err){
+		print STDOUT "db error in querying kb/glossary table: ".$sth->errstr."\n";
+	}else{
+		my ($count) = $sth->fetchrow_array();
+		if($count >=1){
+			return 1;
+		}
+	}
+	
 	return 0;
 }
 

@@ -2,7 +2,7 @@ use strict;
 use DBI;
 use utf8;
 
-my $prefix="fnav20";
+my $prefix="fna_a";
 my $user="root";
 my $password="root";
 my $host="localhost";
@@ -40,12 +40,15 @@ my $stmt = "select count(*) from ".$prefix."_allwords where word ='my'";
 #my $line="sometimes with weakly developed, non- or weakly spinulose projection, gland-dotted,"; #didn't handle
 #my $line ="blades (1- or obscurely 3-nerved )obovate to oblanceolate, 20ΓÇô35 ├ù 3ΓÇô15 mm, distally reduced and narrowed, bases cuneate, margins irregularly incised to coarsely serrate or 2-serrate, faces glabrous, gland-dotted, resinous.";
 #my $line = "blades (1-), 3-, or (5-)nerved, elliptic to lanceolate, 7â€“30 Ã— 0.5â€“2.5 (â€“4)cm, bases cuneate to attenuate, margins entire (usually ciliate ).";
-#my $line = "(corollas lemon- or golden yellow)laminae narrowly oblong, 6â€“7 mm.";
-my $line = "Cypselae (black or brown)± compressed or flattened, often 3- or 4-angled or biconvex, ± cuneiform in silhouette";
+#my $line = "(corollas lemon- or golden yellow) laminae narrowly oblong, 6â€“7 mm.";
+#my $line = "Cypselae (black or brown)± compressed or flattened, often 3- or 4-angled or biconvex, ± cuneiform in silhouette";
+ my $line= "often purplish, particularly adaxially, cylindro- to narrowly campanulate,"; #arrowly is a word
+ my $line ="rarely entire (distal), (piloso- to strigoso-)ciliate to scabrous (distal), apices mucronate,";
 #print stdout $line."\n";
 my $connectors = "and|or|plus|to|sometimes";
 $line = normalizeBrokenWords($line);
 #print stdout $line."\n";
+
 
 #normalize $line: "... plagio-, dicho-, and/or/plus trichotriaenes ..." => "... plagiotriaenes, dichotriaenes, and trichotriaenes ..."
 #normalize $line: "... plagio- and/or/plus trichotriaenes ..." => "... plagiotriaenes and trichotriaenes ..."
@@ -108,6 +111,9 @@ sub completeWords{
 			$missing =~ s#[[:punct:]]+$##; #remove trailing punct marks
 			$missing =~ s#^[[:punct:]]+##; #remove leading punct marks
 			$seg =~ s#-#-$missing#g; #attach the missing part to all segs
+			if($tokens[$i]=~/-[(){}\]\[]/){
+				$tokens[$i] =~ s#-#-$missing#;#(piloso- to strigoso-)ciliate
+			}
 			$result[0] = join(' ', $seg, splice(@tokens, 0, $i));
 			$result[1] = join(' ', @tokens);
 			return @result;			
