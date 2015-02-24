@@ -33,7 +33,7 @@ Setup
 11. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCMarkupMain.java
 ">ETCMarkupMain</a>
  * Use the same arguments as for ETCLearnMain
- * Create config.properties file from <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/resources/edu/arizona/biosemantics/semanticmarkup/config.properties.template">template</a>
+12. Create config.properties file from <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/resources/edu/arizona/biosemantics/semanticmarkup/config.properties.template">template</a>
    
 Running
 ----------
