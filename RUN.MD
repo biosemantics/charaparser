@@ -4,6 +4,9 @@ Run Charaparser
 Setup
 ---------
 0. Install maven and aspectj plugin for eclipse
+ * m2e - Maven Integration for Eclipse (e.g. for Juno version: http://download.eclipse.org/releases/juno)
+ * AspectJ Development Tools (http://download.eclipse.org/tools/ajdt/42/update)
+ * Maven Integration for AJDT (http://dist.springsource.org/release/AJDT/configurator/)
 1. Checkout out the repository
 2. Import as general project
 3. Configure as Maven Project
