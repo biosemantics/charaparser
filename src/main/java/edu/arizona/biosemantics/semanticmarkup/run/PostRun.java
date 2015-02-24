@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,18 +51,15 @@ public class PostRun {
 	static XPathExpression<Element> keyPath = null;
 	static XPathExpression<Element> detPath = null;
 	static XPathExpression<Element> nextIdPath = null;
-	static XPathExpression<Element> stateIdPath = null;
 	static XPathExpression<Element> namePath = null;
-	static XPathExpression<Element> keyStatePath = null;
 
 	static{
 		fac = XPathFactory.instance();
 		keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		detPath = fac.compile("//key//determination", Filters.element());
-		nextIdPath = fac.compile("//key//next_statement_id", Filters.element());
-		stateIdPath = fac.compile("//key//statement_id", Filters.element());
+		detPath = fac.compile(".//determination", Filters.element()); //use . to limit the selection in the key element (not the entire document)
+		nextIdPath = fac.compile(".//next_statement_id", Filters.element());
+		//stateIdPath = fac.compile("//key//statement_id", Filters.element());
 		namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		keyStatePath = fac.compile("//key//key_statement", Filters.element());
 	}
 
 	/**
@@ -113,12 +111,16 @@ public class PostRun {
 		//leaving the original key unchanged in the source document
 		KeyElementValidator kev = new KeyElementValidator();
 		ArrayList<String> keyErrors = new ArrayList<String>();
-		ArrayList<File> newFiles = new ArrayList<File> ();
+		//ArrayList<File> newFiles = new ArrayList<File> ();
+		int count = 0;
 		for(Document docWKey: containsKey){
+			log(LogLevel.DEBUG, "Processing keys in "+docWKey.getBaseURI());
 			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
+				count++;
+				log(LogLevel.DEBUG, "Processing key "+count+": "+key.getChildText("key_head"));
 				//check if the key is formatted properly, break if not
 				if(! kev.validate(key, keyErrors)){
-					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+" ");
+					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+":"+key.getChildText("key_head"));
 					continue;
 				}
 				for(Object determination: detPath.evaluate(key)){
@@ -129,14 +131,14 @@ public class PostRun {
 
 					Document doc = locateTaxonDocument(taxonName, taxa2doc);
 					if(doc!=null){
-						//add a new description element of type 'key' to the doc for the taxon
+						//add a new description element of type 'morphology_from_key' to the doc for the taxon
 						doc.getRootElement().addContent(description);
 						writeFile(doc, doc2file.get(doc));
 						log(LogLevel.DEBUG, "Add info from a key in "+docWKey.getBaseURI()+" to morph. description in "+doc.getBaseURI());
 					}else{
 						//create a new file holding the description
 						File file = createFileFor(taxonName, description, docWKey);
-						newFiles.add(file);
+						//newFiles.add(file);
 						log(LogLevel.DEBUG, "create new file "+file.getAbsolutePath()+" to hold info from a key in "+docWKey.getBaseURI());
 					}
 				}
@@ -165,16 +167,33 @@ public class PostRun {
 		//make a template doc for the new description by removing un-needed elements
 		Document doc = template.clone();
 		Element root = doc.getRootElement();
-		ArrayList<Element> removes = new ArrayList<Element> ();
+		//ArrayList<Element> removes = new ArrayList<Element> ();
 		List<Element> children = root.getChildren();
-		for(Element child: children){
+		Iterator<Element> it = children.iterator();
+		while(it.hasNext()){
+			Element child = it.next();
 			String name = child.getName();
-			if(!name.matches("meta|taxon_identification")) removes.add(child);
+			if(!name.matches("meta|taxon_identification")){
+				it.remove();
+			}else if(name.compareTo("meta")==0){
+				List<Element> otherInfoOnMeta = child.getChildren("other_info_on_meta");
+				Iterator<Element> it2 = otherInfoOnMeta.iterator();
+				while(it2.hasNext()){
+					it2.next();
+					it2.remove();
+				}
+			}else if(name.compareTo("taxon_identification")==0 && child.getAttributeValue("status").compareToIgnoreCase("ACCEPTED")!=0){
+				it.remove();
+			}
 		}
 
-		for(Element remove: removes){
-			root.removeChildren(remove.getName());
-		}
+		/*for(Element remove: removes){
+			if(remove.getName().compareTo("meta")==0){
+				List<Element> otherInfoOnMeta = remove.getChildren("other_info_on_meta");
+				root.re(otherInfoOnMeta);				
+			}
+			root.removeContent(remove);
+		}*/
 
 		//update taxon_identification
 		Element ti = root.getChild("taxon_identification");
@@ -210,7 +229,7 @@ public class PostRun {
 		try {
 			out.output(doc, new FileWriter(file));
 		} catch (IOException e) {
-			log(LogLevel.ERROR, "Failed to update xml file: "+file.getAbsolutePath());
+			log(LogLevel.ERROR, "Failed to write xml file: "+file.getAbsolutePath());
 			e.printStackTrace();
 		}
 	}

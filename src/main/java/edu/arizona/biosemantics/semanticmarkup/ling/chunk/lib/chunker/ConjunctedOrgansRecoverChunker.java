@@ -40,6 +40,10 @@ public class ConjunctedOrgansRecoverChunker extends AbstractChunker {
 
 	/**
 	 * attempts to include broken-away conjuncted organs to pp and vb phrase
+	 * 
+	 * 		//PP: [PREPOSITION: [PP_LIST: [at, OR: [or], near]], ORGAN: [bases]]
+			//need to wrap ORGAN in OBJECT chunk e.g.,
+			//PP: [PREPOSITION: [of], OBJECT: [COUNT: [1-4], ORGAN: [scales]]]
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
@@ -65,20 +69,22 @@ public class ConjunctedOrgansRecoverChunker extends AbstractChunker {
 					LinkedHashSet<Chunk> newOrgan = new LinkedHashSet<Chunk>();
 					AbstractParseTree organ = terminals.get(++j);					
 					do {
-						//log(LogLevel.DEBUG, "do loop " + terminals.get(j));
-						//log(LogLevel.DEBUG, "add " + chunkCollector.getChunk(organ));
 						newOrgan.add(chunkCollector.getChunk(organ));
 						organ = terminals.get(++j);					
 					} while(chunkCollector.isPartOfChunkType(organ, ChunkType.ORGAN) && j+1 < terminals.size());
 					
-					Chunk chunk = chunkCollector.getChunk(terminal);
+					Chunk chunk = chunkCollector.getChunk(terminal); 
 					newOrgan.remove(chunk);
-					LinkedHashSet<Chunk> childChunks = chunk.getChunks();
-					//log(LogLevel.DEBUG, "chunkCollector " + chunkCollector.toString());
-					childChunks.addAll(newOrgan);
-					//log(LogLevel.DEBUG, "childChunks");
-					//log(LogLevel.DEBUG, childChunks);
 					
+					LinkedHashSet<Chunk> childChunks = chunk.getChunks();
+					if(chunk.containsChunkType(ChunkType.OBJECT)){
+						//add newOrgan to OBJECT
+						Chunk oldObjectChunk = chunk.getChunkDFS(ChunkType.OBJECT);
+						oldObjectChunk.getChunks().addAll(newOrgan);
+					}else{
+						Chunk objectChunk = new Chunk(ChunkType.OBJECT, newOrgan);
+						childChunks.add(objectChunk);
+					}					
 					chunk = new Chunk(chunk.getChunkType(), childChunks);
 					
 					chunkCollector.addChunk(chunk);

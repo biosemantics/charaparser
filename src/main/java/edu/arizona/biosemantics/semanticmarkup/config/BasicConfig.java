@@ -301,7 +301,9 @@ public class BasicConfig extends AbstractModule {
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("PossessWords")).toInstance(possessWords);	
 			  
 			  Set<String> stopWords = getStopWords();
-			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("StopWords")).toInstance(stopWords);			  
+			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("StopWords")).toInstance(stopWords);			
+			  String stopWordString = getStopWordString();
+			  bind(String.class).annotatedWith(Names.named("StopWordString")).toInstance(stopWordString);			
 			  String units = getUnits();
 			  bind(String.class).annotatedWith(Names.named("Units")).toInstance(units);
 			  Set<String> notInModifier = getNotInModifier();
@@ -366,6 +368,7 @@ public class BasicConfig extends AbstractModule {
 	}
 	
 	private Set<String> getPrepositionWordsSet() {
+		//when adding words here, also update the stopword list
 		String prepositionWords = "above|across|after|along|among|amongst|around|as|at|before|behind|below|beneath|between|beyond|by|during|for|from|in|into|near|of|off|on|onto|out"
 				+ "|outside|over|per|than|through|throughout|to|toward|towards|up|upward|with|without";
 		return this.getWordSet(prepositionWords);
@@ -450,13 +453,15 @@ public class BasicConfig extends AbstractModule {
 		//		+ "beneath|between|beyond|but|by|ca|can|could|did|do|does|doing|done|for|from|had|has|have|hence|here|how|if|in|into|inside|inward|is|it|its|"
 		//		+ "may|might|more|most|near|no|not|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
 		//		+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
-		String stopWordsString = "a|about|above|across|after|along|also|although|amp|an|and|are|as|at|be|because|become|becomes|becoming|been|before|being|"
+		return this.getWordSet(getStopWordString());
+	}
+
+	private String getStopWordString(){
+		return "a|about|above|across|after|along|also|although|amp|an|and|are|as|at|be|because|become|becomes|becoming|been|before|being|"
 				+ "beneath|between|beyond|but|by|ca|can|could|did|do|does|doing|done|for|from|had|has|have|hence|here|how|however|if|in|into|inside|inward|is|it|its|"
 				+ "may|might|more|most|near|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
 				+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
-		return this.getWordSet(stopWordsString);
 	}
-
 
 	//keep this up to date with the glossary.
 	private HashMap<String, String> getEqualCharacters() {

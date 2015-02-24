@@ -248,7 +248,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		Chunk chunk = parentChunk.getChunkOfTypeAndTerminal(oldChunkType, terminal);
 		//if(oldChunkType.equals(ChunkType.CHARACTER_STATE))
 		//	chunk.clearProperties();
-		chunk.setChunkType(newChunkType);
+		if(chunk!=null) chunk.setChunkType(newChunkType);
 	}	
 	
 	

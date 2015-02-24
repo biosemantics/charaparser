@@ -91,7 +91,9 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> modifier = new ArrayList<Chunk>();// chunk.getChunks(ChunkType.MODIFIER);
 		Chunk preposition = chunk.getChunkDFS(ChunkType.PREPOSITION);
 		LinkedHashSet<Chunk> prepositionChunks = preposition.getChunks();
-		Chunk object = chunk.getChunkDFS(ChunkType.OBJECT);
+		Chunk object = chunk.getChunkDFS(ChunkType.OBJECT); //PP: [PREPOSITION: [PP_LIST: [at, OR: [or], near]], ORGAN: [bases]]
+		
+		if(object ==null) return result;
 		
 		if(characterPrep(chunk, processingContextState))
 			return result;	

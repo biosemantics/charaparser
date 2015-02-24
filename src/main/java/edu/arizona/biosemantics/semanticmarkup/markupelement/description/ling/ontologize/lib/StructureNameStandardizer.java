@@ -103,9 +103,11 @@ public class StructureNameStandardizer {
 	private void filterNonspecificParts(Description description) {
 		
 		for(Statement s: description.getStatements()){
-			String sentence = s.getText();
+			String sentence = s.getText().trim();
 			if(sentence!=null && sentence.matches("^[A-Z].*")){ //record parentorgan
-				String word1 = sentence.substring(0, sentence.indexOf(" ")).toLowerCase();
+				String word1 = sentence.toLowerCase();
+				if(sentence.indexOf(" ")>0)
+					word1 = sentence.substring(0, sentence.indexOf(" ")).toLowerCase();
 				this.nonspecificParts = this.nonspecificParts.replaceFirst("(^|\\|)"+word1+"(\\||$)", "|").replaceFirst("(^\\||\\|$)", "");
 			}
 		}
