@@ -13,7 +13,7 @@ Setup
 4. Configure as AspectJ Project
 5. Install MySQL if necessary
 6. Create charaparser database
-7. Import SetupDB.sql dump located in root project directory
+7. Import <a href="https://github.com/biosemantics/charaparser/blob/master/setupDB.sql">setupDB.sql</a> dump
 8. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCLearnMain.java
 ">ETCLearnMain</a>
  * As arguments use 
