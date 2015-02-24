@@ -31,5 +31,5 @@ Running
 3. Run ETCMarkupMain
 
 After you run either Learn or Markup
-workspace/{runId}/out will contain output files
-workspace/{runId}/*.log will be created log files
+* workspace/{runId}/out will contain output files
+* workspace/{runId}/*.log will be created log files
