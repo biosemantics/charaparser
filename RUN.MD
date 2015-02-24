@@ -12,9 +12,12 @@ Setup
 3. Configure as Maven Project
 4. Configure as AspectJ Project
 5. Install MySQL if necessary
-6. Create charaparser database
-7. Import <a href="https://github.com/biosemantics/charaparser/blob/master/setupDB.sql">setupDB.sql</a> dump
-8. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCLearnMain.java
+6. Install <a href="https://www.perl.org/">Perl</a> if necessary
+ * including modules DBI, DBD::MySQL, Encoding::FixLatin
+7. Install <a href="http://wordnet.princeton.edu/">WordNet</a> if necessary
+8. Create charaparser database
+9. Import <a href="https://github.com/biosemantics/charaparser/blob/master/setupDB.sql">setupDB.sql</a> dump
+10. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCLearnMain.java
 ">ETCLearnMain</a>
  * As arguments use 
    * -c {TaxonGroup} 
@@ -24,7 +27,7 @@ Setup
 -i {input-directory} -z {runId} -o {oto2-installation-url} -y -q {ontology-owl-file-directory}
  * <a href="https://github.com/biosemantics/common/blob/master/biology/src/main/java/edu/arizona/biosemantics/common/biology/TaxonGroup.java">{TaxonGroup} possiblities</a>
  * {oto2-installation-url} =  http://etc-dev.cs.umb.edu/oto2
-9. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCMarkupMain.java
+11. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCMarkupMain.java
 ">ETCMarkupMain</a>
  * Use the same arguments as for ETCLearnMain
 
