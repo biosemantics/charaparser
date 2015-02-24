@@ -14,7 +14,7 @@ Setup
 8. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCLearnMain.java
 ">ETCLearnMain</a>
  * As arguments use 
--c {TaxonGroup} 
+   * -c {TaxonGroup} 
 -w {Path-to-charaparser-project}\wordnet\wn31\dict 
 -l {Path-to-charaparser-project}\src\main\perl\edu\arizona\biosemantics\semanticmarkup\markupelement\description\ling\learn\lib\perl 
 -n {database-host} -p {database-port} -d {database-name} -u {database-user} -s {database-password} 
