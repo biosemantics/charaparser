@@ -11,7 +11,7 @@ Setup
 2. Import as general project
 3. Configure as Maven Project
 4. Configure as AspectJ Project
-5. Install MySQL if necessary
+5. Install <a href="http://www.mysql.com/">MySQL</a> if necessary
 6. Install <a href="https://www.perl.org/">Perl</a> if necessary
  * including modules DBI, DBD::MySQL, Encoding::FixLatin
 7. Install <a href="http://wordnet.princeton.edu/">WordNet</a> if necessary
