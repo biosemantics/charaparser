@@ -22,8 +22,7 @@ Setup
 7. Install <a href="http://wordnet.princeton.edu/">WordNet</a> if necessary
 8. Create charaparser database
 9. Import <a href="https://github.com/biosemantics/charaparser/blob/master/setupDB.sql">setupDB.sql</a> dump
-10. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCLearnMain.java
-">ETCLearnMain</a>
+10. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCLearnMain.java">ETCLearnMain</a>
  * As arguments use 
    * -c {TaxonGroup} 
 -w {Path-to-charaparser-project}\wordnet\wn31\dict 
