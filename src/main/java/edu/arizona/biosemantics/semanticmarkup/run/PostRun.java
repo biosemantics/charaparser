@@ -45,19 +45,25 @@ import edu.arizona.biosemantics.common.validation.key.KeyElementValidator;
  */
 public class PostRun {
 	String runOutDirectory;
+
 	//String validateSchemaFile;
 	static XMLOutputter out = new XMLOutputter();
 	static XPathFactory fac = null;
 	static XPathExpression<Element> keyPath = null;
 	static XPathExpression<Element> detPath = null;
+	static XPathExpression<Element> allDetPath = null;
 	static XPathExpression<Element> nextIdPath = null;
 	static XPathExpression<Element> namePath = null;
+	static XPathExpression<Element> keyHead = null;
+	
 
 	static{
 		fac = XPathFactory.instance();
 		keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
 		detPath = fac.compile(".//determination", Filters.element()); //use . to limit the selection in the key element (not the entire document)
+		allDetPath = fac.compile("//determination", Filters.element()); //don't use .
 		nextIdPath = fac.compile(".//next_statement_id", Filters.element());
+		keyHead  = fac.compile("//key//key_head", Filters.element()); //don't use .
 		//stateIdPath = fac.compile("//key//statement_id", Filters.element());
 		namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
 	}
@@ -124,11 +130,16 @@ public class PostRun {
 					continue;
 				}
 				for(Object determination: detPath.evaluate(key)){
+					//if determination matches a key_head, so is not a taxon name
+					if(matchesKeyHead((Element)determination, key)) continue;
+					
 					String taxonName = getName((Element) determination, docWKey);
 					Element description = new Element("description");
 					description.setAttribute("type", "morphology_from_key");
-					wrapCharacter(description, nextIdPath, (Element)determination, (Element)key);
-
+					wrapCharacter(description, (Element)determination, (Element)key);
+					
+					if(description.getContentSize()==0) continue;
+					
 					Document doc = locateTaxonDocument(taxonName, taxa2doc);
 					if(doc!=null){
 						//add a new description element of type 'morphology_from_key' to the doc for the taxon
@@ -283,31 +294,87 @@ public class PostRun {
 
 
 	/**
-	 * trace from determination up the key to collect all parsed descriptions applicable to the determination
+	 * traces from determination up the key to collect all parsed descriptions applicable to the determination
 	 * save the statements in the description
 	 * need also update the ids for all the statements, structures, relations and references to them. 
+	 * 
+	 * handles also the situation where the determination points to another key such as "Key A"
 	 * 
 	 * @param description
 	 * @param determination
 	 * @param key
 	 */
-	private void wrapCharacter(Element description, XPathExpression<Element> nextIdPath, Element determination,
+	private void wrapCharacter(Element description, Element determination,
 			Element key) {
-		String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
-		Element desc = determination.getParentElement().getChild("description").clone();
-		Collection<Element> statements = prepStatmentsFrom(desc);
-		if(statements!=null) description.addContent(statements);
-
-		Element nextId = getNextIdStatement(stmtid, key);
-		while(nextId!=null){
-			desc = ((Element)nextId).getParentElement().getChild("description").clone();
-			statements = prepStatmentsFrom(desc);
+			
+			//tracing up
+			String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
+			Element desc = determination.getParentElement().getChild("description").clone();
+			Collection<Element> statements = prepStatmentsFrom(desc);
 			if(statements!=null) description.addContent(statements);
-			stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
-			nextId = getNextIdStatement(stmtid, key);
+	
+			Element nextId = getNextIdStatement(stmtid, key);
+			while(nextId!=null){
+				desc = ((Element)nextId).getParentElement().getChild("description").clone();
+				statements = prepStatmentsFrom(desc);
+				if(statements!=null) description.addContent(statements);
+				stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
+				nextId = getNextIdStatement(stmtid, key);
+			}
+	
+			//if key has a key_head, search for a key with the key_head as a determination, and continue to trace up the description chain
+			if(key.getChild("key_head")!=null){
+				Element upperDet = findUpperDetermination(key.getChild("key_head"), key);
+				if(upperDet!=null){
+					Element upperKey = upperDet.getParentElement().getParentElement();
+					if(upperKey!=null) wrapCharacter(description, upperDet, upperKey);
+				}
+			}
+	}
+	
+	/**
+	 * search for the determination element that matches the key_head
+	 * @param child
+	 * @param key
+	 * @return
+	 */
+	private Element findUpperDetermination(Element keyHead, Element key) {
+		if(keyHead==null || key==null) return null;
+		String kh = keyHead.getTextNormalize().toLowerCase();
+		List<Element> dets = allDetPath.evaluate(key);
+		for(Element det: dets){
+			String detString = det.getTextNormalize().toLowerCase();
+			detString = detString.replaceFirst("[(\\[,].*$", "").trim(); //187a. mutisieae (in part; acourtia
+			if(kh.matches(".*?\\b"+detString+"\\b.*"))
+				return det;
 		}
+		return null;
 	}
 
+
+	/**
+	 * if determination matches a key_head in any of the keys in the document
+	 * det: <determination>Group 2, v. 19, p. 14</determination>
+	 * key_head: <key_head>Key to Genera of Group 2</key_head>
+	 * @param determination
+	 * @param key
+	 * @return
+	 */
+	private boolean matchesKeyHead(Element determination, Element key) {
+		if(determination==null || key==null) return false;
+		String det = determination.getTextNormalize().toLowerCase();
+		det = det.replaceFirst("[(\\[,].*$", "").trim(); //group 2 ; group 1 (cichorieae )
+		List<Element> keyHeads = keyHead.evaluate(key);
+		for(Element head: keyHeads){
+			String kh = head.getTextNormalize().toLowerCase();
+			if(kh.matches(".*?\\b"+det+"\\b.*")){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
 
 	/**
 	 * collect all parsed statements
@@ -392,14 +459,14 @@ public class PostRun {
 		}
 
 		String name = "";
-		String lastRank = "";
+		//String lastRank = "";
 		//collect name/rank info from document
 		Hashtable<String, String> nameRank = new Hashtable<String, String>();
 		Element ti = document.getRootElement().getChild("taxon_identification");
 		for(Element tn: ti.getChildren("taxon_name")){
 			nameRank.put(tn.getTextTrim(), tn.getAttributeValue("rank"));
 			name += tn.getAttributeValue("rank")+"_"+tn.getTextTrim().toLowerCase()+" ";
-			lastRank = tn.getAttributeValue("rank");
+			//lastRank = tn.getAttributeValue("rank");
 		}
 
 		//now taking name related tokens only
