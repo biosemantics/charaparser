@@ -11,3 +11,5 @@
 /target
 /ontologies
 /workspace - Copy
+
+/src/main/resources/log4j.properties
