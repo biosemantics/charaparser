@@ -127,7 +127,7 @@ public class PostRun {
 				//check if the key is formatted properly, break if not
 				if(! kev.validate(key, keyErrors)){
 					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+":"+key.getChildText("key_head"));
-					continue;
+					break; //if one key is not valid in a document (other keys may refers to this bad key), go to the next doc
 				}
 				for(Object determination: detPath.evaluate(key)){
 					//if determination matches a key_head, so is not a taxon name
