@@ -645,6 +645,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		 
 		String[] range = characterValue.split("\\s+to\\s+");//a or b, c, to d, c, e
 		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+or\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
+		if(tokens.length==0)
+			return results;
 		String from = getFirstCharacter(tokens[tokens.length-1]);
 		tokens = range[1].split("\\s*,\\s*");
 		String to = getFirstCharacter(tokens[0]);
@@ -969,7 +971,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	protected boolean isNumerical(Chunk object) {
-		if(object.getTerminalsText()!=null)
+		if(object!=null && object.getTerminalsText()!=null)
 			return object.getTerminalsText().matches("\\d+");
 		return false;
 	}

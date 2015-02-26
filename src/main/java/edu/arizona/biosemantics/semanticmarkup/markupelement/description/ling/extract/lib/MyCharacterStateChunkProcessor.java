@@ -141,7 +141,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 			boolean dealt = false;
 			//if(processingContextState.getLastElements().size() > 0){
 			//	Element lastElement = processingContextState.getLastElements().getLast();
-				if(lastElement.isCharacter()){ 
+				if(lastElement!=null && lastElement.isCharacter()){ 
 					for(Element element : processingContextState.getLastElements()) 
 						if(element.isCharacter()){
 							((Character)element).setName(characterStateString);

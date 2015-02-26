@@ -386,7 +386,7 @@ public class CharacterListNormalizer{
 					if(chunkedTokens.get(i).length()>0){
 						//if(t.indexOf("<")>0){
 						//if(this.organStateKnowledgeBase.isOrgan(t)){	
-						if(this.characterKnowledgeBase.isEntity(t)){		
+						if(this.characterKnowledgeBase.isEntity(chunkedTokens.get(i))){		
 							//case: {shape~list~ovate~to~lance-ovate~(~glabrous~or~sparsely~glandular-pubescent~punct~<apices>~acute~to~acuminate~)} 
 							//this is caused by adding more tokens to t to complete a open bracket
 							//solution: abort normalization
@@ -411,7 +411,7 @@ public class CharacterListNormalizer{
 						if(chunkedTokens.get(i).compareTo(")")==0) leftround--;
 						if(chunkedTokens.get(i).length()>0){
 							//if(this.organStateKnowledgeBase.isOrgan(t)/* t.indexOf("<")>0*/){
-							if(this.characterKnowledgeBase.isEntity(t)/* t.indexOf("<")>0*/){
+							if(this.characterKnowledgeBase.isEntity(chunkedTokens.get(i))/* t.indexOf("<")>0*/){
 								//case: {shape~list~ovate~to~lance-ovate~(~glabrous~or~sparsely~glandular-pubescent~punct~<apices>~acute~to~acuminate~)} 
 								//this is caused by adding more tokens to t to complete a open bracket
 								//solution: abort normalization

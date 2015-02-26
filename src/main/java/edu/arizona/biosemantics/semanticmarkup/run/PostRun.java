@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,24 +45,27 @@ import edu.arizona.biosemantics.common.validation.key.KeyElementValidator;
  */
 public class PostRun {
 	String runOutDirectory;
+
 	//String validateSchemaFile;
 	static XMLOutputter out = new XMLOutputter();
 	static XPathFactory fac = null;
 	static XPathExpression<Element> keyPath = null;
 	static XPathExpression<Element> detPath = null;
+	static XPathExpression<Element> allDetPath = null;
 	static XPathExpression<Element> nextIdPath = null;
-	static XPathExpression<Element> stateIdPath = null;
 	static XPathExpression<Element> namePath = null;
-	static XPathExpression<Element> keyStatePath = null;
+	static XPathExpression<Element> keyHead = null;
+	
 
 	static{
 		fac = XPathFactory.instance();
 		keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		detPath = fac.compile("//key//determination", Filters.element());
-		nextIdPath = fac.compile("//key//next_statement_id", Filters.element());
-		stateIdPath = fac.compile("//key//statement_id", Filters.element());
+		detPath = fac.compile(".//determination", Filters.element()); //use . to limit the selection in the key element (not the entire document)
+		allDetPath = fac.compile("//determination", Filters.element()); //don't use .
+		nextIdPath = fac.compile(".//next_statement_id", Filters.element());
+		keyHead  = fac.compile("//key//key_head", Filters.element()); //don't use .
+		//stateIdPath = fac.compile("//key//statement_id", Filters.element());
 		namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		keyStatePath = fac.compile("//key//key_statement", Filters.element());
 	}
 
 	/**
@@ -113,30 +117,39 @@ public class PostRun {
 		//leaving the original key unchanged in the source document
 		KeyElementValidator kev = new KeyElementValidator();
 		ArrayList<String> keyErrors = new ArrayList<String>();
-		ArrayList<File> newFiles = new ArrayList<File> ();
+		//ArrayList<File> newFiles = new ArrayList<File> ();
+		int count = 0;
 		for(Document docWKey: containsKey){
+			log(LogLevel.DEBUG, "Processing keys in "+docWKey.getBaseURI());
 			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
+				count++;
+				log(LogLevel.DEBUG, "Processing key "+count+": "+key.getChildText("key_head"));
 				//check if the key is formatted properly, break if not
 				if(! kev.validate(key, keyErrors)){
-					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+" ");
-					continue;
+					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+":"+key.getChildText("key_head"));
+					break; //if one key is not valid in a document (other keys may refers to this bad key), go to the next doc
 				}
 				for(Object determination: detPath.evaluate(key)){
+					//if determination matches a key_head, so is not a taxon name
+					if(matchesKeyHead((Element)determination, key)) continue;
+					
 					String taxonName = getName((Element) determination, docWKey);
 					Element description = new Element("description");
 					description.setAttribute("type", "morphology_from_key");
-					wrapCharacter(description, nextIdPath, (Element)determination, (Element)key);
-
+					wrapCharacter(description, (Element)determination, (Element)key);
+					
+					if(description.getContentSize()==0) continue;
+					
 					Document doc = locateTaxonDocument(taxonName, taxa2doc);
 					if(doc!=null){
-						//add a new description element of type 'key' to the doc for the taxon
+						//add a new description element of type 'morphology_from_key' to the doc for the taxon
 						doc.getRootElement().addContent(description);
 						writeFile(doc, doc2file.get(doc));
 						log(LogLevel.DEBUG, "Add info from a key in "+docWKey.getBaseURI()+" to morph. description in "+doc.getBaseURI());
 					}else{
 						//create a new file holding the description
 						File file = createFileFor(taxonName, description, docWKey);
-						newFiles.add(file);
+						//newFiles.add(file);
 						log(LogLevel.DEBUG, "create new file "+file.getAbsolutePath()+" to hold info from a key in "+docWKey.getBaseURI());
 					}
 				}
@@ -165,16 +178,33 @@ public class PostRun {
 		//make a template doc for the new description by removing un-needed elements
 		Document doc = template.clone();
 		Element root = doc.getRootElement();
-		ArrayList<Element> removes = new ArrayList<Element> ();
+		//ArrayList<Element> removes = new ArrayList<Element> ();
 		List<Element> children = root.getChildren();
-		for(Element child: children){
+		Iterator<Element> it = children.iterator();
+		while(it.hasNext()){
+			Element child = it.next();
 			String name = child.getName();
-			if(!name.matches("meta|taxon_identification")) removes.add(child);
+			if(!name.matches("meta|taxon_identification")){
+				it.remove();
+			}else if(name.compareTo("meta")==0){
+				List<Element> otherInfoOnMeta = child.getChildren("other_info_on_meta");
+				Iterator<Element> it2 = otherInfoOnMeta.iterator();
+				while(it2.hasNext()){
+					it2.next();
+					it2.remove();
+				}
+			}else if(name.compareTo("taxon_identification")==0 && child.getAttributeValue("status").compareToIgnoreCase("ACCEPTED")!=0){
+				it.remove();
+			}
 		}
 
-		for(Element remove: removes){
-			root.removeChildren(remove.getName());
-		}
+		/*for(Element remove: removes){
+			if(remove.getName().compareTo("meta")==0){
+				List<Element> otherInfoOnMeta = remove.getChildren("other_info_on_meta");
+				root.re(otherInfoOnMeta);				
+			}
+			root.removeContent(remove);
+		}*/
 
 		//update taxon_identification
 		Element ti = root.getChild("taxon_identification");
@@ -210,7 +240,7 @@ public class PostRun {
 		try {
 			out.output(doc, new FileWriter(file));
 		} catch (IOException e) {
-			log(LogLevel.ERROR, "Failed to update xml file: "+file.getAbsolutePath());
+			log(LogLevel.ERROR, "Failed to write xml file: "+file.getAbsolutePath());
 			e.printStackTrace();
 		}
 	}
@@ -264,31 +294,87 @@ public class PostRun {
 
 
 	/**
-	 * trace from determination up the key to collect all parsed descriptions applicable to the determination
+	 * traces from determination up the key to collect all parsed descriptions applicable to the determination
 	 * save the statements in the description
 	 * need also update the ids for all the statements, structures, relations and references to them. 
+	 * 
+	 * handles also the situation where the determination points to another key such as "Key A"
 	 * 
 	 * @param description
 	 * @param determination
 	 * @param key
 	 */
-	private void wrapCharacter(Element description, XPathExpression<Element> nextIdPath, Element determination,
+	private void wrapCharacter(Element description, Element determination,
 			Element key) {
-		String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
-		Element desc = determination.getParentElement().getChild("description").clone();
-		Collection<Element> statements = prepStatmentsFrom(desc);
-		if(statements!=null) description.addContent(statements);
-
-		Element nextId = getNextIdStatement(stmtid, key);
-		while(nextId!=null){
-			desc = ((Element)nextId).getParentElement().getChild("description").clone();
-			statements = prepStatmentsFrom(desc);
+			
+			//tracing up
+			String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
+			Element desc = determination.getParentElement().getChild("description").clone();
+			Collection<Element> statements = prepStatmentsFrom(desc);
 			if(statements!=null) description.addContent(statements);
-			stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
-			nextId = getNextIdStatement(stmtid, key);
+	
+			Element nextId = getNextIdStatement(stmtid, key);
+			while(nextId!=null){
+				desc = ((Element)nextId).getParentElement().getChild("description").clone();
+				statements = prepStatmentsFrom(desc);
+				if(statements!=null) description.addContent(statements);
+				stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
+				nextId = getNextIdStatement(stmtid, key);
+			}
+	
+			//if key has a key_head, search for a key with the key_head as a determination, and continue to trace up the description chain
+			if(key.getChild("key_head")!=null){
+				Element upperDet = findUpperDetermination(key.getChild("key_head"), key);
+				if(upperDet!=null){
+					Element upperKey = upperDet.getParentElement().getParentElement();
+					if(upperKey!=null) wrapCharacter(description, upperDet, upperKey);
+				}
+			}
+	}
+	
+	/**
+	 * search for the determination element that matches the key_head
+	 * @param child
+	 * @param key
+	 * @return
+	 */
+	private Element findUpperDetermination(Element keyHead, Element key) {
+		if(keyHead==null || key==null) return null;
+		String kh = keyHead.getTextNormalize().toLowerCase();
+		List<Element> dets = allDetPath.evaluate(key);
+		for(Element det: dets){
+			String detString = det.getTextNormalize().toLowerCase();
+			detString = detString.replaceFirst("[(\\[,].*$", "").trim(); //187a. mutisieae (in part; acourtia
+			if(kh.matches(".*?\\b"+detString+"\\b.*"))
+				return det;
 		}
+		return null;
 	}
 
+
+	/**
+	 * if determination matches a key_head in any of the keys in the document
+	 * det: <determination>Group 2, v. 19, p. 14</determination>
+	 * key_head: <key_head>Key to Genera of Group 2</key_head>
+	 * @param determination
+	 * @param key
+	 * @return
+	 */
+	private boolean matchesKeyHead(Element determination, Element key) {
+		if(determination==null || key==null) return false;
+		String det = determination.getTextNormalize().toLowerCase();
+		det = det.replaceFirst("[(\\[,].*$", "").trim(); //group 2 ; group 1 (cichorieae )
+		List<Element> keyHeads = keyHead.evaluate(key);
+		for(Element head: keyHeads){
+			String kh = head.getTextNormalize().toLowerCase();
+			if(kh.matches(".*?\\b"+det+"\\b.*")){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
 
 	/**
 	 * collect all parsed statements
@@ -373,14 +459,14 @@ public class PostRun {
 		}
 
 		String name = "";
-		String lastRank = "";
+		//String lastRank = "";
 		//collect name/rank info from document
 		Hashtable<String, String> nameRank = new Hashtable<String, String>();
 		Element ti = document.getRootElement().getChild("taxon_identification");
 		for(Element tn: ti.getChildren("taxon_name")){
 			nameRank.put(tn.getTextTrim(), tn.getAttributeValue("rank"));
 			name += tn.getAttributeValue("rank")+"_"+tn.getTextTrim().toLowerCase()+" ";
-			lastRank = tn.getAttributeValue("rank");
+			//lastRank = tn.getAttributeValue("rank");
 		}
 
 		//now taking name related tokens only

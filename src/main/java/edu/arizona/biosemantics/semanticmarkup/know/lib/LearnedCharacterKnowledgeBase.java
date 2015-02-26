@@ -36,6 +36,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	
 	private String negWords; 
 	private String advModifiers;
+	private String stopWords;
 	//private ITerminologyLearner terminologyLearner;
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
 	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
@@ -51,12 +52,13 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	 */
 	@Inject
 	public LearnedCharacterKnowledgeBase(/*ITerminologyLearner terminologyLearner,*/ IGlossary glossary, 
-			@Named("NegationWords")String negWords, @Named("AdvModifiers") String advModifiers, IInflector inflector) {
+			@Named("NegationWords")String negWords, @Named("AdvModifiers") String advModifiers, @Named("StopWordString") String stopWords, @Named("Units") String units, IInflector inflector) {
 		//this.terminologyLearner = terminologyLearner;
 		this.glossary = glossary;
 		this.negWords = negWords;
 		this.advModifiers = advModifiers+"|"+advModifiers.replaceAll(" ", "[_-]"); //at least|at[_-]least
 		this.inflector = inflector;
+		this.stopWords = stopWords+"|times|time|"+units;
 	}
 	
 	@Override
@@ -115,8 +117,11 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 
 	@Override
 	public Match getCharacterName(String word) {//hyphened words (standardized "_" to "-").
+		
+		if(word.matches(this.stopWords)) return new Match(null);
+		
 		String wo = word;
-
+		
 		//rejected searches
 		if(word.matches("("+negWords+")")) return new Match(null);
 		if (word.trim().length() == 0 || !word.matches(".*[a-z].*")) return new Match(null);
@@ -149,8 +154,9 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			HashSet<Term> result = new HashSet<Term> ();
 			result.add(new Term(wo, "shape"));
 			m = new Match(result);
-		}else if (ch == null && wc.indexOf('-') > 0) {// pani_culiform, primocane_foliage
-			ws = word.split("-+");
+		}else if (ch == null && (wc.indexOf('-') > 0 || wc.indexOf('~') > 0)) {// pani_culiform, primocane_foliage //orange_yellow~or~occasionally~{colorationttt~list~suffused~with~red} 
+			word = word.replaceAll("[{}]", "");
+			ws = word.split("[-~]+");
 			word = word.replaceFirst(ws[ws.length-1]+"$", inflector.getSingular(ws[ws.length-1])); //pl -> singular, to get a match for the added pl form of phrases in PhraseMarker
 			ch = lookup(word);
 			if(ch==null){
@@ -160,6 +166,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 					ch = lookup(wc.replaceAll("-", ""));
 					if(ch == null){
 						//ch = lookup(ws[0]); //searching the first word in a "-"-connected phrase doesn't make sense hong 5/5/14
+						ch = lookup(inflector.getSingular(word)); //searching the first word in a "-"-connected phrase doesn't make sense hong 5/5/14
 						m = new Match(ch);
 					}else{
 						m = new Match(ch);
@@ -173,6 +180,9 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			}else{
 				m = new Match(ch);
 			}
+		}else{
+			ch = lookup(inflector.getSingular(word));
+			m = new Match(ch);
 		}
 		
 		characterCache.put(wo, m);

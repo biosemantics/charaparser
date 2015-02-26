@@ -114,7 +114,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 					|| word.compareTo("about") == 0) {
 				posedSentence.add(new POSedToken(word, POS.RB));
 			} else if (word.compareTo("throughout") == 0
-					&& sentence.get(i + 1).getContent().matches("(,|or)")) {
+					&&(i+1 == sentence.size() || sentence.get(i + 1).getContent().matches("(,|or)"))) {
 				posedSentence.add(new POSedToken(word, POS.RB));
 			} else if (word.contains("#")) {
 				posedSentence.add(new POSedToken(word.replace('#','-'), POS.RB));

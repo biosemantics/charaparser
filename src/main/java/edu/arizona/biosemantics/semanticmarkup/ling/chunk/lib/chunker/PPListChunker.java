@@ -113,13 +113,13 @@ public class PPListChunker extends AbstractChunker {
 				isList = false;
 				//log(LogLevel.DEBUG, "islist false4");
 			}
-			
+
 			if(isList) {
 				//pp.prettyPrint();
 				AbstractParseTree newIN = parseTreeFactory.create();
 				newIN.setPOS(POS.PREPOSITION);
 				AbstractParseTree np = null;
-				
+				//collect tokens for the new IN
 				for(int i=0; i < ppChildren.size(); i++) {
 					AbstractParseTree ppChild = ppChildren.get(i);
 					if(ppChild.getPOS().equals(POS.NP)) {
@@ -152,16 +152,16 @@ public class PPListChunker extends AbstractChunker {
 				
 				LinkedHashSet<Chunk> ppChildChunks = new LinkedHashSet<Chunk>();
 				
-				
+				//form PPList chunk
 				LinkedHashSet<Chunk> ppListChildChunks = new LinkedHashSet<Chunk>();
 				for(AbstractParseTree terminal : newIN.getTerminals())
 					ppListChildChunks.add(terminal);
 				Chunk ppListChunk = new Chunk(ChunkType.PP_LIST, ppListChildChunks);
 				chunkCollector.addChunk(ppListChunk);
-				
+				//form preposition chunk
 				Chunk prepositionChunk = new Chunk(ChunkType.PREPOSITION, ppListChunk);
 				ppChildChunks.add(prepositionChunk);
-				
+				//form Object
 				if(np!=null) {
 					LinkedHashSet<Chunk> npListChildChunks = new LinkedHashSet<Chunk>();
 					for(AbstractParseTree terminal : np.getTerminals()) {

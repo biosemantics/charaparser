@@ -637,7 +637,7 @@ public class Chunk implements Cloneable {
 		for(Chunk childChunk : this.getChunks()) {
 			HashSet<Chunk> newVisitedChunks = new HashSet<Chunk>();
 			newVisitedChunks.addAll(visitedChunks);
-			boolean result = childChunk.hasCircularReference(newVisitedChunks);
+			boolean result = childChunk==null? false : childChunk.hasCircularReference(newVisitedChunks);
 			if(result)
 				return true;
 		}

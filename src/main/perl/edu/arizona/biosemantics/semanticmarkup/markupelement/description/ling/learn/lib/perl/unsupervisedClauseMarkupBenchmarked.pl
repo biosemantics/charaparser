@@ -6187,7 +6187,7 @@ while(defined ($file=readdir(IN))){
 	my $end = $SENTID-1;
 	$NEWDESCRIPTION.=$file."[".$end."] ";
 	my $query = $dbh->prepare("insert into ".$prefix."_sentInFile values ('$file', $end)");
-	$query->execute() or print STDOUT "populatesents db error:".$query->errstr."\n";
+	$query->execute() or print STDOUT "populatesents db error2:".$query->errstr."\n";
 }
 	#chop($PROPERNOUNS);
 print stdout "Total sentences = $SENTID\n";
@@ -6220,10 +6220,10 @@ sub normalizeBrokenWords{
 	$result =~ s#\s+([)\]},;\.])#$1#g;
 	$result =~ s#(^\s+|\s+$)##g; #trim
 	$cline =~ s#(^\s+|\s+$)##g; #trim
-	if($needsfix and $cline ne $result){
-		 print STDOUT "broken words normalization: [$cline] to \n";
-		 print STDOUT "broken words normalization: [$result] \n";
-	};
+	#if($needsfix and $cline ne $result){
+	#	 print STDOUT "broken words normalization: [$cline] to \n";
+	#	 print STDOUT "broken words normalization: [$result] \n";
+	#};
 	return $result;
 }
 
