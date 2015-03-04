@@ -467,10 +467,11 @@ public class BasicConfig extends AbstractModule {
 	private HashMap<String, String> getEqualCharacters() {
 		HashMap<String, String> equalCharacters = new HashMap<String, String>();
 		//these can be states ("leaves long") or be indications of a character ("2cm long" => length = 2cm)
-		equalCharacters.put("wide", "width");
+		equalCharacters.put("wide", "width"); 
 		equalCharacters.put("long", "length");
 		equalCharacters.put("broad", "width");
 		equalCharacters.put("diam", "diameter");
+		equalCharacters.put("diams", "diameter");
 		equalCharacters.put("high", "height");
 		equalCharacters.put("tall", "height");
 		equalCharacters.put("thick", "thickness");

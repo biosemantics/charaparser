@@ -102,7 +102,9 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 
 			//Hong TODO modifiertokens
 			Matcher mc = compreppattern.matcher(word);
-			if(word.equals("moreorless")) {
+			if(word.equals("lengths") || word.equals("length")){
+				posedSentence.add(new POSedToken(word, POS.NNS)); //stanford parser would sometimes take "lengths" as IN
+			}else if(word.equals("moreorless")) {
 				posedSentence.add(new POSedToken(word, POS.RB));
 			} else if (mc.matches()) {
 				posedSentence.add(new POSedToken(word, POS.IN));

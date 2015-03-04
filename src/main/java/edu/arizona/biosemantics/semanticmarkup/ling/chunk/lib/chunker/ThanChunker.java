@@ -59,7 +59,9 @@ public class ThanChunker extends AbstractChunker {
 		IParseTree parseTree = chunkCollector.getParseTree();
 		List<IParseTree> thanSubTrees = parseTree.getTerminalsThatContain("than");
 		String more = "";
-		if(thanSubTrees.size() > 0) {
+		if(thanSubTrees.size() > 0) { //assuming one sentence has one 'than'?
+			if(chunkCollector.isPartOfChunkType(thanSubTrees.get(0).getTerminals().get(0), ChunkType.COMPARATIVE_VALUE)) //COMPARATIVE_VALUE may contain 'than', but they don't belong to THANCHUNK
+				return;
 			IParseTree comparisonTerminal = null;
 			AbstractParseTree thanTerminal = null;
 			LinkedHashSet<Chunk> collectedTerminals = new LinkedHashSet<Chunk>();

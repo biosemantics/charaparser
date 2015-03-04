@@ -10,6 +10,9 @@ import java.util.Set;
 
 
 
+
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -71,16 +74,239 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	
 	
 	/**
-	 * 3 times n[...than...]
+	 * most have "n times":
+	 * 
+	 * 3 times as long as wide.
+	 * 3 times longer than wide
 	   lengths 0.5�0.6+ times <bodies>
 	   ca .3.5 times length of <throat>
        1�3 times {pinnately} {lobed}
        1�2 times shape[{shape~list~pinnately~lobed~or~divided}]
        4 times longer than wide
-	 	content: 0.5�0.6+ times a[type[bodies]]
-	 	subjects2
+	 	0.5�0.6+ times a[type[bodies]]
+	 	lengths of a 2 times width of b
+	 
+	 COMPARATIVE_VALUE: [1-2+, times, CHARACTER_STATE: characterName->shape; [MODIFIER: [pinnately], STATE: [lobed]]]
+	 COMPARATIVE_VALUE: [CHARACTER_STATE: characterName->character; [STATE: [lengths]], of, CHARACTER_STATE: characterName->position; [STATE: [proximal]], ORGAN: [branches], 2, times, array, CHARACTER_STATE: characterName->character; [STATE: [heights]]]
+	 COMPARATIVE_VALUE: [2-3, times, as-long-as, CHARACTER_STATE: characterName->width; [STATE: [wide]]]
+	 COMPARATIVE_VALUE: [CHARACTER_STATE: characterName->character; [STATE: [lengths]], 4-7+, times, CHARACTER_STATE: characterName->character; [STATE: [widths]]]	
+	 COMPARATIVE_VALUE: [0-5, times, CHARACTER_STATE: characterName->length_or_size; [STATE: [longer]], than, CHARACTER_STATE: characterName->width; [STATE: [wide]]]
+	 COMPARATIVE_VALUE: [2, times, as-long-as, CONSTRAINT: [corolla], ORGAN: [throat]]
+	 
+	 How to process:
+	 	1. 3-times lobed: value=whole text
+	 	2. convert length/width comparison to l/w
+	  	3. organ length/width comparison: value = original text, constraint = organ
 	 */
 	private LinkedList<Element> processComparativeValue(Chunk content,
+			List<BiologicalEntity> parents, ProcessingContext processingContext, 
+			ProcessingContextState processingContextState) {
+		
+		LinkedHashSet<Chunk> chunks = content.getChunks();
+		LinkedHashSet<Chunk> organsBeforeNumber = new LinkedHashSet<Chunk>();
+		LinkedHashSet<Chunk> organsAfterNumber = new LinkedHashSet<Chunk>();
+		LinkedHashSet<Chunk> charaBeforeNumber = new LinkedHashSet<Chunk>();
+		LinkedHashSet<Chunk> charaAfterNumber = new LinkedHashSet<Chunk>();
+		LinkedHashSet<Chunk> characters = new LinkedHashSet<Chunk>(); //1-2+ times lobed (shape)
+		LinkedHashSet<Chunk> modifiersBeforeNumber = new LinkedHashSet<Chunk>();
+		String nTimes = "";
+		StringBuffer origText = new StringBuffer(); //n times and all text after
+		Chunk lastChunk = null;
+		boolean beforeNumber = true;
+		boolean collectBeforeOrgan = false;
+		boolean collectAfterOrgan = false;
+		boolean collectText = false;
+		boolean isSizeCharacter = false;
+		//collect info
+		for(Chunk chunk: chunks){
+			lastChunk = chunk; //record this if a biological entity
+			isSizeCharacter = isSizeCharacter(chunk.getTerminalsText());
+			if(collectBeforeOrgan){
+				organsBeforeNumber.add(chunk);
+			}
+			
+			if(collectAfterOrgan){
+				organsAfterNumber.add(chunk);
+			}
+					
+			if(chunk.getTerminalsText().matches("times") || chunk.getTerminalsText().matches("[\\d()\\[\\]\\+\\./-]+")){
+				if(!chunk.getTerminalsText().matches("times")) nTimes = chunk.getTerminalsText().trim(); //expect one N
+				beforeNumber = false;
+				collectBeforeOrgan = false;
+				collectText = true;
+			}else if(chunk.isOfChunkType(ChunkType.MODIFIER) && beforeNumber){
+				modifiersBeforeNumber.add(chunk);
+			}else if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE) || isSizeCharacter || chunk.containsChunkType(ChunkType.CHARACTER_STATE)){
+				if((chunk.getProperty("characterName")!=null && chunk.getProperty("characterName").compareTo("character")==0) || isSizeCharacter){
+					if(beforeNumber) charaBeforeNumber.add(chunk);
+					else charaAfterNumber.add(chunk);
+				}else{
+					if(!beforeNumber) characters.add(chunk);
+				}
+			}else if(chunk.getTerminalsText().matches("of")){ //
+				if(beforeNumber)
+					collectBeforeOrgan = true;
+				else
+					collectAfterOrgan = true;
+			}else if(!beforeNumber && !chunk.getTerminalsText().matches("than")){//can tighten up to require CONSTRAINT and ORGAN chunks
+				organsAfterNumber.add(chunk);
+			}
+			
+			if(collectText) origText.append(chunk.getTerminalsText()+" ");
+		}
+		
+
+		//output
+		//collect modifiers
+		List<Chunk> modifiers = new LinkedList<Chunk>();
+		if(!processingContextState.getUnassignedModifiers().isEmpty()){
+			modifiers = processingContextState.getUnassignedModifiers();
+			processingContextState.clearUnassignedModifiers();
+		}
+		modifiers.addAll(modifiersBeforeNumber);
+		
+		List<BiologicalEntity> constraints = null;
+		
+		//2+ lobed
+		if(organsBeforeNumber.isEmpty() && charaBeforeNumber.isEmpty() && charaAfterNumber.isEmpty() && organsAfterNumber.isEmpty()){ 
+			String cName = "";
+			for(Chunk character: characters){ //expect one character or a TO_PHRASE
+				cName = character.getProperty("characterName");
+				if(cName==null){
+					cName = character.getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName");
+				}
+			}
+			this.createCharacterElement(parents, modifiers, origText.toString(), cName==null? "unknown_character": cName, "", processingContextState, false);
+		} else{
+			//beforeOrgan => create new parent elements 
+			if(!organsBeforeNumber.isEmpty()){
+				//use the organ as the bioentity
+				Chunk object = new Chunk(ChunkType.OBJECT, organsBeforeNumber);
+				parents = this.extractStructuresFromObject(object, processingContext, processingContextState);
+			}
+		
+			//afterOrgan => create constraint structure
+
+			if(!organsAfterNumber.isEmpty()){
+				//use the organ as the bioentity
+				Chunk object = new Chunk(ChunkType.OBJECT, organsAfterNumber);
+				constraints = this.extractStructuresFromObject(object, processingContext, processingContextState);
+			}
+			
+			//characters
+			String beforeChar ="";
+			String afterChar ="";
+			if(!charaBeforeNumber.isEmpty()){
+				//character name
+				StringBuffer characterName = new StringBuffer();
+				for(Chunk character: charaBeforeNumber){
+					if(character.getProperty("characterName").compareTo("character")==0){
+						characterName.append(getCharacter(character.getChildChunk(ChunkType.STATE).getTerminalsText())+"_or_");
+					}
+				}
+				beforeChar = characterName.toString().replaceFirst("_or_$","");
+			}
+			
+			if(!charaAfterNumber.isEmpty()){
+				//character name
+				StringBuffer characterName = new StringBuffer();
+				for(Chunk character: charaAfterNumber){
+					if(character.getTerminalsText().matches("as-.*?-as")){
+						characterName.append(getCharacter(character.getTerminalsText().replaceAll("-?as-?", ""))+"_or_");						
+					}else if(character.getProperty("characterName")!=null && character.getProperty("characterName").compareTo("character")==0){
+						characterName.append(getCharacter(character.getChildChunk(ChunkType.STATE).getTerminalsText())+"_or_"); //TODO: lengths => length
+					}else if(character.getProperty("characterName")!=null){
+						characterName.append(character.getProperty("characterName")+"_or_");
+					}
+					
+				}
+				afterChar = characterName.toString().replaceFirst("_or_$","");
+			}
+						
+			Character chara = null;
+			boolean translate = false;
+			//translate to l/w?
+			if(organsAfterNumber.isEmpty() && !charaAfterNumber.isEmpty()){//"2 times longer than width", "lengths 2 times widths" "widths 2 times lengths"
+				String characterValue = "";
+				if(origText.toString().contains(" longer than wide") || origText.toString().contains(" longer than width") || origText.toString().contains(" longer wide") || origText.toString().contains(" longer width") || origText.toString().contains(" as-long-as wide") ){
+					//TODO +1 //TODO make it more flexiable for other size characters
+					characterValue = nTimes;
+					translate = true;
+				}else if(origText.toString().contains(" wider than long") || origText.toString().contains(" wider than length") || origText.toString().contains(" wider long") || origText.toString().contains(" wider length") || origText.toString().contains(" as-wide-as long") ){
+					characterValue = "1/"+(nTimes.contains("-")? "("+nTimes+")" : nTimes);
+					translate = true;
+				}else if(!charaBeforeNumber.isEmpty()){
+					if(beforeChar.contains("length") && afterChar.contains("width")) characterValue = nTimes;
+					else if(afterChar.contains("length") && beforeChar.contains("width")) characterValue = "1/"+(nTimes.contains("-")? "("+nTimes+")" : nTimes);
+					translate = true;
+				}
+				if(translate)
+					chara = this.createCharacterElement(parents, modifiers, characterValue, "l_w_ratio", "", processingContextState, false);
+			}
+			
+			if(!translate){ //no translation, 
+				// form character value
+				chara = this.createCharacterElement(parents, modifiers, origText.toString().trim().replaceAll("\\bas-", "as ").replaceAll("-as\\b", " as"), 
+						beforeChar.isEmpty()? (afterChar.isEmpty()? "size_or_quantity": afterChar): beforeChar, 
+								"", processingContextState, false);
+			}
+			
+			
+			//add constraints to chara
+			if(constraints!=null){
+				String constraintIDs = "";
+				String constraint = "";
+				for(BiologicalEntity entity: constraints){
+					constraint += entity.getName()+"; ";
+					constraintIDs += entity.getId()+" ";
+				}
+				chara.setConstraintId(constraintIDs.trim());
+				chara.setConstraint(constraint.replaceFirst("; $", ""));
+			}
+		}
+	
+
+		processingContext.setLastChunkYieldElement(true);
+		if(lastChunk.isOfChunkType(ChunkType.ORGAN) || lastChunk.isOfChunkType(ChunkType.NP_LIST)){
+			processingContextState.setLastElements(constraints);
+			LinkedList<Element> results = new LinkedList<Element> ();
+			for(BiologicalEntity entity: constraints)
+				results.add((Element) entity);
+			return results;
+		}
+		
+		return new LinkedList<Element>();
+	}
+
+	private boolean isSizeCharacter(String string) {
+		string = string.replaceAll("\\bas-", "").replaceAll("-as\\b", "").trim();
+		return getCharacter(string)!=null;
+	}
+
+	/**
+	 * wide, long, broad, diam, high, tall, thick
+	 * see also BasicConfiguration.getEqualCharacters()
+	 * @param string
+	 * @return
+	 */
+	private String getCharacter(String string) {
+		if(string.startsWith("long")) return "length";
+		if(string.startsWith("wide")) return "width";
+		if(string.startsWith("broad")) return "width";
+		if(string.equals("diam")) return "diameter";
+		if(string.equals("diams")) return "diameter";
+		if(string.startsWith("high")) return "height";
+		if(string.startsWith("tall")) return "heigth";
+		if(string.startsWith("thick")) return "thickness";
+		
+		if(string.equals("lengths")) return "length";
+		if(string.equals("widths")) return "width";
+		if(string.equals("heightss")) return "height";
+		if(string.equals("thicknesses")) return "thickness";
+		
+		return null;
+	}
+	/*private LinkedList<Element> processComparativeValue(Chunk content,
 			List<BiologicalEntity> parents, ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		List<Chunk> beforeTimes = new ArrayList<Chunk>();
@@ -192,5 +418,5 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			}
 		}
 		return new LinkedList<Element>();
-	}
+	}*/
 }

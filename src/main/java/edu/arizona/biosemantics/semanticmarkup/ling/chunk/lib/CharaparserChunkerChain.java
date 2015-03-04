@@ -45,8 +45,9 @@ public class CharaparserChunkerChain extends ChunkerChain {
 			@Named("OrganChunker") IChunker organChunker,
 			@Named("StateChunker") IChunker stateChunker,
 			@Named("ModifierChunker") IChunker modifierChunker,
-			@Named("NumericalChunker") IChunker numericalChunker,
 			@Named("NPListChunker") IChunker npChunker, 
+			@Named("NumericalChunker") IChunker numericalChunker,
+			//@Named("NPListChunker") IChunker npChunker,  //moved to before NumericalChunker, Feb, 2015, Hong
 			@Named("PPListChunker") IChunker ppListChunker,
 			@Named("CharacterNameChunker") IChunker characterNameChunker,
 			@Named("PPINChunker") IChunker ppINChunker,

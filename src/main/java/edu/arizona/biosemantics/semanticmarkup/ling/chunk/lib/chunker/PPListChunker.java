@@ -62,6 +62,8 @@ public class PPListChunker extends AbstractChunker {
 		for(IParseTree ppCCSubTree : ppCCSubTrees) {
 			//log(LogLevel.DEBUG, "ppCCSubTree " + ppCCSubTree.getTerminalsText());
 			//parseTree.prettyPrint();
+			if(chunkCollector.isPartOfChunkType(ppCCSubTree.getTerminals().get(0), ChunkType.COMPARATIVE_VALUE)) //COMPARATIVE_VALUE may constains PPs such as of, than, as-long-as, but they don't belong to PPChunks
+				continue;
 			IParseTree cc = ppCCSubTree;
 			IParseTree pp = ppCCSubTree.getParent(parseTree);
 			List<AbstractParseTree> ppChildren = pp.getChildren();

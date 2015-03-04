@@ -105,7 +105,8 @@ public class PPINChunker extends AbstractChunker {
 				
 				boolean toConnectsCharacters = isToConnectingCharacters(pp, in, chunkCollector);//"pink to red"
 				//text of IN is not a word, e.g. "x"
-				if(inTerminalText.length() < 2 || inTerminalText.matches("\\b(\\w+ly|ca|than)\\b") || firstNPTree==null || toConnectsCharacters) { 
+				if(chunkCollector.isPartOfChunkType(in.getTerminals().get(0), ChunkType.COMPARATIVE_VALUE)||inTerminalText.length() < 2 || inTerminalText.matches("\\b(\\w+ly|ca|than)\\b") || firstNPTree==null || toConnectsCharacters)//COMPARATIVE_VALUE may constains PPs such as of, than, as-long-as, but they don't belong to PPChunks
+				{ 
 					//dont create junk "" is no text
 					collapseSubtree(parseTree, pp, POS.PP_CHECKED);
 					return;

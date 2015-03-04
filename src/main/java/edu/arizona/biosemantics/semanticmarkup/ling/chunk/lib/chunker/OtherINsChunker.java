@@ -70,6 +70,9 @@ public class OtherINsChunker extends AbstractChunker {
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
 			
+			if(chunkCollector.isPartOfChunkType(terminal, ChunkType.COMPARATIVE_VALUE)) //COMPARATIVE_VALUE may constains PPs such as of, than, as-long-as, but they don't belong to PPChunks
+				continue;
+			
 			boolean isFunctionOfPPWithoutOrgan = isFunctionOfPPWithoutOrgan(terminal, chunkCollector);
 			if(isFunctionOfPPWithoutOrgan) {
 				Chunk ppChunk = chunkCollector.getChunk(terminal);
