@@ -185,7 +185,7 @@ public class CharacterListChunker extends AbstractChunker {
 	}
 
 	//coloration~list~yellow~to~orange-yellow~or~occasionally~{colorationttt~list~suffused~with~red}
-	//	
+	//architecture~list~narrowly~to~broadly~secund~pyramidal~or~club-shaped	
 	private void normalizeCharacterList(AbstractParseTree terminal, ChunkCollector chunkCollector) {
 		String terminalsText = terminal.getTerminalsText();
 		
@@ -285,6 +285,7 @@ public class CharacterListChunker extends AbstractChunker {
 					modifiersTree.addChild(modifierTerminal);
 					Chunk characterStateChildChunk = new Chunk(ChunkType.MODIFIER, modifierTerminal);
 					characterStateChildChunks.add(characterStateChildChunk);
+					newState = false;
 				}
 			} else if(posKnowledgeBase.isAdverb(modifierStateToken)) {
 				if(modifiersTree == null) {
@@ -377,9 +378,7 @@ public class CharacterListChunker extends AbstractChunker {
 					//chunkCollector.reindex(statesTree, stateTerminal);
 					Chunk stateChildChunk = stateTerminal;
 					stateChildChunks.add(stateChildChunk);
-
-				
-					newState = true;
+					newState = true; //one state may contain multiple words
 				}
 			}
 		}
