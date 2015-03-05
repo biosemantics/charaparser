@@ -38,9 +38,9 @@ public class TerminologyStandardizer {
 				LinkedHashSet<Character> characters = struct.getCharacters();
 				for(Character character: characters){
 					preferedName = null;
-					String value = character.getValue().trim();
-					if(value!=null && !value.contains(" ") && !character.getName().contains(or)){
-						preferedName = characterKnowledgeBase.getCharacterName(value).getLabel(character.getName());
+					String value = character.getValue();
+					if(value!=null && !value.trim().contains(" ") && !character.getName().contains(or)){
+						preferedName = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getName());
 					}
 					if(preferedName !=null) character.setValue(preferedName);
 				}

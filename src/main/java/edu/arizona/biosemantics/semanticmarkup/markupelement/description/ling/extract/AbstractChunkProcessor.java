@@ -650,8 +650,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		String from = getFirstCharacter(tokens[tokens.length-1]);
 		tokens = range[1].split("\\s*,\\s*");
 		String to = getFirstCharacter(tokens[0]);
-		character.setFrom(from.replaceAll("-c-", " ")); //a or b to c => b to c
-		character.setTo(to.replaceAll("-c-", " "));
+		character.setFrom(from.replaceAll("-c-", " ").replaceAll("~", " ")); //a or b to c => b to c
+		character.setTo(to.replaceAll("-c-", " ").replaceAll("~", " "));
 
 		for(Chunk modifier : modifiers)
 			character.appendModifier(modifier.getTerminalsText());
@@ -735,6 +735,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 					modifierString = modifierString.length()>0 ? modifierString + "; "+ m : m;
 					characterValue = color;
+				}else if(characterValue.contains("~")){
+					characterValue = characterValue.replaceAll("~", " ");
 				}
 				if(char_type.length() > 0){
 					character.setCharType(char_type);

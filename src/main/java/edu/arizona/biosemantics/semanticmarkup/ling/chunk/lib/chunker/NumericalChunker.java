@@ -115,6 +115,7 @@ public class NumericalChunker extends AbstractChunker {
 						
 						i++;
 						AbstractParseTree lookForwardTerminal = terminals.get(i);
+						//Chunk lookForwardChunk =  chunkCollector.getChunk(lookForwardTerminal);
 						String lookForwardText = lookForwardTerminal.getTerminalsText();
 						
 						if(lookForwardText.matches("^(" + units + ")\\b.*?")){
@@ -133,8 +134,7 @@ public class NumericalChunker extends AbstractChunker {
 								chunkCollector.addChunk(value);
 							}
 							continue;
-						}
-						if(lookForwardText.matches("(" + timesWords + ")\\b.*?")){
+						} else if(lookForwardText.matches("(" + timesWords + ")\\b.*?")){
 							/*
 							 * 
 							 *  lengths => lengths
@@ -228,12 +228,7 @@ public class NumericalChunker extends AbstractChunker {
 							if(!findCharacter) //reset childChunks
 								childChunks = new LinkedHashSet<Chunk>();
 							else{//reverse the order of chunks obtained through tracing back
-								ArrayList<Chunk> clone = new ArrayList<Chunk>();
-								clone.addAll((LinkedHashSet<Chunk>) childChunks.clone());
-								childChunks = new LinkedHashSet<Chunk>();
-								for(int k = clone.size()-1; k>=0; k--){
-									childChunks.add(clone.get(k));
-								}
+								childChunks = reserveOrder(childChunks);
 							}
 							
 							i++;
@@ -285,9 +280,57 @@ public class NumericalChunker extends AbstractChunker {
 								chunkCollector.addChunk(comparativeValue);
 							}
 							continue;
-						} 
+						}else{ //characters (e.g lengths/widths) comparison without 'times'
+							/*lengths => CHARACTER_STATE: characterName->character; [STATE: [lengths]]
+							1.5-4+ => 1.5-4+
+						 	widths => CHARACTER_STATE: characterName->character; [STATE: [widths]]
+							; => END_OF_LINE: [;]*/
+							LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
+							boolean aheadIsCharacter = false;
+							boolean behindIsCharacter = false;
+
+							//behind
+							for(int j=i-2; j>=0; j--){
+								AbstractParseTree lookBehindTerminal = terminals.get(j);
+								Chunk lookBehindChunk = chunkCollector.getChunk(lookBehindTerminal);
+								if(lookBehindChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && lookBehindChunk.getProperty("characterName"+"").compareTo("character")==0){
+									behindIsCharacter = true;
+									childChunks.add(lookBehindChunk);
+								}else if(!lookBehindChunk.isOfChunkType(ChunkType.MODIFIER)){
+									break;
+								}else{
+									childChunks.add(lookBehindChunk);
+								}
+							}
+							
+							//reverse the order of the elements in childChunks
+							childChunks = reserveOrder(childChunks);
+							
+							childChunks.add(chunkCollector.getChunk(terminal)); //i-1
+							
+							//ahead
+							for(int j=i; j<terminals.size(); j++){
+								AbstractParseTree lookAheadTerminal = terminals.get(j);
+								Chunk lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
+								if(lookAheadChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && lookAheadChunk.getProperty("characterName").compareTo("character")==0){
+									aheadIsCharacter = true;
+									childChunks.add(lookAheadChunk);
+								}else if(!lookAheadChunk.isOfChunkType(ChunkType.MODIFIER)){
+									break;
+								}else{
+									childChunks.add(lookAheadChunk);
+								}
+							}
+							
+							if(aheadIsCharacter && behindIsCharacter){
+								Chunk comparativeValue = new Chunk(ChunkType.COMPARATIVE_VALUE, childChunks);
+								chunkCollector.addChunk(comparativeValue);
+								continue;
+							}
+
+						}
 						
-						Chunk count = new Chunk(ChunkType.COUNT,  chunkCollector.getChunk(terminal));
+						Chunk count = new Chunk(ChunkType.COUNT,  chunkCollector.getChunk(terminal)); //default to "COUNT"
 						chunkCollector.addChunk(count);
 					}
 				}
@@ -366,6 +409,17 @@ public class NumericalChunker extends AbstractChunker {
 				}
 			}
 		}
+	}
+
+
+	private LinkedHashSet<Chunk> reserveOrder(LinkedHashSet<Chunk> childChunks) {
+		ArrayList<Chunk> clone = new ArrayList<Chunk>();
+		clone.addAll((LinkedHashSet<Chunk>) childChunks.clone());
+		childChunks = new LinkedHashSet<Chunk>();
+		for(int k = clone.size()-1; k>=0; k--){
+			childChunks.add(clone.get(k));
+		}
+		return childChunks;
 	}
 	
 	

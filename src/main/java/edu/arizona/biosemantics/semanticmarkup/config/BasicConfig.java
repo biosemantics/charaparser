@@ -406,7 +406,7 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getTimesWords() {
-		String timesWords = "times|folds|lengths|widths";
+		String timesWords = "times|folds";
 		return timesWords;
 	}
 	

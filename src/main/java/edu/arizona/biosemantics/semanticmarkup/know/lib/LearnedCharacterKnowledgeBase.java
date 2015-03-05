@@ -117,10 +117,22 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 
 	@Override
 	public Match getCharacterName(String word) {//hyphened words (standardized "_" to "-").
+
+		
 		
 		if(word.matches(this.stopWords)) return new Match(null);
 		
 		String wo = word;
+		
+		if(word.contains("~list~")){ // "{colorationttt~list~suffused~with~red}"
+			String ch = word.substring(0, word.indexOf("~list~"));
+			ch = ch.replaceAll("(\\W|ttt)", "");
+			HashSet<Term> result = new HashSet<Term> ();
+			result.add(new Term(wo, ch));
+			return new Match(result);
+		}
+		
+		word = word.replaceAll("[{}]", ""); //avoid regexp illegal repetation exception
 		
 		//rejected searches
 		if(word.matches("("+negWords+")")) return new Match(null);
