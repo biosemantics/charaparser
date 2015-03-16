@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.transf
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -38,6 +39,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 	private Description description;
 	private AbstractDescriptionsFile descriptionsFile;
 	private CountDownLatch sentencesLatch;
+	private Hashtable<String, String> prevMissingOrgan;
 
 	/**
 	 * @param source
@@ -53,7 +55,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 	public SentenceChunkerRun(String source, String sentenceString, Description description, 
 			AbstractDescriptionsFile descriptionsFile,
 			INormalizer normalizer, 
-			ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, CountDownLatch sentencesLatch) {
+			ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, Hashtable<String, String> prevMissingOrgan, CountDownLatch sentencesLatch) {
 		this.source = source;
 		this.sentenceString = sentenceString;
 		this.description = description;
@@ -64,6 +66,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 		this.parser = parser;
 		this.chunkerChain = chunkerChain;
 		this.sentencesLatch = sentencesLatch;
+		this.prevMissingOrgan = prevMissingOrgan;
 	}
 
 	@Override
@@ -74,7 +77,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 			String[] sentenceArray = sentenceString.split("##");
 			String originalSent = sentenceArray[3];
 			sentenceString = sentenceArray[2];
-			String subjectTag = sentenceArray[1]; //TODO: Hong stop using subjectTag and modifier
+			String subjectTag = sentenceArray[1]; //TODO: Hong stop using subjectTag and modifier. Pause. Still used in fixInner.
 			String modifier = sentenceArray[0];
 			modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
 			subjectTag = subjectTag.replaceAll("\\[|\\]|>|<|(|)", "");
@@ -82,7 +85,7 @@ public class SentenceChunkerRun implements Callable<ChunkCollector> {
 
 			// normalize sentence
 			String normalizedSentence="";
-			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source);
+			normalizedSentence = normalizer.normalize(sentenceString, subjectTag, modifier, source, prevMissingOrgan);
 			log(LogLevel.DEBUG, "Normalized sentence: " + normalizedSentence);//TODO: (4) is not '3'
 			
 			// tokenize sentence

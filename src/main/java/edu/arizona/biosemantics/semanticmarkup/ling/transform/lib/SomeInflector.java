@@ -43,7 +43,7 @@ public class SomeInflector implements IInflector {
 	 * @param posKnowledgeBase
 	 */
 	@Inject
-	public SomeInflector(IPOSKnowledgeBase posKnowledgeBase, @Named("Singulars") HashMap<String, String> singulars, @Named("Plurals") HashMap<String, String> plurals) { //Hong TODO load in singular-plural mapping from those learned from perl step
+	public SomeInflector(@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, @Named("Singulars") HashMap<String, String> singulars, @Named("Plurals") HashMap<String, String> plurals) { //Hong TODO load in singular-plural mapping from those learned from perl step
 		this.posKnowledgeBase = posKnowledgeBase;
 		this.singulars = singulars;
 		this.plurals = plurals;

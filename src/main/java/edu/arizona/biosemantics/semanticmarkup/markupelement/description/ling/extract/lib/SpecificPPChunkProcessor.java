@@ -10,9 +10,11 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
@@ -151,6 +153,9 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 					characterChunk.setProperty("characterName", unassignedChara);
 					result.addAll(characterStateProcessor.process(characterChunk, processingContext));	//chunkCollector is not updated with characterChunk
 				}
+				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+				processingContext.setCurrentState(processingContextState);
+				log(LogLevel.DEBUG, "restored current state after "+characterStateProcessor.getClass()+" is run.");
 				IChunkProcessor ppProcessor = processingContext.getChunkProcessor(ChunkType.PP);
 				result.addAll(ppProcessor.process(pp, processingContext)); //not as a relation
 				

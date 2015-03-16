@@ -1,5 +1,8 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,13 @@ public interface ITerminologyLearner {
 	public Set<String> getSentences();
 	
 	/**
+	 * 
+	 * @param criterion
+	 * @return the number of sentences matching the rlike criterion
+	 */
+	public int countMatchingSentences(String phrase);
+	
+	/**
 	 * @return <treatment, <source, sentence> map used by OrganStateMarker
 	 */
 	public Map<Description, LinkedHashMap<String, String>> getSentencesForOrganStateMarker();
@@ -61,7 +71,8 @@ public interface ITerminologyLearner {
 	/**
 	 * @return <word, source set> map used in sentence table
 	 */
-	public Map<String, Set<String>> getWordToSources();
+	//public Map<String, Set<String>> getWordToSources();
+	public Map<String, Map<String, Set<Integer>>> getWordToSources();
 	
 	/**
 	 * @return <semanticrole, word set> map used in wordroles table
@@ -107,5 +118,7 @@ public interface ITerminologyLearner {
 	 * @return <source, AjectiveReplacementForNoun> map used in sentence table
 	 */
 	public Map<String, AdjectiveReplacementForNoun> getAdjectiveReplacementsForNouns();
+
+	//public Hashtable<String, String> selectMatchingSentences(String string);
 	
 }

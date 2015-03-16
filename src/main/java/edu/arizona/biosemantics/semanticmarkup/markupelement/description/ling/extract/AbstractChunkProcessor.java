@@ -104,7 +104,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	/**
-	 * The current processingContextState of the given processingContext will be cloned and preserved for restore
+	 * [Important]The current processingContextState of the given processingContext will be cloned and preserved for restore
+	 * [Important]Due to the clone, after a ChunkProcesser calls another ChunkProcessor,  the processingContextState.getCarryOverDataFrom(processingContext.getCurrentState()) should be called to stored the current state for the former processor;
 	 * @param chunk
 	 * @param processingContext
 	 * @return list of DescriptionTreatmentElements resulting from the processing of chunk in processingContext
@@ -528,7 +529,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 		for(Chunk token : tokens) {
 			if(stopWords.contains(token.getTerminalsText())) continue;
-			processingContextState = processingContext.getCurrentState();
+			//processingContextState = processingContext.getCurrentState();
 			if(token.isOfChunkType(ChunkType.TO_PHRASE)) {
 				processingContextState.setLastElements(new LinkedList<Element>(parents));
 				processingContextState.setCommaAndOrEosEolAfterLastElements(false);
@@ -540,6 +541,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					}
 				}
 				results.addAll(result);
+				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+				processingContext.setCurrentState(processingContextState);
+				log(LogLevel.DEBUG, "restored current state after "+processor.getClass()+" is run.");
 				//results = this.processCharacterList(token, parents, processingContextState, processingContext);
 			} else {
 				List<Chunk> chunkModifiers = token.getChunks(ChunkType.MODIFIER);
@@ -615,6 +619,10 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 								}
 							}
 							results.addAll(result);
+							//restore CurrentState
+							processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+							processingContext.setCurrentState(processingContextState);
+							log(LogLevel.DEBUG, "restored current state after "+processor.getClass()+" is run.");
 						}
 					}
 				}

@@ -116,12 +116,13 @@ public class PostRun {
 		//absorb characters in keys into taxon descriptions (existing or new)
 		//leaving the original key unchanged in the source document
 		KeyElementValidator kev = new KeyElementValidator();
-		ArrayList<String> keyErrors = new ArrayList<String>();
+		
 		//ArrayList<File> newFiles = new ArrayList<File> ();
 		int count = 0;
 		for(Document docWKey: containsKey){
 			log(LogLevel.DEBUG, "Processing keys in "+docWKey.getBaseURI());
 			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
+				ArrayList<String> keyErrors = new ArrayList<String>();
 				count++;
 				log(LogLevel.DEBUG, "Processing key "+count+": "+key.getChildText("key_head"));
 				//check if the key is formatted properly, break if not

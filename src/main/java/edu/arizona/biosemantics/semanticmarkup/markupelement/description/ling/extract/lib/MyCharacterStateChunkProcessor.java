@@ -163,6 +163,9 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 				int backupNextIndex = chunkListIterator.nextIndex();
 				String suffix = matcher.group(1);
 				results.addAll(findPreviousCharacterList(processingContext, character, suffix));
+				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+				processingContext.setCurrentState(processingContextState);
+				log(LogLevel.DEBUG, "restored current state after findPreviousCharacterList is run.");
 				while(chunkListIterator.nextIndex() < backupNextIndex)
 					chunkListIterator.next();
 			}	

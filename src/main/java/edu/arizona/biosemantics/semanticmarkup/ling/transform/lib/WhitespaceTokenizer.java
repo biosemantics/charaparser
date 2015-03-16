@@ -15,8 +15,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
  */
 public class WhitespaceTokenizer implements ITokenizer {
 
-	private Pattern wordPunctuationPattern = Pattern.compile("(.+)([\\!,\\.:;\\?])");
-	
+	private Pattern wordPunctuationPattern = Pattern.compile("(.+)([\\!,\\.:;\\?])"); //don't put brackets in here
 	@Override
 	public List<Token> tokenize(String text) {
 		List<Token> tokens = new ArrayList<Token>();

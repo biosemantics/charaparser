@@ -1,6 +1,7 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -107,16 +108,20 @@ public class DescriptionExtractorRun implements Callable<Description> {
 				}
 			}
 			CountDownLatch sentencesLatch = new CountDownLatch(selectedSentences.size());
-			
+			//check this for multi-threaded run
+			Hashtable<String, String> prevMissingOrgan = new Hashtable<String, String>(); //hold two entries only -- the missing organ found for the last immediate sentence. It's scope is the sentences from one description.
+			prevMissingOrgan.put("source", "");
+			prevMissingOrgan.put("missing", "");
 			// process each sentence separately
 			for(Entry<String, String> sentenceEntry : selectedSentences) {
 				String sentenceString = sentenceEntry.getValue();
 				String source = sentenceEntry.getKey();
 				
+
 				// start a SentenceChunkerRun for the treatment to process as a separate thread
 				SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString, 
 						description, descriptionsFile, normalizer, wordTokenizer, 
-						posTagger, parser, chunkerChain, sentencesLatch);
+						posTagger, parser, chunkerChain, prevMissingOrgan, sentencesLatch);
 				Future<ChunkCollector> futureResult = executorService.submit(sentenceChunker);
 				futureChunkCollectors.add(futureResult);
 			}

@@ -223,19 +223,16 @@ public class MyNewCleanupChunker extends AbstractChunker {
 					if(singleCharacterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
 						return true;
 				}*/
-				if(characterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
+				if(characterName.matches(".*?(^|_)(size|length|width|height|thickness)(_|$).*") && (characterState.endsWith("est") || characterState.endsWith("er")))
 					return true;
 				
 				String[] characterNames = characterName.split("_or_");
-				boolean result = !notAllowedCharacterStates.contains(characterState);
+				if(notAllowedCharacterStates.contains(characterState)) return false;
+				boolean result = false;
 				for(String singleCharacterName : characterNames)
-				//&& !characterName.contains("_or_")) {
-					result &= allowedCharacterNames.contains(singleCharacterName);
-				//String[] singleCharacterNames = characterName.split("_or_");
-				//for(String singleCharacterName : singleCharacterNames) {
-				//	if(allowedCharacterNames.contains(singleCharacterName) && !notAllowedCharacterStates.contains(characterState))
-				//		return true;
-				//}
+					result |= allowedCharacterNames.contains(singleCharacterName);
+					//result &= allowedCharacterNames.contains(singleCharacterName);
+
 				return result;
 			}
 		}
