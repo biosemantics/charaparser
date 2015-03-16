@@ -129,7 +129,13 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		boolean[] state = getArray(terminals, chunkCollector, ChunkType.STATE, ChunkType.VERB);
 		boolean[] organ = getArray(terminals, chunkCollector, ChunkType.ORGAN);
 		boolean[] constraint = getArray(terminals, chunkCollector, ChunkType.CONSTRAINT);
+		boolean[] and = getArray(terminals, chunkCollector, ChunkType.AND); //mid and|or outer petals => constraint (mid and|or outer)
+		boolean[] or = getArray(terminals, chunkCollector, ChunkType.OR);
+		boolean[] to = getArray(terminals, chunkCollector, ChunkType.TO);
 		boolean[] constraintOrgan = new boolean[terminals.size()];
+		
+		//[CHARACTER_STATE: characterName->position; [STATE: [outer]], and, CHARACTER_STATE: characterName->position; [STATE: [mid]], ORGAN: [phyllaries]]
+		//need to group characters of a organ together: (outer and mid) phyllaries
 		
 		boolean changed = true;
 		while(changed) {
@@ -147,7 +153,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			boolean changedCharacterToConstraint = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateCharacterToConstraint[i];
-				translateCharacterToConstraint[i] = character[i] && i+1 < terminals.size() && 
+				translateCharacterToConstraint[i] = (character[i]||and[i]||or[i]||to[i]) && i+1 < terminals.size() && 
 					(constraintOrgan[i+1] || translateCharacterToConstraint[i+1]) && ((i-1 >= 0 && !modifier[i-1]) || i==0);
 				changedCharacterToConstraint |= translateCharacterToConstraint[i] != before;
 			}
@@ -195,6 +201,8 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			AbstractParseTree terminal = terminals.get(i);
 			Chunk chunk = chunkCollector.getChunk(terminal);
 			Chunk characterStateChunk = chunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
+			
+			if(characterStateChunk==null) return false; //and, or
 			
 			String characterName = characterStateChunk.getProperty("characterName");
 			String characterState = characterStateChunk.getChunkBFS(ChunkType.STATE).getTerminalsText();

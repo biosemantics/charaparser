@@ -83,7 +83,7 @@ public class NonOntologyBasedStandardizer {
 
 	/**
 	 * this method removes any distributed constraints (primary basal stems and [primary basal] leaves) 
-	 * it does not taken into consideration of possible punctuation marks that may separate contraint from structure name in the sentence.
+	 * it does not taken into consideration of possible punctuation marks that may separate constraint from structure name in the sentence.
 	 * @param constraints
 	 * @param sentence
 	 * @param nameOriginal

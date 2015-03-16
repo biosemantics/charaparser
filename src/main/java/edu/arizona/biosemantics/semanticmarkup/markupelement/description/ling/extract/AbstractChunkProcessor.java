@@ -204,7 +204,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected List<BiologicalEntity> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<BiologicalEntity> results = new LinkedList<BiologicalEntity>();	
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
-		log(LogLevel.DEBUG, "create structure element from subjectChunks:\n" + subjectChunks);
+		log(LogLevel.DEBUG, "create structure element from subjectChunks:\n " + subjectChunks);
 		List<Chunk> organChunks = subjectChunk.getChunks(ChunkType.ORGAN);
 		if(!organChunks.isEmpty()) {
 			for(Chunk organChunk : organChunks) {
@@ -332,13 +332,16 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 		LinkedHashSet<Chunk> constraints = new LinkedHashSet<Chunk>();
 		if(organChunkIsLast) {
+			boolean seenConstraint = false;
 			for(AbstractParseTree terminal : subjectChunk.getTerminals()) {
 				if(subjectChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT)) {
+					seenConstraint = true;
 					Chunk constraintChunk = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.CONSTRAINT, terminal);
 					if(constraintChunk!=null)
 						constraints.addAll(constraintChunk.getTerminals());
-				}/*else if(terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or"))
-					constraints.add(terminal);*/ //TODO Hong Don't understand why 'and/or' would be treated as constraints: trees or shrubs. changed to the opposite
+				}else if(seenConstraint && (terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or") || terminal.getTerminalsText().equals("to")))
+					constraints.add(terminal); //TODO  'and/or' would be treated as constraints in case of "mid and inner petals", but not "trees or shrubs". 
+				
 				if(organChunk.containsOrEquals(terminal)) {
 					Chunk returnChunk = new Chunk(ChunkType.CONSTRAINT, constraints);
 					return returnChunk;

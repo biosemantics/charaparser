@@ -248,7 +248,7 @@ public abstract class Normalizer implements INormalizer {
 		//prevMissingOrgan.put("source", "");
 		//prevMissingOrgan.put("missing", "");
 		//fixInnerOnSentences(str, adjnounslist, source, prevMissingOrgan);
-
+		
 		for(String modifierphrase: modifierphrases){
 			str = str.replaceAll(modifierphrase, modifierphrase.replace(" ", "#"));
 		}
@@ -1850,7 +1850,7 @@ public abstract class Normalizer implements INormalizer {
 			if(m1.matches()){
 				//move conjunctions to "after"
 				inner = m1.group(1).trim();
-				after = (m1.group(2)+after).trim();
+				after = (m1.group(2)+" "+after).trim();
 			}
 
 			boolean needFix = needFix(before, inner, after); 
