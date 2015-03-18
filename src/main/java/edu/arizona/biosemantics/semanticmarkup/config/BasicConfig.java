@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -287,6 +289,12 @@ public class BasicConfig extends AbstractModule {
 			  Set<String> prepositionWordsSet = getPrepositionWordsSet();
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("PrepositionWordsSet")).toInstance(prepositionWordsSet);
 			  
+			  String adjNouns= getAdjectivesUsedAsNounsString();
+			  bind(new TypeLiteral<String>(){}).annotatedWith(Names.named("AdjNouns")).toInstance(adjNouns);
+			  Hashtable<String, String> adjNounCounterParts = getAjectiveNounsCounterParts();
+			  bind(new TypeLiteral<Hashtable<String, String>>(){}).annotatedWith(Names.named("AdjNounCounterParts")).toInstance(adjNounCounterParts);
+			  
+			  
 			  
 			  Set<String> simplePrepWordsSet = this.getSimplePrepsSet();
 			  bind(new TypeLiteral<Set<String>>(){}).annotatedWith(Names.named("SimplePrepsWordsSet")).toInstance(simplePrepWordsSet);
@@ -342,6 +350,50 @@ public class BasicConfig extends AbstractModule {
 			throw new IllegalArgumentException();
 		}
   	}
+
+	private Hashtable<String, String> getAjectiveNounsCounterParts() {
+		Hashtable<String, String> counterParts = new Hashtable<String, String>();
+		//TODO
+		/*if(inner.equals("inner"))  return "outer|mid|middle";
+		if(inner.equals("outer"))  return "inner|mid|middle";
+		if(inner.equals("mid"))  return "inner|outer|middle";
+		if(inner.equals("middle"))  return "inner|outer|mid";
+		return null;*/
+		ArrayList<String[]> lists = new ArrayList<String[]>();
+		lists.add(new String[]{"inner", "outer", "mid", "middle", "innermost", "outermost",});
+		lists.add(new String[]{"adaxial", "abaxial"});
+		lists.add(new String[]{"left", "right", "medial", "central", "leftmost", "rightmost", "centralmost"});
+		lists.add(new String[]{"upper", "lower", "middle", "central", "uppermost", "lowermost", "centralmost"});
+		lists.add(new String[]{"superior", "inferior", "central", "superiormost", "inferiormost", "centralmost"});
+		lists.add(new String[]{"anterior", "posterior", "central", "anteriormost", "posteriormost", "centralmost"});
+		lists.add(new String[]{"apical", "basal", "central", "centralmost"});
+		lists.add(new String[]{"proximal", "distal", "middle", "central", "proximalmost", "distalmost", "centralmost"});
+		lists.add(new String[]{"dorsal", "ventral", "medial", "dorsalmost", "ventralmost", "medialmost"});
+		lists.add(new String[]{"central", "peripheral"});
+
+		for(String[] list: lists){
+			for(int i = 0; i < list.length; i++){
+				String counters = formListSkip(i, list);
+				counterParts.put(list[i], counters);
+			}
+		}
+		return counterParts;
+	}
+
+	private String formListSkip(int skip, String[] list) {
+		String result = "";
+		for(int i = 0; i<list.length; i++){
+			if(i!=skip && !list[i].trim().isEmpty())
+				result += list[i]+"|";
+		}
+		
+		return result.replaceFirst("\\|$", "");
+	}
+
+	private String getAdjectivesUsedAsNounsString() {
+		return "(?:inner|outer|middle|mid|cauline|basal|adaxial|abaxial|left|right|medial|upper|lower|superior|inferior|anterior|posterior|apical|basal|central|proximal|distal|dorsal|ventral|peripheral)(?:most)?";
+		
+	}
 
 	private Set<String> getDelimiters() {
 		String delimiters = "comma|or";
@@ -406,7 +458,7 @@ public class BasicConfig extends AbstractModule {
 	}
 
 	private String getTimesWords() {
-		String timesWords = "times|folds|lengths|widths";
+		String timesWords = "times|folds";
 		return timesWords;
 	}
 	
@@ -467,10 +519,11 @@ public class BasicConfig extends AbstractModule {
 	private HashMap<String, String> getEqualCharacters() {
 		HashMap<String, String> equalCharacters = new HashMap<String, String>();
 		//these can be states ("leaves long") or be indications of a character ("2cm long" => length = 2cm)
-		equalCharacters.put("wide", "width");
+		equalCharacters.put("wide", "width"); 
 		equalCharacters.put("long", "length");
 		equalCharacters.put("broad", "width");
 		equalCharacters.put("diam", "diameter");
+		equalCharacters.put("diams", "diameter");
 		equalCharacters.put("high", "height");
 		equalCharacters.put("tall", "height");
 		equalCharacters.put("thick", "thickness");

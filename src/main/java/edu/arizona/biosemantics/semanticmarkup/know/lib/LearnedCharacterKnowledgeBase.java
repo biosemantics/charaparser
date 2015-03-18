@@ -37,6 +37,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private String negWords; 
 	private String advModifiers;
 	private String stopWords;
+	private String units;
 	//private ITerminologyLearner terminologyLearner;
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
 	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
@@ -59,6 +60,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		this.advModifiers = advModifiers+"|"+advModifiers.replaceAll(" ", "[_-]"); //at least|at[_-]least
 		this.inflector = inflector;
 		this.stopWords = stopWords+"|times|time|"+units;
+		this.units = units;
 	}
 	
 	@Override
@@ -116,11 +118,22 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 
 	@Override
-	public Match getCharacterName(String word) {//hyphened words (standardized "_" to "-").
-		
+	public Match getCharacterName(String word) {//word: one word, or ,hyphened words (standardized "_" to "-"), phrases such as "dark green" and "purple spot", "gland-dotted and"?
+		word = word.trim();
 		if(word.matches(this.stopWords)) return new Match(null);
+		if((word.matches("[^a-z]+") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new Match(null); //numerical expressions
 		
 		String wo = word;
+		
+		if(word.contains("~list~")){ // "{colorationttt~list~suffused~with~red}"
+			String ch = word.substring(0, word.indexOf("~list~"));
+			ch = ch.replaceAll("(\\W|ttt)", "");
+			HashSet<Term> result = new HashSet<Term> ();
+			result.add(new Term(wo, ch));
+			return new Match(result);
+		}
+		
+		word = word.replaceAll("[{}]", ""); //avoid regexp illegal repetation exception
 		
 		//rejected searches
 		if(word.matches("("+negWords+")")) return new Match(null);

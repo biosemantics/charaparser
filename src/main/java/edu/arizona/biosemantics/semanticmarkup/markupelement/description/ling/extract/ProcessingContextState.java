@@ -66,6 +66,12 @@ public class ProcessingContextState implements Cloneable {
 		scopeProperties = null;
 		inBracketsLevel = 0;
 	}
+	
+	public void getCarryOverDataFrom(ProcessingContextState state){
+		this.unassignedModifiers.addAll(state.getUnassignedModifiers());
+		this.unassignedCharacters.addAll(state.getUnassignedCharacters());
+		this.unassignedConstraints.addAll(state.getUnassignedConstraints());
+	}
 
 	@Override
 	public Object clone() {
@@ -220,7 +226,6 @@ public class ProcessingContextState implements Cloneable {
 		else {
 			this.lastElements.clear();
 			this.lastElements.addAll(lastElements);
-			System.out.print("");
 		}
 	}
 

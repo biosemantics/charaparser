@@ -83,7 +83,7 @@ public class NonOntologyBasedStandardizer {
 
 	/**
 	 * this method removes any distributed constraints (primary basal stems and [primary basal] leaves) 
-	 * it does not taken into consideration of possible punctuation marks that may separate contraint from structure name in the sentence.
+	 * it does not taken into consideration of possible punctuation marks that may separate constraint from structure name in the sentence.
 	 * @param constraints
 	 * @param sentence
 	 * @param nameOriginal
@@ -96,6 +96,12 @@ public class NonOntologyBasedStandardizer {
 		ArrayList<String> orderedCandidates = new ArrayList<String>();
 
 		int i = sent.indexOf(nameOriginal); //i could be 0
+		if(i<0){ //nameOrginal may be added by fixInner, for exmaple. 
+			if(sentence.matches(".*?\\b"+constraints+"\\b.*")){
+				log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] normalized to itself [entity name not present in sentence]");
+				return constraints;
+			}
+		}
 		do{
 			String ordered = "";
 			if(i>=constr.size()){
@@ -130,8 +136,14 @@ public class NonOntologyBasedStandardizer {
 				selected = ordered;
 			}
 		}
-		if(constraints.compareTo(selected)!=0)
-			log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] somehow normalized to "+ selected);
+		if(constraints.compareTo(selected)!=0 && !selected.isEmpty()){
+			log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] somehow normalized to "+ selected +" for sentence ["+sentence+"]");
+		}else if(constraints.compareTo(selected)!=0 && selected.isEmpty()){
+			if(sentence.matches(".*?\\b"+constraints+"\\b.*")){
+				log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] normalized to itself");
+				return constraints;
+			}
+		}
 		return selected.trim();
 	}
 

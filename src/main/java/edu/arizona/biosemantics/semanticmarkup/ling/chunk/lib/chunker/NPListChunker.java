@@ -124,9 +124,10 @@ public class NPListChunker extends AbstractChunker {
 					Chunk childChunk = chunkCollector.getChunk(terminal);
 					childChunks.add(childChunk);
 				}
-				Chunk chunk = new Chunk(ChunkType.NP_LIST, childChunks);
+				Chunk chunk = new Chunk(ChunkType.NP_LIST, childChunks); 
 				chunkCollector.addChunk(chunk);
 			}
+			
 			/*
 			if (isList) {// collapse the NP
 				IParseTree backup = parseTreeFactory.create();

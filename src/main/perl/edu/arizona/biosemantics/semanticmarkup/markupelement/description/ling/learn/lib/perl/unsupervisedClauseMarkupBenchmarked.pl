@@ -6110,7 +6110,6 @@ while(defined ($file=readdir(IN))){
   		s#\[[^\]\[]*?[a-zA-Z][^\]\[]*?\]# #g;  #remove [.a.]
   		s#{[^{}]*?[a-zA-Z][^{}]*?}# #g; #remove {.a.}
 
-		s#[(\[\]{)}]#, #g;                        #change remaining ([{}]) to comma
     	#s#([^\d])\s*-\s*([^\d])#\1_\2#g;         #hyphened words: - =>_ to avoid space padding in the next step
 		s#([^/])[-]+\s*([a-z])#$1_$2#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+, exclude +/- hairy 
 		s#(\W)# \1 #g;                            #add space around nonword char

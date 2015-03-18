@@ -96,12 +96,18 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				Chunk constraint = thanChunk.getChunks(ChunkType.CONSTRAINT).get(0);
 				IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(ChunkType.CONSTRAINT);
 				List<? extends Element> elements = chunkProcessor.process(constraint, processingContext);
+				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+				processingContext.setCurrentState(processingContextState);
+				log(LogLevel.DEBUG, "restored current state after "+chunkProcessor.getClass()+" is run.");
 				List<BiologicalEntity> structures = new LinkedList<BiologicalEntity>();
 				for(Element element : elements)
 					if(element.isStructure())
 						structures.add((BiologicalEntity)element);
 				result.addAll(structures);
 				this.createConstraintedCharacters(content, parents, beforeChunk, structures, processingContext);
+				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+				processingContext.setCurrentState(processingContextState);
+				log(LogLevel.DEBUG, "restored current state after createConstraintedCharacters is run.");
 		} else {
 			Chunk thanObject = thanChunk.getChunkDFS(ChunkType.OBJECT);
 			//Chunk thanObject = thanChunk.getChildChunk(ChunkType.PP).getChildChunk(ChunkType.OBJECT);
@@ -118,6 +124,9 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				Chunk objectChunk = new Chunk(ChunkType.UNASSIGNED, objectChunks);
 				List<BiologicalEntity> structures = extractStructuresFromObject(objectChunk, processingContext, processingContextState);
 				List<Element> characters = this.createConstraintedCharacters(content, parents, beforeChunk, structures, processingContext);
+				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+				processingContext.setCurrentState(processingContextState);
+				log(LogLevel.DEBUG, "restored current state after createConstraintedCharacters is run.");
 				result.addAll(characters);
 				result.addAll(structures);
 			} else {
@@ -161,6 +170,9 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					if(!foundCharacter && !thanObject.getChunks().isEmpty()) {
 						result.addAll(this.createConstraintedCharacters(content, parents, beforeChunk, 
 									 	new LinkedList<BiologicalEntity>(), processingContext));
+						processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+						processingContext.setCurrentState(processingContextState);
+						log(LogLevel.DEBUG, "restored current state after createConstraintedCharacters is run.");
 					}
 				}
 			}

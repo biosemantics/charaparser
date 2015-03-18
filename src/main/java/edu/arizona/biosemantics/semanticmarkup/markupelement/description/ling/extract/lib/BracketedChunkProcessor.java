@@ -8,9 +8,11 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
@@ -63,6 +65,9 @@ public class BracketedChunkProcessor extends AbstractChunkProcessor {
 		for(Chunk childChunk : chunk.getChunks()) {
 			result.addAll(describeChunk(childChunk, processingContext));
 		}
+		processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+		processingContext.setCurrentState(processingContextState);
+		log(LogLevel.DEBUG, "restored current state after describeChunk is run.");
 		processingContextState.decreaseInBrackets();
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return result;

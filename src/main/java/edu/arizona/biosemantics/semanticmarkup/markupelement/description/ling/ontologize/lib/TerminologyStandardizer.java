@@ -37,11 +37,12 @@ public class TerminologyStandardizer {
 				//standardize character
 				LinkedHashSet<Character> characters = struct.getCharacters();
 				for(Character character: characters){
+					preferedName = null;
 					String value = character.getValue();
-					if(value!=null && !character.getName().contains(this.or)){
-						preferedName = characterKnowledgeBase.getCharacterName(value).getLabel(character.getName());
-						if(preferedName !=null) character.setValue(preferedName);
+					if(value!=null && !value.trim().contains(" ") && !character.getName().contains(or)){
+						preferedName = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getName());
 					}
+					if(preferedName !=null) character.setValue(preferedName);
 				}
 			}
 		}

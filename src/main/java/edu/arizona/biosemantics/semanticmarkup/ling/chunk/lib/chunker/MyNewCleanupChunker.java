@@ -1,7 +1,9 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,9 +11,13 @@ import java.util.Set;
 
 
 
+
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
@@ -57,11 +63,11 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		boolean[] translateCharacterToConstraint = new boolean[terminals.size()];
 		boolean[] translateStateToConstraint = new boolean[terminals.size()];
-		boolean[] translateModifierToConstraint = new boolean[terminals.size()];
+		//boolean[] translateModifierToConstraint = new boolean[terminals.size()];
 		boolean[] translateStateToModifier = new boolean[terminals.size()];
 		boolean[] translateConstraintToModifier = new boolean[terminals.size()];
 		
-		determineTranslationsBasedOnStructure(terminals, chunkCollector, translateCharacterToConstraint, translateStateToConstraint, translateModifierToConstraint,
+		determineTranslationsBasedOnStructure(terminals, chunkCollector, translateCharacterToConstraint, translateStateToConstraint, /* translateModifierToConstraint,*/
 				translateStateToModifier, translateConstraintToModifier);
 
 		for(int i=0; i<terminals.size(); i++) {
@@ -74,10 +80,10 @@ public class MyNewCleanupChunker extends AbstractChunker {
 				translate(ChunkType.STATE, ChunkType.CONSTRAINT, i, chunkCollector);
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
 			}
-			if(translateModifierToConstraint[i]) {
+			/*if(translateModifierToConstraint[i]) {
 				translate(ChunkType.MODIFIER, ChunkType.CONSTRAINT, i, chunkCollector);
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
-			}
+			}*/
 			if(translateStateToModifier[i]) {
 				translate(ChunkType.STATE, ChunkType.MODIFIER, i, chunkCollector);
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
@@ -88,7 +94,46 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			}
 		}
 		
+		/*
+		 * basal => CONSTRAINT: characterName->position; [STATE: [basal]]
+and => AND: [AND: [and]]
+proximal => MAIN_SUBJECT_ORGAN: [CONSTRAINT: characterName->position; [STATE: [proximal]], CONSTRAINT: characterName->position; [STATE: [cauline]], ORGAN: [leaves]]
+cauline => MAIN_SUBJECT_ORGAN: [CONSTRAINT: characterName->position; [STATE: [proximal]], CONSTRAINT: characterName->position; [STATE: [cauline]], ORGAN: [leaves]]
+leaves => MAIN_SUBJECT_ORGAN: [CONSTRAINT: characterName->position; [STATE: [proximal]], CONSTRAINT: characterName->position; [STATE: [cauline]], ORGAN: [leaves]]
+red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
+; => END_OF_LINE: [;]
+		 */
+		//include orphaned constraints in the Organ chunk
+		Chunk chunkWithOrgan = null;
+		
+		ArrayList<Chunk> toBeIncluded = new ArrayList<Chunk> ();
+		for(int i=terminals.size()-1; i>=0; i--) { //from back to front
+			AbstractParseTree terminal = terminals.get(i);
+			Chunk terminalChunk = chunkCollector.getChunk(terminal);
+			//first looking for a chunk containing an ORGAN
+			if(terminalChunk.containsChunkType(ChunkType.ORGAN)){
+				if(!toBeIncluded.isEmpty())
+					includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
+				chunkWithOrgan = terminalChunk;
+				toBeIncluded = new ArrayList<Chunk> ();
+			}else if(chunkWithOrgan!=null && (terminalChunk.isOfChunkType(ChunkType.AND) || terminalChunk.isOfChunkType(ChunkType.OR) ||
+					terminalChunk.isOfChunkType(ChunkType.TO) || terminalChunk.isOfChunkType(ChunkType.CONSTRAINT) )){
+				toBeIncluded.add(0, terminalChunk);
+			}else{
+				if(!toBeIncluded.isEmpty())
+					includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
+				//reset
+				chunkWithOrgan = null;
+				toBeIncluded = new ArrayList<Chunk> ();
+			}
+			
+		}
+		if(!toBeIncluded.isEmpty())
+			includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
+		
 		//capture multiple modifiers following each other into one chunk
+		//from: MODIFIER: [mostly], MODIFIER: [not]
+		//to: MODIFIER: [mostly, not],
 		Chunk previousModifierChunk = null;
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
@@ -121,15 +166,43 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		//moveChunksForAndOrLists(terminals, chunkCollector);		
 	}
 
+	private void includeConstraints(ChunkCollector chunkCollector,
+			Chunk chunkWithOrgan, ArrayList<Chunk> toBeIncluded) {
+		//remove AND, OR, TO from the beginning of toBeAdded
+		Iterator<Chunk> it = toBeIncluded.iterator();
+		while(it.hasNext()){
+			Chunk c = it.next();
+			if(c.isOfChunkType(ChunkType.AND) || c.isOfChunkType(ChunkType.OR) || c.isOfChunkType(ChunkType.TO)){
+				it.remove();
+			}else{
+				break;
+			}
+		}
+		if(toBeIncluded.isEmpty()) return;
+		//add constraints to chunkWithOrgan
+		LinkedHashSet<Chunk> organChildChunks = new LinkedHashSet<Chunk>();
+		organChildChunks.addAll(toBeIncluded);
+		organChildChunks.addAll(chunkWithOrgan.getChunks());
+		chunkWithOrgan.setChunks(organChildChunks);
+		chunkCollector.addChunk(chunkWithOrgan);
+		log(LogLevel.DEBUG, "joined orphaned constraint with the organ: "+chunkWithOrgan);
+	}
+
 	private void determineTranslationsBasedOnStructure(List<AbstractParseTree> terminals, ChunkCollector chunkCollector,
-			boolean[] translateCharacterToConstraint, boolean[] translateStateToConstraint, boolean[] translateModifierToConstraint, 
+			boolean[] translateCharacterToConstraint, boolean[] translateStateToConstraint, /*boolean[] translateModifierToConstraint, */
 			boolean[] translateStateToModifier, boolean[] translateConstraintToModifier) {
 		boolean[] modifier = getArray(terminals, chunkCollector, ChunkType.MODIFIER);
 		boolean[] character = getArray(terminals, chunkCollector, ChunkType.CHARACTER_STATE);
 		boolean[] state = getArray(terminals, chunkCollector, ChunkType.STATE, ChunkType.VERB);
 		boolean[] organ = getArray(terminals, chunkCollector, ChunkType.ORGAN);
 		boolean[] constraint = getArray(terminals, chunkCollector, ChunkType.CONSTRAINT);
+		boolean[] and = getArray(terminals, chunkCollector, ChunkType.AND); //mid and|or outer petals => constraint (mid and|or outer)
+		boolean[] or = getArray(terminals, chunkCollector, ChunkType.OR);
+		boolean[] to = getArray(terminals, chunkCollector, ChunkType.TO);
 		boolean[] constraintOrgan = new boolean[terminals.size()];
+		
+		//[CHARACTER_STATE: characterName->position; [STATE: [outer]], and, CHARACTER_STATE: characterName->position; [STATE: [mid]], ORGAN: [phyllaries]]
+		//need to group characters of a organ together: (outer and mid) phyllaries
 		
 		boolean changed = true;
 		while(changed) {
@@ -147,7 +220,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			boolean changedCharacterToConstraint = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateCharacterToConstraint[i];
-				translateCharacterToConstraint[i] = character[i] && i+1 < terminals.size() && 
+				translateCharacterToConstraint[i] = (character[i]||and[i]||or[i]||to[i]) && i+1 < terminals.size() && 
 					(constraintOrgan[i+1] || translateCharacterToConstraint[i+1]) && ((i-1 >= 0 && !modifier[i-1]) || i==0);
 				changedCharacterToConstraint |= translateCharacterToConstraint[i] != before;
 			}
@@ -167,8 +240,8 @@ public class MyNewCleanupChunker extends AbstractChunker {
 				}
 			//log(LogLevel.DEBUG, "changedStateToX " + changedStateToX);
 			changed |= changedStateToX;
-			
-			boolean changedModifierToConstraint = false;
+			//why change modifiers to constraints? This should not be done. Hong 3/18/15
+			/*boolean changedModifierToConstraint = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateModifierToConstraint[i];
 				translateModifierToConstraint[i] = (modifier[i] || translateStateToModifier[i]) && i+1 < terminals.size() && (constraintOrgan[i+1] || translateCharacterToConstraint[i+1] ||
@@ -177,11 +250,12 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			}
 			//log(LogLevel.DEBUG, "changedModifierToConstraint " + changedModifierToConstraint);
 			changed |= changedModifierToConstraint;
+			*/
 			
 			boolean changedConstraintToModifier = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateConstraintToModifier[i];
-				translateConstraintToModifier[i] = (constraint[i] || translateCharacterToConstraint[i] || translateStateToConstraint[i] || translateModifierToConstraint[i]) && 
+				translateConstraintToModifier[i] = (constraint[i] || translateCharacterToConstraint[i] || translateStateToConstraint[i] /*|| translateModifierToConstraint[i]*/) && 
 					i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1];
 				changedConstraintToModifier |= translateConstraintToModifier[i] != before;
 			}
@@ -195,6 +269,8 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			AbstractParseTree terminal = terminals.get(i);
 			Chunk chunk = chunkCollector.getChunk(terminal);
 			Chunk characterStateChunk = chunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
+			
+			if(characterStateChunk==null) return false; //and, or
 			
 			String characterName = characterStateChunk.getProperty("characterName");
 			String characterState = characterStateChunk.getChunkBFS(ChunkType.STATE).getTerminalsText();
@@ -223,19 +299,16 @@ public class MyNewCleanupChunker extends AbstractChunker {
 					if(singleCharacterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
 						return true;
 				}*/
-				if(characterName.equals("size") && (characterState.endsWith("est") || characterState.endsWith("er")))
+				if(characterName.matches(".*?(^|_)(size|length|width|height|thickness)(_|$).*") && (characterState.endsWith("est") || characterState.endsWith("er")))
 					return true;
 				
 				String[] characterNames = characterName.split("_or_");
-				boolean result = !notAllowedCharacterStates.contains(characterState);
+				if(notAllowedCharacterStates.contains(characterState)) return false;
+				boolean result = false;
 				for(String singleCharacterName : characterNames)
-				//&& !characterName.contains("_or_")) {
-					result &= allowedCharacterNames.contains(singleCharacterName);
-				//String[] singleCharacterNames = characterName.split("_or_");
-				//for(String singleCharacterName : singleCharacterNames) {
-				//	if(allowedCharacterNames.contains(singleCharacterName) && !notAllowedCharacterStates.contains(characterState))
-				//		return true;
-				//}
+					result |= allowedCharacterNames.contains(singleCharacterName);
+					//result &= allowedCharacterNames.contains(singleCharacterName);
+
 				return result;
 			}
 		}

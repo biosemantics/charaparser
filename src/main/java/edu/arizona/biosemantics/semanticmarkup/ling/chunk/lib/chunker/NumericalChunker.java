@@ -1,9 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
 
 
 
@@ -79,12 +81,12 @@ public class NumericalChunker extends AbstractChunker {
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
-		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
+		List<AbstractParseTree> terminals = chunkCollector.getTerminals(); 
 		for(int i=0; i < terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
 			if(!chunkCollector.isPartOfChunkType(terminal, ChunkType.CHROM)) {
 				String terminalsText = terminal.getTerminalsText();
-				
+
 				if(terminalsText.matches(".*?" + numberPattern + "$") || terminalsText.matches("\\(\\d+\\)") || terminalsText.matches("\\d+\\+?") || terminalsText.matches("^to~\\d.*")) { 
 					terminalsText = originalNumForm(terminalsText).replaceAll("\\?", "");		
 					if(terminalsText.matches("^to~\\d.*")){
@@ -110,11 +112,12 @@ public class NumericalChunker extends AbstractChunker {
 							chunkCollector.addChunk(count);
 							continue;
 						}
-						
+
 						i++;
 						AbstractParseTree lookForwardTerminal = terminals.get(i);
+						//Chunk lookForwardChunk =  chunkCollector.getChunk(lookForwardTerminal);
 						String lookForwardText = lookForwardTerminal.getTerminalsText();
-						
+
 						if(lookForwardText.matches("^(" + units + ")\\b.*?")){
 							String combinedText = terminalsText + " " + lookForwardText;
 							//adjustPointer4Dot(pointer, terminals);
@@ -131,175 +134,301 @@ public class NumericalChunker extends AbstractChunker {
 								chunkCollector.addChunk(value);
 							}
 							continue;
-						}
-						if(lookForwardText.matches("(" + timesWords + ")\\b.*?")){
+						} else if(lookForwardText.matches("(" + timesWords + ")\\b.*?")){ //text with 'n times' and 'than' are chunked here. THANChunker chunks 'than' without ' n times'
 							/*
 							 * 
 							 *  lengths => lengths
 								mostly => MODIFIER: [mostly]
 								2-5 => 2-5
+								times => times
 								widths => widths
-							   
+
 							   to 
-							   
-							    lengths => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
-								mostly => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
-								2-5 => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
-								widths => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
+
+							    lengths => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, times,  CHARACTER_STATE: characterName->character; [STATE: [widths]]]
+								mostly => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, times, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
+								2-5 => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, times, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
+								times => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, times, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
+								widths => COMPARATIVE_VALUE: [ CHARACTER_STATE: characterName->character; [STATE: [lengths]], MODIFIER: [mostly], 2-5, times, CHARACTER_STATE: characterName->character; [STATE: [widths]]]
 								; => END_OF_LINE: [;]
-							  
+
 							 */
 							LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
-							//look behind for comparison character
+							//look behind for the comparison character 
 							int j = i-2; //go back to the chunk before the "terminal"
 							boolean findCharacter = false;
+							boolean expectOf = false;
+							boolean expectCharacter = false;
+
+
 							for(; j>=0; j--){
 								AbstractParseTree lookBehindTerminal = terminals.get(j);
 								Chunk lookBehindChunk = chunkCollector.getChunk(lookBehindTerminal);
-								if(lookBehindChunk.isOfChunkType(ChunkType.MODIFIER) || lookBehindChunk.isOfChunkType(ChunkType.COUNT) 
-										||lookBehindChunk.isOfChunkType(ChunkType.COMMA) || lookBehindChunk.isOfChunkType(ChunkType.UNASSIGNED)){
+
+								if(expectOf && lookBehindTerminal.getTerminalsText().compareTo("of")==0){ //lengths of ...
 									childChunks.add(lookBehindChunk);
-								}else if(lookBehindChunk.isOfChunkType(ChunkType.CHARACTER_STATE)){
+									expectCharacter = true;
+									continue;
+								}else if(expectOf && !(lookBehindChunk.isOfChunkType(ChunkType.CONSTRAINT) || lookBehindChunk.isOfChunkType(ChunkType.ORGAN) 
+										|| lookBehindChunk.isOfChunkType(ChunkType.NP_LIST) || lookBehindChunk.isOfChunkType(ChunkType.CHARACTER_STATE))){
+									break;
+								}
+
+								if(expectCharacter && lookBehindChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && lookBehindChunk.getProperty("characterName").compareTo("character")==0){
+									childChunks.add(lookBehindChunk);
+									findCharacter = true;
+									break;
+								}else if(expectCharacter){
+									break;
+								}
+
+
+								if(lookBehindChunk.isOfChunkType(ChunkType.CHARACTER_STATE)){
 									if(lookBehindChunk.getProperty("characterName").compareTo("character")==0){
 										childChunks.add(lookBehindChunk);
 										findCharacter = true;
 										break;
+									}else{
+										childChunks.add(lookBehindChunk);
 									}
-								}else{
-									break;
+
+								}else if(lookBehindChunk.isOfChunkType(ChunkType.CONSTRAINT) || lookBehindChunk.isOfChunkType(ChunkType.ORGAN) || lookBehindChunk.isOfChunkType(ChunkType.NP_LIST)){
+									childChunks.add(lookBehindChunk);
+									expectOf = true;
+									continue;
+								}
+
+								/*else if(lookBehindChunk.isOfChunkType(ChunkType.CONSTRAINT) || lookBehindChunk.isOfChunkType(ChunkType.ORGAN) || lookBehindChunk.isOfChunkType(ChunkType.NP_LIST)){
+									LinkedHashSet<Chunk> childChunkCandidates = new LinkedHashSet<Chunk>();
+									childChunkCandidates.add(lookBehindChunk);
+									boolean expectCharacter = false;
+									for(j = j-1; j>=0; j--){
+										AbstractParseTree lookFurtherBehindTerminal = terminals.get(j);
+										Chunk lookFurtherBehindChunk = chunkCollector.getChunk(lookFurtherBehindTerminal);
+										if(expectCharacter && lookFurtherBehindChunk.getProperty("characterName").compareTo("character")==0){
+											childChunkCandidates.add(lookFurtherBehindChunk);
+											childChunks.addAll(childChunkCandidates);
+											findCharacter = true;
+											break;
+										}else if(expectCharacter){
+											break;
+										}
+										if(lookFurtherBehindChunk.isOfChunkType(ChunkType.CONSTRAINT) ||lookFurtherBehindChunk.isOfChunkType(ChunkType.CHARACTER_STATE) || lookFurtherBehindChunk.isOfChunkType(ChunkType.ORGAN) || lookFurtherBehindChunk.isOfChunkType(ChunkType.NP_LIST)){
+											childChunkCandidates.add(lookFurtherBehindChunk);
+										}else if(lookFurtherBehindTerminal.getTerminalsText().compareTo("of"+"")==0){ //lengths of ...
+											childChunkCandidates.add(lookFurtherBehindChunk);
+											expectCharacter = true;
+										}
+
+
+									}
+								}*/else{
+									childChunks.add(lookBehindChunk); //collect everything until any of the break point is met: find a character such as lengths or a (list of) organ
 								}
 							}
-							
+
 							if(!findCharacter) //reset childChunks
 								childChunks = new LinkedHashSet<Chunk>();
-							
+							else{//reverse the order of chunks obtained through tracing back
+								childChunks = reserveOrder(childChunks);
+							}
+
 							i++;
 							AbstractParseTree lookDoubleForwardTerminal = terminals.get(i);
 							Chunk lookDoubleForwardChunk = chunkCollector.getChunk(lookDoubleForwardTerminal);
-							
+
 							childChunks.add(chunkCollector.getChunk(terminal));
 							childChunks.add(chunkCollector.getChunk(lookForwardTerminal));
-							
+
 							if(lookDoubleForwardChunk.isOfChunkType(ChunkType.THAN_CHARACTER_PHRASE)) {
 								childChunks.add(lookDoubleForwardChunk);				
 								Chunk value = new Chunk(ChunkType.VALUE, childChunks);
 								chunkCollector.addChunk(value);
 							} else {
-								//i++;
-								//AbstractParseTree lookAheadTerminal = terminals.get(i);
+								//look ahead until a character (e.g. lengths), an organ/list of organ is found. also consider 'widths of organ' and "organ widths", "2 times longer than wide", 
 								
+								boolean foundCharacter = false;
+								boolean foundOrgan = false;
+
 								for(; i < terminals.size(); i++){
 									AbstractParseTree lookAheadTerminal = terminals.get(i);
 									Chunk lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
-									if(lookAheadChunk.isOfChunkType(ChunkType.UNASSIGNED)){
-										childChunks.add(lookAheadChunk);
-									}else if(lookAheadChunk.isOfChunkType(ChunkType.CHARACTER_STATE)){
-										if(lookAheadChunk.getProperty("characterName").compareTo("character")==0){
-											childChunks.add(lookAheadChunk);
+									if(foundCharacter || foundOrgan){
+										if(!lookAheadChunk.isOfChunkType(ChunkType.CONSTRAINT) && ! lookAheadChunk.isOfChunkType(ChunkType.ORGAN)
+												&& ! lookAheadChunk.isOfChunkType(ChunkType.NP_LIST) && !lookAheadChunk.isOfChunkType(ChunkType.CHARACTER_STATE)
+														&& lookAheadTerminal.getTerminalsText().compareTo("of")!=0 && lookAheadTerminal.getTerminalsText().compareTo("than")!=0 ){
 											break;
 										}
 									}
-								}
-								/*while(chunkCollector.isOfChunkType(lookAheadTerminal, ChunkType.UNASSIGNED) ) {
-									childChunks.add(chunkCollector.getChunk(lookAheadTerminal));
-									i++;
-									if(i==terminals.size()) break;
-									lookAheadTerminal = terminals.get(i);
-									lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
-								}*/
-								Chunk comparativeValue = new Chunk(ChunkType.COMPARATIVE_VALUE, childChunks);
-								chunkCollector.addChunk(comparativeValue);
+									if(foundCharacter && lookAheadTerminal.getTerminalsText().compareTo("of")==0){
+										childChunks.add(lookAheadChunk);
+										continue;
+									}else if(foundOrgan && lookAheadTerminal.getTerminalsText().compareTo("of")==0){
+										break;
+									}else if(lookAheadChunk.isOfChunkType(ChunkType.CHARACTER_STATE) &&
+											lookAheadChunk.getProperty("characterName").matches(".*?_?(character|width|length)_?.*")){
+										childChunks.add(lookAheadChunk);
+										foundCharacter = true;
+									}else if(lookAheadChunk.isOfChunkType(ChunkType.UNASSIGNED) || lookAheadChunk.isOfChunkType(ChunkType.CHARACTER_STATE) ||lookAheadChunk.isOfChunkType(ChunkType.TO_PHRASE)){ //2 times pinnately lobed
+										childChunks.add(lookAheadChunk);
+									}else if(lookAheadChunk.isOfChunkType(ChunkType.CONSTRAINT) || lookAheadChunk.isOfChunkType(ChunkType.ORGAN) || lookAheadChunk.isOfChunkType(ChunkType.NP_LIST)){
+										childChunks.add(lookAheadChunk);
+										foundOrgan = true;
+									}
+
 							}
+							Chunk comparativeValue = new Chunk(ChunkType.COMPARATIVE_VALUE, childChunks);
+							chunkCollector.addChunk(comparativeValue);
+						}
+						continue;
+					}else{ //characters (e.g lengths/widths) comparison without 'times'
+						/*lengths => CHARACTER_STATE: characterName->character; [STATE: [lengths]]
+							1.5-4+ => 1.5-4+
+						 	widths => CHARACTER_STATE: characterName->character; [STATE: [widths]]
+							; => END_OF_LINE: [;]*/
+						LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
+						boolean aheadIsCharacter = false;
+						boolean behindIsCharacter = false;
+
+						//behind
+						for(int j=i-2; j>=0; j--){
+							AbstractParseTree lookBehindTerminal = terminals.get(j);
+							Chunk lookBehindChunk = chunkCollector.getChunk(lookBehindTerminal);
+							if(lookBehindChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && lookBehindChunk.getProperty("characterName"+"").compareTo("character")==0){
+								behindIsCharacter = true;
+								childChunks.add(lookBehindChunk);
+							}else if(!lookBehindChunk.isOfChunkType(ChunkType.MODIFIER)){
+								break;
+							}else{
+								childChunks.add(lookBehindChunk);
+							}
+						}
+
+						//reverse the order of the elements in childChunks
+						childChunks = reserveOrder(childChunks);
+
+						childChunks.add(chunkCollector.getChunk(terminal)); //i-1
+
+						//ahead
+						for(int j=i; j<terminals.size(); j++){
+							AbstractParseTree lookAheadTerminal = terminals.get(j);
+							Chunk lookAheadChunk = chunkCollector.getChunk(lookAheadTerminal);
+							if(lookAheadChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && lookAheadChunk.getProperty("characterName").compareTo("character")==0){
+								aheadIsCharacter = true;
+								childChunks.add(lookAheadChunk);
+							}else if(!lookAheadChunk.isOfChunkType(ChunkType.MODIFIER)){
+								break;
+							}else{
+								childChunks.add(lookAheadChunk);
+							}
+						}
+
+						if(aheadIsCharacter && behindIsCharacter){
+							Chunk comparativeValue = new Chunk(ChunkType.COMPARATIVE_VALUE, childChunks);
+							chunkCollector.addChunk(comparativeValue);
 							continue;
-						} 
-						
-						Chunk count = new Chunk(ChunkType.COUNT,  chunkCollector.getChunk(terminal));
-						chunkCollector.addChunk(count);
+						}
+
 					}
-				}
-			}
-		}
-		
-		// l/w = X 
-		// ratio chunking
-		for(int i=0; i<terminals.size(); i++) {
-			AbstractParseTree terminal = terminals.get(i);
-			String terminalsText = terminal.getTerminalsText();
-			
-			if(terminalsText.matches("l/w")){
-				int j = i+1;
-				boolean foundRatio = false;
-				while(j < terminals.size()) {
-					AbstractParseTree lookAheadTerminal = terminals.get(j);
-					String lookAheadTerminalText = lookAheadTerminal.getTerminalsText();
-					if(lookAheadTerminalText.equals("=")) {
-						//j++;
-						i = j+1;
-						j = i;
-					} else if(lookAheadTerminalText.matches(".*?\\d.*")) {
-						foundRatio = true;
-						j++;
-					} else {
-						break;
-					}
-				}
-				if(foundRatio) {
-					LinkedHashSet<Chunk> ratioChildren = new LinkedHashSet<Chunk>();
-					for(;i<j;i++) {
-						/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
-						Chunk c = chunkCollector.getChunk(terminals.get(i));
-						c.setChunkType(ChunkType.RATIO);
-						ratioChildren.add(c);
-					}
-					Chunk ratioChunk = new Chunk(ChunkType.RATIO, ratioChildren); 
-					chunkCollector.addChunk(ratioChunk);
-				}
-			}
-		}
-		
-		//average values: av . 6 . 9 x 5 . 5 μm
-		for(int i=0; i<terminals.size(); i++) {
-			AbstractParseTree terminal = terminals.get(i);
-			String terminalsText = terminal.getTerminalsText();
-			
-			if(terminalsText.matches("av")){
-				int j = i+1;
-				boolean foundAV = false;
-				while(j < terminals.size()) {
-					AbstractParseTree lookAheadTerminal = terminals.get(j);
-					String lookAheadTerminalText = lookAheadTerminal.getTerminalsText();
-					if(lookAheadTerminalText.matches("[.=:]")) {
-						//j++;
-						i = j+1;
-						j = i;
-					} else if(lookAheadTerminalText.matches(".*?\\d.*")) {
-						foundAV = true;
-						j++;
-					} else {
-						break;
-					}
-				}
-				if(foundAV) {
-					LinkedHashSet<Chunk> ratioChildren = new LinkedHashSet<Chunk>();
-					for(;i<j;i++) {
-						/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
-						Chunk c = chunkCollector.getChunk(terminals.get(i));
-						c.setChunkType(ChunkType.AVERAGE);
-						ratioChildren.add(c);
-					}
-					Chunk ratioChunk = new Chunk(ChunkType.AVERAGE, ratioChildren); 
-					chunkCollector.addChunk(ratioChunk);
+
+					Chunk count = new Chunk(ChunkType.COUNT,  chunkCollector.getChunk(terminal)); //default to "COUNT"
+					chunkCollector.addChunk(count);
 				}
 			}
 		}
 	}
-	
-	
-	public String originalNumForm(String token){
-		if(token.matches(".*[a-z].*?")){
-			return token.replaceAll("-\\s*LRB-/-LRB\\s*-?", "(").replaceAll("-\\s*RRB-/-RRB\\s*-?", ")");
-		}else{
-			return token.replaceAll("-\\s*LRB-/-LRB\\s*-?", "[").replaceAll("-\\s*RRB-/-RRB\\s*-?", "]");
+
+	// l/w = X 
+	// ratio chunking
+	for(int i=0; i<terminals.size(); i++) {
+		AbstractParseTree terminal = terminals.get(i);
+		String terminalsText = terminal.getTerminalsText();
+
+		if(terminalsText.matches("l/w")){
+			int j = i+1;
+			boolean foundRatio = false;
+			while(j < terminals.size()) {
+				AbstractParseTree lookAheadTerminal = terminals.get(j);
+				String lookAheadTerminalText = lookAheadTerminal.getTerminalsText();
+				if(lookAheadTerminalText.equals("=")) {
+					//j++;
+					i = j+1;
+					j = i;
+				} else if(lookAheadTerminalText.matches(".*?\\d.*")) {
+					foundRatio = true;
+					j++;
+				} else {
+					break;
+				}
+			}
+			if(foundRatio) {
+				LinkedHashSet<Chunk> ratioChildren = new LinkedHashSet<Chunk>();
+				for(;i<j;i++) {
+					/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
+					Chunk c = chunkCollector.getChunk(terminals.get(i));
+					c.setChunkType(ChunkType.RATIO);
+					ratioChildren.add(c);
+				}
+				Chunk ratioChunk = new Chunk(ChunkType.RATIO, ratioChildren); 
+				chunkCollector.addChunk(ratioChunk);
+			}
 		}
 	}
+
+	//average values: av . 6 . 9 x 5 . 5 μm
+	for(int i=0; i<terminals.size(); i++) {
+		AbstractParseTree terminal = terminals.get(i);
+		String terminalsText = terminal.getTerminalsText();
+
+		if(terminalsText.matches("av")){
+			int j = i+1;
+			boolean foundAV = false;
+			while(j < terminals.size()) {
+				AbstractParseTree lookAheadTerminal = terminals.get(j);
+				String lookAheadTerminalText = lookAheadTerminal.getTerminalsText();
+				if(lookAheadTerminalText.matches("[.=:]")) {
+					//j++;
+					i = j+1;
+					j = i;
+				} else if(lookAheadTerminalText.matches(".*?\\d.*")) {
+					foundAV = true;
+					j++;
+				} else {
+					break;
+				}
+			}
+			if(foundAV) {
+				LinkedHashSet<Chunk> ratioChildren = new LinkedHashSet<Chunk>();
+				for(;i<j;i++) {
+					/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
+					Chunk c = chunkCollector.getChunk(terminals.get(i));
+					c.setChunkType(ChunkType.AVERAGE);
+					ratioChildren.add(c);
+				}
+				Chunk ratioChunk = new Chunk(ChunkType.AVERAGE, ratioChildren); 
+				chunkCollector.addChunk(ratioChunk);
+			}
+		}
+	}
+}
+
+
+private LinkedHashSet<Chunk> reserveOrder(LinkedHashSet<Chunk> childChunks) {
+	ArrayList<Chunk> clone = new ArrayList<Chunk>();
+	clone.addAll((LinkedHashSet<Chunk>) childChunks.clone());
+	childChunks = new LinkedHashSet<Chunk>();
+	for(int k = clone.size()-1; k>=0; k--){
+		childChunks.add(clone.get(k));
+	}
+	return childChunks;
+}
+
+
+public String originalNumForm(String token){
+	if(token.matches(".*[a-z].*?")){
+		return token.replaceAll("-\\s*LRB-/-LRB\\s*-?", "(").replaceAll("-\\s*RRB-/-RRB\\s*-?", ")");
+	}else{
+		return token.replaceAll("-\\s*LRB-/-LRB\\s*-?", "[").replaceAll("-\\s*RRB-/-RRB\\s*-?", "]");
+	}
+}
 }

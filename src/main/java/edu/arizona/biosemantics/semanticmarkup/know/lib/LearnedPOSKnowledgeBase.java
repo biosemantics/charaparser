@@ -203,13 +203,13 @@ public class LearnedPOSKnowledgeBase implements IPOSKnowledgeBase {
 
 	@Override
 	public void addAdjective(String word) {
-		// TODO Auto-generated method stub
+		this.adjectives.add(word);
 		
 	}
 
 	@Override
 	public void addAdverb(String word) {
-		// TODO Auto-generated method stub
+		this.adverbs.add(word);
 		
 	}
 

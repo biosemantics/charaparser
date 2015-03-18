@@ -42,7 +42,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 	//private Pattern compreppattern;
 	//private IOrganStateKnowledgeBase organStateKnowledgeBase;
 	private ICharacterKnowledgeBase learnedCharacterKnowledgeBase;
-	
+
 	/**
 	 * @param corpus
 	 * @param prepositions
@@ -66,31 +66,39 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 		this.learnedCharacterKnowledgeBase = learnedCharacterKnowledgeBase;
 		this.compreppattern = Pattern.compile("("+compoundPrepWords.replaceAll("\\s+", "-")+")");
 	}
-	
-	
+
+
 	@Override
 	public List<Token> tag(List<Token> sentence) {
 		List<Token> posedSentence = new ArrayList<Token>();
 
 		for (int i = 0; i < sentence.size(); i++) {
-			
+
 			Token token = sentence.get(i);
 			String word = token.getContent();
 
 			String p = "";
-			
+
 			boolean isState = false;
 			boolean isOrgan = false;
 			boolean isVerb = false;
 			//if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
-			if(word.contains("~list~") || word.contains("_c_") || learnedCharacterKnowledgeBase.isState(word))
+			//don't send numbers, values to learnedCharacterKnowledgeBase
+			if(word.contains("~list~") || word.contains("_c_")  || 
+					((word.matches("[^a-z]+") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*"))){ //units could be mixed in the numbers
 				isState = true;
-			//isOrgan = organStateKnowledgeBase.isOrgan(word);
-			isOrgan = learnedCharacterKnowledgeBase.isEntity(word);
-			Match m = learnedCharacterKnowledgeBase.getCharacterName(word);
-			if(m!=null &&  m.getCategories()!=null && m.getCategories().matches("(^|.*?_)position_relational(_.*|$)")){
-				isVerb = true;
+			}else if(learnedCharacterKnowledgeBase.isState(word)){
+				isState = true;
+				Match m = learnedCharacterKnowledgeBase.getCharacterName(word);
+				if(m!=null &&  m.getCategories()!=null && m.getCategories().matches("(^|.*?_)position_relational(_.*|$)")){
+					isVerb = true;
+				}
+			}else {
+				//isOrgan = organStateKnowledgeBase.isOrgan(word);
+				isOrgan = learnedCharacterKnowledgeBase.isEntity(word);
 			}
+
+
 			Map<String, Set<String>> wordsToRoles = terminologyLearner
 					.getWordsToRoles();
 			if (word.length() > 0 && !word.matches("\\W")
@@ -102,7 +110,9 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 
 			//Hong TODO modifiertokens
 			Matcher mc = compreppattern.matcher(word);
-			if(word.equals("moreorless")) {
+			if(word.equals("lengths") || word.equals("length")){
+				posedSentence.add(new POSedToken(word, POS.NNS)); //stanford parser would sometimes take "lengths" as IN
+			}else if(word.equals("moreorless")) {
 				posedSentence.add(new POSedToken(word, POS.RB));
 			} else if (mc.matches()) {
 				posedSentence.add(new POSedToken(word, POS.IN));
@@ -133,15 +143,15 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 					|| (p.length() == 0 && isOrgan)) {
 				posedSentence.add(new POSedToken(word, POS.NN));
 			} else if (word.matches("(\\{?\\b" + roman + "\\b\\}?)")) {// mohan
-																		// code
-																		// to
-																		// mark
-																		// roman
-																		// numbers
-																		// {ii}
-																		// or ii
-																		// as
-																		// ii/NNS
+				// code
+				// to
+				// mark
+				// roman
+				// numbers
+				// {ii}
+				// or ii
+				// as
+				// ii/NNS
 				word = word.replaceAll("\\{|\\}", "");
 				posedSentence.add(new POSedToken(word, POS.NNS));
 			} else if(word.matches("\\d*.{0,1}\\d+")) {

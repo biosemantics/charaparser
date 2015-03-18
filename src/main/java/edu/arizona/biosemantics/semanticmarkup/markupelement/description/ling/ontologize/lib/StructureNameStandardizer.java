@@ -325,7 +325,7 @@ public class StructureNameStandardizer {
 					if(c.getConstraintId()!=null && c.getConstraintId().compareTo(idp)==0 &&
 							s.getId().compareTo(idw)==0 && c.getConstraint()!=null){
 						hasRelation = true;
-						if(possess.contains(c.getConstraint().substring(0, c.getConstraint().indexOf(" ")))) //first word in constraint string is in possess
+						if(possess.contains(c.getConstraint().contains(" ")? c.getConstraint().substring(0, c.getConstraint().indexOf(" ")): c.getConstraint())) //first word in constraint string is in possess
 							hasPossessRelation = true;
 					}
 				}

@@ -53,7 +53,7 @@ public class MyStateChunker extends AbstractChunker {
 	public MyStateChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-			ICharacterKnowledgeBase characterKnowledgeBase, IPOSKnowledgeBase posKnowledgeBase, ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
+			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
 				terminologyLearner, inflector, learnedCharacterKnowledgeBase);
 

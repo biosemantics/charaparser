@@ -163,7 +163,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.etcUser = etcUser;
 		this.useEmptyGlossary = useEmptyGlossary;
 		
-		normalizer.init();
+		//normalizer.init(); //moved after learn is complete so normalizer can read the results from learn
 		
 		Class.forName("com.mysql.jdbc.Driver");
 		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
@@ -250,6 +250,9 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		//Question TODO  all term category info are in the glossary, then why do we need terminologyLearner?
 		terminologyLearner.learn(descriptionsFiles, glossaryTable);
 		terminologyLearner.readResults(descriptionsFiles);
+		
+		normalizer.init();
+		
 
 		Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker = 
 				terminologyLearner.getSentencesForOrganStateMarker(); //sentence level markup: modifier##tag##sentence text
@@ -401,8 +404,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			// TODO Auto-generated catch block
 			log(LogLevel.ERROR, "Exception", e);
 		}
-	}
-	*/
+
 	
 	/**
 	 * notes: OTO Webservice should probably only return one term category list.

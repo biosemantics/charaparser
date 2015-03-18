@@ -27,7 +27,8 @@ public class ParentTagProvider {
 	 */
 	public String getParentTag(String source) {
 		String result =  this.parentTags.get(source);
-		result = result.replaceAll("\\[|\\]|>|<|(|)", "");
+		if(result!=null)
+			result = result.replaceAll("\\[|\\]|>|<|(|)", "");
 		return result;
 	}
 	

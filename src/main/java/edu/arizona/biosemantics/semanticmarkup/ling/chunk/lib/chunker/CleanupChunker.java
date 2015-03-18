@@ -67,7 +67,7 @@ public class CleanupChunker extends AbstractChunker {
 	public CleanupChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
 			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, @Named("SkipWords")String skipWords, 
-			@Named("MoreWords")String moreWords, @Named("NumberPattern") String numberPattern, IPOSKnowledgeBase posKnowledgeBase, 
+			@Named("MoreWords")String moreWords, @Named("NumberPattern") String numberPattern, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, 
 			@Named("PercentageWords")String percentage, @Named("DegreeWords") String degree, @Named("CountWords")String counts, 
 			@Named("TimesWords") String times, ICharacterKnowledgeBase characterKnowledgeBase, 
 			 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {

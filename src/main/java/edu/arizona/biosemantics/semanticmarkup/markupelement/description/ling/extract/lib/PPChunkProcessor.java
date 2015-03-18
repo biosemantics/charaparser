@@ -13,9 +13,11 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
@@ -78,7 +80,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			chunkListIterator.previous();
 		}
 
-		if(!chunk.containsChunkType(ChunkType.ORGAN) && (nextChunk==null || nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE))) {
+		if(!chunk.containsChunkType(ChunkType.ORGAN) && (nextChunk==null || nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE))) { //at flowering?
 			processingContextState.setClauseModifierContraint(chunk.getTerminalsText());
 			return result;
 		}
@@ -185,7 +187,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					//result.addAll(structures);
 				} else {
 					if(lastIsStructure){
-						//context on cutting first white
+						//context: on cutting first white
 						ArrayList<Chunk> mods = new ArrayList<Chunk> ();
 						mods.add(chunk);
 						processingContextState.setUnassignedModifiers(mods);
@@ -211,8 +213,12 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				processingContext.getCurrentState().setLastElements(newLastElements);
 				for(Chunk afterOrganChunk : afterOrganChunks) {
 					IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(afterOrganChunk.getChunkType());
-					if(chunkProcessor != null) 
+					if(chunkProcessor != null){ 
 						result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
+						processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+						processingContext.setCurrentState(processingContextState);
+						log(LogLevel.DEBUG, "restored current state after "+chunkProcessor.getClass()+" is run.");
+					}
 				}
 				processingContext.getCurrentState().setLastElements(lastElementsBackup);
 			}

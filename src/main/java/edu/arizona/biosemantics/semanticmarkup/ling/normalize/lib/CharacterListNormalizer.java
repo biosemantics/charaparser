@@ -431,7 +431,9 @@ public class CharacterListNormalizer{
 					}
 				}
 				t = t.replaceFirst("~$", "")+" ";
-				if(t.indexOf("ttt~list")>=0) t = t.replaceAll("~color.*?ttt~list", "");
+				/*if(t.indexOf("ttt~list")>=0){
+					t = t.replaceAll("~color.*?ttt~list", "");
+				}*/
 				chunkedTokens.set(start, t);
 				//if(this.printCharacterList){
 				//	System.out.println(this.src+":"+">>>"+t);

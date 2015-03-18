@@ -1,10 +1,12 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
 
 
 
@@ -68,7 +70,7 @@ public class CharacterListChunker extends AbstractChunker {
 		for(AbstractParseTree terminal : chunkCollector.getTerminals())  { 
 			String terminalsText = terminal.getTerminalsText();
 			
-			if(terminalsText.contains("~list~")) {
+			if(terminalsText.contains("~list~")) {//architecture~list~narrowly~to~broadly~secund~pyramidal~or~club-shaped
 				normalizeCharacterList(terminal, chunkCollector);
 			}
 			terminalsText = terminal.getTerminalsText();
@@ -182,11 +184,34 @@ public class CharacterListChunker extends AbstractChunker {
 		return; 
 	}
 
+	//coloration~list~yellow~to~orange-yellow~or~occasionally~{colorationttt~list~suffused~with~red}
+	//architecture~list~narrowly~to~broadly~secund~pyramidal~or~club-shaped	
 	private void normalizeCharacterList(AbstractParseTree terminal, ChunkCollector chunkCollector) {
 		String terminalsText = terminal.getTerminalsText();
 		
 		terminalsText = terminalsText.replaceAll("(^\\{|\\}$)", "");
-		String[] characterListParts = terminalsText.split("~list~");
+		String character = terminalsText.substring(0, terminalsText.indexOf("~list~"));
+		if(character.equals("colorationttt"))
+			character = character.replaceAll("ttt", "");
+		
+		String [] lists = terminalsText.split("(~?\\{|\\}~?)"); //in case where colorationttt~lists are embedded in the terminal
+		
+		ArrayList<String> modifierStateTokensList = new ArrayList<String>();
+		
+		for(String list: lists){
+			if(list.startsWith("colorationttt")){
+				modifierStateTokensList.add(list.replaceAll("^colorationttt~list~", "")); //keep colorationttt phrase as one word
+			}else{
+				list = list.replaceAll("^.*?~list~", "");
+				list = list.replaceAll("~", " ");
+				list = list.replaceAll(" punct ", " , ");
+				String[] modifierStateTokens = list.split("\\s");
+				modifierStateTokensList.addAll(Arrays.asList(modifierStateTokens));
+			}
+		}
+		
+		
+		/*String[] characterListParts = terminalsText.split("~list~");
 		String character = characterListParts[0];
 		if(character.equals("colorationttt"))
 			character = character.replaceAll("ttt", "");
@@ -197,7 +222,7 @@ public class CharacterListChunker extends AbstractChunker {
 		String[] modifierStateTokens = stateList.split("\\s");
 		List<String> modifierStateTokensList = Arrays.asList(modifierStateTokens);
 		//List<Chunk> modifierChunks = new LinkedList<Chunk>();
-		
+		*/
 		terminal.setPOS(POS.ADJP);
 		//chunkCollector.toString();
 	
@@ -215,7 +240,7 @@ public class CharacterListChunker extends AbstractChunker {
 		Chunk characterChunk = null;
 		LinkedHashSet<Chunk> toChunks = new LinkedHashSet<Chunk>();
 		boolean collectToChunks = false;
-		for(String modifierStateToken : modifierStateTokensList) {
+		for(String modifierStateToken : modifierStateTokensList) {//e.g. [narrowly, to, broadly, secund, pyramidal, or, club-shaped]
 			//disconnect connected color strings
 			modifierStateToken = modifierStateToken.replaceAll("_c_", " ");
 			
@@ -243,16 +268,25 @@ public class CharacterListChunker extends AbstractChunker {
 			}
 			
 			if(modifierStateToken.equals("to")) {
-				toChunks.add(characterChunk);
-				AbstractParseTree toTree = parseTreeFactory.create();
-				toTree.setPOS(POS.TO);
-				terminal.addChild(toTree);
-				AbstractParseTree to = parseTreeFactory.create();
-				to.setTerminalsText(modifierStateToken);
-				toTree.addChild(to);
-				toChunks.add(new Chunk(ChunkType.TO, to));
-				collectToChunks = true;
-				newState = false;
+				if(characterChunk!=null){
+					toChunks.add(characterChunk);
+					AbstractParseTree toTree = parseTreeFactory.create();
+					toTree.setPOS(POS.TO);
+					terminal.addChild(toTree);
+					AbstractParseTree to = parseTreeFactory.create();
+					to.setTerminalsText(modifierStateToken);
+					toTree.addChild(to);
+					toChunks.add(new Chunk(ChunkType.TO, to));
+					collectToChunks = true;
+					newState = false;
+				}else{//put "to" in the modifier chunk?
+					AbstractParseTree modifierTerminal = parseTreeFactory.create();
+					modifierTerminal.setTerminalsText(modifierStateToken);
+					modifiersTree.addChild(modifierTerminal);
+					Chunk characterStateChildChunk = new Chunk(ChunkType.MODIFIER, modifierTerminal);
+					characterStateChildChunks.add(characterStateChildChunk);
+					newState = false;
+				}
 			} else if(posKnowledgeBase.isAdverb(modifierStateToken)) {
 				if(modifiersTree == null) {
 					modifiersTree = parseTreeFactory.create();
@@ -278,7 +312,7 @@ public class CharacterListChunker extends AbstractChunker {
 					newState = false;
 				}*/
 				AbstractParseTree modifierTerminal = parseTreeFactory.create();
-				if(modifierStateToken.equals("moreorless"))
+				if(modifierStateToken.equals("moreorless"+""))
 					modifierStateToken = "more or less";
 				
 				modifierTerminal.setTerminalsText(modifierStateToken);
@@ -288,7 +322,7 @@ public class CharacterListChunker extends AbstractChunker {
 				//previousCharacter = null;
 				//previousStateTree = null;
 			} else { //!modifierStateToken.equals(",") && !modifierStateToken.equals("and") && !modifierStateToken.equals("or")posKnowledgeBase.isAdjective(modifierStateToken)
-				if(newState && (modifierStateToken.equals(",") || modifierStateToken.equals("and") || modifierStateToken.equals("or"))) {
+				if(newState && (modifierStateToken.equals(",") || modifierStateToken.equals("and") || modifierStateToken.equals("or") || modifierStateToken.equals("and/or"))) {
 					if(newState && modifierStateToken.equals(",")) {
 						AbstractParseTree punctTree = parseTreeFactory.create();
 						punctTree.setPOS(POS.PUNCT);
@@ -305,7 +339,7 @@ public class CharacterListChunker extends AbstractChunker {
 						ccTree.addChild(cc);
 						terminal.addChild(ccTree);
 						newState = true;
-					} else if(modifierStateToken.equals("or")) {
+					} else if(modifierStateToken.equals("or") ||modifierStateToken.equals("and/or")) {
 						toChunks.add(characterChunk); //treat or-node also as part of TO-chunk
 						AbstractParseTree ccTree = parseTreeFactory.create();
 						ccTree.setPOS(POS.CC);
@@ -338,15 +372,17 @@ public class CharacterListChunker extends AbstractChunker {
 					}*/
 					
 					AbstractParseTree stateTerminal = parseTreeFactory.create();
+			
 					stateTerminal.setTerminalsText(modifierStateToken);
 					statesTree.addChild(stateTerminal);
 					//chunkCollector.reindex(statesTree, stateTerminal);
 					Chunk stateChildChunk = stateTerminal;
 					stateChildChunks.add(stateChildChunk);
-					newState = true;
+					newState = true; //one state may contain multiple words
 				}
 			}
 		}
+		
 		//last one
 		Chunk stateChunk = new Chunk(ChunkType.STATE, stateChildChunks);
 		characterStateChildChunks.add(stateChunk);

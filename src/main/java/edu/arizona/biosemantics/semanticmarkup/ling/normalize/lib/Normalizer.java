@@ -3,17 +3,16 @@ package edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
-
 
 
 
@@ -28,11 +27,18 @@ import com.google.inject.name.Named;
 
 
 
+
+
+
+
+
+
 //import edu.arizona.biosemantics.oto.lite.beans.Term;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
@@ -46,7 +52,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
  * Normalizer implements a strategy to normalize text according to the previous version of charaparser
  */
 public abstract class Normalizer implements INormalizer {
-	
+
 	private String or = "_or_";
 	private String units;
 	private IGlossary glossary;
@@ -92,16 +98,20 @@ public abstract class Normalizer implements INormalizer {
 	//private Pattern charalistpattern2 = Pattern.compile("(([a-z-]+ )*([a-z-]+ )+([0-9a-z–\\[\\]\\+-]+ly )*[& ]*([@,;\\.] )+\\s*)(([a-z-]+ |[0-9a-z–\\[\\]\\+-]+ly )*(\\3)+([0-9a-z–\\[\\]\\+-]+ly )*[@,;\\.%\\[\\]\\(\\)&#a-z].*)");//merely shape, @ shape
 	private Pattern vaguenumberptn1 = Pattern.compile("(.*?)\\b((?:equal[ _-]to|(?:more|greater|less|fewer) than|or| )+) ([\\d.]+)(.*)");
 	private Pattern vaguenumberptn2 = Pattern.compile("(.*?)0(-[\\d.]+)( \\w+ )(?:and|but) ([\\d.]+)\\+(.*)");
+	private Pattern conjunctionPtn = Pattern.compile("(.*?)\\b((and|or|to| )+)$");
 	private String[] modifierphrases;
 	private HashSet<String> modifiertokens = new HashSet<String>();
 	private Pattern compoundPPptn;    
 	private ParentTagProvider parentTagProvider;
 	private String adjnounslist;
-	private Map<String, String> adjnounsent;
+	//private Map<String, String> adjnounsent;
 	private Map<String, AdjectiveReplacementForNoun> replacements;
 	private CharacterListNormalizer cln;
+	private String adjNouns;
+	private Hashtable<String, String> adjNounCounterParts;
 	
-	
+
+
 	/**
 	 * @param glossary
 	 * @param units
@@ -138,7 +148,7 @@ public abstract class Normalizer implements INormalizer {
 	@Inject
 	public Normalizer(IGlossary glossary, @Named("Units") String units, @Named("NumberPattern")String numberPattern,
 			@Named("Singulars")HashMap<String, String> singulars, @Named("Plurals")HashMap<String, String> plurals, 
-			IPOSKnowledgeBase posKnowledgeBase, @Named("LyAdverbpattern") String lyAdverbPattern,
+			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, @Named("LyAdverbpattern") String lyAdverbPattern,
 			@Named("P1")String p1, @Named("P2")String p2, @Named("P3")String p3, @Named("P4")String p4, @Named("P5")String p5, 
 			@Named("P6")String p6, @Named("P7")String p7, @Named("P75")String p75, @Named("P8")String p8, 
 			ITerminologyLearner terminologyLearner, 
@@ -156,7 +166,9 @@ public abstract class Normalizer implements INormalizer {
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			/*IOrganStateKnowledgeBase organStateKnowledgeBase, */
 			IInflector inflector, 
-			@Named("CompoundPrepWords")String compoundPPptn) {
+			@Named("CompoundPrepWords")String compoundPPptn, 
+			@Named("AdjNouns") String adjNouns, 
+			@Named("AdjNounCounterParts") Hashtable<String, String> adjNounCounterParts) {
 		this.units = units; 
 		this.areapattern = Pattern.compile("(.*?)([²½¼\\d\\.()+-]+ ?"+units+"?\\s*[x×]\\S*\\s*[²½¼\\d\\.()+-]+ "+units+"\\s*[x×]?(\\S*\\s*[²½¼\\d\\.()+-]+ "+units+")?)(.*)");
 		this.numberPattern = numberPattern;
@@ -192,40 +204,51 @@ public abstract class Normalizer implements INormalizer {
 		this.compoundPPptn = Pattern.compile("(.*?)\\b("+compoundPPptn+")\\b(.*)");	
 		this.modifierphrases = advModifiers.split("\\s*\\|\\s*");	
 		this.omitUnits = Pattern.compile("(.*?\\b)([\\d\\.]+\\s+)((?:and|or|,)\\s+[\\d\\.]+\\s*("+units+")\\b.*)");
+		this.adjNouns = adjNouns;
+		this.adjNounCounterParts = adjNounCounterParts;
 	}
-	
+
 	public void init(){
-		adjnounsent = terminologyLearner.getAdjNounSent();
-		List<String> adjnouns = terminologyLearner.getAdjNouns();
-		if(adjnouns!=null && adjnounsent!=null){
-			Collections.sort(adjnouns); 
-			adjnounslist = "";
-			for(int i = adjnouns.size()-1; i>=0; i--) {
-				String adjnoun = adjnouns.get(i);
-				if(adjnoun.contains("or") || adjnoun.contains("and")) {
-					String[] parts = adjnoun.split("or|and");
-					for(String part : parts) 
-						adjnounslist += part.trim()+"|";			
-				} else 
-					adjnounslist += adjnoun+"|";			
-			}
-			adjnounslist = adjnounslist.trim().length()==0? null : adjnounslist.replaceFirst("(\\|+$|^\\|+)", "").replaceAll("\\|+", "|");
+
+		//adjnounsent = terminologyLearner.getAdjNounSent(); //inner => [petal]
+		List<String> adjnouns = terminologyLearner.getAdjNouns(); //inner, outer
+
+		Collections.sort(adjnouns); 
+		adjnounslist = "";
+		for(int i = adjnouns.size()-1; i>=0; i--) {
+			String adjnoun = adjnouns.get(i);
+			if(adjnoun.contains("or") || adjnoun.contains("and")) {
+				String[] parts = adjnoun.split("\\bor|and\\b");
+				for(String part : parts) 
+					adjnounslist += part.trim()+"|";			
+			} else 
+				adjnounslist += adjnoun+"|";			
 		}
+
+		adjnounslist = adjnounslist.trim().replaceFirst("(\\|+$|^\\|+)", "").replaceAll("\\|+", "|");
+		adjnounslist = (adjnounslist.isEmpty()? "" : "|")+adjNouns; //"inner|outer|middle|mid|cauline|distal|outermost";
+
 		replacements = 
 				terminologyLearner.getAdjectiveReplacementsForNouns();
-		
+
 		for(String mp: this.modifierphrases){
 			this.modifiertokens.add(mp.replaceAll("\\s+", "#"));
 		}
-		
+
 		cln = CharacterListNormalizer.getInstance(characterKnowledgeBase/*, organStateKnowledgeBase*/);
+		
 	}
-	
+
 	public Set<String> getModifierTokens(){
 		return this.modifiertokens;
 	}
 	@Override
-	public String normalize(String str, String tag, String modifier, String source) {			
+	public String normalize(String str, String tag, String modifier, String source, Hashtable<String, String> prevMissingOrgan) { //source <> source in db
+		//Hashtable<String, String> prevMissingOrgan = new Hashtable<String, String>(); //hold two entries only -- the missing organ found for the last immediate sentence
+		//prevMissingOrgan.put("source", "");
+		//prevMissingOrgan.put("missing", "");
+		//fixInnerOnSentences(str, adjnounslist, source, prevMissingOrgan);
+		
 		for(String modifierphrase: modifierphrases){
 			str = str.replaceAll(modifierphrase, modifierphrase.replace(" ", "#"));
 		}
@@ -252,7 +275,7 @@ public abstract class Normalizer implements INormalizer {
 
 		//str = stringColors(str);
 		str = connectColors(str);
-        //deal with numbers
+		//deal with numbers
 
 		str = ratio2number(str);
 		str = toNumber(str);
@@ -260,34 +283,40 @@ public abstract class Normalizer implements INormalizer {
 		str = formatNumericalRange(str, source);
 		//text = text.replaceAll("\\bca\\s*\\.", "ca");
 		str = stringCompoundPP(str);		
-		
+
 		String backupStr = str;
-		str = normalizeInner(str, tag, source);
+		
+		str = normalizeSpacesRoundNumbers(str);
+		
+		/*Hashtable<String, String> prevMissingOrgan = new Hashtable<String, String>(); //hold two entries only -- the missing organ found for the last immediate sentence
+		prevMissingOrgan.put("source", source);
+		prevMissingOrgan.put("missing", "");*/
+		str = normalizeInner(str, tag, source, prevMissingOrgan);
 		if(str.equals(backupStr))
 			str = normalizeInnerNew(str, tag, source);
 		//if(!modifier.trim().isEmpty())
 		//	str = addModifier(str, modifier, tag);
-		
-		boolean containsArea = false;
-		String strcp = str;
-		str = normalizeSpacesRoundNumbers(str);
-		
-		
+
+		//boolean containsArea = false;
+		//String strcp = str;
+
 		//32 and 21 microns => 32 microns and 21 microns
 		str = restoreOmittedUnits(str); //done after normalizeSpacesRoundNumbers
-		
+
 		/*str = str.replaceAll("\\b(?<=\\d+) \\. (?=\\d+)\\b", "."); //2 . 5 =>2.5
 		str = str.replaceAll("(?<=\\d)\\s+/\\s+(?=\\d)", "/"); // 1 / 2 => 1/2
 		str = str.replaceAll("(?<=\\d)\\s+[�-�]\\s+(?=\\d)", "-"); // 1 - 2 => 1-2*/
 		/*if(str.indexOf(" -{")>=0){//1�2-{pinnately} or -{palmately} {lobed} => {1�2-pinnately-or-palmately} {lobed}
 			str = str.replaceAll("\\s+or\\s+-\\{", "-or-").replaceAll("\\s+to\\s+-\\{", "-to-").replaceAll("\\s+-\\{", "-{");
 		}*/
-		//TODO: Hong [_-]?  _or_?
+		//turn heads disciform , discoid , radiate , radiant , or quasi-radiate ,-radiant , or-liguliflorous . 3/16/15
+		//to heads disciform , discoid , radiate , radiant , or quasi-radiate ,-radiant ,-or-liguliflorous . TODO: didn't help with the parsing as ',' breaks up the character in stanford parser.
 		if(str.matches(".*?-(or|to)\\b.*") || str.matches(".*?\\b(or|to)-.*") ){//1�2-{pinnately} or-{palmately} {lobed} => {1�2-pinnately-or-palmately} {lobed}
 			str = str.replaceAll("-or\\s+", "-or-").replaceAll("\\s+or-", "-or-").replaceAll("-to\\s+", "-to-").replaceAll("\\s+to-", "-to-");
 			//str = str.replaceAll("\\}?-or\\s+\\{?", "-or-").replaceAll("\\}?\\s+or-\\{?", "-or-").replaceAll("\\}?-to\\s+\\{?", "-to-").replaceAll("\\}?\\s+to-\\{?", "-to-").replaceAll("-or\\} \\{", "-or-").replaceAll("-to\\} \\{", "-to-");
 		}
 		//{often} 2-, 3-, or 5-{ribbed} ; =>{often} {2-,3-,or5-ribbed} ;  635.txt-16
+		//what about (1-), 3-, or (5-) nerved?
 		Matcher m = hyphenedtoorpattern.matcher(str); //TODO: _ribbed not in local learned terms set. why?
 		while(m.matches()){
 			String possibleCharacterState = m.group(5);
@@ -300,9 +329,9 @@ public abstract class Normalizer implements INormalizer {
 			} else 
 				break;
 		}
-		
 
-		
+
+
 		str = str.replaceAll("-+", "-");
 		str = str.replaceAll("(?<![\\d(\\[–—-]\\s?)[–—-]+\\s*(?="+numberpattern+"\\s+\\W?("+units+")\\W?)", " to "); //fna: tips -2.5 {mm}
 		//if(!scp.equals(str)){
@@ -310,44 +339,44 @@ public abstract class Normalizer implements INormalizer {
 		//}
 
 		//ArrayList<String> chunkedTokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
-    	str = normalizemodifier(str);//shallowly to deeply pinnatifid: this should be done before other normalization that involved composing new tokens using ~
+		str = normalizemodifier(str);//shallowly to deeply pinnatifid: this should be done before other normalization that involved composing new tokens using ~
 		//position list does not apply to FNA.			
 		//str = normalizePositionList(str); //TODO Hong 
 		str = normalizeCountList(str);
 
 		//lookupCharacters(str);//populate charactertokens
 		ArrayList<String> characterTokensReversed = cln.lookupCharacters(str, false);//false: treating -ly as %
-        if(characterTokensReversed.contains("color") || characterTokensReversed.contains("coloration")){
-        	str = normalizeColorPatterns(str, characterTokensReversed);
-        	//lookupCharacters(str);
-        }
-        //lookupCharacters(str, true); //treating -ly as -ly
-        if(str.indexOf(" to ")>=0 ||str.indexOf(" or ")>=0){
-        	//if(this.printCharacterList){
-				//log(LogLevel.DEBUG, str);
+		if(characterTokensReversed.contains("color") || characterTokensReversed.contains("coloration")){
+			str = normalizeColorPatterns(str, characterTokensReversed);
+			//lookupCharacters(str);
+		}
+		//lookupCharacters(str, true); //treating -ly as -ly
+		if(str.indexOf(" to ")>=0 ||str.indexOf(" or ")>=0 || str.indexOf(" and/or ")>=0){
+			//if(this.printCharacterList){
+			//log(LogLevel.DEBUG, str);
 			//}
-        	//str = normalizeCharacterLists(str); //a set of states of the same character connected by ,/to/or => {color-blue-to-red}
-        	str = cln.normalizeParentheses(str); 
-        }
+			//str = normalizeCharacterLists(str); //a set of states of the same character connected by ,/to/or => {color-blue-to-red}
+			str = cln.normalizeParentheses(str); 
+		}
 
-        if(str.matches(".*? as\\s+[\\w]+\\s+as .*")){
-           str = normalizeAsAs(str);
-        }
-        
+		if(str.matches(".*? as\\s+[\\w]+\\s+as .*")){
+			str = normalizeAsAs(str);
+		}
 
-        
-        /*if(str.matches(".*?(?<=[a-z])/(?=[a-z]).*")){ //tooth/lobe =>tooth-lobe TODO Hong?
+
+
+		/*if(str.matches(".*?(?<=[a-z])/(?=[a-z]).*")){ //tooth/lobe =>tooth-lobe TODO Hong?
         	str = str.replaceAll("(?<=[a-z])/(?=[a-z])", "-");
         }*/
-        
-        
-        //10-20(-38) {cm}�6-10 {mm} 
-        
+
+
+		//10-20(-38) {cm}�6-10 {mm} 
+
 		//try{
-			String strcp2 = str;
-			
-			String strnum = null;
-			/*
+		String strcp2 = str;
+
+		String strnum = null;
+		/*
 			//if(str.indexOf("}�")>0){//{cm}�
       		if(str.indexOf("�")>0){
 				containsArea = true;
@@ -355,82 +384,82 @@ public abstract class Normalizer implements INormalizer {
 				str = area[0]; //with complete info
 				strnum = area[1]; //contain only numbers
 			}
-			*/
-			
-	        //deal with (3) as bullet
-			m = bulletpattern.matcher(str.trim());
-			if(m.matches()){
-				str = m.group(3);
+		 */
+
+		//deal with (3) as bullet
+		m = bulletpattern.matcher(str.trim());
+		if(m.matches()){
+			str = m.group(3);
+		}
+		if(str.indexOf("±")>=0){
+			str = str.replaceAll("±(?!~[a-z])","moreorless").replaceAll("±(?!\\s+\\d)","moreorless");
+		}
+		/*to match {more} or {less}*/
+		if(str.matches(".*?\\bmore\\s+or\\s+less\\b?.*")){
+			str = str.replaceAll("more\\s+or\\s+less", "moreorless");
+		}
+		//if(str.matches(".*?\\bin\\s+[a-z_<>{} -]+\\s+[<{]?view[}>]?\\b.*")){//ants: "in full-face view"
+		//if(str.matches(".*?\\bin\\s+[a-z_<>{} -]*\\s*[<{]?(view|profile)[}>]?\\b.*")){
+		if(str.matches(".*\\b(in|at)\\b.*?\\b(view|profile|closure)\\b.*")){
+			Matcher vm = viewptn.matcher(str);
+			while(vm.matches()){
+				str = vm.group(1)+" "+vm.group(2).replaceAll("\\s+", "-")+" "+vm.group(3); 
+				vm = viewptn.matcher(str);
 			}
-			if(str.indexOf("±")>=0){
-				str = str.replaceAll("±(?!~[a-z])","moreorless").replaceAll("±(?!\\s+\\d)","moreorless");
-			}
-			/*to match {more} or {less}*/
-			if(str.matches(".*?\\bmore\\s+or\\s+less\\b?.*")){
-				str = str.replaceAll("more\\s+or\\s+less", "moreorless");
-			}
-			//if(str.matches(".*?\\bin\\s+[a-z_<>{} -]+\\s+[<{]?view[}>]?\\b.*")){//ants: "in full-face view"
-			//if(str.matches(".*?\\bin\\s+[a-z_<>{} -]*\\s*[<{]?(view|profile)[}>]?\\b.*")){
-			if(str.matches(".*\\b(in|at)\\b.*?\\b(view|profile|closure)\\b.*")){
-				Matcher vm = viewptn.matcher(str);
-				while(vm.matches()){
-					str = vm.group(1)+" "+vm.group(2).replaceAll("\\s+", "-")+" "+vm.group(3); 
-					vm = viewptn.matcher(str);
-				}
-			}
-			
-			if(str.indexOf("×")>0 || str.matches(".*?[\\d)²½¼]\\s*\\b?("+units+")?\\b?\\s*x\\s*[(\\d²½¼].*")){ 
-				containsArea = true; //½ x
-				String[] area = normalizeArea(str); //here × and x are standardized to ×. 
-				str = area[0]; //with complete info
-				strnum = area[1]; //like str but with numerical expression normalized
-			}
+		}
+
+		if(str.indexOf("×")>0 || str.matches(".*?[\\d)²½¼]\\s*\\b?("+units+")?\\b?\\s*x\\s*[(\\d²½¼].*")){ 
+			//containsArea = true; //½ x
+			String[] area = normalizeArea(str); //here × and x are standardized to ×. 
+			str = area[0]; //with complete info
+			strnum = area[1]; //like str but with numerical expression normalized
+		}
 
 
-			//str = handleBrackets(str);
+		//str = handleBrackets(str);
 
-			//str = Utilities.handleBrackets(str);
-			if(str.matches(".*?\\d.*")){
-				str = normalizeVagueNumbers(str); //more than 5, less than 5
-			}
-			//stmt.execute("update "+this.tableprefix+"_markedsentence set rmarkedsent ='"+str+"' where source='"+src+"'");	
-			
-			/*if(containsArea){
+		//str = Utilities.handleBrackets(str);
+		if(str.matches(".*?\\d.*")){
+			str = normalizeVagueNumbers(str); //more than 5, less than 5
+		}
+		//stmt.execute("update "+this.tableprefix+"_markedsentence set rmarkedsent ='"+str+"' where source='"+src+"'");	
+
+		/*if(containsArea){
 				str = strnum;
 			}*/
-			
-			//leave threeing out as multiple tokens can be given to sp and protect them from being split up 
-			//str = threeingSentence(str);
-			if(hasUnmatchedBrackets(str)){
-				log(LogLevel.DEBUG, "unmatched: "+str);
-			}
-	            //if(strcp.compareTo(str)!=0){
-        	//   log(LogLevel.DEBUG, "orig sent==>"+ strcp);
-        	//   log(LogLevel.DEBUG, "rmarked==>"+ strcp2);
-        	//   log(LogLevel.DEBUG, "threed-sent==>"+ str);
-			//}
-           //str = str.replaceAll("}>", "/NN").replaceAll(">}", "/NN").replaceAll(">", "/NN").replaceAll("}", "/JJ").replaceAll("[<{]", "");
-		
+
+		//leave threeing out as multiple tokens can be given to sp and protect them from being split up 
+		//str = threeingSentence(str);
+		if(hasUnmatchedBrackets(str)){
+			log(LogLevel.DEBUG, "unmatched: "+str);
+		}
+		//if(strcp.compareTo(str)!=0){
+		//   log(LogLevel.DEBUG, "orig sent==>"+ strcp);
+		//   log(LogLevel.DEBUG, "rmarked==>"+ strcp2);
+		//   log(LogLevel.DEBUG, "threed-sent==>"+ str);
+		//}
+		//str = str.replaceAll("}>", "/NN").replaceAll(">}", "/NN").replaceAll(">", "/NN").replaceAll("}", "/JJ").replaceAll("[<{]", "");
+
 		//str = str.replaceAll("\\{", "").replaceAll("\\}", "");//Hong TODO {}, remove }> from reg exps.
-		
+
 		/*if(!tag.equals("ditto"))
 			this.parentTag = tag;
 		this.previousSentenceParentTag = this.parentTag;*/
-			str = str.trim();
-			if(str.startsWith("with or without ") && str.endsWith(";")){
-				//this sentence can not be terminated with a semicolon. If it does, Standford Parser will tag the first with/RB (should be with/IN). 
-				//Use period, comma, or non punct can avoid the problem. 
-				str = str.replaceFirst(";$", "").trim();
-			}
+		str = str.trim();
+		if(str.startsWith("with or without ") && str.endsWith(";")){
+			//this sentence can not be terminated with a semicolon. If it does, Standford Parser will tag the first with/RB (should be with/IN). 
+			//Use period, comma, or non punct can avoid the problem. 
+			str = str.replaceFirst(";$", "").trim();
+		}
 		return str;
 	}
-	
+
 	/**
 	 * 32 and 21 microns => 32 microns and 21 microns
 	 * @param str
 	 * @return
 	 */
-    private String restoreOmittedUnits(String str) {
+	private String restoreOmittedUnits(String str) {
 		while(str.matches(this.omitUnits.toString())){ //= Pattern.compile("(.*?\\b)([\\d\\.]+\\s+)((?:and|or|,)\\s+[\\d\\.]+\\s*("+units+")\\b.*)");
 			Matcher m = omitUnits.matcher(str);
 			if(m.matches())
@@ -482,22 +511,22 @@ public abstract class Normalizer implements INormalizer {
 	/*
 	 * Handles the compound prepositions
 	 */
-	 private String stringCompoundPP(String text) {
-	        boolean did = false;
-	        String result = "";
-	        Matcher m = compoundPPptn.matcher(text);
-	        while(m.matches()){
-	            String linked = m.group(2).replaceAll("\\s+", "-");
-	            result += m.group(1)+ linked;
-	            text = m.group(3);
-	            m = compoundPPptn.matcher(text);
-	            did = true;
-	        }
-	        result += text;
-	        if(did) log(LogLevel.DEBUG, "[compound pp]:"+result);
-	        return result;
-	    }
-	
+	private String stringCompoundPP(String text) {
+		boolean did = false;
+		String result = "";
+		Matcher m = compoundPPptn.matcher(text);
+		while(m.matches()){
+			String linked = m.group(2).replaceAll("\\s+", "-");
+			result += m.group(1)+ linked;
+			text = m.group(3);
+			m = compoundPPptn.matcher(text);
+			did = true;
+		}
+		result += text;
+		if(did) log(LogLevel.DEBUG, "[compound pp]:"+result);
+		return result;
+	}
+
 
 	/**
 	 * from 5-6 to 10 => 5-10
@@ -532,7 +561,7 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return text.replaceAll("\\s+", " ").trim();
 	}
-	
+
 	/**
 	 * deal with: to-range such as "to 3 cm", "to 24 × 5 mm", "to 2 . 7 × 1 . 7 – 2 mm", "3 – 20 ( – 25 )" 
 	 * text = text.replaceAll(" (up )?to (?=[\\d\\. ]{1,6} )", " 0 - "); // <trees> to 3 cm => <trees> 0 - 3 cm: works for case 1,  3, (case 4 should not match)
@@ -554,12 +583,12 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return text.replaceAll("TO", "to");
 	}
-	
+
 	private String normalizeInnerNew(String str, String tag, String source) {
 
 		if(replacements!=null && replacements.containsKey(source)) {
 			AdjectiveReplacementForNoun replacement = replacements.get(source);
-			
+
 			String newString = "";
 			String remainder = str;
 			while(!remainder.isEmpty()) {
@@ -573,8 +602,8 @@ public abstract class Normalizer implements INormalizer {
 					String singular = this.inflector.getSingular(possibleNoun);
 					String plural = this.inflector.getPlural(possibleNoun);
 					if(!possibleNoun.equals(replacement.getNoun()) &&
-						!singular.equals(replacement.getNoun()) &&
-						!plural.equals(replacement.getNoun())) {
+							!singular.equals(replacement.getNoun()) &&
+							!plural.equals(replacement.getNoun())) {
 						newString += remainder.substring(0, j + replacement.getAdjective().length()) + " " + replacement.getNoun();
 					} else {
 						newString += remainder.substring(0, j + replacement.getAdjective().length());
@@ -582,13 +611,13 @@ public abstract class Normalizer implements INormalizer {
 					remainder = remainder.substring(j + replacement.getAdjective().length());
 				}
 			}
-			
+
 			str = newString;
 			//str = str.replaceAll(replacement.getAdjective(), replacement.getNoun());
 		}
 		/*Map<String, String> tagAdjectiveMap = terminologyLearner.getAdjNounSent();
 		List<String> adjectiveList = terminologyLearner.getAdjNouns();
-		
+
 		for(String adjective : adjectiveList) {
 			if(str.contains(adjective)) {
 				//check that no other adjective contains the adjective and is 
@@ -623,32 +652,32 @@ public abstract class Normalizer implements INormalizer {
 	/*private String addModifier(String str, String modifier, String tag) {
 		String singularTag = inflector.getSingular(tag);
 		String pluralTag = inflector.getPlural(tag);
-		
+
 		//log(LogLevel.DEBUG, "modifier " + modifier + " tag " + tag);
 		Set<Integer> tagPositions = new HashSet<Integer>();
-		
+
 		int index = str.indexOf(singularTag);
 		while (index >= 0) {
 			tagPositions.add(index);
 		    index = str.indexOf(singularTag, index + 1);
 		}	
-			
+
 		index = str.indexOf(pluralTag);
 		while (index >= 0) {
 			tagPositions.add(index);
 		    index = str.indexOf(singularTag, index + 1);
 		}
-		
+
 		//int index = str.indexOf(tag);
 		for(Integer position : tagPositions) {
 		//if(!tagPositions.isEmpty()) {
 		//while (index >= 0) {
 			//log(LogLevel.DEBUG, "index " + index);
 			//tagPositions.add(index);
-				
+
 			String prefixStr = str.substring(0, position).trim();
 			String postfixStr = str.substring(position).trim();
-			
+
 			String[] prefixTokens = prefixStr.split("\\b");
 			//int searchIndex = index + 1;
 			//prefixStr.matches(".*\\b")
@@ -656,11 +685,11 @@ public abstract class Normalizer implements INormalizer {
 				str = prefixStr + " " + modifier + " " + postfixStr;
 				//searchIndex = index + 1 + modifier.length();
 			}
-			
+
 			//log(LogLevel.DEBUG, "search " + searchIndex);
 		    //index = str.indexOf(tag, searchIndex);
 		}
-				
+
 		//int i=0;
 		//for(Integer position : tagPositions) {
 		//	int correctPosition = position + (i * modifier.length());
@@ -674,7 +703,7 @@ public abstract class Normalizer implements INormalizer {
 		//		i++;
 		//	}
 		//}
-	
+
 		return str;
 	}*/
 
@@ -690,7 +719,7 @@ public abstract class Normalizer implements INormalizer {
 		String pt = "\\b(<=" + colors + ")\\s+(=" + colors + ")\\b";
 		Pattern p = Pattern.compile(pt);
 		Matcher m = p.matcher(text);
-		
+
 		while(m.find()){
 			String toReplace = m.group();
 			String replacement = m.group().replaceAll("\\s+", "_c_");
@@ -704,34 +733,38 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return text;
 	}
-	
+
 	private String colorsFromGloss() {
 		StringBuffer colorsString = new StringBuffer();
 		Set<String> allColors = new HashSet<String>();
-		
+
 		Set<String> colorations = glossary.getWords("coloration");
 		if(colorations!=null)
 			allColors.addAll(colorations);
 		Set<String> colors = glossary.getWords("color");
 		if(colors!=null)
 			allColors.addAll(colors);
-		
+
 		for(String color : allColors) {
 			color = color.trim();
 			//color = color.indexOf(" ") > 0? color.substring(color.lastIndexOf(" ") + 1) : color;
 			String[] clrs = color.split("[ -]+");
-			for(String clr: clrs)
-				colorsString.append(clr + "|");
+			for(String clr: clrs){
+				if(!clr.matches("and|or"))
+					colorsString.append(clr + "|");
+			}
 		}
 		return colorsString.toString().replaceFirst("\\|$", "");
 	}
 
 
-	private String normalizeInner(String str, String tag, String source) {
-				//if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")[^ly ]*\\b.*")) || str.matches(".*? of \\b(?:"+adjnounslist+")[^ly ]*\\b.*")){	
-		if(adjnounsent!=null && adjnounslist!=null && (adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")\\b.*"))){
-			str = fixInner(str, tag.replaceAll("\\W",""), adjnounslist, source);
+	private String normalizeInner(String str, String tag, String source, Hashtable<String, String> prevMissingOrgan) {
+		//if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")[^ly ]*\\b.*")) || str.matches(".*? of \\b(?:"+adjnounslist+")[^ly ]*\\b.*")){	
+		//if(adjnounsent!=null && adjnounslist!=null && (adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")\\b.*"))){
+		if(str.matches(".*?\\b(?:"+adjnounslist+")\\b.*")){
+			str = fixInner(str, adjnounslist, source, prevMissingOrgan);
 			//need to put tag in after the modifier inner
+			//fixInnerOnSentences(str, adjnounslist, source, prevMissingOrgan);
 		}
 		return str;
 	}
@@ -759,7 +792,7 @@ public abstract class Normalizer implements INormalizer {
 				if(m.group(2).startsWith(")")) left = "(";
 				if(m.group(2).startsWith("]")) left = "[";
 				if(left.length()>0){
-				    //m.group(1) = {pistillate} 9-47 ( -55 in <fruit> 
+					//m.group(1) = {pistillate} 9-47 ( -55 in <fruit> 
 					//find the starting brackets in temp and remove the braketed content
 					//if(temp.matches(".*?\\d$")){
 					text = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[ \\{\\}]", "") + m.group(4);
@@ -774,7 +807,7 @@ public abstract class Normalizer implements INormalizer {
 		result[0] = text.replaceAll("x(?=\\.?\\d)", "×");//{oblanceolate} , 15-70×30-150+cm , {flat}  
 		result[1] = text2.replaceAll("x(?=\\.?\\d)", "×");//{oblanceolate} , 15-70×30-150+ , {flat} 
 		return result;
-}
+	}
 
 	/**
 	 * 
@@ -801,7 +834,7 @@ public abstract class Normalizer implements INormalizer {
 		result[1] = text2;
 		return result;
 	}*/
-		
+
 	/**
 	 * make "suffused with dark blue and purple or green" one token
 	 * ch-ptn"color % color color % color @ color"
@@ -814,9 +847,9 @@ public abstract class Normalizer implements INormalizer {
 		String list = "";
 		String result = "";
 		String header = "ttt";
-		
+
 		ArrayList<String> chunkedTokens = new ArrayList<String>(Arrays.asList(str.split("\\s+")));
-		
+
 		for (int i = characterTokensReversed.size() - 1; i >= 0; i--) {
 			list += characterTokensReversed.get(i) + " ";
 		}
@@ -850,15 +883,15 @@ public abstract class Normalizer implements INormalizer {
 				t = t.replaceFirst("~$", "}");
 				t = distributePrep(t) + " ";
 				chunkedTokens.set(end - 1, t.trim());// "suffused with ..."
-															// will not form a
-															// list with other
-															// previously
-															// mentioned colors,
-															// but may with
-															// following colors,
-															// so put this list
-															// close to the next
-															// token.
+				// will not form a
+				// list with other
+				// previously
+				// mentioned colors,
+				// but may with
+				// following colors,
+				// so put this list
+				// close to the next
+				// token.
 				result += t;
 			}
 			// prepare for the next step
@@ -875,8 +908,8 @@ public abstract class Normalizer implements INormalizer {
 
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * 
 	 * @param t
@@ -890,7 +923,7 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return t;
 	}
-		
+
 	/**
 	 * replace "few or/to more" with "count~list~few~or/to~more" in the string update
 	 * this.chunkedTokens
@@ -907,7 +940,7 @@ public abstract class Normalizer implements INormalizer {
 			String rcount = "count~list~"
 					+ count.replaceAll(" ", "~");
 			str = str.substring(0, start).trim() +" "+rcount+str.substring(end).trim();
-			
+
 			/*
 			// synchronise this.chunkedtokens
 			// split by single space to get an accurate count to elements that
@@ -930,8 +963,8 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return str.replaceAll("\\s+", " ").trim();
 	}
-		
-		
+
+
 	/**
 	 * shallowly to deeply pinnatifid => //shallowly~to~deeply pinnatifid
 	 * @param str
@@ -957,7 +990,7 @@ public abstract class Normalizer implements INormalizer {
 		result += str;
 		return result;
 	}
-	
+
 	/*challenging cases: 
 	 * <petiole> 15 - 30 ( - 53 ) cm {long} ( 20 - 30 ( - 50 ) % of total <leaf> ) , <petiole> {glabrous} , {spinescent} for 20 - 35 % of {length} .*/
 	private String normalizeSpacesRoundNumbers(String sent) {
@@ -974,7 +1007,7 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("n\\s*=", "n=");
 		sent = sent.replaceAll("x\\s*=", "x=");
 		sent = sent.replaceAll("q\\s*=", "q=");
-		
+
 
 		//sent = sent.replaceAll("[–—-]", "-").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\[", " [ ").replaceAll("\\]", " ] ").replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").replaceAll("\\s+", " ").trim();
 		sent = sent.replaceAll("[~–—-]", "-").replaceAll("°", " ° ").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\s+", " ").trim();
@@ -985,25 +1018,25 @@ public abstract class Normalizer implements INormalizer {
 		}
 		sent = sent.replaceAll("\\b(?<=\\d+) \\. (?=\\d+)\\b", ".");//2 . 5 => 2.5
 		sent = sent.replaceAll("(?<=\\d)\\.(?=\\d[nx]=)", " . "); //pappi 0.2n=12
-		
-		
+
+
 		//sent = sent.replaceAll("(?<=\\d)\\s+/\\s+(?=\\d)", "/"); // 1 / 2 => 1/2
 		//sent = sent.replaceAll("(?<=[\\d()\\[\\]])\\s+[–—-]\\s+(?=[\\d()\\[\\]])", "-"); // 1 - 2 => 1-2
 		//sent = sent.replaceAll("(?<=[\\d])\\s+[–—-]\\s+(?=[\\d])", "-"); // 1 - 2 => 1-2
-		
+
 		//4-25 [ -60 ] => 4-25[-60]: this works only because "(text)" have already been removed from sentence in perl program
 		sent = sent.replaceAll("\\(\\s+(?=[\\d\\+\\-%])", "("). //"( 4" => "(4"
-		replaceAll("(?<=[\\d\\+\\-%])\\s+\\((?!\\s?[{<a-zA-Z])", "("). //" 4 (" => "4("
-		replaceAll("(?<![a-zA-Z}>]\\s?)\\)\\s+(?=[\\d\\+\\-%])", ")"). //") 4" => ")4"
-		replaceAll("(?<=[\\d\\+\\-%])\\s+\\)", ")"). //"4 )" => "4)"
-		replaceAll("\\((?=\\d+-\\{)", "( "); //except for ( 4-{angled} )
-		
+				replaceAll("(?<=[\\d\\+\\-%])\\s+\\((?!\\s?[{<a-zA-Z])", "("). //" 4 (" => "4("
+				replaceAll("(?<![a-zA-Z}>]\\s?)\\)\\s+(?=[\\d\\+\\-%])", ")"). //") 4" => ")4"
+				replaceAll("(?<=[\\d\\+\\-%])\\s+\\)", ")"). //"4 )" => "4)"
+				replaceAll("\\((?=\\d+-\\{)", "( "); //except for ( 4-{angled} )
+
 		sent = sent.replaceAll("\\[\\s+(?=[\\d\\+\\-%])", "["). //"[ 4" => "[4", not [ -subpalmately ]
-		replaceAll("(?<=[\\d\\+\\-%])\\s+\\[(?!\\s?[{<a-zA-Z])", "["). //" 4 [" => "4["
-		replaceAll("(?<![a-zA-Z}>]\\s?)\\]\\s+(?=[\\d\\+\\-%])", "]"). //"] 4" => "]4"
-		replaceAll("(?<=[\\d\\+\\-%])\\s+\\]", "]"). //"4 ]" => "4]"
-		replaceAll("\\[(?=\\d+-\\{)", "[ "); //except for [ 4-{angled} ]
-		
+				replaceAll("(?<=[\\d\\+\\-%])\\s+\\[(?!\\s?[{<a-zA-Z])", "["). //" 4 [" => "4["
+				replaceAll("(?<![a-zA-Z}>]\\s?)\\]\\s+(?=[\\d\\+\\-%])", "]"). //"] 4" => "]4"
+				replaceAll("(?<=[\\d\\+\\-%])\\s+\\]", "]"). //"4 ]" => "4]"
+				replaceAll("\\[(?=\\d+-\\{)", "[ "); //except for [ 4-{angled} ]
+
 		/*Pattern p = Pattern.compile("(.*?)(\\d*)\\s+\\[\\s+([ –—+\\d\\.,?×/-]+)\\s+\\]\\s+(\\d*)(.*)");  //4-25 [ -60 ] => 4-25[-60]. ? is for chromosome count
 		Matcher m = p.matcher(sent);
 		while(m.matches()){
@@ -1018,7 +1051,7 @@ public abstract class Normalizer implements INormalizer {
 			sent = m.group(1)+ (m.group(2).length()>0? m.group(2):" ")+"("+m.group(3).replaceAll("\\s*[–—-]\\s*", "-")+")"+(m.group(4).length()>0? m.group(4):" ")+m.group(5);
 			m = p.matcher(sent);
 		}*/
-		
+
 		sent = sent.replaceAll("\\s+/\\s+", "/"); //and/or 1/2
 		sent = sent.replaceAll("\\s+×\\s+", "×");
 		sent = sent.replaceAll("\\s*\\+\\s*", "+"); // 1 + => 1+
@@ -1036,14 +1069,14 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("\\(\\s*\\?\\s*\\)","");
 		//end mohan code
 		sent = sent.replaceAll("(?<=[xnq]=)\\s+(?=[\\d\\[(])", "");//2n= 44 => 2n=44
-	
+
 		//make sure brackets that are not part of a numerical expression are separated from the expression by a space
 		if(sent.contains("(") || sent.contains(")")) sent = normalizeBrackets(sent, '(');
 		if(sent.contains("[") || sent.contains("]")) sent = normalizeBrackets(sent, '[');
-		
+
 		sent = sent.replaceAll("\\[(?=-[a-z])", "[ ");//[-subpalmately ] => [ -subpalmately ]
 		sent = sent.replaceAll("\\((?=-[a-z])", "( ");//[-subpalmately ] => [ -subpalmately ]
-		
+
 		sent = sent.replaceAll("\\bav\\s*\\.", "av.");
 		return sent;
 	}
@@ -1070,20 +1103,20 @@ public abstract class Normalizer implements INormalizer {
 		}
 		sent = sent.replaceAll("\\b(?<=\\d+) \\. (?=\\d+)\\b", ".");//2 . 5 => 2.5
 		sent = sent.replaceAll("(?<=\\d)\\.(?=\\d[nx]=)", " . "); //pappi 0.2n=12
-		
+
 		//4-25 [ -60 ] => 4-25[-60]: this works only because "(text)" have already been removed from sentence in perl program
 		sent = sent.replaceAll("\\(\\s+(?=[\\d\\+\\-%])", "("). //"( 4" => "(4"
 		replaceAll("(?<=[\\d\\+\\-%])\\s+\\((?!\\s?[{<a-zA-Z])", "("). //" 4 (" => "4("
 		replaceAll("(?<![a-zA-Z}>]\\s?)\\)\\s+(?=[\\d\\+\\-%])", ")"). //") 4" => ")4"
 		replaceAll("(?<=[\\d\\+\\-%])\\s+\\)", ")"). //"4 )" => "4)"
 		replaceAll("\\((?=\\d+-\\{)", "( "); //except for ( 4-{angled} )
-		
+
 		sent = sent.replaceAll("\\[\\s+(?=[\\d\\+\\-%])", "["). //"[ 4" => "[4", not [ -subpalmately ]
 		replaceAll("(?<=[\\d\\+\\-%])\\s+\\[(?!\\s?[{<a-zA-Z])", "["). //" 4 [" => "4["
 		replaceAll("(?<![a-zA-Z}>]\\s?)\\]\\s+(?=[\\d\\+\\-%])", "]"). //"] 4" => "]4"
 		replaceAll("(?<=[\\d\\+\\-%])\\s+\\]", "]"). //"4 ]" => "4]"
 		replaceAll("\\[(?=\\d+-\\{)", "[ "); //except for [ 4-{angled} ]
-		
+
 		sent = sent.replaceAll("\\s+/\\s+", "/"); //and/or 1/2
 		sent = sent.replaceAll("\\s+×\\s+", "×");
 		sent = sent.replaceAll("\\s*\\+\\s*", "+"); // 1 + => 1+
@@ -1101,13 +1134,13 @@ public abstract class Normalizer implements INormalizer {
 		//make sure brackets that are not part of a numerical expression are separated from the expression by a space
 		if(sent.contains("(") || sent.contains(")")) sent = normalizeBrackets(sent, '(');
 		if(sent.contains("[") || sent.contains("]")) sent = normalizeBrackets(sent, '[');
-		
+
 		sent = sent.replaceAll("\\[(?=-[a-z])", "[ ");//[-subpalmately ] => [ -subpalmately ]
 		sent = sent.replaceAll("\\((?=-[a-z])", "( ");//[-subpalmately ] => [ -subpalmately ]
 		return sent;
 	}*/
-	
-	
+
+
 	private String ratio2number(String sent){
 		String small = "\\b(?:one|two|three|four|five|six|seven|eight|nine)\\b";
 		String big = "\\b(?:half|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)s?\\b";
@@ -1133,7 +1166,7 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("(?<=\\d)\\s*to\\s*(?=\\d)", "-");
 		return sent;
 	}
-	
+
 	private String toNumber(String ratio){
 		ratio = ratio.replaceAll("\\btwo\\b", "2");
 		ratio = ratio.replaceAll("\\bthree\\b", "3");
@@ -1145,7 +1178,7 @@ public abstract class Normalizer implements INormalizer {
 		ratio = ratio.replaceAll("\\bnine\\b", "9");
 		return ratio;
 	}
-	
+
 	private String toRatio(String ratio){
 		ratio = ratio.replaceAll("\\bone\\b", "1/");
 		ratio = ratio.replaceAll("\\btwo\\b", "2/");
@@ -1168,12 +1201,12 @@ public abstract class Normalizer implements INormalizer {
 		ratio = ratio.replaceAll("-", "").replaceAll("\\s", "");
 		return ratio;
 	}
-	
+
 	private String normalizeBrackets(String sent, char bracket) {
 		char l ='('; char r=')';
 		switch (bracket){
-			case '(': l = '('; r=')'; break;
-			case '[': l = '['; r=']'; break;
+		case '(': l = '('; r=')'; break;
+		case '[': l = '['; r=']'; break;
 		}
 		//boolean changed = false;
 		String sentorig = sent;
@@ -1228,77 +1261,77 @@ public abstract class Normalizer implements INormalizer {
 		//}
 		return fixed.replaceAll("\\s+", " ");
 	}
-	
-    private int hasUnmatchedBracket(String text, String lbracket, String rbracket) {
-    	if(lbracket.equals("[")) lbracket = "\\[";
-    	if(lbracket.equals("]")) lbracket = "\\]";
-    	
-    	int left = text.replaceAll("[^"+lbracket+"]", "").length();
-    	int right = text.replaceAll("[^"+rbracket+"]", "").length();
-    	if(left > right) return 1;
-    	if(left < right) return -1;
+
+	private int hasUnmatchedBracket(String text, String lbracket, String rbracket) {
+		if(lbracket.equals("[")) lbracket = "\\[";
+		if(lbracket.equals("]")) lbracket = "\\]";
+
+		int left = text.replaceAll("[^"+lbracket+"]", "").length();
+		int right = text.replaceAll("[^"+rbracket+"]", "").length();
+		if(left > right) return 1;
+		if(left < right) return -1;
 		return 0;
 	}
-	
-	
-    private boolean hasUnmatchedBrackets(String text) {
-    	//String[] lbrackets = new String[]{"\\[", "(", "{"};
-    	//String[] rbrackets = new String[]{"\\]", ")", "}"};
-    	String[] lbrackets = new String[]{"\\[", "("};
-    	String[] rbrackets = new String[]{"\\]", ")"};
-    	for(int i = 0; i<lbrackets.length; i++){
-    		int left1 = text.replaceAll("[^"+lbrackets[i]+"]", "").length();
-    		int right1 = text.replaceAll("[^"+rbrackets[i]+"]", "").length();
-    		if(left1!=right1) return true;
-    	}
+
+
+	private boolean hasUnmatchedBrackets(String text) {
+		//String[] lbrackets = new String[]{"\\[", "(", "{"};
+		//String[] rbrackets = new String[]{"\\]", ")", "}"};
+		String[] lbrackets = new String[]{"\\[", "("};
+		String[] rbrackets = new String[]{"\\]", ")"};
+		for(int i = 0; i<lbrackets.length; i++){
+			int left1 = text.replaceAll("[^"+lbrackets[i]+"]", "").length();
+			int right1 = text.replaceAll("[^"+rbrackets[i]+"]", "").length();
+			if(left1!=right1) return true;
+		}
 		return false;
 	}
-    
-    
-    /**
-     * if bracket is left, then refresh the index of a new positive count
-     * if bracket is right, return the first index with a negative count
-     * @param bracket
-     * @param str
-     * @return index of unmatched bracket in str
-     */
+
+
+	/**
+	 * if bracket is left, then refresh the index of a new positive count
+	 * if bracket is right, return the first index with a negative count
+	 * @param bracket
+	 * @param str
+	 * @return index of unmatched bracket in str
+	 */
 	private int indexOfunmatched(char bracket, String str) {
 		int cnt = 0;
 		char l = '('; char r=')';
 		switch(bracket){
-			case '(':  l = '('; r =')'; break;
-			case '[': l = '['; r =']'; break;
-			case ')':  l = '('; r =')'; break;
-			case ']': l = '['; r =']'; break;
+		case '(':  l = '('; r =')'; break;
+		case '[': l = '['; r =']'; break;
+		case ')':  l = '('; r =')'; break;
+		case ']': l = '['; r =']'; break;
 		}		
-		
+
 		if(bracket == r){
 			for(int i = 0; i < str.length(); i++) {
-			    if(str.charAt(i)== l){
-			    	cnt++;
-			    }else if(str.charAt(i) == r){
-			    	cnt--; 
-			    }			
-			    if(cnt<0) return i; //first index with negative count
+				if(str.charAt(i)== l){
+					cnt++;
+				}else if(str.charAt(i) == r){
+					cnt--; 
+				}			
+				if(cnt<0) return i; //first index with negative count
 			}
 		}
 
 		if(bracket == l){
 			int index = -1;
 			for(int i = 0; i < str.length(); i++) {
-			    if(str.charAt(i)== l){
-			    	cnt++;
-			    	index = i;
-			    }else if(str.charAt(i) == r){
-			    	cnt--; 
-			    }			
-			    if(cnt==0) index = -1; //first index with negative count
+				if(str.charAt(i)== l){
+					cnt++;
+					index = i;
+				}else if(str.charAt(i) == r){
+					cnt--; 
+				}			
+				if(cnt==0) index = -1; //first index with negative count
 			}
 			return index;
 		}
 		return -1;
 	}
-	
+
 	private String threeingSentence(String str) {
 		//hide the numbers in count list: {count~list~9~or~less~} <fin> <rays>
 		ArrayList<String> lists = new ArrayList<String>();
@@ -1316,21 +1349,21 @@ public abstract class Normalizer implements INormalizer {
 		//Pattern pattern5 = Pattern.compile("((?<!(/|(\\.[\\s]?)))[\\d]+[\\-\\�]+[\\d]+(?!([\\�\\-]+/|([\\s]?\\.))))|((?<!(\\{|/))[\\d]+(?!(\\}|/)))");
 		//[\\d�\\+\\�\\-\\��.�:�/�\"��\\_;x�\\�\\s,�%\\*\\{\\}\\[\\]=(<\\{)(\\}>)]+
 		Pattern pattern7 = Pattern.compile("[(\\[]\\s*\\d+\\s*[)\\]]"); // deal with ( 2 ), (23) is dealt with by NumericalHandler.numberpattern
-		
+
 		Matcher	 matcher1 = numberpattern.matcher(str);
-        str = matcher1.replaceAll("0");
+		str = matcher1.replaceAll("0");
 		matcher1.reset();
-         
-         /*matcher1 = pattern4.matcher(str);
+
+		/*matcher1 = pattern4.matcher(str);
          str = matcher1.replaceAll("0");
          matcher1.reset();*/
-         
-         matcher1 = pattern5.matcher(str);//single numbers
-         str = matcher1.replaceAll("0");
-         matcher1.reset();
-         
-         /* should not remove space around 0, because: pollen 70-80% 3-porate should keep 2 separate numbers: 70-80% and 3-porate
-		* 
+
+		matcher1 = pattern5.matcher(str);//single numbers
+		str = matcher1.replaceAll("0");
+		matcher1.reset();
+
+		/* should not remove space around 0, because: pollen 70-80% 3-porate should keep 2 separate numbers: 70-80% and 3-porate
+		 * 
          String scptemp = str;
          matcher1 = pattern6.matcher(str);//remove space around 0
          str = matcher1.replaceAll("0");
@@ -1338,24 +1371,24 @@ public abstract class Normalizer implements INormalizer {
 		   log(LogLevel.DEBUG, );
          }
          matcher1.reset();*/
-         
-         matcher1 = pattern7.matcher(str);//added for (2)
-         str = matcher1.replaceAll("0");
-         matcher1.reset();
-         //further normalization
-         
-         
-         //3 -{many} or 3- {many}=> {3-many}
-         str = str.replaceAll("0\\s*-\\s*", "0-").replaceAll("0(?!~[a-z])", "3").replaceAll("3\\s*[–-]\\{", "{3-").replaceAll("±(?!~[a-z])","{moreorless}").replaceAll("±","moreorless"); //stanford parser gives different results on 0 and other numbers.
-         
-         //2-or-{3-lobed} => {2-or-3-lobed}
-         str = str.replaceAll("(?<=-(to|or)-)\\{", "").replaceAll("[^\\{]\\b(?=3-(to|or)-3\\S+\\})", " {");
-		
-         //unhide count list
-         str = unCountLists(str, lists);
-         return str;
+
+		matcher1 = pattern7.matcher(str);//added for (2)
+		str = matcher1.replaceAll("0");
+		matcher1.reset();
+		//further normalization
+
+
+		//3 -{many} or 3- {many}=> {3-many}
+		str = str.replaceAll("0\\s*-\\s*", "0-").replaceAll("0(?!~[a-z])", "3").replaceAll("3\\s*[–-]\\{", "{3-").replaceAll("±(?!~[a-z])","{moreorless}").replaceAll("±","moreorless"); //stanford parser gives different results on 0 and other numbers.
+
+		//2-or-{3-lobed} => {2-or-3-lobed}
+		str = str.replaceAll("(?<=-(to|or)-)\\{", "").replaceAll("[^\\{]\\b(?=3-(to|or)-3\\S+\\})", " {");
+
+		//unhide count list
+		str = unCountLists(str, lists);
+		return str;
 	}
-	
+
 	/**
 	 * hide lists such as
 	 * {upper} {pharyngeal} <tooth> <plates_4_and_5>
@@ -1385,7 +1418,7 @@ public abstract class Normalizer implements INormalizer {
 			return str;
 		}
 	}
-	
+
 	private static String unCountLists(String str, ArrayList<String> lists) {
 		if(str.contains("#")){
 			String newstr = "";
@@ -1404,14 +1437,14 @@ public abstract class Normalizer implements INormalizer {
 			return str;
 		}
 	}
-	
-	
+
+
 	/*private ArrayList<String> lookupCharacters(String str, boolean markadv, ArrayList<String> chunkedTokens) {		
 		ArrayList<String> characterTokensReversed = new ArrayList<String>();
 		boolean save = false;
 		boolean ambiguous = false;
 		ArrayList<String> saved = new ArrayList<String>();
-		
+
 		ArrayList<String> amb = new ArrayList<String>();
 		for(int i = chunkedTokens.size()-1; i>=0+0; i--){
 			String word = chunkedTokens.get(i);	
@@ -1454,7 +1487,7 @@ public abstract class Normalizer implements INormalizer {
 				save = true;
 			}
 		}
-		
+
 		//deal with a/b characters
 		if(ambiguous){
 			Iterator<String> it = amb.iterator();
@@ -1479,7 +1512,7 @@ public abstract class Normalizer implements INormalizer {
 		//log(LogLevel.DEBUG, "characterTokensReversed " + this.charactertokensReversed);
 		return characterTokensReversed;
 	}*/
-	
+
 	/**
 	 * lookback
 	 * @param saved
@@ -1496,7 +1529,7 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return "";
 	}*/
-	
+
 	/**
 	 * lookahead
 	 * @param saved
@@ -1513,17 +1546,17 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return "";
 	}*/
-	
-	
-	
+
+
+
 	/*private void save(ArrayList<String> saved, int index, String ch){
 		while(saved.size()<=index){
 			saved.add("");
 		}
 		saved.set(index, ch);
 	}*/
-	
-	
+
+
 	/**
 	 * as wide as => as-wide-as/IN
 	 * as wide as or/to wider than inner
@@ -1543,8 +1576,8 @@ public abstract class Normalizer implements INormalizer {
 		result+=str;
 		return result.trim();
 	}
-	
-	
+
+
 	/**
 	 * deal with sentences with parentheses
 	 * @param chunkedTokens 
@@ -1552,18 +1585,18 @@ public abstract class Normalizer implements INormalizer {
 	 */
 	/*private String normalizeParentheses(String src, ArrayList<String> chunkedTokens){
 		ArrayList<String> characterTokensReversed = lookupCharacters(src, true, chunkedTokens); //treating -ly as -ly
-		
+
 		//use & as place holders
 		//create list by replace (...) with &s
 		//create lists by replace things not in () with &s
 		//normalizeCharacterLists(list)
 		//merge result
-		
+
 		//e.g leaves lanceolate ( outer ) to linear ( inner ) 
 		String inlist = ""; //represent tokens not in brackets: # size & & & @ size & & &
 		String outlist = ""; //represent tokens in brackets   : & & & position & & & & position & 
 		int inbrackets = 0;
-		
+
 		boolean hasbrackets = false;
 		for(int i = characterTokensReversed.size() -1; i>=0; i--){
 			String t = characterTokensReversed.get(i);
@@ -1611,15 +1644,15 @@ public abstract class Normalizer implements INormalizer {
 				orphanedto = getIndexOfOrphanedTo(inlist, ++orphanedto, chunkedTokens); 
 			}
 		}
-		
+
 		String result = "";
 		for(int i = 0; i<chunkedTokens.size(); i++){
 			result += chunkedTokens.get(i)+" ";
 		}
 		return result.replaceAll("\\s+", " ").trim(); //{shape~list~lanceolate~(~outer~)~to~linear}, note the constraint( inner ) after liner is not in the shape list, it will be associated to "linear" later in the process (in annotator) when more information become available for more reliable associations.
 	}*/
-	
-	
+
+
 	/**
 	 * when "to"[@] is the last token in bracketed phrase:
 	 * e.g. (, {yellow-gray}, to, ), {coloration~list~brown~to~black}
@@ -1629,7 +1662,7 @@ public abstract class Normalizer implements INormalizer {
 	 */
 	private String getCharaOfTo(String inlist, int orphanedto) {
 		List<String> symbols = Arrays.asList(inlist.trim().split("\\s+"));
-        return  symbols.get(orphanedto-1);
+		return  symbols.get(orphanedto-1);
 	}
 
 	/**
@@ -1649,8 +1682,8 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return -1;
 	}
-	
-	
+
+
 	/**
 	 * put a list of states of the same character connected by to/or in a chunk
 	 * color, color, or color
@@ -1665,15 +1698,15 @@ public abstract class Normalizer implements INormalizer {
 		//charactertokens.toString
 		//String list = ""; //6/29/12
 		//String result = ""; //6/29/12
-		
+
 		//lookupCharacters(src, true); //treating -ly as -ly 6/29/12
-		
+
 		//6/29/12
 		//for(int i = this.charactertokensReversed.size() -1; i>=0; i--){
 		//	list+=this.charactertokensReversed.get(i)+" ";
 		//}
 		//list = list.trim()+" "; //need to have a trailing space
-		
+
 		//pattern match: collect state one by one
 		String listcopy = list;
 		//log(LogLevel.DEBUG, list);
@@ -1708,13 +1741,13 @@ public abstract class Normalizer implements INormalizer {
 			}else{
 				start = end;
 			}
-				
-			
+
+
 			//list = list.replaceFirst("^.*?(?=[@,;\\.%\\[\\]\\(\\)#])", ""); //6/29/2012
 			//list = list.replaceFirst("^.*?(?=[@,;\\.%\\[\\]\\(\\)&#])", "");
 			list = segByWord(listcopy, end);
 			mt = charalistpattern.matcher(list);
-			
+
 			//6/29/12
 			//for(int i = base; i<start; i++){
 			//	result += this.chunkedtokens.get(i)+" ";
@@ -1743,14 +1776,14 @@ public abstract class Normalizer implements INormalizer {
 			}
 			base = end;
 		}
-		
+
 		//6/29/12
 		//for(int i = base; i<(list.trim()+" b").trim().split("\\s+").length+base-1; i++){
 		//	result += this.chunkedtokens.get(i)+" ";
 		//}
 		//return result.trim();
 	}*/
-	
+
 
 
 	/*private String segByWord(String listcopy, int startindex) {
@@ -1762,160 +1795,395 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return seg.trim();
 	}*/
-	
-	
-	
+
+
 	/**
-	 * mark Inner as organ for sent such as "inner red".
-	 * @param adjnouns
-	 * @param taggedsent
+	 * cases to be handled:
+	 * //each broadest distal to middle //above middle
+	 * 
+	 * test cases
+	 * @param sent
+	 * @param adjnounslist
+	 * @param source
+	 */
+	/*private void fixInnerOnSentences(String sent, String adjnounslist, String source, Hashtable<String, String> prevMissingOrgan){
+		Hashtable<String, String> sents = terminologyLearner.selectMatchingSentences("[[:<:]](inner|mid|middle|outer)[[:space:]]+");
+		//Hashtable<String, String> sents = new Hashtable<String, String>();
+		//sents.put("01980.txt-3", "pappi of crisped , outer plus straight , coarse , inner bristles .");
+		//sents.put("06193.txt-4", "mid and distal cauline sessile , lancelate or oblanceolate to elliptic , 30 – 100 × 20 – 40 mm , reduced distally , margins serrate to entire distally .");
+		//HashSet<String> sents = new HashSet<String>();
+		//sents.add("mid and distal cauline sessile , lancelate or oblanceolate to elliptic , 30 – 100 × 20 – 40 mm , reduced distally , margins serrate to entire distally .");
+		//sents.add("outer predominantly closely lanuginose , sparsely , if at all , stipitate_glandular , apices erect , ± rigid .");
+		//sents.add("pappi of 10 outer , erose scales 0 . 7 – 1 mm plus 10 inner , unequally 3_aristate scales 5 – 6 . 5 mm . 2n = 14 .");
+		//sents.add("pappi usually of distinct bristles or of outer , shorter setae or scales plus inner , longer bristles , sometimes 0 .");
+		//sents.add("pappi of crisped , outer plus straight , coarse , inner bristles .");
+		Enumeration<String> sources = sents.keys();
+		while(sources.hasMoreElements()){
+			String src = sources.nextElement();
+			String sentence = sents.get(src);
+			fixInner(sentence, adjnounslist, src, prevMissingOrgan);
+		}
+		System.out.println("fixInnerOnSentences completed");
+		System.exit(0);
+	}*/
+
+	/**
+	 * complete Inner with its parent organ, turn "inner red" to "inner petal red".
+	 * @param adjnounslist: could include "inner and outer"
+	 * @param sent: sentence
+	 * @param source : souce of the sentence
 	 * @return inner-fixed String
 	 */
-	private String fixInner(String taggedsent, String tag, String adjnounslist, String source) {
-		//this.showOutputMessage("System is rewriting some sentences...");
+	private String fixInner(String sent, String adjnounslist, String source, Hashtable<String, String> prevMissingOrgan) {
+		String missingOrgan = "";//use this filler to fix all inners in the sentence
 		String fixed = "";
-		String copysent = taggedsent;
-		boolean needfix = false;
+		String copysent = sent;
 		boolean changed = true;
-		//Pattern p =Pattern.compile("(.*?)(\\s*(?:[ <{]*\\b(?:"+adjnounslist+")\\b[}> ]*)+\\s*)(.*)");
-		//Pattern p0 =Pattern.compile("(.*?)((?:^| )(?:(?:\\{|<\\{)*\\b(?:"+adjnounslist+")\\b(?:\\}>|\\})*) )(.*)");
-		//Pattern p =Pattern.compile("(.*?)((?:^| )(?:(?:\\{|<\\{)*\\b(?:"+adjnounslist+")[^ly ]*\\b(?:\\}>|\\})*)\\s+)(.*)");
-		Pattern p =Pattern.compile("(.*?)((?:^| )(?:(?:\\{|<\\{)*\\b(?:"+adjnounslist+")[^ly ]*\\b(?:\\}>|\\})*)\\s+)(((?!to\\s+\\D).*).*)");
-		Matcher m = p.matcher(taggedsent);
-		//Matcher m0 = p0.matcher(taggedsent);
-		int matchcount = 0;
-		while(m.matches() && changed){
+		ArrayList<String> beforeOrgans = new ArrayList<String>(); //candidate organs to fill the blanks, appearing in the list in the order of their appearance in the sent
+		ArrayList<String> afterOrgans = new ArrayList<String>(); //candidate organs to fill the blanks, appearing in the list in the order of their appearance in the sent
+		Pattern p =Pattern.compile("(.*?)((?:^| )\\b(?:(?:"+adjnounslist+"| )+(?:and|or|to| )*)+\\b)(.*)"); //match double inners such as "mid caulin", "mid and distal cauline"
+		Matcher m = p.matcher(sent);
+		while(m.matches()){
 			changed = false;
-			matchcount++;
-			String before = m.group(1);
-			String inner = m.group(2);
-			String after = m.group(3);
-			//TODO: may be after should not start with "to" : proximal to heads tocheck: 3/30/11
+
+			String before = m.group(1).trim();
+			String inner = m.group(2).trim(); 
+			String after = m.group(3).trim(); 
 			
-			String[] beforeTokens = before.split(" ");
-			String[] afterTokens = after.split(" ");
-			log(LogLevel.DEBUG, "before token " + beforeTokens[beforeTokens.length-1]);
-			//log(LogLevel.DEBUG, String.valueOf(organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1])));
-			log(LogLevel.DEBUG, String.valueOf(characterKnowledgeBase.isEntity(beforeTokens[beforeTokens.length-1])));
-			//if(!organStateKnowledgeBase.isOrgan(beforeTokens[beforeTokens.length-1]) &&
-			//		!organStateKnowledgeBase.isOrgan(afterTokens[0])) {
-			if(!characterKnowledgeBase.isEntity(beforeTokens[beforeTokens.length-1]) &&
-						!characterKnowledgeBase.isEntity(afterTokens[0])) {
-				boolean beforeContainsOrgan = false;
-				String organ = "";
-				for(String beforeToken : beforeTokens) {
-					//if(organStateKnowledgeBase.isOrgan(beforeToken)) {
-					if(characterKnowledgeBase.isEntity(beforeToken)) {
-						beforeContainsOrgan = true;
-						organ = "";
-					}
-					if(beforeContainsOrgan)
-						organ += beforeToken + " ";
-				}
-				if(beforeTokens[beforeTokens.length-1].equals("of") && beforeContainsOrgan) {
-					//String organ = before.substring(before.lastIndexOf("<"));
-					if(copysent.startsWith(organ)){
-						tag = parentTagProvider.getParentTag(source);
-						//tag = parentTag;//tag may be null, remove before return
-					}
-					organ = organ.replaceFirst("\\s*of\\s*$", "").replaceAll("\\W", "");
-					if(inflector.getSingular(organ).compareTo(tag)==0 || 
-						(organ.matches("(apex|apices)") && tag.compareTo("base")==0)){
-						tag = parentTagProvider.getGrandParentTag(source);
-					}
-				}
-					
-				String copyinner = inner.trim();
-				//inner = copyinner.replaceAll("[<{}>]", "").replaceAll("\\{and\\}", "and").replaceAll("\\{or\\}", "or");
-				//inner = "<"+inner+">";
-				//inner = "{"+inner+"} <"+tag+">";
+			Matcher m1 = conjunctionPtn.matcher(inner);
+			if(m1.matches()){
+				//move conjunctions to "after"
+				inner = m1.group(1).trim();
+				after = (m1.group(2)+" "+after).trim();
+			}
+
+			boolean needFix = needFix(before, inner, after); 
+			if(needFix){
+				log(LogLevel.DEBUG,"need fix:"+inner+":"+before+" "+inner+" "+after);
+			}
+			if(!needFix){
 				fixed +=before + " " + inner + " ";
-				//taggedsent = matchcount==1 && !before.trim().endsWith("of")? " "+after : "#<"+tag+">#"+" "+after;
-				if(after.matches("^\\d\\s*/\\s*\\d.*")){//proximal 1 / 2
-					taggedsent = " "+after;
-				}else if(inner.endsWith("er") && after.startsWith("than")){
-					taggedsent = " "+after;
-				}else if(before.trim().endsWith("of")){
-					taggedsent = tag + " " + after;
-				//}else if(matchcount==1 && copysent.startsWith(copyinner)){
-				//	taggedsent = " "+after;
-				}else{
-					String[] fixedTokens = fixed.split(" ");
-					boolean fixedContainsOrgan = false;
-					String fixedOrgan = "";
-					for(String fixedToken : fixedTokens) {
-						//if(this.organStateKnowledgeBase.isOrgan(fixedToken)) {
-						if(this.characterKnowledgeBase.isEntity(fixedToken)) {
-							fixedContainsOrgan = true;
-							fixedOrgan = fixedToken;
+				sent = " "+after;
+				m = p.matcher(sent);
+				continue;
+			}
+
+			//now fix INNERs
+			if(missingOrgan.isEmpty()){
+				String[] beforeTokens = before.trim().split(" ");
+				//collect all eligible canididate organs in the sent
+				//TODO remove all candidate organs following immediately after a prep
+				beforeOrgans = collectOrganNames(before.trim().split(" "));
+				afterOrgans = collectOrganNames(after.trim().split(" "));
+				ArrayList<String> remove = new ArrayList<String> ();
+				for(String organ: beforeOrgans){
+					if(before.matches(".*?\\b("+this.prepositionWords+") "+organ+".*?")) remove.add(organ);
+				}
+				beforeOrgans.removeAll(remove);
+				/*for(String beforeToken : beforeTokens) { 
+					if(characterKnowledgeBase.isEntity(beforeToken)) {//TODO: multiple-word organ names
+						organs.add(beforeToken);
+					}
+				}*/
+	
+				if(!beforeOrgans.isEmpty() && beforeTokens[beforeTokens.length-1].equals("of"+"")) { //apex of inner ...
+					if(before.trim().matches(".*?"+beforeOrgans.get(beforeOrgans.size()-1)+"\\s+of")){//TODO:nested: tooth of apex of inner
+						beforeOrgans.remove(beforeOrgans.size()-1); //the last organ ("apex") can not be the missing organ in this case, so remove it from the candidate pool
+					}
+				}
+				if(beforeOrgans.isEmpty()){ //missing organ is not in current sent, must be in an eariler sent
+					String o = parentTagProvider.getParentTag(source);
+					if(o!=null && !o.isEmpty()){
+						beforeOrgans.add(o); //TODO: what if missingOrgan is again an INNER?
+						o = this.inflector.getPlural(o);
+						if(o!=null && !o.isEmpty()) beforeOrgans.add(o);
+					}
+					
+					
+					if(source.replaceAll("-.*", "").compareTo(prevMissingOrgan.get("source").replaceAll("-.*", ""))==0 &&
+					Integer.parseInt(source.replaceAll(".*-", "")) - Integer.parseInt(prevMissingOrgan.get("source").replaceAll(".*-", "")) == 1){ //consecutive sentences
+						if(!prevMissingOrgan.get("missing").isEmpty()){
+							beforeOrgans.add(prevMissingOrgan.get("missing"));
 						}
 					}
-					
-					int start = fixedContainsOrgan ? fixed.lastIndexOf(fixedOrgan) : 0;
-					String segment = fixed.substring(start).trim();
-					//if(segment.indexOf(",")<0 && !segment.startsWith("and")){
-					//	taggedsent = " "+after;
-					//}else{
-						taggedsent = tag + " " + after;
-					//}
 				}
-				needfix = true;
-				changed = true;
+	
+				//before.trim().endsWith("of"): need to be fixed
+				missingOrgan = selectMissingOrgan(beforeOrgans, afterOrgans, copysent, inner.trim());
 			}
 			
-//			if(!before.trim().endsWith(">") &&!after.trim().startsWith("<")){//mark inner as organ
-//				if(before.trim().endsWith("of") && before.lastIndexOf("<")>=0) { //"apices of inner" may appear at the main structure is mentioned, in these cases, matchcount>1					
-//					String organ = before.substring(before.lastIndexOf("<"));
-//					if(copysent.startsWith(organ)){
-//						tag = parentTag;//tag may be null, remove before return
-//					}
-//					organ = organ.replaceFirst("\\s*of\\s*$", "").replaceAll("\\W", "");
-//					if(inflector.getSingular(organ).compareTo(tag)==0 || 
-//						(organ.matches("(apex|apices)") && tag.compareTo("base")==0)){
-//						tag = this.previousSentenceParentTag;
-//					}
-//				}
-//				String copyinner = inner.trim();
-//				inner = copyinner.replaceAll("[<{}>]", "").replaceAll("\\{and\\}", "and").replaceAll("\\{or\\}", "or");
-//				//inner = "<"+inner+">";
-//				//inner = "{"+inner+"} <"+tag+">";
-//				fixed +=before + " " + inner + " ";
-//				//taggedsent = matchcount==1 && !before.trim().endsWith("of")? " "+after : "#<"+tag+">#"+" "+after;
-//				if(after.matches("^\\d\\s*/\\s*\\d.*")){//proximal 1 / 2
-//					taggedsent = " "+after;
-//				}else if(inner.endsWith("er") && after.startsWith("than")){
-//					taggedsent = " "+after;
-//				}else if(before.trim().endsWith("of")){
-//					taggedsent = tag + " " + after;
-//				}else if(matchcount==1 && copysent.startsWith(copyinner)){
-//					taggedsent = " "+after;
-//				}else{
-//					int start = fixed.lastIndexOf(">")>=0? fixed.lastIndexOf(">") : 0;
-//					String segment = fixed.substring(start).trim();
-//					if(segment.indexOf(",")<0 && !segment.startsWith("and")){
-//						taggedsent = " "+after;
-//					}else{
-//						taggedsent = tag + " " + after;
-//					}
-//				}
-//				needfix = true;
-//				changed = true;
-//			}
-			//fixed +=before+" ";
-			//taggedsent = inner+" "+after;
-			m = p.matcher(taggedsent);
-			//fixed = before+" "+inner+" "+after; //{outer} {pistillate}
-			//m = p.matcher(fixed);
+			//put in missing organ
+			fixed +=before + " " + inner + " " +missingOrgan +" " ;
+			sent =  " " + after;
+			changed = true;
+			m = p.matcher(sent);
 		}
-		fixed +=taggedsent;
-		if(needfix){
-			//log(LogLevel.DEBUG, "fixed "+fixedcount+":["+source+"] "+fixed);
-			//fixedcount++;
+		//the last segment
+		fixed +=sent;
+		fixed = fixed.trim().replaceAll("\\s+", " ").replaceAll("\\s+-", "-"); //mid-stems
+		
+		if(changed){
+			log(LogLevel.DEBUG, "fixedInner: changed  ["+source+"] from ["+copysent+"] to ["+fixed+"]");
+		}else{
+			log(LogLevel.DEBUG, "fixedInner: no change  ["+fixed+"]");
 		}
-		if(fixed.trim().length()<1){
-			fixed = taggedsent;
+		/*if(fixed.trim().length()<1){
+				fixed = sent;
+			}*/
+		
+		prevMissingOrgan.put("source", source);
+		prevMissingOrgan.put("missing", missingOrgan);
+		return fixed;
+	}
+
+
+	private boolean needFix(String before, String inner, String after) {
+		String[] beforeTokens = before.trim().split(" ");
+		String[] afterTokens = after.trim().split(" ");
+		//sperate cases that need fix from those don't
+		if(after.matches("^\\d\\s*/\\s*\\d.*")||after.startsWith("-")||after.matches("^to\\s+\\D.*") || (inner.endsWith("er") && after.startsWith("than")) || characterKnowledgeBase.isEntity(beforeTokens[beforeTokens.length-1])){//proximal 1 / 2
+			return false;
+		}else if(((before.isEmpty() || beforeTokens[beforeTokens.length-1].equals(":")) && !startWithOrgan(afterTokens, 0, true)) || after.matches("^of\\b.*")){
+			//outer pistillate florets 40 – 70 ; need some wiggle room for pistillate, which is a state, not a constraint.
+			return true;
+		}
+		//no need to fix: if after matches a pattern of "(character|adv|to|\d|or|and|plus|unknown)+ [^,] organ (^adv|character|\d)", then this INNER needs no fix //mid to distal cauline leaves. 
+		boolean foundOrgan = false;
+		String tokenBeforeOrgan = ""; 
+		for(int i = 0; i < afterTokens.length; i++){ 
+			String aToken = afterTokens[i];
+			//TODO remove all "(text)" from after?
+			if(!foundOrgan && startWithOrgan(afterTokens, i, false)){ //first organ
+				foundOrgan = true;
+				if(i==0) return false; 
+				if(tokenBeforeOrgan.matches(",")) break;
+			}else if(!foundOrgan &&(aToken.matches("(and|to|or|plus|,)") || aToken.matches("[\\d()+–-]+") ||  /*mat.getCategories() == null||*/ characterKnowledgeBase.isState(aToken) || posKnowledgeBase.isAdverb(aToken))){
+				tokenBeforeOrgan = aToken;
+				continue;
+			}else if(foundOrgan){
+				if(!posKnowledgeBase.isAdverb(aToken) && ! characterKnowledgeBase.isState(aToken) && ! aToken.matches(".*?[\\d].*")){
+					return false; //pappi of outer, shorter bristles or scales plus inner, longer bristles; [inner longer bristles]
+				}else{//apices of inner erect , abaxial faces gray-tomentose , ± twisted . //margins of outer entire , abaxial faces without glutinous ridge ;
+					break;
+				}
+			}else if(!foundOrgan && !aToken.matches("(and|to|or|plus|,)") && ! aToken.matches(".*?[\\d].*") /*&& characterKnowledgeBase.getCharacterName(aToken).getCategories() != null */ && ! characterKnowledgeBase.isState(aToken) && !posKnowledgeBase.isAdverb(aToken)){
+				return true;
+			}
+		}
+		return true;
+	}
+	
+	private boolean startWithOrgan(String[] tokens, int startIndex, boolean wiggle){
+		boolean startWithOrgan = false;
+		int wiggleRoom = 0; //don't allow wiggleRoom
+		for(int i = startIndex; i < tokens.length; i++){
+			Match mat = characterKnowledgeBase.getCharacterName(tokens[i]);
+			if(characterKnowledgeBase.isEntity(tokens[i])){
+				startWithOrgan = true;
+				break;
+			}
+			else if((mat.getCategories()!=null &&  mat.getCategories().matches(".*?(^|"+or+")("+ElementRelationGroup.entityConstraintElements+")("+or+"|$).*"))){
+				//keep on looking
+			}else if(tokens[i].matches("and|or|to")){//should not allow these ? check out this: cypselae dimorphic or monomorphic , ray pappi 0 , or of outer , linear_lanceolate scales plus inner , longer bristles
+				//keep on looking  
+			}else{
+				if(wiggle && characterKnowledgeBase.isState(tokens[i])) wiggleRoom++;
+				else return false;
+				
+				if(wiggle && wiggleRoom > 1)
+					return false;
+			}
+		}
+		return startWithOrgan;
+	}
+
+	
+	private ArrayList<String> collectOrganNames(String[] tokens){
+		ArrayList<String> names = new ArrayList<String>();
+		String name = "";
+		boolean foundOrgan = false;
+		for(int i = 0; i < tokens.length; i++){
+			Match mat = characterKnowledgeBase.getCharacterName(tokens[i]);
+			if(characterKnowledgeBase.isEntity(tokens[i])){
+				name += tokens[i]+" ";
+				foundOrgan = true;
+			}
+			else if((mat.getCategories()!=null &&  mat.getCategories().matches(".*?(^|"+or+")("+ElementRelationGroup.entityConstraintElements+")("+or+"|$).*"))){
+				if(!name.isEmpty() && foundOrgan) {
+					names.add(name.trim());
+					name = "";
+					foundOrgan = false;
+				}
+				name += tokens[i]+" ";
+			}else if(tokens[i].matches("and|or|to")){
+				name += tokens[i]+" ";
+			}else{
+				if(!name.isEmpty() && foundOrgan) {
+					names.add(name.trim());
+				}
+				name = "";
+				foundOrgan = false;
+				
+			}
 		}
 		
-		return fixed.trim().replaceAll("\\s+", " ");//.replaceAll("<null>", "");
+		if(!name.isEmpty() && foundOrgan) {
+			names.add(name.trim());
+		}
+		
+		return names;
 	}
+	/**
+	 * 
+	 * @param beforeOrgans
+	 * @param sentence
+	 * @param inner
+	 * @return
+	 */
+	private String selectMissingOrgan(ArrayList<String> beforeOrgans,ArrayList<String> afterOrgans,
+			String sentence, String inner) {
+
+		String expanded = getCounterPart(inner); //inner => outer, returns "outer|middle"
+		inner = expanded==null || expanded.isEmpty()? inner : expanded+"|"+inner;
+		
+		//looking for a match in current sentence: outer and mid phyllaries
+		for(int i = 0; i <beforeOrgans.size(); i++){ //check organs in the order mentioned in the origial description: the subject of the sentence is the best bet	
+			String o = beforeOrgans.get(i).replaceFirst("\\b("+inner+")\\b", "").trim();
+			if(sentence.matches(".*?\\b("+inner+")\\s+"+o+"\\b.*")){
+				return o;
+			}else{
+				if(o.contains(" ")){
+					String shorten = o.substring(o.indexOf(" ")).trim();
+					if(sentence.matches(".*?\\b("+inner+")\\s+"+shorten+"\\b.*"))
+						return o;
+				}
+			}
+		}
+		
+		//looking for a match using afterOrgans
+		for(int i = 0; i <afterOrgans.size(); i++){ //check organs in the order mentioned in the origial description: the subject of the sentence is the best bet	
+			String o = afterOrgans.get(i).replaceFirst("\\b("+inner+")\\b", "").trim();
+			if(sentence.matches(".*?\\b("+inner+")\\s+"+o+"\\b.*")){
+				return o;
+			}else{
+				if(o.contains(" ")){
+					String shorten = o.substring(o.indexOf(" ")).trim();
+					if(sentence.matches(".*?\\b("+inner+")\\s+"+shorten+"\\b.*"))
+						return o;
+				}
+			}
+		}
+		
+
+		//looking for match in all sentences
+		int max = 0;
+		String maxO = "";
+		String [] inners = inner.split("\\|");
+		for(int i = 0; i <beforeOrgans.size(); i++){ //check organs in the order mentioned in the origial description: the subject of the sentence is the best bet		
+			int matches = 0;
+			for(String in: inners){
+				matches += terminologyLearner.countMatchingSentences(in+" "+beforeOrgans.get(i));
+			}
+			if(matches > max){
+				max = matches;
+				maxO = beforeOrgans.get(i);
+			}
+		}
+
+		//TODO PK btw the subject organ and maxO?
+
+		return maxO;
+	}
+
+
+	private String getCounterPart(String inner) {	
+		return this.adjNounCounterParts.get(inner);
+		/*if(inner.equals("inner"))  return "outer|mid|middle";
+		if(inner.equals("outer"))  return "inner|mid|middle";
+		if(inner.equals("mid"))  return "inner|outer|middle";
+		if(inner.equals("middle"))  return "inner|outer|mid";
+		return null;*/
+	}
+
+
+
+	/*
+private String fixInner(String source, String taggedsent, String tag) {
+	//this.showOutputMessage("System is rewriting some sentences...");
+	String fixed = "";
+	String copysent = taggedsent;
+	boolean needfix = false;
+	boolean changed = true;
+	//Pattern p =Pattern.compile("(.*?)(\\s*(?:[ <{]*\\b(?:"+adjnounslist+")\\b[}> ]*)+\\s*)(.*)");
+	//Pattern p0 =Pattern.compile("(.*?)((?:^| )(?:(?:\\{|<\\{)*\\b(?:"+adjnounslist+")\\b(?:\\}>|\\})*) )(.*)");
+	//Pattern p =Pattern.compile("(.*?)((?:^| )(?:(?:\\{|<\\{)*\\b(?:"+adjnounslist+")[^ly ]*\\b(?:\\}>|\\})*)\\s+)(.*)");
+	Pattern p =Pattern.compile("(.*?)((?:^| )(?:(?:\\{|<\\{)*\\b(?:"+adjnounslist+")[^ly ]*\\b(?:\\}>|\\})*)\\s+)(((?!to\\s+\\D).*).*)");
+	Matcher m = p.matcher(taggedsent);
+	//Matcher m0 = p0.matcher(taggedsent);
+	int matchcount = 0;
+	while(m.matches() && changed){
+		changed = false;
+		matchcount++;
+		String before = m.group(1);
+		String inner = m.group(2);
+		String after = m.group(3);
+		//TODO: may be after should not start with "to" : proximal to heads tocheck: 3/30/11
+		if(!before.trim().endsWith(">") &&!after.trim().startsWith("<")){//mark inner as organ
+			if(before.trim().endsWith("of")&& before.lastIndexOf("<")>=0){ //"apices of inner" may appear at the main structure is mentioned, in these cases, matchcount>1					
+				String organ = before.substring(before.lastIndexOf("<"));
+				if(copysent.startsWith(organ)){
+					tag = getParentTag(source);//tag may be null, remove before return
+				}
+				organ = organ.replaceFirst("\\s*of\\s*$", "").replaceAll("\\W", "");
+				if(inflector.getSingular(organ).compareTo(tag)==0 || 
+					(organ.matches("(apex|apices)") && tag.compareTo("base")==0)){
+					String b = source.substring(0, source.indexOf("-")+1);
+					String nsource = b +(Integer.parseInt(source.substring(source.indexOf("-")+1))-1);
+					tag = getParentTag(nsource);
+				}
+			}
+			String copyinner = inner.trim();
+			inner = copyinner.replaceAll("[<{}>]", "").replaceAll("\\s+", "} {").replaceAll("\\{and\\}", "and").replaceAll("\\{or\\}", "or");
+			//inner = "<"+inner+">";
+			//inner = "{"+inner+"} <"+tag+">";
+			fixed +=before+" "+"{"+inner+"} ";
+			//taggedsent = matchcount==1 && !before.trim().endsWith("of")? " "+after : "#<"+tag+">#"+" "+after;
+			if(after.matches("^\\d/\\s*\\d.*")){//proximal 1 / 2
+				taggedsent = " "+after;
+			}else if(inner.endsWith("er") && after.startsWith("than")){
+				taggedsent = " "+after;
+			}else if(before.trim().endsWith("of")){
+				taggedsent = "<"+tag+">"+" "+after;
+			}else if(matchcount==1 && copysent.startsWith(copyinner)){
+				taggedsent = " "+after;
+			}else{
+				int start = fixed.lastIndexOf(">")>=0? fixed.lastIndexOf(">") : 0;
+				String segment = fixed.substring(start).trim();
+				if(segment.indexOf(",")<0 && !segment.startsWith("and")){
+					taggedsent = " "+after;
+				}else{
+					taggedsent = "<"+tag+">"+" "+after;
+				}
+			}
+			needfix = true;
+			changed = true;
+		}
+		//fixed +=before+" ";
+		//taggedsent = inner+" "+after;
+		m = p.matcher(taggedsent);
+		//fixed = before+" "+inner+" "+after; //{outer} {pistillate}
+		//m = p.matcher(fixed);
+	}
+	fixed +=taggedsent;
+	if(needfix){
+		System.out.println("fixed "+fixedcount+":["+source+"] "+fixed);
+		fixedcount++;
+	}
+	if(fixed.trim().length()<1){
+		fixed = taggedsent;
+	}
+	return fixed.replaceAll("\\s+", " ").replaceAll("<null>", "");
+}*/
+
 }
+

@@ -104,7 +104,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 	/**
-	 * The current processingContextState of the given processingContext will be cloned and preserved for restore
+	 * [Important]The current processingContextState of the given processingContext will be cloned and preserved for restore
+	 * [Important]Due to the clone, after a ChunkProcesser calls another ChunkProcessor,  the processingContextState.getCarryOverDataFrom(processingContext.getCurrentState()) should be called to stored the current state for the former processor;
 	 * @param chunk
 	 * @param processingContext
 	 * @return list of DescriptionTreatmentElements resulting from the processing of chunk in processingContext
@@ -203,7 +204,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected List<BiologicalEntity> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<BiologicalEntity> results = new LinkedList<BiologicalEntity>();	
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
-		log(LogLevel.DEBUG, "create structure element from subjectChunks:\n" + subjectChunks);
+		log(LogLevel.DEBUG, "create structure element from subjectChunks:\n " + subjectChunks);
 		List<Chunk> organChunks = subjectChunk.getChunks(ChunkType.ORGAN);
 		if(!organChunks.isEmpty()) {
 			for(Chunk organChunk : organChunks) {
@@ -331,14 +332,24 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 		LinkedHashSet<Chunk> constraints = new LinkedHashSet<Chunk>();
 		if(organChunkIsLast) {
+			boolean seenConstraint = false;
+			ArrayList<AbstractParseTree> last = new ArrayList<AbstractParseTree> ();
 			for(AbstractParseTree terminal : subjectChunk.getTerminals()) {
 				if(subjectChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT)) {
+					seenConstraint = true;
 					Chunk constraintChunk = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.CONSTRAINT, terminal);
-					if(constraintChunk!=null)
+					if(constraintChunk!=null){
 						constraints.addAll(constraintChunk.getTerminals());
-				}/*else if(terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or"))
-					constraints.add(terminal);*/ //TODO Hong Don't understand why 'and/or' would be treated as constraints: trees or shrubs. changed to the opposite
+						last.addAll(constraintChunk.getTerminals());
+					}
+				}else if(seenConstraint && (terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or") || terminal.getTerminalsText().equals("to"))){
+					constraints.add(terminal); //TODO  'and/or' would be treated as constraints in case of "mid and inner petals", but not "trees or shrubs". 
+					last.add(terminal);
+				}else{
+					seenConstraint = false; //inner scales or bristles
+				}
 				if(organChunk.containsOrEquals(terminal)) {
+					if(!last.isEmpty() && last.get(last.size()-1).getTerminalsText().matches("and|or|to")) constraints.remove(last.get(last.size()-1));
 					Chunk returnChunk = new Chunk(ChunkType.CONSTRAINT, constraints);
 					return returnChunk;
 				}
@@ -528,7 +539,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 		for(Chunk token : tokens) {
 			if(stopWords.contains(token.getTerminalsText())) continue;
-			processingContextState = processingContext.getCurrentState();
+			//processingContextState = processingContext.getCurrentState();
 			if(token.isOfChunkType(ChunkType.TO_PHRASE)) {
 				processingContextState.setLastElements(new LinkedList<Element>(parents));
 				processingContextState.setCommaAndOrEosEolAfterLastElements(false);
@@ -540,6 +551,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					}
 				}
 				results.addAll(result);
+				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+				processingContext.setCurrentState(processingContextState);
+				log(LogLevel.DEBUG, "restored current state after "+processor.getClass()+" is run.");
 				//results = this.processCharacterList(token, parents, processingContextState, processingContext);
 			} else {
 				List<Chunk> chunkModifiers = token.getChunks(ChunkType.MODIFIER);
@@ -561,7 +575,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					}
 				}
 				//Hong test
-				if(tokensCharacter==null && w.matches("no")){
+				if(tokensCharacter==null && w.matches("no")){ //e.g. no flowers
 					tokensCharacter = "count";
 				}
 				if(tokensCharacter==null && posKnowledgeBase.isAdverb(w) && !modifiers.contains(token)) {
@@ -615,6 +629,10 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 								}
 							}
 							results.addAll(result);
+							//restore CurrentState
+							processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
+							processingContext.setCurrentState(processingContextState);
+							log(LogLevel.DEBUG, "restored current state after "+processor.getClass()+" is run.");
 						}
 					}
 				}
@@ -644,14 +662,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		
 		 
 		String[] range = characterValue.split("\\s+to\\s+");//a or b, c, to d, c, e
-		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+or\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
+		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+(or|and/or)\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
 		if(tokens.length==0)
 			return results;
 		String from = getFirstCharacter(tokens[tokens.length-1]);
 		tokens = range[1].split("\\s*,\\s*");
 		String to = getFirstCharacter(tokens[0]);
-		character.setFrom(from.replaceAll("-c-", " ")); //a or b to c => b to c
-		character.setTo(to.replaceAll("-c-", " "));
+		character.setFrom(from.replaceAll("-c-", " ").replaceAll("~", " ")); //a or b to c => b to c
+		character.setTo(to.replaceAll("-c-", " ").replaceAll("~", " "));
 
 		for(Chunk modifier : modifiers)
 			character.appendModifier(modifier.getTerminalsText());
@@ -735,6 +753,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 					modifierString = modifierString.length()>0 ? modifierString + "; "+ m : m;
 					characterValue = color;
+				}else if(characterValue.contains("~")){
+					characterValue = characterValue.replaceAll("~", " ");
 				}
 				if(char_type.length() > 0){
 					character.setCharType(char_type);
@@ -1021,8 +1041,19 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 */
 
 	/**
+	 * cases that are not handled well:
+	 * 	[AREA: [(4-5[-6]×)3-5[-7]], mm]
+	[3-12+[-15+], mm]
+	[(5-)10-30+[-80], cm]
+	[[5-7]8-12[13-16]]
+	20 – 100 + [ – 200 + ]
+	[[0-](3-)5(-8)[-15]]
+	[1(-2-4)]
+	AREA: [(4-14(-16)×)4-25+ mm]
+	VALUE: [5.5-(6-8), mm]
 	 * 
-	 * @param numberexp : styles 2[10] mm diam.
+	 * 
+	 * @param numberexp :(1-)5-300+ ;  styles 2[10] mm diam.
 	 * @param cname: 
 	 * @return: characters marked up in XML format <character name="" value="">
 	 */

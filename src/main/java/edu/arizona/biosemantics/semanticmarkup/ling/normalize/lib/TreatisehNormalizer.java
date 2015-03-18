@@ -56,7 +56,7 @@ public class TreatisehNormalizer extends Normalizer {
 	@Inject
 	public TreatisehNormalizer(IGlossary glossary, @Named("Units") String units, @Named("NumberPattern")String numberPattern,
 			@Named("Singulars")HashMap<String, String> singulars, @Named("Plurals")HashMap<String, String> plurals, 
-			IPOSKnowledgeBase posKnowledgeBase, @Named("LyAdverbpattern") String lyAdverbPattern,
+			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, @Named("LyAdverbpattern") String lyAdverbPattern,
 			@Named("P1")String p1, @Named("P2")String p2, @Named("P3")String p3, @Named("P4")String p4, @Named("P5")String p5, 
 			@Named("P6")String p6, @Named("P7")String p7, @Named("P75")String p75, @Named("P8")String p8, 
 			ITerminologyLearner terminologyLearner, 

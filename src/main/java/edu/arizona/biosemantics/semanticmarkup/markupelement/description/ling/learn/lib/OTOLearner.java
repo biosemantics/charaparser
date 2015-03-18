@@ -112,7 +112,7 @@ public class OTOLearner implements ILearner {
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
-			IPOSKnowledgeBase posKnowledgeBase, 
+			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, 
 			@Named("Run_RootDirectory")String runRootDirectory,
 			@Named("BioportalAPIKey")String bioportalAPIKey, 
 			@Named("BioportalUserId")String bioportalUserId, 
