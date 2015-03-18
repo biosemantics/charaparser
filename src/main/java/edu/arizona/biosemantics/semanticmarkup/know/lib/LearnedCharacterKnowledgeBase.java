@@ -37,6 +37,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private String negWords; 
 	private String advModifiers;
 	private String stopWords;
+	private String units;
 	//private ITerminologyLearner terminologyLearner;
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
 	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
@@ -59,6 +60,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		this.advModifiers = advModifiers+"|"+advModifiers.replaceAll(" ", "[_-]"); //at least|at[_-]least
 		this.inflector = inflector;
 		this.stopWords = stopWords+"|times|time|"+units;
+		this.units = units;
 	}
 	
 	@Override
@@ -119,6 +121,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	public Match getCharacterName(String word) {//word: one word, or ,hyphened words (standardized "_" to "-"), phrases such as "dark green" and "purple spot", "gland-dotted and"?
 		word = word.trim();
 		if(word.matches(this.stopWords)) return new Match(null);
+		if((word.matches("[^a-z]+") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new Match(null); //numerical expressions
 		
 		String wo = word;
 		

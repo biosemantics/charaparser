@@ -107,7 +107,7 @@ public class HabitatTransformer implements IHabitatTransformer {
 			element = element.replace("###", "");
 		}else{//merge prep phrases to previous <habitat>
 			String newelement = ""; //text: slopes in thin , rocky (-LRB- -LRB- limestone (-RRB- -RRB- soils , in woods with abundant oaks
-			String textcp = text.replaceAll("\\(-LRB- -LRB- ", "(").replaceAll("\\(-RRB- -RRB- ", ")");
+			String textcp = text.replaceAll("\\(-LRB- -LRB- ", "(").replaceAll("\\(-RRB- -RRB-", ")").replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").replaceAll("\\s+", " ");
 			while(element.contains("###")){
 				int p = element.indexOf("###")+3;
 				String prepphrase = element.substring(p, element.indexOf('<', p));

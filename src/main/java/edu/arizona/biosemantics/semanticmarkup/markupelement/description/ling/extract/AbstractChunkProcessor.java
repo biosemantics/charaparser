@@ -1053,7 +1053,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	VALUE: [5.5-(6-8), mm]
 	 * 
 	 * 
-	 * @param numberexp : styles 2[10] mm diam.
+	 * @param numberexp :(1-)5-300+ ;  styles 2[10] mm diam.
 	 * @param cname: 
 	 * @return: characters marked up in XML format <character name="" value="">
 	 */

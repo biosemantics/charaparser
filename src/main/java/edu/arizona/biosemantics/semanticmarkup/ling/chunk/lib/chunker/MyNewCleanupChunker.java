@@ -13,9 +13,11 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
@@ -61,11 +63,11 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		boolean[] translateCharacterToConstraint = new boolean[terminals.size()];
 		boolean[] translateStateToConstraint = new boolean[terminals.size()];
-		boolean[] translateModifierToConstraint = new boolean[terminals.size()];
+		//boolean[] translateModifierToConstraint = new boolean[terminals.size()];
 		boolean[] translateStateToModifier = new boolean[terminals.size()];
 		boolean[] translateConstraintToModifier = new boolean[terminals.size()];
 		
-		determineTranslationsBasedOnStructure(terminals, chunkCollector, translateCharacterToConstraint, translateStateToConstraint, translateModifierToConstraint,
+		determineTranslationsBasedOnStructure(terminals, chunkCollector, translateCharacterToConstraint, translateStateToConstraint, /* translateModifierToConstraint,*/
 				translateStateToModifier, translateConstraintToModifier);
 
 		for(int i=0; i<terminals.size(); i++) {
@@ -78,10 +80,10 @@ public class MyNewCleanupChunker extends AbstractChunker {
 				translate(ChunkType.STATE, ChunkType.CONSTRAINT, i, chunkCollector);
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
 			}
-			if(translateModifierToConstraint[i]) {
+			/*if(translateModifierToConstraint[i]) {
 				translate(ChunkType.MODIFIER, ChunkType.CONSTRAINT, i, chunkCollector);
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
-			}
+			}*/
 			if(translateStateToModifier[i]) {
 				translate(ChunkType.STATE, ChunkType.MODIFIER, i, chunkCollector);
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
@@ -110,20 +112,21 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 			Chunk terminalChunk = chunkCollector.getChunk(terminal);
 			//first looking for a chunk containing an ORGAN
 			if(terminalChunk.containsChunkType(ChunkType.ORGAN)){
-				if(!toBeIncluded.isEmpty()){
+				if(!toBeIncluded.isEmpty())
 					includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
 				chunkWithOrgan = terminalChunk;
 				toBeIncluded = new ArrayList<Chunk> ();
 			}else if(chunkWithOrgan!=null && (terminalChunk.isOfChunkType(ChunkType.AND) || terminalChunk.isOfChunkType(ChunkType.OR) ||
 					terminalChunk.isOfChunkType(ChunkType.TO) || terminalChunk.isOfChunkType(ChunkType.CONSTRAINT) )){
 				toBeIncluded.add(0, terminalChunk);
-			}else if(!toBeIncluded.isEmpty()){
-				includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
+			}else{
+				if(!toBeIncluded.isEmpty())
+					includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
 				//reset
 				chunkWithOrgan = null;
 				toBeIncluded = new ArrayList<Chunk> ();
 			}
-			}
+			
 		}
 		
 		
@@ -174,16 +177,18 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 				break;
 			}
 		}
+		if(toBeIncluded.isEmpty()) return;
 		//add constraints to chunkWithOrgan
 		LinkedHashSet<Chunk> organChildChunks = new LinkedHashSet<Chunk>();
 		organChildChunks.addAll(toBeIncluded);
 		organChildChunks.addAll(chunkWithOrgan.getChunks());
 		chunkWithOrgan.setChunks(organChildChunks);
 		chunkCollector.addChunk(chunkWithOrgan);
+		log(LogLevel.DEBUG, "joined orphaned constraint with the organ: "+chunkWithOrgan);
 	}
 
 	private void determineTranslationsBasedOnStructure(List<AbstractParseTree> terminals, ChunkCollector chunkCollector,
-			boolean[] translateCharacterToConstraint, boolean[] translateStateToConstraint, boolean[] translateModifierToConstraint, 
+			boolean[] translateCharacterToConstraint, boolean[] translateStateToConstraint, /*boolean[] translateModifierToConstraint, */
 			boolean[] translateStateToModifier, boolean[] translateConstraintToModifier) {
 		boolean[] modifier = getArray(terminals, chunkCollector, ChunkType.MODIFIER);
 		boolean[] character = getArray(terminals, chunkCollector, ChunkType.CHARACTER_STATE);
@@ -234,8 +239,8 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 				}
 			//log(LogLevel.DEBUG, "changedStateToX " + changedStateToX);
 			changed |= changedStateToX;
-			
-			boolean changedModifierToConstraint = false;
+			//why change modifiers to constraints? This should not be done. Hong 3/18/15
+			/*boolean changedModifierToConstraint = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateModifierToConstraint[i];
 				translateModifierToConstraint[i] = (modifier[i] || translateStateToModifier[i]) && i+1 < terminals.size() && (constraintOrgan[i+1] || translateCharacterToConstraint[i+1] ||
@@ -244,11 +249,12 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 			}
 			//log(LogLevel.DEBUG, "changedModifierToConstraint " + changedModifierToConstraint);
 			changed |= changedModifierToConstraint;
+			*/
 			
 			boolean changedConstraintToModifier = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateConstraintToModifier[i];
-				translateConstraintToModifier[i] = (constraint[i] || translateCharacterToConstraint[i] || translateStateToConstraint[i] || translateModifierToConstraint[i]) && 
+				translateConstraintToModifier[i] = (constraint[i] || translateCharacterToConstraint[i] || translateStateToConstraint[i] /*|| translateModifierToConstraint[i]*/) && 
 					i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1];
 				changedConstraintToModifier |= translateConstraintToModifier[i] != before;
 			}
