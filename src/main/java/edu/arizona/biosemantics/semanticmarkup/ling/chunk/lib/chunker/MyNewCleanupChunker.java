@@ -128,7 +128,8 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 			}
 			
 		}
-		
+		if(!toBeIncluded.isEmpty())
+			includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
 		
 		//capture multiple modifiers following each other into one chunk
 		//from: MODIFIER: [mostly], MODIFIER: [not]
