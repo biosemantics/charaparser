@@ -155,7 +155,7 @@ public class OrganRecoverChunker extends AbstractChunker {
 		for(;i >= 0; i--){
 			AbstractParseTree lookBehindTerminal = terminals.get(i);
 			/*preventing "the" from blocking the organ following ",the" to being matched as a subject organ- mohan 10/19/2011*/
-			if(lookBehindTerminal.getTerminalsText().matches("the|a|an")){ //collect articles as part of organ chunks
+			if(lookBehindTerminal.getTerminalsText().matches("the|a|an"+"")){ //collect articles as part of organ chunks
 				List<Chunk> collectedTerminalsList = new ArrayList<Chunk>(collectedTerminals);
 				collectedTerminals.clear();
 				collectedTerminals.add(chunkCollector.getChunk(lookBehindTerminal));
@@ -178,11 +178,11 @@ public class OrganRecoverChunker extends AbstractChunker {
 				
 				List<Chunk> collectedTerminalsList = new ArrayList<Chunk>(collectedTerminals);
 				collectedTerminals.clear();
-				Chunk chunk = chunkCollector.getChunk(lookBehindTerminal);
+				/*Chunk chunk = chunkCollector.getChunk(lookBehindTerminal);
 				if(chunkCollector.isOfChunkType(lookBehindTerminal, ChunkType.MODIFIER) ||
 						chunkCollector.isOfChunkType(lookBehindTerminal, ChunkType.STATE)) {
 					chunk.setChunkType(ChunkType.CONSTRAINT);
-				}
+				} Hong: 3/16/15, don't understand why a modifier or a state is automatically constraint. roots usually taproots, usally is not a constraint. commented this out*/
 				collectedTerminals.add(chunkCollector.getChunk(lookBehindTerminal));
 				collectedTerminals.addAll(collectedTerminalsList);
 				foundModifier = true;

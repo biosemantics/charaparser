@@ -83,7 +83,8 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			boolean isOrgan = false;
 			boolean isVerb = false;
 			//if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
-			if(word.contains("~list~") || word.contains("_c_") || learnedCharacterKnowledgeBase.isState(word))
+			if(word.contains("~list~") || word.contains("_c_")  || 
+					(word.matches("[^a-z]+") && word.matches(".*?\\d.*")) || word.matches(".*?[^a-z]("+units+")$") || learnedCharacterKnowledgeBase.isState(word)) //don't send numbers, values to learnedCharacterKnowledgeBase
 				isState = true;
 			//isOrgan = organStateKnowledgeBase.isOrgan(word);
 			isOrgan = learnedCharacterKnowledgeBase.isEntity(word);

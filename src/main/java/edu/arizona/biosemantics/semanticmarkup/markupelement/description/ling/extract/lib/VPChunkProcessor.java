@@ -74,7 +74,6 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	private List<Element> processVP(Chunk content, List<BiologicalEntity> parents, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		List<Element> results = new LinkedList<Element>();
-		//String object = content.substring(content.indexOf("o["));
 		Chunk object = content.getChunkDFS(ChunkType.OBJECT);
 		Chunk verb = content.getChunkDFS(ChunkType.VERB);
 		if(object.size() == 1 && object.containsChildOfChunkType(ChunkType.PP)) {

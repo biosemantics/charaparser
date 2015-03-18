@@ -309,12 +309,14 @@ public abstract class Normalizer implements INormalizer {
 		/*if(str.indexOf(" -{")>=0){//1�2-{pinnately} or -{palmately} {lobed} => {1�2-pinnately-or-palmately} {lobed}
 			str = str.replaceAll("\\s+or\\s+-\\{", "-or-").replaceAll("\\s+to\\s+-\\{", "-to-").replaceAll("\\s+-\\{", "-{");
 		}*/
-		//TODO: Hong [_-]?  _or_?
+		//turn heads disciform , discoid , radiate , radiant , or quasi-radiate ,-radiant , or-liguliflorous . 3/16/15
+		//to heads disciform , discoid , radiate , radiant , or quasi-radiate ,-radiant ,-or-liguliflorous . TODO: didn't help with the parsing as ',' breaks up the character in stanford parser.
 		if(str.matches(".*?-(or|to)\\b.*") || str.matches(".*?\\b(or|to)-.*") ){//1�2-{pinnately} or-{palmately} {lobed} => {1�2-pinnately-or-palmately} {lobed}
 			str = str.replaceAll("-or\\s+", "-or-").replaceAll("\\s+or-", "-or-").replaceAll("-to\\s+", "-to-").replaceAll("\\s+to-", "-to-");
 			//str = str.replaceAll("\\}?-or\\s+\\{?", "-or-").replaceAll("\\}?\\s+or-\\{?", "-or-").replaceAll("\\}?-to\\s+\\{?", "-to-").replaceAll("\\}?\\s+to-\\{?", "-to-").replaceAll("-or\\} \\{", "-or-").replaceAll("-to\\} \\{", "-to-");
 		}
 		//{often} 2-, 3-, or 5-{ribbed} ; =>{often} {2-,3-,or5-ribbed} ;  635.txt-16
+		//what about (1-), 3-, or (5-) nerved?
 		Matcher m = hyphenedtoorpattern.matcher(str); //TODO: _ribbed not in local learned terms set. why?
 		while(m.matches()){
 			String possibleCharacterState = m.group(5);
@@ -349,7 +351,7 @@ public abstract class Normalizer implements INormalizer {
 			//lookupCharacters(str);
 		}
 		//lookupCharacters(str, true); //treating -ly as -ly
-		if(str.indexOf(" to ")>=0 ||str.indexOf(" or ")>=0){
+		if(str.indexOf(" to ")>=0 ||str.indexOf(" or ")>=0 || str.indexOf(" and/or ")>=0){
 			//if(this.printCharacterList){
 			//log(LogLevel.DEBUG, str);
 			//}
@@ -747,8 +749,10 @@ public abstract class Normalizer implements INormalizer {
 			color = color.trim();
 			//color = color.indexOf(" ") > 0? color.substring(color.lastIndexOf(" ") + 1) : color;
 			String[] clrs = color.split("[ -]+");
-			for(String clr: clrs)
-				colorsString.append(clr + "|");
+			for(String clr: clrs){
+				if(!clr.matches("and|or"))
+					colorsString.append(clr + "|");
+			}
 		}
 		return colorsString.toString().replaceFirst("\\|$", "");
 	}

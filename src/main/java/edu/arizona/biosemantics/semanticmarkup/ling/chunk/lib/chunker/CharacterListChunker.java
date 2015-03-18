@@ -322,7 +322,7 @@ public class CharacterListChunker extends AbstractChunker {
 				//previousCharacter = null;
 				//previousStateTree = null;
 			} else { //!modifierStateToken.equals(",") && !modifierStateToken.equals("and") && !modifierStateToken.equals("or")posKnowledgeBase.isAdjective(modifierStateToken)
-				if(newState && (modifierStateToken.equals(",") || modifierStateToken.equals("and") || modifierStateToken.equals("or"))) {
+				if(newState && (modifierStateToken.equals(",") || modifierStateToken.equals("and") || modifierStateToken.equals("or") || modifierStateToken.equals("and/or"))) {
 					if(newState && modifierStateToken.equals(",")) {
 						AbstractParseTree punctTree = parseTreeFactory.create();
 						punctTree.setPOS(POS.PUNCT);
@@ -339,7 +339,7 @@ public class CharacterListChunker extends AbstractChunker {
 						ccTree.addChild(cc);
 						terminal.addChild(ccTree);
 						newState = true;
-					} else if(modifierStateToken.equals("or")) {
+					} else if(modifierStateToken.equals("or") ||modifierStateToken.equals("and/or")) {
 						toChunks.add(characterChunk); //treat or-node also as part of TO-chunk
 						AbstractParseTree ccTree = parseTreeFactory.create();
 						ccTree.setPOS(POS.CC);

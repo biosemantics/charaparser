@@ -1,10 +1,14 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+
 
 
 
@@ -88,7 +92,44 @@ public class MyNewCleanupChunker extends AbstractChunker {
 			}
 		}
 		
+		/*
+		 * basal => CONSTRAINT: characterName->position; [STATE: [basal]]
+and => AND: [AND: [and]]
+proximal => MAIN_SUBJECT_ORGAN: [CONSTRAINT: characterName->position; [STATE: [proximal]], CONSTRAINT: characterName->position; [STATE: [cauline]], ORGAN: [leaves]]
+cauline => MAIN_SUBJECT_ORGAN: [CONSTRAINT: characterName->position; [STATE: [proximal]], CONSTRAINT: characterName->position; [STATE: [cauline]], ORGAN: [leaves]]
+leaves => MAIN_SUBJECT_ORGAN: [CONSTRAINT: characterName->position; [STATE: [proximal]], CONSTRAINT: characterName->position; [STATE: [cauline]], ORGAN: [leaves]]
+red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
+; => END_OF_LINE: [;]
+		 */
+		//include orphaned constraints in the Organ chunk
+		Chunk chunkWithOrgan = null;
+		
+		ArrayList<Chunk> toBeIncluded = new ArrayList<Chunk> ();
+		for(int i=terminals.size()-1; i>=0; i--) { //from back to front
+			AbstractParseTree terminal = terminals.get(i);
+			Chunk terminalChunk = chunkCollector.getChunk(terminal);
+			//first looking for a chunk containing an ORGAN
+			if(terminalChunk.containsChunkType(ChunkType.ORGAN)){
+				if(!toBeIncluded.isEmpty()){
+					includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
+				chunkWithOrgan = terminalChunk;
+				toBeIncluded = new ArrayList<Chunk> ();
+			}else if(chunkWithOrgan!=null && (terminalChunk.isOfChunkType(ChunkType.AND) || terminalChunk.isOfChunkType(ChunkType.OR) ||
+					terminalChunk.isOfChunkType(ChunkType.TO) || terminalChunk.isOfChunkType(ChunkType.CONSTRAINT) )){
+				toBeIncluded.add(0, terminalChunk);
+			}else if(!toBeIncluded.isEmpty()){
+				includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
+				//reset
+				chunkWithOrgan = null;
+				toBeIncluded = new ArrayList<Chunk> ();
+			}
+			}
+		}
+		
+		
 		//capture multiple modifiers following each other into one chunk
+		//from: MODIFIER: [mostly], MODIFIER: [not]
+		//to: MODIFIER: [mostly, not],
 		Chunk previousModifierChunk = null;
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
@@ -119,6 +160,26 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		}
 
 		//moveChunksForAndOrLists(terminals, chunkCollector);		
+	}
+
+	private void includeConstraints(ChunkCollector chunkCollector,
+			Chunk chunkWithOrgan, ArrayList<Chunk> toBeIncluded) {
+		//remove AND, OR, TO from the beginning of toBeAdded
+		Iterator<Chunk> it = toBeIncluded.iterator();
+		while(it.hasNext()){
+			Chunk c = it.next();
+			if(c.isOfChunkType(ChunkType.AND) || c.isOfChunkType(ChunkType.OR) || c.isOfChunkType(ChunkType.TO)){
+				it.remove();
+			}else{
+				break;
+			}
+		}
+		//add constraints to chunkWithOrgan
+		LinkedHashSet<Chunk> organChildChunks = new LinkedHashSet<Chunk>();
+		organChildChunks.addAll(toBeIncluded);
+		organChildChunks.addAll(chunkWithOrgan.getChunks());
+		chunkWithOrgan.setChunks(organChildChunks);
+		chunkCollector.addChunk(chunkWithOrgan);
 	}
 
 	private void determineTranslationsBasedOnStructure(List<AbstractParseTree> terminals, ChunkCollector chunkCollector,

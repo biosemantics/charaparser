@@ -333,16 +333,23 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		LinkedHashSet<Chunk> constraints = new LinkedHashSet<Chunk>();
 		if(organChunkIsLast) {
 			boolean seenConstraint = false;
+			ArrayList<AbstractParseTree> last = new ArrayList<AbstractParseTree> ();
 			for(AbstractParseTree terminal : subjectChunk.getTerminals()) {
 				if(subjectChunk.isPartOfChunkType(terminal, ChunkType.CONSTRAINT)) {
 					seenConstraint = true;
 					Chunk constraintChunk = subjectChunk.getChunkOfTypeAndTerminal(ChunkType.CONSTRAINT, terminal);
-					if(constraintChunk!=null)
+					if(constraintChunk!=null){
 						constraints.addAll(constraintChunk.getTerminals());
-				}else if(seenConstraint && (terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or") || terminal.getTerminalsText().equals("to")))
+						last.addAll(constraintChunk.getTerminals());
+					}
+				}else if(seenConstraint && (terminal.getTerminalsText().equals("and") || terminal.getTerminalsText().equals("or") || terminal.getTerminalsText().equals("to"))){
 					constraints.add(terminal); //TODO  'and/or' would be treated as constraints in case of "mid and inner petals", but not "trees or shrubs". 
-				
+					last.add(terminal);
+				}else{
+					seenConstraint = false; //inner scales or bristles
+				}
 				if(organChunk.containsOrEquals(terminal)) {
+					if(!last.isEmpty() && last.get(last.size()-1).getTerminalsText().matches("and|or|to")) constraints.remove(last.get(last.size()-1));
 					Chunk returnChunk = new Chunk(ChunkType.CONSTRAINT, constraints);
 					return returnChunk;
 				}
@@ -568,7 +575,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					}
 				}
 				//Hong test
-				if(tokensCharacter==null && w.matches("no")){
+				if(tokensCharacter==null && w.matches("no")){ //e.g. no flowers
 					tokensCharacter = "count";
 				}
 				if(tokensCharacter==null && posKnowledgeBase.isAdverb(w) && !modifiers.contains(token)) {
@@ -655,7 +662,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		
 		 
 		String[] range = characterValue.split("\\s+to\\s+");//a or b, c, to d, c, e
-		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+or\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
+		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+(or|and/or)\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
 		if(tokens.length==0)
 			return results;
 		String from = getFirstCharacter(tokens[tokens.length-1]);
@@ -1034,6 +1041,17 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 */
 
 	/**
+	 * cases that are not handled well:
+	 * 	[AREA: [(4-5[-6]×)3-5[-7]], mm]
+	[3-12+[-15+], mm]
+	[(5-)10-30+[-80], cm]
+	[[5-7]8-12[13-16]]
+	20 – 100 + [ – 200 + ]
+	[[0-](3-)5(-8)[-15]]
+	[1(-2-4)]
+	AREA: [(4-14(-16)×)4-25+ mm]
+	VALUE: [5.5-(6-8), mm]
+	 * 
 	 * 
 	 * @param numberexp : styles 2[10] mm diam.
 	 * @param cname: 

@@ -322,7 +322,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * @param glossaryDownload
 	 * @param download
 	 */
-	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+	/*protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
 		//glossary
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
@@ -397,7 +397,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			// TODO Auto-generated catch block
 			log(LogLevel.ERROR, "Exception", e);
 		}
-	}
+	}*/
 	
 	
 	/**
@@ -410,7 +410,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * For structure terms, both singular and plural forms are included in the synonyms
 	 * @param otoGlossary
 	 */
-	/*protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
 
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
@@ -504,7 +504,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			}
 		}
 	
-	}*/
+	}
 	
 	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 
 			String tablePrefix) {
