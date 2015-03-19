@@ -1732,14 +1732,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			if(chara.getName().startsWith("atypical")){
 				String character = chara.getName().replaceFirst("atypical_", "");
 				if(chara.getFrom()!=null){
-					atypicalfrom = Float.parseFloat(chara.getFrom());
+					atypicalfrom = Float.parseFloat(chara.getFrom().replaceFirst("\\+$", ""));
 				}
 				if(chara.getTo()!=null){
-					atypicalto = Float.parseFloat(chara.getTo());
+					atypicalto = Float.parseFloat(chara.getTo().replaceFirst("\\+$", ""));
 				}
 				if(chara.getValue()!=null){
-					atypicalfrom = Float.parseFloat(chara.getValue());
-					atypicalto = Float.parseFloat(chara.getValue());
+					atypicalfrom = Float.parseFloat(chara.getValue().replaceFirst("\\+$", ""));
+					atypicalto = Float.parseFloat(chara.getValue().replaceFirst("\\+$", ""));
 				}	
 
 				float[] typical = getTypical(innertagstate, character);

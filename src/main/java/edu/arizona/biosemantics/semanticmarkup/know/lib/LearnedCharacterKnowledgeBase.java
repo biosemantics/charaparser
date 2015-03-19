@@ -107,7 +107,9 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 	
 	@Override
-	public boolean isState(String word){
+	public boolean isCategoricalState(String word){
+		//if a word is a categorical character state
+		//numerical expressions are considered non-state for this purpose 
 		if(isStateCache.get(word)!=null) return isStateCache.get(word);
 		
 		String cats = this.getCharacterName(word).getCategories();
@@ -121,7 +123,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	public Match getCharacterName(String word) {//word: one word, or ,hyphened words (standardized "_" to "-"), phrases such as "dark green" and "purple spot", "gland-dotted and"?
 		word = word.trim();
 		if(word.matches(this.stopWords)) return new Match(null);
-		if((word.matches("[^a-z]+") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new Match(null); //numerical expressions
+		//2n=5
+		if((word.matches("[^a-z]+")|| word.contains("=") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new Match(null); //numerical expressions
 		
 		String wo = word;
 		

@@ -85,9 +85,9 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			//if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
 			//don't send numbers, values to learnedCharacterKnowledgeBase
 			if(word.contains("~list~") || word.contains("_c_")  || 
-					((word.matches("[^a-z]+") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*"))){ //units could be mixed in the numbers
+					((word.matches("[^a-z]+") || word.contains("=")|| word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*"))){ //units could be mixed in the numbers
 				isState = true;
-			}else if(learnedCharacterKnowledgeBase.isState(word)){
+			}else if(learnedCharacterKnowledgeBase.isCategoricalState(word)){
 				isState = true;
 				Match m = learnedCharacterKnowledgeBase.getCharacterName(word);
 				if(m!=null &&  m.getCategories()!=null && m.getCategories().matches("(^|.*?_)position_relational(_.*|$)")){

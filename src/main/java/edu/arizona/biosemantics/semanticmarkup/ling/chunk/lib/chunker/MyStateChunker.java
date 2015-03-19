@@ -70,9 +70,9 @@ public class MyStateChunker extends AbstractChunker {
 			//boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
 			//		organStateKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 			
-			boolean validCharacterState = learnedCharacterKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
+			boolean validCharacterState = learnedCharacterKnowledgeBase.isCategoricalState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 			boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
-					learnedCharacterKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
+					learnedCharacterKnowledgeBase.isCategoricalState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 
 			boolean stateNotModifier = validCharacterState && !adverbCharacterState;
 			result[i] = stateNotModifier;
@@ -110,7 +110,7 @@ public class MyStateChunker extends AbstractChunker {
 			}
 			
 			//if(organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
-			if(characterKnowledgeBase.isState(terminal.getTerminalsText())) {
+			if(characterKnowledgeBase.isCategoricalState(terminal.getTerminalsText())) {
 				String character = null;
 				if(characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText())) {
 					character = characterKnowledgeBase.getCharacterName(terminal.getTerminalsText()).getCategories();
