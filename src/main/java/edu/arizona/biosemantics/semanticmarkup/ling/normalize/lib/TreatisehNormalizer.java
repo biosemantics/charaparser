@@ -1,7 +1,9 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Set;
+
 
 
 
@@ -74,14 +76,16 @@ public class TreatisehNormalizer extends Normalizer {
 			ICharacterKnowledgeBase characterKnowledgeBase, 
 			/*IOrganStateKnowledgeBase organStateKnowledgeBase, */
 			IInflector inflector, 
-			@Named("CompoundPrepWords")String compoundPPptn) {
+			@Named("CompoundPrepWords")String compoundPPptn, 
+			@Named("AdjNouns") String adjNouns, 
+			@Named("AdjNounCounterParts") Hashtable<String, String> adjNounCounterParts) {
 		super(glossary, units, numberPattern, singulars, plurals, posKnowledgeBase,
 				lyAdverbPattern, p1, p2, p3, p4, p5, p6, p7, p75, p8,
 				terminologyLearner, viewPattern, countPattern, positionPattern,
 				romanRangePattern, romanPattern, romanNumbers, stopWords,
 				prepositionWords, modifierList, advModifiers, parentTagProvider,
-				characterKnowledgeBase/*, organStateKnowledgeBase*/, inflector, compoundPPptn);
-		// TODO Auto-generated constructor stub
+				characterKnowledgeBase/*, organStateKnowledgeBase*/, inflector, compoundPPptn, 
+				adjNouns, adjNounCounterParts);
 	}
 
 	@Override
