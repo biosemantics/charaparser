@@ -52,7 +52,7 @@ public class StateChunker extends AbstractChunker {
 			//collapse here? no decided to create chunk on the fly 
 			//terminalParent = terminal.getParent(parseTree);
 			Chunk chunk = chunkCollector.getChunk(terminal);
-			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && learnedCharacterKnowledgeBase.isState(terminal.getTerminalsText())) {
+			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && learnedCharacterKnowledgeBase.isCategoricalState(terminal.getTerminalsText())) {
 			//if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
 				chunkCollector.addChunk(new Chunk(ChunkType.STATE, terminal));
 			}

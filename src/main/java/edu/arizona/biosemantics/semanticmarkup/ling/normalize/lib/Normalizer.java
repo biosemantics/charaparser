@@ -320,7 +320,7 @@ public abstract class Normalizer implements INormalizer {
 		Matcher m = hyphenedtoorpattern.matcher(str); //TODO: _ribbed not in local learned terms set. why?
 		while(m.matches()){
 			String possibleCharacterState = m.group(5);
-			boolean isCharacterState = this.characterKnowledgeBase.isState(possibleCharacterState); 
+			boolean isCharacterState = this.characterKnowledgeBase.isCategoricalState(possibleCharacterState); 
 			if(isCharacterState) {
 				str = m.group(1) + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-") + m.group(6);
 				//str = m.group(1) + "{" + m.group(2).replaceAll("[,]", " ").replaceAll("\\s+", "-").replaceAll("\\{$", "")+ "}" + m.group(6);
@@ -781,11 +781,11 @@ public abstract class Normalizer implements INormalizer {
 		Matcher m = areapattern.matcher(text);
 		while(m.matches()){
 			if(m.group(2).matches("[(\\[\\d].*")){
-				text = m.group(1)+m.group(2).replaceAll("[ \\{\\}]", "")+ m.group(4);
+				text = m.group(1)+m.group(2).replaceAll("[ \\{\\}]", "")+ (m.group(4).startsWith(" ")? m.group(4) : " "+m.group(4));
 				m = areapattern.matcher(text2); //match on text2 to keep the unit-free segment
 				m.matches();
 				//text2 = m.group(1)+m.group(2).replaceAll("[μµucmd]?m", "").replaceAll("[ \\{\\}]", "")+ m.group(4);
-				text2 = m.group(1)+m.group(2).replaceAll(units, "").replaceAll("[ \\{\\}]", "")+ m.group(4);
+				text2 = m.group(1)+m.group(2).replaceAll(units, "").replaceAll("[ \\{\\}]", "")+(m.group(4).startsWith(" ")? m.group(4) : " "+m.group(4));
 				m = areapattern.matcher(text);
 			}else {//{pistillate} 9-47 ( -55 in <fruit> ) ×5.5-19 mm , {flowering} <branchlet> 0-4 mm ; m.group(2)= ) ×5.5-19 mm , {flowering} <branchlet> 0-4 mm ;
 				String left = "";
@@ -795,10 +795,10 @@ public abstract class Normalizer implements INormalizer {
 					//m.group(1) = {pistillate} 9-47 ( -55 in <fruit> 
 					//find the starting brackets in temp and remove the braketed content
 					//if(temp.matches(".*?\\d$")){
-					text = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[ \\{\\}]", "") + m.group(4);
+					text = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[ \\{\\}]", "") + (m.group(4).startsWith(" ")? m.group(4) : " "+m.group(4));
 					m = areapattern.matcher(text2);
 					m.matches();
-					text2 = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[cmd]?m", "").replaceAll("[ \\{\\}]", "") + m.group(4);
+					text2 = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[cmd]?m", "").replaceAll("[ \\{\\}]", "") + (m.group(4).startsWith(" ")? m.group(4) : " "+m.group(4));
 					m = areapattern.matcher(text);
 					//}
 				}
@@ -1957,16 +1957,16 @@ public abstract class Normalizer implements INormalizer {
 				foundOrgan = true;
 				if(i==0) return false; 
 				if(tokenBeforeOrgan.matches(",")) break;
-			}else if(!foundOrgan &&(aToken.matches("(and|to|or|plus|,)") || aToken.matches("[\\d()+–-]+") ||  /*mat.getCategories() == null||*/ characterKnowledgeBase.isState(aToken) || posKnowledgeBase.isAdverb(aToken))){
+			}else if(!foundOrgan &&(aToken.matches("(and|to|or|plus|,)") || aToken.matches("[\\d()+–-]+") ||  /*mat.getCategories() == null||*/ characterKnowledgeBase.isCategoricalState(aToken) || posKnowledgeBase.isAdverb(aToken))){
 				tokenBeforeOrgan = aToken;
 				continue;
 			}else if(foundOrgan){
-				if(!posKnowledgeBase.isAdverb(aToken) && ! characterKnowledgeBase.isState(aToken) && ! aToken.matches(".*?[\\d].*")){
+				if(!posKnowledgeBase.isAdverb(aToken) && ! characterKnowledgeBase.isCategoricalState(aToken) && ! aToken.matches(".*?[\\d].*")){
 					return false; //pappi of outer, shorter bristles or scales plus inner, longer bristles; [inner longer bristles]
 				}else{//apices of inner erect , abaxial faces gray-tomentose , ± twisted . //margins of outer entire , abaxial faces without glutinous ridge ;
 					break;
 				}
-			}else if(!foundOrgan && !aToken.matches("(and|to|or|plus|,)") && ! aToken.matches(".*?[\\d].*") /*&& characterKnowledgeBase.getCharacterName(aToken).getCategories() != null */ && ! characterKnowledgeBase.isState(aToken) && !posKnowledgeBase.isAdverb(aToken)){
+			}else if(!foundOrgan && !aToken.matches("(and|to|or|plus|,)") && ! aToken.matches(".*?[\\d].*") /*&& characterKnowledgeBase.getCharacterName(aToken).getCategories() != null */ && ! characterKnowledgeBase.isCategoricalState(aToken) && !posKnowledgeBase.isAdverb(aToken)){
 				return true;
 			}
 		}
@@ -1987,7 +1987,7 @@ public abstract class Normalizer implements INormalizer {
 			}else if(tokens[i].matches("and|or|to")){//should not allow these ? check out this: cypselae dimorphic or monomorphic , ray pappi 0 , or of outer , linear_lanceolate scales plus inner , longer bristles
 				//keep on looking  
 			}else{
-				if(wiggle && characterKnowledgeBase.isState(tokens[i])) wiggleRoom++;
+				if(wiggle && characterKnowledgeBase.isCategoricalState(tokens[i])) wiggleRoom++;
 				else return false;
 				
 				if(wiggle && wiggleRoom > 1)

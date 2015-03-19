@@ -35,7 +35,7 @@ public interface ICharacterKnowledgeBase {
 	 */
 	public boolean containsCharacterName(String characterName);
 
-	public boolean isState(String terminalsText);
+	public boolean isCategoricalState(String terminalsText);
 	
 	public boolean isEntity(String terminalsText);
 

@@ -214,8 +214,8 @@ public abstract class AbstractChunker implements IChunker {
 						//organStateKnowledgeBase.isOrgan(terminals.get(0).getTerminalsText()) && 
 						//organStateKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
 						learnedCharacterKnowledgeBase.isEntity(terminals.get(0).getTerminalsText()) && 
-						learnedCharacterKnowledgeBase.isState(terminals.get(0).getTerminalsText()) && 
-						chunkCollector.isPartOfChunkType(terminals.get(0), ChunkType.STATE)) {
+						learnedCharacterKnowledgeBase.isCategoricalState(terminals.get(0).getTerminalsText()) && 
+						chunkCollector.isPartOfChunkType(terminals.get(0), ChunkType.STATE)) { 
 					alreadyAssignedToValidChunk = false;
 				}
 				for(AbstractParseTree terminal: terminals){//if containing a position term: middle, upper 2/3
