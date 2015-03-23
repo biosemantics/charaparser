@@ -169,8 +169,8 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 				while(chunkListIterator.nextIndex() < backupNextIndex)
 					chunkListIterator.next();
 			}	
-			if(characterStateString.contains(" to "))
-				results.addAll(createRangeCharacterElement(parents, modifiers, characterStateString, character, processingContextState));
+			if(characterStateString.matches(".*?\\bto\\b.*"))
+				results.addAll(createRangeCharacterElement(parents, modifiers, characterStateString.replaceAll("-to-", " to "), character, processingContextState));
 			else {
 				Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState, false);
 				if(characterElement!=null)
