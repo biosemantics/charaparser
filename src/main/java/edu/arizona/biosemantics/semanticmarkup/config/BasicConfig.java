@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
@@ -161,7 +162,9 @@ public class BasicConfig extends AbstractModule {
 					  "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplant.xsd"));
 			  bind(String.class).annotatedWith(Names.named("StanfordParserWrapper_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 			  bind(String.class).annotatedWith(Names.named("HabitatParser_ModelFile")).toInstance("edu/stanford/nlp/models/lexparser/englishFactored.ser.gz");
+			 
 			  // IO
+			  bind(ConnectionPool.class).in(Singleton.class);
 			  bind(new TypeLiteral<Map<File, Binding>>() {}).annotatedWith(Names.named("MOXyBinderDescriptionReaderWriter_FileDocumentMappings")).to(
 					  new TypeLiteral<HashMap<File, Binding>>() {}).in(Singleton.class);
 			  

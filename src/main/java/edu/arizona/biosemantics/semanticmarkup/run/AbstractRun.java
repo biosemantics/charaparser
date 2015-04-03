@@ -11,10 +11,12 @@ import org.apache.commons.io.FileUtils;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 
 /**
  * An AbstractRun implements some shared functionality of concrete Run implementations such as time string formating, config reporting,..
@@ -25,6 +27,7 @@ public abstract class AbstractRun implements IRun {
 	protected String guiceModuleFile;
 	protected String runOutDirectory;
 	private String inputDirectory;
+	protected ConnectionPool connectionPool;
 
 	/**
 	 * @param guiceModuleFile
@@ -32,10 +35,12 @@ public abstract class AbstractRun implements IRun {
 	@Inject
 	public AbstractRun(@Named("GuiceModuleFile")String guiceModuleFile,
 		@Named("InputDirectory")String inputDirectory,
-		@Named("Run_OutDirectory")String runOutDirectory) {
+		@Named("Run_OutDirectory")String runOutDirectory,
+		ConnectionPool connectionPool) {
 		this.guiceModuleFile = guiceModuleFile;
 		this.inputDirectory = inputDirectory;
 		this.runOutDirectory = runOutDirectory;
+		this.connectionPool = connectionPool;
 	}
 	
 	public void run() throws Throwable {	
@@ -71,6 +76,8 @@ public abstract class AbstractRun implements IRun {
 		bwSetup.append(config.toString());
 		bwSetup.flush();
 		bwSetup.close();
+		
+		connectionPool.shutdown();
 	}
 
 	protected abstract void doRun() throws Throwable;

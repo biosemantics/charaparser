@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.IDescriptionMarkupResultReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.io.IDescriptionMarkupEvaluator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupResult;
@@ -38,8 +39,9 @@ public class DescriptionEvaluationRun extends AbstractRun {
 			@Named("EvaluationRun_TestReader")IDescriptionMarkupResultReader testReader,
 			@Named("EvaluationRun_CorrectReader")IDescriptionMarkupResultReader correctReader, 
 			String testInputDirectory,
-			String correctInputDirectory) {
-		super(guiceModuleFile, inputDirectory, runOutDirectory);
+			String correctInputDirectory, 
+			ConnectionPool connectionPool) {
+		super(guiceModuleFile, inputDirectory, runOutDirectory, connectionPool);
 		this.testReader = testReader;
 		this.correctReader = correctReader;
 		this.evaluator = evaluator;
