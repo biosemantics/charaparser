@@ -3,11 +3,12 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.l
 import java.util.List;
 import java.util.Set;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
@@ -27,12 +28,14 @@ public class DatabaseInputFromEvaluationNoLearner extends PerlTerminologyLearner
 			@Named("StopWords") Set<String> stopWords,
 			@Named("SelectedSources") Set<String> selectedSources,
 			IGlossary glossary, 
-			@Named("WordTokenizer") ITokenizer tokenizer, 
-			@Named("ParentTagProvider") ParentTagProvider parentTagProvider, 
-			@Named("PerlDirectory") String perlDirectory) throws Exception {
+			@Named("WordTokenizer") ITokenizer tokenizer,
+			@Named("ParentTagProvider") ParentTagProvider parentTagProvider,
+			@Named("PerlDirectory") String perlDirectory,
+			IInflector inflector, 
+			ConnectionPool connectionPool) throws Exception {
 		super(temporaryPath, markupMode, databaseHost, databasePort, databaseName,
-				databasePrefix, databaseUser, databasePassword,
-				stopWords, selectedSources, glossary, tokenizer, parentTagProvider, perlDirectory);
+				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer, 
+				parentTagProvider, perlDirectory, inflector, connectionPool);
 	}
 	
 	@Override

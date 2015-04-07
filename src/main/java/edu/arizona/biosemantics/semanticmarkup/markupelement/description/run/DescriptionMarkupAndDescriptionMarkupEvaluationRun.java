@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.IDescriptionMarkupResultReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.io.IDescriptionMarkupEvaluator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupResult;
@@ -37,8 +38,9 @@ public class DescriptionMarkupAndDescriptionMarkupEvaluationRun extends Abstract
 			@Named("MarkupCreator") IDescriptionMarkupCreator creator, 
 			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator, 
 			@Named("EvaluationRun_DescriptionMarkupResultReader")IDescriptionMarkupResultReader descriptionMarkupResultReader, 
-			String correctInputDirectory) {
-		super(guiceModuleFile, inputDirectory, runOutDirectory);
+			String correctInputDirectory,
+			ConnectionPool connectionPool) {
+		super(guiceModuleFile, inputDirectory, runOutDirectory, connectionPool);
 		this.creator = creator;
 		this.descriptionMarkupResultReader = descriptionMarkupResultReader;
 		this.evaluator = evaluator;

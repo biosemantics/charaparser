@@ -10,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,9 +39,8 @@ import edu.arizona.biosemantics.oto.common.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.common.model.lite.Term;
 import edu.arizona.biosemantics.oto.common.model.lite.Upload;
 import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
-import edu.arizona.biosemantics.oto2.oto.shared.model.community.Categorization;
-import edu.arizona.biosemantics.oto2.oto.shared.model.community.Synonymization;
 import edu.arizona.biosemantics.semanticmarkup.config.Configuration;
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
@@ -65,7 +63,6 @@ public class OTOLearner implements ILearner {
 	private ITerminologyLearner terminologyLearner;
 	private OTOClient otoClient;
 	private String databasePrefix;
-	private Connection connection;
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
 	private TaxonGroup taxonGroup;
@@ -83,14 +80,12 @@ public class OTOLearner implements ILearner {
 	private String units;
 	private boolean useOtoCommuntiyDownload;
 	private boolean useEmptyGlossary;
+	private ConnectionPool connectionPool;
 	
 	/**
 	 * @param volumeReader
 	 * @param terminologyLearner
 	 * @param otoClient
-	 * @param databaseName
-	 * @param databaseUser
-	 * @param databasePassword
 	 * @param databasePrefix
 	 * @param glossary
 	 * @throws Exception
@@ -103,11 +98,6 @@ public class OTOLearner implements ILearner {
 			OTOLiteClient otoLiteClient,
 			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
 			@Named("OTOLiteReviewFile") String otoLiteReviewFile,
-			@Named("DatabaseHost") String databaseHost,
-			@Named("DatabasePort") String databasePort,
-			@Named("DatabaseName")String databaseName,
-			@Named("DatabaseUser")String databaseUser,
-			@Named("DatabasePassword")String databasePassword,
 			@Named("DatabasePrefix")String databasePrefix, 
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
@@ -120,7 +110,8 @@ public class OTOLearner implements ILearner {
 			@Named("SourceOfDescriptions")String sourceOfDescriptions,
 			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload,
 			@Named("Units")String units,
-			@Named("UseEmptyGlossary")boolean useEmptyGlossary) throws Exception {  
+			@Named("UseEmptyGlossary")boolean useEmptyGlossary, 
+			ConnectionPool connectionPool) throws Exception {  
 		this.inputDirectory = inputDirectory;
 		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
@@ -141,10 +132,7 @@ public class OTOLearner implements ILearner {
 		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
 		this.units = units;
 		this.useEmptyGlossary = useEmptyGlossary;
-		
-		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
-				databaseUser, databasePassword);
+		this.connectionPool = connectionPool;
 	}
 	
 	@Override
@@ -220,13 +208,16 @@ public class OTOLearner implements ILearner {
 	private void storeUploadToDB(UploadResult uploadResult, GlossaryDownload glossaryDownload) throws SQLException {
 		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
 		//iplant environment, hence the dependency on mysql can for iplant not completely be removed
-		String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, oto_secret = ?, glossary_version = ? WHERE prefix = ?";
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		preparedStatement.setInt(1, uploadResult.getUploadId());
-		preparedStatement.setString(2, uploadResult.getSecret());
-		preparedStatement.setString(3, glossaryDownload.getVersion());
-		preparedStatement.setString(4, databasePrefix);
-		preparedStatement.execute();
+		try(Connection connection = connectionPool.getConnection()) {
+			String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, oto_secret = ?, glossary_version = ? WHERE prefix = ?";
+			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+				preparedStatement.setInt(1, uploadResult.getUploadId());
+				preparedStatement.setString(2, uploadResult.getSecret());
+				preparedStatement.setString(3, glossaryDownload.getVersion());
+				preparedStatement.setString(4, databasePrefix);
+				preparedStatement.execute();
+			}
+		}
 	}
 
 	private UploadResult sendLearnedResultToOtoLite() throws InterruptedException, ExecutionException {
@@ -355,49 +346,54 @@ public class OTOLearner implements ILearner {
 		}
 		
 
-		try {
-			Statement stmt = connection.createStatement();
-	        String cleanupQuery = "DROP TABLE IF EXISTS " + 
-									tablePrefix + "_term_category, " + 
-									tablePrefix + "_syns, " +
-									tablePrefix + "_wordroles, " +
-									this.glossaryTable + ";";
-	        stmt.execute(cleanupQuery);
-	        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL) "
-	        		+ "CHARACTER SET utf8 engine=innodb");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
-					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL) CHARACTER SET utf8 engine=innodb");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
-					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`)) CHARACTER SET utf8 engine=innodb;");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
-					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL) CHARACTER SET utf8 engine=innodb");
-			
-			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
-				preparedStatement.setString(1, termCategory.getTerm());
-				preparedStatement.setString(2, termCategory.getCategory());
-				preparedStatement.setBoolean(3, termCategory.isHasSyn());
-				preparedStatement.executeUpdate();
-			}
-			for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + glossaryTable + " (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");	
-				preparedStatement.setString(1, termCategory.getTerm());
-				preparedStatement.setString(2, termCategory.getCategory());
-				preparedStatement.setBoolean(3, termCategory.isHasSyn());
-				preparedStatement.executeUpdate();
-			}
-			for(TermSynonym termSynonym : glossaryDownload.getTermSynonyms()) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
-				preparedStatement.setString(1, termSynonym.getTerm());
-				preparedStatement.setString(2, termSynonym.getSynonym());
-				preparedStatement.executeUpdate();
-			}
-			for(WordRole wordRole : wordRoles) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)");
-				preparedStatement.setString(1, wordRole.getWord());
-				preparedStatement.setString(2, wordRole.getSemanticRole());
-				preparedStatement.setString(3, wordRole.getSavedid());
-				preparedStatement.executeUpdate();
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement stmt = connection.createStatement()) {
+		        String cleanupQuery = "DROP TABLE IF EXISTS " + 
+										tablePrefix + "_term_category, " + 
+										tablePrefix + "_syns, " +
+										tablePrefix + "_wordroles, " +
+										this.glossaryTable + ";";
+		        stmt.execute(cleanupQuery);
+		        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL) "
+		        		+ "CHARACTER SET utf8 engine=innodb");
+				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+						"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL) CHARACTER SET utf8 engine=innodb");
+				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
+						"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`)) CHARACTER SET utf8 engine=innodb;");
+				stmt.execute("CREATE TABLE IF NOT EXISTS " + glossaryTable + " (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+						"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL) CHARACTER SET utf8 engine=innodb");
+				
+				for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)")) {
+						preparedStatement.setString(1, termCategory.getTerm());
+						preparedStatement.setString(2, termCategory.getCategory());
+						preparedStatement.setBoolean(3, termCategory.isHasSyn());
+						preparedStatement.executeUpdate();
+					}
+				}
+				for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + glossaryTable + " (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)")) {
+						preparedStatement.setString(1, termCategory.getTerm());
+						preparedStatement.setString(2, termCategory.getCategory());
+						preparedStatement.setBoolean(3, termCategory.isHasSyn());
+						preparedStatement.executeUpdate();
+					}
+				}
+				for(TermSynonym termSynonym : glossaryDownload.getTermSynonyms()) {
+					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)")) {
+						preparedStatement.setString(1, termSynonym.getTerm());
+						preparedStatement.setString(2, termSynonym.getSynonym());
+						preparedStatement.executeUpdate();
+					}
+				}
+				for(WordRole wordRole : wordRoles) {
+					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)")) {
+						preparedStatement.setString(1, wordRole.getWord());
+						preparedStatement.setString(2, wordRole.getSemanticRole());
+						preparedStatement.setString(3, wordRole.getSavedid());
+						preparedStatement.executeUpdate();
+					}
+				}
 			}
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
@@ -405,15 +401,20 @@ public class OTOLearner implements ILearner {
 	}
 
 	private boolean glossaryExistsLocally(String tablePrefix) throws SQLException {
-		DatabaseMetaData metadata = connection.getMetaData();
-		boolean result = true;
-		ResultSet resultSet = metadata.getTables(null, null, tablePrefix + "_term_category", null);
-		result &= resultSet.next();
-		resultSet = metadata.getTables(null, null, tablePrefix + "_syns", null);
-		result &= resultSet.next();
-		resultSet = metadata.getTables(null, null, tablePrefix + "_wordroles", null);
-		result &= resultSet.next();
-		return result;
+		try(Connection connection = connectionPool.getConnection()) {
+			DatabaseMetaData metadata = connection.getMetaData();
+			boolean result = true;
+			try(ResultSet resultSet = metadata.getTables(null, null, tablePrefix + "_term_category", null)) {
+				result &= resultSet.next();
+			}
+			try(ResultSet resultSet = metadata.getTables(null, null, tablePrefix + "_syns", null)) {
+				result &= resultSet.next();	
+			}
+			try(ResultSet resultSet = metadata.getTables(null, null, tablePrefix + "_wordroles", null)) {
+				result &= resultSet.next();	
+			}
+			return result;
+		}
 	}
 
 	private Upload readUpload() {
@@ -458,13 +459,15 @@ public class OTOLearner implements ILearner {
 
 	private List<Sentence> getSentences() {
 		List<Sentence> sentences = new LinkedList<Sentence>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select * from " + this.databasePrefix + "_sentence order by sentid");
-			while(resultSet.next()) {
-				sentences.add(new Sentence(resultSet.getInt("sentid"), resultSet.getString("source"), resultSet.getString("sentence"),
-						resultSet.getString("originalsent")));
-			}		
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select * from " + this.databasePrefix + "_sentence order by sentid")) {
+					while(resultSet.next()) {
+						sentences.add(new Sentence(resultSet.getInt("sentid"), resultSet.getString("source"), resultSet.getString("sentence"),
+								resultSet.getString("originalsent")));
+					}	
+				}
+			}
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Problem accessing sentence table", e);
 		}
@@ -497,33 +500,16 @@ public class OTOLearner implements ILearner {
 
 	private List<String> getTaxonNames() {
 		List<String> result = new ArrayList<String>();
-		Statement stmt = null;
-		ResultSet rs = null;
-		
-		try {
-			stmt = connection.createStatement(); 
-			rs = stmt.executeQuery("select name from "+this.databasePrefix+"_taxonnames");
-			while(rs.next())
-				result.add(rs.getString("name"));
-			
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement stmt = connection.createStatement()) {
+				try(ResultSet rs = stmt.executeQuery("select name from "+this.databasePrefix+"_taxonnames")) {
+					while(rs.next())
+						result.add(rs.getString("name"));	
+				}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			log(LogLevel.ERROR, "Problem fetching taxon names", e);
-		}finally{
-			if(rs!=null)
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			if(stmt!=null)
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 		}
 		return result;
 	}
@@ -606,48 +592,55 @@ public class OTOLearner implements ILearner {
      * @throws SQLException
      */
     public ArrayList<String> structureTags4Curation(List <String> tagList) throws Exception {
-    	
-    	PreparedStatement stmt = null;
-    	ResultSet rs = null;
- 		String filter1 = "";
+    	String filter1 = "";
  		String filter2 = "";
  		String filter3 = "";
-		Statement stmt1 = connection.createStatement();
-		ResultSet rs1 = stmt1.executeQuery("show tables");
-		while(rs1.next()){
-			if(rs1.getString(1).equals("noneqterms")) {
-				filter1 = " and tag not in (select word from noneqterms) "; 
-				filter2 = " and plural not in (select word from noneqterms) " ;
-				filter3 = " and word not in (select word from noneqterms) ";
+ 		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement stmt1 = connection.createStatement()) {
+				try(ResultSet rs1 = stmt1.executeQuery("show tables")) {
+					while(rs1.next()){
+						if(rs1.getString(1).equals("noneqterms")) {
+							filter1 = " and tag not in (select word from noneqterms) "; 
+							filter2 = " and plural not in (select word from noneqterms) " ;
+							filter3 = " and word not in (select word from noneqterms) ";
+						}
+					}
+				}
 			}
-		}
- 		rs1.close();
- 		stmt1.close();
+ 		}
 
 		String sql = "select distinct tag as structure from "+this.databasePrefix+"_sentence where tag != 'unknown' and tag is not null and tag not like '% %' " +
 		filter1 +
 		"union select distinct plural as structure from "+this.databasePrefix+"_singularplural"+","+ this.databasePrefix+"_sentence where singular=tag "+
 		filter2 +
-		"order by structure"; 		
-		stmt = connection.prepareStatement(sql);
-		rs = stmt.executeQuery();
-		while (rs.next()) {
-			String tag = rs.getString("structure");
-			populateCurationList(tagList, tag); //select tags for curation, filter against the glossary
-		}
-		sql = "select distinct word from "+this.databasePrefix+"_wordpos where pos in ('p', 's', 'n') and saved_flag !='red' "+
-		filter3+" order by word";
-		stmt = connection.prepareStatement(sql);
-		rs = stmt.executeQuery();
-		while (rs.next()) {
-			String tag = rs.getString("word");
-			PreparedStatement stmtSentence = connection.prepareStatement("select * from " + this.databasePrefix + "_sentence where sentence like '% " + tag + "%'");
-			ResultSet rs2 = stmtSentence.executeQuery();
-			if (rs2.next()) {
-				populateCurationList(tagList, tag); //select tags for curation, filter against the glossary
+		"order by structure"; 
+		try(Connection connection = connectionPool.getConnection()) {
+			try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+				try(ResultSet rs = stmt.executeQuery()) {
+					while (rs.next()) {
+						String tag = rs.getString("structure");
+						populateCurationList(tagList, tag); //select tags for curation, filter against the glossary
+					}
+					sql = "select distinct word from "+this.databasePrefix+"_wordpos where pos in ('p', 's', 'n') and saved_flag !='red' "+
+					filter3+" order by word";
+					try(PreparedStatement s = connection.prepareStatement(sql)) {
+						try(ResultSet r = s.executeQuery()) {
+							while (r.next()) {
+								String tag = r.getString("word");
+								try(PreparedStatement stmtSentence = connection.prepareStatement("select * from " + this.databasePrefix + "_sentence where sentence like '% " + tag + "%'")) {
+									try(ResultSet rs2 = stmtSentence.executeQuery()) {
+										if (rs2.next()) {
+											populateCurationList(tagList, tag); //select tags for curation, filter against the glossary
+										}
+									}
+								}	
+							}
+							return deduplicateSort(tagList);
+						}
+					}
+				}
 			}
 		}
-		return deduplicateSort(tagList);
     }
     
 	private ArrayList<String> deduplicateSort(List<String> tagList) {
@@ -669,17 +662,21 @@ public class OTOLearner implements ILearner {
      * @throws Exception 
      */
 	private void populateCurationList(List<String> curationList, String word) throws Exception {
-		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select category from "+this.glossaryTable+" where term ='"+word+"'");
-		if(rs.next()){
-			String cat = rs.getString("category");
-			if(cat.matches("(substance|nominative|structure|life_style|growth_form|structure_subtype|structure_in_adjective_form|taxon_name)")){
-				add2WordRolesTable(word, "op");
-			}else{
-				add2WordRolesTable(word, "c");
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement stmt = connection.createStatement()) {
+				try(ResultSet rs = stmt.executeQuery("select category from "+this.glossaryTable+" where term ='"+word+"'")) {
+					if(rs.next()){
+						String cat = rs.getString("category");
+						if(cat.matches("(substance|nominative|structure|life_style|growth_form|structure_subtype|structure_in_adjective_form|taxon_name)")){
+							add2WordRolesTable(word, "op");
+						} else {
+							add2WordRolesTable(word, "c");
+						}
+					} else {
+						curationList.add(word);
+					}
+				}
 			}
-		}else{
-			curationList.add(word);
 		}
 	}
 	
@@ -689,10 +686,14 @@ public class OTOLearner implements ILearner {
 	 * @param role
 	 */
 	private void add2WordRolesTable(String w, String role) throws Exception {
-		Statement stmt = connection.createStatement();
-		ResultSet rs = stmt.executeQuery("select * from "+this.databasePrefix + "_wordroles where word='"+w+"' and semanticrole='"+role+"'");
-		if(!rs.next()){
-			stmt.execute("insert into "+this.databasePrefix+"_wordroles (word, semanticrole) values ('"+w+"','"+role+"')");
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement stmt = connection.createStatement()) {
+				try(ResultSet rs = stmt.executeQuery("select * from "+this.databasePrefix + "_wordroles where word='"+w+"' and semanticrole='"+role+"'")) {
+					if(!rs.next()){
+						stmt.execute("insert into "+this.databasePrefix+"_wordroles (word, semanticrole) values ('"+w+"','"+role+"')");
+					}
+				}
+			}
 		}
 	}
 
@@ -774,31 +775,34 @@ public class OTOLearner implements ILearner {
      */
     public ArrayList<String> contentTerms4Curation(List <String> curationList, ArrayList<String> structures, ArrayList<String> characters) throws Exception {
  		String filter = "";
-		Statement stmt1 = connection.createStatement();
-		ResultSet rs1 = stmt1.executeQuery("show tables");
-		while(rs1.next()){
-			if(rs1.getString(1).equals("noneqterms")){
-				filter = " and dhword not in (select word from noneqterms)";
+ 		try(Connection connection = connectionPool.getConnection()) {
+	 		try(Statement stmt1 = connection.createStatement()) {
+	 			try(ResultSet rs1 = stmt1.executeQuery("show tables")) {
+	 				while(rs1.next()){
+						if(rs1.getString(1).equals("noneqterms")){
+							filter = " and dhword not in (select word from noneqterms)";
+						}
+					}
+	 			}
+	 		}
+	 		String sql = "select dhword from "+this.databasePrefix+"_allwords" +
+			//" where count>=3 and inbrackets=0 and dhword not like '%\\_%' and " +
+			" where dhword not like '%\\_%' and " +		
+			" dhword not in (select word from "+ this.databasePrefix+"_wordpos where saved_flag='red')"+
+			filter +
+			" and dhword not in (select word from "+ this.databasePrefix+"_wordroles) order by dhword";
+			try(PreparedStatement stmt = connection.prepareStatement(sql)) {
+				try(ResultSet rs = stmt.executeQuery()) {
+					while (rs.next()) {
+						String word = rs.getString("dhword").trim();
+						if(!structures.contains(word) && !characters.contains(word)){
+							populateCurationList(curationList, word);
+						}
+					}
+					return this.deduplicateSort(curationList);
+				}
 			}
-		}
- 		rs1.close();
- 		stmt1.close();
- 		
- 		String sql = "select dhword from "+this.databasePrefix+"_allwords" +
-		//" where count>=3 and inbrackets=0 and dhword not like '%\\_%' and " +
-		" where dhword not like '%\\_%' and " +		
-		" dhword not in (select word from "+ this.databasePrefix+"_wordpos where saved_flag='red')"+
-		filter +
-		" and dhword not in (select word from "+ this.databasePrefix+"_wordroles) order by dhword";
-		PreparedStatement stmt = connection.prepareStatement(sql);
-		ResultSet rs = stmt.executeQuery();
-		while (rs.next()) {
-			String word = rs.getString("dhword").trim();
-			if(!structures.contains(word) && !characters.contains(word)){
-				populateCurationList(curationList, word);
-			}
-		}
-		return this.deduplicateSort(curationList);
+ 		}
     }
 	
 	/**
@@ -809,37 +813,41 @@ public class OTOLearner implements ILearner {
 	public ArrayList<String> descriptorTerms4Curation() throws Exception {
 		ArrayList<String> words = new ArrayList<String>();
 		
-		PreparedStatement stmt = null;
-		ResultSet rset = null;
- 		String filter = "";
-		Statement stmt1 = connection.createStatement();
-		ResultSet rs1 = stmt1.executeQuery("show tables");
-		while(rs1.next()){
-			if(rs1.getString(1).equals("noneqterms")) {
-				filter = " and word not in (select word from noneqterms) ";
-			}
-		}
- 		rs1.close();
- 		stmt1.close();
- 		
- 		String sql = "select word from " + this.databasePrefix + "_wordpos where pos=? and saved_flag !='red' "+
- 				filter+"order by word";
-		//stmt = conn.prepareStatement("select word from "+this.tablePrefix+"_"+ApplicationUtilities.getProperty("POSTABLE")+" where pos=? and word not in (select distinct term from "+this.glossarytable+")");
-		stmt = connection.prepareStatement(sql);
-		stmt.setString(1, "b");
-		rset = stmt.executeQuery();
-		if (rset != null) {
-			while(rset.next()){
-				String word = rset.getString("word");
-				PreparedStatement stmtSentence = connection.prepareStatement("select * from " + this.databasePrefix + "_sentence where sentence like '% " + word + "%'");
-				ResultSet rs2 = stmtSentence.executeQuery();
-				if (rs2.next()) {
-					populateDescriptorList(words, word);
-				}
-			}	
-		}
-		words = deduplicateSort(words);
-		return words;
+		String filter = "";
+ 		try(Connection connection = connectionPool.getConnection()) {
+	 		try(Statement stmt1 = connection.createStatement()) {
+	 			try(ResultSet rs1 = stmt1.executeQuery("show tables")) {
+					while(rs1.next()){
+						if(rs1.getString(1).equals("noneqterms")) {
+							filter = " and word not in (select word from noneqterms) ";
+						}
+					}
+	 			}
+	 		}
+	 		
+			String sql = "select word from " + this.databasePrefix + "_wordpos where pos=? and saved_flag !='red' "+
+	 				filter+"order by word";
+			//stmt = conn.prepareStatement("select word from "+this.tablePrefix+"_"+ApplicationUtilities.getProperty("POSTABLE")+" where pos=? and word not in (select distinct term from "+this.glossarytable+")");
+			try(PreparedStatement stmt2 = connection.prepareStatement(sql)) {
+				stmt2.setString(1, "b");
+				try(ResultSet rset2 = stmt2.executeQuery()) {
+					if (rset2 != null) {
+						while(rset2.next()){
+							String word = rset2.getString("word");
+							try(PreparedStatement stmtSentence = connection.prepareStatement("select * from " + this.databasePrefix + "_sentence where sentence like '% " + word + "%'")) {
+								try(ResultSet rs3 = stmtSentence.executeQuery()) {
+									if (rs3.next()) {
+										populateDescriptorList(words, word);
+									}
+								}
+							}
+						}	
+					}
+					words = deduplicateSort(words);
+					return words;
+ 				}
+ 			}	
+ 		}
 	}
 	
 	/**
@@ -860,18 +868,22 @@ public class OTOLearner implements ILearner {
 				w = ws[ws.length-1];
 			}
 
-			Statement stmt = connection.createStatement();
-			ResultSet rset = stmt.executeQuery("select category from " + this.glossaryTable + " where term ='"+w+"'");					 
-			if(rset.next()){//in glossary
-				String cat = rset.getString(1);
-				if(cat.matches("\\b(STRUCTURE|FEATURE|SUBSTANCE|PLANT|nominative|structure)\\b")){
-					add2WordRolesTable(wc, "os");
-				}else{
-					add2WordRolesTable(wc, "c");
+			try(Connection connection = connectionPool.getConnection()) {
+				try(Statement stmt = connection.createStatement()) {
+					try(ResultSet rset = stmt.executeQuery("select category from " + this.glossaryTable + " where term ='"+w+"'")) { 
+						if(rset.next()){//in glossary
+							String cat = rset.getString(1);
+							if(cat.matches("\\b(STRUCTURE|FEATURE|SUBSTANCE|PLANT|nominative|structure)\\b")){
+								add2WordRolesTable(wc, "os");
+							}else{
+								add2WordRolesTable(wc, "c");
+							}
+							
+						}else{ //not in glossary
+							words.add(wc);
+						}
+					}
 				}
-				
-			}else{ //not in glossary
-				words.add(wc);
 			}
 		}
 	}

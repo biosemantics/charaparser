@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-		<project.version>0.1.112-SNAPSHOT</project.version>
+		<project.version>0.1.118-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -135,7 +135,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.21</version>
+			<version>5.1.27</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.mit</groupId>
@@ -240,6 +240,11 @@
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>biology</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp</artifactId>
+			<version>0.8.0.RELEASE</version>
 		</dependency>
 	</dependencies>
 

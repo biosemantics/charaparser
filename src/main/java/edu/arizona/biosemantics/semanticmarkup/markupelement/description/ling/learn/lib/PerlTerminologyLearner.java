@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,23 +21,18 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
 
-
-
-
-
-
-
-
-
-
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
+import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.PhraseMarker;
@@ -78,7 +72,6 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Set<String> modifiers;
 	protected Map<String, Set<String>> categoryTerms;
 
-	private Connection connection;
 	private String temporaryPath;
 	private String databasePrefix;
 	private String markupMode;
@@ -97,6 +90,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private String databasePort;
 	private Map<String, AdjectiveReplacementForNoun> adjectiveReplacementsForNouns;
 	private String perlDirectory;
+	private ConnectionPool connectionPool;
 
 	/**
 	 * @param temporaryPath
@@ -127,7 +121,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("WordTokenizer") ITokenizer tokenizer,
 			@Named("ParentTagProvider") ParentTagProvider parentTagProvider,
 			@Named("PerlDirectory") String perlDirectory,
-			IInflector inflector) throws Exception {
+			IInflector inflector, 
+			ConnectionPool connectionPool) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.markupMode = markupMode;
 		this.databasePrefix = databasePrefix;
@@ -143,13 +138,9 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.databaseUser = databaseUser;
 		this.databasePassword = databasePassword;
 		this.perlDirectory = perlDirectory;
-
-		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connecttimeout=0&sockettimeout=0&autoreconnect=true", 
-				databaseUser, databasePassword);
+		this.connectionPool = connectionPool;
 	}
-
-
+	
 	@Override
 	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) throws LearnException {
 		File directory = new File(temporaryPath);
@@ -192,10 +183,11 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			}
 		}
 
-		try {
-			Statement statement = connection.createStatement();
-			for(String taxonName: taxonNames){
-				statement.execute("insert into "+this.databasePrefix+"_taxonnames (name) value ('"+taxonName+"')");
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				for(String taxonName: taxonNames){
+					statement.execute("insert into "+this.databasePrefix+"_taxonnames (name) value ('"+taxonName+"')");
+				}
 			}
 		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem inserting taxon name to the taxonnames table", e);
@@ -264,12 +256,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Set<String> readModifiers() {
 		Set<String> modifiers = new HashSet<String>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select modifier from " + this.databasePrefix + "_sentence");
-			while(resultSet.next()) {
-				String modifier = resultSet.getString("modifier");
-				modifiers.add(modifier);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select modifier from " + this.databasePrefix + "_sentence")) {
+					while(resultSet.next()) {
+						String modifier = resultSet.getString("modifier");
+						modifiers.add(modifier);
+					}
+				}
 			}
 		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
@@ -280,12 +274,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Set<String> readTags() {
 		Set<String> tags = new HashSet<String>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select tag from " + this.databasePrefix + "_sentence");
-			while(resultSet.next()) {
-				String tag = resultSet.getString("tag");
-				tags.add(tag);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select tag from " + this.databasePrefix + "_sentence")) {
+					while(resultSet.next()) {
+						String tag = resultSet.getString("tag");
+						tags.add(tag);
+					}
+				}
 			}
 		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
@@ -296,15 +292,17 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Map<String, Set<String>> readTermCategories() {
 		Map<String, Set<String>> termCategories = new HashMap<String, Set<String>>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select term, category from " + this.databasePrefix + "_term_category");
-			while(resultSet.next()) {
-				String term = resultSet.getString("term");
-				String category = resultSet.getString("category");
-				if(!termCategories.containsKey(term))
-					termCategories.put(term, new HashSet<String>());
-				termCategories.get(term).add(category);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select term, category from " + this.databasePrefix + "_term_category")) {
+					while(resultSet.next()) {
+						String term = resultSet.getString("term");
+						String category = resultSet.getString("category");
+						if(!termCategories.containsKey(term))
+							termCategories.put(term, new HashSet<String>());
+						termCategories.get(term).add(category);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing term_category table", e);
@@ -314,15 +312,17 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Map<String, Set<String>> readCategoryTerms() {
 		Map<String, Set<String>> categoryNames = new HashMap<String, Set<String>>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select term, category from " + this.databasePrefix + "_term_category");
-			while(resultSet.next()) {
-				String term = resultSet.getString("term");
-				String category = resultSet.getString("category");
-				if(!categoryNames.containsKey(category))
-					categoryNames.put(category, new HashSet<String>());
-				categoryNames.get(category).add(term);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select term, category from " + this.databasePrefix + "_term_category")) {
+					while(resultSet.next()) {
+						String term = resultSet.getString("term");
+						String category = resultSet.getString("category");
+						if(!categoryNames.containsKey(category))
+							categoryNames.put(category, new HashSet<String>());
+						categoryNames.get(category).add(term);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing term_category table", e);
@@ -333,17 +333,19 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Map<String, Set<String>> readWordsToRoles() {
 		Map<String, Set<String>> wordsToRoles = new HashMap<String, Set<String>>();
 		//TODO wordroles table is populated by the GUI User interaction see MainForm.java. Therefore simply left as empty for now
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select word, semanticrole from " + this.databasePrefix + "_wordroles");
-			while(resultSet.next()) {
-				String word = resultSet.getString("word");
-				//perl treated hyphens as underscores
-				word = word.replaceAll("_", "-");
-				String semanticRole = resultSet.getString("semanticrole");
-				if(!wordsToRoles.containsKey(word))
-					wordsToRoles.put(word, new HashSet<String>());
-				wordsToRoles.get(word).add(semanticRole);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select word, semanticrole from " + this.databasePrefix + "_wordroles")) {
+					while(resultSet.next()) {
+						String word = resultSet.getString("word");
+						//perl treated hyphens as underscores
+						word = word.replaceAll("_", "-");
+						String semanticRole = resultSet.getString("semanticrole");
+						if(!wordsToRoles.containsKey(word))
+							wordsToRoles.put(word, new HashSet<String>());
+						wordsToRoles.get(word).add(semanticRole);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing wordroles table", e);
@@ -353,11 +355,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Map<String, String> readHeuristicNouns() {
 		Map<String, String> heuristicNouns = new HashMap<String, String>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select word, type from " + this.databasePrefix + "_heuristicnouns");
-			while(resultSet.next()) {
-				heuristicNouns.put(resultSet.getString("word"), resultSet.getString("type"));
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select word, type from " + this.databasePrefix + "_heuristicnouns")) {
+					while(resultSet.next()) {
+						heuristicNouns.put(resultSet.getString("word"), resultSet.getString("type"));
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing heuristicnouns table", e);
@@ -368,18 +372,19 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Map<String, Set<String>> readRoleToWords() {
 		Map<String, Set<String>> roleToWords = new HashMap<String, Set<String>>();
 		//TODO wordroles table is populated by the GUI User interaction see MainForm.java. Therefore simply left as empty for now
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select word, semanticrole from " + this.databasePrefix + "_wordroles");
-
-			while(resultSet.next()) {
-				String word = resultSet.getString("word");
-				//perl treated hyphens as underscores
-				word = word.replaceAll("_", "-");
-				String semanticRole = resultSet.getString("semanticrole");
-				if(!roleToWords.containsKey(semanticRole))
-					roleToWords.put(semanticRole, new HashSet<String>());
-				roleToWords.get(semanticRole).add(word);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select word, semanticrole from " + this.databasePrefix + "_wordroles")) {
+					while(resultSet.next()) {
+						String word = resultSet.getString("word");
+						//perl treated hyphens as underscores
+						word = word.replaceAll("_", "-");
+						String semanticRole = resultSet.getString("semanticrole");
+						if(!roleToWords.containsKey(semanticRole))
+							roleToWords.put(semanticRole, new HashSet<String>());
+						roleToWords.get(semanticRole).add(word);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing wordroles table", e);
@@ -415,25 +420,27 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	 */
 	protected Map<String, Map<String, Set<Integer>>> readWordToSourcesMap() {
 		Map<String, Map<String, Set<Integer>>> wordToSources = new HashMap<String, Map<String, Set<Integer>>>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select source, sentence from " + this.databasePrefix + "_sentence");
-			while(resultSet.next()) {
-				String source = getSource(resultSet.getString("source"));
-				String sentence = resultSet.getString("sentence");
-				List<Token> tokens = tokenizer.tokenize(sentence);
-				int p = 0;
-				for(Token token : tokens) {
-					String word = token.getContent();
-					if(word.matches(".*?[a-z].*")){
-						if(!wordToSources.containsKey(word))
-							wordToSources.put(word, new HashMap<String, Set<Integer>>());
-						Map<String, Set<Integer>> positions = wordToSources.get(word);
-						if(!positions.containsKey(source))
-							positions.put(source, new HashSet<Integer>());
-						positions.get(source).add(p);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select source, sentence from " + this.databasePrefix + "_sentence")) {
+					while(resultSet.next()) {
+						String source = getSource(resultSet.getString("source"));
+						String sentence = resultSet.getString("sentence");
+						List<Token> tokens = tokenizer.tokenize(sentence);
+						int p = 0;
+						for(Token token : tokens) {
+							String word = token.getContent();
+							if(word.matches(".*?[a-z].*")){
+								if(!wordToSources.containsKey(word))
+									wordToSources.put(word, new HashMap<String, Set<Integer>>());
+								Map<String, Set<Integer>> positions = wordToSources.get(word);
+								if(!positions.containsKey(source))
+									positions.put(source, new HashSet<Integer>());
+								positions.get(source).add(p);
+							}
+							p++;
+						}
 					}
-					p++;
 				}
 			}
 		} catch (SQLException e) {
@@ -445,15 +452,17 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	protected Set<String> readWordRoleTags()  {
 		Set<String> tags = new HashSet<String>();
 		//TODO wordroles table is populated by the GUI User interaction see MainForm.java. Therefore simply left as empty for now
-		try {
-			Statement statement = connection.createStatement();
-			String wordroletable = this.databasePrefix + "_wordroles";
-			ResultSet resultSet = statement.executeQuery("select word from "+wordroletable+" where semanticrole in ('op', 'os')");
-			while(resultSet.next()) {
-				//perl treated hyphens as underscores
-				String tag = resultSet.getString("word").replaceAll("_", "-").trim();
-				if(!tag.isEmpty())
-					tags.add(tag);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				String wordroletable = this.databasePrefix + "_wordroles";
+				try(ResultSet resultSet = statement.executeQuery("select word from "+wordroletable+" where semanticrole in ('op', 'os')")) {
+					while(resultSet.next()) {
+						//perl treated hyphens as underscores
+						String tag = resultSet.getString("word").replaceAll("_", "-").trim();
+						if(!tag.isEmpty())
+							tags.add(tag);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing wordrole table", e);
@@ -463,23 +472,25 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Set<String> readBracketTags(List<AbstractDescriptionsFile> descriptionsFiles) {
 		Set<String> tags = new HashSet<String>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select modifier, tag from " + this.databasePrefix + "_sentence where tag  like '[%]'"); //inner [tepal]
-			while(resultSet.next()){
-				String modifier = resultSet.getString("modifier");
-				modifier = modifier.replaceAll("\\[^\\[*\\]", ""); 
-				if(!modifier.equals("")){
-					String tag;
-					if(modifier.lastIndexOf(" ")<0) {
-						tag = modifier;
-					} else {
-						tag = modifier.substring(modifier.lastIndexOf(" ")+1); //last word from modifier
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select modifier, tag from " + this.databasePrefix + "_sentence where tag  like '[%]'")) { //inner [tepal]
+					while(resultSet.next()){
+						String modifier = resultSet.getString("modifier");
+						modifier = modifier.replaceAll("\\[^\\[*\\]", ""); 
+						if(!modifier.equals("")){
+							String tag;
+							if(modifier.lastIndexOf(" ")<0) {
+								tag = modifier;
+							} else {
+								tag = modifier.substring(modifier.lastIndexOf(" ")+1); //last word from modifier
+							}
+							if(tag.indexOf("[")>=0 || stopWords.contains(tag) || tag.matches(".*?(\\d).*")) 
+								continue;
+							if(!tag.trim().isEmpty())
+								tags.add(tag);
+						}
 					}
-					if(tag.indexOf("[")>=0 || stopWords.contains(tag) || tag.matches(".*?(\\d).*")) 
-						continue;
-					if(!tag.trim().isEmpty())
-						tags.add(tag);
 				}
 			}
 		} catch (SQLException e) {
@@ -532,40 +543,42 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected HashMap<Description,  LinkedHashMap<String, String>> readSentencesForOrganStateMarker(List<AbstractDescriptionsFile> descriptionsFiles) {
 		HashMap<Description, LinkedHashMap<String, String>> sentences = new  HashMap<Description, LinkedHashMap<String, String>>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet rs = statement.executeQuery("select source, modifier, tag, sentence, originalsent from " + this.databasePrefix + "_sentence");
-			// order by sentid desc");
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet rs = statement.executeQuery("select source, modifier, tag, sentence, originalsent from " + this.databasePrefix + "_sentence")) {
+					// order by sentid desc");
 
-			//int listId = -1;
-			String previousTreatmentId = "-1";
-
-			//leave ditto as it is
-			while(rs.next()){ //read sent in in reversed order
-				String tag = rs.getString("tag");
-				String sent = rs.getString("sentence").trim();
-
-				if(sent.length()!=0){
-					String treatmentId = getTreatmentId(rs.getString("source"));
-					String source = getSource(rs.getString("source"));
-
-					if(selectedSources.isEmpty() || selectedSources.contains(source)) {
-						if(!treatmentId.equals(previousTreatmentId)) {
-							previousTreatmentId = treatmentId;
-							//listId++; // in the db 1 is followed by 10 by 11 and not 2
+					//int listId = -1;
+					String previousTreatmentId = "-1";
+		
+					//leave ditto as it is
+					while(rs.next()){ //read sent in in reversed order
+						String tag = rs.getString("tag");
+						String sent = rs.getString("sentence").trim();
+		
+						if(sent.length()!=0){
+							String treatmentId = getTreatmentId(rs.getString("source"));
+							String source = getSource(rs.getString("source"));
+		
+							if(selectedSources.isEmpty() || selectedSources.contains(source)) {
+								if(!treatmentId.equals(previousTreatmentId)) {
+									previousTreatmentId = treatmentId;
+									//listId++; // in the db 1 is followed by 10 by 11 and not 2
+								}
+		
+								String osent = rs.getString("originalsent");
+								String text = sent;
+								text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)[μµ]\\s+m\\b", "um");
+								text = text.replaceAll("&#176;", "°");
+								text = text.replaceAll("\\bca\\s*\\.", "ca");
+								text = rs.getString("modifier")+"##"+tag+"##"+text+"##"+osent;
+		
+								Description description = fileTreatments.get(treatmentId);
+								if(!sentences.containsKey(description))
+									sentences.put(description, new LinkedHashMap<String, String>());
+								sentences.get(description).put(source, text);
+							}
 						}
-
-						String osent = rs.getString("originalsent");
-						String text = sent;
-						text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)[μµ]\\s+m\\b", "um");
-						text = text.replaceAll("&#176;", "°");
-						text = text.replaceAll("\\bca\\s*\\.", "ca");
-						text = rs.getString("modifier")+"##"+tag+"##"+text+"##"+osent;
-
-						Description description = fileTreatments.get(treatmentId);
-						if(!sentences.containsKey(description))
-							sentences.put(description, new LinkedHashMap<String, String>());
-						sentences.get(description).put(source, text);
 					}
 				}
 			}
@@ -590,17 +603,19 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Map<String, String> readAdjNounSent() {
 		Map<String, String> result = new HashMap<String, String>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT source, tag, modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"");
-			while(resultSet.next()){
-				String modifier = resultSet.getString(3);
-				String tag = resultSet.getString(2);
-
-				modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
-				tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
-
-				result.put(tag, modifier);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("SELECT source, tag, modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"")) {
+					while(resultSet.next()){
+						String modifier = resultSet.getString(3);
+						String tag = resultSet.getString(2);
+		
+						modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
+						tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
+		
+						result.put(tag, modifier);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
@@ -610,12 +625,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected List<String> readAdjNouns() {
 		List<String> result = new ArrayList<String>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT distinct modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"");
-			while(resultSet.next()) {
-				String modifier = resultSet.getString(1).replaceAll("\\[.*?\\]", "").trim();
-				result.add(modifier);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("SELECT distinct modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"")) {
+					while(resultSet.next()) {
+						String modifier = resultSet.getString(1).replaceAll("\\[.*?\\]", "").trim();
+						result.add(modifier);
+					}
+				}
 			}
 		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
@@ -625,13 +642,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Set<String> readSentences() {
 		Set<String> result = new HashSet<String>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT sentence FROM " + this.databasePrefix + "_sentence order by sentid");
-
-			while(resultSet.next()) {
-				String sentence = resultSet.getString(1);
-				result.add(sentence);
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("SELECT sentence FROM " + this.databasePrefix + "_sentence order by sentid")) {
+					while(resultSet.next()) {
+						String sentence = resultSet.getString(1);
+						result.add(sentence);
+					}
+				}
 			}
 		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
@@ -709,30 +727,31 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 
 	private void createTablesNeededForPerl(List<AbstractDescriptionsFile> descriptionsFiles) throws LearnException {
-		try {
-			Statement stmt = connection.createStatement();
-			String cleanupQuery = "DROP TABLE IF EXISTS " + 
-					//this.databasePrefix + "_allwords, " +  //allwords table is created outside of perl by dehypenizer
-					this.databasePrefix + "_discounted, " + 
-					this.databasePrefix + "_heuristicnouns, " + 
-					this.databasePrefix + "_isa, " + 
-					this.databasePrefix + "_modifiers, " + 
-					this.databasePrefix + "_sentence, " + 
-					this.databasePrefix + "_sentinfile, " + 
-					this.databasePrefix + "_singularplural, " + 
-					this.databasePrefix + "_substructure, " + 
-					this.databasePrefix + "_unknownwords, " + 
-					this.databasePrefix + "_wordpos, " + 
-					this.databasePrefix + "_taxonnames, " + 
-					this.databasePrefix + "_wordroles;";
-			stmt.execute(cleanupQuery);
-			stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, "
-					+ "dhword varchar(150), inbrackets int default 0) CHARACTER SET utf8 engine=innodb");
-			AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, this.databaseHost, this.databasePort, this.databaseName, this.databasePrefix, this.databaseUser, this.databasePassword);
-			allWordsLearner.learn(descriptionsFiles);
-			stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), "
-					+ "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");  
-			stmt.execute("create table if not exists " + this.databasePrefix + "_taxonnames (name varchar(100), primary key(name)) CHARACTER SET utf8 engine=innodb");
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement stmt = connection.createStatement()) {
+				String cleanupQuery = "DROP TABLE IF EXISTS " + 
+						//this.databasePrefix + "_allwords, " +  //allwords table is created outside of perl by dehypenizer
+						this.databasePrefix + "_discounted, " + 
+						this.databasePrefix + "_heuristicnouns, " + 
+						this.databasePrefix + "_isa, " + 
+						this.databasePrefix + "_modifiers, " + 
+						this.databasePrefix + "_sentence, " + 
+						this.databasePrefix + "_sentinfile, " + 
+						this.databasePrefix + "_singularplural, " + 
+						this.databasePrefix + "_substructure, " + 
+						this.databasePrefix + "_unknownwords, " + 
+						this.databasePrefix + "_wordpos, " + 
+						this.databasePrefix + "_taxonnames, " + 
+						this.databasePrefix + "_wordroles;";
+				stmt.execute(cleanupQuery);
+				stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, "
+						+ "dhword varchar(150), inbrackets int default 0) CHARACTER SET utf8 engine=innodb");
+				AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, connectionPool, databasePrefix);
+				allWordsLearner.learn(descriptionsFiles);
+				stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), "
+						+ "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");  
+				stmt.execute("create table if not exists " + this.databasePrefix + "_taxonnames (name varchar(100), primary key(name)) CHARACTER SET utf8 engine=innodb");
+			}
 		} catch(SQLException | ClassNotFoundException e) {
 			log(LogLevel.ERROR, "problem initalizing tables", e);
 			throw new LearnException();
@@ -875,18 +894,20 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	private Map<String, AdjectiveReplacementForNoun> readAdjectiveReplacementsForNouns() {
 		Map<String, AdjectiveReplacementForNoun> result = new HashMap<String, AdjectiveReplacementForNoun>();
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT source, tag, modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"");
-			while(resultSet.next()){
-				String source = resultSet.getString(1);
-				String modifier = resultSet.getString(3);
-				String tag = resultSet.getString(2);
-
-				modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
-				tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
-
-				result.put(source, new AdjectiveReplacementForNoun(modifier, tag, source));
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("SELECT source, tag, modifier FROM " + this.databasePrefix + "_sentence s where modifier != \"\" and tag like \"[%\"")) {
+					while(resultSet.next()){
+						String source = resultSet.getString(1);
+						String modifier = resultSet.getString(3);
+						String tag = resultSet.getString(2);
+		
+						modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
+						tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
+		
+						result.put(source, new AdjectiveReplacementForNoun(modifier, tag, source));
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);
@@ -899,31 +920,33 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		HashMap<String, String> parentTags = new HashMap<String, String>();
 		HashMap<String, String> grandParentTags = new HashMap<String, String>();
 
-		try {
-			Statement statement = connection.createStatement();
-			ResultSet resultSet = statement.executeQuery("select source, tag from " + this.databasePrefix + "_sentence order by sentid");
-			String parentTag = "";
-			String grandParentTag = "";
-			String prevSource = "";
-			while(resultSet.next()) {
-				String source = getSource(resultSet.getString("source"));
-				String tag = resultSet.getString("tag");
-
-				if(source.replaceFirst("-.*", "").compareTo(prevSource.replaceFirst("-.*", ""))!=0){ //a new description starts
-					parentTag = "";
-					grandParentTag = "";
+		try(Connection connection = connectionPool.getConnection()) {
+			try(Statement statement = connection.createStatement()) {
+				try(ResultSet resultSet = statement.executeQuery("select source, tag from " + this.databasePrefix + "_sentence order by sentid")) {
+					String parentTag = "";
+					String grandParentTag = "";
+					String prevSource = "";
+					while(resultSet.next()) {
+						String source = getSource(resultSet.getString("source"));
+						String tag = resultSet.getString("tag");
+		
+						if(source.replaceFirst("-.*", "").compareTo(prevSource.replaceFirst("-.*", ""))!=0){ //a new description starts
+							parentTag = "";
+							grandParentTag = "";
+						}
+		
+						parentTags.put(source, parentTag);
+						grandParentTags.put(source, grandParentTag);
+		
+						grandParentTag = parentTag;
+						if(tag != null && !tag.equals("ditto"))
+							parentTag = tag;
+						else if(tag == null)
+							parentTag = "";
+		
+						prevSource = source;
+					}
 				}
-
-				parentTags.put(source, parentTag);
-				grandParentTags.put(source, grandParentTag);
-
-				grandParentTag = parentTag;
-				if(tag != null && !tag.equals("ditto"))
-					parentTag = tag;
-				else if(tag == null)
-					parentTag = "";
-
-				prevSource = source;
 			}
 		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);

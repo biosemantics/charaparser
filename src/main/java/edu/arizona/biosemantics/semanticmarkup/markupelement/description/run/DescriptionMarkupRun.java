@@ -1,13 +1,12 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.run;
 
 import java.io.File;
-
-
 import java.util.Arrays;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.IVolumeValidator;
 import edu.arizona.biosemantics.semanticmarkup.io.validate.lib.XMLVolumeValidator;
 import edu.arizona.biosemantics.common.log.LogLevel;
@@ -29,8 +28,9 @@ public class DescriptionMarkupRun extends AbstractRun {
 			@Named("InputDirectory")String inputDirectory, 
 			@Named("Run_OutDirectory")String runOutDirectory, 
 			IDescriptionMarkupCreator creator,
-			@Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile) {
-		super(guiceModuleFile, inputDirectory, runOutDirectory);
+			@Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile, 
+			ConnectionPool connectionPool) {
+		super(guiceModuleFile, inputDirectory, runOutDirectory, connectionPool);
 		this.creator = creator;
 		this.validateSchemaFile = validateSchemaFile;
 	}

@@ -1,7 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,8 +34,8 @@ import edu.arizona.biosemantics.oto.common.model.lite.Decision;
 import edu.arizona.biosemantics.oto.common.model.lite.Download;
 import edu.arizona.biosemantics.oto.common.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.common.model.lite.UploadResult;
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.ITerm;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
@@ -78,7 +77,6 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected OTOClient otoClient;
 	protected String databasePrefix;
 	protected IGlossary glossary;
-	protected Connection connection;
 	protected TaxonGroup taxonGroup;
 	protected OTOLiteClient otoLiteClient;
 	protected String otoLiteTermReviewURL;
@@ -88,6 +86,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	private IInflector inflector;
 	private String etcUser;
 	private boolean useEmptyGlossary;
+	private ConnectionPool connectionPool;
 	
 	/**
 	 * @param wordTokenizer
@@ -101,9 +100,6 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * @param descriptionExtractorRunMaximum
 	 * @param sentenceChunkerRunMaximum
 	 * @param otoClient
-	 * @param databaseName
-	 * @param databaseUser
-	 * @param databasePassword
 	 * @param databasePrefix
 	 * @param glossary
 	 * @throws ClassNotFoundException 
@@ -126,11 +122,6 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			OTOClient otoClient, 
 			OTOLiteClient otoLiteClient, 
 			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
-			@Named("DatabaseHost") String databaseHost,
-			@Named("DatabasePort") String databasePort,
-			@Named("DatabaseName")String databaseName,
-			@Named("DatabaseUser")String databaseUser,
-			@Named("DatabasePassword")String databasePassword,
 			@Named("DatabasePrefix")String databasePrefix, 
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
@@ -139,7 +130,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("termCategorizationRequired")boolean termCategorizationRequired,
 			IInflector inflector, 
 			@Named("EtcUser")String etcUser, 
-			@Named("UseEmptyGlossary") boolean useEmptyGlossary) throws ClassNotFoundException, SQLException {
+			@Named("UseEmptyGlossary") boolean useEmptyGlossary, 
+			ConnectionPool connectionPool) throws ClassNotFoundException, SQLException {
 		super(version, parallelProcessing);
 		this.inflector = inflector;
 		this.parser = parser;
@@ -162,12 +154,9 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.termCategorizationRequired = termCategorizationRequired;
 		this.etcUser = etcUser;
 		this.useEmptyGlossary = useEmptyGlossary;
+		this.connectionPool = connectionPool;
 		
 		//normalizer.init(); //moved after learn is complete so normalizer can read the results from learn
-		
-		Class.forName("com.mysql.jdbc.Driver");
-		connection = DriverManager.getConnection("jdbc:mysql://" + databaseHost + ":" + databasePort +"/" + databaseName + "?connectTimeout=0&socketTimeout=0&autoReconnect=true",
-				databaseUser, databasePassword);
 	}
 
 	@Override
@@ -279,31 +268,38 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 	
     private UploadResult readUploadResult() throws SQLException {
-        int uploadId = -1;
-        String secret = "";
-        String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setString(1, databasePrefix);
-        preparedStatement.execute();
-        ResultSet resultSet = preparedStatement.getResultSet();
-        while(resultSet.next()) {
-                uploadId = resultSet.getInt("oto_uploadid");
-                secret = resultSet.getString("oto_secret");
-        }
-        return new UploadResult(uploadId, secret);
+    	try(Connection connection = connectionPool.getConnection()) {
+	        int uploadId = -1;
+	        String secret = "";
+	        String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
+	        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+		        preparedStatement.setString(1, databasePrefix);
+		        preparedStatement.execute();
+		        try(ResultSet resultSet = preparedStatement.getResultSet()) {
+			        while(resultSet.next()) {
+			                uploadId = resultSet.getInt("oto_uploadid");
+			                secret = resultSet.getString("oto_secret");
+			        }
+			        return new UploadResult(uploadId, secret);
+		        }
+	        }
+    	}
 }
 
 	private String getGlossaryVersionOfLearn() {
 		String glossaryVersion = null;
-		try {
+		try(Connection connection = connectionPool.getConnection()) {
 			String sql = "SELECT glossary_version FROM datasetprefixes WHERE prefix = ?";
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, databasePrefix);
-			preparedStatement.execute();
-			ResultSet resultSet = preparedStatement.getResultSet();
-			
-			while(resultSet.next()) {
-				glossaryVersion = resultSet.getString("glossary_version");
+			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+				preparedStatement.setString(1, databasePrefix);
+				preparedStatement.execute();
+				
+				try(ResultSet resultSet = preparedStatement.getResultSet()) {
+				
+					while(resultSet.next()) {
+						glossaryVersion = resultSet.getString("glossary_version");
+					}
+				}
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "Could not read glossary version used for learning", e);
@@ -312,16 +308,20 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	private int readUploadId() throws SQLException {
-		int uploadId = -1;
-		String sql = "SELECT oto_uploadid FROM datasetprefixes WHERE prefix = ?";
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		preparedStatement.setString(1, databasePrefix);
-		preparedStatement.execute();
-		ResultSet resultSet = preparedStatement.getResultSet();
-		while(resultSet.next()) {
-			uploadId = resultSet.getInt("oto_uploadid");
+		try(Connection connection = connectionPool.getConnection()) {
+			int uploadId = -1;
+			String sql = "SELECT oto_uploadid FROM datasetprefixes WHERE prefix = ?";
+			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+				preparedStatement.setString(1, databasePrefix);
+				preparedStatement.execute();
+				try(ResultSet resultSet = preparedStatement.getResultSet()) {
+					while(resultSet.next()) {
+						uploadId = resultSet.getInt("oto_uploadid");
+					}
+					return uploadId;
+				}
+			}
 		}
-		return uploadId;
 	}
 
 
@@ -480,38 +480,42 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			wordRoles.add(wordRole);
 		}
 		
-		try {
-			Statement stmt = connection.createStatement();
-	        String cleanupQuery = "DROP TABLE IF EXISTS " + 
-									tablePrefix + "_term_category, " + 
-									tablePrefix + "_syns, " +
-									tablePrefix + "_wordroles;";
-	        stmt.execute(cleanupQuery);
-	        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
-					"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
-			stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
-					"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`))  CHARACTER SET utf8 engine=innodb");
-			
-			for(TermCategory termCategory : termCategories) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)");
-				preparedStatement.setString(1, termCategory.getTerm());
-				preparedStatement.setString(2, termCategory.getCategory());
-				preparedStatement.setBoolean(3, termCategory.isHasSyn());
-				preparedStatement.executeUpdate();
-			}
-			for(TermSynonym termSynonym : termSynonyms) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)");
-				preparedStatement.setString(1, termSynonym.getTerm());
-				preparedStatement.setString(2, termSynonym.getSynonym());
-				preparedStatement.executeUpdate();
-			}
-			for(WordRole wordRole : wordRoles) {
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)");
-				preparedStatement.setString(1, wordRole.getWord());
-				preparedStatement.setString(2, wordRole.getSemanticRole());
-				preparedStatement.setString(3, wordRole.getSavedid());
-				preparedStatement.executeUpdate();
+		try(Connection connection = connectionPool.getConnection()) {	
+			try(Statement stmt = connection.createStatement()) {
+		        String cleanupQuery = "DROP TABLE IF EXISTS " + 
+										tablePrefix + "_term_category, " + 
+										tablePrefix + "_syns, " +
+										tablePrefix + "_wordroles;";
+		        stmt.execute(cleanupQuery);
+		        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
+				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+						"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
+				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(50) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
+						"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`))  CHARACTER SET utf8 engine=innodb");
+				
+				for(TermCategory termCategory : termCategories) {
+					try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)")) {
+						preparedStatement.setString(1, termCategory.getTerm());
+						preparedStatement.setString(2, termCategory.getCategory());
+						preparedStatement.setBoolean(3, termCategory.isHasSyn());
+						preparedStatement.executeUpdate();
+					}
+				}
+				for(TermSynonym termSynonym : termSynonyms) {
+					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)")) {
+						preparedStatement.setString(1, termSynonym.getTerm());
+						preparedStatement.setString(2, termSynonym.getSynonym());
+						preparedStatement.executeUpdate();
+					}
+				}
+				for(WordRole wordRole : wordRoles) {
+					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)")) {
+						preparedStatement.setString(1, wordRole.getWord());
+						preparedStatement.setString(2, wordRole.getSemanticRole());
+						preparedStatement.setString(3, wordRole.getSavedid());
+						preparedStatement.executeUpdate();
+					}
+				}
 			}
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
