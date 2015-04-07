@@ -3,34 +3,23 @@ package edu.arizona.biosemantics.semanticmarkup.config;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Collection;
-
 import javax.xml.bind.JAXBException;
-
-import org.w3c.dom.Document;
 
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
 import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto2.Client;
 import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
-import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.CSVGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.FNAv19Normalizer;
-import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.TreatisehNormalizer;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.IDescriptionMarkupResultReader;
@@ -41,18 +30,12 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDes
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.EvaluationDBDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionWriter;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyDescriptionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputNoLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.PartOfFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupAndOntologyMappingCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupRun;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.GUIDescriptionTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.IDescriptionTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.IDistributionMarkupCreator;
@@ -86,14 +69,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationWriter;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.lib.JDOMEcologyReader;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.lib.JDOMEcologyWriter;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.IEcologyMarkupCreator;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.EcologyMarkupCreator;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.transform.EcologyTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.transform.IEcologyTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.IEcologyReader;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.io.IEcologyWriter;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 
 

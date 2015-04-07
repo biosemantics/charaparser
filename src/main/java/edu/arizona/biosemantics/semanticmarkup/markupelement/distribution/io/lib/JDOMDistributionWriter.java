@@ -52,6 +52,7 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 					statementElement.addContent(textElement);
 					for(BiologicalEntity be: statement.getBiologicalEntities()){
 						Element beElement = new Element("biological_entity");
+						beElement.setAttribute("id", be.getId() );
 						beElement.setAttribute("name", be.getName());
 						beElement.setAttribute("name_original", be.getNameOriginal());
 						beElement.setAttribute("type", be.getType());

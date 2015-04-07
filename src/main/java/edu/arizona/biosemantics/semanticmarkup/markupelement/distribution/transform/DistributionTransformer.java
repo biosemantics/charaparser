@@ -21,6 +21,7 @@ public class DistributionTransformer implements IDistributionTransformer {
 	public void transform(List<DistributionsFile> distributionsFiles) {
 		for(DistributionsFile distributionsFile : distributionsFiles) {
 			int i = 0;
+			int organId = 0;
 			for(Treatment treatment : distributionsFile.getTreatments()) {
 				for(Distribution distribution : treatment.getDistributions()) {
 					List<Statement> statements = new LinkedList<Statement>();
@@ -30,6 +31,7 @@ public class DistributionTransformer implements IDistributionTransformer {
 					
 					BiologicalEntity be = new BiologicalEntity();
 					be.setName("whole_organism");
+					be.setId("dis_o"+organId++);
 					be.setType("structure");
 					be.setNameOriginal("");
 					be.addCharacters(parse(distribution.getText()));

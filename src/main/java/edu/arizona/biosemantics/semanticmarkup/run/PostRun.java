@@ -55,17 +55,19 @@ public class PostRun {
 	static XPathExpression<Element> nextIdPath = null;
 	static XPathExpression<Element> namePath = null;
 	static XPathExpression<Element> keyHead = null;
+
 	
 
 	static{
 		fac = XPathFactory.instance();
 		keyPath = fac.compile("//bio:treatment/key", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		detPath = fac.compile(".//determination", Filters.element()); //use . to limit the selection in the key element (not the entire document)
-		allDetPath = fac.compile("//determination", Filters.element()); //don't use .
+		detPath = fac.compile(".//determination", Filters.element()); //use "." to limit the selection in the key element (not the entire document)
+		allDetPath = fac.compile("//determination", Filters.element()); //don't use "."
 		nextIdPath = fac.compile(".//next_statement_id", Filters.element());
-		keyHead  = fac.compile("//key//key_head", Filters.element()); //don't use .
+		keyHead  = fac.compile("//key//key_head", Filters.element()); //don't use "."
 		//stateIdPath = fac.compile("//key//statement_id", Filters.element());
 		namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+		
 	}
 
 	/**
@@ -120,6 +122,8 @@ public class PostRun {
 		//ArrayList<File> newFiles = new ArrayList<File> ();
 		int count = 0;
 		for(Document docWKey: containsKey){
+			//baseURI:file:/C:/Users/updates/git/charaparser/workspace/rubus_fna_2/out/1.xml
+			String keyFileName = docWKey.getBaseURI().substring(docWKey.getBaseURI().lastIndexOf("/")+1).replaceFirst("\\.xml$", "");
 			log(LogLevel.DEBUG, "Processing keys in "+docWKey.getBaseURI());
 			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
 				ArrayList<String> keyErrors = new ArrayList<String>();
@@ -137,14 +141,16 @@ public class PostRun {
 					String taxonName = getName((Element) determination, docWKey);
 					Element description = new Element("description");
 					description.setAttribute("type", "morphology_from_key");
-					wrapCharacter(description, (Element)determination, (Element)key);
+					wrapCharacter(description, (Element)determination, (Element)key, keyFileName);
 					
 					if(description.getContentSize()==0) continue;
 					
 					Document doc = locateTaxonDocument(taxonName, taxa2doc);
 					if(doc!=null){
 						//add a new description element of type 'morphology_from_key' to the doc for the taxon
-						doc.getRootElement().addContent(description);
+						//one determination may occur multiple times in one key, need to deduplicate description statements before add description to the related doc
+						addDescription(doc, description);
+						//doc.getRootElement().addContent(description);
 						writeFile(doc, doc2file.get(doc));
 						log(LogLevel.DEBUG, "Add info from a key in "+docWKey.getBaseURI()+" to morph. description in "+doc.getBaseURI());
 					}else{
@@ -167,6 +173,33 @@ public class PostRun {
 
 
 	
+	/**
+	 * one determination may occur multiple times in one key, need to deduplicate description statements before add description to the related doc
+	 * doc may already contain some statements from descriptions, stop those from being added again.
+	 * 
+	 * @param doc
+	 * @param description
+	 */
+
+	private void addDescription(Document doc, Element description) {
+		if(doc==null || description == null) return;
+		//<statement id="from_key_d90_s0">
+		//remove statements with the same id as those to be added
+		List<Element> statements = description.getChildren("statement");
+		Iterator<Element> it = statements.iterator();
+		while(it.hasNext()){
+			Element state = it.next();
+			String id = state.getAttributeValue("id");
+			XPathExpression<Element> statemts  = fac.compile("//description/statement[@id='"+id+"']", Filters.element()); 
+			if(!statemts.evaluate(doc).isEmpty()){
+				it.remove();
+			}
+		}
+		
+		//add de-duplicated description
+		doc.getRootElement().addContent(description);
+	}
+
 
 	/**
 	 * create a new file using the file naming convention
@@ -175,7 +208,7 @@ public class PostRun {
 	 * @param description
 	 */
 	private File createFileFor(String taxonName, Element description, Document template) {
-		File out = new File(this.runOutDirectory, taxonName.replaceAll(" ", "_")+".xml");
+		File out = new File(this.runOutDirectory, "from_key_"+taxonName.replaceAll(" ", "_")+".xml");
 		//make a template doc for the new description by removing un-needed elements
 		Document doc = template.clone();
 		Element root = doc.getRootElement();
@@ -306,18 +339,18 @@ public class PostRun {
 	 * @param key
 	 */
 	private void wrapCharacter(Element description, Element determination,
-			Element key) {
+			Element key, String keyFileName) {
 			
 			//tracing up
 			String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
 			Element desc = determination.getParentElement().getChild("description").clone();
-			Collection<Element> statements = prepStatmentsFrom(desc);
+			Collection<Element> statements = prepStatmentsFrom(desc, keyFileName);
 			if(statements!=null) description.addContent(statements);
 	
 			Element nextId = getNextIdStatement(stmtid, key);
 			while(nextId!=null){
 				desc = ((Element)nextId).getParentElement().getChild("description").clone();
-				statements = prepStatmentsFrom(desc);
+				statements = prepStatmentsFrom(desc, keyFileName);
 				if(statements!=null) description.addContent(statements);
 				stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
 				nextId = getNextIdStatement(stmtid, key);
@@ -328,7 +361,7 @@ public class PostRun {
 				Element upperDet = findUpperDetermination(key.getChild("key_head"), key);
 				if(upperDet!=null){
 					Element upperKey = upperDet.getParentElement().getParentElement();
-					if(upperKey!=null) wrapCharacter(description, upperDet, upperKey);
+					if(upperKey!=null) wrapCharacter(description, upperDet, upperKey, keyFileName);
 				}
 			}
 	}
@@ -385,14 +418,14 @@ public class PostRun {
 	 */
 
 
-	private Collection<Element> prepStatmentsFrom(Element description) {
+	private Collection<Element> prepStatmentsFrom(Element description, String keyFileName) {
 		ArrayList<Element> states = new ArrayList<Element>(description.getChildren("statement"));		
 		ArrayList<Element> statements = new ArrayList<Element>();
 		for(int i = 0; i < states.size(); i++){
 			//for(Element statement: description.getChildren("statement")){ //concurrent modification issue
 			Element statement = states.get(i);
 			statement.detach();
-			updateIds(statement);
+			updateIds(statement, keyFileName);
 			statements.add(statement);
 		}
 		return statements;
@@ -404,21 +437,21 @@ public class PostRun {
 	 * @param statement
 	 */
 
-	private void updateIds(Element statement) {
+	private void updateIds(Element statement, String keyFileName) {
 
 		if(statement.getAttribute("id")!=null)
-			statement.setAttribute("id", "from_key_"+statement.getAttributeValue("id"));
+			statement.setAttribute("id", "from_key_"+keyFileName+"_"+statement.getAttributeValue("id"));
 
 		for(Element elem: statement.getChildren()){
 			if(elem.getAttribute("id")!=null){
-				elem.setAttribute("id", "from_key_"+elem.getAttributeValue("id"));
+				elem.setAttribute("id", "from_key_"+keyFileName+"_"+elem.getAttributeValue("id"));
 			}
 			if(elem.getName().compareTo("relation")==0){
 				if(elem.getAttribute("from")!=null){
-					elem.setAttribute("from", "from_key_"+elem.getAttributeValue("from"));
+					elem.setAttribute("from", "from_key_"+keyFileName+"_"+elem.getAttributeValue("from"));
 				}
 				if(elem.getAttribute("to")!=null){
-					elem.setAttribute("to", "from_key_"+elem.getAttributeValue("to"));
+					elem.setAttribute("to", "from_key_"+keyFileName+"_"+elem.getAttributeValue("to"));
 				}
 			}
 		}

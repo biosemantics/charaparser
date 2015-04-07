@@ -56,6 +56,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	public void transform(List<PhenologiesFile> phenologiesFiles) {
 		for(PhenologiesFile phenologiesFile : phenologiesFiles) {
 			int i = 0;
+			int organId = 0;
 			for(Treatment treatment : phenologiesFile.getTreatments()) {
 				for(Phenology phenology : treatment.getPhenologies()) {
 					List<Statement> statements = new LinkedList<Statement>();
@@ -65,6 +66,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 
 					BiologicalEntity be = new BiologicalEntity();
 					be.setName("whole_organism");
+					be.setId("phen_o"+organId++);
 					be.setType("structure");
 					be.setNameOriginal("");
 					be.addCharacters(parse(phenology.getText()));
