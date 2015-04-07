@@ -31,6 +31,7 @@ public class ElevationTransformer implements IElevationTransformer {
 	public void transform(List<ElevationsFile> elevationsFiles) {
 		for(ElevationsFile elevationsFile : elevationsFiles) {
 			int i = 0;
+			int organId = 0;
 			for(Treatment treatment : elevationsFile.getTreatments()) {
 				for(Elevation elevation : treatment.getElevations()) {
 					List<Statement> statements = new LinkedList<Statement>();
@@ -39,6 +40,7 @@ public class ElevationTransformer implements IElevationTransformer {
 					statement.setText(elevation.getText());
 					BiologicalEntity be = new BiologicalEntity();
 					be.setName("whole_organism");
+					be.setId("elev_o"+organId++);
 					be.setType("structure");
 					be.setNameOriginal("");
 					be.addCharacters(parse(elevation.getText()));

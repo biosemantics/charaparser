@@ -45,6 +45,7 @@ public class HabitatTransformer implements IHabitatTransformer {
 		//englishFactored.ser.gz
 		for(HabitatsFile habitatsFile : habitatsFiles) {
 			int i = 0;
+			int organId = 0;
 			for(Treatment treatment : habitatsFile.getTreatments()) {
 				for(Habitat habitat : treatment.getHabitats()) {
 					List<Statement> statements = new LinkedList<Statement>();
@@ -54,6 +55,7 @@ public class HabitatTransformer implements IHabitatTransformer {
 					
 					BiologicalEntity be = new BiologicalEntity();
 					be.setName("whole_organism");
+					be.setId("hab_o"+organId++);
 					be.setType("structure");
 					be.setNameOriginal("");
 					be.addCharacters(parse(habitat.getText()));
