@@ -44,7 +44,7 @@ public class ETCMarkupRun extends AbstractRun {
 
 		
 		log(LogLevel.INFO, "Creating markup using " + creator.getDescription() + "...");
-		creator.create();
+		//creator.create();
 		
 		
 		PostRun r = new PostRun(runOutDirectory);

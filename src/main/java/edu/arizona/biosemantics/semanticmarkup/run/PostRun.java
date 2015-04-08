@@ -32,6 +32,7 @@ import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.common.validation.key.KeyElementValidator;
+import edu.arizona.biosemantics.common.validation.key.KeyValidationException;
 
 
 /**
@@ -130,10 +131,19 @@ public class PostRun {
 				count++;
 				log(LogLevel.DEBUG, "Processing key "+count+": "+key.getChildText("key_head"));
 				//check if the key is formatted properly, break if not
-				if(! kev.validate(key, keyErrors)){
+				try{
+					kev.validate(key, keyErrors);
+				}catch(KeyValidationException e){
+					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+":"+key.getChildText("key_head"));
+					for(String message : e.getAllErrors()){
+						log(LogLevel.DEBUG, message);
+					}
+					break;
+				}
+				/*if(! ){
 					log(LogLevel.DEBUG, "not a valid key in file "+docWKey.getBaseURI()+":"+key.getChildText("key_head"));
 					break; //if one key is not valid in a document (other keys may refers to this bad key), go to the next doc
-				}
+				}*/
 				for(Object determination: detPath.evaluate(key)){
 					//if determination matches a key_head, so is not a taxon name
 					if(matchesKeyHead((Element)determination, key)) continue;
