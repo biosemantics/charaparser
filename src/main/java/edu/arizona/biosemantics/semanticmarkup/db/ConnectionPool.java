@@ -53,27 +53,6 @@ public class ConnectionPool {
 	
 	public void shutdown() {
 		this.connectionPool.shutdown();
-		try {
-			DriverManager.deregisterDriver(mySqlDriver);
-		} catch (SQLException e) {
-			log(LogLevel.ERROR, "Couldn't deregister mysql driver", e);
-		}
-		try {
-		    AbandonedConnectionCleanupThread.shutdown();
-		} catch (InterruptedException e) {
-			log(LogLevel.ERROR, "Couldn't shutdown abandoned connection cleanup thread", e);
-		}
-		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-		Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
-		for (Thread t : threadArray) {
-			if(t.getName().contains("Abandoned connection cleanup thread") 
-		            ||  t.getName().matches("com\\.google.*Finalizer")
-		            ) {
-		        synchronized(t) {
-		            t.stop(); //don't complain, it works
-		        }
-			}
-		}
 	}
 	
 }
