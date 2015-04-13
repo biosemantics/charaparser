@@ -5,8 +5,12 @@ package edu.arizona.biosemantics.semanticmarkup.run;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +21,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.jdom2.Document;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
@@ -92,8 +97,8 @@ public class PostRun {
 		Document document;
 		File [] files = new File(runOutDirectory).listFiles();
 		for(File file: files){	
-			try{
-				document = (Document) builder.build(file);
+			try(FileInputStream fileInputStream = new FileInputStream(file)) {
+				document = builder.build(fileInputStream);
 				Element root = document.getRootElement();
 				Element ti = (Element) namePath.evaluate(root).get(0);
 				String name = "";
@@ -123,8 +128,8 @@ public class PostRun {
 		//ArrayList<File> newFiles = new ArrayList<File> ();
 		int count = 0;
 		for(Document docWKey: containsKey){
-			//baseURI:file:/C:/Users/updates/git/charaparser/workspace/rubus_fna_2/out/1.xml
-			String keyFileName = docWKey.getBaseURI().substring(docWKey.getBaseURI().lastIndexOf("/")+1).replaceFirst("\\.xml$", "");
+			String keyFileName = FilenameUtils.removeExtension(doc2file.get(docWKey).getName());
+			
 			log(LogLevel.DEBUG, "Processing keys in "+docWKey.getBaseURI());
 			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
 				ArrayList<String> keyErrors = new ArrayList<String>();
@@ -281,8 +286,8 @@ public class PostRun {
 	 */
 	private void writeFile(Document doc, File file) {
 		out.setFormat(Format.getPrettyFormat());	
-		try {
-			out.output(doc, new FileWriter(file));
+		try(OutputStreamWriter outputStreamWriter= new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
+			out.output(doc, outputStreamWriter);
 		} catch (IOException e) {
 			log(LogLevel.ERROR, "Failed to write xml file: "+file.getAbsolutePath());
 			e.printStackTrace();
