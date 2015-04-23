@@ -10,6 +10,7 @@ import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Distribution;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFile;
@@ -48,6 +49,9 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 					Element statementElement = new Element("statement");
 					Element textElement = new Element("text");
 					textElement.setText(statement.getText());
+					if(statement.getText().contains("Mexico(Nuevo")){
+						log(LogLevel.INFO, "in distribution writer, see text "+ statement.getText());
+					}
 					statementElement.setAttribute("id", statement.getId());
 					statementElement.addContent(textElement);
 					for(BiologicalEntity be: statement.getBiologicalEntities()){

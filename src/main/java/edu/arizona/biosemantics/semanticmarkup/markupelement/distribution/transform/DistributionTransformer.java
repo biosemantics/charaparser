@@ -49,6 +49,9 @@ public class DistributionTransformer implements IDistributionTransformer {
 	public LinkedHashSet<Character> parse(String text) {
 		//format text, hide [,;] in parentheses
 		LinkedHashSet<Character> values = new LinkedHashSet<Character>();
+		if(text.contains("Mexico(Nuevo")){
+			log(LogLevel.INFO, "in distribution transformation, see text "+ text);
+		}
 		text = format(text); 
 		//collect value
 		String[] areas = text.split("[;,]");

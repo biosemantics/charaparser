@@ -121,9 +121,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		List<? extends Element> results = processChunk(chunk, processingContext);
 		if(results.size()==0 && chunk!=null && chunk.getTerminalsText().compareTo(".")!=0)  processingContext.setLastChunkYieldElement(false); //ignore unprocessed '.', "15 cm. long"
 		else processingContext.setLastChunkYieldElement(true);
-		
+
 		return results;
-		
+
 	}
 
 	/**
@@ -169,14 +169,14 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		log(LogLevel.DEBUG, "reestablish subject");
 		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 
-		
+
 		List<BiologicalEntity> subjects = processingContextState.getSubjects();
 		if(subjects.size()==0){
 			subjects = processingContext.getLastSubjects();
 		}
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		lastElements.clear();
-		
+
 		for(BiologicalEntity structure : subjects) {
 			lastElements.add(structure);
 			//element.detach();
@@ -200,7 +200,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		structureElements.add(structureElement);
 		result.addAll(establishSubject(structureElements, processingContextState));
 	}
-	
+
 	protected List<BiologicalEntity> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<BiologicalEntity> results = new LinkedList<BiologicalEntity>();	
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
@@ -560,7 +560,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				modifiers.addAll(chunkModifiers);
 
 				String w = token.getTerminalsText();
-				
+
 				if(token.containsChunkType(ChunkType.STATE))
 					w = token.getChunkBFS(ChunkType.STATE).getTerminalsText();
 				String tokensCharacter = null;
@@ -589,7 +589,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						}
 					}
 					results.addAll(charas);
-					
+
 					//annotateCount(parents, w, modifiers);
 					modifiers.clear();
 				}else{
@@ -659,8 +659,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		//if(this.inbrackets){character.setAttribute("in_bracket", "true");}
 		character.setCharType("range_value");
 		character.setName(characterName);
-		
-		 
+
+
 		String[] range = characterValue.split("\\s+to\\s+");//a or b, c, to d, c, e
 		String[] tokens = range[0].replaceFirst("\\W$", "").replaceFirst("^.*?\\s+(or|and/or)\\s+", "").split("\\s*,\\s*"); //a or b, c, =>
 		if(tokens.length==0)
@@ -890,7 +890,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 	protected String differentiateOf(List<BiologicalEntity> organsBeforeOf, List<BiologicalEntity> organsAfterOf) {
 		String result = "part_of";
-		
+
 		for (int i = 0; i<organsBeforeOf.size(); i++){
 			String b = organsBeforeOf.get(i).getName();
 			if(b.compareTo("part")==0) return "part_of";
@@ -898,7 +898,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				result = "consist_of";
 				break;
 			}
-			
+
 			for(int j = 0; j<organsAfterOf.size(); j++){
 				String a = organsAfterOf.get(j).getName();
 				//String pattern = a+"[ ]+of[ ]+[0-9]+.*"+b+"[,\\.]"; //consists-of
@@ -1005,7 +1005,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		if(characters.size()==0){//failed, simplify chunktext
 			characters = parseNumericals(text, characterString);
 		}
-		
+
 		for(Character c: characters){
 			if(average && !c.getName().contains("average_")) c.setName("average_"+c.getName());
 		}
@@ -1059,97 +1059,98 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 */
 
 	protected List<Character> parseNumericals(String numberexp, String suggestedcharaname){	
-		numberexp = numberexp.replaceAll("–", "-");
 		LinkedList<Character> innertagstate = new LinkedList<Character>();
-		int i,j;
-		numberexp = numberexp.replaceAll("\\([\\s]?|\\[[\\s]?", "[");
-		numberexp = numberexp.replaceAll("[\\s]?\\)|[\\s]?\\]", "]").trim();
-		String original = numberexp;
+		try{
+			numberexp = numberexp.replaceAll("–", "-");
+			int i,j;
+			numberexp = numberexp.replaceAll("\\([\\s]?|\\[[\\s]?", "[");
+			numberexp = numberexp.replaceAll("[\\s]?\\)|[\\s]?\\]", "]").trim();
+			String original = numberexp;
 
-		//4-5[+] => 4-5[-5+]
-		Pattern p1 = Pattern.compile("(.*?\\b(\\d+))\\s*\\[\\+\\](.*)");
-		Matcher m = p1.matcher(numberexp);
-		if(m.matches()){
-			numberexp = m.group(1)+"[-"+m.group(2)+"+]"+m.group(3);
+			//4-5[+] => 4-5[-5+]
+			Pattern p1 = Pattern.compile("(.*?\\b(\\d+))\\s*\\[\\+\\](.*)");
+			Matcher m = p1.matcher(numberexp);
+			if(m.matches()){
+				numberexp = m.group(1)+"[-"+m.group(2)+"+]"+m.group(3);
+				m = p1.matcher(numberexp);
+			}
+			//1-[2-5] => 1-1[2-5] => 1[2-5]
+			//1-[4-5] => 1-3[4-5] 
+			p1 = Pattern.compile("(.*?)(\\d+)-(\\[(\\d)-.*)");
 			m = p1.matcher(numberexp);
-		}
-		//1-[2-5] => 1-1[2-5] => 1[2-5]
-		//1-[4-5] => 1-3[4-5] 
-		p1 = Pattern.compile("(.*?)(\\d+)-(\\[(\\d)-.*)");
-		m = p1.matcher(numberexp);
-		if(m.matches()){
-			int n = Integer.parseInt(m.group(4))-1;
-			if(n==Integer.parseInt(m.group(2))){
-				numberexp = m.group(1)+n+m.group(3);
-			}else{
-				numberexp = m.group(1)+m.group(2)+"-"+n+m.group(3);
-			}
-		}
-
-		///////////////////////////////////////////////////////////////////
-		//      area                                               ////////
-		
-
-		//Pattern pattern19 = Pattern.compile("([ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m?))\\s*[×x]?(\\s*[ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m?))?\\s*[×x]\\s*([ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m))");
-		Pattern pattern19 = Pattern.compile("([ \\d\\.\\[\\]+-]+\\s*("+units+"?))\\s*[×x]?(\\s*[ \\d\\.\\[\\]+-]+\\s*("+units+"?))?\\s*[×x]\\s*([ \\d\\.\\[\\]+-]+\\s*("+units+")\\b)");
-		Matcher matcher2 = pattern19.matcher(numberexp);
-		if(matcher2.matches()){
-			//get l, w, and h
-			String width = "";
-			String height = "";
-			String lunit = "";
-			String wunit = "";
-			String hunit = "";
-			String length = matcher2.group(1).trim();
-			String g5 = matcher2.group(5).trim();
-			if(matcher2.group(3)==null){
-				width = g5;
-			}else{
-				width = matcher2.group(3);
-				height = g5;
-			}
-			//make sure each has a unit
-			if(height.length()==0){//2 dimensions
-				wunit = matcher2.group(6);
-				if(matcher2.group(2)==null || matcher2.group(2).trim().length()==0){
-					lunit = wunit;
+			if(m.matches()){
+				int n = Integer.parseInt(m.group(4))-1;
+				if(n==Integer.parseInt(m.group(2))){
+					numberexp = m.group(1)+n+m.group(3);
 				}else{
-					lunit = matcher2.group(2);
-				}
-			}else{//3 dimensions
-				hunit = matcher2.group(6);
-				if(matcher2.group(4)==null || matcher2.group(4).trim().length()==0){
-					wunit = hunit;
-				}else{
-					wunit = matcher2.group(4);
-				}
-				if(matcher2.group(2)==null || matcher2.group(2).trim().length()==0){
-					lunit = wunit;
-				}else{
-					lunit = matcher2.group(2);
+					numberexp = m.group(1)+m.group(2)+"-"+n+m.group(3);
 				}
 			}
-			//format expression value+unit
-			//length = length.matches(".*[cmdµu]?m$")? length : length + " "+lunit;
-			//width = width.matches(".*[cmdµu]?m$")? width : width + " "+wunit;
-			//if(height.length()>0) height = height.matches(".*[cmdµu]?m$")? height : height + " "+hunit;
-			length = length.matches(".*\\b"+units+"$")? length : length + " "+lunit;
-			width = width.matches(".*\\b"+units+"$")? width : width + " "+wunit;
-			if(height.length()>0) height = height.matches(".*\\b"+units+"$")? height : height + " "+hunit;
 
-			
-			//annotation
-			annotateSize(length, innertagstate, "length");
-			annotateSize(width, innertagstate, "width");
-			if(height.length()>0) annotateSize(height, innertagstate, "height");
+			///////////////////////////////////////////////////////////////////
+			//      area                                               ////////
 
-			numberexp = matcher2.replaceAll("#");
-			matcher2.reset();
-		}
 
-		////////////////////////////////////////////////////////////////////////////////////
-		//   ratio                                                              ////////////
-		/*Pattern pattern24 = Pattern.compile("l/w[\\s]?=[/\\d\\.\\s\\+\\–\\-]+");
+			//Pattern pattern19 = Pattern.compile("([ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m?))\\s*[×x]?(\\s*[ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m?))?\\s*[×x]\\s*([ \\d\\.\\[\\]+-]+\\s*([cmdµu]?m))");
+			Pattern pattern19 = Pattern.compile("([ \\d\\.\\[\\]+-]+\\s*("+units+"?))\\s*[×x]?(\\s*[ \\d\\.\\[\\]+-]+\\s*("+units+"?))?\\s*[×x]\\s*([ \\d\\.\\[\\]+-]+\\s*("+units+")\\b)");
+			Matcher matcher2 = pattern19.matcher(numberexp);
+			if(matcher2.matches()){
+				//get l, w, and h
+				String width = "";
+				String height = "";
+				String lunit = "";
+				String wunit = "";
+				String hunit = "";
+				String length = matcher2.group(1).trim();
+				String g5 = matcher2.group(5).trim();
+				if(matcher2.group(3)==null){
+					width = g5;
+				}else{
+					width = matcher2.group(3);
+					height = g5;
+				}
+				//make sure each has a unit
+				if(height.length()==0){//2 dimensions
+					wunit = matcher2.group(6);
+					if(matcher2.group(2)==null || matcher2.group(2).trim().length()==0){
+						lunit = wunit;
+					}else{
+						lunit = matcher2.group(2);
+					}
+				}else{//3 dimensions
+					hunit = matcher2.group(6);
+					if(matcher2.group(4)==null || matcher2.group(4).trim().length()==0){
+						wunit = hunit;
+					}else{
+						wunit = matcher2.group(4);
+					}
+					if(matcher2.group(2)==null || matcher2.group(2).trim().length()==0){
+						lunit = wunit;
+					}else{
+						lunit = matcher2.group(2);
+					}
+				}
+				//format expression value+unit
+				//length = length.matches(".*[cmdµu]?m$")? length : length + " "+lunit;
+				//width = width.matches(".*[cmdµu]?m$")? width : width + " "+wunit;
+				//if(height.length()>0) height = height.matches(".*[cmdµu]?m$")? height : height + " "+hunit;
+				length = length.matches(".*\\b"+units+"$")? length : length + " "+lunit;
+				width = width.matches(".*\\b"+units+"$")? width : width + " "+wunit;
+				if(height.length()>0) height = height.matches(".*\\b"+units+"$")? height : height + " "+hunit;
+
+
+				//annotation
+				annotateSize(length, innertagstate, "length");
+				annotateSize(width, innertagstate, "width");
+				if(height.length()>0) annotateSize(height, innertagstate, "height");
+
+				numberexp = matcher2.replaceAll("#");
+				matcher2.reset();
+			}
+
+			////////////////////////////////////////////////////////////////////////////////////
+			//   ratio                                                              ////////////
+			/*Pattern pattern24 = Pattern.compile("l/w[\\s]?=[/\\d\\.\\s\\+\\–\\-]+");
 		matcher2 = pattern24.matcher(numberexp);
 		while ( matcher2.find()){
 			if(numberexp.charAt(matcher2.start())==' '){
@@ -1193,200 +1194,200 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		}
 		numberexp = matcher2.replaceAll("#");
 		matcher2.reset();
-		*/
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// size: deal with  "[5-]10-15[-20] cm", not deal with "5 cm - 10 cm"                        ////////////
-		//int sizect = 0;
-		String toval;
-		String fromval;
-		suggestedcharaname = suggestedcharaname==null || suggestedcharaname.length()==0? suggestedcharaname = "size" : suggestedcharaname;
-		numberexp = annotateSize(numberexp, innertagstate, suggestedcharaname);
+			 */
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////
+			// size: deal with  "[5-]10-15[-20] cm", not deal with "5 cm - 10 cm"                        ////////////
+			//int sizect = 0;
+			String toval;
+			String fromval;
+			suggestedcharaname = suggestedcharaname==null || suggestedcharaname.length()==0? suggestedcharaname = "size" : suggestedcharaname;
+			numberexp = annotateSize(numberexp, innertagstate, suggestedcharaname);
 
 
 
 
 
-		////////////////////////////////////////////////////////////////////////////////////////////
-		//   relative size                                                                             /////
-		Pattern pattern14 = Pattern.compile("[±\\d\\[\\]\\–\\-\\./\\s]+[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)");
-		matcher2 = pattern14.matcher(numberexp);
-		toval="";
-		fromval="";
-		while ( matcher2.find()){
-			if(numberexp.charAt(matcher2.start())==' '){
-				i=matcher2.start()+1;
-			}
-			else{
-				i=matcher2.start();
-			}
-			j=matcher2.end();
-			String extreme = numberexp.substring(i,j);
-			i = 0;
-			j = extreme.length();
-			Pattern pattern20 = Pattern.compile("\\[[±\\d\\.\\s\\+]+[\\–\\-]{1}[±\\d\\.\\s\\+\\–\\-]*\\]");
-			Matcher matcher1 = pattern20.matcher(extreme);
-			if ( matcher1.find()){
-				int p = matcher1.start();
-				int q = matcher1.end();
-				if(extreme.charAt(q-2)=='–' | extreme.charAt(q-2)=='-'){
-					Character character = new Character();
-					character.setCharType("range_value");
-					character.setName("atypical_size");
-					character.setFrom(extreme.substring(p+1,q-2).trim());
-					character.setTo("");
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
-				}else{
-					Character character = new Character();
-					character.setCharType("range_value");
-					character.setName("atypical_size");
-					character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-					character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
-				}
-			}
-			extreme = matcher1.replaceAll("#");
-			matcher1.reset();
-			if(extreme.contains("#"))
-				i = extreme.indexOf("#")+1;
-			Pattern pattern21 = Pattern.compile("\\[[±\\d\\.\\s\\+\\–\\-]*[\\–\\-]{1}[±\\d\\.\\s\\+]+\\]");
-			matcher1 = pattern21.matcher(extreme);
-			if ( matcher1.find()){
-				int p = matcher1.start();
-				int q = matcher1.end();
-				if (extreme.charAt(p+1)=='–' | extreme.charAt(p+1)=='-'){
-					if (extreme.charAt(q-2)=='+'){
-						Character character = new Character();
-						character.setCharType("range_value");
-						character.setName("atypical_size");
-						character.setFrom("");
-						character.setTo(extreme.substring(p+2,q-2).trim());
-						character.setUpperRestricted("false");
-						innertagstate.add(character);
-						//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-2).trim()+"\" upper_restricted=\"false\"/>");
-					}else{
-						Character character = new Character();
-						character.setCharType("range_value");
-						character.setName("atypical_size");
-						character.setFrom("");
-						character.setTo(extreme.substring(p+2,q-1).trim());
-						innertagstate.add(character);
-						//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-1).trim()+"\"/>");
-					}
+			////////////////////////////////////////////////////////////////////////////////////////////
+			//   relative size                                                                             /////
+			Pattern pattern14 = Pattern.compile("[±\\d\\[\\]\\–\\-\\./\\s]+[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)");
+			matcher2 = pattern14.matcher(numberexp);
+			toval="";
+			fromval="";
+			while ( matcher2.find()){
+				if(numberexp.charAt(matcher2.start())==' '){
+					i=matcher2.start()+1;
 				}
 				else{
-					if (extreme.charAt(q-2)=='+'){
+					i=matcher2.start();
+				}
+				j=matcher2.end();
+				String extreme = numberexp.substring(i,j);
+				i = 0;
+				j = extreme.length();
+				Pattern pattern20 = Pattern.compile("\\[[±\\d\\.\\s\\+]+[\\–\\-]{1}[±\\d\\.\\s\\+\\–\\-]*\\]");
+				Matcher matcher1 = pattern20.matcher(extreme);
+				if ( matcher1.find()){
+					int p = matcher1.start();
+					int q = matcher1.end();
+					if(extreme.charAt(q-2)=='–' | extreme.charAt(q-2)=='-'){
 						Character character = new Character();
 						character.setCharType("range_value");
 						character.setName("atypical_size");
-						character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-						character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim());
-						character.setUpperRestricted("false");
+						character.setFrom(extreme.substring(p+1,q-2).trim());
+						character.setTo("");
 						innertagstate.add(character);
-						//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
+						//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
 					}else{
 						Character character = new Character();
 						character.setCharType("range_value");
 						character.setName("atypical_size");
 						character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-						character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim() );
-						//character.setAttribute("upper_restricted", "true");
+						character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
 						innertagstate.add(character);
 						//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
-
 					}
 				}
-			}
-			extreme = matcher1.replaceAll("#");
-			matcher1.reset();
-			j = extreme.length();
-			Pattern pattern23 = Pattern.compile("\\[[±\\d\\.\\s\\+]+\\]");
-			matcher1 = pattern23.matcher(extreme);
-			if ( matcher1.find()){
-				int p = matcher1.start();
-				int q = matcher1.end();
-				if (extreme.charAt(q-2)=='+'){
-					Character character = new Character();
-					character.setCharType("range_value");
-					character.setName("atypical_size");
-					character.setFrom(extreme.substring(p+1,q-2).trim());
-					character.setUpperRestricted("false");
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
-				}else{
-					Character character = new Character();
-					character.setCharType("range_value");
-					character.setName("atypical_size");
-					character.setValue(extreme.substring(p+1,q-1).trim());
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"atypical_size\" value=\""+extreme.substring(p+1,q-1).trim()+"\"/>");
-				}
-			}
-			extreme = matcher1.replaceAll("#");
-			matcher1.reset();
-			j = extreme.length();      	
-			if(extreme.substring(i,j).contains("–")|extreme.substring(i,j).contains("-") && !extreme.substring(i,j).contains("×") && !extreme.substring(i,j).contains("x") && !extreme.substring(i,j).contains("X")){
-				String extract = extreme.substring(i,j);
-				Pattern pattern18 = Pattern.compile("[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)");
-				Matcher matcher3 = pattern18.matcher(extract);
-				String relative="";
-				if ( matcher3.find()){
-					relative = extract.substring(matcher3.start(), matcher3.end());
-				}
-				extract = matcher3.replaceAll("#");
-				matcher3.reset();
+				extreme = matcher1.replaceAll("#");
+				matcher1.reset();
+				if(extreme.contains("#"))
+					i = extreme.indexOf("#")+1;
+				Pattern pattern21 = Pattern.compile("\\[[±\\d\\.\\s\\+\\–\\-]*[\\–\\-]{1}[±\\d\\.\\s\\+]+\\]");
+				matcher1 = pattern21.matcher(extreme);
+				if ( matcher1.find()){
+					int p = matcher1.start();
+					int q = matcher1.end();
+					if (extreme.charAt(p+1)=='–' | extreme.charAt(p+1)=='-'){
+						if (extreme.charAt(q-2)=='+'){
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_size");
+							character.setFrom("");
+							character.setTo(extreme.substring(p+2,q-2).trim());
+							character.setUpperRestricted("false");
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-2).trim()+"\" upper_restricted=\"false\"/>");
+						}else{
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_size");
+							character.setFrom("");
+							character.setTo(extreme.substring(p+2,q-1).trim());
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\"\" to=\""+extreme.substring(p+2,q-1).trim()+"\"/>");
+						}
+					}
+					else{
+						if (extreme.charAt(q-2)=='+'){
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_size");
+							character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+							character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim());
+							character.setUpperRestricted("false");
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
+						}else{
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_size");
+							character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+							character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim() );
+							//character.setAttribute("upper_restricted", "true");
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
 
-				Character character = new Character();
-				character.setCharType("range_value");
-				character.setName("size");
-				character.setFrom(extract.substring(0, extract.indexOf('-')).trim());
-				character.setTo(extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim());
-				//character.setRelativeConstraint("relative_constraint",relative.trim());
-				innertagstate.add(character);
-				//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"size\" from=\""+extract.substring(0, extract.indexOf('-')).trim()+"\" to=\""+extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim()+"\" relative_constraint=\""+relative.trim()+"\"/>");
-				toval = extract.substring(0, extract.indexOf('-'));
-				fromval = extract.substring(extract.indexOf('-')+1,extract.indexOf('#'));
-				//sizect+=1;
-			}
-			else{
-				String extract = extreme.substring(i,j);
-				Pattern pattern18 = Pattern.compile("[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)"); 
-				Matcher matcher3 = pattern18.matcher(extract);
-				String relative="";
-				if ( matcher3.find()){
-					relative = extract.substring(matcher3.start(), matcher3.end());
+						}
+					}
 				}
-				extract = matcher3.replaceAll("#");
-				matcher3.reset();
-				Character character = new Character();
-				character.setCharType("range_value");
-				character.setName("size");
-				character.setValue(extract.substring(0,extract.indexOf('#')).trim());
-				//character.setRelativeConstraint("relative_constraint", relative.trim());
-				innertagstate.add(character);
-				//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"size\" value=\""+extract.substring(0,extract.indexOf('#')).trim()+"\" relative_constraint=\""+relative.trim()+"\"/>");
-				toval = extract.substring(0,extract.indexOf('#'));
-				fromval = extract.substring(0,extract.indexOf('#'));
-			}
-
-			for(Character character : innertagstate) {
-				if(character.getTo() != null && character.getTo().isEmpty()){
-					if(toval.endsWith("+")){
-						toval = toval.replaceFirst("\\+$", "");
-						character.setUpperRestricted("false");
+				extreme = matcher1.replaceAll("#");
+				matcher1.reset();
+				j = extreme.length();
+				Pattern pattern23 = Pattern.compile("\\[[±\\d\\.\\s\\+]+\\]");
+				matcher1 = pattern23.matcher(extreme);
+				if ( matcher1.find()){
+					int p = matcher1.start();
+					int q = matcher1.end();
+					if (extreme.charAt(q-2)=='+'){
+						Character character = new Character();
 						character.setCharType("range_value");
+						character.setName("atypical_size");
+						character.setFrom(extreme.substring(p+1,q-2).trim());
+						character.setUpperRestricted("false");
+						innertagstate.add(character);
+						//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"atypical_size\" from=\""+extreme.substring(p+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
+					}else{
+						Character character = new Character();
+						character.setCharType("range_value");
+						character.setName("atypical_size");
+						character.setValue(extreme.substring(p+1,q-1).trim());
+						innertagstate.add(character);
+						//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"atypical_size\" value=\""+extreme.substring(p+1,q-1).trim()+"\"/>");
 					}
-					character.setTo(toval.trim());
-					character.setToInclusive("false");
 				}
-				if(character.getFrom() != null && character.getFrom().isEmpty()){
-					character.setFrom(fromval.trim());
-					character.setFromInclusive("false");
-				}
-			}
+				extreme = matcher1.replaceAll("#");
+				matcher1.reset();
+				j = extreme.length();      	
+				if(extreme.substring(i,j).contains("–")|extreme.substring(i,j).contains("-") && !extreme.substring(i,j).contains("×") && !extreme.substring(i,j).contains("x") && !extreme.substring(i,j).contains("X")){
+					String extract = extreme.substring(i,j);
+					Pattern pattern18 = Pattern.compile("[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)");
+					Matcher matcher3 = pattern18.matcher(extract);
+					String relative="";
+					if ( matcher3.find()){
+						relative = extract.substring(matcher3.start(), matcher3.end());
+					}
+					extract = matcher3.replaceAll("#");
+					matcher3.reset();
 
-			/*StringBuffer sb = new StringBuffer();
+					Character character = new Character();
+					character.setCharType("range_value");
+					character.setName("size");
+					character.setFrom(extract.substring(0, extract.indexOf('-')).trim());
+					character.setTo(extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim());
+					//character.setRelativeConstraint("relative_constraint",relative.trim());
+					innertagstate.add(character);
+					//innertagstate = innertagstate.concat("<character char_type=\"relative_range_value\" name=\"size\" from=\""+extract.substring(0, extract.indexOf('-')).trim()+"\" to=\""+extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim()+"\" relative_constraint=\""+relative.trim()+"\"/>");
+					toval = extract.substring(0, extract.indexOf('-'));
+					fromval = extract.substring(extract.indexOf('-')+1,extract.indexOf('#'));
+					//sizect+=1;
+				}
+				else{
+					String extract = extreme.substring(i,j);
+					Pattern pattern18 = Pattern.compile("[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)"); 
+					Matcher matcher3 = pattern18.matcher(extract);
+					String relative="";
+					if ( matcher3.find()){
+						relative = extract.substring(matcher3.start(), matcher3.end());
+					}
+					extract = matcher3.replaceAll("#");
+					matcher3.reset();
+					Character character = new Character();
+					character.setCharType("range_value");
+					character.setName("size");
+					character.setValue(extract.substring(0,extract.indexOf('#')).trim());
+					//character.setRelativeConstraint("relative_constraint", relative.trim());
+					innertagstate.add(character);
+					//innertagstate = innertagstate.concat("<character char_type=\"relative_value\" name=\"size\" value=\""+extract.substring(0,extract.indexOf('#')).trim()+"\" relative_constraint=\""+relative.trim()+"\"/>");
+					toval = extract.substring(0,extract.indexOf('#'));
+					fromval = extract.substring(0,extract.indexOf('#'));
+				}
+
+				for(Character character : innertagstate) {
+					if(character.getTo() != null && character.getTo().isEmpty()){
+						if(toval.endsWith("+")){
+							toval = toval.replaceFirst("\\+$", "");
+							character.setUpperRestricted("false");
+							character.setCharType("range_value");
+						}
+						character.setTo(toval.trim());
+						character.setToInclusive("false");
+					}
+					if(character.getFrom() != null && character.getFrom().isEmpty()){
+						character.setFrom(fromval.trim());
+						character.setFromInclusive("false");
+					}
+				}
+
+				/*StringBuffer sb = new StringBuffer();
 			Pattern pattern25 = Pattern.compile("to=\"\"");
 			matcher1 = pattern25.matcher(innertagstate);
 			while ( matcher1.find()){
@@ -1404,13 +1405,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			matcher1.appendTail(sb1);
 			innertagstate=sb1.toString();
 			matcher1.reset();*/
-		}
-		numberexp = matcher2.replaceAll("#");
-		matcher2.reset();
+			}
+			numberexp = matcher2.replaceAll("#");
+			matcher2.reset();
 
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		//   count                                                                                             ///////////////
-		/*p1 = Pattern.compile("^\\[(\\d+)\\](.*)");
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//   count                                                                                             ///////////////
+			/*p1 = Pattern.compile("^\\[(\\d+)\\](.*)");
     	m = p1.matcher(numberexp);
     	if(m.matches()){
     		Element character = new Element("characterName");
@@ -1434,182 +1435,135 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     	}*/
 
 
-		//int countct = 0;
-		String text = original;
-		boolean iscount = false;
-		Pattern pattern15 = Pattern.compile("([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?|[\\[]?[±]?[\\d]+[+]?[\\]]?[\\s]?)[\\–\\–\\-]+[a-zA-Z]+");
-		matcher2 = pattern15.matcher(numberexp);
-		numberexp = matcher2.replaceAll("#");
-		matcher2.reset();     	
-		//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?)*|[±]?[\\d]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
-		//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|[±]?[\\d\\./%]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
-		//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµu]?m))");
-		Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?\\b"+units+"\\b))");
+			//int countct = 0;
+			String text = original;
+			boolean iscount = false;
+			Pattern pattern15 = Pattern.compile("([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?|[\\[]?[±]?[\\d]+[+]?[\\]]?[\\s]?)[\\–\\–\\-]+[a-zA-Z]+");
+			matcher2 = pattern15.matcher(numberexp);
+			numberexp = matcher2.replaceAll("#");
+			matcher2.reset();     	
+			//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?)*|[±]?[\\d]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
+			//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|[±]?[\\d\\./%]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
+			//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµu]?m))");
+			Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?\\b"+units+"\\b))");
 
-		matcher2 = pattern16.matcher(numberexp);
-		while ( matcher2.find()){
-			iscount = true;
-			i=matcher2.start();
-			j=matcher2.end();
-			String extreme = numberexp.substring(i,j);
-			text = text.replace(extreme, "").trim();
-			i = 0;
-			j = extreme.length();
-			Pattern pattern20 = Pattern.compile("\\[[±\\d\\.\\s\\+]+[\\–\\-]{1}[±\\d\\.\\s\\+\\–\\-]*\\]");
-			Matcher matcher1 = pattern20.matcher(extreme);
-			if ( matcher1.find()){
-				int p = matcher1.start();
-				int q = matcher1.end();
-				if(extreme.charAt(q-2)=='–' | extreme.charAt(q-2)=='-'){
-					Character character = new Character();
-					character.setCharType("range_value");
-					character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
-					character.setFrom(extreme.substring(p+1,q-2).trim());
-					character.setTo("");
-					innertagstate.add(character);
+			matcher2 = pattern16.matcher(numberexp);
+			while ( matcher2.find()){
+				iscount = true;
+				i=matcher2.start();
+				j=matcher2.end();
+				String extreme = numberexp.substring(i,j);
+				text = text.replace(extreme, "").trim();
+				i = 0;
+				j = extreme.length();
+				Pattern pattern20 = Pattern.compile("\\[[±\\d\\.\\s\\+]+[\\–\\-]{1}[±\\d\\.\\s\\+\\–\\-]*\\]");
+				Matcher matcher1 = pattern20.matcher(extreme);
+				if ( matcher1.find()){
+					int p = matcher1.start();
+					int q = matcher1.end();
+					if(extreme.charAt(q-2)=='–' | extreme.charAt(q-2)=='-'){
+						Character character = new Character();
+						character.setCharType("range_value");
+						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
+						character.setFrom(extreme.substring(p+1,q-2).trim());
+						character.setTo("");
+						innertagstate.add(character);
 
-					//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
-				}else{
-					Character character = new Character();
-					character.setCharType("range_value");
-					character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
-					character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-					String tmp = extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim();
-					character.setTo(tmp.replaceFirst("[^0-9]+$", ""));
-					if(tmp.endsWith("+")){
-						character.setUpperRestricted("false");
-					}
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
-				}
-			}
-			extreme = matcher1.replaceAll("#");
-			matcher1.reset();
-			if(extreme.contains("#"))
-				i = extreme.indexOf("#")+1;
-			j = extreme.length(); //process from # to the end of extreme. but in 1-[2-5] (1-#), the value is before #
-			Pattern pattern21 = Pattern.compile("\\[[±\\d\\.\\s\\+\\–\\-]*[\\–\\-]{1}[±\\d\\.\\s\\+]+\\]");
-			matcher1 = pattern21.matcher(extreme);
-			if ( matcher1.find()){
-				int p = matcher1.start();
-				int q = matcher1.end();
-				j = p;
-				if (extreme.charAt(p+1)=='–' | extreme.charAt(p+1)=='-'){
-					if (extreme.charAt(q-2)=='+'){
-						Character character = new Character();
-						character.setCharType("range_value");
-						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
-						character.setFrom("");
-						character.setTo(extreme.substring(p+2,q-2).trim());
-						character.setUpperRestricted("false");
-						innertagstate.add(character);
-						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\"\" to=\""+extreme.substring(p+2,q-2).trim()+"\" upper_restricted=\"false\"/>");
-					}else{
-						Character character = new Character();
-						character.setCharType("range_value");
-						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
-						character.setFrom("");
-						character.setTo(extreme.substring(p+2,q-1).trim());
-						innertagstate.add(character);
-						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\"\" to=\""+extreme.substring(p+2,q-1).trim()+"\"/>");
-					}
-				}
-				else{
-					if (extreme.charAt(q-2)=='+'){
-						Character character = new Character();
-						character.setCharType("range_value");
-						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
-						character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-						character.setTo(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-						character.setUpperRestricted("false");
-						innertagstate.add(character);
-						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
+						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
 					}else{
 						Character character = new Character();
 						character.setCharType("range_value");
 						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
 						character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
-						character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
+						String tmp = extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim();
+						character.setTo(tmp.replaceFirst("[^0-9]+$", ""));
+						if(tmp.endsWith("+")){
+							character.setUpperRestricted("false");
+						}
 						innertagstate.add(character);
 						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
 					}
 				}
-
-			}
-			matcher1.reset();
-			Pattern pattern23 = Pattern.compile("\\[[±\\d\\.\\s\\+]+\\]");
-			matcher1 = pattern23.matcher(extreme);
-			if ( matcher1.find()){
-				int p = matcher1.start();
-				int q = matcher1.end();
-				j = p;
-				if (extreme.charAt(q-2)=='+'){
-					Character character = new Character();
-					character.setCharType("range_value");
-					character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
-					character.setFrom(extreme.substring(p+1,q-2).trim());
-					character.setUpperRestricted("false");
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character name=\"atypical_count\" from=\""+extreme.substring(p+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
-				}else{
-					Character character = new Character();
-					character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
-					character.setValue(extreme.substring(p+1,q-1).trim());
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character name=\"atypical_count\" value=\""+extreme.substring(p+1,q-1).trim()+"\"/>");
-				}
-			}
-			matcher1.reset();
-			//# to the end
-			String extract = extreme.substring(i,j);
-
-			if(extract.contains("–")|extract.contains("-") && !extract.contains("×") && !extract.contains("x") && !extract.contains("X")){
-				//String extract = extreme.substring(i,j);
-				Pattern pattern22 = Pattern.compile("[\\[\\]]+");
-				matcher1 = pattern22.matcher(extract);
-				extract = matcher1.replaceAll("");
+				extreme = matcher1.replaceAll("#");
 				matcher1.reset();
-
-				String to = extract.substring(extract.indexOf('-')+1,extract.length()).trim();
-				boolean upperrestricted = true;
-				if(to.endsWith("+")){
-					upperrestricted = false;
-					to = to.replaceFirst("\\+$", "");
-				}
-				Character character = new Character();
-				character.setCharType("range_value");
-				character.setName(suggestedcharaname==null?"count": suggestedcharaname);
-				character.setFrom(extract.substring(0, extract.indexOf('-')).trim());
-				character.setTo(to);
-				if(!upperrestricted)
-					character.setUpperRestricted(upperrestricted+"");
-				innertagstate.add(character);
-				//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"count\" from=\""+extract.substring(0, extract.indexOf('-')).trim()+"\" to=\""+extract.substring(extract.indexOf('-')+1,extract.length()).trim()+"\"/>");
-				toval = extract.substring(0, extract.indexOf('-'));
-				fromval = extract.substring(extract.indexOf('-')+1,extract.length());
-				//countct+=1;
-			}else{
-				//String extract = extreme.substring(i,j).trim();
-				if(extract.length()>0){
-					Character character = new Character();
-					character.setName(suggestedcharaname==null?"count": suggestedcharaname);
-					if(extract.endsWith("+")){
-						extract = extract.replaceFirst("\\+$", "").trim();
-						character.setCharType("range_value");
-						character.setFrom(extract);
-						character.setUpperRestricted("false");
-					}else{
-						character.setValue(extract);
+				if(extreme.contains("#"))
+					i = extreme.indexOf("#")+1;
+				j = extreme.length(); //process from # to the end of extreme. but in 1-[2-5] (1-#), the value is before #
+				Pattern pattern21 = Pattern.compile("\\[[±\\d\\.\\s\\+\\–\\-]*[\\–\\-]{1}[±\\d\\.\\s\\+]+\\]");
+				matcher1 = pattern21.matcher(extreme);
+				if ( matcher1.find()){
+					int p = matcher1.start();
+					int q = matcher1.end();
+					j = p;
+					if (extreme.charAt(p+1)=='–' | extreme.charAt(p+1)=='-'){
+						if (extreme.charAt(q-2)=='+'){
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
+							character.setFrom("");
+							character.setTo(extreme.substring(p+2,q-2).trim());
+							character.setUpperRestricted("false");
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\"\" to=\""+extreme.substring(p+2,q-2).trim()+"\" upper_restricted=\"false\"/>");
+						}else{
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
+							character.setFrom("");
+							character.setTo(extreme.substring(p+2,q-1).trim());
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\"\" to=\""+extreme.substring(p+2,q-1).trim()+"\"/>");
+						}
 					}
-					innertagstate.add(character);
-					//innertagstate = innertagstate.concat("<character name=\"count\" value=\""+extract.trim()+"\"/>");
-					toval = extract;
-					fromval = extract;
+					else{
+						if (extreme.charAt(q-2)=='+'){
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
+							character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+							character.setTo(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+							character.setUpperRestricted("false");
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
+						}else{
+							Character character = new Character();
+							character.setCharType("range_value");
+							character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
+							character.setFrom(extreme.substring(p+1,extreme.indexOf("-",p+1)).trim());
+							character.setTo(extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim());
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,extreme.indexOf("-",p+1)).trim()+"\" to=\""+extreme.substring(extreme.indexOf("-",p+1)+1,q-1).trim()+"\"/>");
+						}
+					}
+
 				}
-			}
-			//start to #, dupllicated above
-			if(i-1>0){
-				extract = extreme.substring(0, i-1);
+				matcher1.reset();
+				Pattern pattern23 = Pattern.compile("\\[[±\\d\\.\\s\\+]+\\]");
+				matcher1 = pattern23.matcher(extreme);
+				if ( matcher1.find()){
+					int p = matcher1.start();
+					int q = matcher1.end();
+					j = p;
+					if (extreme.charAt(q-2)=='+'){
+						Character character = new Character();
+						character.setCharType("range_value");
+						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
+						character.setFrom(extreme.substring(p+1,q-2).trim());
+						character.setUpperRestricted("false");
+						innertagstate.add(character);
+						//innertagstate = innertagstate.concat("<character name=\"atypical_count\" from=\""+extreme.substring(p+1,q-2).trim()+"\" upper_restricted=\"false\"/>");
+					}else{
+						Character character = new Character();
+						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
+						character.setValue(extreme.substring(p+1,q-1).trim());
+						innertagstate.add(character);
+						//innertagstate = innertagstate.concat("<character name=\"atypical_count\" value=\""+extreme.substring(p+1,q-1).trim()+"\"/>");
+					}
+				}
+				matcher1.reset();
+				//# to the end
+				String extract = extreme.substring(i,j);
+
 				if(extract.contains("–")|extract.contains("-") && !extract.contains("×") && !extract.contains("x") && !extract.contains("X")){
 					//String extract = extreme.substring(i,j);
 					Pattern pattern22 = Pattern.compile("[\\[\\]]+");
@@ -1654,26 +1608,73 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						fromval = extract;
 					}
 				}
-			}
+				//start to #, dupllicated above
+				if(i-1>0){
+					extract = extreme.substring(0, i-1);
+					if(extract.contains("–")|extract.contains("-") && !extract.contains("×") && !extract.contains("x") && !extract.contains("X")){
+						//String extract = extreme.substring(i,j);
+						Pattern pattern22 = Pattern.compile("[\\[\\]]+");
+						matcher1 = pattern22.matcher(extract);
+						extract = matcher1.replaceAll("");
+						matcher1.reset();
 
-			for(Character character : innertagstate) {
-				if(character.getTo() != null && character.getTo().isEmpty()){
-					if(toval.endsWith("+")){
-						toval = toval.replaceFirst("\\+$", "");
-						character.setUpperRestricted("false");
-					
+						String to = extract.substring(extract.indexOf('-')+1,extract.length()).trim();
+						boolean upperrestricted = true;
+						if(to.endsWith("+")){
+							upperrestricted = false;
+							to = to.replaceFirst("\\+$", "");
+						}
+						Character character = new Character();
+						character.setCharType("range_value");
+						character.setName(suggestedcharaname==null?"count": suggestedcharaname);
+						character.setFrom(extract.substring(0, extract.indexOf('-')).trim());
+						character.setTo(to);
+						if(!upperrestricted)
+							character.setUpperRestricted(upperrestricted+"");
+						innertagstate.add(character);
+						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"count\" from=\""+extract.substring(0, extract.indexOf('-')).trim()+"\" to=\""+extract.substring(extract.indexOf('-')+1,extract.length()).trim()+"\"/>");
+						toval = extract.substring(0, extract.indexOf('-'));
+						fromval = extract.substring(extract.indexOf('-')+1,extract.length());
+						//countct+=1;
+					}else{
+						//String extract = extreme.substring(i,j).trim();
+						if(extract.length()>0){
+							Character character = new Character();
+							character.setName(suggestedcharaname==null?"count": suggestedcharaname);
+							if(extract.endsWith("+")){
+								extract = extract.replaceFirst("\\+$", "").trim();
+								character.setCharType("range_value");
+								character.setFrom(extract);
+								character.setUpperRestricted("false");
+							}else{
+								character.setValue(extract);
+							}
+							innertagstate.add(character);
+							//innertagstate = innertagstate.concat("<character name=\"count\" value=\""+extract.trim()+"\"/>");
+							toval = extract;
+							fromval = extract;
+						}
 					}
-					character.setTo(toval.trim());
-					character.setToInclusive("false");
-					character.setCharType("range_value");
 				}
-				if(character.getFrom() != null && character.getFrom().isEmpty()){
-					character.setFrom(fromval.trim());
-					character.setFromInclusive("false");
-					character.setCharType("range_value");
+
+				for(Character character : innertagstate) {
+					if(character.getTo() != null && character.getTo().isEmpty()){
+						if(toval.endsWith("+")){
+							toval = toval.replaceFirst("\\+$", "");
+							character.setUpperRestricted("false");
+
+						}
+						character.setTo(toval.trim());
+						character.setToInclusive("false");
+						character.setCharType("range_value");
+					}
+					if(character.getFrom() != null && character.getFrom().isEmpty()){
+						character.setFrom(fromval.trim());
+						character.setFromInclusive("false");
+						character.setCharType("range_value");
+					}
 				}
-			}
-			/*
+				/*
     		StringBuffer sb = new StringBuffer();
 			Pattern pattern25 = Pattern.compile("to=\"\"");
 			matcher1 = pattern25.matcher(innertagstate);
@@ -1692,22 +1693,25 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			matcher1.appendTail(sb1);
 			innertagstate=sb1.toString();
 			matcher1.reset();*/
-		}
-		matcher2.reset();   
-		if(iscount && text.length()>0 && text.matches(".*?\\w.*")){//puncts can not be units
-			//add units to all counts. //Eh, why counts need to have units? TODO Hong
-			for(Character character: innertagstate){
-				//Iterator<Element> it = innertagstate.iterator();
-				//while(it.hasNext()){
-				//Element chara = it.next();
-				//Attribute unittext = new Attribute("unit", text);
-				character.setUnit(text);
 			}
-		}
-		//}
+			matcher2.reset();   
+			if(iscount && text.length()>0 && text.matches(".*?\\w.*")){//puncts can not be units
+				//add units to all counts. //Eh, why counts need to have units? TODO Hong
+				for(Character character: innertagstate){
+					//Iterator<Element> it = innertagstate.iterator();
+					//while(it.hasNext()){
+					//Element chara = it.next();
+					//Attribute unittext = new Attribute("unit", text);
+					character.setUnit(text);
+				}
+			}
+			//}
 
-		//"atypical" measure to "average" measure if atypical values are in the range of typical values
-		refinement(innertagstate); //TODO hong make this interpretation configurable?
+			//"atypical" measure to "average" measure if atypical values are in the range of typical values
+			refinement(innertagstate); //TODO hong make this interpretation configurable?
+		}catch(Throwable e){
+			log(LogLevel.ERROR, "parseNumericals throwable: "+e.toString());
+		}
 		return innertagstate;
 	}
 	/**
@@ -2613,7 +2617,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				extract = matcher3.replaceAll("#");
 				matcher3.reset();
 
-			    	boolean upperrestricted = ! extract.endsWith("+#");
+				boolean upperrestricted = ! extract.endsWith("+#");
 				Character character = new Character();
 				character.setName(chara);
 				if(!upperrestricted){
@@ -2622,9 +2626,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					character.setUpperRestricted(upperrestricted+"");
 					character.setCharType("range_value");
 				}else{
-				character.setValue(extract.substring(0,extract.indexOf('#')).trim());
-				character.setUnit(unit.trim());
-}
+					character.setValue(extract.substring(0,extract.indexOf('#')).trim());
+					character.setUnit(unit.trim());
+				}
 				innertagstate.add(character);
 				//innertagstate = innertagstate.concat("<character name=\"size\" value=\""+extract.substring(0,extract.indexOf('#')).trim()+"\" unit=\""+unit.trim()+"\"/>");
 				toval = extract.substring(0,extract.indexOf('#'));
@@ -2654,7 +2658,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return plaincharset;
 	}
 
-/*	protected String annotateSize(String plaincharset, List<Character> innertagstate, String chara) {
+	/*	protected String annotateSize(String plaincharset, List<Character> innertagstate, String chara) {
 		int i;
 		int j;
 		Matcher matcher2;

@@ -280,7 +280,8 @@ public class PostRun {
 	 * @throws  
 	 */
 	private void writeFile(Document doc, File file) {
-		out.setFormat(Format.getPrettyFormat());	
+		Format f = Format.getPrettyFormat().setEncoding("UTF-8");
+		out.setFormat(f);	
 		try {
 			out.output(doc, new FileWriter(file));
 		} catch (IOException e) {
