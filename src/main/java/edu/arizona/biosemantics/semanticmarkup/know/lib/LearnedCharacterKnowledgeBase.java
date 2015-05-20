@@ -196,7 +196,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			}else{
 				m = new Match(ch);
 			}
-		}else{
+		//}else{
+		 }else if(ch == null){
 			ch = lookup(inflector.getSingular(word));
 			m = new Match(ch);
 		}

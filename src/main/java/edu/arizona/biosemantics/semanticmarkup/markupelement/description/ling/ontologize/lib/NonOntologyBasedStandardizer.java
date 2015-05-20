@@ -156,9 +156,10 @@ public class NonOntologyBasedStandardizer {
 			if(element.isStructure()){
 				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
 				for(Character c: chars){
-					if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches(".*?\\b(absent|present|0)\\b.*")){
+					//if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches(".*?\\b(absent|present|0)\\b.*")){
+					if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches("absent|present|0")){
 						c.setName("presence");
-						c.setValue(c.getValue().replaceAll("\\b0\\b", "absent"));
+						c.setValue(c.getValue().replaceAll("0", "absent"));
 					}
 
 				}
