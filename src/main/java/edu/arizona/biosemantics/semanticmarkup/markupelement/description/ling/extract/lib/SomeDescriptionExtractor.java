@@ -177,7 +177,6 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		processingContext.setResult(result);
 
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
-		
 		List<Chunk> chunks = chunkCollector.getChunks();
 		ListIterator<Chunk> iterator = chunks.listIterator(); 
 		processingContext.setChunkListIterator(iterator);
@@ -194,6 +193,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		//addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext)); //process subject
 		addToResult(result, firstChunkProcessor.process(chunks.get(skip), processingContext)); //process subject?
 		log(LogLevel.DEBUG, "result:\n" + result);
+		
+
+		
 		while(iterator.hasNext()) {
 			if(!iterator.hasPrevious() && skip+firstChunkProcessor.skipFirstNChunk()>0) {
 				for(int i = 0; i < skip+firstChunkProcessor.skipFirstNChunk(); i++){

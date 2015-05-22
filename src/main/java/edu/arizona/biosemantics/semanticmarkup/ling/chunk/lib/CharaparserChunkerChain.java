@@ -76,8 +76,9 @@ public class CharaparserChunkerChain extends ChunkerChain {
 		this.add(modifierChunker);
 		this.add(organChunker);
 		this.add(stateChunker);
-		this.add(numericalChunker);
 		this.add(npChunker);
+		this.add(numericalChunker);
+		//this.add(npChunker); //moved to before NumericalChunker, Feb, 2015, Hong
 		this.add(characterNameChunker);
 		this.add(vbChunker);
 		this.add(ppListChunker);

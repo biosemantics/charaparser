@@ -87,10 +87,18 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		modifiers.addAll(processingContextState.getUnassignedModifiers());
 		
 		String character = text.indexOf("size") >= 0 ? "size" : null;
-		if(character ==null)
+		if(character ==null){
 			character = processingContextState.getUnassignedCharacter();
-		if(character ==null)
-			character = content.indexOf('/') > 0 || content.indexOf('%') > 0 || content.indexOf('.') > 0 ? "size_or_shape" : "size";
+			processingContextState.setUnassignedCharacter(null);
+		}
+		if(character ==null){
+			boolean allHyphenated = true; //cound enhance the condition by checking both tokens connected by - are biological entities.
+			for(BiologicalEntity parent: parents){
+				if (!parent.getNameOriginal().contains("-")) allHyphenated = false;
+			}
+			if(allHyphenated && content.trim().matches(".*?"+units)) character = "distance"; //spider spiracle–epigastrium 2.77 mm
+			else character = content.indexOf('/') > 0 || content.indexOf('%') > 0 ? "size_or_shape" : "size";
+		}
 
 		List<Character> characters = annotateNumericals(content, character,
 				modifiers, lastStructures(processingContext, processingContextState), resetFrom, processingContextState);

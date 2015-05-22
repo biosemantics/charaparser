@@ -151,6 +151,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 					Chunk stateChunk = new Chunk(ChunkType.STATE, nonModifiers); //lost modifiers. SPECIFIC_PP: [SPECIFIER: [changing], PP: [PREPOSITION: [with], OBJECT: [the, ORGAN: [growth]]]]
 					Chunk characterChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
 					characterChunk.setProperty("characterName", unassignedChara);
+					processingContextState.setUnassignedCharacter(null);
 					result.addAll(characterStateProcessor.process(characterChunk, processingContext));	//chunkCollector is not updated with characterChunk
 				}
 				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());

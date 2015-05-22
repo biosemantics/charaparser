@@ -104,6 +104,24 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		boolean lastIsCharacter = false;
 		//boolean lastIsComma = false;
 		
+		//length of leaves
+		if(preposition.getChildChunk(ChunkType.CHARACTER_STATE)!=null && 
+				preposition.getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName").compareTo("character")==0 &&
+				object.containsChunkType(ChunkType.ORGAN)
+				){//PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [length]], of]
+				//save character
+				processingContextState.setUnassignedCharacter(preposition.getChildChunk(ChunkType.CHARACTER_STATE).getTerminalsText());
+				//create biological entity elements for the organs
+				ArrayList<Chunk> organs = new ArrayList<Chunk>();
+				organs.addAll(splitObject(object));
+				List<BiologicalEntity> elements = this.createStructureElements(organs, processingContext, processingContextState);
+				processingContext.getCurrentState().setLastElements(elements);
+				result.addAll(elements);
+				processingContextState.setCommaAndOrEosEolAfterLastElements(false);
+				return result;
+		}
+		
+		
 		if (lastElements.isEmpty()) {
 			unassignedModifiers.add(chunk);
 			return result;

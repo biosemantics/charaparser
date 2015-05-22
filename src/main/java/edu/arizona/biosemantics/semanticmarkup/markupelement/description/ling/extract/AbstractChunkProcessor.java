@@ -386,9 +386,11 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 	protected List<BiologicalEntity> lastStructures(ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
-		LinkedList<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
 
 		boolean newSegment = processingContext.getCurrentState().isCommaAndOrEosEolAfterLastElements();
+		
+		/* 5/21/2015
+		LinkedList<BiologicalEntity> parents = new LinkedList<BiologicalEntity>(); 
 		if(!newSegment && (processingContextState.getLastElements().size()> 0 && 
 				processingContextState.getLastElements().getLast().isStructure())) {
 			for(Element lastElement : processingContextState.getLastElements())
@@ -398,6 +400,25 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			parents.addAll(processingContextState.getSubjects());
 		}
 		return parents;
+		*/
+		
+		LinkedList<BiologicalEntity> lastStructures = new LinkedList<BiologicalEntity>();
+		if(processingContextState.getLastElements().size()> 0 && 
+				processingContextState.getLastElements().getLast().isStructure()) {
+			for(Element lastElement : processingContextState.getLastElements())
+				if(lastElement.isStructure())
+					lastStructures.add((BiologicalEntity)lastElement);
+		}
+		
+		if(newSegment){
+			if(!processingContextState.getSubjects().isEmpty()) return processingContextState.getSubjects();
+			else return lastStructures;
+		}else{
+			if(!lastStructures.isEmpty()) return lastStructures;
+			else return processingContextState.getSubjects();
+		}
+		
+		
 	}
 
 	protected Chunk getLastOrgan(List<Chunk> chunks) {
@@ -2431,7 +2452,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		int j;
 		Matcher matcher2;
 		//Pattern pattern13 = Pattern.compile("[xX\\×±\\d\\[\\]\\–\\-\\.\\s\\+]+[\\s]?([dcmµu]?m)(?![\\w])(([\\s]diam)?([\\s]wide)?)");
-		Pattern pattern13 = Pattern.compile("[xX\\×±\\d\\[\\]\\–\\-\\.\\s\\+]+[\\s]?(\\b"+units+"\\b)(?![\\w])(([\\s]diam)?([\\s]wide)?)");
+		//Pattern pattern13 = Pattern.compile("[xX\\×±\\d\\[\\]\\–\\-\\.\\s\\+]+[\\s]?(\\b"+units+"\\b)(?![\\w])(([\\s]diam)?([\\s]wide)?)");
+		Pattern pattern13 = Pattern.compile("[xX\\×±\\d\\[\\]\\–\\-/\\.\\s\\+]+[\\s]?(\\b"+units+"\\b)(?![\\w])(([\\s]diam)?([\\s]wide)?)");
 		matcher2 = pattern13.matcher(plaincharset);
 		String toval="";
 		String fromval="";
@@ -2449,7 +2471,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			String extreme = plaincharset.substring(i,j);
 			i = 0;
 			j = extreme.length();
-			Pattern pattern20 = Pattern.compile("\\[[±\\d\\.\\s\\+]+[\\–\\-]{1}[±\\d\\.\\s\\+\\–\\-]*\\]");
+			Pattern pattern20 = Pattern.compile("\\[[±\\d\\./\\s\\+]+[\\–\\-]{1}[±\\d\\./\\s\\+\\–\\-]*\\]");
 			Matcher matcher1 = pattern20.matcher(extreme);
 			if ( matcher1.find()){
 				int p = matcher1.start();
@@ -2482,7 +2504,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			matcher1.reset();
 			if(extreme.contains("#"))
 				i = extreme.indexOf("#")+1;
-			Pattern pattern21 = Pattern.compile("\\[[±\\d\\.\\s\\+\\–\\-]*[\\–\\-]{1}[±\\d\\.\\s\\+]+\\]");
+			Pattern pattern21 = Pattern.compile("\\[[±\\d\\./\\s\\+\\–\\-]*[\\–\\-]{1}[±\\d\\./\\s\\+]+\\]");
 			matcher1 = pattern21.matcher(extreme);
 			if ( matcher1.find()){
 				int p = matcher1.start();
@@ -2541,7 +2563,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			extreme = matcher1.replaceAll("#");
 			matcher1.reset();
 			j = extreme.length();
-			Pattern pattern23 = Pattern.compile("\\[[±\\d\\.\\s\\+]+\\]");
+			Pattern pattern23 = Pattern.compile("\\[[±\\d\\./\\s\\+]+\\]");
 			matcher1 = pattern23.matcher(extreme);
 			if ( matcher1.find()){
 				int p = matcher1.start();

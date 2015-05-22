@@ -454,13 +454,14 @@ print stdout "Done:\n";
 
 
 ##################################################################################################
-########### set saved_flag to red for the following terms in preparation to run the Parser
+########### set saved_flag to red for the following terms in preparation to run the Parser (Markup Step)
 #1. words that are not in allwords table 
 #2. special words added
 ##################################################################################################
 
 sub prepareWordPos4Parser{
-	my $toremove = $PRONOUN."|".$CHARACTER."|".$NUMBERS."|".$CLUSTERSTRINGS."|".$PREPOSITION."|".$stop;
+	#my $toremove = $PRONOUN."|".$CHARACTER."|".$NUMBERS."|".$CLUSTERSTRINGS."|".$PREPOSITION."|".$stop;
+	my $toremove = $PRONOUN."|".$CHARACTER."|".$NUMBERS."|".$PREPOSITION."|".$stop;
 	$toremove =~ s#\|#","#g;
 	$toremove = "\"".$toremove."\"";
 	
@@ -747,7 +748,8 @@ sub addclusterstrings{
 	for (@chars){
 		my $w = $_;
 		if($w =~/\b(?:$FORBIDDEN)\b/){next;}
-		update($w, "b", "*", "wordpos", 0);
+		#update($w, "b", "*", "wordpos", 0);
+		update($w, "n", "*", "wordpos", 0);
 	}
 }
 

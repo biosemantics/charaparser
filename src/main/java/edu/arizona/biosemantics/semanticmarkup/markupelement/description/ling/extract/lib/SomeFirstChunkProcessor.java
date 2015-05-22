@@ -1,9 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 
 
 
@@ -194,7 +196,14 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 					result.addAll(subjects);
 				}
 				skipFirstNChunk = 0;
-			} else {
+			}else if(firstChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE)!=null && 
+					firstChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName").compareTo("character")==0
+					){ // PP: [PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [length, of]]], OBJECT: [ORGAN: [tibia/metatarsus]]]
+				processingContextState.setSubjects(new LinkedList<BiologicalEntity>());
+				skipFirstNChunk = 0; //leave it for PPChunkProcessor to process
+				return result;
+			
+			}else {
 				if(chunks.size()>1){
 					Chunk nextChunk = chunks.get(1);
 					//mostly r[p[at] o[(tips)]] r[p[of] o[(inflorescences)]] ; other prepchunks should be processed as well if they are not followed by an organ chunk.
@@ -213,7 +222,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 					}
 				}
 			}
-		} else {
+		}else {
 			if(firstChunk.isOfChunkType(ChunkType.MODIFIER) || firstChunk.isOfChunkType(ChunkType.CONSTRAINT)){
 				processingContextState.getUnassignedConstraints().add(firstChunk);
 			}

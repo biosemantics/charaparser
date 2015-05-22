@@ -14,6 +14,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -267,6 +268,37 @@ public abstract class AbstractChunker implements IChunker {
 		}
 		
 	}
+	
+	/**
+	 * character of (e.g length of leaves)
+	 * position of (e.g. abaxial of leaves)
+	 * @param chunkCollector
+	 * @param singlePPINSubtree
+	 */
+	protected void charaPP(ChunkCollector chunkCollector,
+			AbstractParseTree singlePPINSubtree) {
+		AbstractParseTree prepositionTerminal = singlePPINSubtree.getTerminals().get(0);
+		int prepositionTerminalId = chunkCollector.getTerminalId(prepositionTerminal);
+		if(prepositionTerminalId > 0) {
+			AbstractParseTree predecessor = chunkCollector.getTerminals().get(prepositionTerminalId-1);
+			Chunk predecessorChunk = chunkCollector.getChunk(predecessor);
+			//if(predecessorChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && predecessorChunk.getProperty("characterName").contains("insertion")) {
+			//if(predecessorChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && predecessorChunk.getProperty("characterName").contains("position")) { //abaxial of leaf
+			if(singlePPINSubtree.getTerminalsText().compareTo("of")==0  && predecessorChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && 
+					(predecessorChunk.getProperty("characterName").contains("character") || predecessorChunk.getProperty("characterName").contains("position"))) { //length of leaf	
+				Chunk ppChunk = chunkCollector.getChunk(prepositionTerminal);
+				Chunk prepositionChunk = ppChunk.getChunkBFS(ChunkType.PREPOSITION);
+				LinkedHashSet<Chunk> oldChunks = prepositionChunk.getChunks();
+				LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
+				newChunks.add(predecessorChunk);
+				newChunks.addAll(oldChunks);
+				prepositionChunk.setChunks(newChunks);
+				chunkCollector.addChunk(ppChunk);
+
+			}
+		}
+	}
+
 
 	private boolean hasSeparatedNNs(AbstractParseTree tree) {
 		//(NP (JJ caudate) (NN acumination) (JJ 1.5-2.5) (NNS cm)) => true

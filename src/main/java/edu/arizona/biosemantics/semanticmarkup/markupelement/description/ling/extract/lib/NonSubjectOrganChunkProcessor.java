@@ -72,7 +72,42 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 			nextChunk = chunkListIterator.next();
 			chunkListIterator.previous();
 		}
-		if(nextChunk==null || nextChunk.isOfChunkType(ChunkType.COMMA) || nextChunk.isOfChunkType(ChunkType.END_OF_LINE)||nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE)){
+		
+		boolean isConstraintOrgan = false;
+		Chunk previousChunk1 = null; //:
+		Chunk previousChunk2 = null; //PP: [PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [length]], of], OBJECT: [ORGAN: [tibia/metatarsus]]]
+		if(chunkListIterator.hasPrevious()){
+			chunkListIterator.previous();
+			if(chunkListIterator.hasPrevious()){
+				previousChunk1 = chunkListIterator.previous();
+				if(chunkListIterator.hasPrevious()){
+					previousChunk2 = chunkListIterator.previous();
+					chunkListIterator.next();
+				}
+				chunkListIterator.next();
+			}
+			chunkListIterator.next();
+		}
+		
+		Chunk character = null;
+		if(previousChunk2 !=null && previousChunk2.getChunkType().equals(ChunkType.PP)){
+			character = previousChunk2.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE);
+		}
+		
+		if(previousChunk1 !=null &&  character!=null &&  (previousChunk1.getTerminalsText().equals(":") || previousChunk1.getChunkType().equals(ChunkType.COMMA) && 
+				character.getProperty("characterName").compareTo("character")==0 && character.getTerminalsText().endsWith(" of"))){
+			isConstraintOrgan = true;
+		}
+		
+		boolean commaAndOrEosEolAfterLastElements = nextChunk==null || nextChunk.isOfChunkType(ChunkType.COMMA) || nextChunk.isOfChunkType(ChunkType.END_OF_LINE)||nextChunk.isOfChunkType(ChunkType.END_OF_SUBCLAUSE);
+		
+		if(isConstraintOrgan && processingContextState.getUnassignedCharacter()!=null && processingContextState.getLastElements().getLast().isStructure() && ! processingContext.getLastChunkYieldElement()){ //length of tibia: leg I, 7.0 mm, current chunk = leg
+			//add the organ of this chunk as constraint to the last elements
+			List<Element> elements = processingContextState.getLastElements();
+			for(Element element: elements){
+				((BiologicalEntity) element).appendConstraint(chunk.getTerminalsText());
+			}
+		}else if(commaAndOrEosEolAfterLastElements){
 			//LinkedList<Element> lastElements = processingContextState.getLastElements();
 			ArrayList<Chunk> chunks = new ArrayList<Chunk>();
 			chunks.add(chunk);
@@ -83,11 +118,10 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 			//annotateType(chunk, lastElement);
 			//else 
 			processingContextState.setLastElements(structures);
-			processingContextState.setCommaAndOrEosEolAfterLastElements(true);
 		}else{
 			result = this.establishSubject(chunk, processingContext, processingContextState);
-			processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		}
+		processingContextState.setCommaAndOrEosEolAfterLastElements(commaAndOrEosEolAfterLastElements);
 		return result;
 	}
 

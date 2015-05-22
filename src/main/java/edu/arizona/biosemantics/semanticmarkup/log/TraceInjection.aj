@@ -10,7 +10,7 @@ import edu.arizona.biosemantics.common.log.ObjectStringifier;
 
 @Aspect
 public class TraceInjection {
-
+	
 	@Before("within(edu.arizona.biosemantics.semanticmarkup..*) && "
 			+ "!within(edu.arizona.biosemantics.semanticmarkup.log..*) && "
 			+ "execution(public * *(..))")

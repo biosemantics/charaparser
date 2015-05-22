@@ -116,6 +116,17 @@ public class MyStateChunker extends AbstractChunker {
 					character = characterKnowledgeBase.getCharacterName(terminal.getTerminalsText()).getCategories();
 				}
 				
+				/*Chunk stateChunk = null;
+				//put "length of" in one state chunk
+				if(character.compareTo("character")==0 && terminals.get(i+1).getTerminalsText().compareTo("of")==0){
+					LinkedHashSet<Chunk> combined = new LinkedHashSet<Chunk>();
+					combined.add(terminal);
+					combined.add(terminals.get(i+1));
+					i++;
+					stateChunk = new Chunk(ChunkType.STATE, combined);
+				}else{
+					stateChunk = new Chunk(ChunkType.STATE, terminal);
+				}*/
 				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);
 				chunkCollector.addChunk(stateChunk); //forking => STATE: [forking]
 				List<Chunk> characterStateChildChunks = new ArrayList<Chunk>();

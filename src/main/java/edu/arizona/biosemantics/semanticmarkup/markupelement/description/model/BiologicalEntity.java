@@ -330,7 +330,8 @@ public class BiologicalEntity extends NamedElement {
 	}
 
 
-	public void appendConstraintId(String constraintId) {
+	/* BiologicalEntity does not have constraintid attribute
+	 * public void appendConstraintId(String constraintId) {
 		String newValue = "";
 		if(this.constraintId == null || this.constraintId.isEmpty()) {
 			newValue = constraintId;
@@ -338,7 +339,7 @@ public class BiologicalEntity extends NamedElement {
 			newValue = this.constraintId + "; " + constraintId;
 		}
 		this.constraintId = newValue;
-	}
+	}*/
 
 
 	public void appendAlterName(String alterName) {

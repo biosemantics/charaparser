@@ -264,7 +264,7 @@ public class OtherINsChunker extends AbstractChunker {
 					}
 				}
 				
-				
+				boolean ppChunkFormed = false;
 				//form a PP chunk to include terminals from index i to before j
 				if(foundOrgan || npCopy ||foundStructureRef){
 					LinkedHashSet<Chunk> function = new LinkedHashSet<Chunk>();
@@ -343,6 +343,7 @@ public class OtherINsChunker extends AbstractChunker {
 					childChunks.add(objectChunk);
 					Chunk ppChunk = new Chunk(ChunkType.PP, childChunks);
 					chunkCollector.addChunk(ppChunk);
+					ppChunkFormed = true;
 					
 					/*if(chunkCollector.isPartOfAChunk(terminal)) {
 						Chunk organChunk = new Chunk(ChunkType.ChunkOrgan, organTerminals);
@@ -367,6 +368,7 @@ public class OtherINsChunker extends AbstractChunker {
 						//construct merged chunk
 						Chunk merged = new Chunk(ChunkType.PP, childChunks);
 						chunkCollector.addChunk(merged);
+						ppChunkFormed = true;
 						/*token ="r[p["+token+" "+np.trim()+" "+nextoken.replaceFirst("^r\\[\\w\\[", "");
 						this.chunkedtokens.set(i,  token);
 						for(int k = i+1; k<=j; k++){
@@ -408,7 +410,7 @@ public class OtherINsChunker extends AbstractChunker {
 							//construct merged chunk
 							Chunk merged = new Chunk(ChunkType.PP, childChunks);
 							chunkCollector.addChunk(merged);	
-							
+							ppChunkFormed = true;
 							
 						
 							/*token = token.replaceAll("(\\w\\[|\\])", "");
@@ -421,6 +423,7 @@ public class OtherINsChunker extends AbstractChunker {
 							childChunks.add(new Chunk(ChunkType.PREPOSITION, terminal));
 							childChunks.add(new Chunk(ChunkType.OBJECT, organTerminals));
 							chunkCollector.addChunk(new Chunk(ChunkType.PP, childChunks));	
+							ppChunkFormed = true;
 						}
 						
 						/*if(this.printNorm){
@@ -509,6 +512,9 @@ public class OtherINsChunker extends AbstractChunker {
 						//chunkCollector.addChunk(new Chunk(ChunkType.ChunkOrgan, organTerminals));
 					//}
 				}
+			}
+			if(ppChunkFormed && terminal.getTerminalsText().compareTo("of")==0){
+				charaPP(chunkCollector, terminal);
 			}
 		}
 		}

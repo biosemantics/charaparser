@@ -71,6 +71,7 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 		String characterName = null;
 		if(processingContextState.getUnassignedCharacter()!=null) {
 			characterName = processingContextState.getUnassignedCharacter();
+			processingContextState.setUnassignedCharacter(null);
 		}
 				
 		//process characters recursively with the appropriate processor

@@ -9,9 +9,11 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
@@ -74,6 +76,13 @@ public class PPINChunker extends AbstractChunker {
 				// this and the next step are to
 				// select PP nodes containing no
 				// other PP/INs
+				/* strange behavior to be checked 5/21/2015, the for-statement changed chunks in chunckCollector silently
+				 * if(chunkCollector.getChunk(ppINSubtree.getTerminals().get(0)).isOfChunkType(ChunkType.CHARACTER_STATE) && 
+						chunkCollector.getChunk(ppINSubtree).getProperty("character_name").compareTo("character")==0) //length of 
+				{
+					log(LogLevel.DEBUG, "PPINChunker, did it");
+					continue;
+				}*/
 				List<AbstractParseTree> ppINSubtreesInParent = ppINSubtree.getParent(parseTree).getDescendants(POS.PP, posBs);
 				//log(LogLevel.DEBUG, ppINSubtreesInParent.size());
 				if(ppINSubtreesInParent.size() == 0) {
@@ -121,25 +130,13 @@ public class PPINChunker extends AbstractChunker {
 				
 				
 				createTwoValuedChunk(ChunkType.PP, collapsedTree, chunkCollector);
-				AbstractParseTree prepositionTerminal = singlePPINSubtree.getTerminals().get(0);
-				int prepositionTerminalId = chunkCollector.getTerminalId(prepositionTerminal);
-				if(prepositionTerminalId > 0) {
-					AbstractParseTree predecessor = chunkCollector.getTerminals().get(prepositionTerminalId-1);
-					Chunk predecessorChunk = chunkCollector.getChunk(predecessor);
-					if(predecessorChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && predecessorChunk.getProperty("characterName").contains("insertion")) {
-						Chunk ppChunk = chunkCollector.getChunk(prepositionTerminal);
-						Chunk prepositionChunk = ppChunk.getChunkBFS(ChunkType.PREPOSITION);
-						LinkedHashSet<Chunk> oldChunks = prepositionChunk.getChunks();
-						LinkedHashSet<Chunk> newChunks = new LinkedHashSet<Chunk>();
-						newChunks.add(predecessorChunk);
-						newChunks.addAll(oldChunks);
-						prepositionChunk.setChunks(newChunks);
-					}
-				}
+				//deal with a special case: length of leaves, adaxial of leaves
+				charaPP(chunkCollector, singlePPINSubtree);
 			}
 		}
 	}
 
+	
 	private boolean isToConnectingCharacters(AbstractParseTree pp,
 			AbstractParseTree in, ChunkCollector chunkCollector) {
 		if(in.getPOS().equals(POS.TO)) {
