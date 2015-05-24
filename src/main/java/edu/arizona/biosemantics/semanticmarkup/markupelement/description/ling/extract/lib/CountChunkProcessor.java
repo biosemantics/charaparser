@@ -3,7 +3,10 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.e
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
+
+
 
 
 
@@ -15,6 +18,7 @@ import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
@@ -58,6 +62,14 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		LinkedList<Character> result = new LinkedList<Character>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
+		
+		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
+		Chunk nextChunk = null;
+		if(chunkListIterator.hasNext()){
+			nextChunk = chunkListIterator.next();
+			chunkListIterator.previous();
+		}
+		
 		List<Chunk> modifiers = processingContextState.getUnassignedModifiers();
 		
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
@@ -70,19 +82,33 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 			parents.add((BiologicalEntity)lastElements.getLast()); 
 		}
 		
+		List<Character> characterElement = 
+				this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
+		//1/4 PP: [PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [lengths]], of], OBJECT: [ORGAN: [blades]]]
+		if(nextChunk.isOfChunkType(ChunkType.PP) && nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE)!=null && 
+				nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName").compareTo("character")==0){
+			String character = nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE).getChildChunk(ChunkType.STATE).getTerminalsText();
+			for(Character c: characterElement){
+				c.setName(inflector.getSingular(character)); //count => length
+				//update values
+				if(c.getValue()!=null){
+					c.setValue(c.getValue()+" "+nextChunk.getTerminalsText());
+				}else{
+					if(c.getTo()!=null)
+						c.setTo(c.getTo()+" "+nextChunk.getTerminalsText());
+					if(c.getFrom()!=null)
+						c.setFrom(c.getFrom()+" "+nextChunk.getTerminalsText());
+				}
+			}
+			chunkListIterator.next(); //adjust the 'next' pointer
+		}
+		
+
 		if(!parents.isEmpty() && parents.getLast().isStructure()) {
-			List<Character> characterElement = 
-					this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
-			//DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, chunk.getTerminalsText(), 
-			//		"count", "", processingContextState);
 			if(characterElement!=null)
 				result.addAll(characterElement);
 			processingContextState.clearUnassignedModifiers();
 		} else {
-			List<Character> characterElement = 
-					this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
-			//DescriptionTreatmentElement characterElement = createCharacterElement(parents, modifiers, chunk.getTerminalsText(), 
-			//		"count", "", processingContextState);
 			processingContextState.getUnassignedCharacters().addAll(characterElement);
 		}
 		

@@ -106,8 +106,8 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		
 		//length of leaves
 		if(preposition.getChildChunk(ChunkType.CHARACTER_STATE)!=null && 
-				preposition.getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName").compareTo("character")==0 &&
-				object.containsChunkType(ChunkType.ORGAN)
+				preposition.getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName").compareTo("character")==0 //&&
+				//object.containsChunkType(ChunkType.ORGAN)
 				){//PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [length]], of]
 				//save character
 				processingContextState.setUnassignedCharacter(preposition.getChildChunk(ChunkType.CHARACTER_STATE).getTerminalsText());

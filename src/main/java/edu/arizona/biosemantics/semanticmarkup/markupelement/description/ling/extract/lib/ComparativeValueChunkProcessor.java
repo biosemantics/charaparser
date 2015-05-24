@@ -194,7 +194,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			}
 			
 			//characters
-			String beforeChar ="";
+			String beforeChar =""+"";
 			String afterChar ="";
 			if(!charaBeforeNumber.isEmpty()){
 				//character name
@@ -317,6 +317,9 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		if(string.equals("lengths")) return "length";
 		if(string.equals("widths")) return "width";
 		if(string.equals("heights")) return "height";
+		if(string.equals("length")) return "length";
+		if(string.equals("width")) return "width";
+		if(string.equals("height")) return "height";
 		if(string.equals("thicknesses")) return "thickness";
 		
 		return null;

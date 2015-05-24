@@ -26,6 +26,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 
 /**
  * PPListChunker chunks conjuncted preposition phrases
+ * PP: [PREPOSITION: [PP_LIST: [at, chelicerae, bases, and, at]], OBJECT: [leg, iii]]
  * @author rodenhausen
  */
 public class PPListChunker extends AbstractChunker {
