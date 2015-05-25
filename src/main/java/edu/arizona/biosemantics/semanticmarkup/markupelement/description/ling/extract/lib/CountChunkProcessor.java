@@ -85,7 +85,7 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		List<Character> characterElement = 
 				this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
 		//1/4 PP: [PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [lengths]], of], OBJECT: [ORGAN: [blades]]]
-		if(nextChunk.isOfChunkType(ChunkType.PP) && nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE)!=null && 
+		if(nextChunk!=null && nextChunk.isOfChunkType(ChunkType.PP) && nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE)!=null && 
 				nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName").compareTo("character")==0){
 			String character = nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE).getChildChunk(ChunkType.STATE).getTerminalsText();
 			for(Character c: characterElement){
