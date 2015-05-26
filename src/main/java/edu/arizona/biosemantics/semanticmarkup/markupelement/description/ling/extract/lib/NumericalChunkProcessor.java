@@ -92,9 +92,15 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			processingContextState.setUnassignedCharacter(null);
 		}
 		if(character ==null){
-			boolean allHyphenated = true; //cound enhance the condition by checking both tokens connected by - are biological entities.
+			boolean allHyphenated = true; 
 			for(BiologicalEntity parent: parents){
 				if (!parent.getNameOriginal().contains("-")) allHyphenated = false;
+				else{
+					String[] organs = parent.getNameOriginal().split("\\s*-\\s*");
+					for(String organ: organs){ //enhance the condition by checking all tokens connected by '-' are biological entities.
+						if(!characterKnowledgeBase.isEntity(organ)) allHyphenated = false;
+					}
+				}
 			}
 			if(allHyphenated && content.trim().matches(".*?"+units)) character = "distance"; //spider spiracle–epigastrium 2.77 mm
 			else character = content.indexOf('/') > 0 || content.indexOf('%') > 0 ? "size_or_shape" : "size";
