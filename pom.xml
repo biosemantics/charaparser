@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-		<project.version>0.1.128-SNAPSHOT</project.version>
+		<project.version>0.1.129-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -235,6 +235,50 @@
 			<groupId>edu.arizona.biosemantics.common.ontology</groupId>
 			<artifactId>search</artifactId>
 			<version>0.0.22-SNAPSHOT</version>
+			
+			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects -->
+			<exclusions>
+				<exclusion>
+					<artifactId>elk-owlapi</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-owl-model</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-util-hashing</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-reasoner</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-owl-implementation</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-util-logging</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-util-collections</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-util-concurrent</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-util-common</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>elk-util-io</artifactId>
+					<groupId>org.semanticweb.elk</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
