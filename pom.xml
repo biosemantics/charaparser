@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-		<project.version>0.1.129-SNAPSHOT</project.version>
+		<project.version>0.1.130-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -207,15 +207,11 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.oto</groupId>
 			<artifactId>oto-client</artifactId>
-			<version>0.0.42-SNAPSHOT</version>
+			<version>0.0.49-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>gxt</artifactId>
 					<groupId>com.sencha.gxt</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>oto-common</artifactId>
-					<groupId>edu.arizona.biosemantics.oto</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
