@@ -233,6 +233,7 @@
 			<version>0.0.23-SNAPSHOT</version>
 			
 			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects -->
+			
 			<exclusions>
 				<exclusion>
 					<artifactId>elk-owlapi</artifactId>
@@ -275,6 +276,7 @@
 					<groupId>org.semanticweb.elk</groupId>
 				</exclusion>
 			</exclusions>
+			
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
