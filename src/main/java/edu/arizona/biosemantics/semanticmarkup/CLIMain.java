@@ -30,6 +30,7 @@ import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.GastropodsConfi
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.HymenopteraConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PlantConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PoriferaConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.SpiderConfig;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.GenericDescriptionReader;
@@ -254,6 +255,8 @@ public class CLIMain {
 			return new PlantConfig();
 		case PORIFERA:
 			return new PoriferaConfig();
+		case SPIDER:
+			return new SpiderConfig();
 		default:
 			log(LogLevel.ERROR, "Config unknown, fall back to default config based on Plant");
 			return new PlantConfig();
