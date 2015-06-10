@@ -748,7 +748,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						+ "dhword varchar(150), inbrackets int default 0) CHARACTER SET utf8 engine=innodb");
 				AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, connectionPool, databasePrefix);
 				allWordsLearner.learn(descriptionsFiles);
-				stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(50), semanticrole varchar(2), savedid varchar(40), "
+				stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(200), semanticrole varchar(2), savedid varchar(40), "
 						+ "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");  
 				stmt.execute("create table if not exists " + this.databasePrefix + "_taxonnames (name varchar(100), primary key(name)) CHARACTER SET utf8 engine=innodb");
 			}
