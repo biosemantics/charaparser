@@ -81,7 +81,8 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) {
 			ontologies += ontology.toString() + ",  ";
 		}
-		ontologies = ontologies.substring(0, ontologies.length() - 2);
+		if(!ontologies.isEmpty())
+			ontologies = ontologies.substring(0, ontologies.length() - 2);
 		Resource resource = new Resource();
 		resource.setName(ontologies);
 		resource.setType("Ontology(ies)");
