@@ -49,9 +49,10 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		this.taxonGroup = taxonGroup;
 		
 		searchers = new LinkedList<Searcher>();
-		//local test of charaparser without ontology mapping
-		//for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
-		//	searchers.add(new FileSearcher(ontology, ontologyDirectory, wordNetSource));
+
+		
+		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
+			searchers.add(new FileSearcher(ontology, ontologyDirectory, wordNetSource));
 		
 		/*File ontologyDirectory = new File("C:/Users/rodenhausen/etcsite/ontologies");
 		for(File ontologyFile : ontologyDirectory.listFiles()) {

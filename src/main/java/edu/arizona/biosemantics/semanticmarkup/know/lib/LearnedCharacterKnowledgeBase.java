@@ -170,7 +170,11 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			HashSet<Term> result = new HashSet<Term> ();
 			result.add(new Term(wo, "shape"));
 			m = new Match(result);
-		}else if (ch == null && (wc.indexOf('-') > 0 || wc.indexOf('~') > 0)) {// pani_culiform, primocane_foliage //orange_yellow~or~occasionally~{colorationttt~list~suffused~with~red} 
+		}else if(ch==null && word.contains("/")){ //width/length
+			ch = lookup(word.substring(word.indexOf("/")+1));
+			m = new Match(ch);
+		}
+		else if (ch == null && (wc.indexOf('-') > 0 || wc.indexOf('~') > 0)) {// pani_culiform, primocane_foliage //orange_yellow~or~occasionally~{colorationttt~list~suffused~with~red} 
 			word = word.replaceAll("[{}]", "");
 			ws = word.split("[-~]+");
 			word = word.replaceFirst(ws[ws.length-1]+"$", inflector.getSingular(ws[ws.length-1])); //pl -> singular, to get a match for the added pl form of phrases in PhraseMarker

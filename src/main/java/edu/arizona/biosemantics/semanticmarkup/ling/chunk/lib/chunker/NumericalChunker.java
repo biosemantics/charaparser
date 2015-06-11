@@ -338,13 +338,16 @@ public class NumericalChunker extends AbstractChunker {
 		}
 	}
 
-	// l/w = X 
+	// l/w = X or width/length
 	// ratio chunking
 	for(int i=0; i<terminals.size(); i++) {
 		AbstractParseTree terminal = terminals.get(i);
 		String terminalsText = terminal.getTerminalsText();
 
-		if(terminalsText.matches("l/w")){
+		//if(terminalsText.matches("l/w")){
+		if(terminalsText.matches("l/w") ||
+				(terminalsText.contains("/") && chunkCollector.getChunk(terminal).isOfChunkType(ChunkType.CHARACTER_STATE) &&
+						chunkCollector.getChunk(terminal).getProperty("characterName").compareTo("character")==0)){
 			int j = i+1;
 			boolean foundRatio = false;
 			while(j < terminals.size()) {
@@ -366,7 +369,8 @@ public class NumericalChunker extends AbstractChunker {
 				for(;i<j;i++) {
 					/*terminal.setTerminalsText(originalNumForm(terminalsText).trim());*/
 					Chunk c = chunkCollector.getChunk(terminals.get(i));
-					c.setChunkType(ChunkType.RATIO);
+					if(! c.isOfChunkType(ChunkType.CHARACTER_STATE) || c.getProperty("characterName").compareTo("character")!=0)
+						c.setChunkType(ChunkType.RATIO);
 					ratioChildren.add(c);
 				}
 				Chunk ratioChunk = new Chunk(ChunkType.RATIO, ratioChildren); 
