@@ -40,9 +40,9 @@ public class NonOntologyBasedStandardizer {
 	private IPOSKnowledgeBase posKnowledgeBase;
 
 	public NonOntologyBasedStandardizer(IGlossary glossary, String sentence, ProcessingContext processingContext, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase){
-		lifeStyles = glossary.getWords("life_style");
-		lifeStyles.addAll(glossary.getWords("growth_form"));
-		durations = glossary.getWords("duration");
+		lifeStyles = glossary.getWordsInCategory("life_style");
+		lifeStyles.addAll(glossary.getWordsInCategory("growth_form"));
+		durations = glossary.getWordsInCategory("duration");
 		this.sentence = sentence;
 		this.processingContext = processingContext;
 		this.posKnowledgeBase = posKnowledgeBase;

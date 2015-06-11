@@ -738,10 +738,10 @@ public abstract class Normalizer implements INormalizer {
 		StringBuffer colorsString = new StringBuffer();
 		Set<String> allColors = new HashSet<String>();
 
-		Set<String> colorations = glossary.getWords("coloration");
+		Set<String> colorations = glossary.getWordsInCategory("coloration");
 		if(colorations!=null)
 			allColors.addAll(colorations);
-		Set<String> colors = glossary.getWords("color");
+		Set<String> colors = glossary.getWordsInCategory("color");
 		if(colors!=null)
 			allColors.addAll(colors);
 

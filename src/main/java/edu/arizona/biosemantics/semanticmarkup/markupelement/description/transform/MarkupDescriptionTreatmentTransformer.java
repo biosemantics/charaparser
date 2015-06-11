@@ -349,7 +349,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				String synp = "";
 				String terms = "";
 				String termp = "";
-				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
+				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){ //must convert _ to -, as matching entity phrases will be converted from leg iii to leg-iii in the sentence.
 					synp = termSyn.getSynonym().replaceAll("_",  "-");
 					syns = inflector.getSingular(synp);					
 				}else{

@@ -112,8 +112,24 @@ public class InMemoryGlossary implements IGlossary {
 	protected ConcurrentHashMap<String, Set<String>> reverseGlossary = new ConcurrentHashMap<String, Set<String>>();
 	protected ConcurrentHashMap<String, Set<Term>> syns = new ConcurrentHashMap<String, Set<Term>>(); //syn => label, category
 	protected ConcurrentHashMap<String, Set<Term>> reverseSyns = new ConcurrentHashMap<String, Set<Term>>(); //label => syn, catgory
+	protected ConcurrentHashMap<String, Set<String>> synsByCategory = new ConcurrentHashMap<String, Set<String>>(); //category => syn,
+	
+	
 	@Override
-	public Set<String> getWords(String category) { //returns only preferred terms
+	public Set<String> getWordsInCategory(String category) { //returns preferred terms and synonyms
+		category = category.toLowerCase().trim();
+		HashSet<String> terms = new HashSet<String> ();
+		if(reverseGlossary.containsKey(category))
+			terms.addAll(reverseGlossary.get(category));
+		
+		if(this.synsByCategory.containsKey(category)){
+			terms.addAll(synsByCategory.get(category));
+		}
+		return terms;
+	}
+	
+	@Override
+	public Set<String> getPerferedWordsInCategory(String category) { //returns only preferred terms
 		category = category.toLowerCase().trim();
 		if(reverseGlossary.containsKey(category))
 			return reverseGlossary.get(category);
@@ -193,9 +209,14 @@ public class InMemoryGlossary implements IGlossary {
 		if(!syns.containsKey(syn))
 			syns.put(syn, new HashSet<Term>());
 		syns.get(syn).add( new Term (label, category));
+		
 		if(!reverseSyns.containsKey(label))
 			reverseSyns.put(label, new HashSet<Term>());
 		reverseSyns.get(label).add(new Term(syn, category));
+		
+		if(!synsByCategory.containsKey(category))
+			synsByCategory.put(category, new HashSet<String>());
+		synsByCategory.get(category).add(syn);
 	}
 
 	@Override
@@ -213,7 +234,7 @@ public class InMemoryGlossary implements IGlossary {
 		HashSet<String> entities = new HashSet<String>();
 		String[] list = ElementRelationGroup.entityElements.split("\\|");
 		for(String entity : list){
-			entities.addAll(this.getWords(entity));
+			entities.addAll(this.getWordsInCategory(entity));
 		}
 		//for(String word: this.getWords("structure")){
 		for(String word: entities){

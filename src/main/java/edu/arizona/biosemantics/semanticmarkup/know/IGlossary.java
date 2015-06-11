@@ -23,7 +23,7 @@ public interface IGlossary {
 	 * @param category
 	 * @return word in the category
 	 */
-	public Set<String> getWords(String category);
+	public Set<String> getWordsInCategory(String category);
 
 	/**
 	 * @param word
@@ -68,7 +68,9 @@ public interface IGlossary {
 	 * get all quality phrases with words connected by  "_" and replace "_" with " ";
 	 * @return
 	 */
-	public HashSet<String> getNonStructurePhrasesWithSpaces(); 
+	public HashSet<String> getNonStructurePhrasesWithSpaces();
+
+	public Set<String> getPerferedWordsInCategory(String category); 
 	
 	/*
 	public void addStructure(String structure);

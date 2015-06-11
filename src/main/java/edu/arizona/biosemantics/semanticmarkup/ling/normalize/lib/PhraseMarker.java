@@ -111,14 +111,14 @@ public class PhraseMarker implements IPhraseMarker{
 		}
 
 		/**
-		 * @param sentence : leaf blade rounded
+		 * @param sentence : leaf blade rounded, in original letter cases (upper/lower)
 		 * @return leaf_blade rounded
 		 */
 		@Override
 		public String markPhrases(String sentence){
 			if(this.phrasepattern!=null){
 				Matcher m = phrasepattern.matcher(sentence);
-				//System.out.println(this.phrasepattern);
+				System.out.println(this.phrasepattern);
 				while(m.matches()){
 					sentence = m.group(1)+m.group(2).replaceAll("[ _-]", "_#_")+m.group(3);
 					m = phrasepattern.matcher(sentence);

@@ -44,6 +44,7 @@ import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
+import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
@@ -81,6 +82,7 @@ public class OTOLearner implements ILearner {
 	private boolean useOtoCommuntiyDownload;
 	private boolean useEmptyGlossary;
 	private ConnectionPool connectionPool;
+	private IInflector inflector;
 	
 	/**
 	 * @param volumeReader
@@ -111,6 +113,7 @@ public class OTOLearner implements ILearner {
 			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload,
 			@Named("Units")String units,
 			@Named("UseEmptyGlossary")boolean useEmptyGlossary, 
+			IInflector inflector, 
 			ConnectionPool connectionPool) throws Exception {  
 		this.inputDirectory = inputDirectory;
 		this.descriptionReader = descriptionReader;
@@ -133,6 +136,7 @@ public class OTOLearner implements ILearner {
 		this.units = units;
 		this.useEmptyGlossary = useEmptyGlossary;
 		this.connectionPool = connectionPool;
+		this.inflector = inflector;
 	}
 	
 	@Override
@@ -319,9 +323,53 @@ public class OTOLearner implements ILearner {
 	 * @param GlossaryDownload
 	 */
 	private void initGlossary(GlossaryDownload glossaryDownload) {
-		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-			this.glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
+		//add the syn set of the glossary
+		HashSet<edu.arizona.biosemantics.semanticmarkup.know.lib.Term> gsyns = new HashSet<edu.arizona.biosemantics.semanticmarkup.know.lib.Term>();
+		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
+			termSyn.setTerm(termSyn.getTerm().replaceAll("_+", "_")); //multiple _ cause inflector to throw exception.
+			termSyn.setSynonym(termSyn.getSynonym().replaceAll("_+", "_"));
+			//do not replaceAll("_", "-")
+			//if(termSyn.getCategory().compareTo("structure")==0){
+			if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
+				//take care of singular and plural forms
+				String syns = ""; 
+				String synp = "";
+				String terms = "";
+				String termp = "";
+				if(inflector.isPlural(termSyn.getSynonym())){
+					synp = termSyn.getSynonym();
+					syns = inflector.getSingular(synp);					
+				}else{
+					syns = termSyn.getSynonym();
+					synp = inflector.getPlural(syns);
+				}
+				if(inflector.isPlural(termSyn.getTerm())){
+					termp = termSyn.getTerm();
+					terms = inflector.getSingular(termp);					
+				}else{
+					terms = termSyn.getTerm();
+					termp = inflector.getPlural(terms);
+				}
+				glossary.addSynonym(syns, termSyn.getCategory(), terms);
+				glossary.addSynonym(synp, termSyn.getCategory(), termp);
+				gsyns.add(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(syns, termSyn.getCategory()));
+				gsyns.add(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(synp, termSyn.getCategory()));
+			}else{
+				glossary.addSynonym(termSyn.getSynonym(), termSyn.getCategory(), termSyn.getTerm());
+				gsyns.add(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(termSyn.getSynonym(), termSyn.getCategory()));
+			}
 		}
+
+		//the glossary, excluding gsyns
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+			if(!gsyns.contains(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(termCategory.getTerm(), termCategory.getCategory())))
+				glossary.addEntry(termCategory.getTerm(), termCategory.getCategory()); 
+		}
+		
+		//previous code, without loading synonyms
+		//for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+		//	this.glossary.addEntry(termCategory.getTerm(), termCategory.getCategory());
+		//}
 	}	
 	
 	private void storeInLocalDB(GlossaryDownload glossaryDownload, String tablePrefix) {
