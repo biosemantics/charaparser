@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -68,9 +69,11 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
 		List<Element> elements = processCharacterState(chunk, parents, 
 				processingContextState, processingContext);//apices of basal leaves spread 
+		addAlternativeIds(elements, alternativeIds); 
 		if(parents.isEmpty()) {
 			for(Element element : elements)
 				if(element.isCharacter())

@@ -9,6 +9,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -24,6 +25,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * AreaChunkProcessor processes chunks of ChunkType.AREA
@@ -56,12 +58,14 @@ public class AreaChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
 		List<Chunk> modifiers = new ArrayList<Chunk>();
-		List<Character> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
+		List<Element> characters = annotateNumericals(chunk.getTerminalsText(), "area", modifiers, 
 				parents, false, processingContextState);
+		addAlternativeIds(characters, alternativeIds);
 		log(LogLevel.DEBUG, "area characters:\n" + characters);
 		processingContextState.getLastElements().addAll(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);

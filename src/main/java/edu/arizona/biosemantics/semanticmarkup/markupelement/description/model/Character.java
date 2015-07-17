@@ -52,7 +52,7 @@ public class Character extends NamedElement implements Cloneable {
 	@XmlPath("@" + CharacterAttribute.constraintid)
 	private String constraintId;
 	@XmlPath("@" + CharacterAttribute.notes)
-	private String notes;
+	private String notes; //"alterID:o1 o2"; "[duplicate value]"
 	@XmlPath("@" + CharacterAttribute.provenance)
 	private String provenance;
 	@XmlPath("@" + CharacterAttribute.ontologyid)

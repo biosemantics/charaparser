@@ -1,9 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 
 
 
@@ -63,7 +65,8 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 			ProcessingContext processingContext) {
 		List<Element> results = new LinkedList<Element>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 		List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 		modifiers.addAll(unassignedModifiers);
@@ -94,8 +97,9 @@ public class ToChunkProcessor extends AbstractChunkProcessor {
 				characterName = characterStateChunks.get(0).getProperty("characterName");
 			
 			String character = chunk.getTerminalsText();
-			List<Character> rangeCharacter = createRangeCharacterElement(parents, modifiers, character, characterName, processingContextState);
+			List<Element> rangeCharacter = createRangeCharacterElement(parents, modifiers, character, characterName, processingContextState);
 			
+			addAlternativeIds(rangeCharacter, alternativeIds);
 			if(!rangeCharacter.isEmpty()){ //to [not or]
 				for(Element element: results){ //add notes: "[duplicate value]" for the characters as they repeats what is in the rangeCharacter
 					if(element.isCharacter()){

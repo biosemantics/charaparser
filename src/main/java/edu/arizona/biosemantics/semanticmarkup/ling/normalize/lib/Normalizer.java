@@ -73,9 +73,6 @@ public abstract class Normalizer implements INormalizer {
 	//private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-,\\s*)+ (to|or) \\d-\\{)(.*)");	
 	private Pattern hyphenedtoorpattern = Pattern.compile("(.*?)((\\d-{0,1},{0,1}\\s*)+ (to|or) \\d-(\\w+))(\\b.*)");
 	private Pattern numberpattern = Pattern.compile("[()\\[\\]\\-\\–\\d\\.×x\\+²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+²½/¼\\*/%\\?]{2,}(?![a-z])"); //added , and ? for chromosome counts
-	//positionptn does not apply to FNA, it may apply to animal descriptions e.g. rib_I, rib_II,
-	//private static Pattern positionptn = Pattern.compile("(<(\\S+?)> \\d+(?: and \\d+)?)"); // <{wing}> 1 – 3 cm ;
-	private static Pattern positionptn = Pattern.compile("(<(\\S+?)> \\d+(?:(?: and |_)\\d+)?(?!\\s*(?:\\.|/|times)))");//changed to match "4_5", "4 and 5" but not "<structure> 2 / 5" or "<structure> 2 times"
 
 	private Pattern modifierlist = Pattern.compile("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");
 	private String countp = "more|fewer|less|\\d+";

@@ -1,9 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 
 
 
@@ -58,10 +60,11 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
 		List<Element> characters = processCharacterState(chunk, parents, 
 				processingContextState);//apices of basal leaves spread 
-		
+		addAlternativeIds(characters, alternativeIds);
 		processingContextState.setLastElements(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
@@ -74,7 +77,6 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 	protected List<Element> processCharacterState(Chunk content,
 			List<BiologicalEntity> parents, ProcessingContextState processingContextState) {
 		List<Element> results = new LinkedList<Element>();
-
 		List<Chunk> modifiers = content.getChunks(ChunkType.MODIFIER);
 		Chunk characterChunk = content.getChunkDFS(ChunkType.CHARACTER_STATE);
 		String character = characterChunk.getProperty("characterName");

@@ -13,6 +13,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -63,10 +64,11 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
 		List<Element> characters = processComparativeValue(chunk, 
 				parents, processingContext, processingContextState);
-		
+		addAlternativeIds(characters, alternativeIds);
 		//processingContextState.setLastElements(characters); //set only the characters as the last elements in processComparativeValue
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;

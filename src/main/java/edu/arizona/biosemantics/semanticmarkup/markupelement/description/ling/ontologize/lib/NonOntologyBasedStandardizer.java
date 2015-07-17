@@ -63,6 +63,87 @@ public class NonOntologyBasedStandardizer {
 		quantityVsPresence(result); //after count => quantity
 		phraseUpConstraints(result); //put constraints in the order as appeared in the original text, should be among the last normalization steps
 		normalizeAdvConstraintedOrgan(result);	//after phraseUpConstraints
+		checkAlternativeIDs(result);
+	}
+
+	/**
+		<text>ovules 2-4, glabrous, lamina ovate 25-4 mm long, 15-25 mm wide, deeply pectinate, with 14-22 soft lateral spines 15-25 mm long, 2.5 mm wide, apical spine not distinct from lateral spines.</text>
+		<biological_entity id="o1" name="ovule" name_original="ovules" type="structure">
+		<character char_type="range_value" from="2" name="quantity" to="4" />
+		<character is_modifier="false" name="pubescence" value="glabrous" />
+		</biological_entity>
+		<biological_entity id="o2" name="lamina" name_original="lamina" type="structure">
+		<character is_modifier="false" name="shape" value="ovate" />
+		<character char_type="range_value" from="25" from_unit="mm" name="length" to="4" to_unit="mm" />
+		<character char_type="range_value" from="15" from_unit="mm" name="width" to="25" to_unit="mm" />
+		<character is_modifier="false" modifier="deeply" name="shape" value="pectinate" />
+	 ************
+		<character name="width" notes="alterIDs:o3" unit="mm" value="2.5" />
+	 ************
+		</biological_entity>
+		<biological_entity constraint="lateral" id="o3" name="spine" name_original="spines" type="structure">
+		<character char_type="range_value" from="14" is_modifier="true" name="quantity" to="22" />
+		<character is_modifier="true" name="pubescence_or_texture" value="soft" />
+		<character char_type="range_value" from="15" from_unit="mm" name="length" to="25" to_unit="mm" />
+		</biological_entity>
+	 * 
+	 * check characters with an alterIDs note, 
+	 * If the current entity has the same kind of measurements (typical/atypical width, length, height, size with numerical values), 
+	 * move the character to the entities indicated by the alterIDs. Any following charWAIs are moved too.
+	 * 
+	 * Otherwise, do nothing
+	 * 
+	 * @param result
+	 */
+
+	private void checkAlternativeIDs(LinkedList<Element> result) {
+		for(Element element: result){
+			if(element.isStructure()){
+				LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters(); //in the order of parsing results?
+				ArrayList<Character> withAlterIDs = new ArrayList<Character> ();
+				for(Character character: characters){
+					String notes = character.getNotes();
+					if(notes !=null && notes.contains("alterIDs:")){
+						withAlterIDs.add(character);
+					}
+
+				}
+
+				boolean move = false;
+				ArrayList<Character> removes = new ArrayList<Character>();
+				for(Character charWAI: withAlterIDs){
+					String notes = charWAI.getNotes();
+					String note = notes.substring(notes.indexOf("alterIDs:"));
+					List<String> ids = Arrays.asList(note.replaceFirst("[;\\.].*", "").replaceFirst("alterIDs:", "").split("\\s+"));
+					String charName = charWAI.getName(); //width, atypical_width
+					if(move) moveCharacter2Structures(charWAI, ids, result);
+					else{
+						for(Character character: characters){
+							if(charName.compareTo(character.getName())==0){
+								//move charWAI to entities with the ids
+								removes.add(charWAI);
+								moveCharacter2Structures(charWAI, ids, result); //
+								move = true;
+								break;
+							}
+						}
+					}
+				}
+				characters.removeAll(removes);
+			}
+		}
+
+	}
+
+
+	private void moveCharacter2Structures(Character charWAI, List<String> list, LinkedList<Element> result) {
+		for(Element element: result){
+			if(element.isStructure()){
+				if(list.contains(((BiologicalEntity) element).getId())){
+					((BiologicalEntity) element).addCharacter(charWAI);
+				}
+			}
+		}
 	}
 
 	/**

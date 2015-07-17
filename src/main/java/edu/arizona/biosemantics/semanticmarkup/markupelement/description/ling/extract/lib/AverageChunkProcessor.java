@@ -3,6 +3,7 @@
  */
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -57,7 +58,7 @@ public class AverageChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		String chara = "average_";
@@ -80,8 +81,10 @@ public class AverageChunkProcessor extends AbstractChunkProcessor {
 		else if(characterNames.size()==2 && characterNames.contains("length") && characterNames.contains("width")) chara = chara + "area";
 		else if(characterNames.size()>1) chara = chara + last;
 		List<Chunk> modifiers = new LinkedList<Chunk>();
-		List<Character> characters = annotateNumericals(chunk.getTerminalsText(), chara, modifiers, 
-				lastStructures(processingContext, processingContextState), false, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<Element> characters = annotateNumericals(chunk.getTerminalsText(), chara, modifiers, 
+				parentStructures(processingContext, processingContextState, alternativeIds), false, processingContextState);
+		addAlternativeIds(characters, alternativeIds);
 		processingContextState.setLastElements(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;

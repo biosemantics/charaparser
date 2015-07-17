@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -153,7 +154,6 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	protected List<BiologicalEntity> establishSubject(
 			Chunk subjectChunk, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		log(LogLevel.DEBUG, "establish subject from " + subjectChunk);
-		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 
 		List<Chunk> subjectChunks = new LinkedList<Chunk>();
 		subjectChunks.addAll(processingContextState.getUnassignedConstraints());
@@ -384,8 +384,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 
 
-	protected List<BiologicalEntity> lastStructures(ProcessingContext processingContext, 
-			ProcessingContextState processingContextState) {
+	/**
+	 * 
+	 * @param processingContext
+	 * @param processingContextState
+	 * @param alternativeStructureIDs biologicalentities considered but are not used as the parents. 
+	 * @return biologicalentities to be used as the parent. 
+	 */
+	protected List<BiologicalEntity> parentStructures(ProcessingContext processingContext, 
+			ProcessingContextState processingContextState, ArrayList<String> alternativeStructureIDs) {
 
 		boolean newSegment = processingContext.getCurrentState().isCommaAndOrEosEolAfterLastElements();
 		
@@ -402,6 +409,32 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return parents;
 		*/
 		
+		LinkedList<BiologicalEntity> lastStructures = lastStructures(processingContextState);
+		LinkedList<BiologicalEntity> subjects =processingContextState.getSubjects();
+		
+		if(newSegment){
+			if(!processingContextState.getSubjects().isEmpty()){
+				structureIDs (subjects, lastStructures,alternativeStructureIDs);
+				return subjects;
+			}
+			else{
+				structureIDs (lastStructures, subjects,alternativeStructureIDs);
+				return lastStructures;
+			}
+		}else{
+			if(!lastStructures.isEmpty()){
+				return lastStructures;
+			}
+			else {
+				return subjects;
+			}
+		}
+		
+		
+	}
+
+	protected LinkedList<BiologicalEntity> lastStructures(
+			ProcessingContextState processingContextState) {
 		LinkedList<BiologicalEntity> lastStructures = new LinkedList<BiologicalEntity>();
 		if(processingContextState.getLastElements().size()> 0 && 
 				processingContextState.getLastElements().getLast().isStructure()) {
@@ -409,16 +442,66 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				if(lastElement.isStructure())
 					lastStructures.add((BiologicalEntity)lastElement);
 		}
-		
-		if(newSegment){
-			if(!processingContextState.getSubjects().isEmpty()) return processingContextState.getSubjects();
-			else return lastStructures;
-		}else{
-			if(!lastStructures.isEmpty()) return lastStructures;
-			else return processingContextState.getSubjects();
+		return lastStructures;
+	}
+	
+	/**
+	 * 
+	 * @param parents
+	 * @param alternatives
+	 * @param alternativeStructureIDs:  return alternatives if it is disjoint from parents, otherwise, return empty list.
+	 */
+	protected void structureIDs (LinkedList<BiologicalEntity> parents, LinkedList<BiologicalEntity> alternatives, ArrayList<String> alternativeStructureIDs){
+
+		boolean disjoint = true;
+		for(BiologicalEntity structure: alternatives){
+			String id = structure.getId();
+			alternativeStructureIDs.add(id);
+			for(BiologicalEntity parent: parents){
+				if(parent.getId().compareTo(id)==0){
+					disjoint = false; 
+					break;
+				}
+			}
+			if(!disjoint){
+				alternativeStructureIDs.clear();
+				return;
+			}
 		}
-		
-		
+	}
+	
+	/**
+	 *  characters may need to be associated with the alternative structures in post-parsing normalization
+	 */
+	/*protected void addAlternativeIds(List<Character> characters, ArrayList<String>alternativeIds){
+		String ids = "";
+		for(String id: alternativeIds){
+			ids += id+" ";
+		}
+		ids.trim();
+		if(!ids.isEmpty()){
+			for(Character character: characters){
+				character.setNotes("alterIDs:"+ids);
+			}
+		}
+	}*/
+	
+	/**
+	 *  characters may need to be associated with the alternative structures in post-parsing normalization
+	 */
+	protected void addAlternativeIds(List<Element> characters, ArrayList<String>alternativeIds){
+		String ids = "";
+		for(String id: alternativeIds){
+			ids += id+" ";
+		}
+		ids = ids.trim();
+		if(!ids.isEmpty()){
+			for(Element character: characters){
+				if(character.isCharacter()){
+					((Character)character).setNotes("alterIDs:"+ids);
+				}
+			}
+		}
 	}
 
 	protected Chunk getLastOrgan(List<Chunk> chunks) {
@@ -603,7 +686,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					//TODO: can be made more efficient, since sometimes character is already given
 					modifiers.add(token);
 				}else if(w.matches(".*?\\d.*") && !w.matches(".*?[a-z].*")){//TODO: 2 times =>2-times?
-					List<Character> charas = this.annotateNumericals(w, "count", modifiers, parents, false, processingContextState);
+					List<Element> charas = this.annotateNumericals(w, "count", modifiers, parents, false, processingContextState);
 					for(Element c: charas){
 						if(c.isCharacter()){
 							((Character)c).setIsModifier(isModifier+"");
@@ -671,9 +754,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param characterValue 
 	 * @param cname
 	 */
-	protected List<Character> createRangeCharacterElement(List<BiologicalEntity> parents,
+	protected List<Element> createRangeCharacterElement(List<BiologicalEntity> parents,
 			List<Chunk> modifiers, String characterValue, String characterName, ProcessingContextState processingContextState) {
-		LinkedList<Character> results = new  LinkedList<Character>();
+		LinkedList<Element> results = new  LinkedList<Element>();
 		if(characterValue.indexOf(" to ") < 0) return results;
 
 		Character character = new Character();
@@ -1018,9 +1101,9 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	}
 
 
-	protected List<Character> annotateNumericals(String text, String characterString, List<Chunk> modifiers, 
+	protected List<Element> annotateNumericals(String text, String characterString, List<Chunk> modifiers, 
 			List<BiologicalEntity> parents, boolean resetFrom, ProcessingContextState processingContextState) {
-		LinkedList<Character> result = new LinkedList<Character>();
+		LinkedList<Element> result = new LinkedList<Element>();
 		boolean average = characterString.startsWith("average_");
 		List<Character> characters = parseNumericals(text, characterString);
 		if(characters.size()==0){//failed, simplify chunktext

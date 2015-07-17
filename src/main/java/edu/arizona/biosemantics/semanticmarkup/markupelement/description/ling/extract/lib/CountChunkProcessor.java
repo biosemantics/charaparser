@@ -59,8 +59,8 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
-		LinkedList<Character> result = new LinkedList<Character>();
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
+		LinkedList<Element> result = new LinkedList<Element>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
@@ -82,13 +82,14 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 			parents.add((BiologicalEntity)lastElements.getLast()); 
 		}
 		
-		List<Character> characterElement = 
+		List<Element> characterElement = 
 				this.annotateNumericals(chunk.getTerminalsText(), "count", modifiers, parents, false, processingContextState);
 		//1/4 PP: [PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [lengths]], of], OBJECT: [ORGAN: [blades]]]
 		if(nextChunk!=null && nextChunk.isOfChunkType(ChunkType.PP) && nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE)!=null && 
 				nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE).getProperty("characterName").compareTo("character")==0){
 			String character = nextChunk.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE).getChildChunk(ChunkType.STATE).getTerminalsText();
-			for(Character c: characterElement){
+			for(Element ce: characterElement){
+				Character c = (Character)ce;
 				c.setName(inflector.getSingular(character)); //count => length
 				//update values
 				if(c.getValue()!=null){
@@ -109,7 +110,11 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 				result.addAll(characterElement);
 			processingContextState.clearUnassignedModifiers();
 		} else {
-			processingContextState.getUnassignedCharacters().addAll(characterElement);
+			for(Element ce: characterElement){
+				if(ce.isCharacter()){
+					processingContextState.getUnassignedCharacters().add((Character)ce);
+				}
+			}
 		}
 		
 		processingContextState.setLastElements(result);

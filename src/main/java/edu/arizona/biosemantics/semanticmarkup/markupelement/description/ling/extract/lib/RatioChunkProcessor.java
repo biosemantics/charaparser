@@ -1,9 +1,12 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+
 
 
 
@@ -24,6 +27,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * RatioChunkProcessor processes chunks of ChunkType.RATIO
@@ -63,7 +67,7 @@ public class RatioChunkProcessor extends AbstractChunkProcessor {
 			1.00 => RATIO: [RATIO: [1.00]]
 	*/
 	@Override
-	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		List<Chunk> modifiers = new LinkedList<Chunk>();
 		String character ="l/w";
@@ -72,8 +76,10 @@ public class RatioChunkProcessor extends AbstractChunkProcessor {
 			character =  chunk.getChunkDFS(ChunkType.STATE).getTerminalsText();
 			content = chunk.getChildChunk(ChunkType.RATIO).getTerminalsText();
 		}
-		List<Character> characters = annotateNumericals(content, character, modifiers, 
-						lastStructures(processingContext, processingContextState), false, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<Element> characters = annotateNumericals(content, character, modifiers, 
+						parentStructures(processingContext, processingContextState, alternativeIds), false, processingContextState);
+		addAlternativeIds(characters, alternativeIds);
 		processingContextState.setLastElements(characters);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;

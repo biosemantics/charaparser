@@ -1,9 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 
 
 
@@ -58,9 +60,10 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 	@Override
 	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
 		List<Element> es = processVP(chunk, parents, processingContext, processingContextState); //apices of basal leaves spread 
-		
+		addAlternativeIds(es, alternativeIds);
 		processingContextState.setLastElements(es);
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return es;

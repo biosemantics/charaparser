@@ -254,11 +254,11 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 		return null;
 	}
 
-	private List<Character> connectCharacters(
+	private List<Element> connectCharacters(
 			List<BiologicalEntity> subjectStructures, List<Chunk> modifiers, 
 			Chunk preposition, LinkedHashSet<Chunk> beforeOrganChunks,
 			ProcessingContext processingContext) {
-		List<Character> result = new LinkedList<Character>();
+		List<Element> result = new LinkedList<Element>();
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
 		chunkListIterator.previous();
 		Chunk beforePPChunk = chunkListIterator.previous();

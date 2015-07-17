@@ -1,8 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+
 
 
 
@@ -22,6 +25,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ex
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * NPListChunkProcessor processes chunks of ChunkType.NUMERICALS
@@ -54,7 +58,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 	}
 
 	@Override
-	protected List<Character> processChunk(Chunk chunk, ProcessingContext processingContext) {
+	protected List<Element> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		//** find parents, modifiers
 		//TODO: check the use of [ and ( in extreme values
@@ -66,7 +70,8 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			resetFrom = true;
 		}
 		
-		List<BiologicalEntity> parents = lastStructures(processingContext, processingContextState);
+		ArrayList<String> alternativeIds = new ArrayList<String>();
+		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
 		
 		/*String modifier1 = "";
 		//m[mostly] [4-]8�12[-19] mm m[distally]; m[usually] 1.5-2 times n[size[{longer} than {wide}]]:consider a constraint
@@ -106,14 +111,22 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			else character = content.indexOf('/') > 0 || content.indexOf('%') > 0 ? "size_or_shape" : "size";
 		}
 
-		List<Character> characters = annotateNumericals(content, character,
-				modifiers, lastStructures(processingContext, processingContextState), resetFrom, processingContextState);
+		//List<Character> characters = annotateNumericals(content, character,
+		//		modifiers, parentStructures(processingContext, processingContextState), resetFrom, processingContextState);
+		List<Element> characters = annotateNumericals(content, character,
+						modifiers, parents, resetFrom, processingContextState);
+		addAlternativeIds(characters, alternativeIds); // characters may need to be associated with the alternative structures in post-parsing normalization
 		processingContextState.setLastElements(characters);
 		processingContextState.clearUnassignedModifiers();
 		processingContextState.setUnassignedCharacter(null); //consumed
 		
 		if(parents.isEmpty()) {
-			processingContextState.getUnassignedCharacters().addAll(characters);
+			//processingContextState.getUnassignedCharacters().addAll(characters);
+			if(parents.isEmpty()) {
+				for(Element element : characters)
+					if(element.isCharacter())
+						processingContextState.getUnassignedCharacters().add((Character)element);
+			}
 		}/* else {
 			for(DescriptionTreatmentElement parent : parents) {
 				for(DescriptionTreatmentElement characterElement : characters) {
