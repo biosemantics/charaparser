@@ -223,7 +223,7 @@ public abstract class Normalizer implements INormalizer {
 		}
 
 		adjnounslist = adjnounslist.trim().replaceFirst("(\\|+$|^\\|+)", "").replaceAll("\\|+", "|");
-		adjnounslist = (adjnounslist.isEmpty()? "" : "|")+adjNouns; //"inner|outer|middle|mid|cauline|distal|outermost";
+		adjnounslist += (adjnounslist.isEmpty()? "" : "|")+adjNouns; //"inner|outer|middle|mid|cauline|distal|outermost";
 
 		replacements = 
 				terminologyLearner.getAdjectiveReplacementsForNouns();
@@ -758,7 +758,7 @@ public abstract class Normalizer implements INormalizer {
 	private String normalizeInner(String str, String tag, String source, Hashtable<String, String> prevMissingOrgan) {
 		//if((adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")[^ly ]*\\b.*")) || str.matches(".*? of \\b(?:"+adjnounslist+")[^ly ]*\\b.*")){	
 		//if(adjnounsent!=null && adjnounslist!=null && (adjnounsent.containsKey(tag) && str.matches(".*?\\b(?:"+adjnounslist+")\\b.*"))){
-		if(str.matches(".*?\\b(?:"+adjnounslist+")\\b.*")){
+		if(str.matches(".*?\\b(?:"+adjnounslist+")\\b.*")) {
 			str = fixInner(str, adjnounslist, source, prevMissingOrgan);
 			//need to put tag in after the modifier inner
 			//fixInnerOnSentences(str, adjnounslist, source, prevMissingOrgan);
