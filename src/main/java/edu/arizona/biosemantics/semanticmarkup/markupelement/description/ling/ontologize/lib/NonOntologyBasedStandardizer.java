@@ -50,6 +50,7 @@ public class NonOntologyBasedStandardizer {
 
 	public void standardize(LinkedList<Element>result){
 		if(result.isEmpty()) return;
+		checkAlternativeIDs(result); //before count
 		taxonName2WholeOrganism(result);
 		createWholeOrganismDescription(result, lifeStyles, "growth_form");
 		createWholeOrganismDescription(result, durations, "duration");
@@ -60,10 +61,10 @@ public class NonOntologyBasedStandardizer {
 		removeCircularCharacterConstraint(result);
 		character2structureContraint(result);//is_modifier => constraint
 		renameCharacter(result, "count", "quantity");
+		renameCharacter(result, "atypical_count", "atypical_quantity");
 		quantityVsPresence(result); //after count => quantity
 		phraseUpConstraints(result); //put constraints in the order as appeared in the original text, should be among the last normalization steps
 		normalizeAdvConstraintedOrgan(result);	//after phraseUpConstraints
-		checkAlternativeIDs(result);
 	}
 
 	/**
@@ -113,13 +114,17 @@ public class NonOntologyBasedStandardizer {
 				ArrayList<Character> removes = new ArrayList<Character>();
 				for(Character charWAI: withAlterIDs){
 					String notes = charWAI.getNotes();
+					removeAlterIDsNotes(charWAI);
 					String note = notes.substring(notes.indexOf("alterIDs:"));
 					List<String> ids = Arrays.asList(note.replaceFirst("[;\\.].*", "").replaceFirst("alterIDs:", "").split("\\s+"));
 					String charName = charWAI.getName(); //width, atypical_width
-					if(move) moveCharacter2Structures(charWAI, ids, result);
+					if(move){
+						removes.add(charWAI);
+						moveCharacter2Structures(charWAI, ids, result);
+					}
 					else{
 						for(Character character: characters){
-							if(charName.compareTo(character.getName())==0){
+							if(!character.equals(charWAI) && charName.compareTo(character.getName())==0 && charName.matches(".*?_?(count|length|width|size|height)")){
 								//move charWAI to entities with the ids
 								removes.add(charWAI);
 								moveCharacter2Structures(charWAI, ids, result); //
@@ -143,6 +148,13 @@ public class NonOntologyBasedStandardizer {
 					((BiologicalEntity) element).addCharacter(charWAI);
 				}
 			}
+		}
+	}
+
+	private void removeAlterIDsNotes(Character charWAI) {
+		if(charWAI.getNotes()!=null && charWAI.getNotes().contains("alterIDs:")){
+			charWAI.setNotes(charWAI.getNotes().replaceFirst("\\balterIDs:.*?(;|\\.|$)", "")); //remove alterIDs note
+			if(charWAI.getNotes()!=null && charWAI.getNotes().isEmpty()) charWAI.setNotes(null);
 		}
 	}
 

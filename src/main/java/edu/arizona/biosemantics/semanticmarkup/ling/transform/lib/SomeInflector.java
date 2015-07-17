@@ -183,6 +183,10 @@ public class SomeInflector implements IInflector {
 		}
 		if(plurals.containsKey(word))
 			return plurals.get(word);
+		
+		if(word.matches(".*\\d$"))
+			return word;
+		
 		if(word.endsWith("s"))
 			return word + "es";
 		else

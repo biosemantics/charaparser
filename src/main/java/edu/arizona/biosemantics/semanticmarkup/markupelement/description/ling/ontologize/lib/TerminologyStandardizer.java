@@ -34,6 +34,25 @@ public class TerminologyStandardizer {
 				String preferedName = characterKnowledgeBase.getCharacterName(struct.getName()).getLabel(struct.getType());
 				if(preferedName!=null) struct.setName(preferedName);
 				
+				//standardize structural constraint, a word or a phrase
+				String constraint = struct.getConstraint(); //try to match longest segment anchored to the last word in the phrase.
+				if(constraint!=null){
+					constraint = constraint.trim();
+					String leading = "";
+					do{
+						String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(struct.getType());
+						if(prefered!=null){
+							struct.setConstraint((leading+" "+prefered).trim());
+							break;
+						}else{
+							//remove the leading word
+							leading = constraint.replaceFirst(" .*", "").trim();
+							constraint = constraint.replaceFirst(leading, "").trim(); 
+						}
+					}while(!constraint.isEmpty());
+				}
+				
+				
 				//standardize character
 				LinkedHashSet<Character> characters = struct.getCharacters();
 				for(Character character: characters){
