@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-		<project.version>0.1.143-SNAPSHOT</project.version>
+		<project.version>0.1.144-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -19,14 +19,14 @@
 			<id>learn</id>
 			<properties>
 				<mainName>learn</mainName>
-				<mainClass>edu.arizona.biosemantics.semanticmarkup.LearnMain</mainClass>
+				<mainClass>edu.arizona.biosemantics.semanticmarkup.ETCLearnMain</mainClass>
 			</properties>
 		</profile>
 		<profile>
 			<id>markup</id>
 			<properties>
 				<mainName>markup</mainName>
-				<mainClass>edu.arizona.biosemantics.semanticmarkup.MarkupMain</mainClass>
+				<mainClass>edu.arizona.biosemantics.semanticmarkup.ETCMarkupMain</mainClass>
 			</properties>
 		</profile>
 	</profiles>
@@ -376,6 +376,14 @@
 					</descriptorRefs>
 					<finalName>${project.artifactId}-${mainName}-${project.version}</finalName>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
