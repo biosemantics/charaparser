@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -116,7 +117,7 @@ public class InMemoryGlossary implements IGlossary {
 	protected ConcurrentHashMap<String, Set<Term>> syns = new ConcurrentHashMap<String, Set<Term>>(); //syn => label, category
 	protected ConcurrentHashMap<String, Set<Term>> reverseSyns = new ConcurrentHashMap<String, Set<Term>>(); //label => syn, catgory
 	protected ConcurrentHashMap<String, Set<String>> synsByCategory = new ConcurrentHashMap<String, Set<String>>(); //category => syn,
-	protected boolean hasIndexedStructure = false; //not thread safe
+	protected AtomicReference<Boolean> hasIndexedStructure = new AtomicReference<Boolean>(); // false; //not thread safe
 	protected ConcurrentSkipListSet<String> indexedStructures = new ConcurrentSkipListSet<String>();
 	protected Pattern indexedStructurePtn = Pattern.compile("(.*)[_-](\\d+|[ivx]+)$", Pattern.CASE_INSENSITIVE);
 	
@@ -212,10 +213,11 @@ public class InMemoryGlossary implements IGlossary {
 	 * 
 	 */
 	private void indexedStructureWord(String word, String category) {
+		this.hasIndexedStructure.set(false);
 		if(category.matches(ElementRelationGroup.entityElements)){
 			Matcher m = indexedStructurePtn.matcher(word);
 			if(m.matches()){
-				this.hasIndexedStructure = true;
+				this.hasIndexedStructure.set(true);
 				this.indexedStructures.add(m.group(1));
 			}	
 		}
@@ -283,7 +285,7 @@ public class InMemoryGlossary implements IGlossary {
 
 	@Override
 	public boolean 	hasIndexedStructure(){
-		return this.hasIndexedStructure;
+		return this.hasIndexedStructure.get();
 	}
 	
 	@Override
