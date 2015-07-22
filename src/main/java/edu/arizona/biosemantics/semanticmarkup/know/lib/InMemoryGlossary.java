@@ -117,7 +117,7 @@ public class InMemoryGlossary implements IGlossary {
 	protected ConcurrentHashMap<String, Set<Term>> syns = new ConcurrentHashMap<String, Set<Term>>(); //syn => label, category
 	protected ConcurrentHashMap<String, Set<Term>> reverseSyns = new ConcurrentHashMap<String, Set<Term>>(); //label => syn, catgory
 	protected ConcurrentHashMap<String, Set<String>> synsByCategory = new ConcurrentHashMap<String, Set<String>>(); //category => syn,
-	protected AtomicReference<Boolean> hasIndexedStructure = new AtomicReference<Boolean>(); // false; //not thread safe
+	protected boolean hasIndexedStructure = false; 
 	protected ConcurrentSkipListSet<String> indexedStructures = new ConcurrentSkipListSet<String>();
 	protected Pattern indexedStructurePtn = Pattern.compile("(.*)[_-](\\d+|[ivx]+)$", Pattern.CASE_INSENSITIVE);
 	
@@ -210,14 +210,14 @@ public class InMemoryGlossary implements IGlossary {
 	 * 
 	 * @param word e.g., lorum_2, leg_i
 	 * @param category
+	 * @return 
 	 * 
 	 */
-	private void indexedStructureWord(String word, String category) {
-		this.hasIndexedStructure.set(false);
+	private synchronized void indexedStructureWord(String word, String category) {
 		if(category.matches(ElementRelationGroup.entityElements)){
 			Matcher m = indexedStructurePtn.matcher(word);
 			if(m.matches()){
-				this.hasIndexedStructure.set(true);
+				this.hasIndexedStructure = true;
 				this.indexedStructures.add(m.group(1));
 			}	
 		}
@@ -285,7 +285,7 @@ public class InMemoryGlossary implements IGlossary {
 
 	@Override
 	public boolean 	hasIndexedStructure(){
-		return this.hasIndexedStructure.get();
+		return this.hasIndexedStructure;
 	}
 	
 	@Override
