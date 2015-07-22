@@ -201,6 +201,16 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		result.addAll(establishSubject(structureElements, processingContextState));
 	}
 
+	/**
+	 * i-iii or i to iii: [MAIN_SUBJECT_ORGAN: [CONSTRAINT: [legs], ORGAN: [i-iii]]] => return 1 compound organ (1-3)
+	 * MAIN_SUBJECT_ORGAN: [NP_LIST: [CONSTRAINT: [legs], ORGAN: [i], AND: [and], ORGAN: [ii]]] =>return a list of individual organs
+	 * MAIN_SUBJECT_ORGAN: [NP_LIST: [CONSTRAINT: [legs], ORGAN: [i], COMMA: [,], ORGAN: [ii], COMMA: [,], AND: [and], ORGAN: [iii]]] =>return a list of individual organs
+	 * 
+	 * @param subjectChunks
+	 * @param processingContext
+	 * @param processingContextState
+	 * @return
+	 */
 	protected List<BiologicalEntity> createStructureElements(List<Chunk> subjectChunks, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		LinkedList<BiologicalEntity> results = new LinkedList<BiologicalEntity>();	
 		Chunk subjectChunk = new Chunk(ChunkType.UNASSIGNED, subjectChunks);
@@ -1069,18 +1079,22 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					negation = true;
 					relation = relation.replace("not", "").trim();
 				}
-				relationElements.add(addRelation(relation, modifiers, symmetric, o1id, o2id, fromStructures.get(i), toStructures.get(j), negation, processingContext, processingContextState));
+				Relation rel = addRelation(relation, modifiers, symmetric, o1id, o2id, fromStructures.get(i), toStructures.get(j), negation, processingContext, processingContextState);
+				relationElements.add(rel);
+				//update from/to relations of BiologicalEntities
+				fromStructures.get(i).addFromRelation(rel);
+				toStructures.get(j).addToRelation(rel);
 			}
 		}
 		return relationElements;
 	}
 
 	protected Relation addRelation(String relationName, List<Chunk> modifiers,
-			boolean symmetric, String o1id, String o2id,BiologicalEntity fromStructure, BiologicalEntity toStructure,  boolean negation, ProcessingContext processingContext, ProcessingContextState processingContextState) {
+			boolean symmetric, String fromId, String toId,BiologicalEntity fromStructure, BiologicalEntity toStructure,  boolean negation, ProcessingContext processingContext, ProcessingContextState processingContextState) {
 		Relation relation = new Relation();
 		relation.setName(relationName);
-		relation.setFrom(o1id);
-		relation.setTo(o2id);
+		relation.setFrom(fromId);
+		relation.setTo(toId);
 		relation.setNegation(String.valueOf(negation));
 		relation.setFromStructure(fromStructure);
 		relation.setToStructure(toStructure);

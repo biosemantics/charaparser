@@ -39,7 +39,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
  *
  */
 @XmlRootElement
-public class BiologicalEntity extends NamedElement {
+public class BiologicalEntity extends NamedElement implements Cloneable {
 
 	@XmlPath("@" + BiologicalEntityAttribute.alter_name)
 	private String alterName;
@@ -72,7 +72,7 @@ public class BiologicalEntity extends NamedElement {
 
 	@XmlPath("character")
 	private LinkedHashSet<Character> characters = new LinkedHashSet<Character>();
-	private LinkedHashSet<Relation> fromRelations = new LinkedHashSet<Relation>();
+	private LinkedHashSet<Relation> fromRelations = new LinkedHashSet<Relation>(); 
 	private LinkedHashSet<Relation> toRelations = new LinkedHashSet<Relation>();
 
 
@@ -372,5 +372,41 @@ public class BiologicalEntity extends NamedElement {
 			else
 				character.removeElementRecursively(element);
 		}
+	}
+	
+	@Override
+	public BiologicalEntity clone(){
+		BiologicalEntity entity = new BiologicalEntity();
+		entity.setAlterName(alterName);
+		entity.setConstraint(constraint);
+		entity.setConstraintId(constraintId);
+		entity.setGeographicalConstraint(geographicalConstraint);
+		entity.setId(id);
+		entity.setInBrackets(inBrackets);
+		entity.setName(name);
+		entity.setNameOriginal(nameOriginal);
+		entity.setNotes(notes);
+		entity.setOntologyId(ontologyId);
+		entity.setParallelismConstraint(parallelismConstraint);
+		entity.setProvenance(provenance);
+		entity.setTaxonConstraint(taxonConstraint);
+		entity.setType(type);
+	
+		
+		for(Relation fromR: fromRelations){
+			entity.addFromRelation(fromR);
+		}
+		
+		for(Relation toR: toRelations){
+			entity.addToRelation(toR);
+		}
+		
+		LinkedHashSet<Character> chars = new LinkedHashSet<Character>();
+		for(Character character: characters){
+			chars.add(character.clone());
+		}
+		entity.setCharacters(chars);
+		
+		return entity;
 	}
 }

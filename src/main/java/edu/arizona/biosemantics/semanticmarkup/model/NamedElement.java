@@ -5,7 +5,7 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
 public abstract class NamedElement extends Element {
 	
 	@XmlPath("@name")
-	private String name;
+	protected String name;
 	
 	public NamedElement() { }
 

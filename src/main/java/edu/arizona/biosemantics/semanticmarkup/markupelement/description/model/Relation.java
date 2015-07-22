@@ -33,7 +33,7 @@ import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
  *
  */
 @XmlRootElement
-public class Relation extends NamedElement {
+public class Relation extends NamedElement implements Cloneable {
 	@XmlPath("@" + RelationAttribute.alter_name)
 	private String alterName;
 	@XmlPath("@" + RelationAttribute.from)
@@ -216,5 +216,28 @@ public class Relation extends NamedElement {
 	@Override
 	public void removeElementRecursively(Element element) {
 		return;
+	}
+	
+	@Override
+	public Relation clone(){
+		Relation relation = new Relation();
+		relation.setAlterName(alterName);
+		relation.setFrom(from);
+		relation.setFromStructure(fromStructure);
+		relation.setGeographicalConstraint(geographicalConstraint);
+		relation.setId(id);
+		relation.setInBrackets(inBrackets);
+		relation.setModifier(modifier);
+		relation.setName(name);
+		relation.setNegation(negation);
+		relation.setNotes(notes);
+		relation.setOntologyId(ontologyId);
+		relation.setOrganConstraint(organConstraint);
+		relation.setParallelismConstraint(parallelismConstraint);
+		relation.setProvenance(provenance);
+		relation.setTaxonConstraint(taxonConstraint);
+		relation.setTo(to);
+		relation.setToStructure(toStructure);
+		return relation;
 	}
 }

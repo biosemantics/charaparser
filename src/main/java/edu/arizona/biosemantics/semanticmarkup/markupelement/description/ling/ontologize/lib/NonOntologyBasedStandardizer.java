@@ -50,6 +50,7 @@ public class NonOntologyBasedStandardizer {
 
 	public void standardize(LinkedList<Element>result){
 		if(result.isEmpty()) return;
+		enumerateCompoundOrgan(result); //legs i-iii
 		checkAlternativeIDs(result); //before count
 		taxonName2WholeOrganism(result);
 		createWholeOrganismDescription(result, lifeStyles, "growth_form");
@@ -65,6 +66,109 @@ public class NonOntologyBasedStandardizer {
 		quantityVsPresence(result); //after count => quantity
 		phraseUpConstraints(result); //put constraints in the order as appeared in the original text, should be among the last normalization steps
 		normalizeAdvConstraintedOrgan(result);	//after phraseUpConstraints
+	}
+	
+	/**
+	 * <biological_entity constraint="legs" id="o0" name="i-iii" name_original="i-iii" type="structure">
+		<character constraint="than leg-iv" constraintid="o1" is_modifier="false" name="fragility" value="stronger" />
+	   </biological_entity>
+	 * @param result
+	 */
+
+	private void enumerateCompoundOrgan(LinkedList<Element> result) {
+		ArrayList<Element> toberemoved = new ArrayList<Element>();
+		for(int i = 0; i < result.size(); i++){
+			Element element = result.get(i);
+			if(element.isStructure()){
+				BiologicalEntity entity = (BiologicalEntity) element;
+				String name = entity.getName();
+				if(name.matches("(\\d+|[ivx]+)-(\\d+|[ivx]+)")){
+					//int elementPosition = result.indexOf(element);
+					ArrayList<String> list = getIndividuals (name);
+					boolean added =false;
+					int count = 1;
+					ArrayList<String> newIds = new ArrayList<String>();
+					for(String individual: list){
+						BiologicalEntity one = entity.clone();
+						//clone but update id
+						((BiologicalEntity) one).setName(individual);
+						String newId = one.getId()+"_"+count;
+						one.setId(newId);
+						newIds.add(newId);
+						count++;
+						result.add(i+1, one);
+						i++;
+						added = true;
+					}
+					if(added){
+						//remove the original biological entity element
+						toberemoved.add(element);
+						//result.remove(elementPosition);
+					
+					    //if the original element involved in any relations, individualize the relations
+						//to
+						LinkedHashSet<Relation> toRelations = entity.getToRelations();
+						for(Relation relation: toRelations){
+							int relationPosition = result.indexOf(relation);						
+							for(String newId: newIds){
+								Relation one = relation.clone();
+								one.setTo(newId);
+								result.add(relationPosition+1, one);
+							}
+							//result.remove(relationPosition);	
+							toberemoved.add(relation);
+						}
+						//from
+						LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
+						for(Relation relation: fromRelations){
+							int relationPosition = result.indexOf(relation);						
+							for(String newId: newIds){
+								Relation one = relation.clone();
+								one.setFrom(newId);
+								result.add(relationPosition+1, one);
+							}
+							//result.remove(relationPosition);	
+							toberemoved.add(relation);
+						}
+					
+					
+					}
+					
+				}
+			}
+		}
+		result.removeAll(toberemoved);
+	}
+
+	private ArrayList<String> getIndividuals(String name) {
+		String [] ends = name.split("-");
+		ArrayList<String> individuals = new ArrayList<String>();
+		String current = ends[0];
+		String last = ends[ends.length-1];
+		while(current.compareTo(last)!=0){
+			individuals.add(current);
+			current = nextRoman(current);
+		}
+		individuals.add(last);
+		return individuals;
+	}
+	
+	/**
+	 * 
+	 * @param roman <= XXXVIII (38)
+	 * @return
+	 */
+	private String nextRoman(String roman){
+		if(roman.endsWith("iv")){
+			return roman.replaceFirst("iv$", "v");
+		}else if(roman.endsWith("ix")){
+			return roman.replaceFirst("ix$", "x");
+		}else if(roman.endsWith("viii")){
+			return roman.replaceFirst("viii$", "ix");
+		}else if(roman.endsWith("iii")){
+			return roman.replaceFirst("iii$", "iv");
+		}else 
+			return roman+"i";
 	}
 
 	/**
@@ -189,7 +293,7 @@ public class NonOntologyBasedStandardizer {
 		ArrayList<String> orderedCandidates = new ArrayList<String>();
 
 		int i = sent.indexOf(nameOriginal); //i could be 0
-		if(i<0){ //nameOrginal may be added by fixInner, for exmaple. 
+		if(i<0){ //nameOrginal may be added by fixInner, for example. 
 			if(sentence.matches(".*?\\b"+constraints+"\\b.*")){
 				log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] normalized to itself [entity name not present in sentence]");
 				return constraints;

@@ -22,8 +22,12 @@ import java.util.regex.Pattern;
 
 
 
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+
+
 
 
 
@@ -96,6 +100,7 @@ public abstract class Normalizer implements INormalizer {
 	private Pattern vaguenumberptn1 = Pattern.compile("(.*?)\\b((?:equal[ _-]to|(?:more|greater|less|fewer) than|or| )+) ([\\d.]+)(.*)");
 	private Pattern vaguenumberptn2 = Pattern.compile("(.*?)0(-[\\d.]+)( \\w+ )(?:and|but) ([\\d.]+)\\+(.*)");
 	private Pattern conjunctionPtn = Pattern.compile("(.*?)\\b((and|or|to| )+)$");
+	private Pattern torangeptn = Pattern.compile("(.*?)\\b?(\\S+)? to ([\\d\\. ]{1,6} )(.*)");
 	private String[] modifierphrases;
 	private HashSet<String> modifiertokens = new HashSet<String>();
 	private Pattern compoundPPptn;    
@@ -551,6 +556,16 @@ public abstract class Normalizer implements INormalizer {
 			text = to_Range(text);				
 			text = text.replaceAll(" (?<=0 - [\\d\\. ]{1,6} [a-z ]?)× (?=[\\d\\. ]{1,6} [a-z])", " × 0 - "); //deal with case 2
 			text = text.replaceAll(" 0 - (?=[\\d\\.\\ ]{1,8} [-–])", " ");// 0 - 1 . 3  - 2 . 0 => 1 . 3 - 2 . 0
+			
+			
+			Pattern indexRange = Pattern.compile("(.*?) ([ivx]+) to ([ivx]+) (.*)");
+			Matcher m = indexRange.matcher(text);
+			if(m.matches()){
+				String from = m.group(2);
+				String to = m.group(3);
+				if(getArabicNumber(to)>getArabicNumber(from))
+					text = (m.group(1)+" "+from+"-"+to+" "+m.group(4)).trim();
+			}
 		}
 		if(!copy.equals(text)){
 			log(LogLevel.DEBUG, src+" [to range original] "+copy);
@@ -558,6 +573,70 @@ public abstract class Normalizer implements INormalizer {
 		}
 		return text.replaceAll("\\s+", " ").trim();
 	}
+
+
+	/**
+	 * 
+	 * @param roman ii
+	 * @return arabic number 2 if input is a roman number consisting only i, v, and x, otherwise -1
+	 */
+	private int getArabicNumber(String roman) {
+		if(!roman.matches("[ivx]+")) return -1;
+		int decimal = 0;
+		int lastNumber = 0;
+		String romanNumeral = roman.toUpperCase();
+		for (int x = romanNumeral.length() - 1; x >= 0 ; x--) {
+			char convertToDecimal = romanNumeral.charAt(x);
+
+			switch (convertToDecimal) {
+			/*case 'M':
+		                decimal = processDecimal(1000, lastNumber, decimal);
+		                lastNumber = 1000;
+		                break;
+
+		            case 'D':
+		                decimal = processDecimal(500, lastNumber, decimal);
+		                lastNumber = 500;
+		                break;
+
+		            case 'C':
+		                decimal = processDecimal(100, lastNumber, decimal);
+		                lastNumber = 100;
+		                break;
+
+		            case 'L':
+		                decimal = processDecimal(50, lastNumber, decimal);
+		                lastNumber = 50;
+		                break;
+			 */
+			case 'X':
+				decimal = processDecimal(10, lastNumber, decimal);
+				lastNumber = 10;
+				break;
+
+			case 'V':
+				decimal = processDecimal(5, lastNumber, decimal);
+				lastNumber = 5;
+				break;
+
+			case 'I':
+				decimal = processDecimal(1, lastNumber, decimal);
+				lastNumber = 1;
+				break;
+			}
+		}
+		return decimal;
+	}
+
+
+	public static int processDecimal(int decimal, int lastNumber, int lastDecimal) {
+		if (lastNumber > decimal) {
+			return lastDecimal - decimal;
+		} else {
+			return lastDecimal + decimal;
+		}
+	}
+
 
 	/**
 	 * deal with: to-range such as "to 3 cm", "to 24 × 5 mm", "to 2 . 7 × 1 . 7 – 2 mm", "3 – 20 ( – 25 )" 
@@ -568,7 +647,7 @@ public abstract class Normalizer implements INormalizer {
 	 */
 	private String to_Range(String text) {
 		//Pattern torangeptn = Pattern.compile("(.*?)\\b(\\S+)? to ([\\d\\. ]{1,6} )(.*)");// doesn't match "elongate , to 10 cm in diameter" because of '\b' not matching ','
-		Pattern torangeptn = Pattern.compile("(.*?)\\b?(\\S+)? to ([\\d\\. ]{1,6} )(.*)");
+
 		Matcher m = torangeptn.matcher(text);
 		while(m.matches()){
 			if(m.group(2).compareTo("up")==0 || ! this.posKnowledgeBase.isVerb(m.group(2))){
@@ -1005,7 +1084,7 @@ public abstract class Normalizer implements INormalizer {
 		sent = sent.replaceAll("x\\s*=", "x=");
 		sent = sent.replaceAll("q\\s*=", "q=");
 
-
+        //list of UTF-8 characters that looks like a hyphen: U+0096, U+0097, U+02D7, U+0335, U+0036, U+05BE...
 		//sent = sent.replaceAll("[–—-]", "-").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\[", " [ ").replaceAll("\\]", " ] ").replaceAll("\\(", " ( ").replaceAll("\\)", " ) ").replaceAll("\\s+", " ").trim();
 		sent = sent.replaceAll("[~−–—-]", "-").replaceAll("°", " ° ").replaceAll(",", " , ").replaceAll(";", " ; ").replaceAll(":", " : ").replaceAll("\\.", " . ").replaceAll("\\s+", " ").trim();
 		sent = sent.replaceAll("(?<=\\d) (?=\\?)", ""); //deals especially x=[9 ? , 13] 12, 19 cases

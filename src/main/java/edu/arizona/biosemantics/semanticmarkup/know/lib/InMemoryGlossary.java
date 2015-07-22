@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 
@@ -113,7 +116,9 @@ public class InMemoryGlossary implements IGlossary {
 	protected ConcurrentHashMap<String, Set<Term>> syns = new ConcurrentHashMap<String, Set<Term>>(); //syn => label, category
 	protected ConcurrentHashMap<String, Set<Term>> reverseSyns = new ConcurrentHashMap<String, Set<Term>>(); //label => syn, catgory
 	protected ConcurrentHashMap<String, Set<String>> synsByCategory = new ConcurrentHashMap<String, Set<String>>(); //category => syn,
-	
+	protected boolean hasIndexedStructure = false; //not thread safe
+	protected ConcurrentSkipListSet<String> indexedStructures = new ConcurrentSkipListSet<String>();
+	protected Pattern indexedStructurePtn = Pattern.compile("(.*)[_-](\\d+|[ivx]+)$", Pattern.CASE_INSENSITIVE);
 	
 	@Override
 	public Set<String> getWordsInCategory(String category) { //returns preferred terms and synonyms
@@ -189,6 +194,7 @@ public class InMemoryGlossary implements IGlossary {
 	@Override
 	public void addEntry(String word, String category) {
 		if(category.compareTo("quantity")==0) category = "count";
+		indexedStructureWord(word, category);
 		word = word.toLowerCase().trim();
 		category = category.toLowerCase().trim();
 		if(!glossary.containsKey(word))
@@ -199,9 +205,26 @@ public class InMemoryGlossary implements IGlossary {
 		reverseGlossary.get(category).add(word);
 	}
 	
+	/**
+	 * 
+	 * @param word e.g., lorum_2, leg_i
+	 * @param category
+	 * 
+	 */
+	private void indexedStructureWord(String word, String category) {
+		if(category.matches(ElementRelationGroup.entityElements)){
+			Matcher m = indexedStructurePtn.matcher(word);
+			if(m.matches()){
+				this.hasIndexedStructure = true;
+				this.indexedStructures.add(m.group(1));
+			}	
+		}
+	}
+
 	@Override
 	public void addSynonym(String syn, String category, String label) {
 		if(category.compareTo("quantity")==0) category = "count";
+		indexedStructureWord(syn, category);
 		syn = syn.toLowerCase().trim();
 		label = label.toLowerCase().trim();
 		category = category.toLowerCase().trim();
@@ -258,4 +281,13 @@ public class InMemoryGlossary implements IGlossary {
 		return phrases;
 	}
 
+	@Override
+	public boolean 	hasIndexedStructure(){
+		return this.hasIndexedStructure;
+	}
+	
+	@Override
+	public ConcurrentSkipListSet<String> getIndexedStructures(){
+		return this.indexedStructures;
+	}
 }

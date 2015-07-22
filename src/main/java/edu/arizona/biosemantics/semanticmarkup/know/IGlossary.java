@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.know;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 
@@ -71,6 +72,9 @@ public interface IGlossary {
 	public HashSet<String> getNonStructurePhrasesWithSpaces();
 
 	public Set<String> getPerferedWordsInCategory(String category); 
+	
+	public boolean 	hasIndexedStructure ();
+	public ConcurrentSkipListSet<String> getIndexedStructures();
 	
 	/*
 	public void addStructure(String structure);

@@ -778,9 +778,19 @@ public class OTOLearner implements ILearner {
 	}
 	
 	private boolean isNoise(String word){
-		if(word.length()==1 || word.matches("times|time|and or|i e|e g|they|their|it|its|others|\\w+selves|\\w+self") || word.matches(units)|| word.matches(".*\\b(and|or)\\b.*")){//TODO: move to configuration
+		//TODO: move to configuration
+		if(word.matches("times|time|and or|i e|e g|they|their|it|its|others|\\w+selves|\\w+self") || word.matches(units)|| word.matches(".*\\b(and|or)\\b.*")){
 			log(LogLevel.DEBUG, word+" is considered a noise and removed");		
 			return true;
+		}
+		
+		if(word.length()==1){
+			if(this.glossary.hasIndexedStructure() && word.matches("[ivx\\d]")){
+				return false;
+			}else{
+				log(LogLevel.DEBUG, word+" is considered a noise and removed");		
+				return true;
+			}
 		}
 		return false;
 	}
