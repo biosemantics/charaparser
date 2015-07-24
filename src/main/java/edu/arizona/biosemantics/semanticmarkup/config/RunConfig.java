@@ -7,8 +7,16 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
+
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
@@ -16,8 +24,10 @@ import com.google.inject.name.Names;
 import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto2.Client;
 import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.CSVGlossary;
+import edu.arizona.biosemantics.common.ling.know.ICorpus;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.lib.CSVCorpus;
+import edu.arizona.biosemantics.common.ling.know.lib.CSVGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.FNAv19Normalizer;
 import edu.arizona.biosemantics.common.log.LogLevel;
@@ -80,32 +90,24 @@ import edu.arizona.biosemantics.common.biology.TaxonGroup;
 public class RunConfig extends BasicConfig {
 
 	// ENVIRONMENTAL
-	private String databaseHost = "localhost";
-	private String databasePort = "3306";
-	private String databaseName = "local";
-	private String databaseUser = "termsuser";
-	private String databasePassword = "termspassword";
+	private String databaseHost = Configuration.databaseHost;
+	private String databasePort = Configuration.databasePort;
+	private String databaseName = Configuration.databaseName;
+	private String databaseUser = Configuration.databaseUser;
+	private String databasePassword = Configuration.databasePassword;
 	private String databaseTablePrefix = "myrun";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
-	private String otoLiteReviewFile = "TermReview.txt";
-	//private String otoLiteTermReviewURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
-	//private String otoLiteClientURL = "http://biosemantics.arizona.edu:8080/OTOLite/";
-	//for general use
-	//http://etc-dev.cs.umb.edu/etcsite/
-	private String otoLiteTermReviewURL = "http://etc.cs.umb.edu/otolite/";
-	private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/etcsite/";
-	//for local test
-	//private String otoLiteTermReviewURL = "http://etc-dev.cs.umb.edu/oto2/";
-	//private String otoLiteClientURL = "http://etc-dev.cs.umb.edu/oto2/";
+	private String oto2ReviewFile = "TermReview.txt";
+	private String oto2TermReviewURL = Configuration.oto2Url;
+	private String oto2ClientURL = Configuration.oto2Url;
 
 	private String otoClientUrl = Configuration.otoUrl;
-	private String perlDirectory = "src/main/perl/edu/arizona/biosemantics/semanticmarkup/markupelement/description/ling/learn/lib/perl" ;
-	private String workspaceDirectory = "workspace";
+	private String perlDirectory = Configuration.perlSourceDirectory;
+	private String workspaceDirectory = Configuration.workspaceDirectory;
 	private String glossaryFile = "edu/arizona/biosemantics/semanticmarkup/know/glossaries/fnaglossaryfixed.csv";
 	private String csvCorpusPath = "edu/arizona/biosemantics/semanticmarkup/know/corpora/brown.csv";
-	private String wordNetSource = "wordnet/wn31/dict";
 	//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
-	private String ontologiesDirectory = "ontologies";
+	private String ontologiesDirectory = Configuration.ontologiesDirectory;
 
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
 	private List<InputStream> descriptionReaderBindingsList = createIOXMLBindingsList();
@@ -139,9 +141,9 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDistributionMarkupCreator> distributionMarkupCreator = DistributionMarkupCreator.class;
 	private Class<? extends IPhenologyMarkupCreator> phenologyMarkupCreator = PhenologyMarkupCreator.class;
 	
-	private boolean markupDescriptionTreatmentTransformerParallelProcessing = false;
-	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = 3; //30
-	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = 3;
+	private boolean markupDescriptionTreatmentTransformerParallelProcessing = Configuration.threadingActive;
+	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = Configuration.descriptionThreads; //30
+	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = Configuration.sentenceThreads;
 	private Class<? extends ITerminologyLearner> terminologyLearner = PerlTerminologyLearner.class;
 	private Class<? extends INormalizer> normalizer = FNAv19Normalizer.class;
 	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
@@ -151,13 +153,12 @@ public class RunConfig extends BasicConfig {
 	// MISC
 	//required for bioportal submission of oto lite
 	private String sourceOfDescriptions = "";
-	private String etcUser = "";
-	private String bioportalAPIKey = "";
-	private String bioportalUserId = "";
+	private String user = "";
 	//
 	
 	public RunConfig() throws IOException {
 		super();
+		this.setWorkspaceDirectory(Configuration.workspaceDirectory);
 	}
 
 	@Override 
@@ -197,7 +198,7 @@ public class RunConfig extends BasicConfig {
 			bind(IPhenologyMarkupCreator.class).to(phenologyMarkupCreator).in(Singleton.class);
 			bind(IPhenologyTransformer.class).to(PhenologyTransformer.class).in(Singleton.class);
 
-			bind(String.class).annotatedWith(Names.named("OntologyMappingTreatmentTransformer_OntologyDirectory")).toInstance(ontologiesDirectory);
+			bind(String.class).annotatedWith(Names.named("OntologiesDirectory")).toInstance(ontologiesDirectory);
 			
 			//IO
 			bind(String.class).annotatedWith(Names.named("InputDirectory")).toInstance(inputDirectory);
@@ -231,23 +232,39 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance(databaseName);
 			bind(String.class).annotatedWith(Names.named("DatabaseUser")).toInstance(databaseUser);
 			bind(String.class).annotatedWith(Names.named("DatabasePassword")).toInstance(databasePassword);
-			bind(String.class).annotatedWith(Names.named("OTOLiteReviewFile")).toInstance(otoLiteReviewFile);
-			bind(String.class).annotatedWith(Names.named("OTOLiteTermReviewURL")).toInstance(otoLiteTermReviewURL);
-			bind(String.class).annotatedWith(Names.named("OTOLiteClient_Url")).toInstance(otoLiteClientURL);
-			bind(OTOLiteClient.class).to(Client.class);
+			bind(String.class).annotatedWith(Names.named("OTO2ReviewFile")).toInstance(oto2ReviewFile);
+			bind(String.class).annotatedWith(Names.named("OTO2TermReviewURL")).toInstance(oto2TermReviewURL);
+			bind(String.class).annotatedWith(Names.named("OTO2Client_Url")).toInstance(oto2ClientURL);
+			bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
+				private Client instance;
+				@Override
+				public OTOLiteClient get() {
+					if(instance == null)
+						instance = new Client(oto2ClientURL);
+					return instance;
+				}
+			}).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 			bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
-			bind(InputStream.class).annotatedWith(Names.named("CSVCorpus")).toInstance(inputStreamCreator.readStreamFromString(csvCorpusPath));
-			bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance(wordNetSource);
-			//resources//wordNet2.1//dict//  resources//wordNet3.1//dict//
-			bind(String.class).annotatedWith(Names.named("CSVGlossary_FilePath")).toInstance(glossaryFile); 
+			
+			 bind(ICorpus.class).toProvider(new Provider<ICorpus>() {
+					private ICorpus corpus;
+					@Override
+					public ICorpus get() {
+						if(corpus == null)
+							try {
+								corpus = new CSVCorpus(inputStreamCreator.readStreamFromString(csvCorpusPath));
+							} catch(IOException e) {
+								log(LogLevel.ERROR, "Could not load csv corpus", e);
+							}
+						return corpus;
+					}
+				  }).in(Singleton.class);
 			
 			//MISC
 			bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
 			bind(String.class).annotatedWith(Names.named("SourceOfDescriptions")).toInstance(sourceOfDescriptions);
-			bind(String.class).annotatedWith(Names.named("EtcUser")).toInstance(etcUser);
-			bind(String.class).annotatedWith(Names.named("BioportalAPIKey")).toInstance(bioportalAPIKey);
-			bind(String.class).annotatedWith(Names.named("BioportalUserId")).toInstance(bioportalUserId);
+			bind(String.class).annotatedWith(Names.named("User")).toInstance(user);
 		
 		} catch(IOException | JAXBException e) {
 			log(LogLevel.ERROR, "Exception loading configuration", e);
@@ -523,14 +540,6 @@ public class RunConfig extends BasicConfig {
 		this.terminologyLearner = terminologyLearner;
 	}
 
-	public String getOtoClientUrl() {
-		return otoClientUrl;
-	}
-
-	public void setOtoClientUrl(String otoClientUrl) {
-		this.otoClientUrl = otoClientUrl;
-	}
-
 	public String getDatabaseHost() {
 		return databaseHost;
 	}
@@ -555,28 +564,28 @@ public class RunConfig extends BasicConfig {
 		this.taxonGroup = taxonGroup;
 	}
 
-	public String getOtoLiteReviewFile() {
-		return otoLiteReviewFile;
+	public String getOto2ReviewFile() {
+		return oto2ReviewFile;
 	}
 
-	public void setOtoLiteReviewFile(String otoLiteReviewFile) {
-		this.otoLiteReviewFile = otoLiteReviewFile;
+	public void setOto2ReviewFile(String oto2ReviewFile) {
+		this.oto2ReviewFile = oto2ReviewFile;
 	}
 
-	public String getOtoLiteTermReviewURL() {
-		return otoLiteTermReviewURL;
+	public String getOto2TermReviewURL() {
+		return oto2TermReviewURL;
 	}
 
-	public void setOtoLiteTermReviewURL(String otoLiteTermReviewURL) {
-		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
+	public void setOto2TermReviewURL(String oto2TermReviewURL) {
+		this.oto2TermReviewURL = oto2TermReviewURL;
 	}
 
-	public String getOtoLiteClientURL() {
-		return otoLiteClientURL;
+	public String getOto2ClientURL() {
+		return oto2ClientURL;
 	}
 
-	public void setOtoLiteClientURL(String otoLiteClientURL) {
-		this.otoLiteClientURL = otoLiteClientURL;
+	public void setOto2ClientURL(String oto2ClientURL) {
+		this.oto2ClientURL = oto2ClientURL;
 	}
 
 	public String getRunRootDirectory() {
@@ -656,8 +665,49 @@ public class RunConfig extends BasicConfig {
 		this.runRootDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix;
 		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
 		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
+		Logger rootLogger = Logger.getRootLogger();
+		//rootLogger.getLoggerRepository().resetConfiguration(); //don't reset to keep log4j.properties configured logger for etc-wide logging
+		addDebugErrorLoggers(rootLogger, this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "debug.log", 
+				this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "error.log");
 	}
 
+	protected void addDebugErrorLoggers(Logger rootLogger, String debugLog, String errorLog) {
+		PatternLayout layout = new PatternLayout();
+		layout.setConversionPattern("%d [%t] %-5p %c:%L - %m%n");
+		
+		RollingFileAppender debugFileAppender = new RollingFileAppender();
+		debugFileAppender.setEncoding("UTF-8");
+		debugFileAppender.setFile(debugLog);
+		debugFileAppender.setMaxFileSize("100MB");
+		debugFileAppender.setAppend(false);
+		debugFileAppender.setMaxBackupIndex(100);
+		debugFileAppender.setLayout(layout);
+		debugFileAppender.setThreshold(Level.DEBUG);
+		debugFileAppender.activateOptions();
+		
+		RollingFileAppender errorFileAppender = new RollingFileAppender();
+		errorFileAppender.setEncoding("UTF-8");
+		errorFileAppender.setFile(errorLog);
+		errorFileAppender.setMaxFileSize("100MB");
+		errorFileAppender.setAppend(false);
+		errorFileAppender.setMaxBackupIndex(100);
+		errorFileAppender.setLayout(layout);
+		errorFileAppender.setThreshold(Level.ERROR);
+		errorFileAppender.activateOptions();
+		
+		ConsoleAppender consoleErrorAppender = new ConsoleAppender();
+		consoleErrorAppender.setTarget("System.out");
+		consoleErrorAppender.setLayout(layout);
+		consoleErrorAppender.setThreshold(Level.ERROR);
+		consoleErrorAppender.activateOptions();
+
+		rootLogger.setLevel(Level.DEBUG);
+		rootLogger.addAppender(debugFileAppender);
+		rootLogger.addAppender(errorFileAppender);
+		rootLogger.addAppender(consoleErrorAppender);
+	}
+
+	
 	public String getWorkspaceDirectory() {
 		return workspaceDirectory;
 	}
@@ -670,28 +720,8 @@ public class RunConfig extends BasicConfig {
 		this.sourceOfDescriptions = sourceOfDescriptions;
 	}
 
-	public String getEtcUser() {
-		return etcUser;
-	}
-
-	public void setEtcUser(String etcUser) {
-		this.etcUser = etcUser;
-	}
-
-	public String getBioportalAPIKey() {
-		return bioportalAPIKey;
-	}
-
-	public void setBioportalAPIKey(String bioportalAPIKey) {
-		this.bioportalAPIKey = bioportalAPIKey;
-	}
-
-	public String getBioportalUserId() {
-		return bioportalUserId;
-	}
-
-	public void setBioportalUserId(String bioportalUserId) {
-		this.bioportalUserId = bioportalUserId;
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 	public boolean isTermCategorizationRequired() {
@@ -751,21 +781,8 @@ public class RunConfig extends BasicConfig {
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));
 		return result;
 	}
-
-	public String getWordNetSource() {
-		return wordNetSource;
-	}
-
-	public void setWordNetSource(String wordNetSource) {
-		this.wordNetSource = wordNetSource;
-	}
-
-	public void setOntologiesDirectory(String ontologiesDirectory) {
-		this.ontologiesDirectory = ontologiesDirectory;
-	}
-
+	
 	public void setUseEmptyGlossary(boolean value) {
 		this.useEmptyGlossary = value;
-	}	
-	
+	}		
 }

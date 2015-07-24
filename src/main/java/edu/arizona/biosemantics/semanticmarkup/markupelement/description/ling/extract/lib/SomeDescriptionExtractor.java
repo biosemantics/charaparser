@@ -25,12 +25,10 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
@@ -38,6 +36,9 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.common.ontology.search.TaxonGroupOntology;
@@ -93,18 +94,18 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			IFirstChunkProcessor firstChunkProcessor, 
 			ILastChunkProcessor lastChunkProcessor, ICharacterKnowledgeBase characterKnowledgeBase,
 			@Named("PossessWords") Set<String> possessWords, OntologyFactory ontologyFactory, @Named("TaxonGroup")TaxonGroup taxonGroup,
-			@Named("OntologyMappingTreatmentTransformer_OntologyDirectory")String ontologyDirectory, @Named("OntologyFile") String ontologyFile, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase) {
+			@Named("OntologiesDirectory")String ontologiesDirectory, @Named("OntologyFile") String ontologyFile, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase) {
 		this.glossary = glossary;
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
 		this.characterKnowledgeBase = characterKnowledgeBase;
-		OntologyFactory of = new OntologyFactory(ontologyDirectory);
+		OntologyFactory of = new OntologyFactory(ontologiesDirectory);
 		
 		Set<Ontology> ontologyEnums  = TaxonGroupPartOfOntology.getOntologies(taxonGroup);
 		Set<IOntology> ontologies = new HashSet<IOntology>();
 		for(Ontology ontologyEnum : ontologyEnums) {
-			IOntology ontology = of.createOntology(ontologyEnum.toString().toLowerCase()+".owl");
+			IOntology ontology = of.createOntology(ontologyEnum.toString().toLowerCase() + ".owl");
 			if(ontology == null)
 				ontology = of.createOntology(ontologyFile);
 		}

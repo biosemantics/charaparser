@@ -14,39 +14,26 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-
-
-
-
-
-
-
-
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-
-
-
-
-
-
-
-
-
-
 //import edu.arizona.biosemantics.oto.lite.beans.Term;
-import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+
+
+
+
+
+
+
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.Term;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.AdjectiveReplacementForNoun;
@@ -803,7 +790,7 @@ public abstract class Normalizer implements INormalizer {
 			//organStateKnowledgeBase.addState(replacement);
 			HashSet<Term> t = new HashSet<Term>();
 			t.add(new Term(replacement.replaceAll("_c_", " "), "coloration"));
-			characterKnowledgeBase.addCharacterStateToName(replacement, new Match (t));
+			characterKnowledgeBase.addCharacterStateToName(replacement, new Match(t));
 			text = text.replaceFirst(toReplace, replacement);
 			m = p.matcher(text);
 		}

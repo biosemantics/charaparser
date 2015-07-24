@@ -12,7 +12,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.InMemoryGlossary;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.InMemoryGlossary;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionWriter;
@@ -216,6 +216,6 @@ public class IPlantLearnMain extends CLIMain {
 		config.setGlossary(InMemoryGlossary.class);
 		config.setTerminologyLearner(PerlTerminologyLearner.class);
 		config.setDescriptionWriter(MOXyBinderDescriptionWriter.class);
-		config.setOtoLiteReviewFile("nextStep.html");
+		config.setOto2ReviewFile("nextStep.html");
 	}
 }

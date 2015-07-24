@@ -72,11 +72,6 @@ public abstract class AbstractRun implements IRun {
 		config.append(timeString + "\n");
 		log(LogLevel.INFO, timeString);
 		
-		BufferedWriter bwSetup = new BufferedWriter(new FileWriter(runOutDirectory + File.separator + "config.txt"));
-		bwSetup.append(config.toString());
-		bwSetup.flush();
-		bwSetup.close();
-		
 		connectionPool.shutdown();
 	}
 

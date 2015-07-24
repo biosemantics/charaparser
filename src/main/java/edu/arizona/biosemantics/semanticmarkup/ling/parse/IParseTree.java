@@ -3,8 +3,8 @@ package edu.arizona.biosemantics.semanticmarkup.ling.parse;
 import java.util.List;
 import java.util.Set;
 
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POS;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POSedToken;
+import edu.arizona.biosemantics.common.ling.pos.POS;
+import edu.arizona.biosemantics.common.ling.pos.POSedToken;
 
 
 /**

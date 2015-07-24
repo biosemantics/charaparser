@@ -35,16 +35,16 @@ import edu.arizona.biosemantics.oto.model.lite.Download;
 import edu.arizona.biosemantics.oto.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.Term;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.Term;
+import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
@@ -78,8 +78,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected String databasePrefix;
 	protected IGlossary glossary;
 	protected TaxonGroup taxonGroup;
-	protected OTOLiteClient otoLiteClient;
-	protected String otoLiteTermReviewURL;
+	protected OTOLiteClient oto2Client;
+	protected String oto2TermReviewURL;
 	protected Set<String> selectedSources;
 	private String glossaryTable;
 	private boolean termCategorizationRequired;
@@ -120,8 +120,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
 			OTOClient otoClient, 
-			OTOLiteClient otoLiteClient, 
-			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
+			OTOLiteClient oto2Client, 
+			@Named("OTO2TermReviewURL") String oto2TermReviewURL,
 			@Named("DatabasePrefix")String databasePrefix, 
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
@@ -129,7 +129,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("GlossaryTable")String glossaryTable,
 			@Named("termCategorizationRequired")boolean termCategorizationRequired,
 			IInflector inflector, 
-			@Named("EtcUser")String etcUser, 
+			@Named("User")String etcUser, 
 			@Named("UseEmptyGlossary") boolean useEmptyGlossary, 
 			ConnectionPool connectionPool) throws ClassNotFoundException, SQLException {
 		super(version, parallelProcessing);
@@ -144,8 +144,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.descriptionExtractorRunMaximum = descriptionExtractorRunMaximum;
 		this.sentenceChunkerRunMaximum = sentenceChunkerRunMaximum;
 		this.otoClient = otoClient;
-		this.otoLiteClient = otoLiteClient;
-		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
+		this.oto2Client = oto2Client;
+		this.oto2TermReviewURL = oto2TermReviewURL;
 		this.databasePrefix = databasePrefix;
 		this.glossary = glossary;
 		this.taxonGroup = taxonGroup;
@@ -204,12 +204,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		 
 		if(uploadResult != null) {
 			try {
-				otoLiteClient.open();
-				Future<Download> futureDownload = otoLiteClient.getDownload(uploadResult);
+				oto2Client.open();
+				Future<Download> futureDownload = oto2Client.getDownload(uploadResult);
 				download = futureDownload.get();
-				otoLiteClient.close();
+				oto2Client.close();
 			} catch(InterruptedException | ExecutionException e) {
-				otoLiteClient.close();
+				oto2Client.close();
 				this.log(LogLevel.ERROR, "Problem downloading oto lite categorizations for upload " + uploadResult.getUploadId(), e);
 				throw new TransformationException();
 			}

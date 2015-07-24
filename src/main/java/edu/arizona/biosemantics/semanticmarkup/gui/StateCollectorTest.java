@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Display;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.IOrganStateKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.POS;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.google.inject.Inject;
 
-import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;

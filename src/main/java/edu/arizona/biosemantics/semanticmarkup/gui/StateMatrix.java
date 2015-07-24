@@ -14,7 +14,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.IOrganStateKnowledgeBase;
 import edu.uci.ics.jung.algorithms.cluster.VoltageClusterer;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseMultigraph;

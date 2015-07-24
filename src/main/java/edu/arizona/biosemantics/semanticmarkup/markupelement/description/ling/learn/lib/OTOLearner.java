@@ -19,13 +19,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.oto.client.WordRole;
 import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto.OTOClient;
@@ -41,12 +45,7 @@ import edu.arizona.biosemantics.oto.model.lite.Upload;
 import edu.arizona.biosemantics.oto.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
-import edu.arizona.biosemantics.common.biology.TaxonGroup;
-import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
@@ -68,15 +67,13 @@ public class OTOLearner implements ILearner {
 	private IPOSKnowledgeBase posKnowledgeBase;
 	private TaxonGroup taxonGroup;
 	private IGlossary glossary;
-	private OTOLiteClient otoLiteClient;
-	private String otoLiteTermReviewURL;
-	private String otoLiteReviewFile;
+	private OTOLiteClient oto2Client;
+	private String oto2TermReviewURL;
+	private String oto2ReviewFile;
 	private String runRootDirectory;
 	private IDescriptionReader descriptionReader;
 	private String inputDirectory;
-	private String bioportalAPIKey;
-	private String bioportalUserId;
-	private String etcUser;
+	private String user;
 	private String sourceOfDescriptions;
 	private String units;
 	private boolean useOtoCommuntiyDownload;
@@ -97,18 +94,16 @@ public class OTOLearner implements ILearner {
 			@Named("DescriptionReader_InputDirectory")String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			OTOClient otoClient, 
-			OTOLiteClient otoLiteClient,
-			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
-			@Named("OTOLiteReviewFile") String otoLiteReviewFile,
+			OTOLiteClient oto2Client,
+			@Named("OTO2TermReviewURL") String oto2TermReviewURL,
+			@Named("OTO2ReviewFile") String oto2ReviewFile,
 			@Named("DatabasePrefix")String databasePrefix, 
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			IGlossary glossary, 
 			@Named("GlossaryTable")String glossaryTable, 
 			@Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, 
 			@Named("Run_RootDirectory")String runRootDirectory,
-			@Named("BioportalAPIKey")String bioportalAPIKey, 
-			@Named("BioportalUserId")String bioportalUserId, 
-			@Named("EtcUser")String etcUser, 
+			@Named("User")String etcUser, 
 			@Named("SourceOfDescriptions")String sourceOfDescriptions,
 			@Named("UseOtoCommunityDownload")boolean useOtoCommuntiyDownload,
 			@Named("Units")String units,
@@ -119,18 +114,16 @@ public class OTOLearner implements ILearner {
 		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
 		this.otoClient = otoClient;
-		this.otoLiteClient = otoLiteClient;
-		this.otoLiteTermReviewURL = otoLiteTermReviewURL;
-		this.otoLiteReviewFile = otoLiteReviewFile;
+		this.oto2Client = oto2Client;
+		this.oto2TermReviewURL = oto2TermReviewURL;
+		this.oto2ReviewFile = oto2ReviewFile;
 		this.taxonGroup = taxonGroup;
 		this.glossary = glossary;
 		this.databasePrefix = databasePrefix;
 		this.glossaryTable = glossaryTable;
 		this.posKnowledgeBase = posKnowledgeBase;
 		this.runRootDirectory = runRootDirectory;
-		this.bioportalAPIKey = bioportalAPIKey;
-		this.bioportalUserId = bioportalUserId;
-		this.etcUser = etcUser;
+		this.user = user;
 		this.sourceOfDescriptions = sourceOfDescriptions;
 		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
 		this.units = units;
@@ -173,7 +166,7 @@ public class OTOLearner implements ILearner {
 		//glossary is needed to prematch phrases
 		initGlossary(glossaryDownload);
 		terminologyLearner.learn(descriptionsFileList.getDescriptionsFiles(), glossaryTable);
-		UploadResult uploadResult = sendLearnedResultToOtoLite();
+		UploadResult uploadResult = sendLearnedResultToOto2();
 		storeUploadToDB(uploadResult, glossaryDownload);
 		storeReviewToFile(uploadResult);
 	}
@@ -188,11 +181,11 @@ public class OTOLearner implements ILearner {
 		fw.write("[1]: " + this.otoLiteTermReviewURL + "?uploadID=" + uploadId);  
 		fw.close();*/
 		
-		FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
+		FileWriter fw = new FileWriter(runRootDirectory + File.separator + oto2ReviewFile);  
 		fw.write("<!DOCTYPE html>");
 		fw.write("<html>");
 		fw.write("<head>");
-		String link = this.otoLiteTermReviewURL + "?id=" + uploadResult.getUploadId() + "&secret=" +
+		String link = this.oto2TermReviewURL + "?id=" + uploadResult.getUploadId() + "&secret=" +
 				uploadResult.getSecret() + "&origin=iplant";
 		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + link + "\" charset=\"UTF-8\">");
 		fw.write("<title>Term categorization</title>");
@@ -224,18 +217,18 @@ public class OTOLearner implements ILearner {
 		}
 	}
 
-	private UploadResult sendLearnedResultToOtoLite() throws InterruptedException, ExecutionException {
-		otoLiteClient.open();
-		Future<UploadResult> futureUploadResult = otoLiteClient.putUpload(readUpload());
+	private UploadResult sendLearnedResultToOto2() throws InterruptedException, ExecutionException {
+		oto2Client.open();
+		Future<UploadResult> futureUploadResult = oto2Client.putUpload(readUpload());
 		UploadResult uploadResult = futureUploadResult.get();
-		otoLiteClient.close();
+		oto2Client.close();
 		return uploadResult;
 	}
 
 	private Download getCommunityDownload(GlossaryDownload glossaryDownload) {
 		log(LogLevel.INFO, "Will download oto community decisions to add additionally to glossary used");
-		otoLiteClient.open();
-		Future<Download> futureCommunityDownload = otoLiteClient.getCommunityDownload(taxonGroup.getDisplayName());
+		oto2Client.open();
+		Future<Download> futureCommunityDownload = oto2Client.getCommunityDownload(taxonGroup.getDisplayName());
 		
 		boolean downloadSuccessful = false;
 		Download communityDownload = null;
@@ -246,7 +239,7 @@ public class OTOLearner implements ILearner {
 			log(LogLevel.ERROR, "Couldn't download glossary will fallback to locally stored glossary", t);
 		}
 
-		otoLiteClient.close();
+		oto2Client.close();
 		if(downloadSuccessful) 
 			storeToLocalCommunityDownload(communityDownload, taxonGroup);
 		else
@@ -324,7 +317,7 @@ public class OTOLearner implements ILearner {
 	 */
 	private void initGlossary(GlossaryDownload glossaryDownload) {
 		//add the syn set of the glossary
-		HashSet<edu.arizona.biosemantics.semanticmarkup.know.lib.Term> gsyns = new HashSet<edu.arizona.biosemantics.semanticmarkup.know.lib.Term>();
+		HashSet<edu.arizona.biosemantics.common.ling.know.Term> gsyns = new HashSet<edu.arizona.biosemantics.common.ling.know.Term>();
 		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
 			termSyn.setTerm(termSyn.getTerm().replaceAll("_+", "_")); //multiple _ cause inflector to throw exception.
 			termSyn.setSynonym(termSyn.getSynonym().replaceAll("_+", "_"));
@@ -352,17 +345,17 @@ public class OTOLearner implements ILearner {
 				}
 				glossary.addSynonym(syns, termSyn.getCategory(), terms);
 				glossary.addSynonym(synp, termSyn.getCategory(), termp);
-				gsyns.add(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(syns, termSyn.getCategory()));
-				gsyns.add(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(synp, termSyn.getCategory()));
+				gsyns.add(new edu.arizona.biosemantics.common.ling.know.Term(syns, termSyn.getCategory()));
+				gsyns.add(new edu.arizona.biosemantics.common.ling.know.Term(synp, termSyn.getCategory()));
 			}else{
 				glossary.addSynonym(termSyn.getSynonym(), termSyn.getCategory(), termSyn.getTerm());
-				gsyns.add(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(termSyn.getSynonym(), termSyn.getCategory()));
+				gsyns.add(new edu.arizona.biosemantics.common.ling.know.Term(termSyn.getSynonym(), termSyn.getCategory()));
 			}
 		}
 
 		//the glossary, excluding gsyns
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-			if(!gsyns.contains(new edu.arizona.biosemantics.semanticmarkup.know.lib.Term(termCategory.getTerm(), termCategory.getCategory())))
+			if(!gsyns.contains(new edu.arizona.biosemantics.common.ling.know.Term(termCategory.getTerm(), termCategory.getCategory())))
 				glossary.addEntry(termCategory.getTerm(), termCategory.getCategory()); 
 		}
 		
@@ -467,9 +460,7 @@ public class OTOLearner implements ILearner {
 
 	private Upload readUpload() {
 		Upload upload = new Upload();
-		upload.setBioportalAPIKey(bioportalAPIKey);
-		upload.setBioportalUserId(bioportalUserId);
-		upload.setUser(etcUser);
+		upload.setUser(user);
 		upload.setSource(sourceOfDescriptions);
 		
 		List<String> taxonNames = getTaxonNames();
@@ -615,7 +606,7 @@ public class OTOLearner implements ILearner {
 			//before structure terms are set, partOfPrepPhrases can not be reliability determined
 			//getMostLikelyPOS does stemming, while isVerb does not.
 			if(isNoise(word)) continue;
-			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
+			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.common.ling.pos.POS.VB 
 				|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				//if(Utilities.mustBeAdv(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/){
 					noneqwords.add(word);
@@ -764,7 +755,7 @@ public class OTOLearner implements ILearner {
 		words = descriptorTerms4Curation();
 		for(String word: words){
 			if(isNoise(word)) continue;
-			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
+			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.common.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
 				log(LogLevel.DEBUG, word+"[non-ed-ending verb/adv] is considered an non-eq term and removed");
@@ -812,7 +803,7 @@ public class OTOLearner implements ILearner {
 		
 		for(String word: words){
 			if(isNoise(word)) continue;
-			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.semanticmarkup.ling.pos.POS.VB 
+			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.common.ling.pos.POS.VB 
 					|| posKnowledgeBase.isAdverb(word) /*|| Utilities.partOfPrepPhrase(word, this.conn, prefix)*/)){
 				noneqwords.add(word);
 				log(LogLevel.DEBUG, word+"[non-ed-ending verb/adv] is considered an non-eq term and removed");

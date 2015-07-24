@@ -1,6 +1,6 @@
-package edu.arizona.biosemantics.semanticmarkup.know;
+package edu.arizona.biosemantics.semanticmarkup.ling.know;
 
-import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.Match;
 
 /**
  * An ICharacterKnowledgeBase allows the management and lookup of character names for character states

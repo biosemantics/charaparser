@@ -11,8 +11,8 @@ import com.google.inject.name.Named;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto.OTOClient;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
@@ -48,8 +48,8 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
 			OTOClient otoClient, 
-			OTOLiteClient otoLiteClient, 
-			@Named("OTOLiteTermReviewURL") String otoLiteTermReviewURL,
+			OTOLiteClient oto2Client, 
+			@Named("OTO2TermReviewURL") String oto2TermReviewURL,
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,
 			@Named("DatabaseName")String databaseName,
@@ -64,7 +64,7 @@ public class MarkupDescriptionFromDBForEvaluationTransformer extends MarkupDescr
 		super(version, wordTokenizer, parser, chunkerChain, posTagger, descriptionExtractor,
 				normalizer, terminologyLearner, parallelProcessing,
 				descriptionExtractorRunMaximum, sentenceChunkerRunMaximum, otoClient,
-				otoLiteClient, otoLiteTermReviewURL, databaseHost, databasePort,
+				oto2Client, oto2TermReviewURL, databaseHost, databasePort,
 				databaseName, databaseUser, databasePassword, databasePrefix,
 				taxonGroup, glossary, selectedSources, glossaryTable);
 		this.glossaryTable = glossaryTable;

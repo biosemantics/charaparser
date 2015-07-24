@@ -17,7 +17,7 @@ public aspect StringifyInjection extends AbstractStringifyInjection {
 	//declare parents : edu.arizona.biosemantics.semanticmarkup.model.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.gui.* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.io..* implements IPrintable;
-	declare parents : edu.arizona.biosemantics.semanticmarkup.know..* implements IPrintable;
+	declare parents : edu.arizona.biosemantics.semanticmarkup.ling.know..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.ling..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.markup..* implements IPrintable;
 	declare parents : edu.arizona.biosemantics.semanticmarkup.run..* implements IPrintable;

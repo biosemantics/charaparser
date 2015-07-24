@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.arizona.biosemantics.semanticmarkup.know.lib;
+package edu.arizona.biosemantics.semanticmarkup.ling.know.lib;
 
 import java.util.ArrayList;
 

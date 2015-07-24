@@ -50,7 +50,7 @@ public class IPlantMarkupRun extends AbstractRun {
 			}
 			
 			sql = "SELECT * FROM datasetprefixes WHERE prefix = ? AND oto_uploadid != -1";
-			try(PreparedStatement preparedStatement = connectio.prepareStatement(sql)) {
+			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.setString(1, databasePrefix);
 				preparedStatement.execute();
 				try(ResultSet resultSet = preparedStatement.getResultSet()) {

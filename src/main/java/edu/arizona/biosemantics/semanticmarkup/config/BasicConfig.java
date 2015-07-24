@@ -15,21 +15,15 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.io.InputStreamCreator;
-import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.CSVCorpus;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedCharacterKnowledgeBase;
 //import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.LearnedPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.IChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.CharaparserChunkerChain;
@@ -63,22 +57,29 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.LearnedCharacterKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.LearnedPOSKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.ICorpus;
+import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.lib.CSVCorpus;
+import edu.arizona.biosemantics.common.ling.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.IPhraseMarker;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.PhraseMarker;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParserWrapper;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
+import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
 import edu.arizona.biosemantics.semanticmarkup.ling.pos.lib.OrganCharacterPOSTagger;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IStanfordParserTokenTransformer;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenCombiner;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.SomeInflector;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WhitespaceTokenCombiner;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WhitespaceTokenizer;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.WordStanfordParserTokenTransformer;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.transform.IStanfordParserTokenTransformer;
+import edu.arizona.biosemantics.common.ling.transform.ITokenCombiner;
+import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.common.ling.transform.lib.SomeInflector;
+import edu.arizona.biosemantics.common.ling.transform.lib.WhitespaceTokenCombiner;
+import edu.arizona.biosemantics.common.ling.transform.lib.WhitespaceTokenizer;
+import edu.arizona.biosemantics.common.ling.transform.lib.WordStanfordParserTokenTransformer;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.Binding;
@@ -169,13 +170,19 @@ public class BasicConfig extends AbstractModule {
 					  new TypeLiteral<HashMap<File, Binding>>() {}).in(Singleton.class);
 			  
 			  // PROCESSING
+			  final WordNetPOSKnowledgeBase wordNetPOSKnowledgeBase = new WordNetPOSKnowledgeBase(Configuration.wordNetSourceDirectory, false);
+			  final SingularPluralProvider singularPluralProvider = new SingularPluralProvider();
 			  bind(IPhraseMarker.class).to(PhraseMarker.class).in(Singleton.class);
-			  bind(ICorpus.class).to(CSVCorpus.class).in(Singleton.class);
-			  bind(Boolean.class).annotatedWith(Names.named("WordNetAPI_LoadInRAM")).toInstance(false);
-			  bind(IInflector.class).to(SomeInflector.class).in(Singleton.class);
+			  bind(IInflector.class).toProvider(new Provider<IInflector>() {
+				@Override
+				public IInflector get() {
+					return new SomeInflector(wordNetPOSKnowledgeBase, singularPluralProvider.getSingulars(), singularPluralProvider.getPlurals());
+				}
+			  }).in(Singleton.class);
 			  bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);
-			  //bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);;
-			  bind(IPOSKnowledgeBase.class).to(WordNetPOSKnowledgeBase.class).in(Singleton.class);
+			  //bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);
+			  bind(IPOSKnowledgeBase.class).toInstance(wordNetPOSKnowledgeBase);
+			  bind(String.class).annotatedWith(Names.named("WordNetAPI_Sourcefile")).toInstance(Configuration.wordNetSourceDirectory);
 			  bind(IPOSKnowledgeBase.class).annotatedWith(Names.named("LearnedPOSKnowledgeBase")).to(LearnedPOSKnowledgeBase.class).in(Singleton.class);
 			  bind(ITokenizer.class).annotatedWith(Names.named("WordTokenizer")).to(WhitespaceTokenizer.class);
 			  bind(ITokenCombiner.class).annotatedWith(Names.named("WordCombiner")).to(WhitespaceTokenCombiner.class);
@@ -326,7 +333,6 @@ public class BasicConfig extends AbstractModule {
 			  bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("EqualCharacters")).toInstance(getEqualCharacters());
 			  bind(String.class).annotatedWith(Names.named("NumberPattern")).toInstance(
 								"[()\\[\\]\\-\\–\\d\\.×x\\+°²½/¼\\*/%\\?]*?[½/¼\\d][()\\[\\]\\-\\–\\d\\.,?×x\\+°²½/¼\\*/%\\?]{2,}(?![a-z{}])");
-			  SingularPluralProvider singularPluralProvider = new SingularPluralProvider();
 			  bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("Singulars")).toInstance(singularPluralProvider.getSingulars());
 			  bind(new TypeLiteral<HashMap<String, String>>(){}).annotatedWith(Names.named("Plurals")).toInstance(singularPluralProvider.getPlurals());
 			  bind(String.class).annotatedWith(Names.named("LyAdverbpattern")).toInstance("[a-z]{3,}ly");

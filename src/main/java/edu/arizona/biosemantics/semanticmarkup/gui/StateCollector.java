@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Display;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 
 

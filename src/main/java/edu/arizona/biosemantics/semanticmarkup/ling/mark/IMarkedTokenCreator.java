@@ -1,6 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.mark;
 
-import edu.arizona.biosemantics.semanticmarkup.ling.Token;
+import edu.arizona.biosemantics.common.ling.Token;
 
 /**
  * IMarkedTokenCreator create marked tokens

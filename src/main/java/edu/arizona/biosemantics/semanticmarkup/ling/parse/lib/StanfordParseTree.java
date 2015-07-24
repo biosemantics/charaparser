@@ -8,10 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import edu.arizona.biosemantics.common.ling.pos.POS;
+import edu.arizona.biosemantics.common.ling.pos.POSedToken;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POS;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POSedToken;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.trees.Tree;
