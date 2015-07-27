@@ -62,6 +62,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.LearnedCharacterKno
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.LearnedPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.ICorpus;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.SingularPluralProvider;
 import edu.arizona.biosemantics.common.ling.know.lib.CSVCorpus;
 import edu.arizona.biosemantics.common.ling.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.IPhraseMarker;
