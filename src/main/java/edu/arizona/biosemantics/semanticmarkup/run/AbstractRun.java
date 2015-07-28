@@ -44,35 +44,39 @@ public abstract class AbstractRun implements IRun {
 	}
 	
 	public void run() throws Throwable {	
-		StringBuilder config = new StringBuilder();
-		appendConfigFile(config);
-				
-		long startTime = Calendar.getInstance().getTimeInMillis();
-		String startedAt = "started at " + startTime;
-		config.append(startedAt + "\n\n");
-		log(LogLevel.INFO, startedAt);
-
-		FileUtils.deleteDirectory(new File(runOutDirectory));
-		new File(runOutDirectory).mkdirs();
-		FileUtils.copyDirectory(new File(inputDirectory), new File(runOutDirectory));
-		
-		doRun();
-		
-		
-		long endTime = Calendar.getInstance().getTimeInMillis();
-		String wasDone = "was done at " + endTime;
-		config.append(wasDone + "\n");
-		log(LogLevel.INFO, wasDone);
-		long milliseconds = endTime - startTime;
-		String tookMe = "took me " + (endTime - startTime) + " milliseconds";
-		config.append(tookMe + "\n");
-		log(LogLevel.INFO, tookMe);
-		
-		String timeString = getTimeString(milliseconds);
-		config.append(timeString + "\n");
-		log(LogLevel.INFO, timeString);
-		
-		connectionPool.shutdown();
+		try {
+			StringBuilder config = new StringBuilder();
+			appendConfigFile(config);
+					
+			long startTime = Calendar.getInstance().getTimeInMillis();
+			String startedAt = "started at " + startTime;
+			config.append(startedAt + "\n\n");
+			log(LogLevel.INFO, startedAt);
+	
+			FileUtils.deleteDirectory(new File(runOutDirectory));
+			new File(runOutDirectory).mkdirs();
+			FileUtils.copyDirectory(new File(inputDirectory), new File(runOutDirectory));
+			
+			doRun();
+			
+			
+			long endTime = Calendar.getInstance().getTimeInMillis();
+			String wasDone = "was done at " + endTime;
+			config.append(wasDone + "\n");
+			log(LogLevel.INFO, wasDone);
+			long milliseconds = endTime - startTime;
+			String tookMe = "took me " + (endTime - startTime) + " milliseconds";
+			config.append(tookMe + "\n");
+			log(LogLevel.INFO, tookMe);
+			
+			String timeString = getTimeString(milliseconds);
+			config.append(timeString + "\n");
+			log(LogLevel.INFO, timeString);
+			
+		} catch(Throwable t) {
+			log(LogLevel.ERROR, "Problem to run, shut down connection pool...", t);
+			connectionPool.shutdown();
+		}
 	}
 
 	protected abstract void doRun() throws Throwable;

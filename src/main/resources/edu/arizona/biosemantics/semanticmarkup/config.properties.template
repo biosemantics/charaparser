@@ -11,3 +11,6 @@ ontologiesDirectory=
 otoUrl=http://biosemantics.arizona.edu/OTO
 oto2Url=http://etc-dev.cs.umb.edu/oto2
 threading=false,1,1  #format {true,false},{n},{m}  where first parameter activates,deactivates; n=, m=
+database_partitionCount=2
+database_minConnectionsPerPartition=1
+database_maxConnectionsPerPartition=3

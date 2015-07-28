@@ -14,6 +14,7 @@ import com.jolbox.bonecp.BoneCPConfig;
 import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.config.Configuration;
 
 public class ConnectionPool {
 	
@@ -38,9 +39,9 @@ public class ConnectionPool {
 		config.setJdbcUrl(jdbcUrl);
 		config.setUsername(databaseUser); 
 		config.setPassword(databasePassword);
-		config.setMinConnectionsPerPartition(10);
-		config.setMaxConnectionsPerPartition(20);
-		config.setPartitionCount(2);
+		config.setMinConnectionsPerPartition(Configuration.database_minConnectionsPerPartition);
+		config.setMaxConnectionsPerPartition(Configuration.database_maxConnectionsPerPartition);
+		config.setPartitionCount(Configuration.database_partitionCount);
 		config.setPoolName("charaparserPool");
 		config.setDisableJMX(true);
 		

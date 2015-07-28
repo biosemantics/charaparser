@@ -19,6 +19,9 @@ public class Configuration {
 	public static String databaseName;
 	public static String databaseUser;
 	public static String databasePassword;
+	public static int database_minConnectionsPerPartition;
+	public static int database_maxConnectionsPerPartition;
+	public static int database_partitionCount;
 	public static String workspaceDirectory;
 	public static String perlSourceDirectory;
 	public static String wordNetSourceDirectory;
@@ -44,6 +47,9 @@ public class Configuration {
 			databaseName = properties.getProperty("databaseName");
 			databaseUser = properties.getProperty("databaseUser");
 			databasePassword = properties.getProperty("databasePassword");
+			database_minConnectionsPerPartition = Integer.valueOf(properties.getProperty("database_minConnectionsPerPartition"));
+			database_maxConnectionsPerPartition = Integer.valueOf(properties.getProperty("database_maxConnectionsPerPartition"));
+			database_partitionCount = Integer.valueOf(properties.getProperty("database_partitionCount"));
 			workspaceDirectory = properties.getProperty("workspaceDirectory");
 			perlSourceDirectory = properties.getProperty("perlSourceDirectory");
 			wordNetSourceDirectory = properties.getProperty("wordNetSourceDirectory");
