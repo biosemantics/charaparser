@@ -11,18 +11,24 @@ import java.util.regex.Pattern;
 
 
 
+
+
+
+
+
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.ICorpus;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
+import edu.arizona.biosemantics.common.ling.Token;
+import edu.arizona.biosemantics.common.ling.know.ICorpus;
+import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
+import edu.arizona.biosemantics.common.ling.pos.POS;
+import edu.arizona.biosemantics.common.ling.pos.POSedToken;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.ling.Token;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.IPOSTagger;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POS;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POSedToken;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**

@@ -1,18 +1,16 @@
-package edu.arizona.biosemantics.semanticmarkup.know.lib;
+package edu.arizona.biosemantics.semanticmarkup.ling.know.lib;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POS;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.pos.POS;
 
 /**
  * LearnedPOSKnowledgeBase poses an IPOSKnowledgeBase by relying on learned part of speech and using a fall back knowledgebase

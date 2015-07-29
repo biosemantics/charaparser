@@ -17,9 +17,10 @@ import java.util.Map.Entry;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.ElementRelationGroup;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
@@ -38,14 +39,16 @@ public class NonOntologyBasedStandardizer {
 	private String sentence;
 	private ProcessingContext processingContext;
 	private IPOSKnowledgeBase posKnowledgeBase;
+	private IInflector inflector;
 
-	public NonOntologyBasedStandardizer(IGlossary glossary, String sentence, ProcessingContext processingContext, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase){
+	public NonOntologyBasedStandardizer(IGlossary glossary, IInflector inflector, String sentence, ProcessingContext processingContext, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase){
 		lifeStyles = glossary.getWordsInCategory("life_style");
 		lifeStyles.addAll(glossary.getWordsInCategory("growth_form"));
 		durations = glossary.getWordsInCategory("duration");
 		this.sentence = sentence;
 		this.processingContext = processingContext;
 		this.posKnowledgeBase = posKnowledgeBase;
+		this.inflector = inflector;
 	}
 
 	public void standardize(LinkedList<Element>result){
@@ -169,7 +172,7 @@ public class NonOntologyBasedStandardizer {
 			Element element = result.get(i);
 			if(element.isStructure()){
 				BiologicalEntity entity = (BiologicalEntity) element;
-				String name = entity.getName();
+				String name = entity.getNameOriginal();
 				if(name.matches("(\\d+|[ivx]+)-(\\d+|[ivx]+)")){
 					//int elementPosition = result.indexOf(element);
 					ArrayList<String> list = getIndividuals (name);
@@ -179,7 +182,7 @@ public class NonOntologyBasedStandardizer {
 					for(String individual: list){
 						BiologicalEntity one = entity.clone();
 						//clone but update id
-						((BiologicalEntity) one).setName(individual);
+						((BiologicalEntity) one).setName(inflector.getSingular(individual));
 						String newId = one.getId()+"_"+count;
 						one.setId(newId);
 						newIds.add(newId);

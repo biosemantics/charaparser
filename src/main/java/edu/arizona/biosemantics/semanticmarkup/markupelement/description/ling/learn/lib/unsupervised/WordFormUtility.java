@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.arizona.biosemantics.semanticmarkup.know.lib.WordNetPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.lib.PorterStemmer;
 
 

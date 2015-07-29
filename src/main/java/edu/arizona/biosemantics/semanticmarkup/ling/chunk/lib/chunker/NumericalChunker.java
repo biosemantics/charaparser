@@ -6,22 +6,19 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-
-
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 //not used class because functionality already implemented in CleanupChunker

@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import edu.arizona.biosemantics.semanticmarkup.know.lib.WordNetPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import opennlp.tools.sentdetect.SentenceDetectorME;

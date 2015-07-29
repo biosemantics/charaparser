@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import edu.arizona.biosemantics.common.ling.pos.POS;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.semanticmarkup.ling.pos.POS;
 
 
 /**

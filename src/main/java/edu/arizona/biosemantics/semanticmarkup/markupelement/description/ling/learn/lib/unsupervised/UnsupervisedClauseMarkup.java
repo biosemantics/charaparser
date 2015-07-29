@@ -17,8 +17,8 @@ import org.apache.log4j.PropertyConfigurator;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.Token;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.AdjectiveReplacementForNoun;

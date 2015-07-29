@@ -1,7 +1,4 @@
-/**
- * 
- */
-package edu.arizona.biosemantics.semanticmarkup.know.lib;
+package edu.arizona.biosemantics.semanticmarkup.ling.know.lib;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,14 +6,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IMatch;
+import edu.arizona.biosemantics.common.ling.know.Term;
 
 /**
  * @author Hong Cui
  * holding the match from a character look up in LearnedCharacterKnowledgeBase
  *
  */
-public class Match implements IMatch {
+public class Match {
+	
 	private Set<Term> content = new HashSet<Term>();
 	private String categories = null; //or-contactnated categories
 	private String preferedTerm = null; //not null when all Terms has the same preferred term/label

@@ -3,16 +3,13 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.l
 import java.util.List;
 import java.util.Set;
 
-
-
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;

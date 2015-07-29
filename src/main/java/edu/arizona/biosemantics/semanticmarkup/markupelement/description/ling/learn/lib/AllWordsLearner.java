@@ -9,11 +9,11 @@ import java.util.List;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.ling.Token;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.common.ling.Token;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 

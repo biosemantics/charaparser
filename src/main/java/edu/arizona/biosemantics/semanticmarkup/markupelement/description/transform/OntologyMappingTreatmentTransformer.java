@@ -40,19 +40,17 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 	public OntologyMappingTreatmentTransformer(
 			@Named("Version") String version,
 			@Named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")boolean parallelProcessing, 
-			@Named("EtcUser")String etcUser, 
+			@Named("User")String etcUser, 
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
-			@Named("OntologyMappingTreatmentTransformer_OntologyDirectory")String ontologyDirectory,
+			@Named("OntologiesDirectory")String ontologiesDirectory,
 			@Named("WordNetAPI_Sourcefile")String wordNetSource) {
 		super(version, parallelProcessing);
 		this.etcUser = etcUser;
 		this.taxonGroup = taxonGroup;
 		
 		searchers = new LinkedList<Searcher>();
-
-		
 		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
-			searchers.add(new FileSearcher(ontology, ontologyDirectory, wordNetSource));
+			searchers.add(new FileSearcher(ontology, ontologiesDirectory, wordNetSource));
 		
 		/*File ontologyDirectory = new File("C:/Users/rodenhausen/etcsite/ontologies");
 		for(File ontologyFile : ontologyDirectory.listFiles()) {

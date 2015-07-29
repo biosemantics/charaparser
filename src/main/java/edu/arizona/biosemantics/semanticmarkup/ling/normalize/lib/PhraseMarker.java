@@ -16,9 +16,9 @@ import java.util.regex.Pattern;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.IPhraseMarker;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 
 /**

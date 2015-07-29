@@ -2,8 +2,8 @@ package edu.arizona.biosemantics.semanticmarkup.ling.mark.lib;
 
 import java.util.Set;
 
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.ling.Token;
+import edu.arizona.biosemantics.common.ling.Token;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.semanticmarkup.ling.mark.IMarkedTokenCreator;
 import edu.arizona.biosemantics.semanticmarkup.ling.mark.MarkedToken;
 

@@ -1,6 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.ling.mark;
 
-import edu.arizona.biosemantics.semanticmarkup.ling.Token;
+import edu.arizona.biosemantics.common.ling.Token;
 
 /**
  * A MarkedToken contains represents a token that is marked (e.g. by a type)

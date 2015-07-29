@@ -10,26 +10,19 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-
-
-
-
-
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.IGlossary;
-import edu.arizona.biosemantics.semanticmarkup.know.IPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
+import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
-import edu.arizona.biosemantics.semanticmarkup.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
