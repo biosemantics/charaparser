@@ -183,9 +183,14 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
 		int skip = 0;
-		if(sentIndex==0 && sentence.contains(":")){
-			//identify and skip headings
-			skip = firstChunkProcessor.skipHeading(chunks);
+		if(sentence.contains(":")){
+			if(sentIndex==0){
+				//identify and skip headings
+				skip = firstChunkProcessor.skipHeading(chunks);
+			}
+			firstChunkProcessor.setContainColon();
+		}else{
+			firstChunkProcessor.unsetContainColon();
 		}
 		if(sentIndex==0) firstChunkProcessor.setFirstSentence();
 		else firstChunkProcessor.unsetFirstSentence();

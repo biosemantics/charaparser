@@ -21,4 +21,8 @@ public interface IFirstChunkProcessor extends IChunkProcessor {
 	
 	public void unsetFirstSentence();
 
+	public void setContainColon();
+
+	public void unsetContainColon();
+
 }

@@ -51,6 +51,7 @@ public class NonOntologyBasedStandardizer {
 	public void standardize(LinkedList<Element>result){
 		if(result.isEmpty()) return;
 		enumerateCompoundOrgan(result); //legs i-iii
+		enumerateCompoundStates(result); // tibia/metatarsus:  1.43/1.27 mm
 		checkAlternativeIDs(result); //before count
 		taxonName2WholeOrganism(result);
 		createWholeOrganismDescription(result, lifeStyles, "growth_form");
@@ -63,11 +64,98 @@ public class NonOntologyBasedStandardizer {
 		character2structureContraint(result);//is_modifier => constraint
 		renameCharacter(result, "count", "quantity");
 		renameCharacter(result, "atypical_count", "atypical_quantity");
+		renameCharacter(result, "color", "coloration");
 		quantityVsPresence(result); //after count => quantity
 		phraseUpConstraints(result); //put constraints in the order as appeared in the original text, should be among the last normalization steps
 		normalizeAdvConstraintedOrgan(result);	//after phraseUpConstraints
 	}
 	
+	/**
+	 * 
+	<statement id="d0_s2">
+	<text>Length of tibia/metatarsus: leg-I, 1.43/1.27 mm;</text>
+	<biological_entity constraint="leg-1" id="o3" name="tibia/metatarsu" name_original="tibia/metatarsus" type="structure">
+	<character name="length" unit="mm" value="1.43/1.27" />
+	</biological_entity>
+	</statement>
+	 * @param result
+	 */
+
+	private void enumerateCompoundStates(LinkedList<Element> result) {
+		ArrayList<Element> toberemoved = new ArrayList<Element>();
+		for(int i = 0; i < result.size(); i++){
+			Element element = result.get(i);
+			if(element.isStructure()){
+				boolean isTarget = true;
+				BiologicalEntity entity = (BiologicalEntity) element;
+				String[] entityNames = null;
+				ArrayList<String[]> characterValues = new ArrayList<String[]>();
+				if(entity.getName().contains("/")){ //add all character values also contain /
+					entityNames = entity.getName().split("\\s*/\\s*");
+					if(entity.getCharacters().isEmpty()) isTarget = false; //distal 1/2
+					for(Character character: entity.getCharacters()){
+						if(character.getValue().contains("/")){
+							String [] cValues = character.getValue().split("\\s*/\\s*");
+							characterValues.add(cValues);
+							if(cValues.length != entityNames.length) isTarget = false;
+						}else{
+							isTarget = false;
+						}
+					}
+
+				}else{
+					isTarget= false;
+				}
+
+				if(isTarget){//enumerate
+					toberemoved.add(entity);
+					int p = result.indexOf(entity);
+					ArrayList<String> newIds = new ArrayList<String>();
+					for(int e = 0; e < entityNames.length; e++){
+						BiologicalEntity be = entity.clone();
+						String newId = entity.getId()+"_"+(e+1);
+						be.setName(entityNames[e]);
+						be.setId(newId);
+						newIds.add(newId);
+						int c = 0;
+						for(Character character: be.getCharacters()){
+							character.setValue(characterValues.get(c++)[e]);
+						}
+						result.add(p, be);
+						i++;
+					}
+
+					//if the original element involved in any relations, individualize the relations
+					//to
+					LinkedHashSet<Relation> toRelations = entity.getToRelations();
+					for(Relation relation: toRelations){
+						int relationPosition = result.indexOf(relation);						
+						for(String newId: newIds){
+							Relation one = relation.clone();
+							one.setTo(newId);
+							result.add(relationPosition+1, one);
+						}
+						//result.remove(relationPosition);	
+						toberemoved.add(relation);
+					}
+					//from
+					LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
+					for(Relation relation: fromRelations){
+						int relationPosition = result.indexOf(relation);						
+						for(String newId: newIds){
+							Relation one = relation.clone();
+							one.setFrom(newId);
+							result.add(relationPosition+1, one);
+						}
+						//result.remove(relationPosition);	
+						toberemoved.add(relation);
+					}
+				}
+			}
+		}
+		result.removeAll(toberemoved);
+	}
+
 	/**
 	 * <biological_entity constraint="legs" id="o0" name="i-iii" name_original="i-iii" type="structure">
 		<character constraint="than leg-iv" constraintid="o1" is_modifier="false" name="fragility" value="stronger" />

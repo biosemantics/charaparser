@@ -98,8 +98,14 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		}
 		if(character ==null){
 			boolean allHyphenated = true; 
-			for(BiologicalEntity parent: parents){
+			if(parents.isEmpty()) allHyphenated = false; 
+			for(BiologicalEntity parent: parents){ //spiracle–epigastrium 2.77 mm, but not leg-ii 3 mm long.
 				if (!parent.getNameOriginal().contains("-")) allHyphenated = false;
+				else if(parent.getNameOriginal().matches(".*-[ivx\\d]+$")){ //leg-ii 3 mm long.
+					String leading = parent.getNameOriginal().replaceFirst("-[ivx\\d]+$", ""); //if leg ii-iii, allHyphenated = true
+					if(!leading.matches(".*?\\b[ivx\\d]+$")) //not leg ii-iii, 
+						allHyphenated = false;
+				}
 				else{
 					String[] organs = parent.getNameOriginal().split("\\s*-\\s*");
 					for(String organ: organs){ //enhance the condition by checking all tokens connected by '-' are biological entities.
@@ -107,7 +113,8 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 					}
 				}
 			}
-			if(allHyphenated && content.trim().matches(".*?"+units)) character = "distance"; //spider spiracle–epigastrium 2.77 mm
+			if(allHyphenated && content.trim().matches(".*?"+units)) 
+				character = "distance"; //spider spiracle–epigastrium 2.77 mm
 			else character = content.indexOf('/') > 0 || content.indexOf('%') > 0 ? "size_or_shape" : "size";
 		}
 

@@ -92,10 +92,12 @@ public class NonSubjectOrganChunkProcessor extends AbstractChunkProcessor {
 		Chunk character = null;
 		if(previousChunk2 !=null && previousChunk2.getChunkType().equals(ChunkType.PP)){
 			character = previousChunk2.getChildChunk(ChunkType.PREPOSITION).getChildChunk(ChunkType.CHARACTER_STATE);
+		}else if(previousChunk2 !=null && previousChunk2.getChunkType().equals(ChunkType.CHARACTER_STATE)){
+			character = previousChunk2;
 		}
 		
 		if(previousChunk1 !=null &&  character!=null &&  (previousChunk1.getTerminalsText().equals(":") || previousChunk1.getChunkType().equals(ChunkType.COMMA) && 
-				character.getProperty("characterName").compareTo("character")==0 && character.getTerminalsText().endsWith(" of"))){
+				character.getProperty("characterName").compareTo("character")==0 )){
 			isConstraintOrgan = true;
 		}
 		

@@ -6126,6 +6126,7 @@ while(defined ($file=readdir(IN))){
   	}
 
 	$count = 0;
+	my $beforeColon = "";
 	#foreach (@sentences){
 	foreach (@validindex){
 		#may have fewer than $N words
@@ -6178,11 +6179,33 @@ while(defined ($file=readdir(IN))){
 		#if(hasUnmatchedBrackets($oline)){
 		#	print STDOUT "Warning: sentence [id = $SENTID] has unmatched brackets\n";
 		#}
+		
+		#Length of tibia/metatarsus: leg I, 0.40/0.30 mm; leg II, 0.34/0.34 mm; leg III, 0.22/0.20 mm; leg IV, 0.32/0.20 mm.
+		# => Length of tibia/metatarsus: leg I, 0.40/0.30 mm; Length of tibia/metatarsus: leg II, 0.34/0.34 mm; Length of tibia/metatarsus: leg III, 0.22/0.20 mm; Length of tibia/metatarsus: leg IV, 0.32/0.20 mm.
+	
+		
+		if($beforeColon=~/\w{3,}/ && $line !~/:/){ #is equal or longer than 3 characters, to exclude 1:, 12: and a: bullet points, and also doesn't contain :
+			$line = $beforeColon.": ".$line;
+		}
+		
     	$stmt = "insert into ".$prefix."_sentence(sentid, source, sentence, originalsent, lead, status) values($SENTID,'$source' ,'$line','$oline','$lead', '$status')";
 		$sth = $dbh->prepare($stmt);
     	$sth->execute() or print STDOUT "populatesents db error:".$sth->errstr.": SQL Statement: ".$stmt."\n";
 		#print "Sentence: $line\n" if $debug;
 		#print "Leading words: @words\n\n" if $debug;
+		
+				
+		#Length of tibia/metatarsus: leg I, 0.40/0.30 mm; leg II, 0.34/0.34 mm; leg III, 0.22/0.20 mm; leg IV, 0.32/0.20 mm.
+		# => Length of tibia/metatarsus: leg I, 0.40/0.30 mm; Length of tibia/metatarsus: leg II, 0.34/0.34 mm; Length of tibia/metatarsus: leg III, 0.22/0.20 mm; Length of tibia/metatarsus: leg IV, 0.32/0.20 mm.
+		if($line=~/:/){
+			 my ($before, $after) = split(/:/, $line);
+			$beforeColon = $before;
+		}
+		if($line !~/;$/){
+			$beforeColon = "";
+		}
+		
+		
 		$SENTID++;
 	}
 	my $end = $SENTID-1;

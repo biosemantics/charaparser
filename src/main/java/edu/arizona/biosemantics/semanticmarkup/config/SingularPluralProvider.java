@@ -8,6 +8,7 @@ public class SingularPluralProvider {
 		
 		HashMap<String, String> singulars = new HashMap<String, String>();
 		singulars.put("rachis", "rachis");
+		
 	    //special cases
 		singulars.put("anthocyathia", "anthocyathus");
 		singulars.put("axis", "axis");
@@ -40,6 +41,8 @@ public class SingularPluralProvider {
 		singulars.put("lens", "len");
 		singulars.put("malli", "malleus");
 		singulars.put("media", "media");
+		singulars.put("metatarsus", "metatarsus");
+		singulars.put("metatarsi", "metatarsus");
 		singulars.put("midnerves", "midnerve");
 		singulars.put("mollusks", "mollusca");
 		singulars.put("molluscs", "mollusca");
@@ -50,6 +53,8 @@ public class SingularPluralProvider {
 		singulars.put("pileipellis", "pileipellis");
 		singulars.put("proboscises", "proboscis");
 		singulars.put("process", "process");
+		singulars.put("prosoma", "prosoma");
+		singulars.put("prosomas", "prosoma");
 		singulars.put("ptyxis", "ptyxis");
 		singulars.put("proglottides", "proglottis");
 		singulars.put("pseudocoelomata", "pseudocoelomates");
@@ -58,6 +63,7 @@ public class SingularPluralProvider {
 		singulars.put("species", "species");
 		singulars.put("sperm", "sperm");
 		singulars.put("teeth", "tooth");
+		singulars.put("tibia", "tibia");
 		singulars.put("themselves", "themselves");
 		singulars.put("valves", "valve");
 		/*singulars.put("axis", "axis");
@@ -112,6 +118,7 @@ public class SingularPluralProvider {
 		plurals.put("len", "lens");
 		plurals.put("malleus","malli");
 		plurals.put("media", "media");
+		plurals.put("metatarsus", "metatarsi");
 		plurals.put("midnerve", "midnerves");
 		plurals.put("mollusca","mollusks");
 		plurals.put("mollusca","molluscs");
@@ -123,12 +130,14 @@ public class SingularPluralProvider {
 		plurals.put("proboscis","proboscises");
 		plurals.put("proglottis","proglottides");
 		plurals.put("process", "processes");
+		plurals.put("prosoma", "prosomas");
 		plurals.put("pseudocoelomates","pseudocoelomata");
 		plurals.put("ptyxis", "ptyxis");
 		plurals.put("series", "series");
 		plurals.put("setula","setules");
 		plurals.put("species", "species");
 		plurals.put("sperm", "sperm");
+		plurals.put("tibia", "tibiae");
 		plurals.put("tooth", "teeth");
 		plurals.put("valve", "valves");
 		/*plurals.put("axis", "axes");

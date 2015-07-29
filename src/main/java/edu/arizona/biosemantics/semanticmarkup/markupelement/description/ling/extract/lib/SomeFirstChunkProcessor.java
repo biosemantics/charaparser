@@ -42,7 +42,7 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 	private int skipFirstNChunk = 0;
 	private ParentTagProvider parentTagProvider;
 	private boolean firstSentence = false;
-	
+	private boolean containsColon = false; //sentence constains a colon, e.g. Color : ....
 	/**
 	 * @param inflector
 	 * @param glossary
@@ -226,15 +226,22 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 			if(firstChunk.isOfChunkType(ChunkType.MODIFIER) || firstChunk.isOfChunkType(ChunkType.CONSTRAINT)){
 				processingContextState.getUnassignedConstraints().add(firstChunk);
 			}
-			List<BiologicalEntity> subjects = reestablishSubject(processingContext, processingContextState);
-			//if(firstChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && subjects.size()==0 && this.firstSentence){
-			if(subjects.size()==0 && this.firstSentence){
+			if(this.containsColon){//e.g. Color : 
 				establishWholeOrganismAsSubject(processingContext, result,
 						processingContextState);
 			}else{
-				result.addAll(subjects);
+				List<BiologicalEntity> subjects = reestablishSubject(processingContext, processingContextState);
+				//if(firstChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && subjects.size()==0 && this.firstSentence){
+				if(subjects.size()==0 && this.firstSentence){
+					establishWholeOrganismAsSubject(processingContext, result,
+							processingContextState);
+				}
+				else{
+					result.addAll(subjects);
+				}
 			}
-			skipFirstNChunk = 0;
+			
+			skipFirstNChunk = 0; //do not skip
 			return result;
 		}
 		
@@ -320,6 +327,18 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 	
 	public void unsetFirstSentence(){
 		this.firstSentence = false;
+	}
+
+	@Override
+	public void setContainColon() {
+		this.containsColon = true;
+		
+	}
+
+	@Override
+	public void unsetContainColon() {
+		this.containsColon = false;
+		
 	}
 
 }
