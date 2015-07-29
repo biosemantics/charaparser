@@ -55,6 +55,7 @@ public class NonOntologyBasedStandardizer {
 		if(result.isEmpty()) return;
 		enumerateCompoundOrgan(result); //legs i-iii
 		enumerateCompoundStates(result); // tibia/metatarsus:  1.43/1.27 mm
+		orderOrgansInDistance(result); //spiracle-epigastrium distance = epigastrium-spiracle distance
 		checkAlternativeIDs(result); //before count
 		taxonName2WholeOrganism(result);
 		createWholeOrganismDescription(result, lifeStyles, "growth_form");
@@ -73,6 +74,34 @@ public class NonOntologyBasedStandardizer {
 		normalizeAdvConstraintedOrgan(result);	//after phraseUpConstraints
 	}
 	
+	/**
+	 * spiracle-epigastrium distance = epigastrium-spiracle distance, 
+	 * sort the involving organs alphabetically
+	 * @param result
+	 */
+	private void orderOrgansInDistance(LinkedList<Element> result) {
+		for(int i = 0; i < result.size(); i++){
+			Element element = result.get(i);
+			if(element.isStructure()){
+				for(Character character: ((BiologicalEntity)element).getCharacters()){
+					if(character.getName().compareTo("distance")==0){
+						String name = ((BiologicalEntity)element).getName();
+						if(name.contains("-")){
+							String[] names = name.split("\\s*-\\s*");
+							Arrays.sort(names);
+							name = "";
+							for(int n = 0; n < names.length; n++){
+								name += names[n]+"-";
+							}
+							((BiologicalEntity)element).setName(name.replaceFirst("-$", ""));
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * 
 	<statement id="d0_s2">
@@ -94,7 +123,7 @@ public class NonOntologyBasedStandardizer {
 				String[] entityNames = null;
 				ArrayList<String[]> characterValues = new ArrayList<String[]>();
 				if(entity.getName().contains("/")){ //add all character values also contain /
-					entityNames = entity.getName().split("\\s*/\\s*");
+					entityNames = entity.getNameOriginal().split("\\s*/\\s*");
 					if(entity.getCharacters().isEmpty()) isTarget = false; //distal 1/2
 					for(Character character: entity.getCharacters()){
 						if(character.getValue().contains("/")){
@@ -117,7 +146,7 @@ public class NonOntologyBasedStandardizer {
 					for(int e = 0; e < entityNames.length; e++){
 						BiologicalEntity be = entity.clone();
 						String newId = entity.getId()+"_"+(e+1);
-						be.setName(entityNames[e]);
+						be.setName(inflector.getSingular(entityNames[e])); //turn name_original to singular 
 						be.setId(newId);
 						newIds.add(newId);
 						int c = 0;

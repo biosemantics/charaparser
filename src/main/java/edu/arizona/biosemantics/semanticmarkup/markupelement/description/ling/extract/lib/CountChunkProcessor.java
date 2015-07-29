@@ -72,7 +72,7 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		}
 		
 		List<Chunk> modifiers = processingContextState.getUnassignedModifiers();
-		
+
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		LinkedList<BiologicalEntity> subjects = processingContextState.getSubjects();
 		LinkedList<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
