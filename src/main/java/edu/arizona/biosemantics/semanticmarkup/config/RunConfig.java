@@ -665,48 +665,7 @@ public class RunConfig extends BasicConfig {
 		this.runRootDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix;
 		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
 		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
-		Logger rootLogger = Logger.getRootLogger();
-		//rootLogger.getLoggerRepository().resetConfiguration(); //don't reset to keep log4j.properties configured logger for etc-wide logging
-		addDebugErrorLoggers(rootLogger, this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "debug.log", 
-				this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "error.log");
 	}
-
-	protected void addDebugErrorLoggers(Logger rootLogger, String debugLog, String errorLog) {
-		PatternLayout layout = new PatternLayout();
-		layout.setConversionPattern("%d [%t] %-5p %c:%L - %m%n");
-		
-		RollingFileAppender debugFileAppender = new RollingFileAppender();
-		debugFileAppender.setEncoding("UTF-8");
-		debugFileAppender.setFile(debugLog);
-		debugFileAppender.setMaxFileSize("100MB");
-		debugFileAppender.setAppend(false);
-		debugFileAppender.setMaxBackupIndex(100);
-		debugFileAppender.setLayout(layout);
-		debugFileAppender.setThreshold(Level.DEBUG);
-		debugFileAppender.activateOptions();
-		
-		RollingFileAppender errorFileAppender = new RollingFileAppender();
-		errorFileAppender.setEncoding("UTF-8");
-		errorFileAppender.setFile(errorLog);
-		errorFileAppender.setMaxFileSize("100MB");
-		errorFileAppender.setAppend(false);
-		errorFileAppender.setMaxBackupIndex(100);
-		errorFileAppender.setLayout(layout);
-		errorFileAppender.setThreshold(Level.ERROR);
-		errorFileAppender.activateOptions();
-		
-		ConsoleAppender consoleErrorAppender = new ConsoleAppender();
-		consoleErrorAppender.setTarget("System.out");
-		consoleErrorAppender.setLayout(layout);
-		consoleErrorAppender.setThreshold(Level.ERROR);
-		consoleErrorAppender.activateOptions();
-
-		rootLogger.setLevel(Level.DEBUG);
-		rootLogger.addAppender(debugFileAppender);
-		rootLogger.addAppender(errorFileAppender);
-		rootLogger.addAppender(consoleErrorAppender);
-	}
-
 	
 	public String getWorkspaceDirectory() {
 		return workspaceDirectory;
