@@ -161,9 +161,11 @@ public class NonOntologyBasedStandardizer {
 					//to
 					LinkedHashSet<Relation> toRelations = entity.getToRelations();
 					for(Relation relation: toRelations){
-						int relationPosition = result.indexOf(relation);						
+						int relationPosition = result.indexOf(relation);	
+						int rid = 1;
 						for(String newId: newIds){
 							Relation one = relation.clone();
+							one.setId(one.getId()+"_"+(rid++));
 							one.setTo(newId);
 							result.add(relationPosition+1, one);
 						}
@@ -173,9 +175,11 @@ public class NonOntologyBasedStandardizer {
 					//from
 					LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
 					for(Relation relation: fromRelations){
-						int relationPosition = result.indexOf(relation);						
+						int relationPosition = result.indexOf(relation);	
+						int rid = 1;
 						for(String newId: newIds){
 							Relation one = relation.clone();
+							one.setId(one.getId()+"_"+(rid++));
 							one.setFrom(newId);
 							result.add(relationPosition+1, one);
 						}
@@ -229,9 +233,11 @@ public class NonOntologyBasedStandardizer {
 						//to
 						LinkedHashSet<Relation> toRelations = entity.getToRelations();
 						for(Relation relation: toRelations){
-							int relationPosition = result.indexOf(relation);						
+							int relationPosition = result.indexOf(relation);	
+							int rid = 1;
 							for(String newId: newIds){
 								Relation one = relation.clone();
+								one.setId(one.getId()+"_"+(rid++));
 								one.setTo(newId);
 								result.add(relationPosition+1, one);
 							}
@@ -241,9 +247,11 @@ public class NonOntologyBasedStandardizer {
 						//from
 						LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
 						for(Relation relation: fromRelations){
-							int relationPosition = result.indexOf(relation);						
+							int relationPosition = result.indexOf(relation);
+							int rid = 1;
 							for(String newId: newIds){
 								Relation one = relation.clone();
+								one.setId(one.getId()+"_"+(rid++));
 								one.setFrom(newId);
 								result.add(relationPosition+1, one);
 							}
