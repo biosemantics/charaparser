@@ -9,16 +9,21 @@ requirement-notes
  * text capture output
  
 ###### Preparations
-* Resolve character splitting (utilize ontologies) due to
+* Resolve character splitting (utilize ontologies, leave room for other knowledge source) due to
    * quality term synonym
    * organ term synonym
 * Resolve lumping of characters (utilize ontologies) due to 
    * organ identification problem (differentiate apex as leaf vs stem apex)
+   * vision is: use only organ value anymore to *identify* organ unambiguously
+      * by putting constraint to value
+      * by others, see below
 
 The above two are to standardize the character names 
 * Character constraint is put as
   * part of character value
-  * new relation
+  * new relation 
+     * different set of rules
+        * if constraint has constraintid for other organ: create relation between this characters organ and the pointed organ
 
 * Relation contributes to structure name/constraint
    * part_of, and positional relations such as in, on etc.
