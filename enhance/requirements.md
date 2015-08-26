@@ -14,6 +14,8 @@ requirement-notes
    * organ term synonym
 * Resolve lumping of characters (utilize ontologies) due to 
    * organ identification problem
+* Relation contributes to structure name/constraint
+   * part_of, and positional relations such as in, on etc.
 * Character constraint is put as
   * part of character value
   * new relation
