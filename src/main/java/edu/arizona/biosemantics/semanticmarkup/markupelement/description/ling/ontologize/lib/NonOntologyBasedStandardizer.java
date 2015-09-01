@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
@@ -51,7 +52,7 @@ public class NonOntologyBasedStandardizer {
 		this.inflector = inflector;
 	}
 
-	public void standardize(LinkedList<Element>result){
+	public void standardize(LinkedList<Element> result){
 		if(result.isEmpty()) return;
 		enumerateCompoundOrgan(result); //legs i-iii
 		enumerateCompoundStates(result); // tibia/metatarsus:  1.43/1.27 mm
@@ -101,6 +102,66 @@ public class NonOntologyBasedStandardizer {
 			}
 		}
 	}
+	
+	private class CompoundedEntityStates {
+		private BiologicalEntity biologicalEntity;
+		public CompoundedEntityStates(BiologicalEntity biologicalEntity) {
+			this.biologicalEntity = biologicalEntity;
+		}
+		public String[] getEntityParts() {
+			return biologicalEntity.getNameOriginal().split("\\s*/\\s*");
+		}
+		public Map<Character, String[]> getCharacterParts() {
+			Map<Character, String[]> characterParts = new HashMap<Character, String[]>();
+			for(Character character: biologicalEntity.getCharacters())
+				if(character.getValue().contains("/"))
+					characterParts.put(character, character.getValue().split("\\s*/\\s*"));
+			return characterParts;
+		}		
+		public boolean isTarget() {
+			if(!biologicalEntity.getName().contains("/")) //add all character values also contain /
+				return false;
+			String[] entityNames = this.getEntityParts();
+			if(biologicalEntity.getCharacters().isEmpty()) 
+				return false; //distal 1/2
+			Map<Character, String[]> characterParts = getCharacterParts();
+			for(Character character: biologicalEntity.getCharacters()){
+				if(!character.getValue().contains("/")) 
+					return false;
+				if(characterParts.get(character).length != entityNames.length)
+					return false;
+			}
+			
+			return true;
+		}
+	}
+	
+	private class CompoundedEntity {
+
+		private BiologicalEntity biologicalEntity;
+
+		public CompoundedEntity(BiologicalEntity biologicalEntity) {
+			this.biologicalEntity = biologicalEntity;
+		}
+
+		public boolean isTarget() {
+			return biologicalEntity.getNameOriginal().matches("(\\d+|[ivx]+)-(\\d+|[ivx]+)");
+		}
+
+		public List<String> getEntityParts() {
+			String[] ends = biologicalEntity.getNameOriginal().split("-");
+			ArrayList<String> individuals = new ArrayList<String>();
+			String current = ends[0];
+			String last = ends[ends.length-1];
+			while(current.compareTo(last) != 0){
+				individuals.add(current);
+				current = nextRoman(current);
+			}
+			individuals.add(last);
+			return individuals;
+		}
+		
+	}
 
 	/**
 	 * 
@@ -112,84 +173,68 @@ public class NonOntologyBasedStandardizer {
 	</statement>
 	 * @param result
 	 */
-
 	private void enumerateCompoundStates(LinkedList<Element> result) {
-		ArrayList<Element> toberemoved = new ArrayList<Element>();
-		for(int i = 0; i < result.size(); i++){
-			Element element = result.get(i);
+		List<Element> iteratable = new LinkedList<Element>(result);
+		for(int i = 0; i < iteratable.size(); i++){
+			Element element = iteratable.get(i);
 			if(element.isStructure()){
-				boolean isTarget = true;
-				BiologicalEntity entity = (BiologicalEntity) element;
-				String[] entityNames = null;
-				ArrayList<String[]> characterValues = new ArrayList<String[]>();
-				if(entity.getName().contains("/")){ //add all character values also contain /
-					entityNames = entity.getNameOriginal().split("\\s*/\\s*");
-					if(entity.getCharacters().isEmpty()) isTarget = false; //distal 1/2
-					for(Character character: entity.getCharacters()){
-						if(character.getValue().contains("/")){
-							String [] cValues = character.getValue().split("\\s*/\\s*");
-							characterValues.add(cValues);
-							if(cValues.length != entityNames.length) isTarget = false;
-						}else{
-							isTarget = false;
-						}
+				BiologicalEntity biologicalEntity = (BiologicalEntity) element;
+				CompoundedEntityStates compoundedEntityStates = new CompoundedEntityStates(biologicalEntity);
+				
+				if(compoundedEntityStates.isTarget()){//enumerate
+					Map<String, BiologicalEntity> newBiologicalEntities = new HashMap<String, BiologicalEntity>();
+					
+					int id = 0;
+					for(String entityName : compoundedEntityStates.getEntityParts()) {
+						BiologicalEntity clone = biologicalEntity.clone();
+						String newId = biologicalEntity.getId() + "_" + id++;
+						clone.setId(newId);
+						clone.setName(inflector.getSingular(entityName));
+						newBiologicalEntities.put(newId, clone);
+						
+						for(Character character : clone.getCharacters()) 
+							character.setValue(compoundedEntityStates.getCharacterParts().get(character)[id]);
+						
+						result.remove(i);
+						result.add(i, clone);
 					}
 
-				}else{
-					isTarget= false;
-				}
-
-				if(isTarget){//enumerate
-					toberemoved.add(entity);
-					int p = result.indexOf(entity);
-					ArrayList<String> newIds = new ArrayList<String>();
-					for(int e = 0; e < entityNames.length; e++){
-						BiologicalEntity be = entity.clone();
-						String newId = entity.getId()+"_"+(e+1);
-						be.setName(inflector.getSingular(entityNames[e])); //turn name_original to singular 
-						be.setId(newId);
-						newIds.add(newId);
-						int c = 0;
-						for(Character character: be.getCharacters()){
-							character.setValue(characterValues.get(c++)[e]);
-						}
-						result.add(p, be);
-						i++;
-					}
-
-					//if the original element involved in any relations, individualize the relations
-					//to
-					LinkedHashSet<Relation> toRelations = entity.getToRelations();
-					for(Relation relation: toRelations){
-						int relationPosition = result.indexOf(relation);	
-						int rid = 1;
-						for(String newId: newIds){
-							Relation one = relation.clone();
-							one.setId(one.getId()+"_"+(rid++));
-							one.setTo(newId);
-							result.add(relationPosition+1, one);
-						}
-						//result.remove(relationPosition);	
-						toberemoved.add(relation);
-					}
-					//from
-					LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
-					for(Relation relation: fromRelations){
-						int relationPosition = result.indexOf(relation);	
-						int rid = 1;
-						for(String newId: newIds){
-							Relation one = relation.clone();
-							one.setId(one.getId()+"_"+(rid++));
-							one.setFrom(newId);
-							result.add(relationPosition+1, one);
-						}
-						//result.remove(relationPosition);	
-						toberemoved.add(relation);
-					}
+					updateRelations(biologicalEntity, newBiologicalEntities.keySet(), result);
 				}
 			}
 		}
-		result.removeAll(toberemoved);
+	}
+
+	private void updateRelations(BiologicalEntity biologicalEntity, Set<String> newIds, LinkedList<Element> result) {
+		//if the original element involved in any relations, individualize the relations
+		//to
+		LinkedHashSet<Relation> toRelations = biologicalEntity.getToRelations();
+		for(Relation relation : toRelations) {
+			int relationPosition = result.indexOf(relation);	
+			int rid = 0;
+			result.remove(relationPosition);
+			for(String newId : newIds) {
+				Relation clone = relation.clone();
+				clone.setId(clone.getId() + "_" + rid);
+				clone.setTo(newId);
+				result.add(relationPosition + rid, clone);
+				rid++;
+			}
+		}
+		//from
+		LinkedHashSet<Relation> fromRelations = biologicalEntity.getFromRelations();
+		for(Relation relation : fromRelations) {
+			int relationPosition = result.indexOf(relation);	
+			int rid = 0;
+			result.remove(relationPosition);
+			for(String newId : newIds){
+				Relation clone = relation.clone();
+				clone.setId(clone.getId() + "_" + rid);
+				clone.setFrom(newId);
+				result.add(relationPosition + rid, clone);
+				rid++;
+			}
+		}
 	}
 
 	/**
@@ -200,86 +245,42 @@ public class NonOntologyBasedStandardizer {
 	 */
 
 	private void enumerateCompoundOrgan(LinkedList<Element> result) {
-		ArrayList<Element> toberemoved = new ArrayList<Element>();
-		for(int i = 0; i < result.size(); i++){
+		List<Element> iteratable = new LinkedList<Element>(result);
+		for(int i = 0; i < iteratable.size(); i++){
 			Element element = result.get(i);
-			if(element.isStructure()){
-				BiologicalEntity entity = (BiologicalEntity) element;
-				String name = entity.getNameOriginal();
-				if(name.matches("(\\d+|[ivx]+)-(\\d+|[ivx]+)")){
-					//int elementPosition = result.indexOf(element);
-					ArrayList<String> list = getIndividuals (name);
+			if(element.isStructure()) {
+				BiologicalEntity biologicalEntity = (BiologicalEntity) element;
+				CompoundedEntity compoundedEntity = new CompoundedEntity(biologicalEntity);
+				if(compoundedEntity.isTarget()) {
+					Map<String, BiologicalEntity> newBiologicalEntities = new HashMap<String, BiologicalEntity>();
+					List<String> entityParts = compoundedEntity.getEntityParts();
+					
 					boolean added =false;
-					int count = 1;
+					int id = 1;
 					ArrayList<String> newIds = new ArrayList<String>();
-					for(String individual: list){
-						BiologicalEntity one = entity.clone();
-						//clone but update id
-						((BiologicalEntity) one).setName(inflector.getSingular(individual));
-						String newId = one.getId()+"_"+count;
-						one.setId(newId);
-						newIds.add(newId);
-						count++;
-						result.add(i+1, one);
-						i++;
+					for(String individual : entityParts){
+						BiologicalEntity clone = biologicalEntity.clone();
+						String newId = clone.getId() + "_" + id++;
+						clone.setName(inflector.getSingular(individual));
+						clone.setId(newId);
+						newBiologicalEntities.put(newId, clone);
+						
+						result.remove(i);
+						result.add(i, clone);
+						
 						added = true;
 					}
-					if(added){
-						//remove the original biological entity element
-						toberemoved.add(element);
-						//result.remove(elementPosition);
 					
+					if(added){					
 					    //if the original element involved in any relations, individualize the relations
-						//to
-						LinkedHashSet<Relation> toRelations = entity.getToRelations();
-						for(Relation relation: toRelations){
-							int relationPosition = result.indexOf(relation);	
-							int rid = 1;
-							for(String newId: newIds){
-								Relation one = relation.clone();
-								one.setId(one.getId()+"_"+(rid++));
-								one.setTo(newId);
-								result.add(relationPosition+1, one);
-							}
-							//result.remove(relationPosition);	
-							toberemoved.add(relation);
-						}
-						//from
-						LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
-						for(Relation relation: fromRelations){
-							int relationPosition = result.indexOf(relation);
-							int rid = 1;
-							for(String newId: newIds){
-								Relation one = relation.clone();
-								one.setId(one.getId()+"_"+(rid++));
-								one.setFrom(newId);
-								result.add(relationPosition+1, one);
-							}
-							//result.remove(relationPosition);	
-							toberemoved.add(relation);
-						}
-					
-					
+						updateRelations(biologicalEntity, newBiologicalEntities.keySet(), result);
 					}
-					
 				}
 			}
 		}
-		result.removeAll(toberemoved);
 	}
 
-	private ArrayList<String> getIndividuals(String name) {
-		String [] ends = name.split("-");
-		ArrayList<String> individuals = new ArrayList<String>();
-		String current = ends[0];
-		String last = ends[ends.length-1];
-		while(current.compareTo(last)!=0){
-			individuals.add(current);
-			current = nextRoman(current);
-		}
-		individuals.add(last);
-		return individuals;
-	}
+
 	
 	/**
 	 * 
