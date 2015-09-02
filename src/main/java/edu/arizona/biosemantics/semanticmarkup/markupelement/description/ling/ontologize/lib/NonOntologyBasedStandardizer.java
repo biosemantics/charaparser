@@ -52,7 +52,7 @@ public class NonOntologyBasedStandardizer {
 		this.inflector = inflector;
 	}
 
-	public void standardize(LinkedList<Element> result){
+	public void standardize(List<Element> result){
 		if(result.isEmpty()) return;
 		enumerateCompoundOrgan(result); //legs i-iii
 		enumerateCompoundStates(result); // tibia/metatarsus:  1.43/1.27 mm
@@ -80,7 +80,7 @@ public class NonOntologyBasedStandardizer {
 	 * sort the involving organs alphabetically
 	 * @param result
 	 */
-	private void orderOrgansInDistance(LinkedList<Element> result) {
+	private void orderOrgansInDistance(List<Element> result) {
 		for(int i = 0; i < result.size(); i++){
 			Element element = result.get(i);
 			if(element.isStructure()){
@@ -116,6 +116,8 @@ public class NonOntologyBasedStandardizer {
 			for(Character character: biologicalEntity.getCharacters())
 				if(character.getValue().contains("/"))
 					characterParts.put(character, character.getValue().split("\\s*/\\s*"));
+				else
+					characterParts.put(character, new String[] { character.getValue() });
 			return characterParts;
 		}		
 		public boolean isTarget() {
@@ -173,7 +175,7 @@ public class NonOntologyBasedStandardizer {
 	</statement>
 	 * @param result
 	 */
-	private void enumerateCompoundStates(LinkedList<Element> result) {
+	private void enumerateCompoundStates(List<Element> result) {
 		List<Element> iteratable = new LinkedList<Element>(result);
 		for(int i = 0; i < iteratable.size(); i++){
 			Element element = iteratable.get(i);
@@ -181,7 +183,8 @@ public class NonOntologyBasedStandardizer {
 				BiologicalEntity biologicalEntity = (BiologicalEntity) element;
 				CompoundedEntityStates compoundedEntityStates = new CompoundedEntityStates(biologicalEntity);
 				
-				if(compoundedEntityStates.isTarget()){//enumerate
+				if(compoundedEntityStates.isTarget()) { //enumerate
+					result.remove(i);
 					Map<String, BiologicalEntity> newBiologicalEntities = new HashMap<String, BiologicalEntity>();
 					
 					int id = 0;
@@ -195,7 +198,6 @@ public class NonOntologyBasedStandardizer {
 						for(Character character : clone.getCharacters()) 
 							character.setValue(compoundedEntityStates.getCharacterParts().get(character)[id]);
 						
-						result.remove(i);
 						result.add(i, clone);
 					}
 
@@ -205,7 +207,7 @@ public class NonOntologyBasedStandardizer {
 		}
 	}
 
-	private void updateRelations(BiologicalEntity biologicalEntity, Set<String> newIds, LinkedList<Element> result) {
+	private void updateRelations(BiologicalEntity biologicalEntity, Set<String> newIds, List<Element> result) {
 		//if the original element involved in any relations, individualize the relations
 		//to
 		LinkedHashSet<Relation> toRelations = biologicalEntity.getToRelations();
@@ -244,20 +246,20 @@ public class NonOntologyBasedStandardizer {
 	 * @param result
 	 */
 
-	private void enumerateCompoundOrgan(LinkedList<Element> result) {
+	private void enumerateCompoundOrgan(List<Element> result) {
 		List<Element> iteratable = new LinkedList<Element>(result);
 		for(int i = 0; i < iteratable.size(); i++){
-			Element element = result.get(i);
+			Element element = iteratable.get(i);
 			if(element.isStructure()) {
 				BiologicalEntity biologicalEntity = (BiologicalEntity) element;
 				CompoundedEntity compoundedEntity = new CompoundedEntity(biologicalEntity);
 				if(compoundedEntity.isTarget()) {
+					result.remove(i);
 					Map<String, BiologicalEntity> newBiologicalEntities = new HashMap<String, BiologicalEntity>();
 					List<String> entityParts = compoundedEntity.getEntityParts();
 					
 					boolean added =false;
 					int id = 1;
-					ArrayList<String> newIds = new ArrayList<String>();
 					for(String individual : entityParts){
 						BiologicalEntity clone = biologicalEntity.clone();
 						String newId = clone.getId() + "_" + id++;
@@ -265,7 +267,6 @@ public class NonOntologyBasedStandardizer {
 						clone.setId(newId);
 						newBiologicalEntities.put(newId, clone);
 						
-						result.remove(i);
 						result.add(i, clone);
 						
 						added = true;
@@ -330,7 +331,7 @@ public class NonOntologyBasedStandardizer {
 	 * @param result
 	 */
 
-	private void checkAlternativeIDs(LinkedList<Element> result) {
+	private void checkAlternativeIDs(List<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
 				LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters(); //in the order of parsing results?
@@ -374,7 +375,7 @@ public class NonOntologyBasedStandardizer {
 	}
 
 
-	private void moveCharacter2Structures(Character charWAI, List<String> list, LinkedList<Element> result) {
+	private void moveCharacter2Structures(Character charWAI, List<String> list, List<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
 				if(list.contains(((BiologicalEntity) element).getId())){
@@ -395,7 +396,7 @@ public class NonOntologyBasedStandardizer {
 	 * if a structure has multiple constraints, put them in the natural order they occur in the text
 	 * @param result
 	 */
-	private void phraseUpConstraints(LinkedList<Element> result) {
+	private void phraseUpConstraints(List<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
 				String constraints = ((BiologicalEntity)element).getConstraint();
@@ -477,7 +478,7 @@ public class NonOntologyBasedStandardizer {
 	 * separate quantity from presence
 	 * @param result
 	 */
-	private void quantityVsPresence(LinkedList<Element> result) {
+	private void quantityVsPresence(List<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
 				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
@@ -494,7 +495,7 @@ public class NonOntologyBasedStandardizer {
 	}
 
 
-	private void renameCharacter(LinkedList<Element> result, String oldName,
+	private void renameCharacter(List<Element> result, String oldName,
 			String newName) {
 		for(Element element: result){
 			if(element.isStructure()){
@@ -508,7 +509,7 @@ public class NonOntologyBasedStandardizer {
 		}
 	}
 
-	private void character2structureContraint(LinkedList<Element> result) {
+	private void character2structureContraint(List<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
 				String oid = ((BiologicalEntity)element).getId();
@@ -597,7 +598,7 @@ public class NonOntologyBasedStandardizer {
 	 * the markup of such usage of taxon name is normalized to whole_organism here
 	 * @param result
 	 */
-	private void taxonName2WholeOrganism(LinkedList<Element> result) {
+	private void taxonName2WholeOrganism(List<Element> result) {
 		Element firstElement =result.get(0);
 		if(firstElement.isStructure()){
 			String type = ((BiologicalEntity)firstElement).getType();
@@ -613,7 +614,7 @@ public class NonOntologyBasedStandardizer {
 	 * if a character constraint refers to the same structure the character belongs to, remove the constraint
 	 * @param result
 	 */
-	private void removeCircularCharacterConstraint(LinkedList<Element> result) {
+	private void removeCircularCharacterConstraint(List<Element> result) {
 		for(Element element: result){
 			if(element.isStructure()){
 				String oid = ((BiologicalEntity)element).getId();
@@ -848,7 +849,7 @@ public class NonOntologyBasedStandardizer {
 	 * @param result
 	 */
 
-	private void normalizeAdvConstraintedOrgan(LinkedList<Element> result) {
+	private void normalizeAdvConstraintedOrgan(List<Element> result) {
 		ArrayList<Character> remove = new ArrayList<Character>();
 		for(Element element: result){
 			if(element.isStructure()){

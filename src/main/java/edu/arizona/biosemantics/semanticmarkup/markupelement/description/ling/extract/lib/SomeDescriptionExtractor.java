@@ -228,7 +228,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		RelationTreatmentElement relationElement = new RelationTreatmentElement("relationName", "id", "from", "to", false);
 		result.add(structureElement);
 		result.add(relationElement);*/
-		new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize((LinkedList<Element>) result); //first
+		new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize(result); //first
 		new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result); //last
 		return result;
 	}

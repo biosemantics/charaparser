@@ -165,7 +165,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 		List<BiologicalEntity> subjects = processingContextState.getSubjects();
 		if(subjects.size()==0){
-			subjects = processingContext.getLastSubjects();
+			subjects = new LinkedList<BiologicalEntity>();
+			for(BiologicalEntity lastSubject : processingContext.getLastSubjects()) {
+				BiologicalEntity subject = lastSubject.clone();
+				subject.setId("o" + String.valueOf(processingContext.fetchAndIncrementStructureId(subject)));
+				subjects.add(subject);
+			}
 		}
 		LinkedList<Element> lastElements = processingContextState.getLastElements();
 		lastElements.clear();
