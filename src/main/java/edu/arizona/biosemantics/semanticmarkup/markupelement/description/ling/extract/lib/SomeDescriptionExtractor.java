@@ -160,10 +160,10 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		this.structureId = processingContext.getStructureId();
 		this.relationId = processingContext.getRelationId();
 	
-		System.out.println("====1====");
+		/*System.out.println("====1====");
 		for(Statement statement: description.getStatements()){
 			System.out.println(statement.toString());
-	    }
+	    }*/
 		
 		List<Element> xml = new LinkedList<Element>();
 		for(Statement s: description.getStatements()){
@@ -228,6 +228,11 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		RelationTreatmentElement relationElement = new RelationTreatmentElement("relationName", "id", "from", "to", false);
 		result.add(structureElement);
 		result.add(relationElement);*/
+		System.out.println(processingContext.getChunkCollector().getSource());
+		System.out.println(sentence);
+		/*if(sentence.equals("opisthosoma length 4 . 20 mm , width 2 . 30 mm , distance epigastrium_spiracle 2 . 03 mm , distance spiracle_spinnerets 0 . 87 mm .")) {
+			System.out.println("here");
+		}*/
 		new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize(result); //first
 		new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result); //last
 		return result;
