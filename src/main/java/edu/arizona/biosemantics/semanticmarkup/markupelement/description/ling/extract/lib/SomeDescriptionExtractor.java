@@ -233,8 +233,8 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		/*if(sentence.equals("opisthosoma length 4 . 20 mm , width 2 . 30 mm , distance epigastrium_spiracle 2 . 03 mm , distance spiracle_spinnerets 0 . 87 mm .")) {
 			System.out.println("here");
 		}*/
-		new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize(result); //first
-		new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result); //last
+		//new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize(result); //first
+		//new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result); //last
 		return result;
 	}
 	

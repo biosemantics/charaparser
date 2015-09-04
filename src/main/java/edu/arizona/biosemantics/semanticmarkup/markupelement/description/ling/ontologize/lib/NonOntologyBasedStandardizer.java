@@ -3,17 +3,31 @@
  */
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.Parent;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
 import com.google.inject.name.Named;
 
@@ -22,11 +36,6 @@ import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
-import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * @author Hong Cui
@@ -35,68 +44,108 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  *        
  */
 public class NonOntologyBasedStandardizer {
+	
+	protected XPathFactory xpathFactory = XPathFactory.instance();
+	protected XPathExpression<Element> sourceXpath = 
+			xpathFactory.compile("/bio:treatment/meta/source", Filters.element(), null, 
+					Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+	protected XPathExpression<Element> taxonIdentificationXpath = 
+			xpathFactory.compile("/bio:treatment/taxon_identification[@status='ACCEPTED']/taxon_name", Filters.element(), null,
+					Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+	protected XPathExpression<Element> statementXpath = 
+			xpathFactory.compile("//description[@type='morphology']/statement", Filters.element(), null, 
+					Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+	protected XPathExpression<Element> biologicalEntityPath = 
+			xpathFactory.compile("//description[@type='morphology']/statement/biological_entity", Filters.element(), null, 
+					Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+	protected XPathExpression<Element> relationPath = 
+			xpathFactory.compile("//description[@type='morphology']/statement/relation", Filters.element(), null, 
+					Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+	protected XPathExpression<Element> characterPath = 
+			xpathFactory.compile("//description[@type='morphology']/statement/biological_entity/character", Filters.element(), null, 
+					Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
+	
 	private Set<String> lifeStyles;
 	private Set<String> durations;
-	private String sentence;
-	private ProcessingContext processingContext;
 	private IPOSKnowledgeBase posKnowledgeBase;
 	private IInflector inflector;
 
-	public NonOntologyBasedStandardizer(IGlossary glossary, IInflector inflector, String sentence, ProcessingContext processingContext, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase){
+	public NonOntologyBasedStandardizer(IGlossary glossary, IInflector inflector, @Named("LearnedPOSKnowledgeBase")IPOSKnowledgeBase posKnowledgeBase) {
 		lifeStyles = glossary.getWordsInCategory("life_style");
 		lifeStyles.addAll(glossary.getWordsInCategory("growth_form"));
 		durations = glossary.getWordsInCategory("duration");
-		this.sentence = sentence;
-		this.processingContext = processingContext;
 		this.posKnowledgeBase = posKnowledgeBase;
 		this.inflector = inflector;
 	}
 
-	public void standardize(List<Element> result){
-		if(result.isEmpty()) return;
-		enumerateCompoundOrgan(result); //legs i-iii
-		enumerateCompoundStates(result); // tibia/metatarsus:  1.43/1.27 mm
-		orderOrgansInDistance(result); //spiracle-epigastrium distance = epigastrium-spiracle distance
-		checkAlternativeIDs(result); //before count
-		taxonName2WholeOrganism(result);
-		createWholeOrganismDescription(result, lifeStyles, "growth_form");
-		createWholeOrganismDescription(result, durations, "duration");
-		//createMayBeSameRelations(result, processingContext);  //not sure we need this relation.
-		removeOrphenedUnknownElements(result);
-		noOrgan2AdvConstraintedOrgan(result);
-		normalizeZeroCount(result);
-		removeCircularCharacterConstraint(result);
-		character2structureContraint(result);//is_modifier => constraint
-		renameCharacter(result, "count", "quantity");
-		renameCharacter(result, "atypical_count", "atypical_quantity");
-		renameCharacter(result, "color", "coloration");
-		quantityVsPresence(result); //after count => quantity
-		phraseUpConstraints(result); //put constraints in the order as appeared in the original text, should be among the last normalization steps
-		normalizeAdvConstraintedOrgan(result);	//after phraseUpConstraints
+	public void standardize(String directory){
+		SAXBuilder saxBuilder = new SAXBuilder();
+		File dir = new File(directory);
+		for(File file : dir.listFiles()) {
+			if(file.isFile()) {
+				try {
+					Document document = null;
+					try(InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), "UTF8")) {
+						document = saxBuilder.build(inputStreamReader);
+					}
+					
+					if(document != null) 
+						standardize(document);
+					
+					File outputFile = new File(directory, file.getName());
+					try(OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF8")) {
+						XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
+						xmlOutput.output(document, outputStreamWriter);
+					}
+				} catch (JDOMException | IOException e) {
+					log(LogLevel.ERROR, "Can't read xml from file " + file.getAbsolutePath(), e);
+				}
+			}
+		}
+
 	}
 	
+	private void standardize(Document document) {
+		enumerateCompoundOrgan(document); //legs i-iii
+		enumerateCompoundStates(document); // tibia/metatarsus:  1.43/1.27 mm
+		orderOrgansInDistance(document); //spiracle-epigastrium distance = epigastrium-spiracle distance
+		checkAlternativeIDs(document); //before count
+		taxonName2WholeOrganism(document);
+		createWholeOrganismDescription(document, lifeStyles, "growth_form");
+		createWholeOrganismDescription(document, durations, "duration");
+		//createMayBeSameRelations(result, processingContext);  //not sure we need this relation.
+		removeOrphenedUnknownElements(document);
+		noOrgan2AdvConstraintedOrgan(document);
+		normalizeZeroCount(document);
+		removeCircularCharacterConstraint(document);
+		character2structureContraint(document);//is_modifier => constraint
+		renameCharacter(document, "count", "quantity");
+		renameCharacter(document, "atypical_count", "atypical_quantity");
+		renameCharacter(document, "color", "coloration");
+		quantityVsPresence(document); //after count => quantity
+		phraseUpConstraints(document); //put constraints in the order as appeared in the original text, should be among the last normalization steps
+		normalizeAdvConstraintedOrgan(document);	//after phraseUpConstraints
+	}
+
 	/**
 	 * spiracle-epigastrium distance = epigastrium-spiracle distance, 
 	 * sort the involving organs alphabetically
 	 * @param result
 	 */
-	private void orderOrgansInDistance(List<Element> result) {
-		for(int i = 0; i < result.size(); i++){
-			Element element = result.get(i);
-			if(element.isStructure()){
-				for(Character character: ((BiologicalEntity)element).getCharacters()){
-					if(character.getName().compareTo("distance")==0){
-						String name = ((BiologicalEntity)element).getName();
-						if(name.contains("-")){
-							String[] names = name.split("\\s*-\\s*");
-							Arrays.sort(names);
-							name = "";
-							for(int n = 0; n < names.length; n++){
-								name += names[n]+"-";
-							}
-							((BiologicalEntity)element).setName(name.replaceFirst("-$", ""));
-							break;
+	private void orderOrgansInDistance(Document document) {
+		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
+			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+				if(character.getAttribute("name").equals("distance")){
+					String biologicalEntityName = biologicalEntity.getAttributeValue("name");
+					if(biologicalEntityName.contains("-")){
+						String[] names = biologicalEntityName.split("\\s*-\\s*");
+						Arrays.sort(names);
+						biologicalEntityName = "";
+						for(int n = 0; n < names.length; n++){
+							biologicalEntityName += names[n]+"-";
 						}
+						biologicalEntity.setAttribute("name", biologicalEntityName.replaceFirst("-$", ""));
+						break;
 					}
 				}
 			}
@@ -104,21 +153,21 @@ public class NonOntologyBasedStandardizer {
 	}
 
 	private class CompoundedEntityStates {
-		private BiologicalEntity biologicalEntity;
+		private Element biologicalEntity;
 
-		public CompoundedEntityStates(BiologicalEntity biologicalEntity) {
+		public CompoundedEntityStates(Element biologicalEntity) {
 			this.biologicalEntity = biologicalEntity;
 		}
 
 		public String[] getEntityParts() {
-			return biologicalEntity.getNameOriginal().split("\\s*/\\s*");
+			return biologicalEntity.getAttributeValue("name_original").split("\\s*/\\s*");
 		}
 
 		public List<String[]> getCharacterParts() {
 			List<String[]> characterParts = new LinkedList<String[]>();
-			for (Character character : biologicalEntity.getCharacters())
-				if (character.getValue().contains("/"))
-					characterParts.add(character.getValue().split("\\s*/\\s*"));
+			for (Element character : biologicalEntity.getChildren("character"))
+				if (character.getAttributeValue("value").contains("/"))
+					characterParts.add(character.getAttributeValue("value").split("\\s*/\\s*"));
 			return characterParts;
 		}
 
@@ -126,12 +175,12 @@ public class NonOntologyBasedStandardizer {
 			if (!biologicalEntity.getName().contains("/")) // add all character  values also contain /
 				return false;
 			String[] entityNames = this.getEntityParts();
-			if (biologicalEntity.getCharacters().isEmpty())
+			if (biologicalEntity.getChildren("character").isEmpty())
 				return false; // distal 1/2
 			List<String[]> characterParts = getCharacterParts();
 			int i=0;
-			for (Character character : biologicalEntity.getCharacters()) {
-				if (!character.getValue().contains("/"))
+			for (Element character : biologicalEntity.getChildren("character")) {
+				if (!character.getAttributeValue("value").contains("/"))
 					return false;
 				if (characterParts.get(i).length != entityNames.length)
 					return false;
@@ -144,19 +193,19 @@ public class NonOntologyBasedStandardizer {
 			
 	private class CompoundedEntity {
 
-		private BiologicalEntity biologicalEntity;
+		private Element biologicalEntity;
 
-		public CompoundedEntity(BiologicalEntity biologicalEntity) {
+		public CompoundedEntity(Element biologicalEntity) {
 			this.biologicalEntity = biologicalEntity;
 		}
 
 		public boolean isTarget() {
-			return biologicalEntity.getNameOriginal().matches(
+			return biologicalEntity.getAttributeValue("name_original").matches(
 					"(\\d+|[ivx]+)-(\\d+|[ivx]+)");
 		}
 
 		public List<String> getEntityParts() {
-			String[] ends = biologicalEntity.getNameOriginal().split("-");
+			String[] ends = biologicalEntity.getAttributeValue("name_original").split("-");
 			ArrayList<String> individuals = new ArrayList<String>();
 			String current = ends[0];
 			String last = ends[ends.length - 1];
@@ -181,46 +230,41 @@ public class NonOntologyBasedStandardizer {
 	 * @param result
 	 */
 
-	private void enumerateCompoundStates(List<Element> result) {
-		List<Element> iteratable = new LinkedList<Element>(result);
-		for(int i = 0; i < iteratable.size(); i++){
-			Element element = iteratable.get(i);
-			if(element.isStructure()){
-				BiologicalEntity biologicalEntity = (BiologicalEntity) element;
-				CompoundedEntityStates compoundedEntityStates = new CompoundedEntityStates(biologicalEntity);
-							
-				if(compoundedEntityStates.isTarget()){//enumerate
-					int resultPosition = result.indexOf(element);
-					result.remove(element);
-					Map<String, BiologicalEntity> newBiologicalEntities = new HashMap<String, BiologicalEntity>();
+	private void enumerateCompoundStates(Document document) {
+		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
+			CompoundedEntityStates compoundedEntityStates = new CompoundedEntityStates(biologicalEntity);
+			if(compoundedEntityStates.isTarget()){//enumerate
+				Parent parent = biologicalEntity.getParent();
+				int resultPosition = parent.indexOf(biologicalEntity);
+				biologicalEntity.detach();
+				Map<String, Element> newBiologicalEntities = new HashMap<String, Element>();
 
-					int id = 0;
-					for (String entityName : compoundedEntityStates.getEntityParts()) {
-						BiologicalEntity clone = biologicalEntity.clone();
-						String newId = biologicalEntity.getId() + "_" + id;
-						clone.setId(newId);
-						clone.setName(inflector.getSingular(entityName));
-						newBiologicalEntities.put(newId, clone);
+				int id = 0;
+				for (String entityName : compoundedEntityStates.getEntityParts()) {
+					Element clone = biologicalEntity.clone();
+					String newId = biologicalEntity.getAttributeValue("id") + "_" + id;
+					clone.setAttribute("id", newId);
+					clone.setAttribute("name", inflector.getSingular(entityName));
+					newBiologicalEntities.put(newId, clone);
 
-						int j=0;
-						for (Character character : clone.getCharacters()) {
-							//try {
-								String[] parts = compoundedEntityStates.getCharacterParts().get(j);
-								//System.out.println(parts);
-								character.setValue(parts[id]);
-							/*} catch(Exception e) {
-								System.out.println("exception");
-								compoundedEntityStates.getCharacterParts();
-							}*/
+					int j=0;
+					for (Element character : clone.getChildren("character")) {
+						//try {
+							String[] parts = compoundedEntityStates.getCharacterParts().get(j);
+							//System.out.println(parts);
+							character.setAttribute("value", parts[id]);
+						/*} catch(Exception e) {
+							System.out.println("exception");
+							compoundedEntityStates.getCharacterParts();
+						}*/
 
-							j++;
-						}
-
-						result.add(resultPosition, clone);
-						id++;
+						j++;
 					}
-					updateRelations(result, biologicalEntity, newBiologicalEntities);
+
+					parent.addContent(resultPosition + id, clone);
+					id++;
 				}
+				updateRelations(document, biologicalEntity, newBiologicalEntities);
 			}
 		}
 	}
@@ -232,69 +276,60 @@ public class NonOntologyBasedStandardizer {
 	 * @param result
 	 */
 
-	private void enumerateCompoundOrgan(List<Element> result) {
-		List<Element> iteratable = new LinkedList<Element>(result);
-		for(int i = 0; i < iteratable.size(); i++){
-			Element element = iteratable.get(i);
-			if(element.isStructure()){
-				BiologicalEntity biologicalEntity = (BiologicalEntity) element;
-				CompoundedEntity compoundedEntity = new CompoundedEntity(biologicalEntity);
-				if(compoundedEntity.isTarget()) {
-					int resultPosition = result.indexOf(element);
-					result.remove(element);
-					Map<String, BiologicalEntity> newBiologicalEntities = new HashMap<String, BiologicalEntity>();
-					List<String> entityParts = compoundedEntity.getEntityParts();
-					boolean added =false;
+	private void enumerateCompoundOrgan(Document document) {
+		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
+			CompoundedEntity compoundedEntity = new CompoundedEntity(biologicalEntity);
+			if(compoundedEntity.isTarget()) {
+				Parent statement = biologicalEntity.getParent();
+				int resultPosition = biologicalEntity.getParent().indexOf(biologicalEntity);
+				biologicalEntity.detach();
+				Map<String, Element> newBiologicalEntities = new HashMap<String, Element>();
+				List<String> entityParts = compoundedEntity.getEntityParts();
+				boolean added =false;
+				
+				int id = 0;
+				for (String individual : entityParts) {
+					Element clone = biologicalEntity.clone();
+					String newId = clone.getAttributeValue("id") + "_" + id;
+					clone.setAttribute("name", inflector.getSingular(individual));
+					clone.setAttribute("id", newId);
+					newBiologicalEntities.put(newId, clone);
 					
-					int id = 1;
-					for (String individual : entityParts) {
-						BiologicalEntity clone = biologicalEntity.clone();
-						String newId = clone.getId() + "_" + id++;
-						clone.setName(inflector.getSingular(individual));
-						clone.setId(newId);
-						newBiologicalEntities.put(newId, clone);
-						result.add(resultPosition, clone);
-						added = true;
-					}
-					if(added){					
-						updateRelations(result, biologicalEntity, newBiologicalEntities);
-					}
-					
+					statement.addContent(resultPosition + id, clone);
+					id++;
+					added = true;
+				}
+				if(added){					
+					updateRelations(document, biologicalEntity, newBiologicalEntities);
+				}
+			}	
+		}
+	}
+
+	private void updateRelations(Document document, Element biologicalEntity, Map<String, Element> newBiologicalEntities) {
+	    //if the original element involved in any relations, individualize the relations
+		//to
+		String[] attributes = { "to", "from" };
+		List[] relations = { this.getToRelations(biologicalEntity, document), this.getFromRelations(biologicalEntity, document) };
+		
+		for(int i=0; i<attributes.length; i++) {
+			String attribute = attributes[i];
+			List<Element> relationsList = relations[i];
+			for(Element relation : relationsList) {
+				Parent parent = relation.getParent();
+				int relationPosition = parent.indexOf(relation);
+				relation.detach();
+				int rid = 0;
+				for(String newId : newBiologicalEntities.keySet()){
+					Element clone = relation.clone();
+					clone.setAttribute("id", clone.getAttributeValue("id") + "_" + (rid));
+					clone.setAttribute(attribute, newId);
+					parent.addContent(relationPosition + rid, clone);
+					rid++;
 				}
 			}
 		}
 	}
-
-	private void updateRelations(List<Element> result, BiologicalEntity biologicalEntity, Map<String, BiologicalEntity> newBiologicalEntities) {
-	    //if the original element involved in any relations, individualize the relations
-		//to
-		LinkedHashSet<Relation> toRelations = biologicalEntity.getToRelations();
-		for(Relation relation: toRelations){
-			int relationPosition = result.indexOf(relation);	
-			int rid = 1;
-			for(String newId : newBiologicalEntities.keySet()){
-				Relation clone = relation.clone();
-				clone.setId(clone.getId() + "_" + (rid++));
-				clone.setTo(newId);
-				result.add(relationPosition + 1, clone);
-			}
-			result.remove(relation);
-		}
-		//from
-		LinkedHashSet<Relation> fromRelations = biologicalEntity.getFromRelations();
-		for(Relation relation: fromRelations){
-			int relationPosition = result.indexOf(relation);
-			int rid = 1;
-			for(String newId : newBiologicalEntities.keySet()){
-				Relation clone = relation.clone();
-				clone.setId(clone.getId() + "_" + (rid++));
-				clone.setFrom(newId);
-				result.add(relationPosition + 1, clone);
-			}
-			result.remove(relation);
-		}
-	}
-
 
 	
 	/**
@@ -345,64 +380,56 @@ public class NonOntologyBasedStandardizer {
 	 * @param result
 	 */
 
-	private void checkAlternativeIDs(List<Element> result) {
-		for(Element element: result){
-			if(element.isStructure()){
-				LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters(); //in the order of parsing results?
-				ArrayList<Character> withAlterIDs = new ArrayList<Character> ();
-				for(Character character: characters){
-					String notes = character.getNotes();
-					if(notes !=null && notes.contains("alterIDs:")){
-						withAlterIDs.add(character);
-					}
-
+	private void checkAlternativeIDs(Document document) {
+		for (Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			ArrayList<Element> withAlterIDs = new ArrayList<Element> ();
+			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+				String notes = character.getAttributeValue("notes");
+				if(notes != null && notes.contains("alterIDs:")) {
+					withAlterIDs.add(character);
 				}
+			}
 
-				boolean move = false;
-				ArrayList<Character> removes = new ArrayList<Character>();
-				for(Character charWAI: withAlterIDs){
-					String notes = charWAI.getNotes();
-					removeAlterIDsNotes(charWAI);
-					String note = notes.substring(notes.indexOf("alterIDs:"));
-					List<String> ids = Arrays.asList(note.replaceFirst("[;\\.].*", "").replaceFirst("alterIDs:", "").split("\\s+"));
-					String charName = charWAI.getName(); //width, atypical_width
-					if(move){
-						removes.add(charWAI);
-						moveCharacter2Structures(charWAI, ids, result);
-					}
-					else{
-						for(Character character: characters){
-							if(!character.equals(charWAI) && charName.compareTo(character.getName())==0 && charName.matches(".*?_?(count|length|width|size|height)")){
-								//move charWAI to entities with the ids
-								removes.add(charWAI);
-								moveCharacter2Structures(charWAI, ids, result); //
-								move = true;
-								break;
-							}
+			boolean move = false;
+			for(Element charWAI: withAlterIDs){
+				String notes = charWAI.getAttributeValue("notes");
+				removeAlterIDsNotes(charWAI);
+				String note = notes.substring(notes.indexOf("alterIDs:"));
+				List<String> ids = Arrays.asList(note.replaceFirst("[;\\.].*", "").replaceFirst("alterIDs:", "").split("\\s+"));
+				String charName = charWAI.getAttributeValue("name"); //width, atypical_width
+				if(move){
+					charWAI.detach();
+					moveCharacterToStructures(charWAI, ids, document);
+				} else {
+					for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+						if(!character.equals(charWAI) && charName.equals(character.getAttributeValue("name")) && 
+								charName.matches(".*?_?(count|length|width|size|height)")){
+							//move charWAI to entities with the ids
+							charWAI.detach();
+							moveCharacterToStructures(charWAI, ids, document); //
+							move = true;
+							break;
 						}
 					}
 				}
-				characters.removeAll(removes);
-			}
-		}
-
-	}
-
-
-	private void moveCharacter2Structures(Character charWAI, List<String> list, List<Element> result) {
-		for(Element element: result){
-			if(element.isStructure()){
-				if(list.contains(((BiologicalEntity) element).getId())){
-					((BiologicalEntity) element).addCharacter(charWAI);
-				}
 			}
 		}
 	}
 
-	private void removeAlterIDsNotes(Character charWAI) {
-		if(charWAI.getNotes()!=null && charWAI.getNotes().contains("alterIDs:")){
-			charWAI.setNotes(charWAI.getNotes().replaceFirst("\\balterIDs:.*?(;|\\.|$)", "")); //remove alterIDs note
-			if(charWAI.getNotes()!=null && charWAI.getNotes().isEmpty()) charWAI.setNotes(null);
+
+	private void moveCharacterToStructures(Element charWAI, List<String> ids, Document document) {
+		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
+			if(ids.contains(biologicalEntity.getAttributeValue("id"))) {
+				biologicalEntity.addContent(charWAI);
+			}
+		}
+	}
+
+	private void removeAlterIDsNotes(Element charWAI) {
+		String notes = charWAI.getAttributeValue("notes");
+		if(notes != null && notes.contains("alterIDs:")){
+			charWAI.setAttribute("notes", notes.replaceFirst("\\balterIDs:.*?(;|\\.|$)", "")); //remove alterIDs note
+			if(notes != null && notes.isEmpty()) charWAI.removeAttribute("notes");
 		}
 	}
 
@@ -410,13 +437,14 @@ public class NonOntologyBasedStandardizer {
 	 * if a structure has multiple constraints, put them in the natural order they occur in the text
 	 * @param result
 	 */
-	private void phraseUpConstraints(List<Element> result) {
-		for(Element element: result){
-			if(element.isStructure()){
-				String constraints = ((BiologicalEntity)element).getConstraint();
-				if(constraints!=null && (constraints.contains(";")||constraints.contains(" "))){
-					constraints = order(constraints, sentence, ((BiologicalEntity)element).getNameOriginal());
-					((BiologicalEntity)element).setConstraint(constraints);
+	private void phraseUpConstraints(Document document) {
+		for (Element statement : this.statementXpath.evaluate(document)) {
+			String sentence = statement.getChild("text").getText();
+			for (Element biologicalEntity : statement.getChildren("biological_entity")) {
+				String constraints = biologicalEntity.getAttributeValue("constraint");
+				if(constraints != null && (constraints.contains(";") || constraints.contains(" "))){
+					constraints = order(constraints, sentence, biologicalEntity.getAttributeValue("name_original"));
+					biologicalEntity.setAttribute("constraint", constraints);
 				}
 			}
 		}
@@ -430,8 +458,7 @@ public class NonOntologyBasedStandardizer {
 	 * @param nameOriginal
 	 * @return
 	 */
-	private String order(String constraints, String sentence,
-			String nameOriginal) {
+	private String order(String constraints, String sentence, String nameOriginal) {
 		ArrayList<String> sent = new ArrayList<String>(Arrays.asList(sentence.split("\\s+")));
 		ArrayList<String> constr = new ArrayList<String>(Arrays.asList(constraints.split("\\s*?[; ]\\s*")));
 		ArrayList<String> orderedCandidates = new ArrayList<String>();
@@ -445,7 +472,7 @@ public class NonOntologyBasedStandardizer {
 		}
 		do{
 			String ordered = "";
-			if(i>=constr.size()){
+			if(i >= constr.size()){
 				for(int j = i - constr.size(); j<i; j++){
 					int sizeBefore = constr.size();
 					constr.remove(sent.get(j));
@@ -466,7 +493,7 @@ public class NonOntologyBasedStandardizer {
 			}
 
 			i = sent.indexOf(nameOriginal);
-		}while(i>=constr.size());
+		} while (i >= constr.size());
 
 		int max = 0;
 		String selected = "";
@@ -492,60 +519,48 @@ public class NonOntologyBasedStandardizer {
 	 * separate quantity from presence
 	 * @param result
 	 */
-	private void quantityVsPresence(List<Element> result) {
-		for(Element element: result){
-			if(element.isStructure()){
-				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
-				for(Character c: chars){
-					//if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches(".*?\\b(absent|present|0)\\b.*")){
-					if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches("absent|present|0")){
-						c.setName("presence");
-						c.setValue(c.getValue().replaceAll("0", "absent"));
-					}
-
-				}
+	private void quantityVsPresence(Document document) {
+		for (Element character : this.characterPath.evaluate(document)) {
+			//if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches(".*?\\b(absent|present|0)\\b.*")){
+			String name = character.getAttributeValue("name");
+			String value = character.getAttributeValue("value");
+			if(name.equals("quantity") && value != null && value.matches("absent|present|0")){
+				character.setAttribute("name", "presence");
+				character.setAttribute("value", value.replaceAll("0", "absent"));
 			}
 		}
 	}
 
 
-	private void renameCharacter(List<Element> result, String oldName,
-			String newName) {
-		for(Element element: result){
-			if(element.isStructure()){
-				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
-				for(Character c: chars){
-					if(c.getName().compareTo(oldName)==0){
-						c.setName(newName);
-					}
-				}
+	private void renameCharacter(Document document, String oldName, String newName) {
+		for (Element character : this.characterPath.evaluate(document)) {
+			if(character.getAttributeValue("name").equals(oldName)) {
+				character.setAttribute("name", newName);
 			}
 		}
 	}
 
-	private void character2structureContraint(List<Element> result) {
-		for(Element element: result){
-			if(element.isStructure()){
-				String oid = ((BiologicalEntity)element).getId();
-				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
-				List<Character> removes = new ArrayList<Character>();
-				for(Character c: chars){
-					if(c.getIsModifier()!=null && c.getIsModifier().compareTo("true")==0 && c.getName()!=null &&
-							c.getName().matches(".*?(^|_or_)("+ElementRelationGroup.entityStructuralConstraintElements+")(_or_|$).*")){
-						if(c.getValue()!=null){
-							((BiologicalEntity) element).appendConstraint(c.getValue());
-							removes.add(c);
+	private void character2structureContraint(Document document) {
+		for (Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+				String isModifier = character.getAttributeValue("is_modifier");
+				
+				if(isModifier != null && isModifier.equals("true") && character.getAttributeValue("name") != null &&
+						character.getAttributeValue("name").matches(".*?(^|_or_)(" + ElementRelationGroup.entityStructuralConstraintElements + ")(_or_|$).*")) {
+					if(character.getAttributeValue("value") != null) {
+						String appendConstraint = character.getAttributeValue("value");
+						
+						String newValue = "";
+						String constraint = character.getAttributeValue("constraint");
+						if(constraint != null && !constraint.matches(".*?(^|; )"+appendConstraint+"($|;).*")){
+							newValue = constraint + "; " + appendConstraint;
 						}
-
+						biologicalEntity.setAttribute("constraint", newValue);
+						character.detach();
 					}
-				}	
-				chars.removeAll(removes);
-				/*for(Character c: removes){
-					((BiologicalEntity)element).removeElementRecursively(c);
-				}*/
+				}
 			}
 		}
-
 	}
 
 	/**
@@ -612,36 +627,37 @@ public class NonOntologyBasedStandardizer {
 	 * the markup of such usage of taxon name is normalized to whole_organism here
 	 * @param result
 	 */
-	private void taxonName2WholeOrganism(List<Element> result) {
-		Element firstElement =result.get(0);
-		if(firstElement.isStructure()){
-			String type = ((BiologicalEntity)firstElement).getType();
-			if(type!=null && type.compareTo("taxon_name")==0 && ( 
-					((BiologicalEntity)firstElement).getConstraint()==null ||((BiologicalEntity)firstElement).getConstraint().isEmpty())){
-				((BiologicalEntity)firstElement).setName("whole_organism");
-				((BiologicalEntity)firstElement).setNameOriginal("");
-				((BiologicalEntity)firstElement).setType("structure");
+	private void taxonName2WholeOrganism(Document document) {
+		for (Element statement : this.statementXpath.evaluate(document)) {
+			List<Element> biologicalEntities = statement.getChildren("biological_entity");
+			if(!biologicalEntities.isEmpty()) {
+				Element firstElement = biologicalEntities.get(0);
+				String type = firstElement.getAttributeValue("type");
+				String constraint = firstElement.getAttributeValue("constraint");
+				if (type != null && type.equals("taxon_name") && (
+						constraint == null || constraint.isEmpty())) {
+					firstElement.setAttribute("name", "whole_organism");
+					firstElement.setAttribute("name_original", "");
+					firstElement.setAttribute("type", "structure");
+				}
 			}
-		}
+		}		
 	}
 	/**
 	 * if a character constraint refers to the same structure the character belongs to, remove the constraint
 	 * @param result
 	 */
-	private void removeCircularCharacterConstraint(List<Element> result) {
-		for(Element element: result){
-			if(element.isStructure()){
-				String oid = ((BiologicalEntity)element).getId();
-				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
-				for(Character c: chars){
-					if(c.getConstraintId()!=null && c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")){
-						c.setConstraint(null);
-						c.setConstraintId(null);
-					}
-				}				
+	private void removeCircularCharacterConstraint(Document document) {
+		for(Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			String oid = biologicalEntity.getAttributeValue("id");
+			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+				String constraintId = character.getAttributeValue("constraintid");
+				if(constraintId != null && constraintId.matches(".*?\\b" + oid + "\\b.*")) {
+					character.removeAttribute("constraint");
+					character.removeAttribute("constraintid");
+				}
 			}
 		}
-
 	}
 
 	/*private void createMayBeSameRelations(List<Element> result, ProcessingContext processingContext) {
@@ -693,26 +709,25 @@ public class NonOntologyBasedStandardizer {
 	}*/
 
 
-	private void createWholeOrganismDescription(List<Element> result, Set<String> targets, String category) {
-		BiologicalEntity wholeOrganism = new BiologicalEntity();
-		boolean exist = false;
-		for(Element element : result) {
-			if(element.isStructure() && ((BiologicalEntity)element).getName().equals("whole_organism")) {
-				wholeOrganism = (BiologicalEntity)element;
-				exist = true;
-				break;
+	private void createWholeOrganismDescription(Document document, Set<String> targets, String category) {
+		for(Element statement : new ArrayList<Element>(this.statementXpath.evaluate(document))) {
+			Element wholeOrganism = new Element("biological_entity");
+			boolean exist = false;
+			for(Element biologicalEntity : new ArrayList<Element>(statement.getChildren("biological_entity"))) {
+				if(biologicalEntity.getAttributeValue("name").equals("whole_organism")) {
+					wholeOrganism = biologicalEntity;
+					exist = true;
+					break;
+				}
 			}
-		}
-
-		boolean modifiedWholeOrganism = false;
-		Iterator<Element> resultIterator = result.iterator();
-		while(resultIterator.hasNext()) {
-			Element element = resultIterator.next();
-			if(element.isStructure()) {
-				BiologicalEntity structure = (BiologicalEntity)element;
-				String name = ((structure.getConstraint()==null? "": structure.getConstraint()+" ")+structure.getName()).trim();
-				boolean isSimpleStructure = isSimpleStructure(structure);
-				if(targets.contains(name) && !isToOrgan(structure) && !isConstraintOrgan(structure, result)) {		
+	
+			boolean modifiedWholeOrganism = false;
+			for(Element biologicalEntity : new ArrayList<Element>(statement.getChildren("biological_entity"))) {
+				String constraint = biologicalEntity.getAttributeValue("constraint");
+				String name = biologicalEntity.getAttributeValue("name");
+				name = ((constraint == null ? "" : constraint + " ") + name).trim();
+				boolean isSimpleStructure = isSimpleStructure(biologicalEntity);
+				if(targets.contains(name) && !isToOrgan(biologicalEntity, document) && !isConstraintOrgan(biologicalEntity, document)) {		
 					//wholeOrganism.appendAlterName(structure.getAlterName());
 					//wholeOrganism.appendConstraint(structure.getConstraint());
 					//wholeOrganism.appendConstraintId(structure.getConstraintId());
@@ -725,45 +740,68 @@ public class NonOntologyBasedStandardizer {
 					//wholeOrganism.appendProvenance(structure.getProvenance());
 					//wholeOrganism.appendTaxonConstraint(structure.getTaxonConstraint());
 					if(exist && isSimpleStructure){
-						LinkedHashSet<Character> characters = structure.getCharacters();
-						wholeOrganism.addCharacters(characters);
+						wholeOrganism.addContent(biologicalEntity.getChildren("character"));
 					}else if(!exist){
-						wholeOrganism = structure;
+						wholeOrganism = biologicalEntity;
 						exist = true;
 					}else if(!isSimpleStructure){
 						//in-place update of structure to whole_organism
-						structure.setName("whole_organism");
-						structure.setNameOriginal("");
-						structure.setType("structure");
-						Character character = new Character();
-						character.setName(category);
-						character.setValue(name);
-						structure.addCharacter(character);
+						biologicalEntity.setAttribute("name", "whole_organism");
+						biologicalEntity.setAttribute("name_original", "");
+						biologicalEntity.setAttribute("type", "structure");
+						Element character = new Element("character");
+						character.setAttribute("name", category);
+						character.setAttribute("value", name);
+						biologicalEntity.addContent(character);
 						continue;
 					}
-					wholeOrganism.setName("whole_organism");
-					wholeOrganism.setNameOriginal("");
-					wholeOrganism.setType("structure");
-					Character character = new Character();
-					character.setName(category);
-					character.setValue(name);
-					wholeOrganism.addCharacter(character);
+					wholeOrganism.setAttribute("name", "whole_organism");
+					wholeOrganism.setAttribute("name_original", "");
+					wholeOrganism.setAttribute("type", "structure");
+					
+					Element character = new Element("character");
+					character.setAttribute("name", category);
+					character.setAttribute("value", name);
+					wholeOrganism.addContent(character);
 					modifiedWholeOrganism = true;
-					updateFromStructureForRelations(structure, wholeOrganism);
-					resultIterator.remove();
+					updateFromStructureForRelations(biologicalEntity, wholeOrganism, document);
+					biologicalEntity.detach();
 				}
 			}	
+	
+			if(modifiedWholeOrganism)
+				statement.addContent(wholeOrganism);
 		}
-
-		if(modifiedWholeOrganism)
-			result.add(wholeOrganism);
 	}
 
+	private List<Element> getFromRelations(Element biologicalEntity, Document document) {
+		List<Element> result = new LinkedList<Element>();
+		for(Element relation : new ArrayList<Element>(this.relationPath.evaluate(document))) {
+			if(relation.getAttributeValue("from").equals(biologicalEntity.getAttributeValue("id")))
+				result.add(relation);
+		}
+		return result;
+	}
+	
+	private List<Element> getToRelations(Element biologicalEntity, Document document) {
+		List<Element> result = new LinkedList<Element>();
+		for(Element relation : new ArrayList<Element>(this.relationPath.evaluate(document))) {
+			if(relation.getAttributeValue("to").equals(biologicalEntity.getAttributeValue("id")))
+				result.add(relation);
+		}
+		return result;
+	}
+	
+	private List<Element> getRelationsInvolve(Element biologicalEntity, Document document) {
+		List<Element> result = new LinkedList<Element>();
+		result.addAll(this.getFromRelations(biologicalEntity, document));
+		result.addAll(this.getToRelations(biologicalEntity, document));
+		return result;
+	}
 
-	private void updateFromStructureForRelations(BiologicalEntity structure, BiologicalEntity wholeOrganism) {
-		LinkedHashSet<Relation> relations = structure.getFromRelations();
-		for(Relation r: relations){
-			r.setFromStructure(wholeOrganism);
+	private void updateFromStructureForRelations(Element biologicalEntity, Element wholeOrganism, Document document) {
+		for(Element relation : new ArrayList<Element>(this.getFromRelations(biologicalEntity, document))) {
+			relation.setAttribute("from", wholeOrganism.getAttributeValue("id"));
 		}
 	}
 
@@ -773,30 +811,37 @@ public class NonOntologyBasedStandardizer {
 	 * @param xml
 	 * @return
 	 */
-	private boolean isConstraintOrgan(BiologicalEntity structure, List<Element> xml) {
-		String oid = structure.getId();
-		for(Element element: xml){
-			if(element.isStructure()){
-				LinkedHashSet<Character> chars = ((BiologicalEntity)element).getCharacters();
-				for(Character c: chars){
-					if(c.getConstraintId()!=null && c.getConstraintId().matches(".*?\\b"+oid+"\\b.*")) return true;
-				}				
+	private boolean isConstraintOrgan(Element biologicalEntity, Document document) {
+		String oid = biologicalEntity.getAttributeValue("id");
+		for(Element entity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			for(Element character : new ArrayList<Element>(entity.getChildren("character"))) {
+				String constraintId = character.getAttributeValue("constraintid");
+				if(constraintId != null && constraintId.matches(".*?\\b" + oid + "\\b.*")) 
+					return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean isToOrgan(BiologicalEntity structure) {
-		return structure.getToRelations().size()>0;
+	private boolean isToOrgan(Element biologicalEntity, Document document) {
+		this.getToRelations(biologicalEntity, document);
+		return !this.getToRelations(biologicalEntity, document).isEmpty();
 	}
 
-	private boolean isSimpleStructure(BiologicalEntity structure) {
-		String complex = (structure.getGeographicalConstraint()==null? "":structure.getGeographicalConstraint()) + 
-				(structure.getInBrackets()==null? "":structure.getInBrackets())+
-				(structure.getNotes()==null? "":structure.getNotes())+
-				(structure.getParallelismConstraint()==null? "":structure.getParallelismConstraint())+
-				(structure.getProvenance()==null? "":structure.getProvenance())+
-				(structure.getTaxonConstraint()==null? "":structure.getTaxonConstraint());
+	private boolean isSimpleStructure(Element biologicalEntity) {
+		String geographicalConstraint = biologicalEntity.getAttributeValue("geographical_constraint");
+		String inBrackets = biologicalEntity.getAttributeValue("in_brackets");
+		String notes = biologicalEntity.getAttributeValue("notes");
+		String parallelismConstraint = biologicalEntity.getAttributeValue("parallelism_constraint");
+		String provenance = biologicalEntity.getAttributeValue("provenance");
+		String taxonConstraint = biologicalEntity.getAttributeValue("taxon_constraint");
+		
+		String complex = (geographicalConstraint == null? "" : geographicalConstraint) + 
+				(inBrackets == null ? "" : inBrackets)+
+				(notes == null? "" : notes)+
+				(parallelismConstraint == null ? "" : parallelismConstraint)+
+				(provenance == null ? "" : provenance)+
+				(taxonConstraint == null ? "" : taxonConstraint);
 		return complex.trim().length()==0;
 	}
 
@@ -827,21 +872,21 @@ public class NonOntologyBasedStandardizer {
 	 * 
 	 * @param xml
 	 */
-	private void noOrgan2AdvConstraintedOrgan(List<Element> result) {
-		List<Character> remove = new ArrayList<Character>();
-		for(Element element: result){
-			if(element.isStructure()){
-				LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
-				int i = 0;
-				for(Character character: characters){
-					if(i==0 && character.getName()!=null && character.getName().compareTo("count")==0 && character.getValue()!=null
-							&& character.getValue().compareTo("no") ==0 && character.getIsModifier()!=null && character.getIsModifier().compareTo("true") == 0){
-						String constraint = ((BiologicalEntity)element).getConstraint()==null? "" :  ((BiologicalEntity)element).getConstraint();
-						((BiologicalEntity)element).setConstraint(("no "+constraint).trim());
-						remove.add(character);
-					}
+	private void noOrgan2AdvConstraintedOrgan(Document document) {
+		for(Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			String entityConstraint = biologicalEntity.getAttributeValue("constraint");
+			int i = 0;
+			for(Element character: new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+				String name = character.getAttributeValue("name");
+				String value = character.getAttributeValue("value");
+				String isModifier = character.getAttributeValue("is_modifier");
+				String constrailnt = character.getAttributeValue("constraint");
+				if(i==0 && name != null && name.equals("count") && value != null
+						&& value.equals("no") && isModifier != null && isModifier.equals("true")) {
+					String constraint = entityConstraint == null ? "" : entityConstraint;
+					biologicalEntity.setAttribute("constraint", ("no " + constraint).trim());
+					character.detach();
 				}
-				characters.removeAll(remove);
 			}
 		}
 	}
@@ -863,111 +908,110 @@ public class NonOntologyBasedStandardizer {
 	 * @param result
 	 */
 
-	private void normalizeAdvConstraintedOrgan(List<Element> result) {
-		ArrayList<Character> remove = new ArrayList<Character>();
-		for(Element element: result){
-			if(element.isStructure()){
-				String constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint();
-				if(((BiologicalEntity)element).getType()!=null && ((BiologicalEntity)element).getType().compareTo("structure")==0
-						//&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("^(no|not|never)\\b.*")){
-						&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("(no|not|never)")){//constraint is a single adv
-					//adv is negation
-					//handle is_modifier characters and true characters
-					boolean hasTrueCharacters = false;
-					LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
-					for(Character character: characters){
-						if(character.getIsModifier()!=null && character.getIsModifier().compareTo("true")==0){
-							//turn this character to structure constraint			
-							constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint();
-							((BiologicalEntity)element).setConstraint((constraint+ " "+character.getValue()).trim());
-							remove.add(character);
+	private void normalizeAdvConstraintedOrgan(Document document) {
+		for(Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			String constraint = biologicalEntity.getAttributeValue("constraint");
+			constraint = constraint == null ? "" : constraint; 
+			
+			String type = biologicalEntity.getAttributeValue("type");
+			
+			if(type !=null && type.equals("structure")
+					//&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("^(no|not|never)\\b.*")){
+					&& constraint.matches("(no|not|never)")){//constraint is a single adv
+				//adv is negation
+				//handle is_modifier characters and true characters
+				boolean hasTrueCharacters = false;
+				for(Element character: new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+					String isModifier = character.getAttributeValue("is_modifier");
+					if(isModifier != null && isModifier.equals("true")) {
+						//turn this character to structure constraint			
+						biologicalEntity.setAttribute("constraint", (constraint + " " + character.getAttributeValue("value").trim()));
+						character.detach();
+					} else {
+						//negate true characters
+						hasTrueCharacters = true;
+						String modifier = character.getAttributeValue("modifier");
+						if(modifier == null){
+							character.setAttribute("modifier", "not");
+						}else if(modifier.matches(".*\\bnot\\b.*")){//double negation 
+							modifier = modifier.replaceFirst("\\bnot\\b", "");
+							character.setAttribute("modifier", modifier.replaceAll("\\s+", " ").trim());
 						}else{
-							//negate true characters
-							hasTrueCharacters = true;
-							String modifier = character.getModifier();
-							if(modifier==null){
-								character.setModifier("not");
-							}else if(modifier.matches(".*\\bnot\\b.*")){//double negation 
-								modifier = modifier.replaceFirst("\\bnot\\b", "");
-								character.setModifier(modifier.replaceAll("\\s+", " ").trim());
-							}else{
-								modifier ="not "+modifier;
-								character.setModifier(modifier.trim());
-							}
+							modifier ="not "+modifier;
+							character.setAttribute("modifier", modifier.trim());
 						}
 					}
-					//negate relations
-					boolean negatedRelation = false;
-					List<Relation> relations = this.getRelationsInvolve(((BiologicalEntity)element), result);
-					for(Relation relation: relations){
-						negatedRelation = true;
-						if(relation.getNegation() !=null &&
-								relation.getNegation().compareTo("true") == 0) relation.setNegation("false");
-						else relation.setNegation("true");
-					}
-
-					//no relation and no true character, set count to 0
-					if(!negatedRelation && !hasTrueCharacters){
-						Character count = new Character();
-						count.setName("count");
-						count.setValue("0");
-						((BiologicalEntity) element).addCharacter(count);
-					}
-
-					//remove unneeded stuff
-					characters.removeAll(remove);
-					//remove no|not|never from the structure constraint
-					constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint().replaceFirst("^no|not|never\\b", "");
-					((BiologicalEntity)element).setConstraint(constraint.trim());
-				}else if(((BiologicalEntity)element).getType()!=null && ((BiologicalEntity)element).getType().compareTo("structure")==0 
-						//&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
-						&& ((BiologicalEntity)element).getConstraint()!=null && !constraint.contains(" ") &&!constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)){ //constraint is a single adverb
-
-					//other advs, mirrors the process above
-					String mod = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
-					//handle is_modifier characters and true characters
-					boolean hasTrueCharacters = false;
-					LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
-					for(Character character: characters){
-						if(character.getIsModifier()!=null && character.getIsModifier().compareTo("true")==0){
-							//turn this character to structure constraint			
-							constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint();
-							((BiologicalEntity)element).setConstraint((constraint+ " "+character.getValue()).trim());
-							remove.add(character);
-						}else{
-							//modify true characters
-							hasTrueCharacters = true;
-							String modifier = character.getModifier()==null? "": character.getModifier();
-							modifier =mod+" "+modifier;
-							character.setModifier(modifier.trim());
-						}
-					}
-
-					//negate relations
-					boolean modifiedRelation = false;
-					List<Relation> relations = this.getRelationsInvolve(((BiologicalEntity)element), result);
-					for(Relation relation: relations){
-						modifiedRelation = true;
-						String modifier = relation.getModifier()==null? "": relation.getModifier();
-						modifier =mod+" "+modifier;
-						relation.setModifier(modifier.trim());
-					}
-
-					//no relation and no true character, set count to 0
-					if(!modifiedRelation && !hasTrueCharacters){
-						Character count = new Character();
-						count.setName("count");
-						count.setValue("present");
-						count.setModifier(mod);
-						((BiologicalEntity) element).addCharacter(count);
-					}
-
-					//remove unneeded stuff
-					characters.removeAll(remove);
-					//remove no|not|never from the structure constraint
-					constraint = ((BiologicalEntity)element).getConstraint()==null? "":  ((BiologicalEntity)element).getConstraint().replaceFirst("^"+mod+"\\b", "");
-					((BiologicalEntity)element).setConstraint(constraint.trim());
 				}
+				//negate relations
+				boolean negatedRelation = false;
+				for(Element relation : this.getRelationsInvolve(biologicalEntity, document)) {
+					negatedRelation = true;
+					String negation = relation.getAttributeValue("negation");
+					if(negation !=null && negation.equals("true")) 
+						relation.setAttribute("negation", "false");
+					else 
+						relation.setAttribute("negation", "true");
+				}
+
+				//no relation and no true character, set count to 0
+				if(!negatedRelation && !hasTrueCharacters){
+					Element count = new Element("character");
+					count.setAttribute("name", "count");
+					count.setAttribute("value", "0");
+					biologicalEntity.addContent(count);
+				}
+
+				//remove no|not|never from the structure constraint
+				constraint = biologicalEntity.getAttributeValue("constraint");
+				biologicalEntity.setAttribute("constraint", constraint.replaceFirst("^no|not|never\\b", "").trim());
+			} else if(type !=null && type.equals("structure")
+					//&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
+					&& !constraint.contains(" ") && !constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)){ //constraint is a single adverb
+
+				//other advs, mirrors the process above
+				String mod = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
+				//handle is_modifier characters and true characters
+				boolean hasTrueCharacters = false;
+				for(Element character: new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+					String isModifier = character.getAttributeValue("is_modifier");
+					if(isModifier != null && isModifier.equals("true")) {
+						//turn this character to structure constraint
+						biologicalEntity.setAttribute("constraint", (constraint + " " + character.getValue()).trim());
+						character.detach();
+					}else{
+						//modify true characters
+						hasTrueCharacters = true;
+						String modifier = character.getAttributeValue("modifier"); 
+						modifier = modifier ==null ? "": modifier;
+						modifier = mod + " " + modifier;
+						character.setAttribute("modifier", modifier.trim());
+					}
+				}
+
+				//negate relations
+				boolean modifiedRelation = false;
+				List<Element> relations = this.getRelationsInvolve(biologicalEntity, document);
+				for(Element relation: relations){
+					modifiedRelation = true;
+					String modifier = relation.getAttributeValue("modifier");
+					modifier = modifier == null ? "": modifier;
+					modifier = mod + " " + modifier;
+					relation.setAttribute("modifier", modifier.trim());
+				}
+
+				//no relation and no true character, set count to 0
+				if(!modifiedRelation && !hasTrueCharacters){
+					Element count = new Element("character");
+					count.setAttribute("name", "count");
+					count.setAttribute("value", "present");
+					count.setAttribute("modifier", mod);
+					biologicalEntity.addContent(count);
+				}
+
+				constraint = biologicalEntity.getAttributeValue("constraint");
+				//remove no|not|never from the structure constraint
+				constraint = constraint.replaceFirst("^"+mod+"\\b", "");
+				biologicalEntity.setAttribute("constraint", constraint.trim());
 			}
 		}
 	}
@@ -982,25 +1026,23 @@ public class NonOntologyBasedStandardizer {
 	 * @param xml
 	 */
 
-	private void normalizeZeroCount(List<Element> xml) {
-		for(Element element: xml){
-			if(element.isStructure()){
-				LinkedHashSet<Character> characters = ((BiologicalEntity)element).getCharacters();
-				for(Character character: characters){
-					if(character.getName()!=null && character.getName().compareTo("count")==0){
-						if(character.getValue()!=null){
-							if(character.getValue().compareTo("none")==0) character.setValue("0"); 
-							if(character.getValue().compareTo("absent") == 0 
-									&& (character.getModifier()==null || !character.getModifier().matches("no|not|never"))) 
-								character.setValue("0"); 
-							if(character.getValue().compareTo("present") == 0 
-									&& character.getModifier()!=null && character.getModifier().matches("no|not|never")){ 
-								character.setValue("0");
-								character.setModifier("");
-							}
+	private void normalizeZeroCount(Document document) {
+		for(Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+				String name = character.getAttributeValue("name");
+				String value = character.getAttributeValue("value");
+				String modifier = character.getAttributeValue("modifier");
+				if(name != null && name.equals("count")) {
+					if(value != null){
+						if(value.equals("none")) character.setAttribute("value", "0"); 
+						if(value.equals("absent") && (modifier == null || !modifier.matches("no|not|never"))) 
+							character.setAttribute("value", "0"); 
+						if(value.equals("present") && modifier != null && modifier.matches("no|not|never")) { 
+							character.setAttribute("value", "0");
+							character.setAttribute("modifier", "");
 						}
-					}	
-				}
+					}
+				}	
 			}
 		}
 
@@ -1015,18 +1057,15 @@ public class NonOntologyBasedStandardizer {
 
 
 	//if unknown_subject has no characters and no relations, remove them.
-	private void removeOrphenedUnknownElements(List<Element> xml) {
-		List<Element> remove = new ArrayList<Element> (); 
-		for(Element element: xml){
-			if(element.isStructure() && ((BiologicalEntity)element).getName()!=null &&
-					((BiologicalEntity)element).getName().compareTo("whole_organism") == 0 && 
-					((BiologicalEntity)element).getCharacters()!=null && ((BiologicalEntity)element).getCharacters().size()==0){
+	private void removeOrphenedUnknownElements(Document document) {
+		for(Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
+			String name = biologicalEntity.getAttributeValue("name");
+			if(name != null && name.equals("whole_organism") && biologicalEntity.getChildren("character").isEmpty()) {
 				//String id = ((Structure)element).getId();
-				List<Relation> relations = getRelationsInvolve((BiologicalEntity)element, xml);
-				if(relations.size()==0) remove.add(element);				
+				if(getRelationsInvolve(biologicalEntity, document).isEmpty()) 
+					biologicalEntity.detach();
 			}
 		}
-		xml.removeAll(remove);
 		/*		List<Element> unknowns = unknownsubject.selectNodes(this.statement);
 				for(Element unknown : unknowns){
 					if(unknown.getChildren().size()==0){ 
@@ -1040,19 +1079,5 @@ public class NonOntologyBasedStandardizer {
 		 */		
 
 	}
-
-
-	private List<Relation> getRelationsInvolve(BiologicalEntity struct, List<Element> xml) {
-		List<Relation> relations = new ArrayList<Relation>();
-		for(Element element: xml){
-			if(element.isRelation() && ((((Relation)element).getFromStructure()!=null && ((Relation)element).getFromStructure().equals(struct)) || 
-					(((Relation)element).getToStructure()!=null && ((Relation)element).getToStructure().equals(struct)))){
-				relations.add((Relation)element);				
-			}
-		}
-		return relations;
-	}
-
-
 
 }
