@@ -121,8 +121,8 @@ public class TerminologyStandardizer {
 			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 				preferedName = null;
 				String value = character.getValue();
-				if(value!=null && !value.trim().contains(" ") && !character.getName().contains(or)){
-					preferedName = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getName());
+				if(value!=null && !value.trim().contains(" ") && !character.getAttributeValue("name").contains(or)){
+					preferedName = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getAttributeValue("name"));
 				}
 				if(preferedName !=null) character.setAttribute(value, preferedName);
 			}

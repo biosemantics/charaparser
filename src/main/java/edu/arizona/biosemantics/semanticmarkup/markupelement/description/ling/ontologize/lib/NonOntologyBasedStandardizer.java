@@ -172,7 +172,7 @@ public class NonOntologyBasedStandardizer {
 		}
 
 		public boolean isTarget() {
-			if (!biologicalEntity.getName().contains("/")) // add all character  values also contain /
+			if (!biologicalEntity.getAttributeValue("name").contains("/")) // add all character  values also contain /
 				return false;
 			String[] entityNames = this.getEntityParts();
 			if (biologicalEntity.getChildren("character").isEmpty())
@@ -966,7 +966,7 @@ public class NonOntologyBasedStandardizer {
 				biologicalEntity.setAttribute("constraint", constraint.replaceFirst("^no|not|never\\b", "").trim());
 			} else if(type !=null && type.equals("structure")
 					//&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
-					&& !constraint.contains(" ") && !constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)){ //constraint is a single adverb
+					&& !constraint.isEmpty() && !constraint.contains(" ") && !constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)){ //constraint is a single adverb
 
 				//other advs, mirrors the process above
 				String mod = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
