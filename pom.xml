@@ -296,7 +296,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>ling</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
+			<version>0.0.6-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
