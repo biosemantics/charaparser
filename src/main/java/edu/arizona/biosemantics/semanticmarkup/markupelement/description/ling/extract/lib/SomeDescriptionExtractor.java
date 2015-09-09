@@ -37,7 +37,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;

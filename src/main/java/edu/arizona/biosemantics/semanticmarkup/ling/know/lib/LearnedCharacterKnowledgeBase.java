@@ -12,7 +12,8 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.CharacterMatch;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.Term;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
@@ -36,8 +37,8 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	private String units;
 	//private ITerminologyLearner terminologyLearner;
 	//private ConcurrentHashMap<String, String> addedCharacters = new ConcurrentHashMap<String, String>();
-	private ConcurrentHashMap<String, Match> addedCharacters = new ConcurrentHashMap<String, Match>();
-	private ConcurrentHashMap<String, Match> characterCache = new ConcurrentHashMap<String, Match> ();
+	private ConcurrentHashMap<String, CharacterMatch> addedCharacters = new ConcurrentHashMap<String, CharacterMatch>();
+	private ConcurrentHashMap<String, CharacterMatch> characterCache = new ConcurrentHashMap<String, CharacterMatch> ();
 	private ConcurrentHashMap<String, Boolean> isEntityCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, Boolean> isEntityStructuralConstraintCache = new ConcurrentHashMap<String, Boolean> ();
 	private ConcurrentHashMap<String, Boolean> isStateCache = new ConcurrentHashMap<String, Boolean> ();
@@ -116,11 +117,11 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}
 
 	@Override
-	public Match getCharacterName(String word) {//word: one word, or ,hyphened words (standardized "_" to "-"), phrases such as "dark green" and "purple spot", "gland-dotted and"?
+	public CharacterMatch getCharacterName(String word) {//word: one word, or ,hyphened words (standardized "_" to "-"), phrases such as "dark green" and "purple spot", "gland-dotted and"?
 		word = word.trim();
-		if(word.matches(this.stopWords)) return new Match(null);
+		if(word.matches(this.stopWords)) return new CharacterMatch(null);
 		//2n=5
-		if((word.matches("[^a-z]+")|| word.contains("=") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new Match(null); //numerical expressions
+		if((word.matches("[^a-z]+")|| word.contains("=") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new CharacterMatch(null); //numerical expressions
 		
 		String wo = word;
 		
@@ -129,16 +130,16 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 			ch = ch.replaceAll("(\\W|ttt)", "");
 			HashSet<Term> result = new HashSet<Term> ();
 			result.add(new Term(wo, ch));
-			return new Match(result);
+			return new CharacterMatch(result);
 		}
 		
 		word = word.replaceAll("[{}]", ""); //avoid regexp illegal repetation exception
 		
 		//rejected searches
-		if(word.matches("("+negWords+")")) return new Match(null);
-		if (word.trim().length() == 0 || !word.matches(".*[a-z].*")) return new Match(null);
+		if(word.matches("("+negWords+")")) return new CharacterMatch(null);
+		if (word.trim().length() == 0 || !word.matches(".*[a-z].*")) return new CharacterMatch(null);
 		//if(word.matches("at[-_]least")) return new Match(null);//TODO: synchronize with Normalizer.modifierPhrases. move to configuration.
-		if(word.matches("(?:"+this.advModifiers+")")) return new Match(null);
+		if(word.matches("(?:"+this.advModifiers+")")) return new CharacterMatch(null);
 		
 		//check caches
 		if(characterCache.get(wo)!=null) return characterCache.get(wo);
@@ -161,14 +162,14 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	
 		//search
 		Set<Term> ch = lookup(word);
-		Match m = new Match(ch);
+		CharacterMatch m = new CharacterMatch(ch);
 		if(ch == null && word.endsWith("like")){//cup_like, cuplike
 			HashSet<Term> result = new HashSet<Term> ();
 			result.add(new Term(wo, "shape"));
-			m = new Match(result);
+			m = new CharacterMatch(result);
 		}else if(ch==null && word.contains("/")){ //width/length
 			ch = lookup(word.substring(word.indexOf("/")+1));
-			m = new Match(ch);
+			m = new CharacterMatch(ch);
 		}
 		else if (ch == null && (wc.indexOf('-') > 0 || wc.indexOf('~') > 0)) {// pani_culiform, primocane_foliage //orange_yellow~or~occasionally~{colorationttt~list~suffused~with~red} 
 			word = word.replaceAll("[{}]", "");
@@ -183,23 +184,23 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 					if(ch == null){
 						//ch = lookup(ws[0]); //searching the first word in a "-"-connected phrase doesn't make sense hong 5/5/14
 						ch = lookup(inflector.getSingular(word)); //searching the first word in a "-"-connected phrase doesn't make sense hong 5/5/14
-						m = new Match(ch);
+						m = new CharacterMatch(ch);
 					}else{
-						m = new Match(ch);
+						m = new CharacterMatch(ch);
 					}
 				}else{
 					for(Term t: ch){
 						t.setLabel(wc);
 					}
-					m = new Match(ch);
+					m = new CharacterMatch(ch);
 				}
 			}else{
-				m = new Match(ch);
+				m = new CharacterMatch(ch);
 			}
 		//}else{
 		 }else if(ch == null){
 			ch = lookup(inflector.getSingular(word));
-			m = new Match(ch);
+			m = new CharacterMatch(ch);
 		}
 		
 		characterCache.put(wo, m);
@@ -343,7 +344,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	}*/
 	
 	@Override
-	public void addCharacterStateToName(String word, Match match) {
+	public void addCharacterStateToName(String word, CharacterMatch match) {
 		word = word.replaceAll(this.c, " ");
 		this.addedCharacters.put(word, match);
 	}

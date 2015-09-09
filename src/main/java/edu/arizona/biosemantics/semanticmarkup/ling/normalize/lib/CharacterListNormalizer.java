@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import com.google.inject.Singleton;
 
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 
 /**
