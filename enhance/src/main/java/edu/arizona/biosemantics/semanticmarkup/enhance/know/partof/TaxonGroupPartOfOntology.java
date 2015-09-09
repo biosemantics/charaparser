@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies;
+package edu.arizona.biosemantics.semanticmarkup.enhance.know.partof;
 
 import java.util.Arrays;
 import java.util.HashSet;

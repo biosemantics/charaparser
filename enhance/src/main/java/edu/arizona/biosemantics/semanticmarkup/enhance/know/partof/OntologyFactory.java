@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies;
+package edu.arizona.biosemantics.semanticmarkup.enhance.know.partof;
 
 import java.io.File;
 import java.net.URI;
@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
 
 /**
  * @author Hong Cui

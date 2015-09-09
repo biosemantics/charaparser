@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize;
+package edu.arizona.biosemantics.semanticmarkup.enhance.know.partof;
 
 /**
  * @author updates

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies;
+package edu.arizona.biosemantics.semanticmarkup.enhance.know.partof;
 
 import java.io.File;
 
@@ -11,7 +11,6 @@ import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.IOntology;
 
 /**
  * @author updates

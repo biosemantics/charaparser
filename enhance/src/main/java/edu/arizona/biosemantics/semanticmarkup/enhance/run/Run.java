@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
+package edu.arizona.biosemantics.semanticmarkup.enhance.run;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,17 +17,19 @@ import org.jdom2.output.XMLOutputter;
 
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MapOntologyIdsTransformer;
 
-public class Transformer {
+public class Run {
 
 	private SAXBuilder saxBuilder = new SAXBuilder();
 	private List<AbstractTransformer> transformers = new LinkedList<AbstractTransformer>();
 	
-	public Transformer() {
+	public Run() {
 		transformers.add(new MapOntologyIdsTransformer(TaxonGroup.PLANT));
 	}
 	
-	public void transform(File inputDirectory, File outputDirectory) {
+	public void run(File inputDirectory, File outputDirectory) {
 		for(File file : inputDirectory.listFiles()) {
 			if(file.isFile()) {
 				try {
@@ -52,9 +54,13 @@ public class Transformer {
 		}
 	}
 	
+	public void addTransformer(AbstractTransformer transformer) {
+		this.transformers.add(transformer);
+	}
+	
 	public static void main(String[] args) {
-		Transformer transformer = new Transformer();
-		transformer.transform(new File("in"), new File("out"));
+		Run transformer = new Run();
+		transformer.run(new File("in"), new File("out"));
 	}
 	
 }

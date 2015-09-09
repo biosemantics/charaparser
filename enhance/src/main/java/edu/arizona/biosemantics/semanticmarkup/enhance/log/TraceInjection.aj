@@ -11,8 +11,8 @@ import edu.arizona.biosemantics.common.log.ObjectStringifier;
 @Aspect
 public class TraceInjection {
 	
-	@Before("within(edu.arizona.biosemantics.semanticmarkup..*) && "
-			+ "!within(edu.arizona.biosemantics.semanticmarkup.log..*) && "
+	@Before("within(edu.arizona.biosemantics.semanticmarkup.enhance..*) && "
+			+ "!within(edu.arizona.biosemantics.semanticmarkup.enhance.log..*) && "
 			+ "execution(public * *(..))")
 	public void trace(JoinPoint joinPoint) {
 		Signature sig = joinPoint.getSignature();
