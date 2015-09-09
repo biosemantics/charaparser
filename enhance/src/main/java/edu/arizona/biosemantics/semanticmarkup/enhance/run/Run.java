@@ -26,7 +26,6 @@ public class Run {
 	private List<AbstractTransformer> transformers = new LinkedList<AbstractTransformer>();
 	
 	public Run() {
-		transformers.add(new MapOntologyIdsTransformer(TaxonGroup.PLANT));
 	}
 	
 	public void run(File inputDirectory, File outputDirectory) {

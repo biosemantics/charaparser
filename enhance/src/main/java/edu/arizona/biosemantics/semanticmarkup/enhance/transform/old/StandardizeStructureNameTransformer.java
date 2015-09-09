@@ -24,14 +24,14 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
  * 
  * use clues from text to attach appropriate parent organ to non-specific structures such as "apex" and "side"
  */
-public class StructureNameStandardizer extends AbstractTransformer {
+public class StandardizeStructureNameTransformer extends AbstractTransformer {
 	
 	private Set<IOntology> ontologies;
 	private ICharacterKnowledgeBase learnedCharacterKnowledgeBase;
 	private Set<String> possess = new HashSet<String>(); //with, has, consist_of, possess
 	private String nonspecificParts = null;
 	
-	public StructureNameStandardizer(Set<IOntology> ontologies, ICharacterKnowledgeBase learnedCharacterKnowledgeBase, Set<String> possess){
+	public StandardizeStructureNameTransformer(Set<IOntology> ontologies, ICharacterKnowledgeBase learnedCharacterKnowledgeBase, Set<String> possess){
 		this.ontologies = ontologies;
 		this.learnedCharacterKnowledgeBase = learnedCharacterKnowledgeBase;
 		this.possess = possess;
