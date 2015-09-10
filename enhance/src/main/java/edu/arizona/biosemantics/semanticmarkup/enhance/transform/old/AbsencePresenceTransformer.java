@@ -17,7 +17,7 @@ public class AbsencePresenceTransformer extends AbstractTransformer {
 			//if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches(".*?\\b(absent|present|0)\\b.*")){
 			String name = character.getAttributeValue("name");
 			String value = character.getAttributeValue("value");
-			if(name.compareTo("quantity")==0 && value != null && value.matches("absent|present|0")) {
+			if(name.equals("quantity") && value != null && value.matches("absent|present|0")) {
 				character.setAttribute("name", "presence");
 				character.setAttribute("value", value.replaceAll("0", "absent"));
 			}
