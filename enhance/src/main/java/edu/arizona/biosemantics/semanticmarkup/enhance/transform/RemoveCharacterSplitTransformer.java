@@ -22,6 +22,10 @@ import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms.SynonymSet;
 
+/**
+ * This implementation assumes biologoical entity names to have the organ name in the last word, Antyhing before are constraint/modifying
+ * @author rodenhausen
+ */
 public class RemoveCharacterSplitTransformer extends AbstractTransformer {
 
 	private List<HasSynonyms> hasSynonymsList;
@@ -47,11 +51,11 @@ public class RemoveCharacterSplitTransformer extends AbstractTransformer {
 	}
 
 	private void normalizeQualities(Document document) {
-		for (Element biologicalEntity : this.characterPath.evaluate(document)) {
-			String value = biologicalEntity.getAttributeValue("value");
+		for (Element character : this.characterPath.evaluate(document)) {
+			String value = character.getAttributeValue("value");
 			if(value != null) {
 				String newValue = createSynonymReplacedValue(getSearchPartitionsForCharacterValue(value));
-				biologicalEntity.setAttribute("value", newValue);
+				character.setAttribute("value", newValue);
 			}
 		}
 	}
@@ -120,7 +124,7 @@ public class RemoveCharacterSplitTransformer extends AbstractTransformer {
 		Collections.sort(result, new Comparator<ICombinatoricsVector<ICombinatoricsVector<String>>>() {
 			@Override
 			public int compare(ICombinatoricsVector<ICombinatoricsVector<String>> o1, ICombinatoricsVector<ICombinatoricsVector<String>> o2) {
-				return o1.getSize() - o2.getSize();
+				return o2.getSize() - o1.getSize();
 			}
 		});
 		return result;
@@ -169,7 +173,7 @@ public class RemoveCharacterSplitTransformer extends AbstractTransformer {
 		Collections.sort(result, new Comparator<ICombinatoricsVector<ICombinatoricsVector<String>>>() {
 			@Override
 			public int compare(ICombinatoricsVector<ICombinatoricsVector<String>> o1, ICombinatoricsVector<ICombinatoricsVector<String>> o2) {
-				return o1.getSize() - o2.getSize();
+				return o2.getSize() - o1.getSize();
 			}
 		});
 		return result;

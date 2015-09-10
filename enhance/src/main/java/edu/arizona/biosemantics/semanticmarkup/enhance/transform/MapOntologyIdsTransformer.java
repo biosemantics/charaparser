@@ -23,11 +23,8 @@ public class MapOntologyIdsTransformer extends AbstractTransformer {
 
 	private Collection<Searcher> searchers;
 
-	public MapOntologyIdsTransformer(TaxonGroup taxonGroup) {
-		searchers = new LinkedList<Searcher>();
-		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
-			searchers.add(new FileSearcher(ontology, Configuration.ontologyDirectory, Configuration.wordNetDirectory));
-		
+	public MapOntologyIdsTransformer(Collection<Searcher> searchers) {
+		this.searchers = searchers;
 	}
 	
 	@Override
