@@ -26,6 +26,8 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 public class MapOntologyIds {
 
 	private MapOntologyIdsTransformer transformer;
+	private Element biologicalEntity1;
+	private Element biologicalEntity2;
 
 	public MapOntologyIds() {
 		List<Searcher> searchers = new LinkedList<Searcher>();
@@ -66,17 +68,9 @@ public class MapOntologyIds {
 	public void testOntologyIdMapping() {
 		Document document = createTestDocument();
 		transformer.transform(document);
-
-		XPathFactory xpathFactory = XPathFactory.instance();
-		XPathExpression<Element> biologicalEntityPath = xpathFactory.compile("//description[@type='morphology']/statement/biological_entity", Filters.element(), null, 
-						Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		for(Element biologicalEntity : biologicalEntityPath.evaluate(document)) {
-			if(biologicalEntity.getAttributeValue("name").equals("test")) {
-				assertEquals("dummyiri", biologicalEntity.getAttributeValue("ontologyid")); 
-			} else {
-				assertEquals("", biologicalEntity.getAttributeValue("ontologyid"));
-			}
-		}
+		
+		assertEquals("dummyiri", biologicalEntity1.getAttributeValue("ontologyid")); 
+		assertEquals("", biologicalEntity2.getAttributeValue("ontologyid"));
 	}
 
 	private Document createTestDocument() {
@@ -88,8 +82,8 @@ public class MapOntologyIds {
 		description.addContent(statement);
 		Element text = new Element("text");
 		text.setText("This is a test sentence");
-		Element biologicalEntity1 = new Element("biological_entity");
-		Element biologicalEntity2 = new Element("biological_entity");
+		biologicalEntity1 = new Element("biological_entity");
+		biologicalEntity2 = new Element("biological_entity");
 		statement.addContent(text);
 		statement.addContent(biologicalEntity1);
 		statement.addContent(biologicalEntity2);
