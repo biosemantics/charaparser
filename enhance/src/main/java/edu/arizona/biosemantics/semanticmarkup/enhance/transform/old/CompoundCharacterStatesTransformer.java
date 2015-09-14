@@ -14,7 +14,7 @@ import org.jdom2.Parent;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class CharacterValueTransformer extends AbstractTransformer {
+public class CompoundCharacterStatesTransformer extends AbstractTransformer {
 
 	private class CompoundedEntityStates {
 		private Element biologicalEntity;
@@ -24,7 +24,8 @@ public class CharacterValueTransformer extends AbstractTransformer {
 		}
 
 		public String[] getEntityParts() {
-			return biologicalEntity.getAttributeValue("name_original").split("\\s*/\\s*");
+			return biologicalEntity.getAttributeValue("name_original") == null ? 
+					new String[] { } : biologicalEntity.getAttributeValue("name_original").split("\\s*/\\s*");
 		}
 
 		public List<String[]> getCharacterParts() {
@@ -36,7 +37,8 @@ public class CharacterValueTransformer extends AbstractTransformer {
 		}
 
 		public boolean isTarget() {
-			if (!biologicalEntity.getAttributeValue("name").contains("/")) // add all character  values also contain /
+			if (biologicalEntity.getAttributeValue("name") != null && 
+					!biologicalEntity.getAttributeValue("name").contains("/")) // add all character  values also contain /
 				return false;
 			String[] entityNames = this.getEntityParts();
 			if (biologicalEntity.getChildren("character").isEmpty())
@@ -57,15 +59,8 @@ public class CharacterValueTransformer extends AbstractTransformer {
 
 	private IInflector inflector;
 	
-	public CharacterValueTransformer(IInflector inflector) {
+	public CompoundCharacterStatesTransformer(IInflector inflector) {
 		this.inflector = inflector;
-	}
-	
-	
-	@Override
-	public void transform(Document document) {
-		enumerateCompoundStates(document);
-		normalizeZeroCount(document);
 	}
 	
 	/**
@@ -78,7 +73,8 @@ public class CharacterValueTransformer extends AbstractTransformer {
 	</statement>
 	 * @param result
 	 */
-	private void enumerateCompoundStates(Document document) {
+	@Override
+	public void transform(Document document) {
 		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
 			CompoundedEntityStates compoundedEntityStates = new CompoundedEntityStates(biologicalEntity);
 			if(compoundedEntityStates.isTarget()){//enumerate
@@ -115,36 +111,5 @@ public class CharacterValueTransformer extends AbstractTransformer {
 				updateRelations(document, biologicalEntity, newBiologicalEntities);
 			}
 		}
-	}
-	
-	/**
-	 * 	nomarlization count
-	 *  count = "none" =>count = 0; 
-	 *  count = "absent" =>count = 0;
-	 *  count = "present", modifier = "no|not|never" =>count = 0;
-	 *  
-	 * @param xml
-	 */
-	private void normalizeZeroCount(Document document) {
-		for(Element structure : this.biologicalEntityPath.evaluate(document)) {
-			for(Element character : structure.getChildren("character")) {
-				String name = character.getAttributeValue("name");
-				String value = character.getAttributeValue("value");
-				String modifier = character.getAttributeValue("modifier");
-				if(name != null && name.compareTo("count")==0) {
-					if(value != null){
-						if(value.compareTo("none") == 0) 
-							character.setAttribute("value", "0"); 
-						if(value.compareTo("absent") == 0 && (modifier == null || !modifier.matches("no|not|never"))) 
-							character.setAttribute("value", "0"); 
-						if(value.compareTo("present") == 0 && modifier !=null && modifier.matches("no|not|never")) { 
-							character.setAttribute("value", "0");
-							character.setAttribute("modifier", "");
-						}
-					}
-				}	
-			}
-		}
-	}
-	
+	}	
 }
