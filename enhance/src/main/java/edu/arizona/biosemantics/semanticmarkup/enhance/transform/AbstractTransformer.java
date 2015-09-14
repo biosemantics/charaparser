@@ -168,4 +168,22 @@ public abstract class AbstractTransformer {
 		}
 		return selected.trim();
 	}
+	
+	/**
+	 * 
+	 * @param roman <= XXXVIII (38)
+	 * @return
+	 */
+	protected String nextRoman(String roman){
+		if(roman.endsWith("iv")){
+			return roman.replaceFirst("iv$", "v");
+		}else if(roman.endsWith("ix")){
+			return roman.replaceFirst("ix$", "x");
+		}else if(roman.endsWith("viii")){
+			return roman.replaceFirst("viii$", "ix");
+		}else if(roman.endsWith("iii")){
+			return roman.replaceFirst("iii$", "iv");
+		}else 
+			return roman+"i";
+	}
 }

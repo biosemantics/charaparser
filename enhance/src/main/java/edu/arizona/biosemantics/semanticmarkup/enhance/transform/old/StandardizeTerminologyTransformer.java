@@ -46,35 +46,37 @@ public class StandardizeTerminologyTransformer extends AbstractTransformer {
 			String name = biologicalEntity.getAttributeValue("name");
 			String constraint = biologicalEntity.getAttributeValue("constraint");
 			String preferedName = characterKnowledgeBase.getCharacterName(name).getLabel(type);
-			if(preferedName!=null) biologicalEntity.setAttribute("name", preferedName);
+			if(preferedName != null) 
+				biologicalEntity.setAttribute("name", preferedName);
 			
 			//standardize structural constraint, a word or a phrase
 			//String constraint = struct.getConstraint(); //try to match longest segment anchored to the last word in the phrase.
-			if(constraint!=null){
+			if(constraint != null){
 				constraint = constraint.trim();
 				String leading = "";
-				do{
+				do {
 					String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(type);
 					if(prefered!=null){
-						biologicalEntity.setAttribute("constraint", (leading+" "+prefered).trim());
+						biologicalEntity.setAttribute("constraint", (leading + " " + prefered).trim());
 						break;
-					}else{
+					} else {
 						//remove the leading word
 						leading = constraint.replaceFirst(" .*", "").trim();
 						constraint = constraint.replaceFirst(leading, "").trim(); 
 					}
-				} while(!constraint.isEmpty());
+				} while (!constraint.isEmpty());
 			}
 			
 			
 			//standardize character
 			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 				preferedName = null;
-				String value = character.getValue();
+				String value = character.getAttributeValue("value");
 				if(value!=null && !value.trim().contains(" ") && !character.getAttributeValue("name").contains(or)){
 					preferedName = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getAttributeValue("name"));
 				}
-				if(preferedName !=null) character.setAttribute(value, preferedName);
+				if(preferedName != null) 
+					character.setAttribute("value", preferedName);
 			}
 		}
 	}

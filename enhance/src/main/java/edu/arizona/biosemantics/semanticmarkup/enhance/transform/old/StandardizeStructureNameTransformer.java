@@ -168,7 +168,7 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 
 	private Element getStructureWithId(Document document, String id) {
 		for(Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
-			if(biologicalEntity.getAttribute("id").equals(id)) {
+			if(biologicalEntity.getAttributeValue("id").equals(id)) {
 				return biologicalEntity;
 			}
 		}
@@ -281,7 +281,7 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 					String constraintId = character.getAttributeValue("constraintid");
 					String constraint = character.getAttributeValue("constraint");
 					if(constraintId != null && constraintId.equals(idp) &&
-						biologicalEntity.getAttribute("id").equals(idw) && constraint != null) {
+						biologicalEntity.getAttributeValue("id").equals(idw) && constraint != null) {
 						hasRelation = true;
 						if(possess.contains(constraint.contains(" ") ? 
 								constraint.substring(0, constraint.indexOf(" ")) : constraint)) //first word in constraint string is in possess
