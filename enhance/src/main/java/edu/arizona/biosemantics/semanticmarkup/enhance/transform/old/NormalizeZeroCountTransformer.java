@@ -17,24 +17,22 @@ public class NormalizeZeroCountTransformer extends AbstractTransformer {
 	 */
 	@Override
 	public void transform(Document document) {
-		for(Element structure : this.biologicalEntityPath.evaluate(document)) {
-			for(Element character : structure.getChildren("character")) {
-				String name = character.getAttributeValue("name");
-				String value = character.getAttributeValue("value");
-				String modifier = character.getAttributeValue("modifier");
-				if(name != null && name.compareTo("count")==0) {
-					if(value != null){
-						if(value.compareTo("none") == 0) 
-							character.setAttribute("value", "0"); 
-						if(value.compareTo("absent") == 0 && (modifier == null || !modifier.matches("no|not|never"))) 
-							character.setAttribute("value", "0"); 
-						if(value.compareTo("present") == 0 && modifier !=null && modifier.matches("no|not|never")) { 
-							character.setAttribute("value", "0");
-							character.setAttribute("modifier", "");
-						}
+		for(Element character : this.characterPath.evaluate(document)) {
+			String name = character.getAttributeValue("name");
+			String value = character.getAttributeValue("value");
+			String modifier = character.getAttributeValue("modifier");
+			if(name != null && name.equals("count")) {
+				if(value != null){
+					if(value.equals("none")) 
+						character.setAttribute("value", "0"); 
+					if(value.equals("absent") && (modifier == null || !modifier.matches("no|not|never"))) 
+						character.setAttribute("value", "0"); 
+					if(value.equals("present") && modifier !=null && modifier.matches("no|not|never")) { 
+						character.setAttribute("value", "0");
+						character.setAttribute("modifier", "");
 					}
-				}	
-			}
+				}
+			}	
 		}
 	}
 	
