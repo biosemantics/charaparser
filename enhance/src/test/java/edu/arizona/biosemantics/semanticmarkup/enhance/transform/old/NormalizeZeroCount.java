@@ -24,7 +24,7 @@ public class NormalizeZeroCount {
 	}
 	
 	@Test
-	public void testOntologyIdMapping() {
+	public void test() {
 		Document document = createTestDocument();
 		transformer.transform(document);
 		

@@ -21,10 +21,6 @@ public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransfo
 	
 	@Override
 	public void transform(Document document) {
-		normalizeAdvConstraintedOrgan(document);
-	}
-	
-	private void normalizeAdvConstraintedOrgan(Document document) {
 		for(Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
 			String constraint = biologicalEntity.getAttributeValue("constraint");
 			constraint = constraint == null ? "" : constraint; 
@@ -33,103 +29,141 @@ public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransfo
 			
 			if(type !=null && type.equals("structure")
 					//&& ((BiologicalEntity)element).getConstraint()!=null && ((BiologicalEntity)element).getConstraint().matches("^(no|not|never)\\b.*")){
-					&& constraint.matches("(no|not|never)")){//constraint is a single adv
-				//adv is negation
-				//handle is_modifier characters and true characters
-				boolean hasTrueCharacters = false;
-				for(Element character: new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
-					String isModifier = character.getAttributeValue("is_modifier");
-					if(isModifier != null && isModifier.equals("true")) {
-						//turn this character to structure constraint			
-						biologicalEntity.setAttribute("constraint", (constraint + " " + character.getAttributeValue("value").trim()));
-						character.detach();
-					} else {
-						//negate true characters
-						hasTrueCharacters = true;
-						String modifier = character.getAttributeValue("modifier");
-						if(modifier == null){
-							character.setAttribute("modifier", "not");
-						}else if(modifier.matches(".*\\bnot\\b.*")){//double negation 
-							modifier = modifier.replaceFirst("\\bnot\\b", "");
-							character.setAttribute("modifier", modifier.replaceAll("\\s+", " ").trim());
-						}else{
-							modifier ="not "+modifier;
-							character.setAttribute("modifier", modifier.trim());
-						}
-					}
-				}
-				//negate relations
-				boolean negatedRelation = false;
-				for(Element relation : this.getRelationsInvolve(biologicalEntity, document)) {
-					negatedRelation = true;
-					String negation = relation.getAttributeValue("negation");
-					if(negation !=null && negation.equals("true")) 
-						relation.setAttribute("negation", "false");
-					else 
-						relation.setAttribute("negation", "true");
-				}
-
-				//no relation and no true character, set count to 0
-				if(!negatedRelation && !hasTrueCharacters){
-					Element count = new Element("character");
-					count.setAttribute("name", "count");
-					count.setAttribute("value", "0");
-					biologicalEntity.addContent(count);
-				}
-
-				//remove no|not|never from the structure constraint
-				constraint = biologicalEntity.getAttributeValue("constraint");
-				biologicalEntity.setAttribute("constraint", constraint.replaceFirst("^no|not|never\\b", "").trim());
+					&& constraint.matches("(no|not|never)")) {//constraint is a single adv
+				handleNegatedStructure(document, biologicalEntity, constraint);
+				
 			} else if(type !=null && type.equals("structure")
 					//&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
-					&& !constraint.isEmpty() && !constraint.contains(" ") && !constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)){ //constraint is a single adverb
-
-				//other advs, mirrors the process above
-				String mod = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
-				//handle is_modifier characters and true characters
-				boolean hasTrueCharacters = false;
-				for(Element character: new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
-					String isModifier = character.getAttributeValue("is_modifier");
-					if(isModifier != null && isModifier.equals("true")) {
-						//turn this character to structure constraint
-						biologicalEntity.setAttribute("constraint", (constraint + " " + character.getValue()).trim());
-						character.detach();
-					}else{
-						//modify true characters
-						hasTrueCharacters = true;
-						String modifier = character.getAttributeValue("modifier"); 
-						modifier = modifier ==null ? "": modifier;
-						modifier = mod + " " + modifier;
-						character.setAttribute("modifier", modifier.trim());
-					}
-				}
-
-				//negate relations
-				boolean modifiedRelation = false;
-				List<Element> relations = this.getRelationsInvolve(biologicalEntity, document);
-				for(Element relation: relations){
-					modifiedRelation = true;
-					String modifier = relation.getAttributeValue("modifier");
-					modifier = modifier == null ? "": modifier;
-					modifier = mod + " " + modifier;
-					relation.setAttribute("modifier", modifier.trim());
-				}
-
-				//no relation and no true character, set count to 0
-				if(!modifiedRelation && !hasTrueCharacters){
-					Element count = new Element("character");
-					count.setAttribute("name", "count");
-					count.setAttribute("value", "present");
-					count.setAttribute("modifier", mod);
-					biologicalEntity.addContent(count);
-				}
-
-				constraint = biologicalEntity.getAttributeValue("constraint");
-				//remove no|not|never from the structure constraint
-				constraint = constraint.replaceFirst("^"+mod+"\\b", "");
-				biologicalEntity.setAttribute("constraint", constraint.trim());
+					&& !constraint.isEmpty() && !constraint.contains(" ") && !constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)) { //constraint is a single adverb
+				handleAdverbConstraint(document, biologicalEntity, constraint);
 			}
 		}
 	}
-	
+
+	private void handleAdverbConstraint(Document document, Element biologicalEntity, String constraint) {
+		//other advs, mirrors the process above
+		String modifier = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
+		
+		//handle is_modifier characters and true characters
+		boolean hasTrueCharacters = handleTrueCharacters(biologicalEntity, constraint, modifier);
+
+		//negate relations
+		boolean hasModifiedRelation = modifyRelation(biologicalEntity, document, modifier);
+
+		//no relation and no true character, set count to 0
+		if(!hasModifiedRelation && !hasTrueCharacters){
+			Element count = new Element("character");
+			count.setAttribute("name", "count");
+			count.setAttribute("value", "present");
+			count.setAttribute("modifier", modifier);
+			biologicalEntity.addContent(count);
+		}
+
+		constraint = biologicalEntity.getAttributeValue("constraint");
+		//remove no|not|never from the structure constraint
+		constraint = constraint.replaceFirst("^"+modifier+"\\b", "");
+		biologicalEntity.setAttribute("constraint", constraint.trim());
+	}
+
+	private boolean handleTrueCharacters(Element biologicalEntity, String constraint, String modifier) {
+		boolean hasTrueCharacters = false;
+		for(Element character: new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+			String isModifier = character.getAttributeValue("is_modifier");
+			if(isModifier != null && isModifier.equals("true")) {
+				moveCharacterToConstraint(biologicalEntity, character, constraint);
+			}else{
+				hasTrueCharacters = true;
+				modifyTrueCharacter(character, modifier);
+			}
+		}
+		return hasTrueCharacters;
+	}
+
+	private boolean modifyRelation(Element biologicalEntity, Document document, String mod) {
+		boolean hasModifiedRelation = false;
+		List<Element> relations = this.getRelationsInvolve(biologicalEntity, document);
+		for(Element relation: relations){
+			hasModifiedRelation = true;
+			String modifier = relation.getAttributeValue("modifier");
+			modifier = modifier == null ? "": modifier;
+			modifier = mod + " " + modifier;
+			relation.setAttribute("modifier", modifier.trim());
+		}
+		return hasModifiedRelation;
+	}
+
+	private void modifyTrueCharacter(Element character, String mod) {
+		//modify true characters
+		String modifier = character.getAttributeValue("modifier"); 
+		modifier = modifier ==null ? "": modifier;
+		modifier = mod + " " + modifier;
+		character.setAttribute("modifier", modifier.trim());
+	}
+
+	private void handleNegatedStructure(Document document, Element biologicalEntity, String constraint) {
+		//adv is negation
+		//handle is_modifier characters and true characters
+		boolean hasTrueCharacters = handleModifiedAndTrueCharacters(biologicalEntity, constraint);
+		//negate relations
+		boolean hasNegatedRelations = negateRelations(biologicalEntity, document);
+
+		//no relation and no true character, set count to 0
+		if(!hasNegatedRelations && !hasTrueCharacters){
+			Element count = new Element("character");
+			count.setAttribute("name", "count");
+			count.setAttribute("value", "0");
+			biologicalEntity.addContent(count);
+		}
+		
+		//remove no|not|never from the structure constraint
+		constraint = biologicalEntity.getAttributeValue("constraint");
+		biologicalEntity.setAttribute("constraint", constraint.replaceFirst("^no|not|never\\b", "").trim());
+	}
+
+	private boolean handleModifiedAndTrueCharacters(Element biologicalEntity, String constraint) {
+		boolean hasTrueCharacters = false;
+		for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+			String isModifier = character.getAttributeValue("is_modifier");
+			if(isModifier != null && isModifier.equals("true")) {
+				moveCharacterToConstraint(biologicalEntity, character, constraint);
+			} else {
+				hasTrueCharacters = true;
+				negateCharacter(character);
+			}
+		}
+		return hasTrueCharacters;
+	}
+
+	private boolean negateRelations(Element biologicalEntity, Document document) {
+		boolean negatedRelation = false;
+		for(Element relation : this.getRelationsInvolve(biologicalEntity, document)) {
+			negatedRelation = true;
+			String negation = relation.getAttributeValue("negation");
+			if(negation !=null && negation.equals("true")) 
+				relation.setAttribute("negation", "false");
+			else 
+				relation.setAttribute("negation", "true");
+		}
+		return negatedRelation;
+	}
+
+	private void negateCharacter(Element character) {
+		String modifier = character.getAttributeValue("modifier");
+		if (modifier == null) {
+			character.setAttribute("modifier", "not");
+		} else if (modifier.matches(".*\\bnot\\b.*")) {// double negation
+			modifier = modifier.replaceFirst("\\bnot\\b", "");
+			character.setAttribute("modifier", modifier.replaceAll("\\s+", " ")
+					.trim());
+		} else {
+			modifier = "not " + modifier;
+			character.setAttribute("modifier", modifier.trim());
+		}
+	}
+
+	private void moveCharacterToConstraint(Element biologicalEntity, Element character, String constraint) {
+		//turn this character to structure constraint			
+		biologicalEntity.setAttribute("constraint", (constraint + " " + character.getAttributeValue("value").trim()));
+		character.detach();
+	}	
 }

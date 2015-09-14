@@ -42,7 +42,7 @@ public class CompoundCharacterStates {
 	}
 	
 	@Test
-	public void testOntologyIdMapping() {
+	public void test() {
 		Document document = createTestDocument();
 		
 		Parent biologicalEntity1Parent = biologicalEntity1.getParent();
