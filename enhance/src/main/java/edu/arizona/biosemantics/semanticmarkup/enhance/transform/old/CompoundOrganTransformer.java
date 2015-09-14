@@ -1,7 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +12,8 @@ import org.jdom2.Parent;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-
-public class OrganNameTransformer extends AbstractTransformer {
-
+public class CompoundOrganTransformer extends AbstractTransformer {
+	
 	private class CompoundedEntity {
 
 		private Element biologicalEntity;
@@ -43,10 +41,11 @@ public class OrganNameTransformer extends AbstractTransformer {
 		}
 
 	}
+	
 
 	private IInflector inflector;
 	
-	public OrganNameTransformer(IInflector inflector) {
+	public CompoundOrganTransformer(IInflector inflector) {
 		this.inflector = inflector;
 	}
 	
@@ -56,8 +55,8 @@ public class OrganNameTransformer extends AbstractTransformer {
 	   </biological_entity>
 	 * @param result
 	 */
-
-	private void enumerateCompoundOrgan(Document document) {
+	@Override
+	public void transform(Document document) {
 		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
 			CompoundedEntity compoundedEntity = new CompoundedEntity(biologicalEntity);
 			if(compoundedEntity.isTarget()) {
@@ -86,55 +85,6 @@ public class OrganNameTransformer extends AbstractTransformer {
 			}	
 		}
 	}
-		
-	/**
-	 * 
-	 * @param roman <= XXXVIII (38)
-	 * @return
-	 */
-	private String nextRoman(String roman){
-		if(roman.endsWith("iv")){
-			return roman.replaceFirst("iv$", "v");
-		}else if(roman.endsWith("ix")){
-			return roman.replaceFirst("ix$", "x");
-		}else if(roman.endsWith("viii")){
-			return roman.replaceFirst("viii$", "ix");
-		}else if(roman.endsWith("iii")){
-			return roman.replaceFirst("iii$", "iv");
-		}else 
-			return roman+"i";
-	}
 	
 
-	/**
-	 * spiracle-epigastrium distance = epigastrium-spiracle distance, 
-	 * sort the involving organs alphabetically
-	 * @param result
-	 */
-	private void orderOrgansInDistance(Document document) {
-		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
-			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
-				if(character.getAttribute("name").equals("distance")){
-					String biologicalEntityName = biologicalEntity.getAttributeValue("name");
-					if(biologicalEntityName.contains("-")){
-						String[] names = biologicalEntityName.split("\\s*-\\s*");
-						Arrays.sort(names);
-						biologicalEntityName = "";
-						for(int n = 0; n < names.length; n++){
-							biologicalEntityName += names[n]+"-";
-						}
-						biologicalEntity.setAttribute("name", biologicalEntityName.replaceFirst("-$", ""));
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	@Override
-	public void transform(Document document) {
-		enumerateCompoundOrgan(document);
-		orderOrgansInDistance(document); //spiracle-epigastrium distance = epigastrium-spiracle distance
-	}
-	
 }
