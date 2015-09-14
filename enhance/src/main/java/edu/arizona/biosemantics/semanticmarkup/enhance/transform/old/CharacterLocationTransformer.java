@@ -43,59 +43,63 @@ public class CharacterLocationTransformer extends AbstractTransformer {
 	 * If the current entity has the same kind of measurements (typical/atypical width, length, height, size with numerical values), 
 	 * move the character to the entities indicated by the alterIDs. Any following charWAIs are moved too.
 	 * 
+	 * Assumption: Before this transformatiion: Characters in a biological_entity element are in order of the text. This becomes effective
+	 * when "following" charWAIs are moved too, because they are assumed to also belong to the alternative biological_entity.
+	 * 
 	 * Otherwise, do nothing
 	 * 
 	 * @param result
 	 */
 	private void checkAlternativeIDs(Document document) {
 		for (Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
-			ArrayList<Element> withAlterIDs = new ArrayList<Element> ();
+			ArrayList<Element> withAlternativeIDs = new ArrayList<Element> ();
 			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 				String notes = character.getAttributeValue("notes");
 				if(notes != null && notes.contains("alterIDs:")) {
-					withAlterIDs.add(character);
+					withAlternativeIDs.add(character);
 				}
-			}
+			}			
 	
 			boolean move = false;
-			for(Element charWAI: withAlterIDs){
-				String notes = charWAI.getAttributeValue("notes");
-				removeAlterIDsNotes(charWAI);
+			for(Element characterWithAlternativeId : withAlternativeIDs){
+				
+				String name = characterWithAlternativeId.getAttributeValue("name"); //width, atypical_width
+				String notes = characterWithAlternativeId.getAttributeValue("notes");
 				String note = notes.substring(notes.indexOf("alterIDs:"));
 				List<String> ids = Arrays.asList(note.replaceFirst("[;\\.].*", "").replaceFirst("alterIDs:", "").split("\\s+"));
-				String charName = charWAI.getAttributeValue("name"); //width, atypical_width
-				if(move){
-					charWAI.detach();
-					moveCharacterToStructures(charWAI, ids, document);
+				
+				if(move) {
+					moveCharacterToStructures(characterWithAlternativeId, ids, document);
 				} else {
 					for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
-						if(!character.equals(charWAI) && charName.equals(character.getAttributeValue("name")) && 
-								charName.matches(".*?_?(count|length|width|size|height)")){
+						if(!character.equals(characterWithAlternativeId) && name.equals(character.getAttributeValue("name")) && 
+								name.matches(".*?_?(count|length|width|size|height)")) {
 							//move charWAI to entities with the ids
-							charWAI.detach();
-							moveCharacterToStructures(charWAI, ids, document); //
+							moveCharacterToStructures(characterWithAlternativeId, ids, document); //
 							move = true;
 							break;
 						}
 					}
 				}
+
+				removeAlternativeIdsNotes(characterWithAlternativeId);
 			}
 		}
 	}
 	
-	private void removeAlterIDsNotes(Element charWAI) {
-		String notes = charWAI.getAttributeValue("notes");
+	private void removeAlternativeIdsNotes(Element characterWithouAlternativeId) {
+		String notes = characterWithouAlternativeId.getAttributeValue("notes");
 		if(notes != null && notes.contains("alterIDs:")){
-			charWAI.setAttribute("notes", notes.replaceFirst("\\balterIDs:.*?(;|\\.|$)", "")); //remove alterIDs note
-			if(notes != null && notes.isEmpty()) charWAI.removeAttribute("notes");
+			characterWithouAlternativeId.setAttribute("notes", notes.replaceFirst("\\balterIDs:.*?(;|\\.|$)", "")); //remove alterIDs note
+			if(notes != null && notes.isEmpty()) characterWithouAlternativeId.removeAttribute("notes");
 		}
 	}
 	
-
-	private void moveCharacterToStructures(Element charWAI, List<String> ids, Document document) {
+	private void moveCharacterToStructures(Element characterWithAlternativeId, List<String> ids, Document document) {
+		characterWithAlternativeId.detach();
 		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
 			if(ids.contains(biologicalEntity.getAttributeValue("id"))) {
-				biologicalEntity.addContent(charWAI);
+				biologicalEntity.addContent(characterWithAlternativeId);
 			}
 		}
 	}
