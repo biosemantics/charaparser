@@ -2,6 +2,8 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,11 +25,13 @@ public class CompoundOrganTransformer extends AbstractTransformer {
 		}
 
 		public boolean isTarget() {
-			return biologicalEntity.getAttributeValue("name_original").matches(
-					"(\\d+|[ivx]+)-(\\d+|[ivx]+)");
+			return biologicalEntity.getAttributeValue("name_original") != null && 
+					biologicalEntity.getAttributeValue("name_original").matches("(\\d+|[ivx]+)-(\\d+|[ivx]+)");
 		}
 
 		public List<String> getEntityParts() {
+			if(biologicalEntity.getAttributeValue("name_original")==null)
+				return new LinkedList<String>();
 			String[] ends = biologicalEntity.getAttributeValue("name_original").split("-");
 			ArrayList<String> individuals = new ArrayList<String>();
 			String current = ends[0];
@@ -63,9 +67,9 @@ public class CompoundOrganTransformer extends AbstractTransformer {
 				Parent statement = biologicalEntity.getParent();
 				int resultPosition = biologicalEntity.getParent().indexOf(biologicalEntity);
 				biologicalEntity.detach();
-				Map<String, Element> newBiologicalEntities = new HashMap<String, Element>();
+				Map<String, Element> newBiologicalEntities = new LinkedHashMap<String, Element>();
 				List<String> entityParts = compoundedEntity.getEntityParts();
-				boolean added =false;
+				boolean added = false;
 				
 				int id = 0;
 				for (String individual : entityParts) {

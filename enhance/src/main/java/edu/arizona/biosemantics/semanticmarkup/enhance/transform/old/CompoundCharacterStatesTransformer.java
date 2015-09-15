@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -81,7 +82,7 @@ public class CompoundCharacterStatesTransformer extends AbstractTransformer {
 				Parent parent = biologicalEntity.getParent();
 				int resultPosition = parent.indexOf(biologicalEntity);
 				biologicalEntity.detach();
-				Map<String, Element> newBiologicalEntities = new HashMap<String, Element>();
+				Map<String, Element> newBiologicalEntities = new LinkedHashMap<String, Element>();
 
 				int id = 0;
 				for (String entityName : compoundedEntityStates.getEntityParts()) {
