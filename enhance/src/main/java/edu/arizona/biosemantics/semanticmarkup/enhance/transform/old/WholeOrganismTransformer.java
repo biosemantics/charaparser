@@ -21,29 +21,6 @@ public class WholeOrganismTransformer extends AbstractTransformer {
 		this.glossary = glossary;
 	}
 	
-	/**
-	 * some description paragraphs start to name the taxon the organism belongs to. 
-	 * e.g. a description about 'Persian cats' starts with 'cats with long hairs and ...'
-	 * the markup of such usage of taxon name is normalized to whole_organism here
-	 * @param result
-	 */
-	private void taxonName2WholeOrganism(Document document) {
-		for (Element statement : this.statementXpath.evaluate(document)) {
-			List<Element> biologicalEntities = statement.getChildren("biological_entity");
-			if(!biologicalEntities.isEmpty()) {
-				Element firstElement = biologicalEntities.get(0);
-				String type = firstElement.getAttributeValue("type");
-				String constraint = firstElement.getAttributeValue("constraint");
-				if (type != null && type.equals("taxon_name") && (
-						constraint == null || constraint.isEmpty())) {
-					firstElement.setAttribute("name", "whole_organism");
-					firstElement.setAttribute("name_original", "");
-					firstElement.setAttribute("type", "structure");
-				}
-			}
-		}		
-	}
-	
 	private void createWholeOrganismDescription(Document document, Set<String> targets, String category) {
 		for(Element statement : new ArrayList<Element>(this.statementXpath.evaluate(document))) {
 			Element wholeOrganism = new Element("biological_entity");
@@ -115,29 +92,7 @@ public class WholeOrganismTransformer extends AbstractTransformer {
 		}
 	}
 	
-	//if unknown_subject has no characters and no relations, remove them.
-	private void removeOrphenedUnknownElements(Document document) {
-		for(Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
-			String name = biologicalEntity.getAttributeValue("name");
-			if(name != null && name.equals("whole_organism") && biologicalEntity.getChildren("character").isEmpty()) {
-				//String id = ((Structure)element).getId();
-				if(getRelationsInvolve(biologicalEntity, document).isEmpty()) 
-					biologicalEntity.detach();
-			}
-		}
-		/*		List<Element> unknowns = unknownsubject.selectNodes(this.statement);
-				for(Element unknown : unknowns){
-					if(unknown.getChildren().size()==0){ 
-						String id = unknown.getAttributeValue("id");
-						List<Element> relations = XPath.selectNodes(this.statement, ".//relation[@from='"+id+"']|.//relation[@to='"+id+"']");
-						if(relations.size()==0) unknown.detach();
-					}else{ //add name_original
-						unknown.setAttribute("name_original", ""); //name_original = "" as it was not in the original text
-					}
-				}	
-		 */		
-
-	}
+	
 	
 	/**
 	 * if the structue is used in a character constraint
@@ -181,15 +136,11 @@ public class WholeOrganismTransformer extends AbstractTransformer {
 
 	@Override
 	public void transform(Document document) {
-		taxonName2WholeOrganism(document);
-		
 		Set<String> lifeStyles = glossary.getWordsInCategory("life_style");
 		lifeStyles.addAll(glossary.getWordsInCategory("growth_form"));
 		Set<String> durations = glossary.getWordsInCategory("duration");
 		
 		createWholeOrganismDescription(document, lifeStyles, "growth_form");
 		createWholeOrganismDescription(document, durations, "duration");
-		
-		removeOrphenedUnknownElements(document);
 	}
 }
