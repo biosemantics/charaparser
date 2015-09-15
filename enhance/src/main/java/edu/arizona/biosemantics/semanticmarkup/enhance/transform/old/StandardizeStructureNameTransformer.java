@@ -1,13 +1,7 @@
-/**
- * 
- */
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -16,7 +10,6 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.enhance.know.partof.IOntology;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
@@ -26,17 +19,73 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
  */
 public class StandardizeStructureNameTransformer extends AbstractTransformer {
 	
-	private Set<IOntology> ontologies;
 	private ICharacterKnowledgeBase characterKnowledgeBase;
-	private Set<String> possess = new HashSet<String>(); //with, has, consist_of, possess
+	private Set<String> possessionTerms = new HashSet<String>(); //with, has, consist_of, possess
 	private String nonSpecificParts = "apex|appendix|area|band|base|belt|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|"
 			+ "face|groove|layer|line|margin|notch|part|pore|portion|protuberance|remnant|section|"
 			+ "side|stratum|surface|tip|wall|zone";
 	
-	public StandardizeStructureNameTransformer(Set<IOntology> ontologies, ICharacterKnowledgeBase characterKnowledgeBase, Set<String> possess){
-		this.ontologies = ontologies;
+	public StandardizeStructureNameTransformer(ICharacterKnowledgeBase characterKnowledgeBase, Set<String> possessionTerms){
 		this.characterKnowledgeBase = characterKnowledgeBase;
-		this.possess = possess;
+		this.possessionTerms = possessionTerms;
+	}
+	
+	@Override
+	public void transform(Document document) {
+		for(Element description : this.descriptionXpath.evaluate(document)) {
+			String nonSpecificParts = removeNonSpecificPartsIfFirstWord(description);
+			
+			String parentOrgan = null;
+			Element biologicalEntityA = null;
+			for(Element statement : description.getChildren("statement")) {
+				List<Element> biologicalEntities = statement.getChildren("biological_entity");
+				Element textElement = statement.getChild("text");
+				String text = textElement.getValue();
+				
+				if(text != null && text.matches("^[A-Z].*")){ //record parentorgan
+					if(!biologicalEntities.isEmpty()) {
+						biologicalEntityA = biologicalEntities.get(0);
+						//attach parent organ to other structures in this statement, return parentorgan used.
+						parentOrgan = attachParentOrganToOtherBiologicalEntities(document, description, statement, biologicalEntityA, "", nonSpecificParts);	
+					}
+				} else { 
+					//sentences not starting with a capitalized structure names => those structures after ';'
+					if(parentOrgan != null) {
+						if(!biologicalEntities.isEmpty()) {
+							//then apply parentorgan to the first structure 
+							biologicalEntityA = biologicalEntities.get(0); 
+							//apply parentorgan + localpo(struct) to other structures in the statement
+							attachParentOrganToOtherBiologicalEntities(document, description, statement, biologicalEntityA, parentOrgan, nonSpecificParts);
+							handlePartOfOrganOfOrgan(document, description, biologicalEntityA, parentOrgan);
+						}
+					}
+				}
+			}
+		}		 
+	}
+
+	private void handlePartOfOrganOfOrgan(Document document, Element description, Element biologicalEntity, String parentOrgan) {
+		String partOfChain = getPartOfChain(document, description, biologicalEntity, 0).replace(" of ", ",").trim(); 
+		if(!partOfChain.isEmpty()) { 
+			//use explicit part_of 
+			log(LogLevel.DEBUG, "===>[pchain] use '" + partOfChain + "' as constraint to '" + biologicalEntity.getName() + "'");
+			appendConstraint(biologicalEntity, formatParentOrgan(partOfChain)); 
+		} else {
+			String part = biologicalEntity.getName();				
+			if(part.matches("\\b(" + nonSpecificParts + ")\\b.*") && !part.contains(",") && parentOrgan.equals("whole_organism")){
+				parentOrgan = hasPart(biologicalEntity, biologicalEntity, description, parentOrgan, part, nonSpecificParts);
+				if(!parentOrgan.isEmpty()){
+					log(LogLevel.DEBUG,"===>[part of 2] use '" + parentOrgan + "' as constraint to '" + biologicalEntity.getName() + "'");
+					appendConstraint(biologicalEntity, formatParentOrgan(parentOrgan));
+				}/*else{
+					//quite strong an assumption that the organ of the first clause is the parent organ of all following clauses.
+					//If this is not true, or the part_of hashtable is complete, comment out this part.
+					//log(LogLevel.DEBUG,"===>[default] use '"+pocp+"' as constraint to '"+struct.getName()+"'");
+					struct.appendConstraint(formatParentOrgan(pocp));
+					parentorgan = pocp;
+				}*/
+			}
+		}
 	}
 	
 	/**
@@ -86,7 +135,7 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 	 * @count number of rounds in the iteration
 	 * @return ,-separated organs from part to whole
 	 */
-	public String getPartOfChain(Document document, Element description, Element from, int depth) {
+	private String getPartOfChain(Document document, Element description, Element from, int depth) {
 		String chain = "";
 		
 		List<Element> statements = description.getChildren("statement");
@@ -98,7 +147,7 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 				String relationTo = relation.getAttributeValue("to");
 				
 				if (relationFrom != null
-						&& relationFrom.equals(from)
+						&& relationFrom.equals(from.getAttributeValue("id"))
 						&& relation.getAttributeValue("name")
 								.matches("part_of") && relationTo != null) {
 					Element to = getStructureWithId(document, relationTo);
@@ -175,7 +224,7 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 		}
 		//add name organ to parentorgan list
 		//parentorgan = parentofparentstructure+" "+parentstruct.getAttributeValue("name");//leaf blade
-		return parentStructure.getName() + "," + parentOfParentStructure; // blade, leaf
+		return parentStructure.getAttributeValue("name") + "," + parentOfParentStructure; // blade, leaf
 	}
 
 	/**
@@ -205,7 +254,7 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 				if((from != null && from.equals(parentStructure.getAttributeValue("id")) && 
 						to != null && to.equals(partStructure.getAttributeValue("id")))) {
 					hasRelation = true;
-					if(possess.contains(relation.getName()))
+					if(possessionTerms.contains(relation.getName()))
 						hasPossessRelation = true;	
 				}
 			}
@@ -223,7 +272,7 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 					if(constraintId != null && constraintId.equals(partId) &&
 						biologicalEntity.getAttributeValue("id").equals(parentId) && constraint != null) {
 						hasRelation = true;
-						if(possess.contains(constraint.contains(" ") ? 
+						if(possessionTerms.contains(constraint.contains(" ") ? 
 								constraint.substring(0, constraint.indexOf(" ")) : constraint)) //first word in constraint string is in possess
 							hasPossessRelation = true;
 					}
@@ -254,12 +303,12 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 
 	/**
 	 * 
-	 * @param parentstruct
-	 * @param struct
+	 * @param parentStructure
+	 * @param structure
 	 * @param description
 	 * @return @return true if structure possess [with, has, posses] struct. This could be expressed as relation or as character constraint
 	 */
-	private boolean possess(Element parentstruct, Element struct, Element description) {
+	private boolean possess(Element parentStructure, Element structure, Element description) {
 		List<Element> statements = description.getChildren("statement");
 		//check relations for evidence
 		for(Element s: statements){
@@ -269,16 +318,17 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 				String negation = relation.getAttributeValue("negation");
 				String from = relation.getAttributeValue("from");
 				String to = relation.getAttributeValue("to");
-				if(possess.contains(name) && (negation==null || negation.equals("false")) &&
-						(from != null && from.equals(parentstruct) && to !=null && to.equals(struct))) {
+				if(possessionTerms.contains(name) && (negation==null || negation.equals("false")) &&
+						(from != null && from.equals(parentStructure.getAttributeValue("id")) && to !=null && 
+						to.equals(structure.getAttributeValue("id")))) {
 					return true;
 				}
 			}
 		}
 		
 		//check character constraints for evidence
-		String idw = parentstruct.getAttributeValue("id");
-		String idp = struct.getAttributeValue("id");
+		String parentStructureId = parentStructure.getAttributeValue("id");
+		String structureId = structure.getAttributeValue("id");
 		for(Element statement: statements){
 			List<Element> biologicalEntities = statement.getChildren("biological_entity");
 			for(Element biologicalEntity : biologicalEntities) {
@@ -288,9 +338,9 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 					Element character = it.next();
 					String constraintId = character.getAttributeValue("constraintid");
 					String constraint = character.getAttributeValue("constraint");
-					if(constraintId != null && constraintId.equals(idp) &&
-							biologicalEntity.getAttributeValue("id").equals(idw) && constraint !=null &&
-							possess.contains(constraint)) {
+					if(constraintId != null && constraintId.equals(structureId) &&
+							biologicalEntity.getAttributeValue("id").equals(parentStructureId) && constraint !=null &&
+							possessionTerms.contains(constraint)) {
 						return true;
 					}
 				}
@@ -299,62 +349,5 @@ public class StandardizeStructureNameTransformer extends AbstractTransformer {
 		return false;
 	}
 
-	@Override
-	public void transform(Document document) {
-		for(Element description : this.descriptionXpath.evaluate(document)) {
-			String nonSpecificParts = removeNonSpecificPartsIfFirstWord(description);
-			
-			String parentOrgan = null;
-			Element biologicalEntityA = null;
-			for(Element statement : description.getChildren("statement")) {
-				List<Element> biologicalEntities = statement.getChildren("biological_entity");
-				Element textElement = statement.getChild("text");
-				String text = textElement.getValue();
-				
-				if(text != null && text.matches("^[A-Z].*")){ //record parentorgan
-					if(!biologicalEntities.isEmpty()) {
-						biologicalEntityA = biologicalEntities.get(0);
-						//attach parent organ to other structures in this statement, return parentorgan used.
-						parentOrgan = attachParentOrganToOtherBiologicalEntities(document, description, statement, biologicalEntityA, "", nonSpecificParts);	
-					}
-				} else { 
-					//sentences not starting with a capitalized structure names => those structures after ';'
-					if(parentOrgan != null) {
-						if(!biologicalEntities.isEmpty()) {
-							//then apply parentorgan to the first structure 
-							biologicalEntityA = biologicalEntities.get(0); 
-							//apply parentorgan + localpo(struct) to other structures in the statement
-							attachParentOrganToOtherBiologicalEntities(document, description, statement, biologicalEntityA, parentOrgan, nonSpecificParts);
-
-							handlePartOfOrganOfOrgan(document, description, biologicalEntityA, parentOrgan);
-						}
-					}
-				}
-			}
-		}		 
-	}
-
-	private void handlePartOfOrganOfOrgan(Document document, Element description, Element biologicalEntity, String parentOrgan) {
-		String partOfChain = getPartOfChain(document, description, biologicalEntity, 0).replace(" of ", ",").trim(); 
-		if(!partOfChain.isEmpty()) { 
-			//use explicit part_of 
-			log(LogLevel.DEBUG, "===>[pchain] use '" + partOfChain + "' as constraint to '" + biologicalEntity.getName() + "'");
-			appendConstraint(biologicalEntity, formatParentOrgan(partOfChain)); 
-		} else {
-			String part = biologicalEntity.getName();				
-			if(part.matches("\\b(" + nonSpecificParts + ")\\b.*") && !part.contains(",") && parentOrgan.equals("whole_organism")){
-				parentOrgan = hasPart(biologicalEntity, biologicalEntity, description, parentOrgan, part, nonSpecificParts);
-				if(!parentOrgan.isEmpty()){
-					log(LogLevel.DEBUG,"===>[part of 2] use '" + parentOrgan + "' as constraint to '" + biologicalEntity.getName() + "'");
-					appendConstraint(biologicalEntity, formatParentOrgan(parentOrgan));
-				}/*else{
-					//quite strong an assumption that the organ of the first clause is the parent organ of all following clauses.
-					//If this is not true, or the part_of hashtable is complete, comment out this part.
-					//log(LogLevel.DEBUG,"===>[default] use '"+pocp+"' as constraint to '"+struct.getName()+"'");
-					struct.appendConstraint(formatParentOrgan(pocp));
-					parentorgan = pocp;
-				}*/
-			}
-		}
-	}
+	
 }

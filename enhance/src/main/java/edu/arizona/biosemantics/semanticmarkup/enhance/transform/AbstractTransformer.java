@@ -68,6 +68,15 @@ public abstract class AbstractTransformer {
 		return result;
 	}
 	
+	protected Element getStructureWithId(Document document, String id) {
+		for(Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
+			if(biologicalEntity.getAttributeValue("id").equals(id)) {
+				return biologicalEntity;
+			}
+		}
+		return null;
+	}
+	
 	protected void appendConstraint(Element biologicalEntity, String append) {
 		String constraint = biologicalEntity.getAttributeValue("constraint");
 		if(constraint == null)
