@@ -7,14 +7,14 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class CharacterConstraintCleanup {
+public class RemoveUselessCharacterConstraint {
 	
-	private CharacterConstraintCleanupTransformer transformer;
+	private RemoveUselessCharacterConstraintTransformer transformer;
 	private Element character1;
 	private Element character2;
 	
-	public CharacterConstraintCleanup() {
-		this.transformer = new CharacterConstraintCleanupTransformer();
+	public RemoveUselessCharacterConstraint() {
+		this.transformer = new RemoveUselessCharacterConstraintTransformer();
 	}
 	
 	@Test

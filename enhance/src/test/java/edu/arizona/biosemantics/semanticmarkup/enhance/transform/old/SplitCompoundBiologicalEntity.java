@@ -12,16 +12,16 @@ import org.junit.Test;
 
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 
-public class CompoundOrgan {
+public class SplitCompoundBiologicalEntity {
 	
-	private CompoundOrganTransformer transformer;
+	private SplitCompoundBiologicalEntityTransformer transformer;
 	private Element biologicalEntity1;
 	private Element character1;
 	private Element relationA;
 	private Element relationB;
 	
-	public CompoundOrgan() {
-		this.transformer = new CompoundOrganTransformer(new IInflector() {
+	public SplitCompoundBiologicalEntity() {
+		this.transformer = new SplitCompoundBiologicalEntityTransformer(new IInflector() {
 			@Override
 			public String getSingular(String word) {
 				return word;

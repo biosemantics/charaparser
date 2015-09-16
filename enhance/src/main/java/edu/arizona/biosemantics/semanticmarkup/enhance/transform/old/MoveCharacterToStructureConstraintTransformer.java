@@ -1,9 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -11,9 +8,11 @@ import org.jdom2.Element;
 import edu.arizona.biosemantics.common.ling.know.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class CharacterToStructureConstraintTransformer extends AbstractTransformer {
+/**
+ * Moves constraint information represented by a character (when character matches certain pattern, e.g. is_modifier, name)  to its parent biological entity
+ */
+public class MoveCharacterToStructureConstraintTransformer extends AbstractTransformer {
 	
-
 	@Override
 	public void transform(Document document) {
 		for (Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {

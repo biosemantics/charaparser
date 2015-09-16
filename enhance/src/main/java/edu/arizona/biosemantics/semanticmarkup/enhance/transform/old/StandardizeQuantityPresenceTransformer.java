@@ -5,7 +5,10 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class AbsencePresenceTransformer extends AbstractTransformer {
+/**
+ * Replaces quantity = 0 by presence = absent
+ */
+public class StandardizeQuantityPresenceTransformer extends AbstractTransformer {
 
 	@Override
 	public void transform(Document document) {

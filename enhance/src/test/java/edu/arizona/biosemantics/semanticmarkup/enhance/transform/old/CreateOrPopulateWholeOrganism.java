@@ -12,9 +12,9 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class CreateWholeOrganismDescription {
+public class CreateOrPopulateWholeOrganism {
 	
-	private CreateWholeOrganismDescriptionTransformer transformer;
+	private CreateOrPopulateWholeOrganismTransformer transformer;
 	private Element biologicalEntity1;
 	private Element biologicalEntity2;
 	private Element character1;
@@ -22,10 +22,10 @@ public class CreateWholeOrganismDescription {
 	private String category = "my_category";
 	private Element relation1;
 	
-	public CreateWholeOrganismDescription() {
+	public CreateOrPopulateWholeOrganism() {
 		Set<String> targets = new HashSet<String>();
 		targets.add(target);
-		this.transformer = new CreateWholeOrganismDescriptionTransformer(targets, category);
+		this.transformer = new CreateOrPopulateWholeOrganismTransformer(targets, category);
 	}
 	
 	@Test

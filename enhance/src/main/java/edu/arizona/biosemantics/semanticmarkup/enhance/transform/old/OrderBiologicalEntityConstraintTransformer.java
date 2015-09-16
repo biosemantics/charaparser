@@ -2,21 +2,16 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
+
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class BiologicalEntityConstraintOrderTransformer extends AbstractTransformer {
-	
+/**
+ * Order multiple constraints of a structure in the natural order they occur in the text
+ */
+public class OrderBiologicalEntityConstraintTransformer extends AbstractTransformer {
 	
 	@Override
 	public void transform(Document document) {
-		orderConstraintsNaturally(document);
-	}	
-	
-	/**
-	 * if a structure has multiple constraints, put them in the natural order they occur in the text
-	 * @param result
-	 */
-	private void orderConstraintsNaturally(Document document) {
 		for(Element statement : this.statementXpath.evaluate(document)) {
 			String sentence = statement.getChildText("text");
 			for(Element structure : statement.getChildren("biological_entity")) {
@@ -29,6 +24,5 @@ public class BiologicalEntityConstraintOrderTransformer extends AbstractTransfor
 			}
 		}
 	}
-
 	
 }

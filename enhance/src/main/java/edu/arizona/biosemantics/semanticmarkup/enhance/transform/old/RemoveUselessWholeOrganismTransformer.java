@@ -7,7 +7,7 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class RemoveOrphanedUnknownElementsTransformer extends AbstractTransformer {
+public class RemoveUselessWholeOrganismTransformer extends AbstractTransformer {
 
 		//if unknown_subject has no characters and no relations, remove them.
 		@Override

@@ -7,14 +7,14 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class CharacterToStructureConstraint {
+public class MoveNegationCharacterToBiologicalEntityConstraint {
 	
-	private CharacterToStructureConstraintTransformer transformer;
+	private MoveNegationCharacterToBiologicalEntityConstraintTransformer transformer;
 	private Element biologicalEntity1;
-	private Element character0;
+	private Element character1;
 	
-	public CharacterToStructureConstraint() {
-		this.transformer = new CharacterToStructureConstraintTransformer();
+	public MoveNegationCharacterToBiologicalEntityConstraint() {
+		this.transformer = new MoveNegationCharacterToBiologicalEntityConstraintTransformer();
 	}
 	
 	@Test
@@ -22,8 +22,8 @@ public class CharacterToStructureConstraint {
 		Document document = createTestDocument();
 		transformer.transform(document);
 		
-		assertTrue(!biologicalEntity1.getChildren().contains(character0));
-		assertTrue(biologicalEntity1.getAttributeValue("constraint").equals("existing constraint; value"));
+		assertTrue(!biologicalEntity1.getContent().contains(character1));
+		assertTrue(biologicalEntity1.getAttributeValue("constraint").equals("no constraint"));
 	}
 
 	private Document createTestDocument() {
@@ -35,19 +35,20 @@ public class CharacterToStructureConstraint {
 		description.addContent(statement);
 		Element text = new Element("text");
 		biologicalEntity1 = new Element("biological_entity");
+		character1 = new Element("character");
 		statement.addContent(text);
 		statement.addContent(biologicalEntity1);
+		biologicalEntity1.addContent(character1);
 
-		text.setText("leafs some brown and more");
+		text.setText("leafs some brown and more wider than long");
 		biologicalEntity1.setAttribute("id", "o0");
 		biologicalEntity1.setAttribute("name", "leaf");
+		biologicalEntity1.setAttribute("name_original", "leafs");
+		biologicalEntity1.setAttribute("constraint", "constraint");
 		
-		character0 = new Element("character");
-		character0.setAttribute("is_modifier", "true");
-		character0.setAttribute("constraint", "existing constraint");
-		character0.setAttribute("name", "structure");
-		character0.setAttribute("value", "value");
-		biologicalEntity1.addContent(character0);
+		character1.setAttribute("name", "count");
+		character1.setAttribute("value", "no");
+		character1.setAttribute("is_modifier", "true");
 		
 		Document document = new Document(treatment);
 		return document;

@@ -1,21 +1,20 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class TaxonNameToWholeOrganism {
+public class ReplaceTaxonNameByWholeOrganism {
 	
-	private TaxonNameToWholeOrganismTransformer transformer;
+	private ReplaceTaxonNameByWholeOrganismTransformer transformer;
 	private Element biologicalEntity1;
 	private Element biologicalEntity2;
 	
-	public TaxonNameToWholeOrganism() {
-		this.transformer = new TaxonNameToWholeOrganismTransformer();
+	public ReplaceTaxonNameByWholeOrganism() {
+		this.transformer = new ReplaceTaxonNameByWholeOrganismTransformer();
 	}
 	
 	@Test

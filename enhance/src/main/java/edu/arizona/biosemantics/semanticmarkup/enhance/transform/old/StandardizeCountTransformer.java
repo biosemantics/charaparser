@@ -5,7 +5,10 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class NormalizeZeroCountTransformer extends AbstractTransformer {
+/**
+ * Normalize count: Replace keywords by actual counts.
+ */
+public class StandardizeCountTransformer extends AbstractTransformer {
 
 	/**
 	 * 	nomarlization count

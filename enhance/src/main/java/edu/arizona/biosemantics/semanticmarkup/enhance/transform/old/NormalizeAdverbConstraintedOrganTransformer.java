@@ -1,8 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -11,6 +9,11 @@ import org.jdom2.Element;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
+/**
+ * If negation in biological entity constraint
+ * - Move character to constraint (if is_modifier)
+ * - Negate character
+ */
 public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransformer {
 
 	private IPOSKnowledgeBase posKnowledgeBase;
@@ -103,7 +106,7 @@ public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransfo
 	private void handleNegatedStructure(Document document, Element biologicalEntity, String constraint) {
 		//adv is negation
 		//handle is_modifier characters and true characters
-		boolean hasTrueCharacters = handleModifiedAndTrueCharacters(biologicalEntity, constraint);
+		boolean hasTrueCharacters = handleModifiedAndTrueCharactersFromNegatedStructure(biologicalEntity, constraint);
 		//negate relations
 		boolean hasNegatedRelations = negateRelations(biologicalEntity, document);
 
@@ -120,7 +123,7 @@ public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransfo
 		biologicalEntity.setAttribute("constraint", constraint.replaceFirst("^no|not|never\\b", "").trim());
 	}
 
-	private boolean handleModifiedAndTrueCharacters(Element biologicalEntity, String constraint) {
+	private boolean handleModifiedAndTrueCharactersFromNegatedStructure(Element biologicalEntity, String constraint) {
 		boolean hasTrueCharacters = false;
 		for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 			String isModifier = character.getAttributeValue("is_modifier");

@@ -1,17 +1,28 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
+import java.util.Map;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class CharacterNameTransformer extends AbstractTransformer {
+/**
+ * Renames a character with a given original name to a given target name
+ */
+public class RenameCharacterTransformer extends AbstractTransformer {
 
+	private Map<String, String> renames;
+
+	public RenameCharacterTransformer(Map<String, String> renames) {
+		this.renames = renames;
+	}
+	
 	@Override
 	public void transform(Document document) {
-		renameCharacter(document, "count", "quantity");
-		renameCharacter(document, "atypical_count", "atypical_quantity");
-		renameCharacter(document, "color", "coloration");
+		for(String original : renames.keySet()) {
+			renameCharacter(document, original, renames.get(original));
+		}
 	}
 	
 	private void renameCharacter(Document document, String oldName, String newName) {
@@ -21,6 +32,5 @@ public class CharacterNameTransformer extends AbstractTransformer {
 			}
 		}
 	}
-
 	
 }

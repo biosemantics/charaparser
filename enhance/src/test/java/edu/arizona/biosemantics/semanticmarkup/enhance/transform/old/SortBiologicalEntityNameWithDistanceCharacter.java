@@ -7,13 +7,13 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class OrderOrgansInDistance  {
+public class SortBiologicalEntityNameWithDistanceCharacter  {
 	
-	private OrderOrgansInDistanceTransformer transformer;
+	private SortBiologicalEntityNameWithDistanceCharacterTransformer transformer;
 	private Element biologicalEntity;
 	
-	public OrderOrgansInDistance() {
-		this.transformer = new OrderOrgansInDistanceTransformer();
+	public SortBiologicalEntityNameWithDistanceCharacter() {
+		this.transformer = new SortBiologicalEntityNameWithDistanceCharacterTransformer();
 	}
 	
 	@Test

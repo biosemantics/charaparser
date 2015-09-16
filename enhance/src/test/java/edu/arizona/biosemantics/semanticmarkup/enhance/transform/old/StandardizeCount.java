@@ -7,9 +7,9 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class NormalizeZeroCount {
+public class StandardizeCount {
 	
-	private NormalizeZeroCountTransformer transformer;
+	private StandardizeCountTransformer transformer;
 	private Element character1;
 	private Element character2;
 	private Element character3;
@@ -19,8 +19,8 @@ public class NormalizeZeroCount {
 	private Element character22;
 	private Element character33;
 	
-	public NormalizeZeroCount() {
-		this.transformer = new NormalizeZeroCountTransformer();
+	public StandardizeCount() {
+		this.transformer = new StandardizeCountTransformer();
 	}
 	
 	@Test

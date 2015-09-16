@@ -7,7 +7,11 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class NoOrganToAdverbConstraintedOrganTransformer extends AbstractTransformer {
+/**
+ * Remove a count = no character that is placed in the first location of a biological entity.
+ * Prepend biological entity's constraint by "no" instead.
+ */
+public class MoveNegationCharacterToBiologicalEntityConstraintTransformer extends AbstractTransformer {
 
 	/**
 	 * turn "no organ" markup to advConstraintedOrgan format

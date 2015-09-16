@@ -10,9 +10,6 @@ import java.util.Set;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 import org.junit.Test;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms;

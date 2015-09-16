@@ -1,9 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +12,11 @@ import org.jdom2.Parent;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class CompoundCharacterStatesTransformer extends AbstractTransformer {
+/**
+ * Splits biological entity's who's name contains multiple names separated by '/' if the the same quantity of character values
+ * exists in all the child characters separated by '/'.
+ */
+public class SplitCompoundBiologicalEntitiesCharactersTransformer extends AbstractTransformer {
 
 	private class CompoundedEntityStates {
 		private Element biologicalEntity;
@@ -60,7 +61,7 @@ public class CompoundCharacterStatesTransformer extends AbstractTransformer {
 
 	private IInflector inflector;
 	
-	public CompoundCharacterStatesTransformer(IInflector inflector) {
+	public SplitCompoundBiologicalEntitiesCharactersTransformer(IInflector inflector) {
 		this.inflector = inflector;
 	}
 	

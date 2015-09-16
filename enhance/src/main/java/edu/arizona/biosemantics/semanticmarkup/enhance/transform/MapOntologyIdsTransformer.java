@@ -2,22 +2,16 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.common.ontology.search.FileSearcher;
 import edu.arizona.biosemantics.common.ontology.search.Searcher;
-import edu.arizona.biosemantics.common.ontology.search.TaxonGroupOntology;
-import edu.arizona.biosemantics.common.ontology.search.model.Ontology;
 import edu.arizona.biosemantics.common.ontology.search.model.OntologyEntry;
 import edu.arizona.biosemantics.common.ontology.search.model.OntologyEntry.Type;
-import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 
 public class MapOntologyIdsTransformer extends AbstractTransformer {
 

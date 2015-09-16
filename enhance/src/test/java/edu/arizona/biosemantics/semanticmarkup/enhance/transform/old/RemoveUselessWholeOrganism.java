@@ -1,6 +1,5 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.jdom2.Document;
@@ -8,15 +7,15 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class RemoveOrphanedTaxonNameElements {
+public class RemoveUselessWholeOrganism {
 
-	private RemoveOrphanedUnknownElementsTransformer transformer;
+	private RemoveUselessWholeOrganismTransformer transformer;
 	private Element biologicalEntity1;
 	private Element biologicalEntity2;
 	private Element biologicalEntity3;
 	
-	public RemoveOrphanedTaxonNameElements() {
-		this.transformer = new RemoveOrphanedUnknownElementsTransformer();
+	public RemoveUselessWholeOrganism() {
+		this.transformer = new RemoveUselessWholeOrganismTransformer();
 	}
 	
 	@Test

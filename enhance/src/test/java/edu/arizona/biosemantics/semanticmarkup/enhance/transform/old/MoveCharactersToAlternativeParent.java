@@ -7,17 +7,17 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class CharacterLocation {
+public class MoveCharactersToAlternativeParent {
 	
-	private CharacterLocationTransformer transformer;
+	private MoveCharactersToAlternativeParentTransformer transformer;
 	private Element biologicalEntity1;
 	private Element biologicalEntity2;
 	private Element character0;
 	private Element character1;
 	private Element character2;
 	
-	public CharacterLocation() {
-		this.transformer = new CharacterLocationTransformer();
+	public MoveCharactersToAlternativeParent() {
+		this.transformer = new MoveCharactersToAlternativeParentTransformer();
 	}
 	
 	@Test

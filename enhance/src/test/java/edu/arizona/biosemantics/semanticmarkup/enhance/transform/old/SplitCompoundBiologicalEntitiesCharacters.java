@@ -3,8 +3,6 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
-
 import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -14,16 +12,16 @@ import org.junit.Test;
 
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 
-public class CompoundCharacterStates {
+public class SplitCompoundBiologicalEntitiesCharacters {
 	
-	private CompoundCharacterStatesTransformer transformer;
+	private SplitCompoundBiologicalEntitiesCharactersTransformer transformer;
 	private Element biologicalEntity1;
 	private Element character1;
 	private Element relationA;
 	private Element relationB;
 	
-	public CompoundCharacterStates() {
-		this.transformer = new CompoundCharacterStatesTransformer(new IInflector() {
+	public SplitCompoundBiologicalEntitiesCharacters() {
+		this.transformer = new SplitCompoundBiologicalEntitiesCharactersTransformer(new IInflector() {
 			@Override
 			public String getSingular(String word) {
 				return word;

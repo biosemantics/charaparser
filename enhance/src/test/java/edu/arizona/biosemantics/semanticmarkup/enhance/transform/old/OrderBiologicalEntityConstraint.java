@@ -1,28 +1,27 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class BiologicalEntityConstraintOrder {
+public class OrderBiologicalEntityConstraint{
 	
-	private BiologicalEntityConstraintOrderTransformer transformer;
+	private OrderBiologicalEntityConstraintTransformer transformer;
 	private Element biologicalEntity1;
 	
-	public BiologicalEntityConstraintOrder() {
-		this.transformer = new BiologicalEntityConstraintOrderTransformer();
+	public OrderBiologicalEntityConstraint() {
+		this.transformer = new OrderBiologicalEntityConstraintTransformer();
 	}
 	
 	@Test
 	public void test() {
 		Document document = createTestDocument();
 		transformer.transform(document);
-		
-		assertEquals(null, biologicalEntity1.getAttributeValue("constraint"));
-		assertEquals(null, biologicalEntity1.getAttributeValue("constraintid"));
+
+		assertTrue(biologicalEntity1.getAttributeValue("constraint").equals("some brown ; more ; wider than long"));
 	}
 
 	private Document createTestDocument() {
@@ -37,10 +36,12 @@ public class BiologicalEntityConstraintOrder {
 		statement.addContent(text);
 		statement.addContent(biologicalEntity1);
 
-		text.setText("leafs some brown and more");
+		text.setText("leafs some brown and more wider than long");
+		biologicalEntity1.setAttribute("id", "o0");
 		biologicalEntity1.setAttribute("name", "leaf");
-		biologicalEntity1.setAttribute("constraint", "and more ; some brown");
 		biologicalEntity1.setAttribute("name_original", "leafs");
+		biologicalEntity1.setAttribute("constraint", "more ; wider than long ; some brown");
+		
 		
 		Document document = new Document(treatment);
 		return document;

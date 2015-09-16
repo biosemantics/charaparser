@@ -18,7 +18,6 @@ import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 import org.paukov.combinatorics.util.ComplexCombinationGenerator;
 
-import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms.SynonymSet;
 

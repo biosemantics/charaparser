@@ -122,45 +122,46 @@ public abstract class AbstractTransformer {
 	 * @return
 	 */
 	protected String order(String constraints, String sentence, String nameOriginal) {
-		ArrayList<String> sent = new ArrayList<String>(Arrays.asList(sentence.split("\\s+")));
-		ArrayList<String> constr = new ArrayList<String>(Arrays.asList(constraints.split("\\s*?[; ]\\s*")));
+		ArrayList<String> sentenceParts = new ArrayList<String>(Arrays.asList(sentence.split("\\s+")));
+		ArrayList<String> constraintParts = new ArrayList<String>(Arrays.asList(constraints.split("\\s*?[; ]\\s*")));
 		ArrayList<String> orderedCandidates = new ArrayList<String>();
 
-		int i = sent.indexOf(nameOriginal); //i could be 0
-		if(i<0){ //nameOrginal may be added by fixInner, for example. 
+		int i = sentenceParts.indexOf(nameOriginal); //i could be 0
+		if(i < 0) { //nameOrginal may be added by fixInner, for example. 
 			if(sentence.matches(".*?\\b"+constraints+"\\b.*")){
 				log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] normalized to itself [entity name not present in sentence]");
 				return constraints;
 			}
 		}
-		do{
+		
+		do {
 			String ordered = "";
-			if(i>=constr.size()){
-				for(int j = i - constr.size(); j<i; j++){
-					int sizeBefore = constr.size();
-					constr.remove(sent.get(j));
-					if(constr.size()<sizeBefore)
-						ordered = ordered +" " + sent.get(j);
+			if(i >= constraintParts.size()){
+				for(int j = i - constraintParts.size(); j<i; j++){
+					int sizeBefore = constraintParts.size();
+					constraintParts.remove(sentenceParts.get(j));
+					if(constraintParts.size() < sizeBefore)
+						ordered = ordered + " " + sentenceParts.get(j);
 				}
 			}
-			if(constr.isEmpty()){
-				if(constraints.compareTo(ordered)!=0)
-					log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] perfectly normalized to "+ ordered);
+			if(constraintParts.isEmpty()){
+				if(constraints.compareTo(ordered) != 0)
+					log(LogLevel.DEBUG, "BiologicalEntity constraints ["+constraints+"] perfectly normalized to " + ordered);
 				return ordered.trim();
 			}else{
 				orderedCandidates.add(ordered.trim());
 			}
 			//index of the next occurrence of the nameOrginal
 			for(int j = 0; j <=i; j++){
-				sent.set(j, " ");
+				sentenceParts.set(j, " ");
 			}
 
-			i = sent.indexOf(nameOriginal);
-		}while(i>=constr.size());
+			i = sentenceParts.indexOf(nameOriginal);
+		} while(i>=constraintParts.size());
 
 		int max = 0;
 		String selected = "";
-		for(String ordered: orderedCandidates){
+		for(String ordered : orderedCandidates){
 			//return the longest
 			if(max < ordered.trim().split("\\s+").length){
 				max = ordered.trim().split("\\s+").length;

@@ -7,17 +7,17 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-public class AbsencePresence {
+public class StandardizeQuantityPresence {
 	
-	private AbsencePresenceTransformer transformer;
+	private StandardizeQuantityPresenceTransformer transformer;
 	private Element character1;
 	private Element character2;
 	private Element character3;
 	private Element character4;
 	private Element character5;
 	
-	public AbsencePresence() {
-		this.transformer = new AbsencePresenceTransformer();
+	public StandardizeQuantityPresence() {
+		this.transformer = new StandardizeQuantityPresenceTransformer();
 	}
 	
 	@Test

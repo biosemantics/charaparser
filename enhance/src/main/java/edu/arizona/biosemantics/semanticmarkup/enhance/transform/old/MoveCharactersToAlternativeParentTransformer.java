@@ -2,8 +2,6 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -11,7 +9,15 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class CharacterLocationTransformer extends AbstractTransformer {
+/**
+ * For a biological entity A check for characters B with an alterIDs note.
+ * If A already has the same kind of measurements (typical/atypical width, length, height, size with numerical values) as an element of B
+ * move the character to the biological entity with the alterID. Any proceeding characters within A are also moved.
+ * 
+ * Assumption before this transformation: Characters in a biological_entity element are in order of the text. This becomes effective
+ * when proceeding characters are moved too, because they are assumed to also belong to the alternative biological_entity.
+ */
+public class MoveCharactersToAlternativeParentTransformer extends AbstractTransformer {
 	
 	@Override
 	public void transform(Document document) {
@@ -38,17 +44,6 @@ public class CharacterLocationTransformer extends AbstractTransformer {
 	<character is_modifier="true" name="pubescence_or_texture" value="soft" />
 	<character char_type="range_value" from="15" from_unit="mm" name="length" to="25" to_unit="mm" />
 	</biological_entity>
-	 * 
-	 * check characters with an alterIDs note, 
-	 * If the current entity has the same kind of measurements (typical/atypical width, length, height, size with numerical values), 
-	 * move the character to the entities indicated by the alterIDs. Any following charWAIs are moved too.
-	 * 
-	 * Assumption: Before this transformatiion: Characters in a biological_entity element are in order of the text. This becomes effective
-	 * when "following" charWAIs are moved too, because they are assumed to also belong to the alternative biological_entity.
-	 * 
-	 * Otherwise, do nothing
-	 * 
-	 * @param result
 	 */
 	private void checkAlternativeIDs(Document document) {
 		for (Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {

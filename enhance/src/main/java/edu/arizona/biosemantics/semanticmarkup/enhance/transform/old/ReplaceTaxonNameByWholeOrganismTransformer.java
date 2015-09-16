@@ -7,7 +7,10 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class TaxonNameToWholeOrganismTransformer extends AbstractTransformer {
+/**
+ * Replaces first biological entity by a whole_organism entity if it was a taxon_name entity.
+ */
+public class ReplaceTaxonNameByWholeOrganismTransformer extends AbstractTransformer {
 	
 	/**
 	 * some description paragraphs start to name the taxon the organism belongs to. 

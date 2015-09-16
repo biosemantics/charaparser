@@ -1,7 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +13,11 @@ import org.jdom2.Parent;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
-public class CompoundOrganTransformer extends AbstractTransformer {
+/**
+ * Splits biological entity's who's name contains multiple ones indicated by a range of romand numbers, e.g. i-iii.
+ * Characters are cloned for all newly created biological entities.
+ */
+public class SplitCompoundBiologicalEntityTransformer extends AbstractTransformer {
 	
 	private class CompoundedEntity {
 
@@ -43,13 +46,12 @@ public class CompoundOrganTransformer extends AbstractTransformer {
 			individuals.add(last);
 			return individuals;
 		}
-
 	}
 	
 
 	private IInflector inflector;
 	
-	public CompoundOrganTransformer(IInflector inflector) {
+	public SplitCompoundBiologicalEntityTransformer(IInflector inflector) {
 		this.inflector = inflector;
 	}
 	

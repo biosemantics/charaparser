@@ -2,8 +2,6 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Iterator;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -11,8 +9,6 @@ import org.junit.Test;
 
 import edu.arizona.biosemantics.common.ling.know.CharacterMatch;
 import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.common.ling.know.Term;
-import edu.arizona.biosemantics.common.log.LogLevel;
 
 public class StandardizeTerminology {
 	

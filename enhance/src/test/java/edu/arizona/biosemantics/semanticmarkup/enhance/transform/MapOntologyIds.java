@@ -1,6 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -8,20 +8,12 @@ import java.util.List;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 import org.junit.Test;
 
-import edu.arizona.biosemantics.common.biology.TaxonGroup;
-import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.common.ontology.search.FileSearcher;
 import edu.arizona.biosemantics.common.ontology.search.Searcher;
-import edu.arizona.biosemantics.common.ontology.search.TaxonGroupOntology;
 import edu.arizona.biosemantics.common.ontology.search.model.Ontology;
 import edu.arizona.biosemantics.common.ontology.search.model.OntologyEntry;
 import edu.arizona.biosemantics.common.ontology.search.model.OntologyEntry.Type;
-import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 
 public class MapOntologyIds {
 
