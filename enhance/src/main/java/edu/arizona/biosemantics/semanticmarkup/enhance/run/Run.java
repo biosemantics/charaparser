@@ -18,7 +18,7 @@ import org.jdom2.output.XMLOutputter;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MapOntologyIdsTransformer;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MapOntologyIdsTest;
 
 public class Run {
 
