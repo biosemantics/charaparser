@@ -13,9 +13,9 @@ import org.junit.Test;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.pos.POS;
 
-public class NormalizeAdverbConstraintedOrgan {
+public class MoveNegationOrAdverbBiologicalEntityConstraint {
 	
-	private NormalizeAdverbConstraintedOrganTransformer transformer;
+	private MoveNegationOrAdverbBiologicalEntityConstraintTransformer transformer;
 	private Element character11;
 	private Element biologicalEntity11;
 	private Element biologicalEntity21;
@@ -34,8 +34,8 @@ public class NormalizeAdverbConstraintedOrgan {
 	private Element relation42;
 	private Element biologicalEntity51;
 	
-	public NormalizeAdverbConstraintedOrgan() {
-		this.transformer = new NormalizeAdverbConstraintedOrganTransformer(new IPOSKnowledgeBase() {
+	public MoveNegationOrAdverbBiologicalEntityConstraint() {
+		this.transformer = new MoveNegationOrAdverbBiologicalEntityConstraintTransformer(new IPOSKnowledgeBase() {
 			@Override
 			public boolean isNoun(String word) {
 				return false;

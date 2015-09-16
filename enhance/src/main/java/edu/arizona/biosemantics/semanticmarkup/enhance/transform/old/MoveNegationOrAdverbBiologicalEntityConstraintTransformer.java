@@ -11,14 +11,21 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
 
 /**
  * If negation in biological entity constraint
- * - Move character to constraint (if is_modifier)
- * - Negate character
+ * - Move character to constraint if is_modifier; else: Negate character
+ * - Negate relations
+ * - Add count=0 character if no relation or true character was present
+ * - Remove negation from constraint
+ * If no negation in biological entity but adverb constraint
+ * - Move character to constraint if is_modifier; else:  Add constraint of biologicalEntity to modifier of character
+ * - Add constraint of biologicalEntity to modifier of relations
+ * - Add count=0 character if no relation or true character was present
+ * - Remove adverb constraint from biological entity
  */
-public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransformer {
+public class MoveNegationOrAdverbBiologicalEntityConstraintTransformer extends AbstractTransformer {
 
 	private IPOSKnowledgeBase posKnowledgeBase;
 
-	public NormalizeAdverbConstraintedOrganTransformer(IPOSKnowledgeBase posKnowledgeBase) {
+	public MoveNegationOrAdverbBiologicalEntityConstraintTransformer(IPOSKnowledgeBase posKnowledgeBase) {
 		this.posKnowledgeBase = posKnowledgeBase;
 	}
 	
@@ -70,7 +77,7 @@ public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransfo
 
 	private boolean handleTrueCharacters(Element biologicalEntity, String constraint, String modifier) {
 		boolean hasTrueCharacters = false;
-		for(Element character: new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+		for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 			String isModifier = character.getAttributeValue("is_modifier");
 			if(isModifier != null && isModifier.equals("true")) {
 				moveCharacterToConstraint(biologicalEntity, character, constraint);
@@ -85,7 +92,7 @@ public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransfo
 	private boolean modifyRelation(Element biologicalEntity, Document document, String mod) {
 		boolean hasModifiedRelation = false;
 		List<Element> relations = this.getRelationsInvolve(biologicalEntity, document);
-		for(Element relation: relations){
+		for(Element relation : relations) {
 			hasModifiedRelation = true;
 			String modifier = relation.getAttributeValue("modifier");
 			modifier = modifier == null ? "": modifier;
@@ -98,7 +105,7 @@ public class NormalizeAdverbConstraintedOrganTransformer extends AbstractTransfo
 	private void modifyTrueCharacter(Element character, String mod) {
 		//modify true characters
 		String modifier = character.getAttributeValue("modifier"); 
-		modifier = modifier ==null ? "": modifier;
+		modifier = modifier == null ? "": modifier;
 		modifier = mod + " " + modifier;
 		character.setAttribute("modifier", modifier.trim());
 	}
