@@ -14,8 +14,8 @@ requirement-notes
    * organ term synonym
 * Resolve lumping of characters (utilize ontologies) due to 
    * organ identification problem (differentiate apex as leaf vs stem apex)
-   * vision is: use only organ value anymore to *identify* organ unambiguously
-      * by putting constraint to value
+   * vision is: use only organ name anymore to *identify* organ unambiguously
+      * by putting constraint to name
       * by others, see below
 
 The above two are to standardize the character names 
