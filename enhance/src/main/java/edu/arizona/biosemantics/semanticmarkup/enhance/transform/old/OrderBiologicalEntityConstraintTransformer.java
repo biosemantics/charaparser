@@ -1,9 +1,16 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
+import edu.stanford.nlp.util.StringUtils;
 
 /**
  * Order multiple constraints of a structure in the natural order they occur in the text
@@ -25,4 +32,22 @@ public class OrderBiologicalEntityConstraintTransformer extends AbstractTransfor
 		}
 	}
 	
+	protected String order(String constraints, String sentence, String nameOriginal) {
+		StringBuilder result = new StringBuilder();
+		final ArrayList<String> sentenceParts = new ArrayList<String>(Arrays.asList(sentence.split("\\s+")));
+		ArrayList<String> constraintParts = new ArrayList<String>(Arrays.asList(constraints.split("\\s*?[; ]\\s*")));
+		
+		Collections.sort(constraintParts, new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				 return Integer.compare(sentenceParts.indexOf(o1), sentenceParts.indexOf(o2));
+			}
+		});
+		
+		for(String part : constraintParts) {
+			if(!part.trim().isEmpty())
+				result.append(part + " ");
+		}
+		return result.toString().trim();
+	}	
 }

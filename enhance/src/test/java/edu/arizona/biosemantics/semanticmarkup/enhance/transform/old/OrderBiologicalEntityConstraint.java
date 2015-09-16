@@ -21,7 +21,7 @@ public class OrderBiologicalEntityConstraint{
 		Document document = createTestDocument();
 		transformer.transform(document);
 
-		assertTrue(biologicalEntity1.getAttributeValue("constraint").equals("some brown ; more ; wider than long"));
+		assertTrue(biologicalEntity1.getAttributeValue("constraint").equals("some brown more wider than long"));
 	}
 
 	private Document createTestDocument() {
