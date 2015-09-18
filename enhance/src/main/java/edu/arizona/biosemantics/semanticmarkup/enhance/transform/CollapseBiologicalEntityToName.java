@@ -19,6 +19,7 @@ public class CollapseBiologicalEntityToName extends AbstractTransformer  {
 			if(!constraint.isEmpty())
 				newName = constraint + " " + newName;
 			biologicalEntity.setAttribute("name", newName);
+			biologicalEntity.removeAttribute("constraint");
 		}
 	}
 

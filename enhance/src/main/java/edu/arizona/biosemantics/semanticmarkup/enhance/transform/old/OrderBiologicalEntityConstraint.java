@@ -14,6 +14,11 @@ import edu.stanford.nlp.util.StringUtils;
 
 /**
  * Order multiple constraints of a structure in the natural order they occur in the text
+ * 
+ * Assumptions made: 
+ * - term in constraint does not appear multiple times in the source sentence. If it does the correct sorting order is unclear.
+ * - No punctuation marks have been introduced to connect terms of a constraint, 
+ *   e.g. 4 locular from source sentence stays this way and is not put as 4-locular in constraint
  */
 public class OrderBiologicalEntityConstraint extends AbstractTransformer {
 	

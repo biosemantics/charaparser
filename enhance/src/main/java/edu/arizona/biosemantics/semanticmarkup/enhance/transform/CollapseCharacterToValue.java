@@ -11,7 +11,9 @@ public class CollapseCharacterToValue extends AbstractTransformer {
 	@Override
 	public void transform(Document document) {
 		for(Element character : this.characterPath.evaluate(document)) {
-			switch(character.getAttributeValue("char_type")) {
+			String charType = character.getAttributeValue("char_type");
+			charType = charType == null ? "" : charType;
+			switch(charType) {
 			case "range_value":
 				collapseRangeValue(character);
 				break;
@@ -36,27 +38,36 @@ public class CollapseCharacterToValue extends AbstractTransformer {
 		if(!constraint.isEmpty())
 			newValue = constraint + " ; " + newValue;
 		character.setAttribute("value", newValue);
+		character.removeAttribute("from");
+		character.removeAttribute("constraint");
+		character.removeAttribute("modifier");
 	}
 	
 	private void collapseRangeValue(Element character) {
 		String from = character.getAttributeValue("from");
 		from = from == null ? "" : from.trim();
 		String fromUnit = character.getAttributeValue("from_unit");
-		from = fromUnit == null ? "" : fromUnit.trim();
+		fromUnit = fromUnit == null ? "" : fromUnit.trim();
 		String to = character.getAttributeValue("to");
-		from = to == null ? "" : to.trim();
+		to = to == null ? "" : to.trim();
 		String toUnit = character.getAttributeValue("to_unit");
-		from = toUnit == null ? "" : toUnit.trim();
+		toUnit = toUnit == null ? "" : toUnit.trim();
 		String constraint = character.getAttributeValue("constraint");
-		from = constraint == null ? "" : constraint.trim();
+		constraint = constraint == null ? "" : constraint.trim();
 		String modifier = character.getAttributeValue("modifier");
-		from = modifier == null ? "" : modifier.trim();
+		modifier = modifier == null ? "" : modifier.trim();
 		
-		String newValue = from + " " + fromUnit + " - " + to + " " + toUnit;
+		String newValue = (from + " " + fromUnit).trim() + " - " + (to + " " + toUnit).trim();
 		if(!modifier.isEmpty())
 			newValue = modifier + " " + newValue;
 		if(!constraint.isEmpty())
 			newValue = constraint + " ; " + newValue;
 		character.setAttribute("value", newValue);
+		character.removeAttribute("from");
+		character.removeAttribute("from_unit");
+		character.removeAttribute("to");
+		character.removeAttribute("to_unit");
+		character.removeAttribute("constraint");
+		character.removeAttribute("modifier");
 	}
 }

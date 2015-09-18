@@ -1,5 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -109,7 +110,8 @@ public class CollapseBiologicalEntities extends AbstractTransformer {
 	}
 
 	private void collapseBiologicalEntity(Element biologicalEntity,	Element representative) {
-		for(Element character : biologicalEntity.getChildren("character")) {
+		for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
+			character.detach();
 			representative.addContent(character);
 		}
 		biologicalEntity.detach();

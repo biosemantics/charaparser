@@ -55,6 +55,7 @@ public class MoveNegationCharacterToBiologicalEntityConstraint extends AbstractT
 					biologicalEntity.setAttribute("constraint", ("no " + constraint).trim());
 					character.detach();
 				}
+				i++;
 			}
 		}
 	}

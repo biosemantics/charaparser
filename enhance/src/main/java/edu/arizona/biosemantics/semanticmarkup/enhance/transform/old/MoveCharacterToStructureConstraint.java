@@ -24,12 +24,16 @@ public class MoveCharacterToStructureConstraint extends AbstractTransformer {
 					if(character.getAttributeValue("value") != null) {
 						String appendConstraint = character.getAttributeValue("value");
 						
-						String newValue = "";
 						String constraint = character.getAttributeValue("constraint");
-						if(constraint != null && !constraint.matches(".*?(^|; )"+appendConstraint+"($|;).*")) {
-							newValue = constraint + "; " + appendConstraint;
+						constraint = constraint == null ? "" : constraint;
+						if(!constraint.matches(".*?(^|; )"+appendConstraint+"($|;).*")) {
+							if(constraint.isEmpty()) {
+								constraint = appendConstraint;
+							} else {
+								constraint = constraint + "; " + appendConstraint;
+							}
 						}
-						biologicalEntity.setAttribute("constraint", newValue);
+						biologicalEntity.setAttribute("constraint", constraint);
 						character.detach();
 					}
 				}

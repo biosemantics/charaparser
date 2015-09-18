@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jdom2.Document;
@@ -18,11 +19,6 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
  * when proceeding characters are moved too, because they are assumed to also belong to the alternative biological_entity.
  */
 public class MoveCharactersToAlternativeParent extends AbstractTransformer {
-	
-	@Override
-	public void transform(Document document) {
-		checkAlternativeIDs(document);
-	}
 	
 	/**
 	<text>ovules 2-4, glabrous, lamina ovate 25-4 mm long, 15-25 mm wide, deeply pectinate, with 14-22 soft lateral spines 15-25 mm long, 2.5 mm wide, apical spine not distinct from lateral spines.</text>
@@ -45,7 +41,8 @@ public class MoveCharactersToAlternativeParent extends AbstractTransformer {
 	<character char_type="range_value" from="15" from_unit="mm" name="length" to="25" to_unit="mm" />
 	</biological_entity>
 	 */
-	private void checkAlternativeIDs(Document document) {
+	@Override
+	public void transform(Document document) {
 		for (Element biologicalEntity : new ArrayList<Element>(this.biologicalEntityPath.evaluate(document))) {
 			ArrayList<Element> withAlternativeIDs = new ArrayList<Element> ();
 			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
@@ -61,7 +58,8 @@ public class MoveCharactersToAlternativeParent extends AbstractTransformer {
 				String name = characterWithAlternativeId.getAttributeValue("name"); //width, atypical_width
 				String notes = characterWithAlternativeId.getAttributeValue("notes");
 				String note = notes.substring(notes.indexOf("alterIDs:"));
-				List<String> ids = Arrays.asList(note.replaceFirst("[;\\.].*", "").replaceFirst("alterIDs:", "").split("\\s+"));
+				List<String> ids = new ArrayList<String>(Arrays.asList(note.replaceFirst("[;\\.].*", "").replaceFirst("alterIDs:", "").split("\\s+")));
+				ids.removeAll(Collections.singleton(""));
 				
 				if(move) {
 					moveCharacterToStructures(characterWithAlternativeId, ids, document);
@@ -81,7 +79,7 @@ public class MoveCharactersToAlternativeParent extends AbstractTransformer {
 			}
 		}
 	}
-	
+		
 	private void removeAlternativeIdsNotes(Element characterWithouAlternativeId) {
 		String notes = characterWithouAlternativeId.getAttributeValue("notes");
 		if(notes != null && notes.contains("alterIDs:")){
@@ -92,10 +90,10 @@ public class MoveCharactersToAlternativeParent extends AbstractTransformer {
 	
 	private void moveCharacterToStructures(Element characterWithAlternativeId, List<String> ids, Document document) {
 		characterWithAlternativeId.detach();
-		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
-			if(ids.contains(biologicalEntity.getAttributeValue("id"))) {
-				biologicalEntity.addContent(characterWithAlternativeId);
-			}
+		for(String id : ids) {
+			Element clone = characterWithAlternativeId.clone();
+			Element biologicalEntity = this.getStructureWithId(document, id);
+			biologicalEntity.addContent(clone);
 		}
 	}
 	
