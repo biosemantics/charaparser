@@ -4,15 +4,18 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Parent;
 
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsCharacterConstraintType;
 
 
 public class CreateRelationFromCharacterConstraint extends AbstractTransformer {
 
 	private KnowsCharacterConstraintType knowsCharacterConstraintType;
+	private IInflector inflector;
 
-	public CreateRelationFromCharacterConstraint(KnowsCharacterConstraintType knowsCharacterConstraintType) {
+	public CreateRelationFromCharacterConstraint(KnowsCharacterConstraintType knowsCharacterConstraintType, IInflector inflector) {
 		this.knowsCharacterConstraintType = knowsCharacterConstraintType;
+		this.inflector = inflector;
 	}
 	
 	@Override
@@ -34,7 +37,12 @@ public class CreateRelationFromCharacterConstraint extends AbstractTransformer {
 			if(constraintid != null) {
 				Element constraintIdElement = this.getStructureWithId(document, constraintid);
 				if(constraintIdElement != null) {
-					Element relation = createRelation((Element)character.getParent(), constraintIdElement, constraint);
+					String relationName = constraint;
+					relationName = relationName.replaceAll("\\b" + inflector.getPlural(constraintIdElement.getAttributeValue("name_original")) + "\\b", "").trim();
+					relationName = relationName.replaceAll("\\b" + inflector.getSingular(constraintIdElement.getAttributeValue("name_original")) + "\\b", "").trim();
+					relationName = relationName.replaceAll("\\b" + inflector.getPlural(constraintIdElement.getAttributeValue("name")) + "\\b", "").trim();
+					relationName = relationName.replaceAll("\\b" + inflector.getSingular(constraintIdElement.getAttributeValue("name")) + "\\b", "").trim();
+					Element relation = createRelation((Element)character.getParent(), constraintIdElement, relationName);
 					character.getParent().getParent().addContent(relation);
 					character.removeAttribute("constraint");
 					character.removeAttribute("constraintid");
