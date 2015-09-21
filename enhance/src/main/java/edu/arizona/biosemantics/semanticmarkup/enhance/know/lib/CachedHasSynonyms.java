@@ -1,15 +1,18 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.know;
+package edu.arizona.biosemantics.semanticmarkup.enhance.know.lib;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class CachedHasSynonyms implements HasSynonyms {
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
 
-	private HasSynonyms hasSynonyms;
+public class CachedHasSynonyms implements KnowsSynonyms {
+
+	private KnowsSynonyms hasSynonyms;
 	private Map<String, Set<SynonymSet>> cache = new HashMap<String, Set<SynonymSet>>();
 
-	public CachedHasSynonyms(HasSynonyms hasSynonyms) {
+	public CachedHasSynonyms(KnowsSynonyms hasSynonyms) {
 		this.hasSynonyms = hasSynonyms;
 	}
 

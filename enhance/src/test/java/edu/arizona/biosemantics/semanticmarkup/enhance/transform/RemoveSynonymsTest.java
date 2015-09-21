@@ -12,11 +12,11 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
-import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 
-public class RemoveCharacterSplitTest {
+public class RemoveSynonymsTest {
 
-	private RemoveCharacterSplit transformer;
+	private RemoveSynonyms transformer;
 	private Element biologicalEntity1;
 	private Element biologicalEntity2;
 	private Element biologicalEntity3;
@@ -27,9 +27,9 @@ public class RemoveCharacterSplitTest {
 	private Element character2;
 	private Element character3;
 	
-	public RemoveCharacterSplitTest() {
-		List<HasSynonyms> hasSynonymsList = new LinkedList<HasSynonyms>();
-		hasSynonymsList.add(new HasSynonyms() {
+	public RemoveSynonymsTest() {
+		List<KnowsSynonyms> hasSynonymsList = new LinkedList<KnowsSynonyms>();
+		hasSynonymsList.add(new KnowsSynonyms() {
 			@Override
 			public Set<SynonymSet> getSynonyms(String term) {
 				Set<SynonymSet> result = new HashSet<SynonymSet>();
@@ -60,7 +60,7 @@ public class RemoveCharacterSplitTest {
 				return result;
 			}
 		});
-		transformer = new RemoveCharacterSplit(hasSynonymsList);
+		transformer = new RemoveSynonyms(hasSynonymsList, hasSynonymsList);
 	}
 	
 	@Test

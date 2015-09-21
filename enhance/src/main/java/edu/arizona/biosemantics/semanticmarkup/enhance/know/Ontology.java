@@ -17,7 +17,7 @@ import org.semanticweb.owlapi.model.OWLOntologyManager;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
-public class Ontology implements HasSynonyms {
+public class Ontology implements KnowsSynonyms {
 
 	private OWLOntologyManager owlOntologyManager = OWLManager.createOWLOntologyManager();
 	private OWLOntology owlOntology;

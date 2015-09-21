@@ -18,49 +18,55 @@ import org.paukov.combinatorics.Generator;
 import org.paukov.combinatorics.ICombinatoricsVector;
 import org.paukov.combinatorics.util.ComplexCombinationGenerator;
 
-import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms;
-import edu.arizona.biosemantics.semanticmarkup.enhance.know.HasSynonyms.SynonymSet;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
 
 /**
  * This implementation assumes biologoical entity names to have the organ name in the last word, Antyhing before are constraint/modifying
  * @author rodenhausen
  */
-public class RemoveCharacterSplit extends AbstractTransformer {
+public class RemoveSynonyms extends AbstractTransformer {
 
-	private List<HasSynonyms> hasSynonymsList;
+	private List<KnowsSynonyms> hasBiologicalEntitySynonymsList;
+	private List<KnowsSynonyms> hasCharacterSynonymsList;
 
-	public RemoveCharacterSplit(List<HasSynonyms> hasSynonymsList) {
-		this.hasSynonymsList = hasSynonymsList;
+	public RemoveSynonyms(List<KnowsSynonyms> hasBiologicalEntitySynonymsList, List<KnowsSynonyms> hasCharacterSynonymsList) {
+		this.hasBiologicalEntitySynonymsList = hasBiologicalEntitySynonymsList;
+		this.hasCharacterSynonymsList = hasCharacterSynonymsList;
 	}
 	
 	@Override
 	public void transform(Document document) {
-		normalizeOrgans(document);
-		normalizeQualities(document);
+		removeBiologicalEntitySynonyms(document);
+		removeCharacterSynonyms(document);
 	}
 	
-	private void normalizeOrgans(Document document) {
+	private void removeBiologicalEntitySynonyms(Document document) {
 		for (Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
 			String name = biologicalEntity.getAttributeValue("name");
 			if(name != null) {
-				String newName = createSynonymReplacedValue(getSearchPartitionsForOrganName(name));
+				String newName = createSynonymReplacedValue(getSearchPartitionsForOrganName(name), hasBiologicalEntitySynonymsList);
 				biologicalEntity.setAttribute("name", newName);
 			}
 		}
 	}
 
-	private void normalizeQualities(Document document) {
+	private void removeCharacterSynonyms(Document document) {
 		for (Element character : this.characterPath.evaluate(document)) {
 			String value = character.getAttributeValue("value");
+			if(value != null && value.equals("2 times compound or rarely entire blade"))
+				System.out.println(value);
 			if(value != null) {
-				String newValue = createSynonymReplacedValue(getSearchPartitionsForCharacterValue(value));
-				character.setAttribute("value", newValue);
+				if(value.split(" ").length < 5) { //explosion of combinations to check
+					String newValue = createSynonymReplacedValue(getSearchPartitionsForCharacterValue(value), hasCharacterSynonymsList);
+					character.setAttribute("value", newValue);
+				}
 			}
 		}
 	}
 	
 
-	private String createSynonymReplacedValue(List<ICombinatoricsVector<ICombinatoricsVector<String>>> partitionsList) {
+	private String createSynonymReplacedValue(List<ICombinatoricsVector<ICombinatoricsVector<String>>> partitionsList, List<KnowsSynonyms> hasSynonymsList) {
 		//pick partition with most of it's partitions (not in count but coverage) covered by synonyms
 		double maximumSynonymCoverage = 0;
 		ICombinatoricsVector<ICombinatoricsVector<String>> maximumSynonymCoveragePartitions = partitionsList.get(0);
@@ -68,7 +74,7 @@ public class RemoveCharacterSplit extends AbstractTransformer {
 			int synonymsFound = 0;
 			for(ICombinatoricsVector<String> partition : partitions) {
 				String search = StringUtils.join(partition.getVector(), " ");
-				for(HasSynonyms hasSynonyms : hasSynonymsList) {
+				for(KnowsSynonyms hasSynonyms : hasSynonymsList) {
 					Set<SynonymSet> synonymSets = hasSynonyms.getSynonyms(search);
 					if(!synonymSets.isEmpty()) {
 						synonymsFound++;
@@ -89,7 +95,7 @@ public class RemoveCharacterSplit extends AbstractTransformer {
 			String search = StringUtils.join(partition.getVector(), " ");
 			
 			boolean replacedBySynonym = false;
-			for(HasSynonyms hasSynonyms : hasSynonymsList) {
+			for(KnowsSynonyms hasSynonyms : hasSynonymsList) {
 				Set<SynonymSet> synonymSets = hasSynonyms.getSynonyms(search);
 				if(!synonymSets.isEmpty()) {
 					SynonymSet synonymSet = pickSynonymSet(synonymSets, search);
@@ -175,6 +181,15 @@ public class RemoveCharacterSplit extends AbstractTransformer {
 				return o2.getSize() - o1.getSize();
 			}
 		});
+		
+		if(result.isEmpty()) {
+			ICombinatoricsVector<ICombinatoricsVector<String>> vector = new CombinatoricsVector<ICombinatoricsVector<String>>();
+			ICombinatoricsVector<String> organ = new CombinatoricsVector<String>();
+			organ.addValue(originalParts[originalParts.length-1]);
+			vector.addValue(organ);
+			result.add(vector);
+		}
+			
 		return result;
 	}
 
@@ -183,12 +198,11 @@ public class RemoveCharacterSplit extends AbstractTransformer {
 	}
 	
 	public static void main(String[] args) {
-		List<HasSynonyms> hasSynonymsList = new LinkedList<HasSynonyms>();
-		hasSynonymsList.add(new HasSynonyms() {
+		List<KnowsSynonyms> hasBiologicalEntitySynonymsList = new LinkedList<KnowsSynonyms>();
+		hasBiologicalEntitySynonymsList.add(new KnowsSynonyms() {
 			@Override
 			public Set<SynonymSet> getSynonyms(String term) {
 				Set<SynonymSet> result = new HashSet<SynonymSet>();
-				
 				switch(term) {
 				case "lateral":
 					HashSet<String> synonyms = new HashSet<String>();
@@ -206,9 +220,9 @@ public class RemoveCharacterSplit extends AbstractTransformer {
 				
 				return result;
 			}
-			
 		});
-		RemoveCharacterSplit removeCharacterSplitTransformer = new RemoveCharacterSplit(hasSynonymsList);
-		removeCharacterSplitTransformer.createSynonymReplacedValue(removeCharacterSplitTransformer.getSearchPartitionsForOrganName("lateral leaf"));
+		List<KnowsSynonyms> hasCharacterSynonymsList = new LinkedList<KnowsSynonyms>();
+		RemoveSynonyms removeSynonyms = new RemoveSynonyms(hasBiologicalEntitySynonymsList, hasCharacterSynonymsList);
+		//removeSynonyms.createSynonymReplacedValue(removeCharacterSplitTransformer.getSearchPartitionsForOrganName("lateral leaf"));
 	}
 }

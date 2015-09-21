@@ -3,7 +3,7 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.know;
 import java.util.HashSet;
 import java.util.Set;
 
-public interface HasSynonyms {
+public interface KnowsSynonyms {
 	
 	public static class SynonymSet {
 		
