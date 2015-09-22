@@ -327,6 +327,9 @@ public class NonOntologyBasedStandardizer {
 	 * 
 	 * Otherwise, do nothing
 	 * 
+	 * ovule 2-5, sometimes numerous, ....
+	 * what if moved-to organ has the same characters too?
+	 * 
 	 * @param result
 	 */
 

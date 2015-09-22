@@ -258,13 +258,14 @@ public class RunConfig extends BasicConfig {
 				private Client instance;
 				@Override
 				public OTOLiteClient get() {
-					/*if(instance == null)
+					if(instance == null)
 						instance = new Client(oto2ClientURL);
 					return instance;
-					*/
+					
 					
 					 // markup run
-					 return new OTOLiteClient(null) {
+					
+					 /*return new OTOLiteClient(null) {
 						@Override
 						public void open() {
 							
@@ -302,7 +303,7 @@ public class RunConfig extends BasicConfig {
 								return null;
 							}
 						}
-					};
+					}; //*/
 				}
 			}).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
