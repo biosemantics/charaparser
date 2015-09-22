@@ -6182,7 +6182,7 @@ while(defined ($file=readdir(IN))){
 		
 		#Length of tibia/metatarsus: leg I, 0.40/0.30 mm; leg II, 0.34/0.34 mm; leg III, 0.22/0.20 mm; leg IV, 0.32/0.20 mm.
 		# => Length of tibia/metatarsus: leg I, 0.40/0.30 mm; Length of tibia/metatarsus: leg II, 0.34/0.34 mm; Length of tibia/metatarsus: leg III, 0.22/0.20 mm; Length of tibia/metatarsus: leg IV, 0.32/0.20 mm.
-	
+
 		
 		if($beforeColon=~/\w{3,}/ && $line !~/:/){ #is equal or longer than 3 characters, to exclude 1:, 12: and a: bullet points, and also doesn't contain :
 			$line = $beforeColon.": ".$line;

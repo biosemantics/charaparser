@@ -27,6 +27,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -54,11 +55,14 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.on
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.OntologyFactory;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.ontologies.TaxonGroupPartOfOntology;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -160,20 +164,60 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		this.structureId = processingContext.getStructureId();
 		this.relationId = processingContext.getRelationId();
 	
-		System.out.println("====1====");
+		
 		for(Statement statement: description.getStatements()){
 			System.out.println(statement.toString());
+			//normalization of the results
+			LinkedList<Element> results = new LinkedList<Element>();
+			results.addAll(statement.getBiologicalEntities());
+			results.addAll(statement.getRelations());
+			new NonOntologyBasedStandardizer(glossary, inflector, statement.getText(), processingContext, posKnowledgeBase)
+			.standardize(results); //first
+			new TerminologyStandardizer(this.characterKnowledgeBase).standardize((LinkedList)results); //last
+			
+			//update 
+			List<BiologicalEntity> bes = new LinkedList<BiologicalEntity> ();
+			List<Relation> rels = new LinkedList<Relation> ();
+			for(Element e: results){
+				if(e instanceof BiologicalEntity) bes.add((BiologicalEntity)e);
+				if(e instanceof Relation) rels.add((Relation)e);
+			}
+			statement.setBiologicalEntities(bes);
+			statement.setRelations(rels);				
 	    }
 		
-		List<Element> xml = new LinkedList<Element>();
+		
+		
+		/*List<Element> xml = new LinkedList<Element>();
 		for(Statement s: description.getStatements()){
 			xml.addAll(s.getBiologicalEntities());
 			xml.addAll(s.getRelations());
-		}
+		}*/
 		
 		if(structureNameStandardizer!=null)
 			structureNameStandardizer.standardize(description);
 		//log(LogLevel.DEBUG, "StructureNameStandardizer:"+description.getText());
+		
+		
+		
+		/*for(AbstractDescriptionsFile f: descriptionsFiles){
+			if(f instanceof DescriptionsFile){
+				List<TreatmentRoot> roots = ((DescriptionsFile)f).getTreatmentRoots();
+				for(TreatmentRoot root: roots){
+					List<Description> descriptions = root.getDescriptions();
+					for(Description description: descriptions){
+						LinkedList<Element> results = new LinkedList<Element>();
+						for(edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement statement: description.getStatements()){
+							results.add(statement);
+							
+						}
+
+					
+					}
+				}
+				
+			}
+		}*/
 		
 
 	}
@@ -228,8 +272,10 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		RelationTreatmentElement relationElement = new RelationTreatmentElement("relationName", "id", "from", "to", false);
 		result.add(structureElement);
 		result.add(relationElement);*/
-		new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize((LinkedList<Element>) result); //first
-		new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result); //last
+		
+		
+		//new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize((LinkedList<Element>) result); //first
+		//new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result); //last
 		return result;
 	}
 	

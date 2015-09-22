@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -51,9 +52,13 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Resource;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Software;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot;
+import edu.arizona.biosemantics.semanticmarkup.model.Element;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.*;;
 
 
 /**
@@ -246,7 +251,10 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker = 
 				terminologyLearner.getSentencesForOrganStateMarker(); //sentence level markup: modifier##tag##sentence text
 		// do the actual markup
-		markupDescriptions(descriptionsFiles, sentencesForOrganStateMarker);		
+		markupDescriptions(descriptionsFiles, sentencesForOrganStateMarker);	
+		
+		
+	
 
 		Processor processor = new Processor();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

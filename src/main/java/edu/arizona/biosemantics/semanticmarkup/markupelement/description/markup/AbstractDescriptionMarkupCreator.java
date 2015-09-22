@@ -14,13 +14,20 @@ import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.IChunker;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.NonOntologyBasedStandardizer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFileList;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Meta;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Resource;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Software;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.IDescriptionTransformer;
+import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * CharaParserMarkupCreator creates a markup by reading treatments, transforming them using a TreatmentTransformerChain and writing them out
@@ -66,6 +73,7 @@ public abstract class AbstractDescriptionMarkupCreator implements IDescriptionMa
 				}
 			}
 			
+					
 			log(LogLevel.DEBUG, "writing result using " + writer.getClass());
 			writer.write(descriptionsFileList, outputDirectory);
 			

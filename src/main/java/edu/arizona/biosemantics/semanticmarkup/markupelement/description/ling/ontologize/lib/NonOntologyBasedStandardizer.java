@@ -114,9 +114,9 @@ public class NonOntologyBasedStandardizer {
 	 */
 
 	private void enumerateCompoundStates(LinkedList<Element> result) {
-		ArrayList<Element> toberemoved = new ArrayList<Element>();
-		for(int i = 0; i < result.size(); i++){
-			Element element = result.get(i);
+		ArrayList<Element> resultCopy = new ArrayList<Element>(result);
+		for(int i = 0; i < resultCopy.size(); i++){
+			Element element = resultCopy.get(i);
 			if(element.isStructure()){
 				boolean isTarget = true;
 				BiologicalEntity entity = (BiologicalEntity) element;
@@ -140,8 +140,9 @@ public class NonOntologyBasedStandardizer {
 				}
 
 				if(isTarget){//enumerate
-					toberemoved.add(entity);
 					int p = result.indexOf(entity);
+					result.remove(entity);
+				
 					ArrayList<String> newIds = new ArrayList<String>();
 					for(int e = 0; e < entityNames.length; e++){
 						BiologicalEntity be = entity.clone();
@@ -170,7 +171,7 @@ public class NonOntologyBasedStandardizer {
 							result.add(relationPosition+1, one);
 						}
 						//result.remove(relationPosition);	
-						toberemoved.add(relation);
+						result.remove(relation);
 					}
 					//from
 					LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
@@ -184,12 +185,11 @@ public class NonOntologyBasedStandardizer {
 							result.add(relationPosition+1, one);
 						}
 						//result.remove(relationPosition);	
-						toberemoved.add(relation);
+						result.remove(relation);
 					}
 				}
 			}
 		}
-		result.removeAll(toberemoved);
 	}
 
 	/**
@@ -200,9 +200,10 @@ public class NonOntologyBasedStandardizer {
 	 */
 
 	private void enumerateCompoundOrgan(LinkedList<Element> result) {
-		ArrayList<Element> toberemoved = new ArrayList<Element>();
-		for(int i = 0; i < result.size(); i++){
-			Element element = result.get(i);
+		ArrayList<Element> resultCopy = new ArrayList<Element>(result);
+		//use copy to iterate, updates are made in result
+		for(int i = 0; i < resultCopy.size(); i++){
+			Element element = resultCopy.get(i);
 			if(element.isStructure()){
 				BiologicalEntity entity = (BiologicalEntity) element;
 				String name = entity.getNameOriginal();
@@ -220,13 +221,13 @@ public class NonOntologyBasedStandardizer {
 						one.setId(newId);
 						newIds.add(newId);
 						count++;
-						result.add(i+1, one);
-						i++;
+						//result.add(i+1, one);
+						result.add(result.indexOf(element)+1, one);
 						added = true;
 					}
 					if(added){
 						//remove the original biological entity element
-						toberemoved.add(element);
+						result.remove(element);
 						//result.remove(elementPosition);
 					
 					    //if the original element involved in any relations, individualize the relations
@@ -242,7 +243,7 @@ public class NonOntologyBasedStandardizer {
 								result.add(relationPosition+1, one);
 							}
 							//result.remove(relationPosition);	
-							toberemoved.add(relation);
+							result.remove(relation);
 						}
 						//from
 						LinkedHashSet<Relation> fromRelations = entity.getFromRelations();
@@ -256,7 +257,7 @@ public class NonOntologyBasedStandardizer {
 								result.add(relationPosition+1, one);
 							}
 							//result.remove(relationPosition);	
-							toberemoved.add(relation);
+							result.remove(relation);
 						}
 					
 					
@@ -265,7 +266,7 @@ public class NonOntologyBasedStandardizer {
 				}
 			}
 		}
-		result.removeAll(toberemoved);
+	
 	}
 
 	private ArrayList<String> getIndividuals(String name) {
