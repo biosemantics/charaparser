@@ -31,26 +31,17 @@ public class StandardizeTerminology extends AbstractTransformer {
 			String constraint = biologicalEntity.getAttributeValue("constraint");
 			String preferedName = characterKnowledgeBase.getCharacterName(name).getLabel(type);
 			if(preferedName != null) 
-				biologicalEntity.setAttribute("name", preferedName);
+				biologicalEntity.setAttribute("name", preferedName.replaceAll("_", "-"));
 			
 			//standardize structural constraint, a word or a phrase
 			//String constraint = struct.getConstraint(); //try to match longest segment anchored to the last word in the phrase.
 			if(constraint != null){
 				constraint = constraint.trim();
-				String leading = "";
-				do {
-					String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(type);
-					if(prefered!=null){
-						biologicalEntity.setAttribute("constraint", (leading + " " + prefered).trim());
-						break;
-					} else {
-						//remove the leading word
-						leading = constraint.replaceFirst(" .*", "").trim();
-						constraint = constraint.replaceFirst(leading, "").trim(); 
-					}
-				} while (!constraint.isEmpty());
+				String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(type);
+				if(prefered != null){
+					biologicalEntity.setAttribute("constraint", prefered.replaceAll("_", "-"));
+				}
 			}
-			
 			
 			//standardize character
 			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
@@ -60,7 +51,7 @@ public class StandardizeTerminology extends AbstractTransformer {
 					preferedName = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getAttributeValue("name"));
 				}
 				if(preferedName != null) 
-					character.setAttribute("value", preferedName);
+					character.setAttribute("value", preferedName.replaceAll("_", "-"));
 			}
 		}
 	}

@@ -34,7 +34,10 @@ import edu.arizona.biosemantics.common.ling.know.lib.GlossaryBasedCharacterKnowl
 import edu.arizona.biosemantics.common.ling.know.lib.InMemoryGlossary;
 import edu.arizona.biosemantics.common.ling.know.lib.WordNetPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.common.ling.transform.lib.SentencesTokenizer;
 import edu.arizona.biosemantics.common.ling.transform.lib.SomeInflector;
+import edu.arizona.biosemantics.common.ling.transform.lib.WhitespaceTokenizer;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.oto.model.GlossaryDownload;
@@ -45,18 +48,28 @@ import edu.arizona.biosemantics.oto.model.lite.Download;
 import edu.arizona.biosemantics.oto.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.KeyWordBasedKnowsCharacterConstraintType;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntities;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntityToName;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharacterToValue;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharacters;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CreateRelationFromCharacterConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MapOntologyIdsTest;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveRelationToBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveDuplicateValues;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntities;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveOrphanRelations;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.CreateOrPopulateWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharactersToAlternativeParent;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveNegationCharacterToBiologicalEntityConstraint;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.ReplaceNegationCharacterByNegationOrAbsence;
+//import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharactersToAlternativeParent;
+//import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveNegationCharacterToBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveNegationOrAdverbBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.OrderBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.RemoveUselessCharacterConstraint;
@@ -117,6 +130,8 @@ public class Run {
 	}
 	
 	public static void main(String[] args) throws IOException {
+		ITokenizer tokenizer = new WhitespaceTokenizer();
+		tokenizer.tokenize("this is example");
 		TaxonGroup taxonGroup = TaxonGroup.PLANT;
 		WordNetPOSKnowledgeBase wordNetPOSKnowledgeBase = new WordNetPOSKnowledgeBase(Configuration.wordNetDirectory, false);
 		SingularPluralProvider singularPluralProvider = new SingularPluralProvider();
@@ -140,15 +155,74 @@ public class Run {
 		ICharacterKnowledgeBase characterKnowledgeBase = new GlossaryBasedCharacterKnowledgeBase(glossary, 
 				negWords, advModifiers, stopWords, units, inflector);
 		Set<String> possessionTerms = getWordSet("with|has|have|having|possess|possessing|consist_of");
-				
+		
+		
+		
+		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
+				+ "Gordon_complexity_term_review\\category_mainterm_synonymterm-task-Gordon_complexity.csv"));
+		List<String[]> lines = reader.readAll();
+		int i=0;
+		final Map<String, SynonymSet> synonymSetsMap = new HashMap<String, SynonymSet>();
+		for(String[] line : lines) {
+			String preferredTerm = line[1];
+			String synonym = line[2];
+			if(!synonymSetsMap.containsKey(preferredTerm)) 
+				synonymSetsMap.put(preferredTerm, new SynonymSet(preferredTerm, new HashSet<String>()));
+			synonymSetsMap.get(preferredTerm).getSynonyms().add(synonym);
+		}	
+		
+		List<KnowsSynonyms> hasBiologicalEntitySynonymsList = new LinkedList<KnowsSynonyms>();
+		List<KnowsSynonyms> hasCharacterSynonymsList = new LinkedList<KnowsSynonyms>();
+		hasBiologicalEntitySynonymsList.add(new KnowsSynonyms() {
+			@Override
+			public Set<SynonymSet> getSynonyms(String term) {
+				Set<SynonymSet> result = new HashSet<SynonymSet>();
+				for(SynonymSet synonymSet : synonymSetsMap.values()) {
+					if(synonymSet.getPreferredTerm().equals(term) || synonymSet.getSynonyms().contains(term)) 
+						result.add(synonymSet);
+				}
+				if(result.isEmpty())
+					result.add(new SynonymSet(term, new HashSet<String>()));
+				return result;
+			}
+		});
+		
+		
 		Run run = new Run();
+		//AbstractTransformer transformer = new RemoveSynonyms(hasBiologicalEntitySynonymsList, hasBiologicalEntitySynonymsList);
+		//AbstractTransformer transformer = new CreateRelationFromCharacterConstraint(new KeyWordBasedKnowsCharacterConstraintType(wordNetPOSKnowledgeBase), inflector);
+		//AbstractTransformer transformer = new MoveRelationToBiologicalEntityConstraint();//new KeyWordBasedKnowsCharacterConstraintType(wordNetPOSKnowledgeBase), inflector);
+		//AbstractTransformer transformer = new MoveNegationOrAdverbBiologicalEntityConstraint(wordNetPOSKnowledgeBase);
+		/*AbstractTransformer transformer = new RemoveNonSpecificBiologicalEntitiesByRelations(new KnowsPartOf() {
+			@Override
+			public boolean isPartOf(String part, String parent) {
+				if(part.equals("apex") && parent.equals("leaf")) {
+					return true;
+				}
+				if(part.equals("base") && parent.equals("fruit")) {
+					return true;
+				}
+				if(part.equals("base") && parent.equals("petal")) {
+					return true;
+				}
+				return false;
+			}
+		}, tokenizer, new CollapseBiologicalEntityToName());*/
+		
+		AbstractTransformer transformer1 = new MoveCharacterToStructureConstraint();
+		AbstractTransformer transformer2 = new ReplaceNegationCharacterByNegationOrAbsence();
+		
+		run.addTransformer(transformer1);
+		run.addTransformer(transformer2);
+		/*
 		AbstractTransformer transformer = new CollapseCharacterToValue();
 		run.addTransformer(new RemoveOrphanRelations());
 		run.addTransformer(new RemoveDuplicateValues());
 		run.addTransformer(new CollapseBiologicalEntityToName());
 		run.addTransformer(new CollapseCharacterToValue());
 		run.addTransformer(new CollapseBiologicalEntities());
-		run.addTransformer(new CollapseCharacters());
+		run.addTransformer(new CollapseCharacters()); 
+		*/
 		/*
 		run.addTransformer(new SplitCompoundBiologicalEntity(inflector));
 		run.addTransformer(new SplitCompoundBiologicalEntitiesCharacters(inflector));
@@ -179,7 +253,7 @@ public class Run {
 		
 		*/
 		
-		run.run(new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed"), new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed_out_" + transformer.getClass().getSimpleName()));
+		run.run(new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2"), new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2_out_" + transformer2.getClass().getSimpleName()));
 	}
 	
 	private static Set<String> getWordSet(String regexString) {
@@ -262,7 +336,7 @@ public class Run {
 		}	
 		
 		reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
-				+ "Gordon_complexity_term_review\\category_definition-task-Gordon_complexity.csv"));
+				+ "Gordon_complexity_term_review\\category_term-task-Gordon_complexity.csv"));
 		lines = reader.readAll();
 		List<Decision> decisions = new LinkedList<Decision>();
 		i=0;

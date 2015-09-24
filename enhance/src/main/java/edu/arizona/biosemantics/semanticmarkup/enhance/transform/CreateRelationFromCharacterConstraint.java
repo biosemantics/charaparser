@@ -35,7 +35,7 @@ public class CreateRelationFromCharacterConstraint extends AbstractTransformer {
 				constraintid = constraintid.trim();
 			
 			if(constraintid != null) {
-				Element constraintIdElement = this.getStructureWithId(document, constraintid);
+				Element constraintIdElement = this.getBiologicalEntityWithId(document, constraintid);
 				if(constraintIdElement != null) {
 					String relationName = constraint;
 					relationName = relationName.replaceAll("\\b" + inflector.getPlural(constraintIdElement.getAttributeValue("name_original")) + "\\b", "").trim();

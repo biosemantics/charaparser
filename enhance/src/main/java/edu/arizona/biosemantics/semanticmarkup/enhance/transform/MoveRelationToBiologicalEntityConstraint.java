@@ -17,8 +17,8 @@ public class MoveRelationToBiologicalEntityConstraint extends AbstractTransforme
 				if(name.matches(names)) {
 					String from = relation.getAttributeValue("from");
 					String to = relation.getAttributeValue("to");
-					Element fromElement = this.getStructureWithId(document, from);
-					Element toElement = this.getStructureWithId(document, to);
+					Element fromElement = this.getBiologicalEntityWithId(document, from);
+					Element toElement = this.getBiologicalEntityWithId(document, to);
 					
 					appendConstraint(fromElement, name + " " + getBiologicalEntityString(toElement));
 					relation.detach();
@@ -29,7 +29,7 @@ public class MoveRelationToBiologicalEntityConstraint extends AbstractTransforme
 
 	private String getBiologicalEntityString(Element biologicalEntity) {
 		CollapseBiologicalEntityToName collapseBiologicalEntityToName = new CollapseBiologicalEntityToName();
-		return collapseBiologicalEntityToName.getCollapsedBiologicalEntity(biologicalEntity);
+		return collapseBiologicalEntityToName.collapse(biologicalEntity);
 	}
 
 }

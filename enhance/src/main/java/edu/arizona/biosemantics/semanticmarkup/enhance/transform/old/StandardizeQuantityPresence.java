@@ -20,9 +20,25 @@ public class StandardizeQuantityPresence extends AbstractTransformer {
 			//if(c.getName().compareTo("quantity")==0 && c.getValue()!=null && c.getValue().matches(".*?\\b(absent|present|0)\\b.*")){
 			String name = character.getAttributeValue("name");
 			String value = character.getAttributeValue("value");
+			String negation = character.getAttributeValue("negation");
 			if(name.equals("quantity") && value != null && value.matches("absent|present|0")) {
-				character.setAttribute("name", "presence");
-				character.setAttribute("value", value.replaceAll("0", "absent"));
+				name = "presence";
+				value = "absent";
+				character.setAttribute("name", name);
+				character.setAttribute("value", value.replaceAll("0", value));
+			}
+			
+			if(negation.equals("true") && name.equals("presence") && value.equals("absent")) {
+				value = "present";
+				negation = "false";
+				character.setAttribute("value", value);
+				character.setAttribute("negation", negation);
+			}
+			if(negation.equals("true") && name.equals("presence") && value.equals("present")) {
+				value = "absent";
+				negation = "false";
+				character.setAttribute("value", value);
+				character.setAttribute("negation", negation);
 			}
 		}
 	}

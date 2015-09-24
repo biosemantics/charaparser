@@ -39,6 +39,11 @@ public class OrderBiologicalEntityConstraint extends AbstractTransformer {
 	
 	protected String order(String constraints, String sentence, String nameOriginal) {
 		StringBuilder result = new StringBuilder();
+		int nameIndex = sentence.indexOf(nameOriginal);
+		if(nameIndex != -1) 
+			//constraint is per definition only before the entity name; don't let ordering be confused by duplicate term appearances
+			sentence = sentence.substring(0, sentence.indexOf(nameOriginal));
+		
 		final ArrayList<String> sentenceParts = new ArrayList<String>(Arrays.asList(sentence.split("\\s+")));
 		ArrayList<String> constraintParts = new ArrayList<String>(Arrays.asList(constraints.split("\\s*?[; ]\\s*")));
 		

@@ -16,6 +16,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
  * @author Hong Cui
  * 
  * use clues from text to attach appropriate parent organ to non-specific structures such as "apex" and "side"
+ * Resolve lumping of characters (due to non specific parts)
  */
 public class StandardizeStructureName extends AbstractTransformer {
 	
@@ -150,7 +151,7 @@ public class StandardizeStructureName extends AbstractTransformer {
 						&& relationFrom.equals(from.getAttributeValue("id"))
 						&& relation.getAttributeValue("name")
 								.matches("part_of") && relationTo != null) {
-					Element to = getStructureWithId(document, relationTo);
+					Element to = getBiologicalEntityWithId(document, relationTo);
 					if(to != null) {
 						chain += to.getAttributeValue("name") + ",";
 						if(depth < 3) {

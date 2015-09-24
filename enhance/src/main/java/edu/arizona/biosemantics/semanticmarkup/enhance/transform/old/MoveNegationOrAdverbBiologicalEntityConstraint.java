@@ -24,6 +24,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
 public class MoveNegationOrAdverbBiologicalEntityConstraint extends AbstractTransformer {
 
 	private IPOSKnowledgeBase posKnowledgeBase;
+	private String adverbsToProcess = "\\b(always|often|seldom|sometimes|[a-z]+ly)\\b";
 
 	public MoveNegationOrAdverbBiologicalEntityConstraint(IPOSKnowledgeBase posKnowledgeBase) {
 		this.posKnowledgeBase = posKnowledgeBase;
@@ -44,7 +45,7 @@ public class MoveNegationOrAdverbBiologicalEntityConstraint extends AbstractTran
 				
 			} else if(type !=null && type.equals("structure")
 					//&& ((BiologicalEntity)element).getConstraint()!=null && posKnowledgeBase.isAdverb(constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint)){
-					&& !constraint.isEmpty() && !constraint.contains(" ") && !constraint.contains(";") && posKnowledgeBase.isAdverb(constraint)) { //constraint is a single adverb
+					&& !constraint.isEmpty() && !constraint.contains(" ") && !constraint.contains(";") && constraint.matches(this.adverbsToProcess)) { // This would be too broad: e.g. false is considered adverb. posKnowledgeBase.isAdverb(constraint)) { //constraint is a single adverb
 				handleAdverbConstraint(document, biologicalEntity, constraint);
 			}
 		}

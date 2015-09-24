@@ -19,8 +19,8 @@ public class RemoveOrphanRelations extends AbstractTransformer {
 				continue;
 			}
 			
-			Element fromEntity = this.getStructureWithId(document, from);
-			Element toEntity = this.getStructureWithId(document, to);
+			Element fromEntity = this.getBiologicalEntityWithId(document, from);
+			Element toEntity = this.getBiologicalEntityWithId(document, to);
 			if(fromEntity == null || toEntity == null)
 				relation.detach();
 		}

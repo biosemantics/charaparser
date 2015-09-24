@@ -68,7 +68,7 @@ public abstract class AbstractTransformer {
 		return result;
 	}
 	
-	protected Element getStructureWithId(Document document, String id) {
+	protected Element getBiologicalEntityWithId(Document document, String id) {
 		for(Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
 			if(biologicalEntity.getAttributeValue("id").equals(id)) {
 				return biologicalEntity;

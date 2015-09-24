@@ -11,13 +11,13 @@ public class CollapseBiologicalEntityToName extends AbstractTransformer  {
 	@Override
 	public void transform(Document document) {
 		for(Element biologicalEntity : this.biologicalEntityPath.evaluate(document)) {
-			String newName = getCollapsedBiologicalEntity(biologicalEntity);
+			String newName = collapse(biologicalEntity);
 			biologicalEntity.setAttribute("name", newName);
 			biologicalEntity.removeAttribute("constraint");
 		}
 	}
 	
-	public String getCollapsedBiologicalEntity(Element biologicalEntity) {
+	public String collapse(Element biologicalEntity) {
 		String constraint = biologicalEntity.getAttributeValue("constraint");
 		constraint = constraint == null ? "" : constraint.trim();
 		String name = biologicalEntity.getAttributeValue("name");

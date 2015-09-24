@@ -63,8 +63,7 @@ public class RemoveSynonyms extends AbstractTransformer {
 				}
 			}
 		}
-	}
-	
+	}	
 
 	private String createSynonymReplacedValue(List<ICombinatoricsVector<ICombinatoricsVector<String>>> partitionsList, List<KnowsSynonyms> hasSynonymsList) {
 		//pick partition with most of it's partitions (not in count but coverage) covered by synonyms
