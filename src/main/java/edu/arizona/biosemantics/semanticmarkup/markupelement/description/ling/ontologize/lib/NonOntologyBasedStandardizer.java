@@ -420,7 +420,8 @@ public class NonOntologyBasedStandardizer {
 	 */
 	private String order(String constraints, String sentence,
 			String nameOriginal) {
-		ArrayList<String> sent = new ArrayList<String>(Arrays.asList(sentence.toLowerCase().split("\\s+")));
+		sentence = sentence.toLowerCase(); //change to lower case.
+		ArrayList<String> sent = new ArrayList<String>(Arrays.asList(sentence.split("\\s+")));
 		ArrayList<String> constr = new ArrayList<String>(Arrays.asList(constraints.split("\\s*?[; ]\\s*")));
 		ArrayList<String> orderedCandidates = new ArrayList<String>();
 
