@@ -258,9 +258,10 @@ public class RunConfig extends BasicConfig {
 				private Client instance;
 				@Override
 				public OTOLiteClient get() {
+					
 					if(instance == null)
 						instance = new Client(oto2ClientURL);
-					return instance;
+					return instance;//*/
 					
 					
 					 // markup run

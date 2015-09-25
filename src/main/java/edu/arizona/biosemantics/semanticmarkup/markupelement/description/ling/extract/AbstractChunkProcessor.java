@@ -240,29 +240,35 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 							break;
 						}
 					}
-
-					LinkedHashSet<Chunk> characterStateChunks = getCharacterStatesOf(organChunk, subjectChunk);
-					for(Chunk characterStateChunk : characterStateChunks) {
-						String character = characterStateChunk.getProperty("characterName");
-
-						Chunk state = characterStateChunk.getChunkDFS(ChunkType.STATE);
-						LinkedHashSet<Chunk> modifierChunks = getModifiersOf(characterStateChunk, subjectChunk);
-						List<Chunk> modifierChunkList = new LinkedList<Chunk>(modifierChunks);
-						//List<Chunk> modifierChunks = characterStateChunk.getChunks(ChunkType.MODIFIER);
-						//modifierChunks.addAll(subjectChunk.getChunks(ChunkType.MODIFIER))
-
-						this.createCharacterElement(parents, modifierChunkList, state.getTerminalsText(), character, "", processingContextState, true);
-
-						//Chunk modifierChunk = new Chunk(ChunkType.UNASSIGNED, modifierChunks);
-						//DescriptionTreatmentElement characterElement = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
-						//characterElement.setProperty(, value)
-					}
-
+					
 					List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters();
 					for(Character unassignedCharacter : unassignedCharacters) {
 						structure.addCharacter(unassignedCharacter);
 					}
 					unassignedCharacters.clear();
+
+					LinkedHashSet<Chunk> characterStateChunks = getCharacterStatesOf(organChunk, subjectChunk);
+					for(Chunk characterStateChunk : characterStateChunks) {
+						String character = characterStateChunk.getProperty("characterName");
+						Chunk state = characterStateChunk.getChunkDFS(ChunkType.STATE);
+						if(character.compareTo("character")==0){
+							processingContextState.setUnassignedCharacter(state.getTerminalsText());
+						}else{
+						
+							LinkedHashSet<Chunk> modifierChunks = getModifiersOf(characterStateChunk, subjectChunk);
+							List<Chunk> modifierChunkList = new LinkedList<Chunk>(modifierChunks);
+							//List<Chunk> modifierChunks = characterStateChunk.getChunks(ChunkType.MODIFIER);
+							//modifierChunks.addAll(subjectChunk.getChunks(ChunkType.MODIFIER))
+	
+							this.createCharacterElement(parents, modifierChunkList, state.getTerminalsText(), character, "", processingContextState, true);
+							
+							//Chunk modifierChunk = new Chunk(ChunkType.UNASSIGNED, modifierChunks);
+							//DescriptionTreatmentElement characterElement = new DescriptionTreatmentElement(DescriptionType.CHARACTER);
+							//characterElement.setProperty(, value)
+						}
+					}
+
+
 
 					results.add(structure);
 				}

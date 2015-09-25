@@ -80,8 +80,10 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 				if(element.isCharacter())
 					processingContextState.getUnassignedCharacters().add((Character)element);
 		}
-		processingContextState.setLastElements(elements);
-		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
+		if(!elements.isEmpty()){ //elements may be empty when processed a character-character chunk e.g. length
+			processingContextState.setLastElements(elements);
+			processingContextState.setCommaAndOrEosEolAfterLastElements(false);
+		}
 		return elements;
 	}
 	
@@ -153,9 +155,11 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 						}
 				}
 			//}
-			if(!dealt)
+			if(!dealt){
 				processingContextState.setUnassignedCharacter(characterStateString);
-			results.addAll(processingContextState.getLastElements());
+			}else{
+				results.addAll(processingContextState.getLastElements());
+			}
 		} else if(characterStateString.length() > 0) {
 			//Character characterElement = createCharacterElement(parents, modifiers, characterStateString, character, "", processingContextState);
 			//if(characterElement!=null)
