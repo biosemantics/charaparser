@@ -25,11 +25,12 @@ import com.google.inject.name.Named;
 
 
 
+
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.Match;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
+import edu.arizona.biosemantics.common.ling.know.CharacterMatch;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.Term;
@@ -790,7 +791,7 @@ public abstract class Normalizer implements INormalizer {
 			//organStateKnowledgeBase.addState(replacement);
 			HashSet<Term> t = new HashSet<Term>();
 			t.add(new Term(replacement.replaceAll("_c_", " "), "coloration"));
-			characterKnowledgeBase.addCharacterStateToName(replacement, new Match(t));
+			characterKnowledgeBase.addCharacterStateToName(replacement, new CharacterMatch(t));
 			text = text.replaceFirst(toReplace, replacement);
 			m = p.matcher(text);
 		}
@@ -2040,7 +2041,7 @@ public abstract class Normalizer implements INormalizer {
 		boolean startWithOrgan = false;
 		int wiggleRoom = 0; //don't allow wiggleRoom
 		for(int i = startIndex; i < tokens.length; i++){
-			Match mat = characterKnowledgeBase.getCharacterName(tokens[i]);
+			CharacterMatch mat = characterKnowledgeBase.getCharacterName(tokens[i]);
 			if(characterKnowledgeBase.isEntity(tokens[i])){
 				startWithOrgan = true;
 				break;
@@ -2066,7 +2067,7 @@ public abstract class Normalizer implements INormalizer {
 		String name = "";
 		boolean foundOrgan = false;
 		for(int i = 0; i < tokens.length; i++){
-			Match mat = characterKnowledgeBase.getCharacterName(tokens[i]);
+			CharacterMatch mat = characterKnowledgeBase.getCharacterName(tokens[i]);
 			if(characterKnowledgeBase.isEntity(tokens[i])){
 				name += tokens[i]+" ";
 				foundOrgan = true;

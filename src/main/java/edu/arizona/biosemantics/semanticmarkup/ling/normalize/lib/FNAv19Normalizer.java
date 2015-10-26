@@ -12,7 +12,7 @@ import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 

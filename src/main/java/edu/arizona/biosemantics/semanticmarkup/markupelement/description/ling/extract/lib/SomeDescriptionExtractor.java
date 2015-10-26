@@ -38,7 +38,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
@@ -164,9 +164,14 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		this.structureId = processingContext.getStructureId();
 		this.relationId = processingContext.getRelationId();
 	
+<<<<<<< HEAD
 		
+=======
+		/*System.out.println("====1====");
+>>>>>>> branch 'master' of https://github.com/biosemantics/charaparser.git
 		for(Statement statement: description.getStatements()){
 			System.out.println(statement.toString());
+<<<<<<< HEAD
 			//normalization of the results
 			LinkedList<Element> results = new LinkedList<Element>();
 			results.addAll(statement.getBiologicalEntities());
@@ -185,6 +190,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			statement.setBiologicalEntities(bes);
 			statement.setRelations(rels);				
 	    }
+=======
+	    }*/
+>>>>>>> branch 'master' of https://github.com/biosemantics/charaparser.git
 		
 		
 		
@@ -272,9 +280,18 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		RelationTreatmentElement relationElement = new RelationTreatmentElement("relationName", "id", "from", "to", false);
 		result.add(structureElement);
 		result.add(relationElement);*/
+<<<<<<< HEAD
 		
 		
 		//new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize((LinkedList<Element>) result); //first
+=======
+		System.out.println(processingContext.getChunkCollector().getSource());
+		System.out.println(sentence);
+		/*if(sentence.equals("opisthosoma length 4 . 20 mm , width 2 . 30 mm , distance epigastrium_spiracle 2 . 03 mm , distance spiracle_spinnerets 0 . 87 mm .")) {
+			System.out.println("here");
+		}*/
+		//new NonOntologyBasedStandardizer(glossary, inflector, sentence, processingContext, posKnowledgeBase).standardize(result); //first
+>>>>>>> branch 'master' of https://github.com/biosemantics/charaparser.git
 		//new TerminologyStandardizer(this.characterKnowledgeBase).standardize(result); //last
 		return result;
 	}

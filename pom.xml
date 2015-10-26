@@ -6,7 +6,11 @@
 	<version>${project.version}</version>
 
 	<properties>
+<<<<<<< HEAD
 		<project.version>0.1.155-SNAPSHOT</project.version>
+=======
+		<project.version>0.1.153-SNAPSHOT</project.version>
+>>>>>>> branch 'master' of https://github.com/biosemantics/charaparser.git
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -296,7 +300,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>ling</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
+			<version>0.0.6-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

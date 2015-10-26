@@ -12,13 +12,13 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.Match;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
+import edu.arizona.biosemantics.common.ling.know.CharacterMatch;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.pos.POS;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
@@ -214,7 +214,7 @@ public abstract class AbstractChunker implements IChunker {
 					alreadyAssignedToValidChunk = false;
 				}
 				for(AbstractParseTree terminal: terminals){//if containing a position term: middle, upper 2/3
-					Match m = learnedCharacterKnowledgeBase.getCharacterName(terminal.getTerminalsText());
+					CharacterMatch m = learnedCharacterKnowledgeBase.getCharacterName(terminal.getTerminalsText());
 					if(m!=null && m.getCategories()!=null && m.getCategories().matches(".*?(^|_)("+ElementRelationGroup.entityRefElements+")(_|$).*")/*.contains("position")*/){
 						alreadyAssignedToValidChunk = false;
 					}
