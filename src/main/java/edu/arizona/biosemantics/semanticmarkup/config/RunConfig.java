@@ -244,56 +244,15 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("OTO2ReviewFile")).toInstance(oto2ReviewFile);
 			bind(String.class).annotatedWith(Names.named("OTO2TermReviewURL")).toInstance(oto2TermReviewURL);
 			bind(String.class).annotatedWith(Names.named("OTO2Client_Url")).toInstance(oto2ClientURL);
-			/*bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
+			bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
 				private Client instance;
 				@Override
 				public OTOLiteClient get() {
-					/*if(instance == null)
+					if(instance == null)
 						instance = new Client(oto2ClientURL);
-					return instance;*/
-					
-					
-					return new OTOLiteClient(null) {
-						@Override
-						public void open() {
-							
-						}
-						
-						@Override
-						public void close() {
-							
-						}
-						
-						@Override
-						public Future<Download> getDownload(UploadResult uploadResult) {							
-							try {
-								List<Synonym> synonyms = new LinkedList<Synonym>();
-								CSVReader reader = new CSVReader(new FileReader("category_mainterm_synonymterm-task-spiderM.csv"));
-								List<String[]> lines = reader.readAll();
-								int i=0;
-								Set<String> hasSynonym = new HashSet<String>();
-								for(String[] line : lines) {
-									synonyms.add(new Synonym(String.valueOf(i), line[1], line[0], line[2]));
-									hasSynonym.add(line[1]);
-								}	
-								
-								reader = new CSVReader(new FileReader("category_term-task-spiderM.csv"));
-								lines = reader.readAll();
-								List<Decision> decisions = new LinkedList<Decision>();
-								i=0;
-								for(String[] line : lines) {
-									decisions.add(new Decision(String.valueOf(i), line[1], line[0], hasSynonym.contains(line[1]), ""));
-								}
-	
-								Download download = new Download(true, decisions, synonyms);
-								return ConcurrentUtils.constantFuture(download);
-							} catch(Exception e) {
-								return null;
-							}
-						}
-					};
+					return instance;
 				}
-			}).in(Singleton.class);*/
+			}).in(Singleton.class);
 			
 			bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
 				private Client instance;

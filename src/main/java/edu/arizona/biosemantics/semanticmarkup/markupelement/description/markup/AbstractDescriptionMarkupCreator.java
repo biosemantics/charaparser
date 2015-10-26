@@ -1,6 +1,5 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup;
 
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,8 +13,6 @@ import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.IChunker;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionWriter;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.NonOntologyBasedStandardizer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.ontologize.lib.TerminologyStandardizer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
