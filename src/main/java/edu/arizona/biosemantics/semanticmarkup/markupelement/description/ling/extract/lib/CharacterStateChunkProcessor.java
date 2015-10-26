@@ -11,6 +11,7 @@ import java.util.Set;
 
 
 
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -27,6 +28,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
+import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 
 /**
  * CharacterStateChunkProcessor processes chunks of ChunkType.CHARACTER_STATE
@@ -100,8 +102,10 @@ public class CharacterStateChunkProcessor extends AbstractChunkProcessor {
 			Element lastElement = processingContextState.getLastElements().getLast();
 			if(lastElement.isCharacter()) 
 				for(Element element : processingContextState.getLastElements()) 
-					if(element.isCharacter())
-						((Character)element).setName(state);
+					if(element.isCharacter()){
+						//if character name has atypical in it, need to keep it
+						((Character)element).updateCharacterName(state);
+					}
 			else if(lastElement.isStructure())
 				processingContextState.setUnassignedCharacter(state);
 			results.addAll(processingContextState.getLastElements());

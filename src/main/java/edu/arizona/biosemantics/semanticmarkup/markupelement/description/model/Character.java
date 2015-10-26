@@ -339,6 +339,15 @@ public class Character extends NamedElement implements Cloneable {
 		return;
 	}
 	
+	/**using characterName to update the name of this character**/
+	public void updateCharacterName(String characterName){
+		
+		String newName = "";
+		if(this.name.contains("atypical")) newName = "atypical_";
+		if(this.name.contains("average")) newName = "average_";
+		this.setName(newName+characterName);
+	}
+	
 	@Override
 	public Character clone() {
 		Character character = new Character();

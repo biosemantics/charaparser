@@ -720,7 +720,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 								lastelement = processingContextState.getLastElements().getLast();
 							}
 							if(lastelement != null && lastelement.isCharacter()){
-								((Character)lastelement).setName(w);
+								((Character)lastelement).updateCharacterName(w);
 							}
 						}else{
 							String[] characterValues = w.split("\\bor\\b|\\band\\b");
@@ -2513,12 +2513,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				Element lastElement = lastElements.getLast();
 				if(lastElement.isCharacter()) {//shell oval in outline
 					for(Element element : lastElements) {
-						if(element.isNamedElement()){
-							String oldname = ((NamedElement)element).getName();
-							String name = "";
-							if(oldname.contains("atypical")) name = "atypical_";
-							if(oldname.contains("average")) name = "average_";
-							((NamedElement)element).setName(name+lastWord);
+						if(element.isCharacter()){
+							((Character)element).updateCharacterName(lastWord);
 						}
 					}
 					done = true;
@@ -2528,11 +2524,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					//ckstring.replaceFirst(".*?\\]", "").replaceAll("\\w+\\[","").replaceAll(lastword, "").replaceAll("[{}\\]\\[]", "");
 					for(Element element : lastElements) {
 						if(element.isCharacter()) {
-							String oldname = ((NamedElement)element).getName();
-							String name = "";
-							if(oldname.contains("atypical")) name = "atypical_";
-							if(oldname.contains("average")) name = "average_";
-							((Character)element).setName(name+lastWord);
+							((Character)element).updateCharacterName(lastWord);
 							((Character)element).setValue(characterValue.getTerminalsText());
 						}
 					}
