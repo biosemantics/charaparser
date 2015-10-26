@@ -13,11 +13,13 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends RemoveNonSpecificBiologicalEntities {
 
 	private String connectBackwardToParent = "has|have|with|contains";
+	private CollapseBiologicalEntityToName collapseBiologicalEntityToName;
 	
 	public RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
 			KnowsPartOf knowsPartOf, ITokenizer tokenizer,
 			CollapseBiologicalEntityToName collapseBiologicalEntityToName) {
-		super(knowsPartOf, tokenizer, collapseBiologicalEntityToName);
+		super(knowsPartOf, tokenizer);
+		this.collapseBiologicalEntityToName = collapseBiologicalEntityToName;
 	}
 	
 	@Override
@@ -35,7 +37,7 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 					if(!isPartOfAConstraint(name, constraint)) {
 						String parent = findParentConnectedByBackwardKeyWords(name, biologicalEntity, passedStatements, document);
 						if(parent != null) {
-							constraint = (constraint += " " + parent).trim();
+							constraint = (parent + " " + constraint).trim();
 							biologicalEntity.setAttribute("constraint", constraint);
 						}
 					}

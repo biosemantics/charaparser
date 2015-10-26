@@ -48,9 +48,11 @@ import edu.arizona.biosemantics.oto.model.lite.Download;
 import edu.arizona.biosemantics.oto.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsEntityExistence;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.KeyWordBasedKnowsCharacterConstraintType;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntities;
@@ -59,9 +61,13 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharact
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharacters;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CreateRelationFromCharacterConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MapOntologyIdsTest;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveModifierCharactersToBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveRelationToBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveDuplicateValues;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntities;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByBackwardConnectors;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByForwardConnectors;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByPassedParents;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveOrphanRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveSynonyms;
@@ -171,9 +177,9 @@ public class Run {
 			synonymSetsMap.get(preferredTerm).getSynonyms().add(synonym);
 		}	
 		
-		List<KnowsSynonyms> hasBiologicalEntitySynonymsList = new LinkedList<KnowsSynonyms>();
+		/*List<KnowsSynonyms> hasBiologicalEntitySynonymsList = new LinkedList<KnowsSynonyms>();
 		List<KnowsSynonyms> hasCharacterSynonymsList = new LinkedList<KnowsSynonyms>();
-		hasBiologicalEntitySynonymsList.add(new KnowsSynonyms() {
+		hasBiologicalEntitySynonymsList.add(new CSVKnowsSynonyms() {
 			@Override
 			public Set<SynonymSet> getSynonyms(String term) {
 				Set<SynonymSet> result = new HashSet<SynonymSet>();
@@ -185,7 +191,7 @@ public class Run {
 					result.add(new SynonymSet(term, new HashSet<String>()));
 				return result;
 			}
-		});
+		});*/
 		
 		
 		Run run = new Run();
@@ -209,11 +215,34 @@ public class Run {
 			}
 		}, tokenizer, new CollapseBiologicalEntityToName());*/
 		
-		AbstractTransformer transformer1 = new MoveCharacterToStructureConstraint();
-		AbstractTransformer transformer2 = new ReplaceNegationCharacterByNegationOrAbsence();
+		//AbstractTransformer transformer1 = new MoveCharacterToStructureConstraint();
+		//AbstractTransformer transformer2 = new ReplaceNegationCharacterByNegationOrAbsence();
 		
-		run.addTransformer(transformer1);
-		run.addTransformer(transformer2);
+		/*AbstractTransformer transformer = new MoveModifierCharactersToBiologicalEntityConstraint(tokenizer, new KnowsEntityExistence() {
+			@Override
+			public boolean isExistsEntity(String name) {
+				if(name.equals("red leaf")) {
+					return true;
+				}
+				return false;
+			}
+		});*/
+				
+		//RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(new CSVKnowsPartOf(), 
+		//		tokenizer, new CollapseBiologicalEntityToName());
+		//RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(new CSVKnowsPartOf(), 
+		//		tokenizer, new CollapseBiologicalEntityToName());
+		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(new CSVKnowsPartOf(inflector), 
+				tokenizer, new CollapseBiologicalEntityToName());
+		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(new CSVKnowsPartOf(inflector), 
+				tokenizer, new CollapseBiologicalEntityToName(), inflector);
+		//run.addTransformer(transformer1);
+		//run.addTransformer(transformer2);
+		run.addTransformer(transformer3);
+		run.addTransformer(transformer4);
+		
+		//run.addTransformer(transformer1);
+		//run.addTransformer(transformer2);
 		/*
 		AbstractTransformer transformer = new CollapseCharacterToValue();
 		run.addTransformer(new RemoveOrphanRelations());
@@ -253,7 +282,8 @@ public class Run {
 		
 		*/
 		
-		run.run(new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2"), new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2_out_" + transformer2.getClass().getSimpleName()));
+		//run.run(new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2"), new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2_out_" + transformer.getClass().getSimpleName()));
+		run.run(new File("in"), new File("out"));
 	}
 	
 	private static Set<String> getWordSet(String regexString) {

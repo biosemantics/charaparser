@@ -12,11 +12,13 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends RemoveNonSpecificBiologicalEntities {
 
 	private String connectForwardToParent = "in|on|of";
+	private CollapseBiologicalEntityToName collapseBiologicalEntityToName;
 	
 	public RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
 			KnowsPartOf knowsPartOf, ITokenizer tokenizer,
 			CollapseBiologicalEntityToName collapseBiologicalEntityToName) {
-		super(knowsPartOf, tokenizer, collapseBiologicalEntityToName);
+		super(knowsPartOf, tokenizer);
+		this.collapseBiologicalEntityToName = collapseBiologicalEntityToName;
 	}
 	
 	@Override
@@ -32,7 +34,7 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 					if(!isPartOfAConstraint(name, constraint)) {
 						String parent = findParentConnectedByForwardKeyWords(name, biologicalEntity, statement, document);
 						if(parent != null) {
-							constraint = (constraint += " " + parent).trim();
+							constraint = (parent + " " + constraint).trim();
 							biologicalEntity.setAttribute("constraint", constraint);
 						}
 					}
@@ -68,6 +70,7 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 				String nameNormalized = biologicalEntity.getAttributeValue("name");
 				if(knowsPartOf.isPartOf(term, nameNormalized)) 
 					return collapseBiologicalEntityToName.collapse(biologicalEntity);
+				break;
 			}
 		}
 		return null;

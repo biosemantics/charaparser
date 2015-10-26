@@ -9,16 +9,14 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 public abstract class RemoveNonSpecificBiologicalEntities extends AbstractTransformer {
 	
 	private String nonSpecificParts = "apex|appendix|area|band|base|belt|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|"
-			+ "face|groove|layer|line|margin|notch|part|pore|portion|protuberance|remnant|section|"
+			+ "face|groove|layer|line|margin|middle|notch|part|pore|portion|protuberance|remnant|section|"
 			+ "side|stratum|surface|tip|wall|zone";
 	protected KnowsPartOf knowsPartOf;
 	protected ITokenizer tokenizer;
-	protected CollapseBiologicalEntityToName collapseBiologicalEntityToName;
 	
-	public RemoveNonSpecificBiologicalEntities(KnowsPartOf knowsPartOf, ITokenizer tokenizer, CollapseBiologicalEntityToName collapseBiologicalEntityToName) {
+	public RemoveNonSpecificBiologicalEntities(KnowsPartOf knowsPartOf, ITokenizer tokenizer) {
 		this.knowsPartOf = knowsPartOf;
 		this.tokenizer = tokenizer;
-		this.collapseBiologicalEntityToName = collapseBiologicalEntityToName;
 	}
 		
 	protected boolean isNonSpecificPart(String name) {

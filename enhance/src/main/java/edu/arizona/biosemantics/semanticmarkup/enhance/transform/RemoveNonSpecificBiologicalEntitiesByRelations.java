@@ -8,10 +8,13 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 
 public class RemoveNonSpecificBiologicalEntitiesByRelations extends RemoveNonSpecificBiologicalEntities {
 
+	private CollapseBiologicalEntityToName collapseBilogicalEntityToName;
+
 	public RemoveNonSpecificBiologicalEntitiesByRelations(
 			KnowsPartOf knowsPartOf, ITokenizer tokenizer,
-			CollapseBiologicalEntityToName collapseBiologicalEntityToName) {
-		super(knowsPartOf, tokenizer, collapseBiologicalEntityToName);
+			CollapseBiologicalEntityToName collapseBilogicalEntityToName) {
+		super(knowsPartOf, tokenizer);
+		this.collapseBilogicalEntityToName = collapseBilogicalEntityToName;
 	}
 
 	@Override
@@ -24,9 +27,9 @@ public class RemoveNonSpecificBiologicalEntitiesByRelations extends RemoveNonSpe
 					
 					String constraint = fromBiologicalEntity.getAttributeValue("constraint");
 					constraint = constraint == null ? "" : constraint.trim();
-					String parent = collapseBiologicalEntityToName.collapse(toBiologicalEntity);
+					String parent = collapseBilogicalEntityToName.collapse(toBiologicalEntity);
 					if(parent != null) {
-						constraint = (constraint += " " + parent).trim();
+						constraint = (parent + " " + constraint).trim();
 						fromBiologicalEntity.setAttribute("constraint", constraint);
 					}
 				}
