@@ -98,7 +98,7 @@ public class StandardizeStructureName extends AbstractTransformer {
 	private String removeNonSpecificPartsIfFirstWord(Element description) {
 		String result = this.nonSpecificParts;
 		for(Element statement : description.getChildren("statement")) {
-			String sentence = statement.getValue().trim();
+			String sentence = statement.getValue().toLowerCase().trim();
 			if (sentence != null && sentence.matches("^[A-Z].*")) { // record parentorgan
 				String word1 = sentence.toLowerCase();
 				if(sentence.indexOf(" ") > 0)

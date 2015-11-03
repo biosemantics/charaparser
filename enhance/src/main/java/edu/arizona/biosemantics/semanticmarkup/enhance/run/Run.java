@@ -26,6 +26,7 @@ import org.jdom2.output.XMLOutputter;
 
 import au.com.bytecode.opencsv.CSVReader;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
+import edu.arizona.biosemantics.common.ling.Token;
 import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.SingularPluralProvider;
@@ -48,11 +49,14 @@ import edu.arizona.biosemantics.oto.model.lite.Download;
 import edu.arizona.biosemantics.oto.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.model.lite.UploadResult;
 import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsClassHierarchy;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsEntityExistence;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsClassHierarchy;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsPartOf;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.KeyWordBasedKnowsCharacterConstraintType;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntities;
@@ -66,6 +70,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveRelationToB
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveDuplicateValues;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntities;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByBackwardConnectors;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByCollections;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByForwardConnectors;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByPassedParents;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByRelations;
@@ -89,6 +94,8 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.Standardize
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeQuantityPresence;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureName;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeTerminology;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.process.PTBTokenizer;
 
 public class Run {
 
@@ -136,8 +143,29 @@ public class Run {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		ITokenizer tokenizer = new WhitespaceTokenizer();
-		tokenizer.tokenize("this is example");
+		/*for (String arg : args) {
+		      // option #1: By sentence.
+		      DocumentPreprocessor dp = new DocumentPreprocessor(arg);
+		      for (List<HasWord> sentence : dp) {
+		        System.out.println(sentence);
+		      }
+		      // option #2: By token
+		      PTBTokenizer<CoreLabel> ptbt = new PTBTokenizer<>(new FileReader(arg),
+		              new CoreLabelTokenFactory(), "");
+		      while (ptbt.hasNext()) {
+		        CoreLabel label = ptbt.next();
+		        System.out.println(label);
+		      }
+		    }*/
+		
+		ITokenizer tokenizer = new WhitespaceTokenizer(); /*ITokenizer() {		
+			@Override
+			public List<Token> tokenize(String text) {
+				List<Token> result = new LinkedList<Token>();
+				
+				return null;
+			}
+		};*/
 		TaxonGroup taxonGroup = TaxonGroup.PLANT;
 		WordNetPOSKnowledgeBase wordNetPOSKnowledgeBase = new WordNetPOSKnowledgeBase(Configuration.wordNetDirectory, false);
 		SingularPluralProvider singularPluralProvider = new SingularPluralProvider();
@@ -227,19 +255,28 @@ public class Run {
 				return false;
 			}
 		});*/
-				
-		//RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(new CSVKnowsPartOf(), 
-		//		tokenizer, new CollapseBiologicalEntityToName());
-		//RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(new CSVKnowsPartOf(), 
-		//		tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(new CSVKnowsPartOf(inflector), 
+
+		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms(inflector);
+		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
+				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(new CSVKnowsPartOf(inflector), 
-				tokenizer, new CollapseBiologicalEntityToName(), inflector);
-		//run.addTransformer(transformer1);
-		//run.addTransformer(transformer2);
+		RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
+				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
+				tokenizer, new CollapseBiologicalEntityToName());
+		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
+				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				tokenizer, new CollapseBiologicalEntityToName());
+		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
+				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), 
+				csvKnowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
+		//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
+		//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
+		//		tokenizer, new CollapseBiologicalEntityToName(), inflector);
+		run.addTransformer(transformer1);
+		run.addTransformer(transformer2);
 		run.addTransformer(transformer3);
 		run.addTransformer(transformer4);
+		//run.addTransformer(removeByCollections);
 		
 		//run.addTransformer(transformer1);
 		//run.addTransformer(transformer2);

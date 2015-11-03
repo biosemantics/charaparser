@@ -2,48 +2,35 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
-
 import edu.arizona.biosemantics.common.ling.Token;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsClassHierarchy;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 
-public class RemoveNonSpecificBiologicalEntitiesByPassedParents extends RemoveNonSpecificBiologicalEntities {
-	
+public class RemoveNonSpecificBiologicalEntitiesByCollections extends RemoveNonSpecificBiologicalEntities {
+
+	private KnowsClassHierarchy knowsClassHiearchy;
 	private CollapseBiologicalEntityToName collapseBiologicalEntityToName;
 	private IInflector inflector;
 
-	public RemoveNonSpecificBiologicalEntitiesByPassedParents(
-			KnowsPartOf knowsPartOf, KnowsSynonyms knowsSynonyms, ITokenizer tokenizer,
-			CollapseBiologicalEntityToName collapseBiologicalEntityToName, 
-			IInflector inflector) {
+	public RemoveNonSpecificBiologicalEntitiesByCollections(KnowsPartOf knowsPartOf, KnowsSynonyms knowsSynonyms, KnowsClassHierarchy knowsClassHiearchy, 
+			ITokenizer tokenizer, CollapseBiologicalEntityToName collapseBiologicalEntityToName, IInflector inflector) {
 		super(knowsPartOf, knowsSynonyms, tokenizer);
-		this.inflector = inflector;
+		this.knowsClassHiearchy = knowsClassHiearchy;
 		this.collapseBiologicalEntityToName = collapseBiologicalEntityToName;
+		this.inflector = inflector;
 	}
 
 	@Override
 	public void transform(Document document) {
-		System.out.println("--------------------------------------------");
-		
 		List<Element> passedStatements = new LinkedList<Element>();
 		for(Element statement : this.statementXpath.evaluate(document)) {
-			String sentence = statement.getChildText("text");
-			
-			System.out.println(sentence);
-			if(sentence.startsWith("the flagellum, mandibles, anterior margin of the")) {
-				System.out.println();
-			}
-			
 			passedStatements.add(0, statement);
 			for(Element biologicalEntity : statement.getChildren("biological_entity")) { //Lists.reverse(statement.getChildren("biological_entity"))) {
 				String name = biologicalEntity.getAttributeValue("name");
@@ -51,25 +38,23 @@ public class RemoveNonSpecificBiologicalEntitiesByPassedParents extends RemoveNo
 				String constraint = biologicalEntity.getAttributeValue("constraint");
 				constraint = constraint == null ? "" : constraint.trim();
 				
-				if(name.equals("margin") && sentence.startsWith("the flagellum, mandibles, anterior margin of the face, and the head".toLowerCase())) {
-					System.out.println();
+				if(name.equals("array")) {
+					System.out.println("test");
 				}
-				
 				if(isNonSpecificPart(name)) {
-					if(!isPartOfAConstraint(name, constraint)) {
-						
-						
-						
-						List<Element> searchStatements = new LinkedList<Element>(); //this is only in place because sometimes entities are placed in the next statement instead of the one in which it actually appears in text
-						for(Element passedStatement : passedStatements) {
-							searchStatements.add(0, passedStatement);
-							String parent = findParentInPassedStatements(collapseBiologicalEntityToName.collapse(biologicalEntity), document, searchStatements);
-							if(parent == null)
-								parent = findParentInPassedStatements(name, document, searchStatements);
-							if(parent != null) {
-								constraint = (parent + " " + constraint).trim();
-								biologicalEntity.setAttribute("constraint", constraint);
-								break;
+					if(isCollection(name)) {
+						if(!hasPartInConstraint(name, constraint)) {
+							List<Element> searchStatements = new LinkedList<Element>(); //this is only in place because sometimes entities are placed in the next statement instead of the one in which it actually appears in text
+							for(Element passedStatement : passedStatements) {
+								searchStatements.add(0, passedStatement);
+								String child = findChildInPassedStatements(collapseBiologicalEntityToName.collapse(biologicalEntity), document, searchStatements);
+								if(child == null)
+									child = findChildInPassedStatements(name, document, searchStatements);
+								if(child != null) {
+									constraint = (child + " " + constraint).trim();
+									biologicalEntity.setAttribute("constraint", constraint);
+									break;
+								}
 							}
 						}
 					}
@@ -78,7 +63,7 @@ public class RemoveNonSpecificBiologicalEntitiesByPassedParents extends RemoveNo
 		}
 	}
 
-	private String findParentInPassedStatements(String name, Document document, List<Element> searchStatements) {
+	private String findChildInPassedStatements(String name, Document document, List<Element> searchStatements) {
 		Element searchStatement = searchStatements.get(0);
 		String sentence = searchStatement.getChild("text").getValue().toLowerCase();
 		sentence = parenthesisRemover.remove(sentence, '(', ')');
@@ -89,19 +74,31 @@ public class RemoveNonSpecificBiologicalEntitiesByPassedParents extends RemoveNo
 			
 			if(termsBiologicalEntity != null) {
 				String termNormalized = collapseBiologicalEntityToName.collapse(termsBiologicalEntity);
-				if(knowsPartOf.isPartOf(name, termNormalized)) {
+				if(knowsPartOf.isPartOf(termNormalized, name)) {
 					return collapseBiologicalEntityToName.collapse(termsBiologicalEntity);
 				} else {
-					if(knowsPartOf.isPartOf(name, termsBiologicalEntity.getAttributeValue("name"))) 
+					if(knowsPartOf.isPartOf(termsBiologicalEntity.getAttributeValue("name"), name)) 
 						return collapseBiologicalEntityToName.collapse(termsBiologicalEntity);
 				}
 			} else {
-				if(knowsPartOf.isPartOf(name, term.getContent())) 
+				if(knowsPartOf.isPartOf(term.getContent(), name)) 
 					return inflector.getSingular(term.getContent());
 			}
 		}
-	return null;
+		return null;
 	}
-	
+
+	private boolean hasPartInConstraint(String name, String constraint) {
+		for(Token term : tokenizer.tokenize(constraint)) {
+			if(knowsPartOf.isPartOf(term.getContent(), name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isCollection(String name) {
+		return knowsClassHiearchy.isSubclass(name, "collection");
+	}
 
 }

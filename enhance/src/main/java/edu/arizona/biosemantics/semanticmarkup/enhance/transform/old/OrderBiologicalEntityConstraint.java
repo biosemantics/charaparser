@@ -25,7 +25,7 @@ public class OrderBiologicalEntityConstraint extends AbstractTransformer {
 	@Override
 	public void transform(Document document) {
 		for(Element statement : this.statementXpath.evaluate(document)) {
-			String sentence = statement.getChildText("text");
+			String sentence = statement.getChildText("text").toLowerCase();
 			for(Element structure : statement.getChildren("biological_entity")) {
 				String constraints = structure.getAttributeValue("constraint");
 				String originalName = structure.getAttributeValue("name_original");

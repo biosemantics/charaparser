@@ -39,7 +39,7 @@ public class MoveModifierCharactersToBiologicalEntityConstraint extends Abstract
 	@Override
 	public void transform(Document document) {
 		for(Element statement : this.statementXpath.evaluate(document)) {
-			String sentence = statement.getChild("text").getValue();
+			String sentence = statement.getChild("text").getValue().toLowerCase();
 			List<Token> tokens = tokenizer.tokenize(sentence);
 			
 			for(Element biologicalEntity : statement.getChildren("biological_entity")) {

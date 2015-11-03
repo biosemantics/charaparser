@@ -14,18 +14,20 @@ import au.com.bytecode.opencsv.CSVReader;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
 
 public class CSVKnowsPartOf implements KnowsPartOf {
 
 	private HashMap<String, Set<String>> partOfMap;
+	private KnowsSynonyms knowsSynonyms;
 	private IInflector inflector;
 
-	public CSVKnowsPartOf(IInflector inflector) {
+	public CSVKnowsPartOf(KnowsSynonyms knowsSynonyms, IInflector inflector) {
 		this.inflector = inflector;
+		this.knowsSynonyms = knowsSynonyms;
 		partOfMap = new HashMap<String, Set<String>>();
-		try {
-			CSVReader reader = new CSVReader(new FileReader("part-of.csv"));
+		try(CSVReader reader = new CSVReader(new FileReader("part-of.csv"))) {
 			List<String[]> lines = reader.readAll();
 			
 			for(String[] line : lines) {
@@ -52,14 +54,38 @@ public class CSVKnowsPartOf implements KnowsPartOf {
 		
 		String lastPartPart = partParts[partParts.length - 1];
 		String lastParentPart = parentParts[parentParts.length - 1];
-		lastPartPart = inflector.getSingular(lastPartPart).replaceAll("_", " ");
-		lastParentPart = inflector.getSingular(lastParentPart).replaceAll("_", " ");
+		
+		//only temporary for evaluation: inflector doesnt create correct singular for e.g. 'area', 'cypsela'
+		if(!lastPartPart.endsWith("a") && !lastPartPart.endsWith("i")) 
+			lastPartPart = inflector.getSingular(lastPartPart).replaceAll("_", " ");
+		if(!lastParentPart.endsWith("a") && !lastParentPart.endsWith("i"))
+			lastParentPart = inflector.getSingular(lastParentPart).replaceAll("_", " ");
 		
 		partParts[partParts.length - 1] = lastPartPart;
 		parentParts[parentParts.length - 1] = lastParentPart;
 		String normalizedParent = StringUtils.join(parentParts, " ");
 		String normalizedPart = StringUtils.join(partParts, " ");
-		return partOfMap.containsKey(normalizedParent) && partOfMap.get(normalizedParent).contains(normalizedPart);
+		
+		Set<String> parts = new HashSet<String>();
+		parts.add(normalizedPart);
+		Set<SynonymSet> partSynonymSets = knowsSynonyms.getSynonyms(normalizedPart);
+		for(SynonymSet synonymSet : partSynonymSets) 
+			parts.addAll(synonymSet.getSynonyms());
+			
+		Set<String> parents = new HashSet<String>();
+		parents.add(normalizedParent);
+		Set<SynonymSet> parentSynonymSets = knowsSynonyms.getSynonyms(normalizedParent);
+		for(SynonymSet synonymSet : parentSynonymSets) 
+			parents.addAll(synonymSet.getSynonyms());
+		
+		for(String aPart : parts) {
+			for(String aParent : parents) {
+				if(partOfMap.containsKey(aParent) && partOfMap.get(aParent).contains(aPart)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }
