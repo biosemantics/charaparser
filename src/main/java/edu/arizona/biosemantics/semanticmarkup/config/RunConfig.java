@@ -243,17 +243,7 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("DatabasePassword")).toInstance(databasePassword);
 			bind(String.class).annotatedWith(Names.named("OTO2ReviewFile")).toInstance(oto2ReviewFile);
 			bind(String.class).annotatedWith(Names.named("OTO2TermReviewURL")).toInstance(oto2TermReviewURL);
-			bind(String.class).annotatedWith(Names.named("OTO2Client_Url")).toInstance(oto2ClientURL);
-			bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
-				private Client instance;
-				@Override
-				public OTOLiteClient get() {
-					if(instance == null)
-						instance = new Client(oto2ClientURL);
-					return instance;
-				}
-			}).in(Singleton.class);
-			
+			bind(String.class).annotatedWith(Names.named("OTO2Client_Url")).toInstance(oto2ClientURL);			
 			bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
 				private Client instance;
 				@Override
