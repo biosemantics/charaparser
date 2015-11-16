@@ -116,8 +116,8 @@ public class ReplaceNegationCharacterByNegationOrAbsence extends AbstractTransfo
 
 	private Element getCountNoCharacter(Element biologicalEntity) {
 		for(Element character : biologicalEntity.getChildren("character")) {
-			if(character.getAttributeValue("name").equals("count") && character.getAttributeValue("value").equals("no") &&
-					character.getAttributeValue("is_modifier").equals("true")) {
+			if(character.getAttributeValue("name").equals("count") && (character.getAttributeValue("value")!=null && character.getAttributeValue("value").equals("no")) &&
+					(character.getAttributeValue("is_modifier")!=null && character.getAttributeValue("is_modifier").equals("true"))) {
 				return character;
 			}
 		}
