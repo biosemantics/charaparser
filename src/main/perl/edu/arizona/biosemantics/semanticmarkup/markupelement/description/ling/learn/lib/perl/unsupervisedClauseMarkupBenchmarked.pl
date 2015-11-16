@@ -6056,6 +6056,7 @@ opendir(IN, "$dir") || die "$!: $dir\n";
 while(defined ($file=readdir(IN))){
 	if($file !~ /\w/){next;}
 	$text = ReadFile::readfile("$dir$file");
+	#print STDOUT "full text: $text\n";
 	$text =~ s#["']##g;
 	$text =~ s#[-_]+shaped#-shaped#g; #5/30/09
 	$text =~ s#<.*?>##g; #remove html tags
@@ -6067,8 +6068,8 @@ while(defined ($file=readdir(IN))){
 	#$text = normalizeBrokenWords($text); #it is not quite 'original' anymore with this normalization, but it is convenient to do it here without having to change a lot of other code. 
 	                                      
 
-	$text =~ s#^\s*\d+[a-z].\s*##; #remove 2a. (key marks)
-
+	$text =~ s#^\s*\d+[a-z]\.\s*##; #remove 2a. (key marks)
+	#print STDOUT "now text: $text\n";
 	$original = $text;
 	$text =~ s#\b(is|are|was|were|be|being)\b##g; #remove aux.verbs
 	#$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
@@ -6084,7 +6085,7 @@ while(defined ($file=readdir(IN))){
   	$text =~ s#(\sdiam)\s+(\.)#$1$2#g; #diam . =>diam.
   	$text =~ s#(\sca)\s+(\.)#$1$2#g;  #ca . =>ca.
   	$text =~ s#(\d\s+(cm|mm|dm|m)\s*)\.(\s+[^A-Z])#$1\[DOT\]$3#g;
-  	
+  	#print "now text: $text\n";
   	
 
 	#@todo: use [PERIOD] replace . etc. in brackets. Replace back when dump to disk.
@@ -6096,6 +6097,7 @@ while(defined ($file=readdir(IN))){
  	foreach (@sentences){
 		#may have fewer than $N words
 		if(!/\w+/){next;}
+		#print STDOUT "sent: $_\n";
 		push(@validindex, $i);
 		s#\[\s*DOT\s*\]#.#g;
 		s#\[\s*QST\s*\]#?#g;
