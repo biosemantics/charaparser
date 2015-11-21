@@ -104,7 +104,6 @@ public class RunConfig extends BasicConfig {
 	private String databaseName = Configuration.databaseName;
 	private String databaseUser = Configuration.databaseUser;
 	private String databasePassword = Configuration.databasePassword;
-	private String databaseTablePrefix = "myrun";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String oto2ReviewFile = "TermReview.txt";
 	private String oto2TermReviewURL = Configuration.oto2Url;
@@ -254,7 +253,7 @@ public class RunConfig extends BasicConfig {
 				}
 			}).in(Singleton.class);
 			
-			bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
+			/*bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
 				private Client instance;
 				@Override
 				public OTOLiteClient get() {
@@ -305,8 +304,8 @@ public class RunConfig extends BasicConfig {
 							}
 						}
 					}; //*/
-				}
-			}).in(Singleton.class);
+			/*	}
+			}).in(Singleton.class);*/
 			bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 			bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
 			
@@ -553,13 +552,12 @@ public class RunConfig extends BasicConfig {
 	public String getDatabaseTablePrefix() {
 		return databaseTablePrefix;
 	}
-
+	
 	public void setDatabaseTablePrefix(String databaseTablePrefix) {
 		this.databaseTablePrefix = databaseTablePrefix;
 		this.runRootDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix;
 		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
-		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
-		
+		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";	
 	}
 
 	public String getDatabaseGlossaryTable() {

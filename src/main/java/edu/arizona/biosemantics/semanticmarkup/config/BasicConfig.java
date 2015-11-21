@@ -138,7 +138,9 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transfo
 public class BasicConfig extends AbstractModule {
 	
 	  private String version = "N/A";
+	  protected String databaseTablePrefix = "myrun";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
+	  
 	  
 	  public BasicConfig() throws IOException {			
 		  ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -568,5 +570,12 @@ public class BasicConfig extends AbstractModule {
 		this.version = version;
 	}
 	
+	public void setDatabaseTablePrefix(String databaseTablePrefix) {
+		this.databaseTablePrefix = databaseTablePrefix;
+	}
+	
+	public String getDatabaseTablePrefix() {
+		return this.databaseTablePrefix;
+	}
 	
 }
