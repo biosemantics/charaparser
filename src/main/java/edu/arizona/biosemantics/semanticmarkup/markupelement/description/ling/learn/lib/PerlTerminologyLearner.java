@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -759,7 +760,27 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		}
 		@Override
 		public void run() {
+			try {
+				process.getInputStream().close();
+				process.getOutputStream().close();
+				process.getErrorStream().close();
+
+				//if (process instanceof UNIXProcess) {
+			    Field field = process.getClass().getDeclaredField("pid");
+			    field.setAccessible(true);
+			    int pid =field.getInt(process);
+				Runtime.getRuntime().exec("kill -9 " + pid);
+				//}
+				
+			} catch(Throwable t) {
+				log(LogLevel.ERROR, "Could not kill perl process. Running on non-Unix OS?", t);
+			}
 			process.destroy();
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				log(LogLevel.ERROR, "Interrupted", e);
+			}
 		}
 	}
 
