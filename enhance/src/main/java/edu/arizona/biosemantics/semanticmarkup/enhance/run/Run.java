@@ -272,6 +272,8 @@ public class Run {
 		//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
 		//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
 		//		tokenizer, new CollapseBiologicalEntityToName(), inflector);
+		
+		
 		run.addTransformer(transformer1);
 		run.addTransformer(transformer2);
 		run.addTransformer(transformer3);

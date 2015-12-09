@@ -1959,7 +1959,8 @@ public abstract class Normalizer implements INormalizer {
 					String o = parentTagProvider.getParentTag(source);
 					if(o!=null && !o.isEmpty()){
 						beforeOrgans.add(o); //TODO: what if missingOrgan is again an INNER?
-						o = this.inflector.getPlural(o);
+						if(o.compareTo("leaf")==0) o = "leaves";
+						else o = this.inflector.getPlural(o);
 						if(o!=null && !o.isEmpty()) beforeOrgans.add(o);
 					}
 					

@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -175,6 +178,26 @@ public class BasicConfig extends AbstractModule {
 			  bind(IInflector.class).toProvider(new Provider<IInflector>() {
 				@Override
 				public IInflector get() {
+		            //add db access here:  
+					Connection conn = null;
+					try {
+						Class.forName("com.mysql.jdbc.Driver");
+						String URL = "jdbc:mysql://localhost/" + Configuration.databaseName + "?user=" + Configuration.databaseUser + "&password=" + 
+	    					Configuration.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
+					    conn = DriverManager.getConnection(URL);
+					   // Statement stmt = conn.prepareStatement("select singular, plural from "+ Configuration.prefix?+_"signularplural"); //
+					    //to be continued
+					} catch (Exception e) {
+						log(LogLevel.ERROR, "Failed to connect to the database "+Configuration.databaseName);
+					} finally{
+						if(conn!=null)
+							try {
+								conn.close();
+							} catch (SQLException e) {
+								log(LogLevel.ERROR, "Failed to close the connection to "+Configuration.databaseName);
+							}
+					}
+	        		
 					return new SomeInflector(wordNetPOSKnowledgeBase, singularPluralProvider.getSingulars(), singularPluralProvider.getPlurals());
 				}
 			  }).in(Singleton.class);
