@@ -104,7 +104,6 @@ public class RunConfig extends BasicConfig {
 	private String databaseName = Configuration.databaseName;
 	private String databaseUser = Configuration.databaseUser;
 	private String databasePassword = Configuration.databasePassword;
-	private String databaseTablePrefix = "myrun";
 	private String databaseGlossaryTable = "fnaglossaryfixed";
 	private String oto2ReviewFile = "TermReview.txt";
 	private String oto2TermReviewURL = Configuration.oto2Url;
@@ -251,7 +250,7 @@ public class RunConfig extends BasicConfig {
 					
 					if(instance == null)
 						instance = new Client(oto2ClientURL);
-					return instance;//*/
+					return instance;
 					
 					
 					 // markup run
@@ -543,13 +542,12 @@ public class RunConfig extends BasicConfig {
 	public String getDatabaseTablePrefix() {
 		return databaseTablePrefix;
 	}
-
+	
 	public void setDatabaseTablePrefix(String databaseTablePrefix) {
 		this.databaseTablePrefix = databaseTablePrefix;
 		this.runRootDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix;
 		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
-		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
-		
+		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";	
 	}
 
 	public String getDatabaseGlossaryTable() {

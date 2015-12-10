@@ -6,7 +6,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -141,7 +144,9 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transfo
 public class BasicConfig extends AbstractModule {
 	
 	  private String version = "N/A";
+	  protected String databaseTablePrefix = "myrun";
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
+	  
 	  
 	  public BasicConfig() throws IOException {			
 		  ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -178,15 +183,18 @@ public class BasicConfig extends AbstractModule {
 			  bind(IInflector.class).toProvider(new Provider<IInflector>() {
 				@Override
 				public IInflector get() {
-		            //add db access here:  
 					Connection conn = null;
 					try {
 						Class.forName("com.mysql.jdbc.Driver");
 						String URL = "jdbc:mysql://localhost/" + Configuration.databaseName + "?user=" + Configuration.databaseUser + "&password=" + 
 	    					Configuration.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
 					    conn = DriverManager.getConnection(URL);
-					   // Statement stmt = conn.prepareStatement("select singular, plural from "+ Configuration.prefix?+_"signularplural"); //
-					    //to be continued
+					    PreparedStatement stmt = conn.prepareStatement("select singular, plural from "+ getDatabaseTablePrefix()+"_singularplural"); 
+					    ResultSet rs = stmt.executeQuery();
+					    while(rs.next()){
+					    	singularPluralProvider.addSingular(rs.getString("singular"), rs.getString("plural"));
+					    	singularPluralProvider.addPlural(rs.getString("plural"), rs.getString("singular"));
+					    }					    
 					} catch (Exception e) {
 						log(LogLevel.ERROR, "Failed to connect to the database "+Configuration.databaseName);
 					} finally{
@@ -591,5 +599,12 @@ public class BasicConfig extends AbstractModule {
 		this.version = version;
 	}
 	
+	public void setDatabaseTablePrefix(String databaseTablePrefix) {
+		this.databaseTablePrefix = databaseTablePrefix;
+	}
+	
+	public String getDatabaseTablePrefix() {
+		return this.databaseTablePrefix;
+	}
 	
 }

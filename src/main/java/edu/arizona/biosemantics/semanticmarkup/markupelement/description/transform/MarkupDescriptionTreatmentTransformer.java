@@ -59,8 +59,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.S
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
-
-
 /**
  * Transforms the treatments by semantically marking up the description treatment element of a treatment
  * This can be used for the second and hence the 'markup' application for the iPlant integration
