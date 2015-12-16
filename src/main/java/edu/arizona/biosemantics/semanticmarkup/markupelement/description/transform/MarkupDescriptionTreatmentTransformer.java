@@ -435,6 +435,8 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 					glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 			}
 		}
+		
+		//glossary.addEntry("distance", "character");
 	
 	}
 	

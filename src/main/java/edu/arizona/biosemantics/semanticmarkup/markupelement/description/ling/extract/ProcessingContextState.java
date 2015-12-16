@@ -176,9 +176,10 @@ public class ProcessingContextState implements Cloneable {
 
 	/**
 	 * @param unassignedCharacter to set
+	 * 
 	 */
-	public void setUnassignedCharacter(String unassignedCharacter) {
-		this.unassignedCharacter = unassignedCharacter;
+	public void setUnassignedCharacter(String unassignedCharacterInSingularForm) {
+		this.unassignedCharacter = unassignedCharacterInSingularForm;
 	}
 
 	/**
@@ -320,8 +321,12 @@ public class ProcessingContextState implements Cloneable {
 		return unassignedCharacters;
 	}
 
+	public void addUnassignedCharacters(Character character){
+		unassignedCharacters.add(character);
+	}
 	/**
 	 * @param unassignedCharacters to set
+	 * 
 	 */
 	public void setUnassignedCharacters(List<Character> unassignedCharacters) {
 		this.unassignedCharacters = unassignedCharacters;

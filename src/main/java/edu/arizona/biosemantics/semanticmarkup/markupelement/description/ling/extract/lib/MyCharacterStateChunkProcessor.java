@@ -78,7 +78,7 @@ public class MyCharacterStateChunkProcessor extends AbstractChunkProcessor {
 		if(parents.isEmpty()) {
 			for(Element element : elements)
 				if(element.isCharacter())
-					processingContextState.getUnassignedCharacters().add((Character)element);
+					processingContextState.addUnassignedCharacters((Character)element);
 		}
 		if(!elements.isEmpty()){ //elements may be empty when processed a character-character chunk e.g. length
 			processingContextState.setLastElements(elements);

@@ -251,7 +251,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						String character = characterStateChunk.getProperty("characterName");
 						Chunk state = characterStateChunk.getChunkDFS(ChunkType.STATE);
 						if(character.compareTo("character")==0){
-							processingContextState.setUnassignedCharacter(state.getTerminalsText());
+							processingContextState.setUnassignedCharacter(inflector.getSingular(state.getTerminalsText()));
 						}else{
 						
 							LinkedHashSet<Chunk> modifierChunks = getModifiersOf(characterStateChunk, subjectChunk);
@@ -787,7 +787,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			character.appendModifier(modifier.getTerminalsText());
 
 		if(parents.isEmpty())
-			processingContextState.getUnassignedCharacters().add(character);
+			processingContextState.addUnassignedCharacters(character);
 		for(BiologicalEntity parentStructure : parents) {
 			parentStructure.addCharacter(character);
 		}

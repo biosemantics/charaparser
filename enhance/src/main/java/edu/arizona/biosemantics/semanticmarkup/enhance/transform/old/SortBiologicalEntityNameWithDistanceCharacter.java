@@ -10,7 +10,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
 
 /**
  * If biological entity contains a character distance = ?, and the biological entity has a name containing a hyphen:
- * Sort the parts of the name separted by the hyphen alphabetically.
+ * Sort the parts of the name separated by the hyphen alphabetically.
  */
 public class SortBiologicalEntityNameWithDistanceCharacter extends AbstractTransformer {
 	

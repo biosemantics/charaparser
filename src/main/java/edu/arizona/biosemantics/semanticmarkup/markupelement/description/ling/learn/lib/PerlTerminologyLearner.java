@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -45,12 +46,15 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.T
 
 /**
  * PerlTerminologyLearner learns using the previous charaparser perl part
+ * The Markup run reads the results from the database tables populated by perl to continue the character level markup
+ * The description text that perl processes (from the temp folder) is what need to be updated if any normalization step is needed for various types of descriptions.
  * @author rodenhausen
  */
 public class PerlTerminologyLearner implements ITerminologyLearner {
 
 	protected Set<String> taxonNames;
 	protected Set<String> sentences;
+	//
 	protected Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker;
 	protected List<String> adjnouns;
 	protected Map<String, String> adjnounsent;
@@ -86,6 +90,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private Map<String, AdjectiveReplacementForNoun> adjectiveReplacementsForNouns;
 	private String perlDirectory;
 	private ConnectionPool connectionPool;
+	private AllWordsLearner allWordsLearner;
 
 	/**
 	 * @param temporaryPath
@@ -146,6 +151,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 			//create the files
 			this.pm = new PhraseMarker(glossary, inflector);
+			
+			//create tables
+			createTablesNeededForPerl(descriptionsFiles);
+			//dehyphen and update descriptionFiles
+			allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, connectionPool, databasePrefix);
+			allWordsLearner.learn(descriptionsFiles);
+			
 			writeTreatmentsToFiles(descriptionsFiles, inDirectory);
 
 			//run the perl script	
@@ -153,7 +165,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 			this.readResults(descriptionsFiles);
 
-		}catch(IOException e) {
+		}catch(Exception e) {
 			log(LogLevel.ERROR, "Problem with output/input or calling of perl", e);
 			throw new LearnException();
 		}
@@ -716,7 +728,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " 
 				+ this.databaseUser + " " + this.databasePassword + " " + this.databasePrefix + " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
-		createTablesNeededForPerl(descriptionsFiles);
+		
 		collectTaxonIdentifications(descriptionsFiles);
 		runCommand(command);
 	}
@@ -741,13 +753,12 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				stmt.execute(cleanupQuery);
 				stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, "
 						+ "dhword varchar(150), inbrackets int default 0) CHARACTER SET utf8 engine=innodb");
-				AllWordsLearner allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, connectionPool, databasePrefix);
-				allWordsLearner.learn(descriptionsFiles);
+							
 				stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(200), semanticrole varchar(2), savedid varchar(40), "
 						+ "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");  
 				stmt.execute("create table if not exists " + this.databasePrefix + "_taxonnames (name varchar(100), primary key(name)) CHARACTER SET utf8 engine=innodb");
 			}
-		} catch(SQLException | ClassNotFoundException e) {
+		} catch(SQLException e) {
 			log(LogLevel.ERROR, "problem initalizing tables", e);
 			throw new LearnException();
 		}
@@ -851,7 +862,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 				log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
 				BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(treatmentFile), "UTF-8"));
-				description.setText(pm.markPhrases(description.getText().replaceAll("[\\n\\r]", " ").replaceAll("\\s+", " ").trim()));
+				
+				//deal with hypens
+				String text = updateHyphenedWords(description.getText().replaceAll("[\\n\\r]", " ").replaceAll("\\s+", " ").trim(), this.allWordsLearner.getDehypenHash());
+				
+				//mark phrases
+				text = pm.markPhrases(text);
+				
+				description.setText(text);
 
 				fileWriter.write(description.getText() + "\n");
 				fileWriter.close();
@@ -861,6 +879,30 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		}
 	}
 
+	private String updateHyphenedWords (String text, HashMap<String, String> dephyened){
+		String[] words = text.split("\\s+");
+		StringBuffer updated = new StringBuffer();
+		
+		for(String word: words){
+			String key = word.replaceAll("[\\p{Punct}&&[^_-]]", "");
+			if(word.indexOf(key)>=0){
+				String beforeKey = word.substring(0, word.indexOf(key));
+				String afterKey = word.substring(word.indexOf(key)+key.length());
+				if(dephyened.containsKey(key.toLowerCase())){
+					String dehyphened = dephyened.get(key.toLowerCase());
+					if(Character.isUpperCase(key.charAt(0))){
+						dehyphened = WordUtils.capitalize(dehyphened);
+					}
+					word = beforeKey+dehyphened+afterKey;
+				}
+			}
+			updated.append(word);
+			updated.append(" ");
+			
+		}
+		return updated.toString().trim();
+		
+	}
 
 	@Override
 	public Set<String> getSentences() {
@@ -993,4 +1035,5 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	public Map<String, AdjectiveReplacementForNoun> getAdjectiveReplacementsForNouns() {
 		return this.adjectiveReplacementsForNouns;
 	}
+	
 }

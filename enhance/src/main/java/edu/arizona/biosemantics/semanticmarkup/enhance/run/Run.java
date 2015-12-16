@@ -174,6 +174,10 @@ public class Run {
 		renames.put("count", "quantity");
 		renames.put("atypical_count", "atypical_quantity");
 		renames.put("color", "coloration");
+		renames.put("lengths", "length");
+		renames.put("widths", "width");
+		renames.put("heights", "height");
+		renames.put("sizes", "size");
 		IGlossary glossary = new InMemoryGlossary();
 		initGlossary(glossary, inflector, taxonGroup);
 		Set<String> lifeStyles = glossary.getWordsInCategory("life_style");
