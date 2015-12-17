@@ -192,8 +192,8 @@ public class BasicConfig extends AbstractModule {
 					    PreparedStatement stmt = conn.prepareStatement("select singular, plural from "+ getDatabaseTablePrefix()+"_singularplural"); 
 					    ResultSet rs = stmt.executeQuery();
 					    while(rs.next()){
-					    	singularPluralProvider.addSingular(rs.getString("singular"), rs.getString("plural"));
-					    	singularPluralProvider.addPlural(rs.getString("plural"), rs.getString("singular"));
+					    	singularPluralProvider.addSingular(rs.getString("plural"), rs.getString("singular"));
+					    	singularPluralProvider.addPlural(rs.getString("singular"), rs.getString("plural"));
 					    }					    
 					} catch (Exception e) {
 						log(LogLevel.ERROR, "Failed to connect to the database "+Configuration.databaseName);
