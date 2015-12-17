@@ -23,11 +23,11 @@ public class CSVKnowsPartOf implements KnowsPartOf {
 	private KnowsSynonyms knowsSynonyms;
 	private IInflector inflector;
 
-	public CSVKnowsPartOf(KnowsSynonyms knowsSynonyms, IInflector inflector) {
+	public CSVKnowsPartOf(String partOfFile, KnowsSynonyms knowsSynonyms, IInflector inflector) {
 		this.inflector = inflector;
 		this.knowsSynonyms = knowsSynonyms;
 		partOfMap = new HashMap<String, Set<String>>();
-		try(CSVReader reader = new CSVReader(new FileReader("part-of.csv"))) {
+		try(CSVReader reader = new CSVReader(new FileReader(partOfFile))) {
 			List<String[]> lines = reader.readAll();
 			
 			for(String[] line : lines) {

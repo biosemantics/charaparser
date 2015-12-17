@@ -18,9 +18,9 @@ public class CSVKnowsSynonyms implements KnowsSynonyms {
 	private IInflector inflector;
 	private Map<String, Set<SynonymSet>> synonymSetsMap = new HashMap<String, Set<SynonymSet>>();
 	
-	public CSVKnowsSynonyms(IInflector inflector) {
+	public CSVKnowsSynonyms(String synonymsFile, IInflector inflector) {
 		this.inflector = inflector;
-		try(CSVReader reader = new CSVReader(new FileReader("synonyms.csv"))) {
+		try(CSVReader reader = new CSVReader(new FileReader(synonymsFile))) {
 			List<String[]> lines = reader.readAll();
 			for(String[] line : lines) {
 				String preferredTerm = line[0].trim().toLowerCase();

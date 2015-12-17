@@ -76,6 +76,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecif
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveOrphanRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveSynonyms;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SimpleRemoveSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.CreateOrPopulateWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.ReplaceNegationCharacterByNegationOrAbsence;
@@ -256,22 +257,24 @@ public class Run {
 			}
 		});*/
 
-		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms(inflector);
+		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("synonyms.csv", inflector);
 		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
-				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
-				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
+				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
-				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
-				new CSVKnowsPartOf(csvKnowsSynonyms, inflector), 
+				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), 
 				csvKnowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
 		//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
 		//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
 		//		tokenizer, new CollapseBiologicalEntityToName(), inflector);
+		
+		run.addTransformer(new SimpleRemoveSynonyms(csvKnowsSynonyms));
 		run.addTransformer(transformer1);
 		run.addTransformer(transformer2);
 		run.addTransformer(transformer3);
