@@ -1,4 +1,5 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.know.lib;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;

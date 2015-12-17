@@ -4,6 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,6 +183,29 @@ public class BasicConfig extends AbstractModule {
 			  bind(IInflector.class).toProvider(new Provider<IInflector>() {
 				@Override
 				public IInflector get() {
+					Connection conn = null;
+					try {
+						Class.forName("com.mysql.jdbc.Driver");
+						String URL = "jdbc:mysql://localhost/" + Configuration.databaseName + "?user=" + Configuration.databaseUser + "&password=" + 
+	    					Configuration.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
+					    conn = DriverManager.getConnection(URL);
+					    PreparedStatement stmt = conn.prepareStatement("select singular, plural from "+ getDatabaseTablePrefix()+"_singularplural"); 
+					    ResultSet rs = stmt.executeQuery();
+					    while(rs.next()){
+					    	singularPluralProvider.addSingular(rs.getString("plural"), rs.getString("singular"));
+					    	singularPluralProvider.addPlural(rs.getString("singular"), rs.getString("plural"));
+					    }					    
+					} catch (Exception e) {
+						log(LogLevel.ERROR, "Failed to connect to the database "+Configuration.databaseName);
+					} finally{
+						if(conn!=null)
+							try {
+								conn.close();
+							} catch (SQLException e) {
+								log(LogLevel.ERROR, "Failed to close the connection to "+Configuration.databaseName);
+							}
+					}
+	        		
 					return new SomeInflector(wordNetPOSKnowledgeBase, singularPluralProvider.getSingulars(), singularPluralProvider.getPlurals());
 				}
 			  }).in(Singleton.class);

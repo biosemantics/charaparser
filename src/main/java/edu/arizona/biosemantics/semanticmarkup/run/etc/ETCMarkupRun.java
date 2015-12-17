@@ -21,6 +21,7 @@ import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.enhance.run.Run;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.CreateOrPopulateWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharactersToAlternativeParent;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveNegationOrAdverbBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.OrderBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.RemoveUselessCharacterConstraint;
@@ -94,7 +95,7 @@ public class ETCMarkupRun extends AbstractRun {
 		run.addTransformer(new SplitCompoundBiologicalEntity(inflector));
 		run.addTransformer(new SplitCompoundBiologicalEntitiesCharacters(inflector));
 		run.addTransformer(new SortBiologicalEntityNameWithDistanceCharacter());
-		//run.addTransformer(new MoveCharactersToAlternativeParent());
+		run.addTransformer(new MoveCharactersToAlternativeParent());
 		run.addTransformer(new ReplaceTaxonNameByWholeOrganism());
 		run.addTransformer(new CreateOrPopulateWholeOrganism(glossary.getWordsInCategory("life_style"), "growth_form"));
 		run.addTransformer(new CreateOrPopulateWholeOrganism(glossary.getWordsInCategory("duration"), "duration"));

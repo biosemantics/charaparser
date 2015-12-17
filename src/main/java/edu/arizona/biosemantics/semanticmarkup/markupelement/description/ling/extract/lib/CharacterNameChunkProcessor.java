@@ -69,7 +69,7 @@ public class CharacterNameChunkProcessor extends AbstractChunkProcessor {
 			
 			
 		} else {
-			processingContextState.setUnassignedCharacter(chunk.getTerminalsText().toLowerCase());
+			processingContextState.setUnassignedCharacter(inflector.getSingular(chunk.getTerminalsText().toLowerCase()));
 		}
 		return new LinkedList<Element>();
 	}

@@ -133,7 +133,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			if(parents.isEmpty()) {
 				for(Element element : characters)
 					if(element.isCharacter())
-						processingContextState.getUnassignedCharacters().add((Character)element);
+						processingContextState.addUnassignedCharacters((Character)element);
 			}
 		}/* else {
 			for(DescriptionTreatmentElement parent : parents) {

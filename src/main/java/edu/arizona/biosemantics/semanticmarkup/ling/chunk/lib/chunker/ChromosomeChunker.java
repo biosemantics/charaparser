@@ -22,6 +22,11 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 
 /**
  * ChromosomeChunker chunks by handling chromosome describing terminals
+ * 
+ * x= means basal number of chromosomes
+   n= number of chromosomes in haploid state
+   2n= two sets of chromosomes
+   n=2n= number of chromosomes in apogamous condition
  * @author rodenhausen
  */
 public class ChromosomeChunker extends AbstractChunker {
@@ -48,16 +53,17 @@ public class ChromosomeChunker extends AbstractChunker {
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
-		for(int i=0; i<terminals.size()-1; i++) {
+		for(int i=0; i<=terminals.size()-1; i++) {
 			AbstractParseTree terminal = terminals.get(i);
 			
 			if(terminal.getTerminalsText().matches("\\d{0,1}[xn]=.*")) {
 				//chromosome count 2n=, FNA specific
 				Chunk chromosomeChunk = new Chunk(ChunkType.CHROM);
 				LinkedHashSet<Chunk> chromosomeChunkChildren = new LinkedHashSet<Chunk>();
-				for(; i<terminals.size()-1; i++){
+				for(; i<=terminals.size()-1; i++){
 					terminal = terminals.get(i);
-					if(!chunkCollector.getChunk(terminal).containsChunkType(ChunkType.ORGAN)){ //collect all subsequent terminals until an organ is encountered.
+					if(!chunkCollector.getChunk(terminal).containsChunkType(ChunkType.ORGAN) &&
+							! (terminal.getTerminalsText().trim().matches("[\\.;]") && i == terminals.size()-1)){ //collect all subsequent terminals until an organ is encountered.
 						chromosomeChunkChildren.add(terminal);
 						chromosomeChunk.setChunks(chromosomeChunkChildren);
 						chunkCollector.addChunk(chromosomeChunk);

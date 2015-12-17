@@ -28,13 +28,13 @@ public class StandardizeQuantityPresence extends AbstractTransformer {
 				character.setAttribute("value", value.replaceAll("0", value));
 			}
 			
-			if(negation.equals("true") && name.equals("presence") && value.equals("absent")) {
+			if(negation!=null && negation.equals("true") && name.equals("presence") && value.equals("absent")) {
 				value = "present";
 				negation = "false";
 				character.setAttribute("value", value);
 				character.setAttribute("negation", negation);
 			}
-			if(negation.equals("true") && name.equals("presence") && value.equals("present")) {
+			if(negation!=null && negation.equals("true") && name.equals("presence") && value.equals("present")) {
 				value = "absent";
 				negation = "false";
 				character.setAttribute("value", value);

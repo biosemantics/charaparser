@@ -25,6 +25,11 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.B
 
 /**
  * ChromChunkProcessor processes chunks of ChunkType.CHROM
+ * 
+ *  * x= means basal number of chromosomes
+   n= number of chromosomes in haploid state
+   2n= two sets of chromosomes
+   n=2n= number of chromosomes in apogamous condition
  * @author rodenhausen
  */
 public class ChromChunkProcessor extends AbstractChunkProcessor {
@@ -57,15 +62,22 @@ public class ChromChunkProcessor extends AbstractChunkProcessor {
 	protected List<BiologicalEntity> processChunk(Chunk chunk, ProcessingContext processingContext) {
 		List<BiologicalEntity> result = new LinkedList<BiologicalEntity>();
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
-		String[] parts = chunk.getTerminalsText().split("=");
-		if(parts.length==2) {
-			String value = parts[1].replaceFirst("[.;, ]+\\s*$", "").replaceAll("\\bor\\b", "");
+		int split = chunk.getTerminalsText().lastIndexOf("=");
+		String constraint = "";
+		String value = "";
+		if(split > 0){
+			constraint = chunk.getTerminalsText().substring(0, split);
+			value = chunk.getTerminalsText().substring(split+1);
+			value = value.replaceFirst("[.;, ]+\\s*$", "").replaceAll("\\bor\\b", ",").replaceAll("(\\s*,\\s*)+", ",");
+		}		
+		if(!value.isEmpty() && !constraint.isEmpty()){
 			//String content = chunk.getTerminalsText().replaceAll("[^\\d()\\[\\],+ -]", "").trim();
 			//Element structure = new Element("chromosome");
 			BiologicalEntity structure = new BiologicalEntity();
 			structure.setName("chromosome");
 			structure.setNameOriginal("");
 			structure.setType("structure");
+			structure.setConstraint(constraint);
 			structure.setId("o" + String.valueOf(processingContext.fetchAndIncrementStructureId(structure)));
 			result.add(structure);
 			

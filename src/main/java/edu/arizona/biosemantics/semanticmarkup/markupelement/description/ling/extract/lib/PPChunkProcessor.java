@@ -111,7 +111,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 				//object.containsChunkType(ChunkType.ORGAN)
 				){//PREPOSITION: [CHARACTER_STATE: characterName->character; [STATE: [length]], of]
 				//save character
-				processingContextState.setUnassignedCharacter(preposition.getChildChunk(ChunkType.CHARACTER_STATE).getTerminalsText());
+				processingContextState.setUnassignedCharacter(inflector.getSingular(preposition.getChildChunk(ChunkType.CHARACTER_STATE).getTerminalsText()));
 				//create biological entity elements for the organs
 				ArrayList<Chunk> organs = new ArrayList<Chunk>();
 				organs.addAll(splitObject(object));

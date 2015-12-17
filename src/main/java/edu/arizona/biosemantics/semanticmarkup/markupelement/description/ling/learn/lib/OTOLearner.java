@@ -271,6 +271,24 @@ public class OTOLearner implements ILearner {
 		return communityDownload;
 	}
 
+	public static void main(String[] args) {
+		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
+		TaxonGroup taxonGroup = TaxonGroup.SPIDER;
+		otoClient.open();
+		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());
+		
+		boolean downloadSuccessful = false;
+		GlossaryDownload glossaryDownload = null;
+		try {
+			glossaryDownload = futureGlossaryDownload.get();
+			downloadSuccessful = glossaryDownload != null;
+		} catch(Throwable t) {
+			t.printStackTrace();
+		}
+		
+		otoClient.close();
+	}
+	
 	private GlossaryDownload getGlossaryDownload() throws ClassNotFoundException, IOException {
 		otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());

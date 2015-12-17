@@ -113,7 +113,7 @@ public class CountChunkProcessor extends AbstractChunkProcessor {
 		} else {
 			for(Element ce: characterElement){
 				if(ce.isCharacter()){
-					processingContextState.getUnassignedCharacters().add((Character)ce);
+					processingContextState.addUnassignedCharacters((Character)ce);
 				}
 			}
 		}

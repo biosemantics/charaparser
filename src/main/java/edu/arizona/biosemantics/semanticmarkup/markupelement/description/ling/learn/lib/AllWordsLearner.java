@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.ArrayList;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -27,6 +29,7 @@ public class AllWordsLearner {
 	private IGlossary glossary;
 	private String tablename;
 	private ConnectionPool connectionPool;
+	private HashMap<String, List<Token>> fileContent = new HashMap<String, List<Token>>();
 	
 	@Inject
 	public AllWordsLearner(@Named("WordTokenizer")ITokenizer tokenizer,
@@ -50,9 +53,7 @@ public class AllWordsLearner {
 			if(word.contains("-")) {
 				String deHyphenizedWord = normalFormat(word).replaceAll("-", "_");
 				deHyphenizedWords.put(word, deHyphenizedWord);
-			} else {
-				deHyphenizedWords.put(word,  word);
-			}
+			} 
 		}
 		
 		try {
@@ -61,7 +62,17 @@ public class AllWordsLearner {
 			log(LogLevel.ERROR, "Problem to feed dehyphenized words to DB", e);
 		}
 	}
+	
+	/* update description text for perl
+	 * replace some hyphen-ed words with dehyphened words: cau-lin => caulin
+	 * while keep others intact, e.g.,  leaf-blade
+	 */
+	public HashMap<String, String> getDehypenHash(){
+		return deHyphenizedWords;
+	}
 
+		
+		
 	private void createAllWordsTable() throws SQLException {
 		try(Connection connection = connectionPool.getConnection()) {
 			try(Statement statement = connection.createStatement()) {
@@ -103,17 +114,23 @@ public class AllWordsLearner {
      */
 	private void countWords(List<AbstractDescriptionsFile> descriptionsFiles) {
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
-			String descriptionText = "";
+			//String descriptionText = "";
+			List<Token> tokensInFile = new ArrayList<Token>();
+			int order = 0;
 			for(Description description : descriptionsFile.getDescriptions()) {
-				descriptionText += description.getText() + " ";
+				//descriptionText += description.getText() + " ";
+				List<Token> tokensInDscrpt = tokenizer.tokenize(description.getText());
+				//collect tokens
+				tokensInFile.addAll(tokensInDscrpt);
+				//collect file content as tokens -- to be updated with dehyphened words
+				fileContent.put(descriptionsFile.getName()+"_"+(order++), tokensInDscrpt);
 			}
-			List<Token> tokens = tokenizer.tokenize(descriptionText);
 							
 			int lround = 0;
             int lsquare = 0;
             int lcurly = 0;
             int inbracket = 0;
-            for(Token token : tokens){
+            for(Token token : tokensInFile){
             	String wordcp = token.getContent().trim().toLowerCase();
                 if(wordcp.equals("(")) lround++;
                 else if(wordcp.equals(")")) lround--;
