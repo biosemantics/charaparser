@@ -64,7 +64,6 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologi
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharacterToValue;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharacters;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CreateRelationFromCharacterConstraint;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MapOntologyIdsTest;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveModifierCharactersToBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveRelationToBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveDuplicateValues;
