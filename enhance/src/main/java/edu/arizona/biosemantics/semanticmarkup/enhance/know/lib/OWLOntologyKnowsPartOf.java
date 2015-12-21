@@ -7,7 +7,7 @@ public class OWLOntologyKnowsPartOf implements KnowsPartOf {
 
 	private IInflector inflector;
 
-	public OWLOntologyKnowsPartOf(IInflector inflector) {
+	public OWLOntologyKnowsPartOf(String ontology, IInflector inflector) {
 		this.inflector = inflector;
 	}
 
