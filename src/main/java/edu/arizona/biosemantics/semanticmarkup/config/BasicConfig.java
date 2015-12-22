@@ -21,9 +21,11 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 import com.google.inject.name.Names;
 
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
@@ -180,35 +182,7 @@ public class BasicConfig extends AbstractModule {
 			  final WordNetPOSKnowledgeBase wordNetPOSKnowledgeBase = new WordNetPOSKnowledgeBase(Configuration.wordNetSourceDirectory, false);
 			  final SingularPluralProvider singularPluralProvider = new SingularPluralProvider();
 			  bind(IPhraseMarker.class).to(PhraseMarker.class).in(Singleton.class);
-			  bind(IInflector.class).toProvider(new Provider<IInflector>() {
-				@Override
-				public IInflector get() {
-					Connection conn = null;
-					try {
-						Class.forName("com.mysql.jdbc.Driver");
-						String URL = "jdbc:mysql://localhost/" + Configuration.databaseName + "?user=" + Configuration.databaseUser + "&password=" + 
-	    					Configuration.databasePassword + "&connecttimeout=0&sockettimeout=0&autoreconnect=true";
-					    conn = DriverManager.getConnection(URL);
-					    PreparedStatement stmt = conn.prepareStatement("select singular, plural from "+ getDatabaseTablePrefix()+"_singularplural"); 
-					    ResultSet rs = stmt.executeQuery();
-					    while(rs.next()){
-					    	singularPluralProvider.addSingular(rs.getString("plural"), rs.getString("singular"));
-					    	singularPluralProvider.addPlural(rs.getString("singular"), rs.getString("plural"));
-					    }					    
-					} catch (Exception e) {
-						log(LogLevel.ERROR, "Failed to connect to the database "+Configuration.databaseName);
-					} finally{
-						if(conn!=null)
-							try {
-								conn.close();
-							} catch (SQLException e) {
-								log(LogLevel.ERROR, "Failed to close the connection to "+Configuration.databaseName);
-							}
-					}
-	        		
-					return new SomeInflector(wordNetPOSKnowledgeBase, singularPluralProvider.getSingulars(), singularPluralProvider.getPlurals());
-				}
-			  }).in(Singleton.class);
+			  bind(IInflector.class).toProvider(InflectorProvider.class).in(Singleton.class);
 			  bind(ICharacterKnowledgeBase.class).to(LearnedCharacterKnowledgeBase.class).in(Singleton.class);
 			  //bind(IOrganStateKnowledgeBase.class).to(LearnedOrganStateKnowledgeBase.class).in(Singleton.class);
 			  bind(IPOSKnowledgeBase.class).toInstance(wordNetPOSKnowledgeBase);
@@ -607,4 +581,42 @@ public class BasicConfig extends AbstractModule {
 		return this.databaseTablePrefix;
 	}
 	
+	private static class InflectorProvider implements Provider<IInflector> {
+		private ConnectionPool connectionPool;
+		private IInflector instance;
+		private String databaseTablePrefix;
+		private SingularPluralProvider singularPluralProvider;
+		private IPOSKnowledgeBase posKnowledgeBase;
+		@Inject
+		public InflectorProvider(ConnectionPool connectionPool, @Named("DatabasePrefix") String databaseTablePrefix, SingularPluralProvider singularPluralProvider, 
+				IPOSKnowledgeBase posKnowledgeBase) {
+			this.connectionPool = connectionPool;
+			this.databaseTablePrefix = databaseTablePrefix;
+			this.singularPluralProvider = singularPluralProvider;
+			this.posKnowledgeBase = posKnowledgeBase;
+		}
+		@Override
+		public IInflector get() {
+			if(instance == null)
+				initializeInflector();
+			return instance;
+		}
+		
+		private void initializeInflector() {
+			log(LogLevel.INFO, "Initialize inflector from singular plural table.");
+			try {
+				Connection connection = connectionPool.getConnection();
+				PreparedStatement statement = connection.prepareStatement("select singular, plural from " + databaseTablePrefix + "_singularplural"); 
+				ResultSet rs = statement.executeQuery();
+			    while(rs.next()){
+			    	singularPluralProvider.addSingular(rs.getString("plural"), rs.getString("singular"));
+			    	singularPluralProvider.addPlural(rs.getString("singular"), rs.getString("plural"));
+			    }
+			} catch(SQLException e) {
+				log(LogLevel.INFO, "Could not initialize inflector from singular plural table. Table only exists in markup not in learn phase.");
+			}
+			instance = new SomeInflector(posKnowledgeBase, singularPluralProvider.getSingulars(), singularPluralProvider.getPlurals());
+			log(LogLevel.INFO, "Finished initialize inflector from singular plural table.");
+		}
+	}
 }
