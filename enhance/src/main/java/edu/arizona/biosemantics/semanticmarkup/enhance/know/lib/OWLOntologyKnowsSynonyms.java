@@ -7,9 +7,12 @@ import java.util.Set;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLAnnotation;
+import org.semanticweb.owlapi.model.OWLAnnotationAssertionAxiom;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
+import org.semanticweb.owlapi.model.OWLAnnotationValue;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassAxiom;
 import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLLiteral;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -21,6 +24,8 @@ import org.semanticweb.owlapi.search.EntitySearcher;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.transform.lib.SomeInflector;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.AnnotationProperty;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 
@@ -52,79 +57,53 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 	@Override
 	public Set<SynonymSet> getSynonyms(String term) {
 		Set<OWLClass> owlClasses = owlOntology.getClassesInSignature(Imports.INCLUDED);
-		OWLClass owlClass = getOwlClassWithLabel(term, owlClasses);
-		if(owlClass == null) 
-			owlClass = getOwlClassWithLabel(inflector.getSingular(term), owlClasses);
+		OWLClass owlClass = getOwlClassWithLabelOrSynonym(term, owlClasses);
 		
-		Set<OWLClass> synonymOwlClasses = this.getSynonyms(owlClass, owlClasses);
-		Set<String> synonyms = new HashSet<String>();
 		String preferredTerm = term;
-		synonyms.add(term);
-		for(OWLClass synonymOwlClass : synonymOwlClasses) {
-			String label = getLabel(synonymOwlClass);
-			synonyms.add(label);
-			if(label.length() < preferredTerm.length() || 
-					(label.length() == preferredTerm.length() && label.compareTo(preferredTerm) < 0)) {
-				preferredTerm = label;
-			}
+		Set<String> synonyms = new HashSet<String>();
+		if(owlClass != null) {
+			preferredTerm = getLabel(owlClass);
+			synonyms = getSynonyms(owlClass);
 		}
-		synonyms.remove(preferredTerm);
 		
-		// can we in ontology file differentiate synonym sets?
 		SynonymSet synonymSet = new SynonymSet(preferredTerm, synonyms);	
 		Set<SynonymSet> result = new HashSet<SynonymSet>();
 		result.add(synonymSet);
 		return result;
 	}
 	
-	private Set<OWLClass> getSynonyms(OWLClass owlClass, Set<OWLClass> owlClasses) {
-		String owlClassLabel = getLabel(owlClass);
-		Set<OWLClass> synonymToTermClasses = new HashSet<OWLClass>();
-		Set<OWLClass> termToSynonymClasses = new HashSet<OWLClass>();
-		if(owlClass != null) {
-			for(OWLClass possibleSynonym : owlClasses) {
-				String possibleSynonymLabel = getLabel(possibleSynonym);
-				OWLAnnotation synonymAnnotation = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(
-						exactSynonymProperty, owlOntologyManager.getOWLDataFactory().getOWLLiteral(
-								possibleSynonymLabel, "en"));
-				OWLAxiom synonymAxiom = owlOntologyManager.getOWLDataFactory().getOWLAnnotationAssertionAxiom(
-						owlClass.getIRI(), synonymAnnotation);
-				if(owlOntology.containsAxiom(synonymAxiom, 
-						Imports.INCLUDED, AxiomAnnotations.CONSIDER_AXIOM_ANNOTATIONS)) {
-					synonymToTermClasses.add(possibleSynonym);
+	private Set<String> getSynonyms(OWLClass owlClass) {
+		Set<String> synonyms = new HashSet<String>();
+		for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology)) {
+			if(axiom.getProperty().equals(this.exactSynonymProperty)) {
+				OWLAnnotationValue annotationValue = axiom.getValue();
+				if(annotationValue instanceof OWLLiteral) {
+					String value = ((OWLLiteral) annotationValue).getLiteral();
+					synonyms.add(value);
 				}
-				
-				synonymAnnotation = owlOntologyManager.getOWLDataFactory().getOWLAnnotation(
-						exactSynonymProperty, owlOntologyManager.getOWLDataFactory().getOWLLiteral(
-								owlClassLabel, "en"));
-				synonymAxiom = owlOntologyManager.getOWLDataFactory().getOWLAnnotationAssertionAxiom(
-						possibleSynonym.getIRI(), synonymAnnotation);
-				if(owlOntology.containsAxiom(synonymAxiom, 
-						Imports.INCLUDED, AxiomAnnotations.CONSIDER_AXIOM_ANNOTATIONS)) {
-					termToSynonymClasses.add(possibleSynonym);
-				}
-			}	
-		}
-		
-		// would have to search recursively for each synonym found for new synonyms of those?
-		// how to determine preferred term?
-		// is there a more efficient way to search than iterating all classes and seeing axiom is contained?
-		Set<OWLClass> synonyms = new HashSet<OWLClass>();
-		synonyms.addAll(synonymToTermClasses);
-		synonyms.addAll(termToSynonymClasses);
-		
-		for(OWLClass synonym : new HashSet<OWLClass>(synonyms)) {
-			synonyms.addAll(getSynonyms(synonym, owlClasses));
+			}
 		}
 		return synonyms;
 	}
-	
-	private OWLClass getOwlClassWithLabel(String label, Set<OWLClass> owlClasses) {
+
+	private OWLClass getOwlClassWithLabelOrSynonym(String term, Set<OWLClass> owlClasses) {
 		for(OWLClass owlClass : owlClasses) {
 			String classLabel = getLabel(owlClass);
 			if(classLabel != null) {
-				if(classLabel.equals(label)) {
+				if(classLabel.equals(term)) {
 					return owlClass;
+				}
+			}
+			
+			for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology)) {
+				if(axiom.getProperty().equals(this.exactSynonymProperty)) {
+					OWLAnnotationValue annotationValue = axiom.getValue();
+					if(annotationValue instanceof OWLLiteral) {
+						String value = ((OWLLiteral) annotationValue).getLiteral();
+						if(value.equals(term)) {
+							return owlClass;
+						}
+					}
 				}
 			}
 		}
@@ -142,5 +121,26 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 		}
 		return null;
 	}
+	
+	public static void main(String[] args) throws OWLOntologyCreationException {
+		OWLOntologyKnowsSynonyms oks = new OWLOntologyKnowsSynonyms("C:/OntologyOwlFilesTemp/999/on/on.owl", 
+				new IInflector() {
+					@Override
+					public String getSingular(String word) {
+						return word;
+					}
 
+					@Override
+					public String getPlural(String word) {
+						return word;
+					}
+
+					@Override
+					public boolean isPlural(String word) {
+						return false;
+					}
+		});
+		System.out.println(oks.getSynonyms("hello").iterator().next().getPreferredTerm());
+	}
+	
 }

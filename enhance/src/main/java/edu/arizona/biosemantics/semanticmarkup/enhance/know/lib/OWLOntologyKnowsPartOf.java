@@ -91,4 +91,25 @@ public class OWLOntologyKnowsPartOf implements KnowsPartOf {
 		return null;
 	}
 
+	public static void main(String[] args) throws OWLOntologyCreationException {
+		OWLOntologyKnowsPartOf okp = new OWLOntologyKnowsPartOf("C:/OntologyOwlFilesTemp/999/on/on.owl", 
+				new IInflector() {
+					@Override
+					public String getSingular(String word) {
+						return word;
+					}
+
+					@Override
+					public String getPlural(String word) {
+						return word;
+					}
+
+					@Override
+					public boolean isPlural(String word) {
+						return false;
+					}
+		});
+		System.out.println(okp.isPartOf("futbol2", "futbol"));
+		System.out.println(okp.isPartOf("futbol", "futbol2"));
+	}
 }
