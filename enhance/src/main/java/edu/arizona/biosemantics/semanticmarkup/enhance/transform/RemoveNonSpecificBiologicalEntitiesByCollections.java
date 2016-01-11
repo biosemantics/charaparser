@@ -52,6 +52,7 @@ public class RemoveNonSpecificBiologicalEntitiesByCollections extends RemoveNonS
 									child = findChildInPassedStatements(name, document, searchStatements);
 								if(child != null) {
 									constraint = (child + " " + constraint).trim();
+									this.appendInferredConstraint(biologicalEntity, child);
 									biologicalEntity.setAttribute("constraint", constraint);
 									break;
 								}

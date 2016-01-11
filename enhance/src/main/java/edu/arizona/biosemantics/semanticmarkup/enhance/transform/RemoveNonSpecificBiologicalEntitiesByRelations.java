@@ -48,7 +48,8 @@ public class RemoveNonSpecificBiologicalEntitiesByRelations extends RemoveNonSpe
 									parent = collapseBilogicalEntityToName.collapse(toBiologicalEntity);
 							}
 							if(parent != null) {
-								constraint = (parent + " " + constraint).trim();
+								constraint = (parent + " " + constraint).trim();								
+								this.appendInferredConstraint(fromBiologicalEntity, parent);
 								fromBiologicalEntity.setAttribute("constraint", constraint);
 							}
 						}

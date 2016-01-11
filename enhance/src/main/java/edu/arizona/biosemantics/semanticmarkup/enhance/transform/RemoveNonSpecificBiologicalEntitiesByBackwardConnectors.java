@@ -47,6 +47,7 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 						String parent = findParentConnectedByBackwardKeyWords(name, appearance, biologicalEntity, passedStatements, document);
 						if(parent != null) {
 							constraint = (parent + " " + constraint).trim();
+							this.appendInferredConstraint(biologicalEntity, parent);
 							biologicalEntity.setAttribute("constraint", constraint);
 						}
 					}

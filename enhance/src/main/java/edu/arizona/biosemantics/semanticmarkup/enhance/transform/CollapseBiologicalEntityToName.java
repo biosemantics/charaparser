@@ -14,6 +14,7 @@ public class CollapseBiologicalEntityToName extends AbstractTransformer  {
 			String newName = collapse(biologicalEntity);
 			biologicalEntity.setAttribute("name", newName);
 			biologicalEntity.removeAttribute("constraint");
+			biologicalEntity.removeAttribute("inferred_constraint");
 		}
 	}
 	

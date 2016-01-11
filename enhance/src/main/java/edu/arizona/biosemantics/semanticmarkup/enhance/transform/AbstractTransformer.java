@@ -77,15 +77,26 @@ public abstract class AbstractTransformer {
 		return null;
 	}
 	
-	protected void appendConstraint(Element biologicalEntity, String append) {
-		String constraint = biologicalEntity.getAttributeValue("constraint");
+	protected void appendInferredConstraint(Element biologicalEntity, String append) {
+		String constraint = biologicalEntity.getAttributeValue("inferred_constraint");
 		if(constraint == null)
 			constraint = "";
 		if(!constraint.isEmpty())
 			constraint += "; " + append;
 		else
 			constraint += append;
-		biologicalEntity.setAttribute("constraint", constraint);
+		biologicalEntity.setAttribute("inferred_constraint", constraint);
+	}
+	
+	protected void appendConstraint(Element biologicalEntity, String append) {
+		String constraint = biologicalEntity.getAttributeValue("enhanced_constraint");
+		if(constraint == null)
+			constraint = "";
+		if(!constraint.isEmpty())
+			constraint += "; " + append;
+		else
+			constraint += append;
+		biologicalEntity.setAttribute("enhanced_constraint", constraint);
 	}
 	
 	protected void updateRelations(Document document, Element biologicalEntity, Map<String, Element> newBiologicalEntities) {

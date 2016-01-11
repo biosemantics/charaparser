@@ -44,6 +44,7 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 						String parent = findParentConnectedByForwardKeyWords(name, appearance, biologicalEntity, statement, document);
 						if(parent != null) {
 							constraint = (parent + " " + constraint).trim();
+							this.appendInferredConstraint(biologicalEntity, parent);
 							biologicalEntity.setAttribute("constraint", constraint);
 						}
 					}

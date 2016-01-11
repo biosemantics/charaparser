@@ -68,6 +68,7 @@ public class RemoveNonSpecificBiologicalEntitiesByPassedParents extends RemoveNo
 								parent = findParentInPassedStatements(name, document, searchStatements);
 							if(parent != null) {
 								constraint = (parent + " " + constraint).trim();
+								this.appendInferredConstraint(biologicalEntity, parent);
 								biologicalEntity.setAttribute("constraint", constraint);
 								break;
 							}
