@@ -31,3 +31,6 @@ The above two are to standardize the character names
 * Map ontology Ids to all terms used (entities, character states, ...?) to reduce effort down the road
   * This should be a separate module, so it can be optionally put after charaparser, without the other prep steps above. Or make this tool configurable.
  
+###### Use of Schema
+* before enhance: constraint as outputted by charaparser (stated information from text), inferred_constraint unused
+* enhance populates constraint with stated information combined with inferred information in an order and combination that enhance deems best. inferred_constraint holds information added to constraint that was inferred from external resources (not text, e.g. ontologies). That is constraint - inferred_constraint = stated constraint from charaparser output.
