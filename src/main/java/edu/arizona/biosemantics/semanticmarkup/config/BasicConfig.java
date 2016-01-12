@@ -604,14 +604,15 @@ public class BasicConfig extends AbstractModule {
 		
 		private void initializeInflector() {
 			log(LogLevel.INFO, "Initialize inflector from singular plural table.");
-			try {
-				Connection connection = connectionPool.getConnection();
-				PreparedStatement statement = connection.prepareStatement("select singular, plural from " + databaseTablePrefix + "_singularplural"); 
-				ResultSet rs = statement.executeQuery();
-			    while(rs.next()){
-			    	singularPluralProvider.addSingular(rs.getString("plural"), rs.getString("singular"));
-			    	singularPluralProvider.addPlural(rs.getString("singular"), rs.getString("plural"));
-			    }
+			try(Connection connection = connectionPool.getConnection()) {
+				try(PreparedStatement statement = connection.prepareStatement("select singular, plural from " + databaseTablePrefix + "_singularplural")) {
+					try(ResultSet rs = statement.executeQuery()) {
+					    while(rs.next()) {
+					    	singularPluralProvider.addSingular(rs.getString("plural"), rs.getString("singular"));
+					    	singularPluralProvider.addPlural(rs.getString("singular"), rs.getString("plural"));
+					    }
+					}
+				}
 			} catch(SQLException e) {
 				log(LogLevel.INFO, "Could not initialize inflector from singular plural table. Table only exists in markup not in learn phase.");
 			}
