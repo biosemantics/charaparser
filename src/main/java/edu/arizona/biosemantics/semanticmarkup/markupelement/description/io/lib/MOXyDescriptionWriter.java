@@ -33,7 +33,7 @@ public class MOXyDescriptionWriter implements IDescriptionWriter {
 		JAXBContext jaxbContext = JAXBContextFactory.createContext(new Class[] {AbstractDescriptionsFile.class}, properties);
 		this.marshaller = jaxbContext.createMarshaller(); 
 		marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, "http://www.github.com/biosemantics " +
-				"http://raw.githubusercontent.com/biosemantics/schemas/0.0.1/semanticMarkupOutput.xsd");
+				"https://raw.githubusercontent.com/biosemantics/schemas/master/semanticMarkupOutput.xsd");
 	}
 		
 	@Override
