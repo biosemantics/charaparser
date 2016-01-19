@@ -89,14 +89,14 @@ public abstract class AbstractTransformer {
 	}
 	
 	protected void appendConstraint(Element biologicalEntity, String append) {
-		String constraint = biologicalEntity.getAttributeValue("enhanced_constraint");
+		String constraint = biologicalEntity.getAttributeValue("constraint");
 		if(constraint == null)
 			constraint = "";
 		if(!constraint.isEmpty())
 			constraint += "; " + append;
 		else
 			constraint += append;
-		biologicalEntity.setAttribute("enhanced_constraint", constraint);
+		biologicalEntity.setAttribute("constraint", constraint);
 	}
 	
 	protected void updateRelations(Document document, Element biologicalEntity, Map<String, Element> newBiologicalEntities) {
