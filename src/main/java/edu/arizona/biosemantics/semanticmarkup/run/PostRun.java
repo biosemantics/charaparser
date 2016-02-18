@@ -128,7 +128,7 @@ public class PostRun {
 		//ArrayList<File> newFiles = new ArrayList<File> ();
 		int count = 0;
 		for(Document docWKey: containsKey){
-			String keyFileName = FilenameUtils.removeExtension(doc2file.get(docWKey).getName());
+			String keyFileName = FilenameUtils.removeExtension(doc2file.get(docWKey).getName().replace("\\s+", "_"));
 			
 			log(LogLevel.DEBUG, "Processing keys in "+docWKey.getBaseURI());
 			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
