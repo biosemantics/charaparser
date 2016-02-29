@@ -842,6 +842,8 @@ public class OTOLearner implements ILearner {
 		for(edu.arizona.biosemantics.common.ling.know.Term term : mainTerms) {
 			if(term.getCategory().trim().equals(label)) {
 				mainTermsMap.get(label).add(term.getLabel());
+				if(!synonymTermsMap.get(label).containsKey(term.getLabel()))
+					synonymTermsMap.get(label).put(term.getLabel(), new HashSet<String>());
 				synonymTermsMap.get(label).get(term.getLabel()).add(word);
 			}
 		}
