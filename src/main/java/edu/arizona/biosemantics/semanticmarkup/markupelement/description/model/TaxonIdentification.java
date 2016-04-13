@@ -1,5 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.model;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.persistence.oxm.annotations.XmlPath;
@@ -17,7 +18,8 @@ public class TaxonIdentification extends Element {
 	@XmlPath("@" + TaxonIdentificationAttribute.status)
 	private String status;
 	
-	private List<TaxonName> taxonNames;
+	private List<TaxonName> taxonNames = new LinkedList<TaxonName>();
+	private StrainNumber strainNumber =new StrainNumber();
 	/*private List<StrainNumber> strainNumbers;
 	private List<PlaceOfPublication> placeOfPublications;
 	private TaxonHierarchy taxonHierarchy;
@@ -25,6 +27,18 @@ public class TaxonIdentification extends Element {
 	
 	public List<TaxonName> getTaxonNames() {
 		return taxonNames;
+	}
+
+	public boolean hasStrainNumber() {
+		return this.strainNumber.getText()!=null;
+	}
+	
+	public StrainNumber getStrainNumber() {
+		return strainNumber;
+	}
+
+	public void setStrainNumber(StrainNumber strainNumber) {
+		this.strainNumber = strainNumber;
 	}
 
 	public void setTaxonNames(List<TaxonName> taxonNames) {
