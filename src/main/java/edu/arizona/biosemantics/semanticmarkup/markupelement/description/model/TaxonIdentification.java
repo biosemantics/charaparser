@@ -33,7 +33,7 @@ public class TaxonIdentification extends Element {
 	}
 
 	public boolean hasStrainNumber() {
-		return this.strainNumber.getStrainNumber() != null;
+		return strainNumber != null;
 	}
 	
 	public StrainNumber getStrainNumber() {
