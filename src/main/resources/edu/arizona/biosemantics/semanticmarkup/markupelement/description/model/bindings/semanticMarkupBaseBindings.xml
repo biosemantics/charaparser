@@ -25,7 +25,7 @@
        	 
          <java-type name="StrainNumber">
        	   <java-attributes>
-                <xml-element java-attribute="strain" xml-path="text()"/>
+                <xml-element java-attribute="strainNumber" xml-path="text()"/>
 				<xml-element java-attribute="equivalentStrainNumbers" xml-path="@equivalent_strain_numbers"/>
 				<xml-element java-attribute="accessionNumber16sRrna" xml-path="@accession_number_16s_rrna"/>
 				<xml-element java-attribute="accessionNumberForGenomeSequence" xml-path="@accession_number_for_genome_sequence"/>

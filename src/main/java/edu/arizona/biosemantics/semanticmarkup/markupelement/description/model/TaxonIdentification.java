@@ -3,6 +3,8 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.TaxonIdentificationAttribute;
@@ -19,7 +21,8 @@ public class TaxonIdentification extends Element {
 	private String status;
 	
 	private List<TaxonName> taxonNames = new LinkedList<TaxonName>();
-	private StrainNumber strainNumber =new StrainNumber();
+	
+	private StrainNumber strainNumber;
 	/*private List<StrainNumber> strainNumbers;
 	private List<PlaceOfPublication> placeOfPublications;
 	private TaxonHierarchy taxonHierarchy;
@@ -30,7 +33,7 @@ public class TaxonIdentification extends Element {
 	}
 
 	public boolean hasStrainNumber() {
-		return this.strainNumber.getText()!=null;
+		return this.strainNumber.getStrainNumber() != null;
 	}
 	
 	public StrainNumber getStrainNumber() {

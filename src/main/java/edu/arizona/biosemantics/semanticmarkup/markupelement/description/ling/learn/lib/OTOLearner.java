@@ -568,7 +568,7 @@ public class OTOLearner implements ILearner {
 			}
 		}
 		
-		collection.setName(sourceOfDescriptions);
+		collection.setName(databasePrefix);
 		collection.setType(taxonGroup.getDisplayName());
 		return collection;
 	}

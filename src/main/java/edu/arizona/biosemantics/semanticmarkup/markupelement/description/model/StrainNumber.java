@@ -7,8 +7,8 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 public class StrainNumber extends Element {
 
-	@XmlPath("@text")
-	private String strain;
+	@XmlPath("text()")
+	private String strainNumber;
 	@XmlPath("@" + "equivalent_strain_numbers")
 	private String equivalentStrainNumbers;
 	@XmlPath("@" + "accession_number_16s_rrna")
@@ -18,20 +18,20 @@ public class StrainNumber extends Element {
 	
 	public StrainNumber() { }
 	
-	public StrainNumber(String strain, String equivalentStrainNumbers,
+	public StrainNumber(String strainNumber, String equivalentStrainNumbers,
 			String accessionNumber16sRrna,
 			String accessionNumberForGenomeSequence) {
 		super();
-		this.strain = strain;
+		this.strainNumber = strainNumber;
 		this.equivalentStrainNumbers = equivalentStrainNumbers;
 		this.accessionNumber16sRrna = accessionNumber16sRrna;
 		this.accessionNumberForGenomeSequence = accessionNumberForGenomeSequence;
 	}
-	public String getText() {
-		return strain;
+	public String getStrainNumber() {
+		return strainNumber;
 	}
-	public void setText(String strain) {
-		this.strain = strain;
+	public void setStrainNumber(String strainNumber) {
+		this.strainNumber = strainNumber;
 	}
 	public String getEquivalentStrainNumbers() {
 		return equivalentStrainNumbers;

@@ -194,7 +194,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						taxonNames.add(ti.getStrainNumber().getAccessionNumber16sRrna());
 					if(ti.getStrainNumber().getAccessionNumberForGenomeSequence()!=null)
 						taxonNames.add(ti.getStrainNumber().getAccessionNumberForGenomeSequence());
-					taxonNames.add(ti.getStrainNumber().getText());
+					taxonNames.add(ti.getStrainNumber().getStrainNumber());
 				}
 			}
 		}
