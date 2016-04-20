@@ -260,7 +260,7 @@ public class OTOLearner implements ILearner {
 				}
 			}
 		}
-		Future<Void> futureUpdateResult = oto2Client.post(collection);
+		Future<Void> futureUpdateResult = oto2Client.post(collection, true);
 		futureUpdateResult.get();
 		oto2Client.close();
 		return collection;
@@ -545,7 +545,7 @@ public class OTOLearner implements ILearner {
 		collection.add(othersBucket);
 		collection.add(glossaryBucket);
 		
-		fillTaxonNames(taxaBucket);
+		fillTaxonNames(taxaBucket, mainTermsMap, synonymTermsMap);
 		Set<String> labelSet = new HashSet<String>();
 		for(Label label : collection.getLabels()) {
 			labelSet.add(label.getName());
@@ -628,12 +628,28 @@ public class OTOLearner implements ILearner {
 		}
 	}
 
-	private void fillTaxonNames(Bucket bucket) {
+	private void fillTaxonNames(Bucket bucket, Map<String, Set<String>> mainTermsMap, Map<String, Map<String, Set<String>>> synonymTermsMap) {
 		try(Connection connection = connectionPool.getConnection()) {
 			try(Statement stmt = connection.createStatement()) {
 				try(ResultSet rs = stmt.executeQuery("select name from "+this.databasePrefix+"_taxonnames")) {
-					while(rs.next())
-						bucket.addTerm(new Term(rs.getString("name")));
+					while(rs.next()) {
+						String name = rs.getString("name");
+						bucket.addTerm(new Term(name));
+						
+						String label = "taxon_name";
+						String word = name;
+						if(!mainTermsMap.containsKey(label)) 
+							mainTermsMap.put(label, new HashSet<String>());
+						if(!synonymTermsMap.containsKey(label))
+							synonymTermsMap.put(label, new HashMap<String, Set<String>>());
+						
+						Set<String> categories = glossary.getCategoriesOfMainTerm(word);
+						if(categories.contains(label)) {
+							mainTermsMap.get(label).add(word);
+							if(!synonymTermsMap.get(label).containsKey(word))
+								synonymTermsMap.get(label).put(word, new HashSet<String>());
+						}
+					}
 				}
 			}
 		} catch (SQLException e) {

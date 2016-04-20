@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-		<project.version>0.1.177-SNAPSHOT</project.version>
+		<project.version>0.1.180-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.7</java.version>
@@ -295,7 +295,7 @@
 		<dependency>
 		  <groupId>edu.arizona.biosemantics.oto2</groupId>
 		  <artifactId>oto</artifactId>
-		  <version>0.0.100-SNAPSHOT</version>
+		  <version>0.0.123-SNAPSHOT</version>
 		  <classifier>classes</classifier>
 		</dependency>
 	</dependencies>
