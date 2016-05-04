@@ -538,7 +538,7 @@ public class OTOLearner implements ILearner {
 		Bucket othersBucket = new Bucket();
 		othersBucket.setName("Others");
 		Bucket glossaryBucket = new Bucket();
-		glossaryBucket.setName("Glossary-known");
+		glossaryBucket.setName("System known");
 		collection.add(structureBucket);
 		collection.add(characterBucket);
 		collection.add(taxaBucket);
