@@ -52,17 +52,6 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		for(Ontology ontology : TaxonGroupOntology.getOntologies(taxonGroup)) 
 			searchers.add(new FileSearcher(ontology, ontologiesDirectory, wordNetSource));
 		
-		/*File ontologyDirectory = new File("C:/Users/rodenhausen/etcsite/ontologies");
-		for(File ontologyFile : ontologyDirectory.listFiles()) {
-			try {
-				OWLOntology ontology = owlOntologyManager.loadOntologyFromOntologyDocument(ontologyFile);
-				ontologies.add(ontology);
-			} catch (OWLOntologyCreationException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		OntologyAccess access = new OntologyAccess(TaxonGroupOntology.getOntologies(taxonGroup));*/
 	}
 
 	@Override

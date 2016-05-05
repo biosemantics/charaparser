@@ -91,6 +91,8 @@ public class Character extends NamedElement implements Cloneable {
 	private String from;
 	@XmlPath("@" + CharacterAttribute.is_modifier)
 	private String isModifier;
+	@XmlPath("@" + CharacterAttribute.establishment_means)
+	private String establishmentMeans;
 	
 	@XmlTransient
 	private BiologicalEntity structure;
@@ -300,6 +302,14 @@ public class Character extends NamedElement implements Cloneable {
 	public String getIsModifier(){
 		return isModifier;
 	}
+	
+	public void setEstablishedMeans(String establishment) { //introduced or native
+		this.establishmentMeans = establishment;	
+	}
+	public String getEstablishedMeans() {
+		return this.establishmentMeans;
+		
+	}
 
 	public void appendModifier(String modifier) {
 		if(!modifier.contains(" ") && modifier.contains("-")) modifier = modifier.replaceAll("-+", " ");
@@ -379,5 +389,7 @@ public class Character extends NamedElement implements Cloneable {
 		character.setIsModifier(this.getIsModifier());
 		return character;
 	}
+
+
 
 }

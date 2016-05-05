@@ -55,5 +55,6 @@ public class CharacterAttribute {
 	public static final String provenance = "provenance";
 	public static final String notes = "notes";
 	public static final String is_modifier="is_modifier";
+	public static final String establishment_means = "establishment_means";
 	
 }
