@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Connection;
@@ -16,11 +17,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -31,18 +37,20 @@ import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.oto.client.WordRole;
-import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
 import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.oto.model.GlossaryDownload;
 import edu.arizona.biosemantics.oto.model.TermCategory;
 import edu.arizona.biosemantics.oto.model.TermSynonym;
-import edu.arizona.biosemantics.oto.model.lite.Decision;
-import edu.arizona.biosemantics.oto.model.lite.Download;
-import edu.arizona.biosemantics.oto.model.lite.Sentence;
-import edu.arizona.biosemantics.oto.model.lite.Synonym;
-import edu.arizona.biosemantics.oto.model.lite.Term;
-import edu.arizona.biosemantics.oto.model.lite.Upload;
-import edu.arizona.biosemantics.oto.model.lite.UploadResult;
+import edu.arizona.biosemantics.oto2.oto.server.rest.client.Client;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Bucket;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Collection;
+import edu.arizona.biosemantics.oto2.oto.shared.model.HighlightLabel;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Label;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Term;
+import edu.arizona.biosemantics.oto2.oto.shared.model.TermType;
+import edu.arizona.biosemantics.oto2.oto.shared.model.community.Categorization;
+import edu.arizona.biosemantics.oto2.oto.shared.model.community.CommunityCollection;
+import edu.arizona.biosemantics.oto2.oto.shared.model.community.Synonymization;
 import edu.arizona.biosemantics.semanticmarkup.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
@@ -62,18 +70,17 @@ public class OTOLearner implements ILearner {
 
 	private ITerminologyLearner terminologyLearner;
 	private OTOClient otoClient;
+	private Client oto2Client;
 	private String databasePrefix;
 	private String glossaryTable;
 	private IPOSKnowledgeBase posKnowledgeBase;
 	private TaxonGroup taxonGroup;
 	private IGlossary glossary;
-	private OTOLiteClient oto2Client;
 	private String oto2TermReviewURL;
 	private String oto2ReviewFile;
 	private String runRootDirectory;
 	private IDescriptionReader descriptionReader;
 	private String inputDirectory;
-	private String user;
 	private String sourceOfDescriptions;
 	private String units;
 	private boolean useOtoCommuntiyDownload;
@@ -94,7 +101,7 @@ public class OTOLearner implements ILearner {
 			@Named("DescriptionReader_InputDirectory")String inputDirectory,
 			ITerminologyLearner terminologyLearner, 
 			OTOClient otoClient, 
-			OTOLiteClient oto2Client,
+			Client oto2Client,
 			@Named("OTO2TermReviewURL") String oto2TermReviewURL,
 			@Named("OTO2ReviewFile") String oto2ReviewFile,
 			@Named("DatabasePrefix")String databasePrefix, 
@@ -123,7 +130,6 @@ public class OTOLearner implements ILearner {
 		this.glossaryTable = glossaryTable;
 		this.posKnowledgeBase = posKnowledgeBase;
 		this.runRootDirectory = runRootDirectory;
-		this.user = user;
 		this.sourceOfDescriptions = sourceOfDescriptions;
 		this.useOtoCommuntiyDownload = useOtoCommuntiyDownload;
 		this.units = units;
@@ -144,19 +150,28 @@ public class OTOLearner implements ILearner {
 					+ "synonyms: " + glossaryDownload.getTermSynonyms().size());
 			
 			if(useOtoCommuntiyDownload) {
-				Download communityDownload = getCommunityDownload(glossaryDownload);
-				if(communityDownload != null) {
+				CommunityCollection communityCollection = getCommunityDownload(glossaryDownload);
+				if(communityCollection != null) {
 					log(LogLevel.INFO, "Downloaded oto community decisions with categorizatino decisions: "
-							+ "" + communityDownload.getDecisions().size() + " and "
-							+ "synonyms: " + communityDownload.getSynonyms().size());
+							+ "" + communityCollection.getCategorizations().size() + " and "
+							+ "synonyms: " + communityCollection.getSynonymizations().size());
 					
-					for(Decision decision : communityDownload.getDecisions()) {
-						glossaryDownload.getTermCategories().add(new TermCategory(decision.getTerm(), decision.getCategory(), 
-								decision.isHasSynonym(), decision.getSourceDataset(), decision.getId()));
+					Set<Synonymization> synonymizations = communityCollection.getSynonymizations();
+					Set<String> synonymTerms = new HashSet<String>();
+					for(Synonymization synonymization : synonymizations) {
+						synonymTerms.add(synonymization.getMainTerm());
+						synonymTerms.addAll(synonymization.getSynonyms());
 					}
-					for(Synonym synonym : communityDownload.getSynonyms()) {
-						glossaryDownload.getTermSynonyms().add(new TermSynonym(
-								synonym.getTerm(), synonym.getCategory(), synonym.getSynonym(), synonym.getId()));
+
+					for(Categorization categorization : communityCollection.getCategorizations()) {
+						for(String category : categorization.getCategories()) 
+							glossaryDownload.getTermCategories().add(new TermCategory(categorization.getTerm(), category, 
+									synonymTerms.contains(categorization.getTerm()), "OTO2 Community Decisions", ""));
+					}
+					for(Synonymization synonymization : communityCollection.getSynonymizations()) {
+						for(String synonym : synonymization.getSynonyms()) 
+							glossaryDownload.getTermSynonyms().add(new TermSynonym(
+									synonymization.getMainTerm(), synonymization.getLabel(), synonym, ""));
 					}
 				}
 			}
@@ -166,13 +181,13 @@ public class OTOLearner implements ILearner {
 		//glossary is needed to prematch phrases
 		initGlossary(glossaryDownload);
 		terminologyLearner.learn(descriptionsFileList.getDescriptionsFiles(), glossaryTable);
-		UploadResult uploadResult = sendLearnedResultToOto2();
-		storeUploadToDB(uploadResult, glossaryDownload);
-		storeReviewToFile(uploadResult);
+		Collection collection = sendLearnedResultToOto2();
+		storeUploadToDB(collection, glossaryDownload);
+		storeReviewToFile(collection);
 	}
 
 
-	private void storeReviewToFile(UploadResult uploadResult) throws IOException {
+	private void storeReviewToFile(Collection collection) throws IOException {
 		//store URL that uses upload id in a local file so that user can look it up
 		/*FileWriter fw = new FileWriter(runRootDirectory + File.separator + otoLiteReviewFile);  
 		fw.write("Please visit the link [1] below to categorize a selection of terms that appeared in the descriptions you provided as input. ");
@@ -185,8 +200,8 @@ public class OTOLearner implements ILearner {
 		fw.write("<!DOCTYPE html>");
 		fw.write("<html>");
 		fw.write("<head>");
-		String link = this.oto2TermReviewURL + "?id=" + uploadResult.getUploadId() + "&secret=" +
-				uploadResult.getSecret() + "&origin=iplant";
+		String link = this.oto2TermReviewURL + "?id=" + collection.getId() + "&secret=" +
+				collection.getSecret() + "&origin=iplant";
 		fw.write("<meta http-equiv=\"refresh\" content=\"0; url=" + link + "\" charset=\"UTF-8\">");
 		fw.write("<title>Term categorization</title>");
 		fw.write("</head>");
@@ -202,14 +217,14 @@ public class OTOLearner implements ILearner {
 		fw.close();
 	}
 
-	private void storeUploadToDB(UploadResult uploadResult, GlossaryDownload glossaryDownload) throws SQLException {
+	private void storeUploadToDB(Collection collection, GlossaryDownload glossaryDownload) throws SQLException {
 		//store uploadid for the prefix so it is available for the markup part (filesystem cannot be used as a tool's directory is cleanedup after each run in the
 		//iplant environment, hence the dependency on mysql can for iplant not completely be removed
 		try(Connection connection = connectionPool.getConnection()) {
 			String sql = "UPDATE datasetprefixes SET oto_uploadid = ?, oto_secret = ?, glossary_version = ? WHERE prefix = ?";
 			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-				preparedStatement.setInt(1, uploadResult.getUploadId());
-				preparedStatement.setString(2, uploadResult.getSecret());
+				preparedStatement.setInt(1, collection.getId());
+				preparedStatement.setString(2, collection.getSecret());
 				preparedStatement.setString(3, glossaryDownload.getVersion());
 				preparedStatement.setString(4, databasePrefix);
 				preparedStatement.execute();
@@ -217,56 +232,90 @@ public class OTOLearner implements ILearner {
 		}
 	}
 
-	private UploadResult sendLearnedResultToOto2() throws InterruptedException, ExecutionException {
+	private Collection sendLearnedResultToOto2() throws InterruptedException, ExecutionException {
 		oto2Client.open();
-		Future<UploadResult> futureUploadResult = oto2Client.putUpload(readUpload());
-		UploadResult uploadResult = futureUploadResult.get();
+		Map<String, Set<String>> mainTermsMap = new HashMap<String, Set<String>>();
+		Map<String, Map<String, Set<String>>> synonymTermsMap = new HashMap<String, Map<String, Set<String>>>();
+		Collection collection = createCollection(mainTermsMap, synonymTermsMap);
+		
+		Future<Collection> futureUploadResult = oto2Client.put(collection);
+		collection = futureUploadResult.get();
+		Bucket glossaryBucket = collection.getBuckets().get(collection.getBuckets().size()-1);
+				
+		for(Label label : collection.getLabels()) {
+			if(mainTermsMap.containsKey(label.getName())) {
+				Set<String> mainTerms = mainTermsMap.get(label.getName());
+				for(String mainTerm : mainTerms) {
+					Term term = getTerm(glossaryBucket, mainTerm);
+					if(term != null) {
+						label.addMainTerm(term);
+					
+						if(synonymTermsMap.containsKey(label.getName())) {
+							for(String synonymTerm : synonymTermsMap.get(label.getName()).get(mainTerm)) {
+								Term synonym = getTerm(glossaryBucket, synonymTerm);
+								label.addSynonym(term, synonym, false);
+							}
+						}
+					}
+				}
+			}
+		}
+		Future<Void> futureUpdateResult = oto2Client.post(collection, true);
+		futureUpdateResult.get();
 		oto2Client.close();
-		return uploadResult;
+		return collection;
 	}
 
-	private Download getCommunityDownload(GlossaryDownload glossaryDownload) {
+	private Term getTerm(Bucket glossaryBucket, String value) {
+		for(Term term : glossaryBucket.getTerms()) {
+			if(term.getTerm().trim().equals(value.trim()))
+				return term;
+		}
+		return null;
+	}
+
+	private CommunityCollection getCommunityDownload(GlossaryDownload glossaryDownload) {
 		log(LogLevel.INFO, "Will download oto community decisions to add additionally to glossary used");
 		oto2Client.open();
-		Future<Download> futureCommunityDownload = oto2Client.getCommunityDownload(taxonGroup.getDisplayName());
+		Future<CommunityCollection> futureCommunityDownload = oto2Client.getCommunityCollection(taxonGroup.getDisplayName());
 		
 		boolean downloadSuccessful = false;
-		Download communityDownload = null;
+		CommunityCollection communityCollection = null;
 		try {
-			communityDownload = futureCommunityDownload.get();
-			downloadSuccessful = communityDownload != null;
+			communityCollection = futureCommunityDownload.get();
+			downloadSuccessful = communityCollection != null;
 		} catch(Throwable t) {
 			log(LogLevel.ERROR, "Couldn't download glossary will fallback to locally stored glossary", t);
 		}
 
 		oto2Client.close();
 		if(downloadSuccessful) 
-			storeToLocalCommunityDownload(communityDownload, taxonGroup);
+			storeToLocalCommunityDownload(communityCollection, taxonGroup);
 		else
 			try {
-				communityDownload = getLocalCommunityDownload(taxonGroup);
+				communityCollection = getLocalCommunityCollection(taxonGroup);
 			} catch (ClassNotFoundException | IOException e) {
 				log(LogLevel.ERROR, "Couldn't get local community download for taxon group " + taxonGroup, e);
 				return null;
 			}
-		return communityDownload;
+		return communityCollection;
 	}
 
-	private void storeToLocalCommunityDownload(Download communityDownload, TaxonGroup taxonGroup) {
+	private void storeToLocalCommunityDownload(CommunityCollection communityCollection, TaxonGroup taxonGroup) {
 		try {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(Configuration.glossariesDownloadDirectory + File.separator + 
 					"CommunityDownload." + taxonGroup.getDisplayName() + ".ser"));
-			out.writeObject(communityDownload);
+			out.writeObject(communityCollection);
 		    out.close();
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Couldn't store glossaryDownload locally", e);
 		}
 	}
 
-	private Download getLocalCommunityDownload(TaxonGroup taxonGroup) throws ClassNotFoundException, IOException {
+	private CommunityCollection getLocalCommunityCollection(TaxonGroup taxonGroup) throws ClassNotFoundException, IOException {
 		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator + 
 				"CommunityDownload." + taxonGroup.getDisplayName() + ".ser"));
-		Download communityDownload = (Download) objectIn.readObject();
+		CommunityCollection communityDownload = (CommunityCollection) objectIn.readObject();
 		objectIn.close();
 		return communityDownload;
 	}
@@ -373,8 +422,9 @@ public class OTOLearner implements ILearner {
 
 		//the glossary, excluding gsyns
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
-			if(!gsyns.contains(new edu.arizona.biosemantics.common.ling.know.Term(termCategory.getTerm(), termCategory.getCategory())))
+			if(!gsyns.contains(new edu.arizona.biosemantics.common.ling.know.Term(termCategory.getTerm(), termCategory.getCategory()))) {
 				glossary.addEntry(termCategory.getTerm(), termCategory.getCategory()); 
+			}
 		}
 		
 		//previous code, without loading synonyms
@@ -476,45 +526,72 @@ public class OTOLearner implements ILearner {
 		}
 	}
 
-	private Upload readUpload() {
-		Upload upload = new Upload();
-		upload.setUser(user);
-		upload.setSource(sourceOfDescriptions);
+	private Collection createCollection(Map<String, Set<String>> mainTermsMap, Map<String, Map<String, Set<String>>> synonymTermsMap) {
+		Collection collection = new Collection();
+		collection.setLabels(getDefaultLabels());
+		Bucket structureBucket = new Bucket();
+		structureBucket.setName("Structures");
+		Bucket characterBucket = new Bucket();
+		characterBucket.setName("Charaters");
+		Bucket taxaBucket = new Bucket();
+		taxaBucket.setName("Taxon Names");
+		Bucket othersBucket = new Bucket();
+		othersBucket.setName("Others");
+		Bucket glossaryBucket = new Bucket();
+		glossaryBucket.setName("System known");
+		collection.add(structureBucket);
+		collection.add(characterBucket);
+		collection.add(taxaBucket);
+		collection.add(othersBucket);
+		collection.add(glossaryBucket);
 		
-		List<String> taxonNames = getTaxonNames();
-		
-		List<Term> taxonNameTerms = new ArrayList<Term>();
-		for(String name: taxonNames){
-			taxonNameTerms.add(new Term(name));
+		fillTaxonNames(taxaBucket, mainTermsMap, synonymTermsMap);
+		Set<String> labelSet = new HashSet<String>();
+		for(Label label : collection.getLabels()) {
+			labelSet.add(label.getName());
 		}
-		upload.setPossibleTaxonNames(taxonNameTerms);
-
-		List<Term> terms = getStructures(taxonNames);
-		//for(Term t: terms){
-		//	System.out.println(t.getTerm());
-		//}
-		upload.setPossibleStructures(terms);
+		fillStructures(structureBucket, taxaBucket, mainTermsMap, synonymTermsMap, labelSet);
+		fillCharacters(characterBucket, mainTermsMap, synonymTermsMap, labelSet);
+		fillOthers(othersBucket, mainTermsMap, synonymTermsMap, labelSet);
 		
+		for(String label : mainTermsMap.keySet()) {
+			for(String mainTerm : mainTermsMap.get(label)) {
+				Term term = new Term(mainTerm);
+				term.setTermType(TermType.KNOWN_IN_GLOSSARY);
+				glossaryBucket.addTerm(term);
+				
+				for(String synonym : synonymTermsMap.get(label).get(mainTerm)) {
+					Term synonymTerm = new Term(synonym);
+					term.setTermType(TermType.KNOWN_IN_GLOSSARY);
+					glossaryBucket.addTerm(synonymTerm);
+				}
+			}
+		}
 		
-		
-		terms = getCharacters();
-		//for(Term t: terms){
-		//	System.out.println(t.getTerm());
-		//}
-		upload.setPossibleCharacters(terms);
-		
-		terms = getOtherTerms();
-		//for(Term t: terms){
-		//	System.out.println(t.getTerm());
-		//}
-		upload.setPossibleOtherTerms(terms);
-		upload.setSentences(getSentences());
-		upload.setGlossaryType(taxonGroup.getDisplayName());
-		
-		return upload;
+		collection.setName(databasePrefix);
+		collection.setType(taxonGroup.getDisplayName());
+		return collection;
 	}
 
-	private List<Sentence> getSentences() {
+	private List<Label> getDefaultLabels() {
+		List<Label> defaultCategories = new LinkedList<Label>();
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		try(CSVReader reader = new CSVReader(new InputStreamReader(loader.getResourceAsStream("" +
+				"edu/arizona/biosemantics/semanticmarkup/defaultCategories.csv")))) {
+			List<String[]> lines = reader.readAll();
+			for(String[] line : lines) {
+				if(line[2].equals("y"))
+					defaultCategories.add(new HighlightLabel(line[0], line[1]));
+				else
+					defaultCategories.add(new Label(line[0], line[1]));
+			}
+		} catch (IOException e) {
+			log(LogLevel.ERROR, "Could not read default labels", e);
+		}
+		return defaultCategories;
+	}
+
+	/*private List<Sentence> getSentences() {
 		List<Sentence> sentences = new LinkedList<Sentence>();
 		try(Connection connection = connectionPool.getConnection()) {
 			try(Statement statement = connection.createStatement()) {
@@ -529,63 +606,75 @@ public class OTOLearner implements ILearner {
 			log(LogLevel.ERROR, "Problem accessing sentence table", e);
 		}
 		return sentences;
-	}
+	}*/
 
-	private List<Term> getOtherTerms() {
-		List<Term> result = new ArrayList<Term>();
+	private void fillOthers(Bucket bucket, Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) {
 		try {
-			List<String> otherTerms = this.fetchContentTerms();
+			List<String> otherTerms = this.fetchContentTerms(mainTerms, synonymTerms, labelSet);
 			for(String otherTerm : otherTerms) 
-				result.add(new Term(otherTerm));
+				bucket.addTerm(new Term(otherTerm));
 		} catch (Exception e) {
 			log(LogLevel.ERROR, "Problem fetching content terms", e);
 		}
-		return result;
 	}
 
-	private List<Term> getCharacters() {
-		List<Term> result = new ArrayList<Term>();
+	private void fillCharacters(Bucket bucket, Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) {
 		try {
-			List<String> characterTerms = this.fetchCharacterTerms();
+			List<String> characterTerms = this.fetchCharacterTerms(mainTerms, synonymTerms, labelSet);
 			for(String characterTerm : characterTerms) 
-				result.add(new Term(characterTerm));
+				bucket.addTerm(new Term(characterTerm));
 		} catch (Exception e) {
 			log(LogLevel.ERROR, "Problem fetching character terms", e);
 		}
-		return result;
 	}
 
-	private List<String> getTaxonNames() {
-		List<String> result = new ArrayList<String>();
+	private void fillTaxonNames(Bucket bucket, Map<String, Set<String>> mainTermsMap, Map<String, Map<String, Set<String>>> synonymTermsMap) {
 		try(Connection connection = connectionPool.getConnection()) {
 			try(Statement stmt = connection.createStatement()) {
 				try(ResultSet rs = stmt.executeQuery("select name from "+this.databasePrefix+"_taxonnames")) {
-					while(rs.next())
-						result.add(rs.getString("name"));	
+					while(rs.next()) {
+						String name = rs.getString("name");
+						bucket.addTerm(new Term(name));
+						
+						String label = "taxon_name";
+						String word = name;
+						if(!mainTermsMap.containsKey(label)) 
+							mainTermsMap.put(label, new HashSet<String>());
+						if(!synonymTermsMap.containsKey(label))
+							synonymTermsMap.put(label, new HashMap<String, Set<String>>());
+						
+						Set<String> categories = glossary.getCategoriesOfMainTerm(word);
+						if(categories.contains(label)) {
+							mainTermsMap.get(label).add(word);
+							if(!synonymTermsMap.get(label).containsKey(word))
+								synonymTermsMap.get(label).put(word, new HashSet<String>());
+						}
+					}
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 			log(LogLevel.ERROR, "Problem fetching taxon names", e);
 		}
-		return result;
 	}
 	
 	
-	private List<Term> getStructures(List<String> remove) {
-		List<Term> result = new ArrayList<Term>();
+	private void fillStructures(Bucket bucket, Bucket taxaBucket, Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) {
+		Set<String> remove = new HashSet<String>();
+		for(Term taxonName : taxaBucket.getTerms()) {
+			remove.add(taxonName.getTerm());
+			remove.add(taxonName.getOriginalTerm());
+		}
 		try {
-			List<String> structureTerms = this.fetchStructureTerms();
+			List<String> structureTerms = this.fetchStructureTerms(mainTerms, synonymTerms, labelSet);
 			for(String structureTerm : structureTerms) {
 				if(!remove.contains(structureTerm)){
-					Term t = new Term(structureTerm);
-					result.add(t);
+					bucket.addTerm(new Term(structureTerm));
 				}
 			}
 		} catch (Exception e) {
 			log(LogLevel.ERROR, "Problem fetching structure terms", e);
 		}
-		return result;
 	}
 
 	@Override
@@ -605,16 +694,19 @@ public class OTOLearner implements ILearner {
 	 * 3. filtered terms are not displayed and they will not be saved to wordroles table as "os" or "op".
 	 * 4. terms filtered by 2.1.adv or 2.3 will be saved in NONEQTERMSTABLE
 	 * 5. cache results to reduce cost
+	 * @param synonymTerms 
+	 * @param mainTerms 
+	 * @param labelSet 
 	 * 
 	 * @return filtered candidate structure words
 	 * @throws Exception 
 	 */
-	private ArrayList<String> fetchStructureTerms() throws Exception{
+	private ArrayList<String> fetchStructureTerms(Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception{
 		ArrayList <String> words = new ArrayList<String>();
 		ArrayList <String> filteredwords = new ArrayList<String>();
 		ArrayList <String> noneqwords = new ArrayList<String>();
 	
-		words = this.structureTags4Curation(words);
+		words = this.structureTags4Curation(words, mainTerms, synonymTerms, labelSet);
 		
 		for(String word: words){
 			if(word.compareToIgnoreCase("ditto")==0) continue;
@@ -645,10 +737,14 @@ public class OTOLearner implements ILearner {
      * display learned new structures in structures subtab in step 4 (perl markup) for curation.
      * 
      * @param tagList
+	 * @param synonymTerms 
+	 * @param mainTerms 
+	 * @param labelSet 
+	 * @param labels 
      * @throws ParsingException
      * @throws SQLException
      */
-    public ArrayList<String> structureTags4Curation(List <String> tagList) throws Exception {
+    public ArrayList<String> structureTags4Curation(List <String> tagList, Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception {
     	String filter1 = "";
  		String filter2 = "";
  		String filter3 = "";
@@ -676,7 +772,7 @@ public class OTOLearner implements ILearner {
 				try(ResultSet rs = stmt.executeQuery()) {
 					while (rs.next()) {
 						String tag = rs.getString("structure");
-						populateCurationList(tagList, tag); //select tags for curation, filter against the glossary
+						populateCurationList(tagList, tag, mainTerms, synonymTerms, labelSet); //select tags for curation, filter against the glossary
 					}
 					sql = "select distinct word from "+this.databasePrefix+"_wordpos where pos in ('p', 's', 'n') and saved_flag !='red' "+
 					filter3+" order by word";
@@ -687,7 +783,7 @@ public class OTOLearner implements ILearner {
 								try(PreparedStatement stmtSentence = connection.prepareStatement("select * from " + this.databasePrefix + "_sentence where sentence like '% " + tag + "%'")) {
 									try(ResultSet rs2 = stmtSentence.executeQuery()) {
 										if (rs2.next()) {
-											populateCurationList(tagList, tag); //select tags for curation, filter against the glossary
+											populateCurationList(tagList, tag, mainTerms, synonymTerms, labelSet); //select tags for curation, filter against the glossary
 										}
 									}
 								}	
@@ -716,14 +812,22 @@ public class OTOLearner implements ILearner {
      * if not in glossary, add to curationList
      * @param curationList
      * @param word
+     * @param synonymTerms 
+     * @param mainTerms 
+     * @param labelSet 
+     * @param labels 
      * @throws Exception 
      */
-	private void populateCurationList(List<String> curationList, String word) throws Exception {
+	private void populateCurationList(List<String> curationList, String word, Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception {
 		try(Connection connection = connectionPool.getConnection()) {
 			try(Statement stmt = connection.createStatement()) {
 				try(ResultSet rs = stmt.executeQuery("select category from "+this.glossaryTable+" where term ='"+word+"'")) {
 					if(rs.next()){
 						String cat = rs.getString("category");
+						
+						if(labelSet.contains(cat.trim()))
+							addToLabel(cat.trim(), word.trim(), mainTerms, synonymTerms);
+						
 						if(cat.matches("(substance|nominative|structure|life_style|growth_form|structure_subtype|structure_in_adjective_form|taxon_name)")){
 							add2WordRolesTable(word, "op");
 						} else {
@@ -737,6 +841,30 @@ public class OTOLearner implements ILearner {
 		}
 	}
 	
+	private void addToLabel(String label, String word, Map<String, Set<String>> mainTermsMap, Map<String, Map<String, Set<String>>> synonymTermsMap) {		 
+		if(!mainTermsMap.containsKey(label)) 
+			mainTermsMap.put(label, new HashSet<String>());
+		if(!synonymTermsMap.containsKey(label))
+			synonymTermsMap.put(label, new HashMap<String, Set<String>>());
+		
+		Set<String> categories = glossary.getCategoriesOfMainTerm(word);
+		if(categories.contains(label)) {
+			mainTermsMap.get(label).add(word);
+			if(!synonymTermsMap.get(label).containsKey(word))
+				synonymTermsMap.get(label).put(word, new HashSet<String>());
+		}
+		
+		Set<edu.arizona.biosemantics.common.ling.know.Term> mainTerms = glossary.getMainTermsOfSynonym(word);
+		for(edu.arizona.biosemantics.common.ling.know.Term term : mainTerms) {
+			if(term.getCategory().trim().equals(label)) {
+				mainTermsMap.get(label).add(term.getLabel());
+				if(!synonymTermsMap.get(label).containsKey(term.getLabel()))
+					synonymTermsMap.get(label).put(term.getLabel(), new HashSet<String>());
+				synonymTermsMap.get(label).get(term.getLabel()).add(word);
+			}
+		}
+	}
+
 	/**
 	 * 
 	 * @param w
@@ -762,15 +890,18 @@ public class OTOLearner implements ILearner {
 	 * 3. filtered terms are not displayed and they will not be saved to wordroles table as "os" or "op".
 	 * 4. terms filtered by 2.1.adv or 2.2 will be saved in NONEQTERMSTABLE
 	 * 5. cache results to reduce cost
+	 * @param synonymTerms 
+	 * @param mainTerms 
+	 * @param labelSet 
 	 * @return filtered candidate character words
 	 * @throws Exception 
 	 */
-	private ArrayList<String> fetchCharacterTerms() throws Exception{
+	private ArrayList<String> fetchCharacterTerms(Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception{
 		ArrayList <String> words = new ArrayList<String>();;
 		ArrayList <String> filteredwords = new ArrayList<String>();
 		ArrayList <String> noneqwords = new ArrayList<String>();
 
-		words = descriptorTerms4Curation();
+		words = descriptorTerms4Curation(mainTerms, synonymTerms, labelSet);
 		for(String word: words){
 			if(isNoise(word)) continue;
 			if(!word.endsWith("ed") && (posKnowledgeBase.getMostLikleyPOS(word) == edu.arizona.biosemantics.common.ling.pos.POS.VB 
@@ -803,7 +934,7 @@ public class OTOLearner implements ILearner {
 		}
 		return false;
 	}
-	private ArrayList<String> fetchContentTerms() throws Exception {
+	private ArrayList<String> fetchContentTerms(Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception {
 		ArrayList<String> words = new ArrayList<String>();
 		ArrayList <String> filteredwords = new ArrayList<String>();
 		ArrayList <String> noneqwords = new ArrayList<String>();
@@ -812,12 +943,12 @@ public class OTOLearner implements ILearner {
 		ArrayList<String> inicharacterterms = new ArrayList<String>();
 		
 		if(inistructureterms==null || inistructureterms.size()==0){
-			inistructureterms = structureTags4Curation(new ArrayList<String>());
+			inistructureterms = structureTags4Curation(new ArrayList<String>(), mainTerms, synonymTerms, labelSet);
 		}
 		if(inicharacterterms==null || inicharacterterms.size()==0){
-			inicharacterterms = descriptorTerms4Curation();
+			inicharacterterms = descriptorTerms4Curation(mainTerms, synonymTerms, labelSet);
 		}
-		words = contentTerms4Curation(words, inistructureterms, inicharacterterms);
+		words = contentTerms4Curation(words, inistructureterms, inicharacterterms, mainTerms, synonymTerms, labelSet);
 		
 		for(String word: words){
 			if(isNoise(word)) continue;
@@ -837,10 +968,13 @@ public class OTOLearner implements ILearner {
      * display unknown terms in morestructure/moredescriptor subtabs 
      * in step 4 (perl markup) for curation.
      * @param curationList
+	 * @param synonymTerms 
+	 * @param mainTerms 
+	 * @param labelSet 
      * @throws ParsingException
      * @throws SQLException
      */
-    public ArrayList<String> contentTerms4Curation(List <String> curationList, ArrayList<String> structures, ArrayList<String> characters) throws Exception {
+    public ArrayList<String> contentTerms4Curation(List <String> curationList, ArrayList<String> structures, ArrayList<String> characters, Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception {
  		String filter = "";
  		try(Connection connection = connectionPool.getConnection()) {
 	 		try(Statement stmt1 = connection.createStatement()) {
@@ -863,7 +997,7 @@ public class OTOLearner implements ILearner {
 					while (rs.next()) {
 						String word = rs.getString("dhword").trim();
 						if(!structures.contains(word) && !characters.contains(word)){
-							populateCurationList(curationList, word);
+							populateCurationList(curationList, word, mainTerms, synonymTerms, labelSet);
 						}
 					}
 					return this.deduplicateSort(curationList);
@@ -874,10 +1008,14 @@ public class OTOLearner implements ILearner {
 	
 	/**
 	 * load descriptor subtab in step 4 (perl markup)
+	 * @param synonymTerms 
+	 * @param mainTerms 
+	 * @param labelSet 
+	 * @param labels 
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<String> descriptorTerms4Curation() throws Exception {
+	public ArrayList<String> descriptorTerms4Curation(Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception {
 		ArrayList<String> words = new ArrayList<String>();
 		
 		String filter = "";
@@ -904,7 +1042,7 @@ public class OTOLearner implements ILearner {
 							try(PreparedStatement stmtSentence = connection.prepareStatement("select * from " + this.databasePrefix + "_sentence where sentence like '% " + word + "%'")) {
 								try(ResultSet rs3 = stmtSentence.executeQuery()) {
 									if (rs3.next()) {
-										populateDescriptorList(words, word);
+										populateDescriptorList(words, word, mainTerms, synonymTerms, labelSet);
 									}
 								}
 							}
@@ -926,8 +1064,11 @@ public class OTOLearner implements ILearner {
 	 * if it is in the glossary, get its role from glossary and save it in wordroles table.
 	 * @param words
 	 * @param w
+	 * @param synonymTerms 
+	 * @param mainTerms 
+	 * @param labelSet 
 	 */
-	private void populateDescriptorList(ArrayList<String> words, String w) throws Exception {
+	private void populateDescriptorList(ArrayList<String> words, String w, Map<String, Set<String>> mainTerms, Map<String, Map<String, Set<String>>> synonymTerms, Set<String> labelSet) throws Exception {
 		if(w.matches(".*?\\w.*")){
 			String wc = w;
 			if(w.indexOf("-")>=0 || w.indexOf("_")>=0){
@@ -940,6 +1081,10 @@ public class OTOLearner implements ILearner {
 					try(ResultSet rset = stmt.executeQuery("select category from " + this.glossaryTable + " where term ='"+w+"'")) { 
 						if(rset.next()){//in glossary
 							String cat = rset.getString(1);
+							
+							if(labelSet.contains(cat.trim()))
+								addToLabel(cat.trim(), wc.trim(), mainTerms, synonymTerms);
+							
 							if(cat.matches("\\b(STRUCTURE|FEATURE|SUBSTANCE|PLANT|nominative|structure)\\b")){
 								add2WordRolesTable(wc, "os");
 							}else{

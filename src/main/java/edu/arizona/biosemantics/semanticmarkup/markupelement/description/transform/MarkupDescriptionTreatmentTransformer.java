@@ -31,10 +31,9 @@ import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.oto.model.GlossaryDownload;
 import edu.arizona.biosemantics.oto.model.TermCategory;
 import edu.arizona.biosemantics.oto.model.TermSynonym;
-import edu.arizona.biosemantics.oto.model.lite.Decision;
-import edu.arizona.biosemantics.oto.model.lite.Download;
-import edu.arizona.biosemantics.oto.model.lite.Synonym;
-import edu.arizona.biosemantics.oto.model.lite.UploadResult;
+import edu.arizona.biosemantics.oto2.oto.server.rest.client.Client;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Collection;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Label;
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
@@ -81,7 +80,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected String databasePrefix;
 	protected IGlossary glossary;
 	protected TaxonGroup taxonGroup;
-	protected OTOLiteClient oto2Client;
+	protected Client oto2Client;
 	protected String oto2TermReviewURL;
 	protected Set<String> selectedSources;
 	private String glossaryTable;
@@ -123,7 +122,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
 			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
 			OTOClient otoClient, 
-			OTOLiteClient oto2Client, 
+			Client oto2Client, 
 			@Named("OTO2TermReviewURL") String oto2TermReviewURL,
 			@Named("DatabasePrefix")String databasePrefix, 
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
@@ -195,47 +194,46 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			glossaryVersion = glossaryDownload.getVersion();
 		}
 				
-        UploadResult uploadResult = null;
-        Download download = null;
+	    Collection collection = null;
 		try {
-			uploadResult = readUploadResult();
+			collection = readUploadResult();
 		} catch (SQLException e) {
 			this.log(LogLevel.ERROR, "Problem reading upload result", e);
 			throw new TransformationException();
 		}
 		
 		 
-		if(uploadResult != null) {
+		if(collection != null) {
 			try {
 				oto2Client.open();
-				Future<Download> futureDownload = oto2Client.getDownload(uploadResult);
-				download = futureDownload.get();
+				Future<Collection> futureCollection = oto2Client.get(collection.getId(), collection.getSecret());
+				collection = futureCollection.get();
 				oto2Client.close();
 			} catch(InterruptedException | ExecutionException e) {
 				oto2Client.close();
-				this.log(LogLevel.ERROR, "Problem downloading oto lite categorizations for upload " + uploadResult.getUploadId(), e);
+				this.log(LogLevel.ERROR, "Problem downloading oto lite categorizations for upload " + collection.getId(), e);
 				throw new TransformationException();
 			}
 		}
 
 		
-		if(download == null)
+		if(collection == null)
 			throw new TransformationException();
-        if(!download.isFinalized() && termCategorizationRequired) {
+        /*if(!collection.isFinalized() && termCategorizationRequired) {
         	log(LogLevel.ERROR, "The term categorization has to be finalized to run markup. Please return to categorizing terms and finalize first.");
         	throw new TransformationException();
-        }
+        }*/
 		
 		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
 				"Number of term categoy relations " + glossaryDownload.getTermCategories().size() + "\n" +
 				"Number of term synonym relations " + glossaryDownload.getTermSynonyms().size());
-		if(download != null) 
+		if(collection != null) 
 			log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
-					"Number of term categoy relations " + download.getDecisions().size() + "\n" +
-					"Number of term synonym relations " + download.getSynonyms().size());
+					"Number of term categoy relations " + getTermCategoryRelationCount(collection) + "\n" +
+					"Number of term synonym relations " + getSynonymRelationCount(collection) + "\n");
 		//storeInLocalDB(glossaryDownload, download, this.databasePrefix);
 		 
-		initGlossary(glossaryDownload, download); //turn "_" in glossary terms to "-"
+		initGlossary(glossaryDownload, collection); //turn "_" in glossary terms to "-"
 		
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place
@@ -273,7 +271,25 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		return processor;
 	}
 	
-    private UploadResult readUploadResult() throws SQLException {
+    private int getSynonymRelationCount(Collection collection) {
+    	int count = 0;
+		for(Label label : collection.getLabels()) {
+			count += label.getMainTerms().size();
+		}
+		return count;
+	}
+
+	private int getTermCategoryRelationCount(Collection collection) {
+		int count = 0;
+		for(Label label : collection.getLabels()) {
+			for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
+				count += label.getSynonyms(mainTerm).size();
+			}
+		}
+		return count;
+	}
+
+	private Collection readUploadResult() throws SQLException {
     	try(Connection connection = connectionPool.getConnection()) {
 	        int uploadId = -1;
 	        String secret = "";
@@ -286,7 +302,10 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			                uploadId = resultSet.getInt("oto_uploadid");
 			                secret = resultSet.getString("oto_secret");
 			        }
-			        return new UploadResult(uploadId, secret);
+			        Collection collection = new Collection();
+			        collection.setId(uploadId);
+			        collection.setSecret(secret);
+			        return collection;
 		        }
 	        }
     	}
@@ -342,7 +361,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * For structure terms, both singular and plural forms are included in the synonyms
 	 * @param otoGlossary
 	 */
-	protected void initGlossary(GlossaryDownload glossaryDownload, Download download) {
+	protected void initGlossary(GlossaryDownload glossaryDownload, Collection collection) {
 
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
@@ -390,49 +409,52 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 
 		//add syn set of term_category
 		HashSet<Term> dsyns = new HashSet<Term>();
-		if(download != null) {
-			for(Synonym termSyn: download.getSynonyms()){
-				//Hong TODO need to add category info to synonym entry in OTOLite
-				//if(termSyn.getCategory().compareTo("structure")==0){
-				if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
-					//take care of singular and plural forms
-					String syns = ""; 
-					String synp = "";
-					String terms = "";
-					String termp = "";
-					if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
-						synp = termSyn.getSynonym().replaceAll("_",  "-");
-						syns = inflector.getSingular(synp);					
-					}else{
-						syns = termSyn.getSynonym().replaceAll("_",  "-");
-						synp = inflector.getPlural(syns);
-					}
-
-					if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
-						termp = termSyn.getTerm().replaceAll("_",  "-");
-						terms = inflector.getSingular(termp);					
-					}else{
-						terms = termSyn.getTerm().replaceAll("_",  "-");
-						termp = inflector.getPlural(terms);
-					}
-					//glossary.addSynonym(syns, termSyn.getCategory(), terms);
-					//glossary.addSynonym(synp, termSyn.getCategory(), termp);
-					//dsyns.add(new Term(syns, termSyn.getCategory());
-					//dsyns.add(new Term(synp, termSyn.getCategory());
-					glossary.addSynonym(syns, termSyn.getCategory(), terms);
-					glossary.addSynonym(synp,termSyn.getCategory(), termp);
-					dsyns.add(new Term(syns, termSyn.getCategory()));
-					dsyns.add(new Term(synp, termSyn.getCategory()));
-				}else{//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
-					glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
-					dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
-				}					
-			}
-
-			//term_category from OTO, excluding dsyns
-			for(Decision decision : download.getDecisions()) {
-				if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
-					glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
+		if(collection != null) {			
+			for(Label label : collection.getLabels()) {
+				for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
+					if(!dsyns.contains(new Term(mainTerm.getTerm().replaceAll("_",  "-"), label.getName())))//calyx_tube => calyx-tube
+						glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName());  
+					
+					//Hong TODO need to add category info to synonym entry in OTOLite
+					//if(termSyn.getCategory().compareTo("structure")==0){
+					if(label.getName().matches(ElementRelationGroup.entityElements)){
+						for(edu.arizona.biosemantics.oto2.oto.shared.model.Term synonym : label.getSynonyms(mainTerm)) {
+							//take care of singular and plural forms
+							String syns = ""; 
+							String synp = "";
+							String terms = "";
+							String termp = "";
+							if(inflector.isPlural(synonym.getTerm().replaceAll("_",  "-"))){
+								synp = synonym.getTerm().replaceAll("_",  "-");
+								syns = inflector.getSingular(synp);					
+							}else{
+								syns = synonym.getTerm().replaceAll("_",  "-");
+								synp = inflector.getPlural(syns);
+							}
+	
+							if(inflector.isPlural(mainTerm.getTerm().replaceAll("_",  "-"))){
+								termp = mainTerm.getTerm().replaceAll("_",  "-");
+								terms = inflector.getSingular(termp);					
+							}else{
+								terms = mainTerm.getTerm().replaceAll("_",  "-");
+								termp = inflector.getPlural(terms);
+							}
+							//glossary.addSynonym(syns, termSyn.getCategory(), terms);
+							//glossary.addSynonym(synp, termSyn.getCategory(), termp);
+							//dsyns.add(new Term(syns, termSyn.getCategory());
+							//dsyns.add(new Term(synp, termSyn.getCategory());
+							glossary.addSynonym(syns, label.getName(), terms);
+							glossary.addSynonym(synp, label.getName(), termp);
+							dsyns.add(new Term(syns, label.getName()));
+							dsyns.add(new Term(synp, label.getName()));
+						}
+					} else {//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
+						for(edu.arizona.biosemantics.oto2.oto.shared.model.Term synonym : label.getSynonyms(mainTerm)) {
+							glossary.addSynonym(synonym.getTerm().replaceAll("_",  "-"), label.getName(), mainTerm.getTerm());
+							dsyns.add(new Term(synonym.getTerm().replaceAll("_",  "-"), label.getName()));
+						}
+					}				
+				}
 			}
 		}
 		
@@ -440,95 +462,95 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	
 	}
 	
-	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 
-			String tablePrefix) {
-		List<TermCategory> termCategories = new ArrayList<TermCategory>();
-		List<WordRole> wordRoles = new ArrayList<WordRole>();
-		List<TermSynonym> termSynonyms = new ArrayList<TermSynonym>();
-		
-		termCategories.addAll(glossaryDownload.getTermCategories());
-		termSynonyms.addAll(glossaryDownload.getTermSynonyms());
-		
-		List<Decision> decisions = download.getDecisions();
-		List<Synonym> synonyms = download.getSynonyms();
-
-		HashSet<String> hasSynSet = new HashSet<String>();
-		for(Synonym synonym : synonyms) {
-			TermSynonym termSynonym = new TermSynonym();
-			termSynonym.setTerm(synonym.getTerm());
-			termSynonym.setSynonym(synonym.getSynonym());
-			termSynonyms.add(termSynonym);
-			hasSynSet.add(synonym.getTerm());
-		}
-		
-		for(Decision decision : decisions) {
-			TermCategory termCategory = new TermCategory();
-			termCategory.setTerm(decision.getTerm());
-			termCategory.setCategory(decision.getCategory());
-			termCategory.setHasSyn(hasSynSet.contains(decision.getTerm()));
-			termCategories.add(termCategory);
-		}
-		
-		/** generate the wordroles from termcategories **/
-		//remove duplicates, term is primary key in the table
-		HashSet<String> wordSet = new HashSet<String>();
-		for(TermCategory termCategory : termCategories) {
-			if(wordSet.contains(termCategory.getTerm()))
-				continue;
-			wordSet.add(termCategory.getTerm());
-			WordRole wordRole = new WordRole();
-			wordRole.setWord(termCategory.getTerm());
-			String semanticRole = "c";
-			//if(termCategory.getCategory().equalsIgnoreCase("structure")) {
-			if(termCategory.getCategory().toLowerCase().matches(ElementRelationGroup.entityElements)) {
-				semanticRole = "op";
-			}
-			wordRole.setSemanticRole(semanticRole);
-			wordRole.setSavedid(""); //not really needed, is a left over from earlier charaparser times
-			wordRoles.add(wordRole);
-		}
-		
-		try(Connection connection = connectionPool.getConnection()) {	
-			try(Statement stmt = connection.createStatement()) {
-		        String cleanupQuery = "DROP TABLE IF EXISTS " + 
-										tablePrefix + "_term_category, " + 
-										tablePrefix + "_syns, " +
-										tablePrefix + "_wordroles;";
-		        stmt.execute(cleanupQuery);
-		        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
-				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
-						"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
-				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(200) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
-						"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`))  CHARACTER SET utf8 engine=innodb");
-				
-				for(TermCategory termCategory : termCategories) {
-					try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)")) {
-						preparedStatement.setString(1, termCategory.getTerm());
-						preparedStatement.setString(2, termCategory.getCategory());
-						preparedStatement.setBoolean(3, termCategory.isHasSyn());
-						preparedStatement.executeUpdate();
-					}
-				}
-				for(TermSynonym termSynonym : termSynonyms) {
-					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)")) {
-						preparedStatement.setString(1, termSynonym.getTerm());
-						preparedStatement.setString(2, termSynonym.getSynonym());
-						preparedStatement.executeUpdate();
-					}
-				}
-				for(WordRole wordRole : wordRoles) {
-					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)")) {
-						preparedStatement.setString(1, wordRole.getWord());
-						preparedStatement.setString(2, wordRole.getSemanticRole());
-						preparedStatement.setString(3, wordRole.getSavedid());
-						preparedStatement.executeUpdate();
-					}
-				}
-			}
-		} catch(Exception e) {
-			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
-		}
-	}
+//	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 
+//			String tablePrefix) {
+//		List<TermCategory> termCategories = new ArrayList<TermCategory>();
+//		List<WordRole> wordRoles = new ArrayList<WordRole>();
+//		List<TermSynonym> termSynonyms = new ArrayList<TermSynonym>();
+//		
+//		termCategories.addAll(glossaryDownload.getTermCategories());
+//		termSynonyms.addAll(glossaryDownload.getTermSynonyms());
+//		
+//		List<Decision> decisions = download.getDecisions();
+//		List<Synonym> synonyms = download.getSynonyms();
+//
+//		HashSet<String> hasSynSet = new HashSet<String>();
+//		for(Synonym synonym : synonyms) {
+//			TermSynonym termSynonym = new TermSynonym();
+//			termSynonym.setTerm(synonym.getTerm());
+//			termSynonym.setSynonym(synonym.getSynonym());
+//			termSynonyms.add(termSynonym);
+//			hasSynSet.add(synonym.getTerm());
+//		}
+//		
+//		for(Decision decision : decisions) {
+//			TermCategory termCategory = new TermCategory();
+//			termCategory.setTerm(decision.getTerm());
+//			termCategory.setCategory(decision.getCategory());
+//			termCategory.setHasSyn(hasSynSet.contains(decision.getTerm()));
+//			termCategories.add(termCategory);
+//		}
+//		
+//		/** generate the wordroles from termcategories **/
+//		//remove duplicates, term is primary key in the table
+//		HashSet<String> wordSet = new HashSet<String>();
+//		for(TermCategory termCategory : termCategories) {
+//			if(wordSet.contains(termCategory.getTerm()))
+//				continue;
+//			wordSet.add(termCategory.getTerm());
+//			WordRole wordRole = new WordRole();
+//			wordRole.setWord(termCategory.getTerm());
+//			String semanticRole = "c";
+//			//if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+//			if(termCategory.getCategory().toLowerCase().matches(ElementRelationGroup.entityElements)) {
+//				semanticRole = "op";
+//			}
+//			wordRole.setSemanticRole(semanticRole);
+//			wordRole.setSavedid(""); //not really needed, is a left over from earlier charaparser times
+//			wordRoles.add(wordRole);
+//		}
+//		
+//		try(Connection connection = connectionPool.getConnection()) {	
+//			try(Statement stmt = connection.createStatement()) {
+//		        String cleanupQuery = "DROP TABLE IF EXISTS " + 
+//										tablePrefix + "_term_category, " + 
+//										tablePrefix + "_syns, " +
+//										tablePrefix + "_wordroles;";
+//		        stmt.execute(cleanupQuery);
+//		        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
+//				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+//						"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
+//				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(200) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
+//						"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`))  CHARACTER SET utf8 engine=innodb");
+//				
+//				for(TermCategory termCategory : termCategories) {
+//					try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)")) {
+//						preparedStatement.setString(1, termCategory.getTerm());
+//						preparedStatement.setString(2, termCategory.getCategory());
+//						preparedStatement.setBoolean(3, termCategory.isHasSyn());
+//						preparedStatement.executeUpdate();
+//					}
+//				}
+//				for(TermSynonym termSynonym : termSynonyms) {
+//					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)")) {
+//						preparedStatement.setString(1, termSynonym.getTerm());
+//						preparedStatement.setString(2, termSynonym.getSynonym());
+//						preparedStatement.executeUpdate();
+//					}
+//				}
+//				for(WordRole wordRole : wordRoles) {
+//					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)")) {
+//						preparedStatement.setString(1, wordRole.getWord());
+//						preparedStatement.setString(2, wordRole.getSemanticRole());
+//						preparedStatement.setString(3, wordRole.getSavedid());
+//						preparedStatement.executeUpdate();
+//					}
+//				}
+//			}
+//		} catch(Exception e) {
+//			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
+//		}
+//	}
 
 	/**
 	 * @param treatments

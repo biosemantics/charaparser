@@ -14,6 +14,7 @@
        	     <java-attributes>
 				<xml-element java-attribute="status" xml-path="@status"  />
 				<xml-element java-attribute="taxonNames" xml-path="taxon_name" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonName" container-type="java.util.List"/>
+				<xml-element java-attribute="strainNumber" xml-path="strain_number" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.StrainNumber"/>
 				<!--  <xml-element java-attribute="strainNumber" xml-path="strain_number" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.StrainNumber" container-type="java.util.List"/>
 				<xml-element java-attribute="placeOfPublication" xml-path="place_of_publication" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.PlaceOfPublication" container-type="java.util.List"/>
 				<xml-element java-attribute="taxonHierarchy" xml-path="taxon_hierarchy" type="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TaxonHierarchy" />
@@ -21,6 +22,15 @@
 				-->							
 			</java-attributes>
        	 </java-type>
+       	 
+         <java-type name="StrainNumber">
+       	   <java-attributes>
+                <xml-element java-attribute="strainNumber" xml-path="text()"/>
+				<xml-element java-attribute="equivalentStrainNumbers" xml-path="@equivalent_strain_numbers"/>
+				<xml-element java-attribute="accessionNumber16sRrna" xml-path="@accession_number_16s_rrna"/>
+				<xml-element java-attribute="accessionNumberForGenomeSequence" xml-path="@accession_number_for_genome_sequence"/>
+            </java-attributes>
+        </java-type>
         
        	 <java-type name="TaxonName">
        	   <java-attributes>

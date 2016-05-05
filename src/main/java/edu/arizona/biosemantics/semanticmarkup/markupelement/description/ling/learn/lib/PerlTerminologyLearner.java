@@ -181,11 +181,20 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			List<TaxonIdentification> tis = descriptionsFile.getTaxonIdentifications();
 			for(TaxonIdentification ti: tis){
-				for(TaxonName name: ti.getTaxonNames()){
-					String[] nameparts = name.getText().split("\\s+"); //name should be one word long, but just in case 
-					for(String namepart: nameparts){
-						taxonNames.add(namepart.toLowerCase());
-					}
+			    if(ti.getTaxonNames().size()>=1){
+				    for(TaxonName name: ti.getTaxonNames()){
+					    String[] nameparts = name.getText().split("\\s+"); //name should be one word long, but just in case 
+					    for(String namepart: nameparts){
+						    taxonNames.add(namepart.toLowerCase());
+					    }
+				    }
+			    }
+				if(ti.hasStrainNumber()) {
+					if(ti.getStrainNumber().getAccessionNumber16sRrna()!=null)
+						taxonNames.add(ti.getStrainNumber().getAccessionNumber16sRrna());
+					if(ti.getStrainNumber().getAccessionNumberForGenomeSequence()!=null)
+						taxonNames.add(ti.getStrainNumber().getAccessionNumberForGenomeSequence());
+					taxonNames.add(ti.getStrainNumber().getStrainNumber());
 				}
 			}
 		}

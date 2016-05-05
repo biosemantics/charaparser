@@ -26,8 +26,6 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
-import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
-import edu.arizona.biosemantics.oto.client.oto2.Client;
 import edu.arizona.biosemantics.oto.model.lite.Decision;
 import edu.arizona.biosemantics.oto.model.lite.Download;
 import edu.arizona.biosemantics.oto.model.lite.Synonym;
@@ -243,13 +241,13 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("OTO2ReviewFile")).toInstance(oto2ReviewFile);
 			bind(String.class).annotatedWith(Names.named("OTO2TermReviewURL")).toInstance(oto2TermReviewURL);
 			bind(String.class).annotatedWith(Names.named("OTO2Client_Url")).toInstance(oto2ClientURL);			
-			bind(OTOLiteClient.class).toProvider(new Provider<OTOLiteClient>() {
-				private Client instance;
+			bind(edu.arizona.biosemantics.oto2.oto.server.rest.client.Client.class).toProvider(new Provider<edu.arizona.biosemantics.oto2.oto.server.rest.client.Client>() {
+				private edu.arizona.biosemantics.oto2.oto.server.rest.client.Client instance;
 				@Override
-				public OTOLiteClient get() {
+				public edu.arizona.biosemantics.oto2.oto.server.rest.client.Client get() {
 					
 					if(instance == null)
-						instance = new Client(oto2ClientURL);
+						instance = new edu.arizona.biosemantics.oto2.oto.server.rest.client.Client(oto2ClientURL);
 					return instance;
 					
 					
