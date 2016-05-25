@@ -11,5 +11,6 @@ public interface INormalizer {
 	public String normalize(String str, String tag, String modifier, String source, Hashtable<String, String> prevMissingOrgan);
 
 	public void init();
-	
+
+	public String normalizeSpacesRoundNumbers(String str);
 }

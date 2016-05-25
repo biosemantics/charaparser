@@ -218,7 +218,6 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 
 		
 		if(collection == null)
-			throw new TransformationException();
         /*if(!collection.isFinalized() && termCategorizationRequired) {
         	log(LogLevel.ERROR, "The term categorization has to be finalized to run markup. Please return to categorizing terms and finalize first.");
         	throw new TransformationException();

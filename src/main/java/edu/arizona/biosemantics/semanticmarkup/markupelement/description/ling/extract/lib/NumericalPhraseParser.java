@@ -36,7 +36,7 @@ public class NumericalPhraseParser {
 	 * @return: characters marked up in XML format <character name="" value="">
 	 */
 
-	public List<Character> parseNumericals(String numberexp, String suggestedcharaname){	
+	public List<Character> parseNumericals(String numberexp, String suggestedcharaname) {	
 		LinkedList<Character> innertagstate = new LinkedList<Character>();
 		try{
 			numberexp = numberexp.replaceAll("–", "-");
@@ -689,6 +689,7 @@ public class NumericalPhraseParser {
 			refinement(innertagstate); //TODO hong make this interpretation configurable?
 		}catch(Throwable e){
 			log(LogLevel.ERROR, "parseNumericals throwable: "+e.toString());
+			e.printStackTrace();
 		}
 		return innertagstate;
 	}
@@ -948,7 +949,7 @@ public class NumericalPhraseParser {
 				}
 				extract = matcher3.replaceAll("#");
 				matcher3.reset();
-				String from = extract.substring(0, extract.indexOf('-')).trim();
+				String from = extract.substring(0, extract.indexOf('-')).trim(); //2016
 				String to = extract.substring(extract.indexOf('-')+1,extract.lastIndexOf('#')).replaceAll("#", "").trim();
 				boolean upperrestricted = ! to.endsWith("+");
 				to = to.replaceFirst("\\+$", "").trim();
@@ -1023,5 +1024,6 @@ public class NumericalPhraseParser {
 		//log(LogLevel.DEBUG, "plaincharset2:"+plaincharset);
 		return plaincharset;
 	}
+	
 	
 }

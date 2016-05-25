@@ -65,6 +65,8 @@ public class Character extends NamedElement implements Cloneable {
 	private String type;
 	@XmlPath("@" + CharacterAttribute.to_unit)
 	private String toUnit;
+	@XmlPath("@" + CharacterAttribute.to_modifier)
+	private String toModifier;
 	@XmlPath("@" + CharacterAttribute.to_inclusive)
 	private String toInclusive;
 	@XmlPath("@" + CharacterAttribute.to)
@@ -85,6 +87,8 @@ public class Character extends NamedElement implements Cloneable {
 	private String geographicalConstraint;
 	@XmlPath("@" + CharacterAttribute.from_unit)
 	private String fromUnit;
+	@XmlPath("@" + CharacterAttribute.from_modifier)
+	private String fromModifier;
 	@XmlPath("@" + CharacterAttribute.from_inclusive)
 	private String fromInclusive;
 	@XmlPath("@" + CharacterAttribute.from)
@@ -172,7 +176,7 @@ public class Character extends NamedElement implements Cloneable {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-
+	
 	public String getType() {
 		return type;
 	}
@@ -187,6 +191,14 @@ public class Character extends NamedElement implements Cloneable {
 
 	public void setToUnit(String toUnit) {
 		this.toUnit = toUnit;
+	}
+	
+	public String getToModifier() {
+		return toModifier;
+	}
+
+	public void setToModifier(String toModifier) {
+		this.toModifier = toModifier;
 	}
 
 	public String getToInclusive() {
@@ -269,7 +281,14 @@ public class Character extends NamedElement implements Cloneable {
 	public void setFromUnit(String fromUnit) {
 		this.fromUnit = fromUnit;
 	}
+	public String getFromModifier() {
+		return fromModifier;
+	}
 
+	public void setfromModifier(String fromModifier) {
+		this.fromModifier = fromModifier;
+	}
+	
 	public String getFromInclusive() {
 		return fromInclusive;
 	}

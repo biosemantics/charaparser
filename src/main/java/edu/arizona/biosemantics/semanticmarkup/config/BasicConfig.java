@@ -358,7 +358,7 @@ public class BasicConfig extends AbstractModule {
 			  bind(String.class).annotatedWith(Names.named("RomanRangePattern")).toInstance("(\\d+)-<?\\b("+roman+")\\b>?");
 			  bind(String.class).annotatedWith(Names.named("RomanPattern")).toInstance("(<(\\S+?)> <?\\{?\\b("+roman+")\\b\\}?>?)");
 			  bind(String.class).annotatedWith(Names.named("ModifierList")).toInstance("(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)");	
-			  bind(String.class).annotatedWith(Names.named("AdvModifiers")).toInstance("at least|at first|at times");	
+			  bind(String.class).annotatedWith(Names.named("AdvModifiers")).toInstance("at least|at first|at times|almost|always|never|not|often|quite|rather|sometimes|somewhat"); //adv not ending with -ly	
 		} catch(IOException e) {
 			log(LogLevel.ERROR, "Exception loading configuration", e);
 			throw new IllegalArgumentException();
@@ -421,7 +421,7 @@ public class BasicConfig extends AbstractModule {
 
 	private String getUnits() {
 		//String units = "cm|mm|dm|m|meter|meters|microns|micron|unes|µm|um";
-		String units= "(?:(?:pm|cm|mm|dm|ft|m|meters|meter|micro_m|micro-m|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter|transdiameters|transdiameter)[23]?)"; //squared or cubed
+		String units= "(?:(?:pm|cm|mm|dm|km|ft|m|meters|meter|micro_m|micro-m|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter|transdiameters|transdiameter)[23]?)"; //squared or cubed
 		//String units = "[pμµucmd]?m?";
 		//micron => µm
 		return units;

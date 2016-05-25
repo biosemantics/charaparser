@@ -1057,7 +1057,7 @@ public abstract class Normalizer implements INormalizer {
 
 	/*challenging cases: 
 	 * <petiole> 15 - 30 ( - 53 ) cm {long} ( 20 - 30 ( - 50 ) % of total <leaf> ) , <petiole> {glabrous} , {spinescent} for 20 - 35 % of {length} .*/
-	private String normalizeSpacesRoundNumbers(String sent) {
+	public String normalizeSpacesRoundNumbers(String sent) {
 		sent = sent.replaceAll("-+", "-");// 2--4 => 2-4
 		sent = sent.replaceAll("(- )+", "- ");// 2 - - 4 => 2 - 4
 		if(sent.contains("×")) sent = sent.replaceAll("(?<="+units+")\\s*\\.\\s*(?=×)", " "); //4 cm.x 6cm => 4 cm x 6cm

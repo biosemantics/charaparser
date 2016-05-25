@@ -36,6 +36,7 @@ public class CharacterAttribute {
 	public static final String from = "from";
 	public static final String from_inclusive = "from_inclusive";
 	public static final String from_unit = "from_unit";
+	public static final String from_modifier = "from_modifier"; //elevation
 	public static final String geographical_constraint = "geographical_constraint";
 	public static final String in_brackets = "in_brackets";
 	public static final String modifier = "modifier";
@@ -47,6 +48,7 @@ public class CharacterAttribute {
 	public static final String to = "to";
 	public static final String to_inclusive = "to_inclusive";
 	public static final String to_unit = "to_unit";
+	public static final String to_modifier = "to_modifier"; //elevation
 	public static final String type = "type";
 	public static final String unit = "unit";
 	public static final String upper_restricted = "upper_restricted";

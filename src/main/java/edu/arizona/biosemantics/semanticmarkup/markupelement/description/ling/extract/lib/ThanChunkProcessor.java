@@ -98,7 +98,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(ChunkType.CONSTRAINT);
 				List<? extends Element> elements = chunkProcessor.process(constraint, processingContext);
 				processingContextState.getCarryOverDataFrom(processingContext.getCurrentState());
-				processingContext.setCurrentState(processingContextState);
+				processingContext.setCurrentState(processingContextState); 
 				log(LogLevel.DEBUG, "restored current state after "+chunkProcessor.getClass()+" is run.");
 				List<BiologicalEntity> structures = new LinkedList<BiologicalEntity>();
 				for(Element element : elements)
@@ -111,10 +111,19 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 				log(LogLevel.DEBUG, "restored current state after createConstraintedCharacters is run.");
 		} else {
 			Chunk thanObject = thanChunk.getChunkDFS(ChunkType.OBJECT);
+			if(thanObject==null){
+				//TODO narrower than a Value, narrower than in female
+				
+				
+				
+				
+			}else{
 			//Chunk thanObject = thanChunk.getChildChunk(ChunkType.PP).getChildChunk(ChunkType.OBJECT);
 			LinkedHashSet<Chunk> beforeOrganChunks = new LinkedHashSet<Chunk>(); 
 			LinkedHashSet<Chunk> organChunks = new LinkedHashSet<Chunk>();
 			LinkedHashSet<Chunk> afterOrganChunks = new LinkedHashSet<Chunk>(); 
+			
+			
 			this.getOrganChunks(thanObject, beforeOrganChunks, organChunks, afterOrganChunks);
 			boolean foundOrgan = !organChunks.isEmpty();
 			
@@ -176,6 +185,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 						log(LogLevel.DEBUG, "restored current state after createConstraintedCharacters is run.");
 					}
 				}
+			}
 			}
 		}
 		return result; 	
