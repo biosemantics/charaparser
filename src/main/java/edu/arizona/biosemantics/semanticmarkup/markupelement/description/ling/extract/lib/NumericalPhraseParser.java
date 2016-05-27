@@ -725,14 +725,14 @@ public class NumericalPhraseParser {
 			if(chara.getName().startsWith("atypical")){
 				String character = chara.getName().replaceFirst("atypical_", "");
 				if(chara.getFrom()!=null){
-					atypicalfrom = Float.parseFloat(chara.getFrom().replaceFirst("\\+$", ""));
+					atypicalfrom = Float.parseFloat(chara.getFrom().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-")); //015 = -15
 				}
 				if(chara.getTo()!=null){
-					atypicalto = Float.parseFloat(chara.getTo().replaceFirst("\\+$", ""));
+					atypicalto = Float.parseFloat(chara.getTo().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
 				}
 				if(chara.getValue()!=null){
-					atypicalfrom = Float.parseFloat(chara.getValue().replaceFirst("\\+$", ""));
-					atypicalto = Float.parseFloat(chara.getValue().replaceFirst("\\+$", ""));
+					atypicalfrom = Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
+					atypicalto = Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
 				}	
 
 				float[] typical = getTypical(innertagstate, character);

@@ -51,7 +51,7 @@ public class ElevationTransformer implements IElevationTransformer {
 		this.stopwords = stopwords;
 		this.npp = new NumericalPhraseParser(units);
 		this.advModPattern = Pattern.compile(advModifiers+"|"+lyAdvPattern+"|ca.");
-		this.locPattern = Pattern.compile("\\b([A-Z][a-zA-Z.]{2,}|\\w*tropical|\\w*tropics|\\w*equatorial|\\w*temperate|\\w*polar|west|north|east|south|westward|northward|eastward|southward)\\b"); //in subtropical, tropical, Arizona	
+		this.locPattern = Pattern.compile("\\b([A-Z][a-zA-Z.]{2,}|\\w*tropical|\\w*tropics|\\w*equatorial|\\w*temperate|\\w*polar|west|north|east|south|westward|northward|eastward|southward)"); //in subtropical, tropical, Arizona	
 	}
 	/* (non-Javadoc)
 	 * @see edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.transform.IElevationTransformer#transform(java.util.List)
@@ -63,21 +63,22 @@ public class ElevationTransformer implements IElevationTransformer {
 			int organId = 0;
 			for(Treatment treatment : elevationsFile.getTreatments()) {
 				for(Elevation elevation : treatment.getElevations()) {
-					if(elevation.getText()!=null && elevation.getText().trim().length()>0){
 						List<Statement> statements = new LinkedList<Statement>();
 						Statement statement = new Statement();
 						statement.setId("elevation_" + i++);
 						statement.setText(elevation.getText());
-						BiologicalEntity be = new BiologicalEntity();
-						be.setName("whole_organism");
-						be.setId("elev_o"+organId++);
-						be.setType("structure");
-						be.setNameOriginal("");
-						be.addCharacters(parse(elevation.getText()));
-						statement.addBiologicalEntity(be);
+						if(elevation.getText()!=null && elevation.getText().trim().length()>0){
+							BiologicalEntity be = new BiologicalEntity();
+							be.setName("whole_organism");
+							be.setId("elev_o"+organId++);
+							be.setType("structure");
+							be.setNameOriginal("");
+							be.addCharacters(parse(elevation.getText()));
+							statement.addBiologicalEntity(be);
+						}
 						statements.add(statement);				
 						elevation.setStatements(statements);
-					}
+					
 				}
 			}
 		}
@@ -91,7 +92,7 @@ public class ElevationTransformer implements IElevationTransformer {
 		System.out.println("To parse elevation text: "+text);
 
 		text = text.replaceAll("–", "-").replaceAll("-+", "-");
-		String nText = hideNegatives(normalize(text));
+		String nText = normalize(hideNegatives(text)); //in this order
 		
 		if(nText.compareToIgnoreCase(text)!=0) {
 			log(LogLevel.DEBUG, "Text normalized to: "+nText);
@@ -110,12 +111,18 @@ public class ElevationTransformer implements IElevationTransformer {
 	}
 
 	/**
+	 * 0 (100–300 inland) m;
+	 * => 0 m (100–300 m inland) m;
 	 * 
 	 * @param (Greenland, 0–)1000–2400(–4000, Colorado, Utah) m;
 	 * @return (Greenland, 0–1000 m) 1000–2400 m (2400–4000, Colorado, Utah);
 	 */
 	private String normalize(String text) {
 
+		/**
+		 * (Greenland, 0–)1000–2400(–4000, Colorado, Utah) m;
+		 *	=> (Greenland, 0–1000 m) 1000–2400 m (2400–4000, Colorado, Utah);
+		 */
 		if(text.matches(".*?\\(.*?[A-Za-z].*?\\d-\\)\\d.*") || text.matches(".*?\\d\\(-\\d.*?[A-Za-z].*?\\).*")){
 			String unit = "";
 			Pattern units = Pattern.compile("("+this.units+")");
@@ -137,6 +144,34 @@ public class ElevationTransformer implements IElevationTransformer {
 			}
 
 			text.replaceAll("(\\b["+unit+" ])+", unit); // m  m => m
+		}
+		
+		
+		/**
+		 * 0 (100–300 inland) m;
+		 * => 0 m (100–300 m inland) m;
+		 * 
+		 * 0 (Florida)-600 (Arkansas, Texas) m;
+		 * => 0 (Florida)-600 (Arkansas, Texas) m;
+		 */
+		if(text.matches(".*?\\d (?!"+this.units+").*") && text.matches(".*\\) "+this.units+".*")){ //text contains unit by separated from the value by ()
+			//find unit
+			String unit = "";
+			Pattern units = Pattern.compile("("+this.units+")");
+			Matcher u = units.matcher(text);		
+			if(u.find()) unit = text.substring(u.start(), u.end());	
+			
+			//insert unit after numbers
+			String norm = "";
+			int start = 0;
+			Pattern p = Pattern.compile("\\d (?!"+this.units+")");
+			u = p.matcher(text);
+			while(u.find()){
+				norm +=text.substring(start, u.end())+unit+" ";
+				start = u.end();
+			}
+			norm+=text.substring(start);
+			text = norm.replaceAll("\\s+", " ").replaceAll("(?<=\\s)[,.;:]", "");
 		}
 		return text;
 	}
@@ -173,19 +208,19 @@ public class ElevationTransformer implements IElevationTransformer {
 						String v = eri.getCandidateValue();
 						String value = v.replaceFirst(units+"$", "");
 						c.setValue(value.trim());
-						if(v.compareTo(value)!=0) c.setUnit(v.replaceFirst(value, ""));
+						if(v.compareTo(value)!=0) c.setUnit(v.replaceFirst(value, "").trim());
 					}
 					if(eri.getCandidates4High()!=null){
 						String h = eri.getCandidates4High();
 						String value = h.replaceFirst(units+"$", "");
 						c.setTo(value.trim());
-						if(h.compareTo(value)!=0) c.setToUnit(h.replaceFirst(value, ""));
+						if(h.compareTo(value)!=0) c.setToUnit(h.replaceFirst(value, "").trim());
 					}
 					if(eri.getCandidates4Low()!=null){
 						String l = eri.getCandidates4Low();
 						String value = l.replaceFirst(units+"$", "");
 						c.setFrom(value.trim());
-						if(l.compareTo(value)!=0) c.setFromUnit(l.replaceFirst(value, ""));
+						if(l.compareTo(value)!=0) c.setFromUnit(l.replaceFirst(value, "").trim());
 					}
 					elevs.add(c);
 				}
@@ -199,15 +234,15 @@ public class ElevationTransformer implements IElevationTransformer {
 				}else{
 					for(Character elev: elevs){ //set modifiers for each character parsed out
 						if(eri.getModifier4High()!=null && eri.getModifier4High().length()>0){ // to_modifier
-							elev.setToModifier(eri.getModifier4High());
+							elev.setToModifier(format(eri.getModifier4High()));
 						}
 						if(eri.getModifier4Low()!=null && eri.getModifier4Low().length()>0){ //from_modifier
-							elev.setfromModifier(eri.getModifier4Low());
+							elev.setfromModifier(format(eri.getModifier4Low()));
 						}
 						if(eri.getModifier()!=null && eri.getModifier().length()>0){
-							elev.setModifier(eri.getModifier());
+							elev.setModifier(format(eri.getModifier()));
 						}
-						if(elev.getFrom()!=null && elev.getFrom().compareTo(this.defaultLow)==0) elev.setFrom(null);
+						//if(elev.getFrom()!=null && elev.getFrom().compareTo(this.defaultLow)==0) elev.setFrom(null);
 					}
 					values.addAll(elevs); //TODO add modifiers
 				}
@@ -230,6 +265,10 @@ public class ElevationTransformer implements IElevationTransformer {
 	}
 
 
+	private String format(String modifier) {
+		modifier = modifier.replaceAll("^\\W+|\\W+$", "");
+		return modifier;
+	}
 	/**
 	 * 015 => -15
 	 * @param elevs
@@ -251,19 +290,41 @@ public class ElevationTransformer implements IElevationTransformer {
 	 * @return
 	 */
 
-	private String hideNegatives(String negative) {
+	private String hideNegatives(String text) {
 		Pattern p = Pattern.compile("-\\d");
-		Matcher m = p.matcher(negative);
+		Matcher m = p.matcher(text);
+		String norm = "";
+		int start = 0;
 		while(m.find()){ //m.find continues operate on the updated negative because replacing - with 0 does not change the length of the string
-			if((negative.substring(0, m.start()).matches(".*[\\(\\)\\[\\]]+$") && (! negative.substring(0, m.start()).matches(".*\\d[\\(\\)\\[\\]]+$"))) ||
+			String leading = text.substring(start, m.start());
+		
+			//remove all (abc) : 0 (Florida)-600 (Arkansas, Texas) m;
+			String last = leading;
+			while(leading.trim().endsWith(")") || leading.trim().endsWith("]")){
+				leading = leading.replaceFirst("\\s*[\\(\\[][^\\d]*[\\)\\]]\\s*$", "");
+				if(leading.compareTo(last)==0) break;
+				last = leading;
+			}
+			
+			if(last.trim().length()==0 || 
+					(last.trim().matches(".*[\\(\\)\\[\\]]+$") && ! last.trim().matches(".*\\d[\\(\\)\\[\\]]+$")) ||
+					(!last.trim().matches(".*[\\(\\)\\[\\]]+$") && last.trim().matches(".*[^\\d]$"))) 
+				norm += text.substring(start, m.end()).replace("-", "0"); // -70; abc -90
+			else
+				norm += text.substring(start, m.end());
+
+			start = m.end();
+			
+			/*if((negative.substring(0, m.start()).matches(".*[\\(\\)\\[\\]]+$") && (! negative.substring(0, m.start()).matches(".*\\d[\\(\\)\\[\\]]+$"))) ||
 					(! negative.substring(0, m.start()).matches(".*[\\(\\)\\[\\]]+$") && negative.substring(0, m.start()).matches(".*[^\\d]$")) ||
 					negative.substring(0, m.start()).length()==0){ //not directly following another number
 				negative = negative.substring(0, m.start())+negative.substring(m.start(), m.end()).replace("-", "0")+negative.substring(m.end());
 			}else{
 				negative = negative.substring(0, m.start())+negative.substring(m.start(), m.end())+negative.substring(m.end());
-			}
+			}*/
 		}
-		return negative;
+		norm += text.substring(start);
+		return norm;
 	}
 	/**
 	 * text holds info to populate a number of ElevationRangeInfo
@@ -286,7 +347,7 @@ public class ElevationTransformer implements IElevationTransformer {
 			//range pattern: low and high form a range
 			if(text.matches(".*\\d-.*") || text.matches(".*-\\d.*") || text.contains("between") ||  text.contains("Between")){
 				//(-15–)0–900(–1100) m;
-				Pattern numericalRange = Pattern.compile("([\\d\\(\\)\\[\\]\\+\\-]+)-([\\d\\(\\)\\[\\]\\+\\-]+) ("+units+")\\b");
+				Pattern numericalRange = Pattern.compile("([\\d\\(\\)\\[\\]\\+\\-]*\\d[\\d\\(\\)\\[\\]\\+\\-]*)-([\\d\\(\\)\\[\\]\\+\\-]*\\d[\\d\\(\\)\\[\\]\\+\\-]*) ("+units+")\\b");
 				Matcher m = numericalRange.matcher(text);
 
 				if(m.find()){
@@ -297,7 +358,12 @@ public class ElevationTransformer implements IElevationTransformer {
 					eri.appendModifier(m1);
 					m2 = modifierVerbatim(text.substring(m.end()), true);
 					eri.appendModifier(m2);
-					eri.setCandidateValue(text.substring(m.start(), m.end()));
+					String value = text.substring(m.start(), m.end());
+					if(value.matches("^[\\(\\[].*") && !value.matches(".*[\\]\\)].*")) value=value.replaceAll("^[\\(\\[]+", "");
+					if(value.matches("^[\\)\\]].*") && !value.matches(".*[\\[\\(].*")) value=value.replaceAll("^[\\)\\]]+", "");
+					if(value.matches(".*[\\)\\]]$") && !value.matches(".*[\\[\\(].*")) value=value.replaceAll("[\\)\\]]+$", "");
+					if(value.matches(".*[\\(\\[]$") && !value.matches(".*[\\]\\)].*")) value=value.replaceAll("[\\(\\[]+$", "");
+					eri.setCandidateValue(value);
 					//add eri
 					assembleERIS(eris, eri); 
 					//update text
@@ -305,24 +371,25 @@ public class ElevationTransformer implements IElevationTransformer {
 				}	
 
 				//between pattern: 0 (Florida)-600 (Arkansas, Texas) m;
-				Pattern range = Pattern.compile("\\b(?:[Bb]etween )?(\\d+) ?(\\(.*?\\))? ?(?:"+units+")?(?:-| and )(.*?)?\\b(\\d+) ?(\\(.*?\\))? ?("+units+")\\b"); //.... 0 (Florida)–600 (Arkansas, Texas) m; ...
+				Pattern range = Pattern.compile("\\b(?:[Bb]etween )?(\\d+) ?(?:"+units+")? ?(\\(.*?\\))? ?(?:-| and )(.*?)?\\b(\\d+) ?("+units+")?\\b"); //.... 0 (Florida)–600 (Arkansas, Texas) m; ...
+				//Pattern range = Pattern.compile("\\b(?:[Bb]etween )?(\\d+) ?(?:"+units+")? ?(\\(.*?\\))? ?(?:-| and )(.*?)?\\b(\\d+) ?(?:"+units+")? ?(\\(.*?\\))? ?("+units+")\\b"); //.... 0 (Florida)–600 (Arkansas, Texas) m; ...
 				m = range.matcher(text);
 				if(m.find()){
 					String m1 = "";
 					String m2 = "";
 					ElevationRangeInfo eri = new ElevationRangeInfo();
-					eri.setCandidates4Low(m.group(1)+" "+m.group(6));
-					eri.setCandidates4High(m.group(4)+" "+m.group(6));
-					if(m.group(2)!=null && m.group(2).trim().length()>0) //separate modifiers
+					eri.setCandidates4Low(m.group(1)+" "+m.group(5));
+					eri.setCandidates4High(m.group(4)+" "+m.group(5));
+					if(m.group(2)!=null && m.group(2).trim().length()>0 && !m.group(2).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline|\\d).*?")) //separate modifiers
 						eri.appendModifier4Low(m.group(2));
-					if(m.group(3)!=null && m.group(3).trim().length()>0)
+					if(m.group(3)!=null && m.group(3).trim().length()>0 && !m.group(3).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline|\\d).*?"))
 						eri.appendModifier4High(m.group(3));
-					if(m.group(5)!=null && m.group(5).trim().length()>0)
-						eri.appendModifier4High(m.group(5));
+					//if(m.group(5)!=null && m.group(5).trim().length()>0 && !m.group(5).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline|\\d).*?"))
+					//	eri.appendModifier4High(m.group(5));
 
 					m1 = modifierVerbatim(text.substring(0, m.start()), false);
 					m2 = modifierVerbatim(text.substring(m.end()), true);
-					if(m1.trim().length()>0){//separate modifiers
+					if(m1.trim().length()>0 ||(eri.getModifier4Low()!=null && eri.getModifier4Low().length()>0)){//separate modifiers
 						eri.appendModifier4Low(m1);
 						eri.appendModifier4High(m2);
 					}else if(m2.trim().length()>0){//common modifier
@@ -350,8 +417,7 @@ public class ElevationTransformer implements IElevationTransformer {
 					eri.appendModifier4Low(m1);
 					m2 = modifierVerbatim(text.substring(m.end()), true);
 					eri.appendModifier4Low(m2);
-					eri.setCandidates4Low(m.group(1));
-					if(eri.getUnit()==null) eri.setUnit(m.group(2));
+					eri.setCandidates4Low(m.group(1)+" "+m.group(2).trim());
 					//add eri
 					assembleERIS(eris, eri); 
 					//update text
@@ -369,8 +435,8 @@ public class ElevationTransformer implements IElevationTransformer {
 					eri.appendModifier4Low(m1);
 					m2 = modifierVerbatim(text.substring(m.end()), true);
 					eri.appendModifier4Low(m2);
-					eri.setCandidates4Low(m.group(1));
-					if(eri.getUnit()==null) eri.setUnit(m.group(2));
+					eri.setCandidates4Low(m.group(1)+" "+m.group(2).trim());
+					
 					//add eri
 					assembleERIS(eris, eri);
 					//update text
@@ -392,8 +458,8 @@ public class ElevationTransformer implements IElevationTransformer {
 					eri.appendModifier4High(m1);
 					m2 = modifierVerbatim(text.substring(m.end()), true);
 					eri.appendModifier4High(m2);
-					eri.setCandidates4High(m.group(1));
-					if(eri.getUnit()==null) eri.setUnit(m.group(2));
+					eri.setCandidates4High(m.group(1)+" "+m.group(2).trim());
+
 					//add eri
 					assembleERIS(eris, eri);
 					//update text
@@ -410,8 +476,8 @@ public class ElevationTransformer implements IElevationTransformer {
 					eri.appendModifier4High(m1);
 					m2 = modifierVerbatim(text.substring(m.end()), true);
 					eri.appendModifier4High(m2);
-					eri.setCandidates4High(m.group(1));
-					if(eri.getUnit()==null) eri.setUnit(m.group(2));
+					eri.setCandidates4High(m.group(1)+" "+m.group(2).trim());
+
 					//add eri
 					assembleERIS(eris, eri);
 					//update text
@@ -451,7 +517,7 @@ public class ElevationTransformer implements IElevationTransformer {
 		previous = text;
 		//low (in northern regions) to high elevations of over 3300 m;
 		while(text.matches(".*([Ee]levation|[Tt]imberline|[Tt]reeline).*")){
-			Pattern elev = Pattern.compile("([Ll]ow|[Mm]oderate|[Mm]edium) (\\(.*?\\))? ?to (moderate|medium|high|alpine|treeline|timberline)\\b ?(elevations)? ?(\\(.*?\\))?");
+			Pattern elev = Pattern.compile("([Ll]ow|[Mm]oderate|[Mm]edium) (\\(.*?\\))? ?to (moderate|medium|high|alpine|treeline|timberline)\\b ?(elevations)?");
 			Matcher m = elev.matcher(text); 
 			if(m.find()){
 				String m1 = "";
@@ -459,14 +525,14 @@ public class ElevationTransformer implements IElevationTransformer {
 				ElevationRangeInfo eri = new ElevationRangeInfo();
 				eri.setCandidates4Low(m.group(1)+" elevations");
 				eri.setCandidates4High(m.group(3)+ " elevations");
-				if(m.group(2)!=null && m.group(2).trim().length()>0) //separate modifiers
+				if(m.group(2)!=null && m.group(2).trim().length()>0  && !m.group(2).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline|\\d).*?")) //separate modifiers
 					eri.appendModifier4Low(m.group(2));
-				if(m.group(4)!=null && m.group(4).trim().length()>0)
-					eri.appendModifier4High(m.group(4));
+				//if(m.group(5)!=null && m.group(5).trim().length()>0  && !m.group(5).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline|\\d).*?"))
+				//	eri.appendModifier4High(m.group(5));
 
 				m1 = modifierVerbatim(text.substring(0, m.start()), false);
 				m2 = modifierVerbatim(text.substring(m.end()), true);
-				if(m1.trim().length()>0){//separate modifiers
+				if(m1.trim().length()>0 ||( eri.getModifier4Low()!=null && eri.getModifier4Low().length()>0)){//separate modifiers
 					eri.appendModifier4Low(m1);
 					eri.appendModifier4High(m2);
 				}else if(m2.trim().length()>0){//common modifier
@@ -696,7 +762,7 @@ public class ElevationTransformer implements IElevationTransformer {
 			Matcher m = this.locPattern.matcher(text);
 			int stop = 0;
 			while(m.find()){//aggressively searching for location, stop 
-				if(!text.substring(stop, m.end()).matches(".*\\d.*"))
+				if(!text.substring(stop, m.end()).matches(".*\\d.*") && !text.substring(stop, m.end()).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline).*?"))
 					stop = m.end();
 			}
 			//extend the modifier to a good point, punct mark or a number
@@ -708,7 +774,7 @@ public class ElevationTransformer implements IElevationTransformer {
 				for(String w: rest){
 					if(i>0)  space=" ";
 					i++;
-					if(w.matches(".*?[,;:.)]")){
+					if(w.matches(".*?[#,;:.)]")){
 						modifier = modifier +space+w;
 						break;
 					}else if (w.matches(".*?\\d+.*")){
@@ -754,7 +820,7 @@ public class ElevationTransformer implements IElevationTransformer {
 				//int start = text.length();
 				m = this.locPattern.matcher(text);
 				while (m.find()){
-					if(!text.substring(m.start()).matches(".*?\\d.*?")) //no \d between m.start and end of text
+					if(!text.substring(m.start()).matches(".*?\\d.*?") && !text.substring(m.start()).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline).*?")) //no \d between m.start and end of text
 						start = m.start();
 				}	
 				//extend the modifier to a good point, punct mark or a number
@@ -763,7 +829,7 @@ public class ElevationTransformer implements IElevationTransformer {
 					String[] rest = text.substring(0, start).split("\\s");
 					for(int i= rest.length-1; i>=0; i--){
 						String w = rest[i];
-						if(w.matches(".*?[,;:.)]") || w.matches(".*?\\d+.*")){
+						if(w.matches(".*?[#,;:.)(]") || w.matches(".*?\\d+.*")){
 							break;
 						}else{
 							modifier = w+" "+ modifier;
@@ -913,7 +979,6 @@ public class ElevationTransformer implements IElevationTransformer {
 
 
 	private class ElevationRangeInfo{
-		String unit = null;
 		String modifier4Low = ""; //modifier for low
 		String modifier4High = ""; //modifier for high
 		String modifier = ""; //apply to both low and high. If low/high modifier is not empty, modifier must be null, vice versa
@@ -936,12 +1001,6 @@ public class ElevationTransformer implements IElevationTransformer {
 			if(modifier!=null && modifier.trim().length()>0)
 				this.modifier +=  modifier +this.deliminator;
 		} 
-		protected String getUnit() {
-			return unit;
-		}
-		protected void setUnit(String unit) {
-			this.unit = unit;
-		}
 		protected String getModifier4Low() {
 			return modifier4Low;
 		}

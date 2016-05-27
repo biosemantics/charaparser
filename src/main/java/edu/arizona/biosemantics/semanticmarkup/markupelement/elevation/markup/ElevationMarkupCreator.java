@@ -68,6 +68,9 @@ public class ElevationMarkupCreator implements IElevationMarkupCreator {
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Problem reading, transforming or writing treatments", e);
 			e.printStackTrace();
+		}catch(Throwable t) {
+			log(LogLevel.ERROR, "Problem reading, transforming or writing treatments", t);
+			t.printStackTrace();
 		}
 		return null;
 	}
