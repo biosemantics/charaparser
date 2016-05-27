@@ -215,12 +215,14 @@ public class ElevationTransformer implements IElevationTransformer {
 						String value = h.replaceFirst(units+"$", "");
 						c.setTo(value.trim());
 						if(h.compareTo(value)!=0) c.setToUnit(h.replaceFirst(value, "").trim());
+						c.setCharType("range_value");
 					}
 					if(eri.getCandidates4Low()!=null){
 						String l = eri.getCandidates4Low();
 						String value = l.replaceFirst(units+"$", "");
 						c.setFrom(value.trim());
 						if(l.compareTo(value)!=0) c.setFromUnit(l.replaceFirst(value, "").trim());
+						c.setCharType("range_value");
 					}
 					elevs.add(c);
 				}
@@ -371,7 +373,7 @@ public class ElevationTransformer implements IElevationTransformer {
 				}	
 
 				//between pattern: 0 (Florida)-600 (Arkansas, Texas) m;
-				Pattern range = Pattern.compile("\\b(?:[Bb]etween )?(\\d+) ?(?:"+units+")? ?(\\(.*?\\))? ?(?:-| and )(.*?)?\\b(\\d+) ?("+units+")?\\b"); //.... 0 (Florida)–600 (Arkansas, Texas) m; ...
+				Pattern range = Pattern.compile("\\b(?:[Bb]etween )?(\\d+) ?(?:"+units+")? ?(\\([^#]*?\\))? ?(?:-| and )([^#]*?)?\\b(\\d+) ?("+units+")?\\b"); //.... 0 (Florida)–600 (Arkansas, Texas) m; ...
 				//Pattern range = Pattern.compile("\\b(?:[Bb]etween )?(\\d+) ?(?:"+units+")? ?(\\(.*?\\))? ?(?:-| and )(.*?)?\\b(\\d+) ?(?:"+units+")? ?(\\(.*?\\))? ?("+units+")\\b"); //.... 0 (Florida)–600 (Arkansas, Texas) m; ...
 				m = range.matcher(text);
 				if(m.find()){
@@ -517,7 +519,7 @@ public class ElevationTransformer implements IElevationTransformer {
 		previous = text;
 		//low (in northern regions) to high elevations of over 3300 m;
 		while(text.matches(".*([Ee]levation|[Tt]imberline|[Tt]reeline).*")){
-			Pattern elev = Pattern.compile("([Ll]ow|[Mm]oderate|[Mm]edium) (\\(.*?\\))? ?to (moderate|medium|high|alpine|treeline|timberline)\\b ?(elevations)?");
+			Pattern elev = Pattern.compile("([Ll]ow|[Mm]oderate|[Mm]edium) (\\([^#]*?\\))? ?to (moderate|medium|high|alpine|treeline|timberline)\\b ?(elevations)?");
 			Matcher m = elev.matcher(text); 
 			if(m.find()){
 				String m1 = "";
