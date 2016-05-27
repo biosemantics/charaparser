@@ -385,7 +385,7 @@ public class ElevationTransformer implements IElevationTransformer {
 
 				Matcher m = belowN.matcher(text);
 				if(m.find()){
-					String m1 = "";
+					String m1 = ""+"";
 					String m2 = "";
 					ElevationRangeInfo eri = new ElevationRangeInfo();
 					m1 = modifierVerbatim(text.substring(0, m.start()), false);
@@ -734,14 +734,24 @@ public class ElevationTransformer implements IElevationTransformer {
 			
 			
 			// ... In Arizona often 100 m
+			int start = text.length();
 			Matcher m = this.advModPattern.matcher(text);
+			while (m.find()){
+				if(!text.substring(m.start()).matches(".*?\\d.*?")) //no \d between m.start and end of text
+					start = m.start();
+			}	
+			//extend the modifier to a good point, punct mark or a number
+			modifier = text.substring(start);
+			/*Matcher m = this.advModPattern.matcher(text);
 			while (m.find() && m.end() == text.length()){
 				modifier = modifier +this.deliminator+ text.substring(m.start(), m.end());
 				text = text.substring(0, m.start()).trim();
 				m = this.advModPattern.matcher(text);
-			}
-			if(text.length()>0){
-				int start = text.length();
+			}*/
+			
+			
+			//if(text.length()>0){
+				//int start = text.length();
 				m = this.locPattern.matcher(text);
 				while (m.find()){
 					if(!text.substring(m.start()).matches(".*?\\d.*?")) //no \d between m.start and end of text
@@ -760,7 +770,7 @@ public class ElevationTransformer implements IElevationTransformer {
 						}
 					}
 				}
-			}
+			//}
 		}
 		return modifier.replaceFirst("("+this.stopwords+"| )+$", "").trim();
 	}
