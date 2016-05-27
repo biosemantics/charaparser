@@ -63,7 +63,6 @@ public class ElevationMarkupCreator implements IElevationMarkupCreator {
 			
 			log(LogLevel.DEBUG, "writing result using " + writer.getClass());
 			writer.write(elevationsFileList, outputDirectory);
-			
 			return new ElevationMarkupResult(elevationsFileList);
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Problem reading, transforming or writing treatments", e);
