@@ -827,14 +827,27 @@ public class ElevationTransformer implements IElevationTransformer {
 
 
 			// ... In Arizona often 100 m
+			//int start = text.length();
+			/*Matcher m = this.advModPattern.matcher(text);
+			String advModifier = "";
+			while (m.find()){
+				if(m.end() == text.trim().length()){
+					advModifier = text.substring(m.start(), m.end());
+					text = text.substring(0, m.start()).trim();
+				}
+			}*/	
+			// ... In Arizona often 100 m
+			String advModifier = "";
 			int start = text.length();
 			Matcher m = this.advModPattern.matcher(text);
 			while (m.find()){
-				if(!text.substring(m.start()).matches(".*?\\d.*?")) //no \d between m.start and end of text
+				if(!text.substring(m.start()).matches(".*\\d+.*")) //no \d between m.start and end of text
 					start = m.start();
 			}	
+			advModifier = text.substring(start);
+
 			//extend the modifier to a good point, punct mark or a number
-			modifier = text.substring(start);
+			//modifier = text.substring(start);
 			/*Matcher m = this.advModPattern.matcher(text);
 			while (m.find() && m.end() == text.length()){
 				modifier = modifier +this.deliminator+ text.substring(m.start(), m.end());
@@ -844,7 +857,7 @@ public class ElevationTransformer implements IElevationTransformer {
 
 
 			//if(text.length()>0){
-			//int start = text.length();
+			start = text.length();
 			m = this.locPattern.matcher(text);
 			while (m.find()){
 				if(!text.substring(m.start()).matches(".*?\\d.*?") && !text.substring(m.start()).matches(".*?([Ee]levations|[Aa]lpine|[Tr]eeline|[Tt]imberline).*?")) //no \d between m.start and end of text
@@ -863,6 +876,8 @@ public class ElevationTransformer implements IElevationTransformer {
 					}
 				}
 			}
+			
+			if(advModifier.length()>0) modifier = modifier +" "+advModifier;
 			//}
 		}
 		return modifier.replaceFirst("("+this.stopwords+"| )+$", "").trim();
