@@ -63,6 +63,9 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 							Element chElement = new Element("character");
 							chElement.setAttribute("name", ch.getName());
 							chElement.setAttribute("value", ch.getValue());
+							if(ch.getModifier()!=null && ch.getModifier().length()>0){
+								chElement.setAttribute("modifier", ch.getModifier());
+							}
 							beElement.addContent(chElement);
 						}
 						statementElement.addContent(beElement);						

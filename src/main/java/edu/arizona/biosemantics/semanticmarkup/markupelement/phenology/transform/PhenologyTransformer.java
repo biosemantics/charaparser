@@ -44,9 +44,9 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	//static String months ="(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)";
 	static String keywordsPtn = "flowers|flowering|flower|leaves|fruiting|coning|cones|seeds|sporulating|sporulates|sporulation|sporocarps|spores|capsules|capsule|sporophytes|sporophyte|sporophylls";
 	static String stagesPtn ="appearing|arising|maturing|matures|mature|maturity|produced|meiosis|dying|persisting|persists|persist";
-	static String timePtn = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|Feburary|March|April|June|July|August|September|October|November|December|spring|summer|fall|autumn|winter|midspring|midsummer|midwinter|midfall|midautumn|year[_-]round|year|\\w+ periods";
+	static String timePtn = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|Feburary|March|April|June|July|August|September|October|November|December|spring|summer|fall|autumn|winter|midspring|midsummer|midwinter|midfall|midautumn|year[_-]round|\\w+ periods";
 	static String timeModifierPtn="latter|late|last|early|mid|middle";
-	static Pattern timePattern = Pattern.compile("[^ ]*(_|-|\\b)("+timePtn+")(\\)|\\b)");
+	static Pattern timePattern = Pattern.compile("[^ ]*(_|-|\\b)("+timePtn+")(\\)|\\b)", Pattern.CASE_INSENSITIVE);
 	
 	static Hashtable<String, String> phenologyNames = null;
 	static Hashtable<String, String> stages = null;
@@ -56,18 +56,23 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		//appear
 		stages.put("occuring", "appearing");
 		stages.put("appearing", "appearing");
+		stages.put("arising", "appearing");
+		stages.put("produced", "appearing");
 		
 		//mature
 		stages.put("maturing", "maturing");
 		stages.put("mature", "maturing");
 		stages.put("matures", "maturing");
 		stages.put("maturity", "maturing");
-		stages.put("produced", "maturing");
+		
 		
 		//persist
 		stages.put("persisting", "persisting");
 		stages.put("persists", "persisting");
 		stages.put("persist", "persisting");
+		
+		//meiosis
+		stages.put("meiosis", "meiosis");
 		
 		//dying
 		stages.put("dying", "dying");
@@ -83,6 +88,9 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		
 		//leaves appearing time
 		phenologyNames.put("leaves appearing", "leaves appearing time");
+		//leaves meiosis time
+		phenologyNames.put("leaves meiosis", "leaves meiosis time");
+		//leaves dying time
 		phenologyNames.put("leaves dying", "leaves dying time");
 		
 		//fruits appearing time		
@@ -117,8 +125,8 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		phenologyNames.put("sporophtye maturing", "sporophytes maturing time");
 		
 		//sporophylls 
-		phenologyNames.put("sporophylls appearing", "sporophylls appearing");
-		phenologyNames.put("sporophylls persisting", "sporophylls persisting");
+		phenologyNames.put("sporophylls appearing", "sporophylls appearing time");
+		phenologyNames.put("sporophylls persisting", "sporophylls persisting time");
 	
 	}
 	
@@ -202,7 +210,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		//check for keywords, stage, then time 
 		//text="  and dying in late_spring-early_summer,";
 		//Pattern p = Pattern.compile("(?<=(?:[,;.] |^))((?:"+this.keywordsPtn+")\\b)? ?(\\b(?:"+this.stagesPtn+")\\b)?(.*?[^ ]*(?:"+this.timePtn+")\\b)", Pattern.CASE_INSENSITIVE);
-		Pattern p = Pattern.compile("\\b((?:"+this.keywordsPtn+")\\b)?+ ?(\\b(?:"+this.stagesPtn+")\\b)?+(.*?[^ ]*(?:"+this.timePtn+")\\b)", Pattern.CASE_INSENSITIVE);
+		/*Pattern p = Pattern.compile("\\b((?:"+this.keywordsPtn+")\\b)?+ ?(\\b(?:"+this.stagesPtn+")\\b)?+(.*?[^ ]*(?:"+this.timePtn+")\\b)", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(text);
 		String keyword = "";
 		int start = 0;
@@ -228,19 +236,65 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			
 			log(LogLevel.DEBUG, "add a PhenologyInfo object: "+pi.toString());
 			System.out.println("add a PhenologyInfo object: "+pi.toString());
+		}*/
+		String keyword = "";
+		Matcher m = PhenologyTransformer.timePattern.matcher(text);
+		int start = 0;
+		while(m.find(start)){
+			Pattern p = Pattern.compile("\\b((?:"+PhenologyTransformer.keywordsPtn+")\\b)", Pattern.CASE_INSENSITIVE);
+			Matcher m1 = p.matcher(text);
+			
+			if(m1.find(start)){
+				keyword = text.substring(m1.start(), m1.end()).toLowerCase();
+				start = m1.end();
+			}
+			String stage = "";
+			p = Pattern.compile("\\b((?:"+PhenologyTransformer.stagesPtn+")\\b)", Pattern.CASE_INSENSITIVE);
+			m1 = p.matcher(text);
+			
+			if(m1.find(start)){
+				if(text.substring(start, m1.start()).toLowerCase().matches(".*?\\b((?:"+PhenologyTransformer.keywordsPtn+")\\b).*")) //a keyword in between
+					continue;
+				stage = text.substring(m1.start(), m1.end());
+				start = m1.end();
+			}
+			
+			String time = "";
+			m1 = PhenologyTransformer.timePattern.matcher(text);
+			
+			if(m1.find(start)){
+				if(text.substring(start, m1.start()).toLowerCase().matches(".*?\\b((?:"+PhenologyTransformer.keywordsPtn+")\\b).*")) //a keyword in between
+					continue;
+				time = text.substring(start, m1.end());
+				String extend = completeTime(text.substring(m1.end()));
+				time = time +extend; //one time = the time for a keyword + a stage 
+				start = m1.end()+extend.length();
+				//System.out.println("next start index: "+start);
+				
+				
+				ArrayList<Time> times = parseTime(time);
+				
+				PhenologyInfo pi = new PhenologyInfo();
+				pi.setName(keyword, stage);
+				pi.addAllTime(times);
+				pis.add(pi);
+				
+				log(LogLevel.DEBUG, "add a PhenologyInfo object: "+pi.toString());
+				System.out.println("add a PhenologyInfo object: "+pi.toString());
+				
+			}			
 		}
 		
 		//check for keywords embedded in the middle of a sentence
 		//and the cases of unknown, not reported, undetermined, not determined, no ... data are available
-		
 		
 		for(PhenologyInfo pi: pis){
 			ArrayList<Time> times = pi.getTime();
 				for(Time time: times){
 					Character c = new Character();
 					c.setName(pi.getName()==null? "phenology" : pi.getName());
-					c.setValue(time.getTime());
-					c.setModifier(time.getModifier());
+					c.setValue(time.getCleanTime());
+					c.setModifier(time.getCleanModifier());
 					values.add(c);
 			}
 		}
@@ -341,25 +395,25 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		if(lookAtBeginning){ // the target is at the beginning of text: .... in frostfree coastal habitats.
 			if(text.startsWith("(")){ // (in frostfree coastal habitats.)?
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.startsWith("[")){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.indexOf("(")<0 && text.indexOf(")")>0){ //...)
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.indexOf("[")<0 && text.indexOf("]")>0){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
@@ -380,32 +434,32 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			
 			if(text.indexOf("(")<0 && text.indexOf(")")>0){ //...)
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.indexOf("[")<0 && text.indexOf("]")>0){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.startsWith("(") && text.endsWith(")")){ // (in frostfree coastal habitats.)?
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.startsWith("[") && text.endsWith("]")){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(PhenologyTransformer.timePattern.pattern()))
+				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 			// ... mostly [summer–autumn (Jun–Oct)]
 			int start = text.length();
 			Matcher m = this.advModPattern.matcher(text);
 			while (m.find()){
-				if(!text.substring(m.start()).matches(PhenologyTransformer.timePattern.pattern())) //no \d between m.start and end of text
+				if(!text.substring(m.start()).matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*")) //no \d between m.start and end of text
 					start = m.start();
 			}	
 			modifier = text.substring(start);
@@ -423,6 +477,9 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	 * @return
 	 */
 	private String normalizeTime(String text){
+		//all year, throughout the year, through the year, year round => year_round
+		text = text.replaceAll("\\b(all year|througout the year|through the year|year around)\\b", "year_round");
+		
 		//late spring
 		text = text.replaceAll("(?<=\\b(?:"+PhenologyTransformer.timeModifierPtn+")\\b) (?=(?:"+PhenologyTransformer.timePtn+")\\b)", "_"); 
 
@@ -631,12 +688,46 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		protected String getTime() {
 			return timeString;
 		}
+		
+		protected String getCleanTime() {
+			//remove unmatched ), 
+			timeString = timeString.trim();
+			String prev = timeString;
+			while(timeString.matches(".*?[\\)\\]\\(\\[].*")){
+				if(timeString.matches("^[\\(\\[].*") && !timeString.matches(".*?[\\)\\]].+")) 
+					timeString = timeString.substring(1);
+				if(timeString.matches(".*[\\)\\]]$") && !timeString.matches(".*?[\\(\\[].+")) 
+					timeString = timeString.substring(0, timeString.length()-1);
+				if(prev.compareTo(timeString)==0) break;
+				prev = timeString;
+			}
+			//and leading/trailing puncts
+			timeString = timeString.replaceAll("^[ .:;,]+|[ .:;,]+$", "");
+			return timeString;
+		}
 		protected void setTime(String time) {
 			this.timeString = time;
 		}
 		protected String getModifier() {
 			return modifier;
 		}
+		protected String getCleanModifier() {
+			//remove unmatched ), 
+			modifier = modifier.trim();
+			String prev = modifier;
+			while(modifier.matches(".*?[\\)\\]\\(\\[].*")){
+				if(modifier.matches("^[\\(\\[].*") && !modifier.matches(".*?[\\)\\]].+")) 
+					modifier = modifier.substring(1);
+				if(modifier.matches(".*[\\)\\]]$") && !modifier.matches(".*?[\\(\\[].+")) 
+					modifier = modifier.substring(0, modifier.length()-1);
+				if(prev.compareTo(modifier)==0) break;
+				prev = modifier;
+			}
+			//and leading/trailing puncts
+			modifier = modifier.replaceAll("^[ .:;,]+|[ .:;,]+$", "");
+			return modifier;
+		}
+		
 		protected void setModifier(String modifier) {
 			this.modifier = modifier;
 		}
