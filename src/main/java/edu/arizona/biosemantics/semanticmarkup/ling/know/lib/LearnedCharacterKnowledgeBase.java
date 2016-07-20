@@ -119,7 +119,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 	@Override
 	public CharacterMatch getCharacterName(String word) {//word: one word, or ,hyphened words (standardized "_" to "-"), phrases such as "dark green" and "purple spot", "gland-dotted and"?
 		word = word.trim();
-		if(word.contains("(") || word.contains(")")
+		if(word.contains("(") || word.contains(")"))
 			return new CharacterMatch(null);
 		if(word.matches(this.stopWords)) return new CharacterMatch(null);
 		//2n=5
