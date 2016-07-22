@@ -865,6 +865,8 @@ public abstract class Normalizer implements INormalizer {
 					text2 = m.group(1).substring(0, m.group(1).lastIndexOf(left)).trim() +  m.group(2).replaceFirst("^[)\\]]", "").replaceAll("[cmd]?m", "").replaceAll("[ \\{\\}]", "") + (m.group(4).startsWith(" ")? m.group(4) : " "+m.group(4));
 					m = areapattern.matcher(text);
 					//}
+				} else { //fertile-fronds pinnate , sessile or very short-stalked 1 mm-140 x 4-12 cm ;
+					break;
 				}
 			}
 		}

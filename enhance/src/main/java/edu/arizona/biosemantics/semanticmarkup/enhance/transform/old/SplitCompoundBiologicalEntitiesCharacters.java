@@ -32,9 +32,12 @@ public class SplitCompoundBiologicalEntitiesCharacters extends AbstractTransform
 
 		public List<String[]> getCharacterParts() {
 			List<String[]> characterParts = new LinkedList<String[]>();
-			for (Element character : biologicalEntity.getChildren("character"))
-				if (character.getAttributeValue("value").contains("/"))
+			for (Element character : biologicalEntity.getChildren("character")) {
+				if(character.getAttributeValue("value") == null) 
+					continue;
+				if(character.getAttributeValue("value").contains("/"))
 					characterParts.add(character.getAttributeValue("value").split("\\s*/\\s*"));
+			}
 			return characterParts;
 		}
 
@@ -48,6 +51,8 @@ public class SplitCompoundBiologicalEntitiesCharacters extends AbstractTransform
 			List<String[]> characterParts = getCharacterParts();
 			int i=0;
 			for (Element character : biologicalEntity.getChildren("character")) {
+				if(character.getAttributeValue("value") == null)
+					return false;
 				if (!character.getAttributeValue("value").contains("/"))
 					return false;
 				if (characterParts.get(i).length != entityNames.length)

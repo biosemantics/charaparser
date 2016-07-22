@@ -715,8 +715,7 @@ public class NumericalPhraseParser {
 	 * @return
 	 */
 
-	private static void refinement(
-			List<Character> innertagstate) {
+	private void refinement(List<Character> innertagstate) {
 
 		float atypicalfrom = -1f;
 		float atypicalto = -1f;
@@ -770,23 +769,28 @@ public class NumericalPhraseParser {
 		}*/
 	}
 	
-	private static float[] getTypical(List<Character> innertagstate,
+	private float[] getTypical(List<Character> innertagstate,
 			String character) {
-		for(Character chara: innertagstate){
-			if(chara.getName().compareTo(character)==0){
-				float[] result = new float[2];
-				if(chara.getFrom()!=null){
-					result[0] = Float.parseFloat(chara.getFrom());
+		try {
+			for(Character chara: innertagstate){
+				if(chara.getName().compareTo(character)==0){
+					float[] result = new float[2];
+					if(chara.getFrom()!=null){
+						result[0] = Float.parseFloat(chara.getFrom());
+					}
+					if(chara.getTo()!=null){
+						result[1]= Float.parseFloat(chara.getTo());
+					}
+					if(chara.getValue()!=null){
+						result[0] = Float.parseFloat(chara.getValue());
+						result[1] = Float.parseFloat(chara.getValue());
+					}	
+					return result;
 				}
-				if(chara.getTo()!=null){
-					result[1]= Float.parseFloat(chara.getTo());
-				}
-				if(chara.getValue()!=null){
-					result[0] = Float.parseFloat(chara.getValue());
-					result[1] = Float.parseFloat(chara.getValue());
-				}	
-				return result;
 			}
+		} catch(Exception e) {
+			log(LogLevel.ERROR, "Could not parse typical", e);
+			return null;
 		}
 		return null;
 	}
