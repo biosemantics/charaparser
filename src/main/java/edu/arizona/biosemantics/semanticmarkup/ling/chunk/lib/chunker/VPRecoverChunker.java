@@ -98,7 +98,7 @@ public class VPRecoverChunker extends AbstractChunker {
 				if(!chunkCollector.isOfChunkType(terminal, ChunkType.VP) && 
 						chunkCollector.isOfChunkType(terminal, ChunkType.CHARACTER_STATE) &&
 						(chunkCollector.getChunk(terminal).getProperty("characterName").matches(".*?(^|_)("+ElementRelationGroup.entityRefElements+")(_|$).*") /*.contains("position")*/ ||
-								chunkCollector.getChunk(terminal).getProperty("characterName").contains("size")) && 
+								chunkCollector.getChunk(terminal).getProperty("characterName").contains("some measurement")) && 
 								posKnowledgeBase.isVerb(terminal.getTerminalsText())) {
 					if(chunkCollector.isPartOfChunkType(nextTerminal, ChunkType.PP)) {
 						recoverVPChunkFromVerbAndPP(terminals, i, chunkCollector);

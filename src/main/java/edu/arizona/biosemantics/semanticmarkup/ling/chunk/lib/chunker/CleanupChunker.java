@@ -701,7 +701,7 @@ public class CleanupChunker extends AbstractChunker {
 			if(afterThan.matches(".*?\\d.*?\\b(" + units + "|long|length|wide|width)\\b.*") || 
 					afterThan.matches(".*?\\d\\.\\d.*")){// "n[{longer} than 3 (cm)]" => n[size[{longer} than 3 (cm)]]
 				if(character==null) 
-					character="size";
+					character="some measurement";
 				
 				AbstractParseTree characterTerminal = this.parseTreeFactory.create();
 				characterTerminal.setTerminalsText(character);

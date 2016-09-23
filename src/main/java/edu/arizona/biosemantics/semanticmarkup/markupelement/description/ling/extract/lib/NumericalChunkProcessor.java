@@ -92,7 +92,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 		List<Chunk> modifiers = chunk.getChunks(ChunkType.MODIFIER);
 		modifiers.addAll(processingContextState.getUnassignedModifiers());
 		
-		String character = text.indexOf("size") >= 0 ? "size" : null;
+		String character = text.indexOf("some measurement") >= 0 ? "size" : null;
 		if(character ==null){
 			character = processingContextState.getUnassignedCharacter();
 			processingContextState.setUnassignedCharacter(null);
@@ -116,7 +116,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 			}
 			if(allHyphenated && content.trim().matches(".*?"+units)) 
 				character = "distance"; //spider spiracle–epigastrium 2.77 mm
-			else character = content.indexOf('/') > 0 || content.indexOf('%') > 0 ? "size_or_shape" : "size";
+			else character = content.indexOf('/') > 0 || content.indexOf('%') > 0 ? "some_measurement_or_shape" : "some measurement";
 		}
 
 		//List<Character> characters = annotateNumericals(content, character,
@@ -171,7 +171,7 @@ public class NumericalChunkProcessor extends AbstractChunkProcessor {
 	modifier2 = rest.replaceFirst(".*?(\\d|\\[|\\+|\\-|\\]|%|\\s|"+ChunkedSentence.units+")+\\s?(?=[a-z]|$)", "");//4-5[+]
 	String content = rest.replace(modifier2, "").replaceAll("(\\{|\\})", "").trim();
 	modifier2 = modifier2.replaceAll("(\\w+\\[|\\]|\\{|\\})", "").trim();
-	ArrayList<Element> chars = annotateNumericals(content, text.indexOf("size")>=0 || content.indexOf('/')>0 || content.indexOf('%')>0 || content.indexOf('.')>0? "size" : null, (modifier1+";"+modifier2).replaceAll("(^\\W|\\W$)", ""), lastStructures(), resetfrom);
+	ArrayList<Element> chars = annotateNumericals(content, text.indexOf("some measurement")>=0 || content.indexOf('/')>0 || content.indexOf('%')>0 || content.indexOf('.')>0? "some measurement" : null, (modifier1+";"+modifier2).replaceAll("(^\\W|\\W$)", ""), lastStructures(), resetfrom);
 	updateLatestElements(chars);*/
 
 }

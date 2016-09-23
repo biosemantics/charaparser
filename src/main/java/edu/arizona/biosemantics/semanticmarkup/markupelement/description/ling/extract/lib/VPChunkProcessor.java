@@ -96,7 +96,7 @@ public class VPChunkProcessor extends AbstractChunkProcessor {
 		//String modifier = rest.replace(relation, "").trim().replaceAll("(m\\[|\\])", "");
 		
 		if(object.containsChunkType(ChunkType.ORGAN)) { 
-			List<BiologicalEntity> toStructures = this.extractStructuresFromObject(object, processingContext, processingContextState); 
+			List<BiologicalEntity> toStructures = this.extractStructuresFromObject(content, null, object, processingContext, processingContextState); 
 			for(BiologicalEntity toStructure : toStructures)
 				for(Character character : processingContextState.getUnassignedCharacters())
 					toStructure.addCharacter(character);

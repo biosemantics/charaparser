@@ -21,6 +21,7 @@ import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
+import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.NumericalPhraseParser;
@@ -198,6 +199,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * i-iii or i to iii: [MAIN_SUBJECT_ORGAN: [CONSTRAINT: [legs], ORGAN: [i-iii]]] => return 1 compound organ (1-3)
 	 * MAIN_SUBJECT_ORGAN: [NP_LIST: [CONSTRAINT: [legs], ORGAN: [i], AND: [and], ORGAN: [ii]]] =>return a list of individual organs
 	 * MAIN_SUBJECT_ORGAN: [NP_LIST: [CONSTRAINT: [legs], ORGAN: [i], COMMA: [,], ORGAN: [ii], COMMA: [,], AND: [and], ORGAN: [iii]]] =>return a list of individual organs
+	 * [ORGAN: [horns], AND: [AND: [and]], NON_SUBJECT_ORGAN: [ORGAN: [abdomen]]] =>reconstructed list of organs that are object of a preposition.
 	 * 
 	 * @param subjectChunks
 	 * @param processingContext
@@ -546,9 +548,25 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		return null;
 	}
 
-	//separate o[......... {m} {m} (o1) and {m} (o2)] to two parts: the last part include all organ names
-	//e.g., o[(cypselae) -LSB-/-LSB- {minute} (crowns) -RSB-/-RSB-]
-	protected List<LinkedList<Chunk>> separate(Chunk object) {
+
+	
+	
+	/**
+	 *separate o[......... {m} {m} (o1) and {m} (o2)] to two parts: the last part include all organ names 
+	 * e.g., o[(cypselae) -LSB-/-LSB- {minute} (crowns) -RSB-/-RSB-]
+	 * 
+	 * when preposition is 'between', then
+	 * need to find two structures, e.g., 
+	 * "distance between horns and abdomen" (also handle the case when abdomen is not part of the pp chunk)
+	 * "distance between horns"
+	 * 
+	 * @param object
+	 * @param processingContext
+	 * @param processingContextState
+	 * @return
+	 */
+	protected List<LinkedList<Chunk>> separate(Chunk ppChunk, Chunk preposition, Chunk object, ProcessingContext processingContext, 
+			ProcessingContextState processingContextState) {
 		ArrayList<LinkedList<Chunk>> twoParts  = new ArrayList<LinkedList<Chunk>>();
 		LinkedList<Chunk> nonOrgan = new LinkedList<Chunk>();
 		LinkedList<Chunk> organ = new LinkedList<Chunk>();
@@ -558,24 +576,21 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		List<Chunk> constraintCandidates = new LinkedList<Chunk>();
 
 		List<Chunk> chunks = new LinkedList<Chunk>(object.getChunks());
+		boolean foundAnd = false;
+		boolean foundConjOrgans = false;
 		for(int i=0; i<chunks.size(); i++) {
 			Chunk chunk = chunks.get(i);
-			Chunk nextChunk = null;
-			if(i+1<chunks.size())
-				nextChunk = chunks.get(i+1);
-			Chunk previousChunk = null;
-			if(i-1>=0)
-				previousChunk = chunks.get(i-1);
-
 			if(chunk.isOfChunkType(ChunkType.CONSTRAINT) || 
 					chunk.getTerminalsText().equals("and") || chunk.getTerminalsText().equals("or") 
 					|| chunk.isOfChunkType(ChunkType.COMMA)) {
 				constraintCandidates.add(chunk);
+				if(chunk.getTerminalsText().equals("and")) foundAnd = true;
 			}
 			else if(chunk.containsChunkType(ChunkType.ORGAN) || foundOrgan) {
 				organ.addAll(constraintCandidates);
 				organ.add(chunk);
 				foundOrgan = true;
+				if(foundAnd) foundConjOrgans = true;
 			}
 			else {
 				nonOrgan.add(chunk);
@@ -591,10 +606,32 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				nonOrgan.remove(lastNonOrgan);
 			}
 		}
+		
+		
+		if(ppChunk!=null && preposition!=null && preposition.getTerminalsText().matches("between") && !foundConjOrgans){ //check if two organs or one plural organs
+			//next if the chunk following object Chunk is "and", if so bring it in
+			List<Chunk> allChunks = processingContext.getChunkCollector().getChunks();
+			Chunk next = null;
+			Chunk afterNext = null;
+			int index = allChunks.indexOf(ppChunk);
+			if(allChunks.size()>index+2){
+				next = (Chunk)allChunks.get(index+1);
+				afterNext = ((Chunk)allChunks.get(index+2));
+			}
+			if(next!=null && afterNext!=null && next.getTerminalsText().matches("and") && afterNext.containsChunkType(ChunkType.ORGAN)){
+				//bring it into
+				organ.add(next);
+				organ.add(afterNext);
+				processingContext.getChunkListIterator().next(); //move iterator pointer forward by 2 positions
+				processingContext.getChunkListIterator().next();
+			}
+		}
 		twoParts.add(nonOrgan);
 		twoParts.add(organ);
 		return twoParts;
 	}
+
+
 
 	/**
 	 * o[.........{m} {m} (o1) and {m} (o2)]
@@ -602,12 +639,12 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 	 * @param object
 	 * @return the extracted structures
 	 */
-	protected List<BiologicalEntity> extractStructuresFromObject(Chunk object, ProcessingContext processingContext, 
+	protected List<BiologicalEntity> extractStructuresFromObject(Chunk ppChunk, Chunk prepostion, Chunk object, ProcessingContext processingContext, 
 			ProcessingContextState processingContextState) {
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 
 		List<BiologicalEntity> structures;		
-		List<LinkedList<Chunk>> twoParts = separate(object);  
+		List<LinkedList<Chunk>> twoParts = separate(ppChunk, prepostion, object, processingContext, processingContextState);  
 		//find the organs in object o[.........{m} {m} (o1) and {m} (o2)]
 
 		//log(LogLevel.DEBUG, "twoParts " + twoParts);
@@ -852,7 +889,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				} else
 					character.setTo(values[1]);
 			}else{
-				if (characterName.compareTo("size") == 0) {
+				if (characterName.compareTo("some measurement") == 0) {
 					String value = characterValue.replaceFirst("(\\b" + units + "\\b)", "").trim(); // 5-10 mm
 					String unit = characterValue.replace(value, "").trim();
 					if (unit.length() > 0) {
@@ -903,7 +940,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 
 	protected List<Element> linkObjects(List<BiologicalEntity> subjectStructures, List<Chunk> modifiers, 
-			Chunk preposition, Chunk object, boolean lastIsStruct, boolean lastIsChara, 
+			Chunk ppChunk, Chunk preposition, Chunk object, boolean lastIsStruct, boolean lastIsChara, 
 			ProcessingContext processingContext, ProcessingContextState processingContextState, String relation, Element lastE) {
 
 		LinkedList<Element> result = new LinkedList<Element>();
@@ -914,8 +951,8 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		modifiers.addAll(unassignedModifiers);
 		unassignedModifiers.clear();
 
-		List<BiologicalEntity> structures;
-		structures = extractStructuresFromObject(object, processingContext, processingContextState); //extractStructuresFromObject changed lastElements
+		List<BiologicalEntity> structures = extractStructuresFromObject(ppChunk, preposition, object, processingContext, processingContextState); //extractStructuresFromObject changed lastElements
+		
 		result.addAll(structures);
 		String base = "";
 
@@ -923,12 +960,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			base = "each";
 		}
 
+		//last element was a character, this pp will be rendered as a constraint
 		if(lastIsChara && !lastElements.isEmpty() && !processingContextState.isCommaAndOrEosEolAfterLastElements()) {
 			//Character lastElement = (Character)lastElements.getLast();
 			Character lastElement = (Character) lastE;
 			//if last character is size, change to location: <margins> r[p[with] o[3�6 (spines)]] 1�3 {mm} r[p[{near}] o[(bases)]]. 
 			//1-3 mm is not a size, but a location of spines
-			if(lastElement.getName().equals("size") && 
+			if(lastElement.getName().equals("some measurement") && 
 					((lastElement.getValue() != null && lastElement.getValue().matches(".*?\\d.*")) || 
 							(lastElement.getFrom() != null && lastElement.getFrom().matches(".*?\\d.*"))) 
 							&& locationPrepositions.contains(preposition.getTerminalsText())) {
@@ -947,18 +985,48 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					lastElement.appendAttribute("modifier", modifier.getTerminalsText());
 				}
 			}*/
-		} else {			
-			if(relation == null)
-				relation = relationLabel(preposition, subjectStructures, structures, object, chunkCollector);//determine the relation
-			if(relation != null){
-				result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
-				//result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
+			processingContext.getCurrentState().setLastElements(new LinkedList<Element>(structures));
+		} else { 
+			//deal with between a and b
+			if(preposition.getTerminalsText().matches("between")){ //area between a and b, 'between' will not establish a relation
+				String entityName = (structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getName()+
+						(structures.size()>1? "-"+(structures.get(1).getConstraint()!=null? structures.get(1).getConstraint()+" ":"")+structures.get(1).getName(): "-"+(structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getName());
+				String entityNameOriginal = (structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getNameOriginal()+
+						(structures.size()>1? "-"+(structures.get(1).getConstraint()!=null? structures.get(1).getConstraint()+" ":"")+structures.get(1).getNameOriginal(): "-"+(structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getNameOriginal());
+				String constraintIDs= structures.get(0).getId()+(structures.size()>1?  " "+structures.get(1).getId(): "");
+				if(lastIsStruct && !processingContextState.isCommaAndOrEosEolAfterLastElements()){
+					BiologicalEntity lastElement = (BiologicalEntity)lastE;
+					lastElement.setConstraint(lastElement.getConstraint()!=null? lastElement.getConstraint()+"; between "+entityNameOriginal: entityNameOriginal); //add "between a-b" to 'area'.
+					lastElement.setConstraintId(constraintIDs);
+					//keep the last element
+				}else{ //distance between a and b*/
+					AbstractParseTree terminal = ((Chunk)object.clone()).getChunks(ChunkType.ORGAN).get(0).getTerminals().get(0); //obtain the structure needed to construct a new terminal
+					terminal.setTerminalsText(entityNameOriginal);
+					Chunk entity = new Chunk(ChunkType.NON_SUBJECT_ORGAN, new Chunk(ChunkType.ORGAN, terminal)); //NON_SUBJECT_ORGAN: [ORGAN: [horn-horn]]
+					ArrayList<Chunk> entityChunks= new ArrayList<Chunk>();
+					entityChunks.add(entity);
+					List<BiologicalEntity> nStructures = this.createStructureElements(entityChunks, processingContext, processingContextState); //1 bioEntity:'a-b'
+					//link a and b to their ids? not at this time
+					result.remove(structures);
+					result.addAll(nStructures);
+					processingContext.getCurrentState().setLastElements(new LinkedList<Element>(nStructures));
+				}
+			}else{
+				//render as a relation			
+				if(relation == null){
+					relation = relationLabel(preposition, subjectStructures, structures, object, chunkCollector);//determine the relation
+				}
+				if(relation!=null){
+					result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
+					//result.addAll(createRelationElements(relation, subjectStructures, structures, modifiers, false, processingContext, processingContextState));//relation elements not visible to outside //// 7-12-02 add cs
+				}
+				if(relation!= null && relation.compareTo("part_of")==0) 
+					structures = subjectStructures; //part_of holds: make the organbeforeof/entity1 the return value, all subsequent characters should be refering to organbeforeOf/entity1
+				processingContext.getCurrentState().setLastElements(new LinkedList<Element>(structures));
 			}
-			if(relation!= null && relation.compareTo("part_of")==0) 
-				structures = subjectStructures; //part_of holds: make the organbeforeof/entity1 the return value, all subsequent characters should be refering to organbeforeOf/entity1
 		}
 
-		processingContext.getCurrentState().setLastElements(new LinkedList<Element>(structures));
+		//processingContext.getCurrentState().setLastElements(new LinkedList<Element>(structures));
 		return result;
 	}
 
@@ -1278,7 +1346,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     	//int sizect = 0;
 		String toval;
 		String fromval;
-		numberexp = annotateSize(numberexp, innertagstate, "size");
+		numberexp = annotateSize(numberexp, innertagstate, "some measurement");
 
 
 
@@ -1417,7 +1485,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
     			Character character = new Character();
     			character.setCharType("relative_range_value");
-    			character.setName("size");
+    			character.setName("some measurement");
     			character.setFrom(extract.substring(0, extract.indexOf('-')).trim());
     			character.setTo(extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim());
     			//character.setRelativeConstraint("relative_constraint",relative.trim());
@@ -1439,7 +1507,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
             	matcher3.reset();
     			Character character = new Character();
     			character.setCharType("relative_value");
-    			character.setName("size");
+    			character.setName("some measurement");
     			character.setValue(extract.substring(0,extract.indexOf('#')).trim());
     			//character.setRelativeConstraint("relative_constraint", relative.trim());
     			innertagstate.add(character);

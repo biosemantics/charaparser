@@ -98,7 +98,7 @@ public class SpecificPPChunkProcessor extends AbstractChunkProcessor {
 				relation += preposition.getTerminalsText();
 				LinkedList<Element> lastElements = processingContextState.getLastElements();
 				
-				List<BiologicalEntity> structures = extractStructuresFromObject(object, processingContext, 
+				List<BiologicalEntity> structures = extractStructuresFromObject(chunk, preposition, object, processingContext, 
 						processingContextState);
 				
 				if(!processingContextState.getLastElements().isEmpty() && !structures.isEmpty()) {
