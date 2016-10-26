@@ -33,17 +33,32 @@ public class StandardizeTerminology extends AbstractTransformer {
 			if(preferedName != null) 
 				biologicalEntity.setAttribute("name", preferedName.replaceAll("_", "-"));
 			
-			//standardize structural constraint, a word or a phrase
+			//standardize structural constraint, a word or a phrase, e.g. "between eyes and nose"
 			//String constraint = struct.getConstraint(); //try to match longest segment anchored to the last word in the phrase.
 			if(constraint != null){
-				constraint = constraint.trim();
-				String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(type);
-				if(prefered != null){
-					biologicalEntity.setAttribute("constraint", prefered.replaceAll("_", "-"));
+				constraint = constraint.trim(); 
+				if(constraint.startsWith("between")){
+					String[] terms = constraint.replaceFirst("between", "").trim().split("\\s+(and|,)\\s+");
+					String prefered = "between ";
+					for(int i = 0; i < terms.length; i++){
+						String pref = characterKnowledgeBase.getCharacterName(terms[i]).getLabel(type);
+						if(pref!=null) 
+							if(i == terms.length-2) prefered = preferred + " and ";
+							else prefered = preferred + ", ";
+						else
+							if(i == terms.length-2) prefered = terms[i] + " and ";
+							else prefered = terms[i] + ", ";
+					}
+					biologicalEntity.setAttribute("constraint", prefered.replaceFirst(", $", "").replaceAll("_", "-"));
+				}else{
+					String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(type);
+					if(prefered != null){
+						biologicalEntity.setAttribute("constraint", prefered.replaceAll("_", "-"));
+					}
 				}
 			}
 			
-			//standardize character
+			//standardize single-word character values
 			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 				preferedName = null;
 				String value = character.getAttributeValue("value");
