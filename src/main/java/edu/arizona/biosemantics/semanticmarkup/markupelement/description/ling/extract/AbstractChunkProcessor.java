@@ -223,7 +223,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 						structure.setConstraint(constraintChunk.getTerminalsText());
 
 					String organName = organChunk.getTerminalsText();
-					String singular = inflector.getSingular(organName);
+					String singular = getSingular(organName);
 					structure.setName(singular);
 					structure.setNameOriginal(organName);
 					String entityType = characterKnowledgeBase.getEntityType(singular, organName);
@@ -233,7 +233,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					List<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
 					parents.add(structure);
 
-					List<AbstractParseTree> terminals = subjectChunk.getTerminals();
+					/*List<AbstractParseTree> terminals = subjectChunk.getTerminals();
 					for(int i=0; i<terminals.size(); i++) {
 						if(organChunk.containsOrEquals(terminals.get(i))) {
 							if(i-1>=0 && (terminals.get(i-1).getTerminalsText().equals("a") || terminals.get(i-1).getTerminalsText().equals("an"))) {
@@ -241,7 +241,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 							}
 							break;
 						}
-					}
+					}*/
 					
 					List<Character> unassignedCharacters = processingContextState.getUnassignedCharacters();
 					for(Character unassignedCharacter : unassignedCharacters) {
@@ -277,6 +277,21 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			}
 		}
 		return results;
+	}
+
+	/**
+	 * horns-abdomens
+	 * =>horn-abdomen
+	 * @param organName
+	 * @return
+	 */
+	private String getSingular(String organNames) {
+		String[] list = organNames.split("[-]");
+		String singular = "";
+		for(String organName: list){
+			singular = singular+inflector.getSingular(organName)+"-";
+		}
+		return singular.replaceAll("-$", "");
 	}
 
 	private LinkedHashSet<Chunk> getModifiersOf(Chunk characterStateChunk, Chunk subjectChunk) {
@@ -889,7 +904,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 				} else
 					character.setTo(values[1]);
 			}else{
-				if (characterName.compareTo("some measurement") == 0) {
+				if (characterName.compareTo("some_measurement") == 0) {
 					String value = characterValue.replaceFirst("(\\b" + units + "\\b)", "").trim(); // 5-10 mm
 					String unit = characterValue.replace(value, "").trim();
 					if (unit.length() > 0) {
@@ -966,7 +981,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			Character lastElement = (Character) lastE;
 			//if last character is size, change to location: <margins> r[p[with] o[3�6 (spines)]] 1�3 {mm} r[p[{near}] o[(bases)]]. 
 			//1-3 mm is not a size, but a location of spines
-			if(lastElement.getName().equals("some measurement") && 
+			if(lastElement.getName().equals("some_measurement") && 
 					((lastElement.getValue() != null && lastElement.getValue().matches(".*?\\d.*")) || 
 							(lastElement.getFrom() != null && lastElement.getFrom().matches(".*?\\d.*"))) 
 							&& locationPrepositions.contains(preposition.getTerminalsText())) {
@@ -989,25 +1004,50 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		} else { 
 			//deal with between a and b
 			if(preposition.getTerminalsText().matches("between")){ //area between a and b, 'between' will not establish a relation
-				String entityName = (structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getName()+
-						(structures.size()>1? "-"+(structures.get(1).getConstraint()!=null? structures.get(1).getConstraint()+" ":"")+structures.get(1).getName(): "-"+(structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getName());
-				String entityNameOriginal = (structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getNameOriginal()+
-						(structures.size()>1? "-"+(structures.get(1).getConstraint()!=null? structures.get(1).getConstraint()+" ":"")+structures.get(1).getNameOriginal(): "-"+(structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getNameOriginal());
-				String constraintIDs= structures.get(0).getId()+(structures.size()>1?  " "+structures.get(1).getId(): "");
+				String entityNameOriginal1 = (structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getNameOriginal();
+				String entityNameOriginal2 = "";
+				if(structures.size()>1)
+					entityNameOriginal2 = (structures.get(1).getConstraint()!=null? structures.get(1).getConstraint()+" ":"")+structures.get(1).getNameOriginal();
+				else
+					entityNameOriginal2 = (structures.get(0).getConstraint()!=null? structures.get(0).getConstraint()+" ":"")+structures.get(0).getNameOriginal();
+
+				int count = structures.size();
+				String entityNameOriginal = entityNameOriginal1+(count>1? " and "+entityNameOriginal2: "");
 				if(lastIsStruct && !processingContextState.isCommaAndOrEosEolAfterLastElements()){
-					BiologicalEntity lastElement = (BiologicalEntity)lastE;
-					lastElement.setConstraint(lastElement.getConstraint()!=null? lastElement.getConstraint()+"; between "+entityNameOriginal: entityNameOriginal); //add "between a-b" to 'area'.
-					lastElement.setConstraintId(constraintIDs);
-					//keep the last element
+					String newConstraint = ""; //add "between a-b" to 'area'.
+					if(((BiologicalEntity)lastE).getConstraint()!=null)
+						if(((BiologicalEntity)lastE).getConstraint().startsWith("between"))
+							newConstraint = ((BiologicalEntity)lastE).getConstraint()+" and "+entityNameOriginal;
+						else
+							newConstraint = ((BiologicalEntity)lastE).getConstraint()+"; between "+entityNameOriginal;
+					else
+						newConstraint = "between "+entityNameOriginal;
+					
+					((BiologicalEntity)lastE).setConstraint(newConstraint);
+					
+					String constraintIDs = consolidateResultRConstraints(
+							subjectStructures, result, structures,
+							entityNameOriginal1, entityNameOriginal2);
+					String existingCId = "";
+					if(((BiologicalEntity)lastE).getConstraintId()!=null) existingCId = ((BiologicalEntity)lastE).getConstraintId();
+					
+					((BiologicalEntity)lastE).setConstraintId((existingCId+ " "+constraintIDs).trim());
+					
+					result.add(lastE);
+					//keep lastElement as the last element
 				}else{ //distance between a and b*/
 					AbstractParseTree terminal = ((Chunk)object.clone()).getChunks(ChunkType.ORGAN).get(0).getTerminals().get(0); //obtain the structure needed to construct a new terminal
-					terminal.setTerminalsText(entityNameOriginal);
+					terminal.setTerminalsText(entityNameOriginal1+"-"+entityNameOriginal2);
 					Chunk entity = new Chunk(ChunkType.NON_SUBJECT_ORGAN, new Chunk(ChunkType.ORGAN, terminal)); //NON_SUBJECT_ORGAN: [ORGAN: [horn-horn]]
 					ArrayList<Chunk> entityChunks= new ArrayList<Chunk>();
 					entityChunks.add(entity);
 					List<BiologicalEntity> nStructures = this.createStructureElements(entityChunks, processingContext, processingContextState); //1 bioEntity:'a-b'
-					//link a and b to their ids? not at this time
-					result.remove(structures);
+					nStructures.get(0).setNameOriginal(entityNameOriginal);
+					
+					String constraintIDs = consolidateResultRConstraints(
+							subjectStructures, result, structures,
+							entityNameOriginal1, entityNameOriginal2);
+					nStructures.get(0).setId(nStructures.get(0).getId()+"("+constraintIDs+")");
 					result.addAll(nStructures);
 					processingContext.getCurrentState().setLastElements(new LinkedList<Element>(nStructures));
 				}
@@ -1029,6 +1069,27 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 		//processingContext.getCurrentState().setLastElements(new LinkedList<Element>(structures));
 		return result;
 	}
+
+	private String consolidateResultRConstraints(
+			List<BiologicalEntity> subjectStructures,
+			LinkedList<Element> result, List<BiologicalEntity> structures,
+			String entityNameOriginal1, String entityNameOriginal2) {
+		//link a and b to their ids. a or b may also be mentioned before, try to find the id of the first mention in subjects
+		//use ref id as part of the constraintIDs
+		String constraintIDs = "";
+		for(BiologicalEntity ref: subjectStructures){
+			for(BiologicalEntity str:structures){ //if constraint+name matches, consider a match
+				if(((str.getConstraint()==null && ref.getConstraint()==null)||(str.getConstraint()!=null && ref.getConstraint()==null && str.getConstraint().equals(ref.getConstraint()))) && str.getName().equals(ref.getName())){
+					result.remove(str);
+					constraintIDs += ref.getId()+" ";
+				}else{
+					constraintIDs += str.getId()+" ";
+				}
+			}
+		}
+		return constraintIDs.trim();
+	}
+
 
 	protected String relationLabel(Chunk preposition, 
 			List<BiologicalEntity> organsbeforepp, 
@@ -1346,7 +1407,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
     	//int sizect = 0;
 		String toval;
 		String fromval;
-		numberexp = annotateSize(numberexp, innertagstate, "some measurement");
+		numberexp = annotateSize(numberexp, innertagstate, "some_measurement");
 
 
 
@@ -1485,7 +1546,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
     			Character character = new Character();
     			character.setCharType("relative_range_value");
-    			character.setName("some measurement");
+    			character.setName("some_measurement");
     			character.setFrom(extract.substring(0, extract.indexOf('-')).trim());
     			character.setTo(extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim());
     			//character.setRelativeConstraint("relative_constraint",relative.trim());
@@ -1507,7 +1568,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
             	matcher3.reset();
     			Character character = new Character();
     			character.setCharType("relative_value");
-    			character.setName("some measurement");
+    			character.setName("some_measurement");
     			character.setValue(extract.substring(0,extract.indexOf('#')).trim());
     			//character.setRelativeConstraint("relative_constraint", relative.trim());
     			innertagstate.add(character);

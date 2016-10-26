@@ -227,7 +227,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 		if(!firstIsThan) {
 			if(beforeThanText.matches(".*?\\d.*") && 
 					beforeChunk.containsChunkType(ChunkType.CHARACTER_STATE) && 
-					beforeChunk.getChunkDFS(ChunkType.CHARACTER_STATE).getProperty("characterName").contains("some measurement")) {
+					beforeChunk.getChunkDFS(ChunkType.CHARACTER_STATE).getProperty("characterName").contains("some_measurement")) {
 				//size[m[mostly] [0.5-]1.5-4.5] ;// often wider than 2 cm.
 				
 				Pattern p = Pattern.compile(numberPattern+" ?[{<(]?[cdm]?m?[)>}]?");
@@ -250,7 +250,7 @@ public class ThanChunkProcessor extends AbstractChunkProcessor {
 					part0 = t;
 					part0 = constraint;
 				}
-				characters = annotateNumericals(numeric.replaceAll("[{<()>}]", ""), "some measurement", modifier.replaceAll("[{<()>}]", ""), parents, false, processingContextState);
+				characters = annotateNumericals(numeric.replaceAll("[{<()>}]", ""), "some_measurement", modifier.replaceAll("[{<()>}]", ""), parents, false, processingContextState);
 			}else{//size[{shorter} than {plumose} {inner}]
 				//TODO instead of processing every child of the "before than" part... find a character in the before part and make the character state
 				// the whole text of the before part. the character name is the one of the character found

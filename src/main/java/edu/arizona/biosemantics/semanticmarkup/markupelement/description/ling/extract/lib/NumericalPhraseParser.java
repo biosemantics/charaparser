@@ -178,7 +178,7 @@ public class NumericalPhraseParser {
 			//int sizect = 0;
 			String toval;
 			String fromval;
-			suggestedcharaname = suggestedcharaname==null || suggestedcharaname.length()==0? suggestedcharaname = "some measurement" : suggestedcharaname;
+			suggestedcharaname = suggestedcharaname==null || suggestedcharaname.length()==0? suggestedcharaname = "some_measurement" : suggestedcharaname;
 			numberexp = annotateSize(numberexp, innertagstate, suggestedcharaname);
 
 
@@ -318,7 +318,7 @@ public class NumericalPhraseParser {
 
 					Character character = new Character();
 					character.setCharType("range_value");
-					character.setName("some measurement");
+					character.setName("some_measurement");
 					character.setFrom(extract.substring(0, extract.indexOf('-')).trim());
 					character.setTo(extract.substring(extract.indexOf('-')+1,extract.indexOf('#')).trim());
 					//character.setRelativeConstraint("relative_constraint",relative.trim());
@@ -340,7 +340,7 @@ public class NumericalPhraseParser {
 					matcher3.reset();
 					Character character = new Character();
 					character.setCharType("range_value");
-					character.setName("some measurement");
+					character.setName("some_measurement");
 					character.setValue(extract.substring(0,extract.indexOf('#')).trim());
 					//character.setRelativeConstraint("relative_constraint", relative.trim());
 					innertagstate.add(character);

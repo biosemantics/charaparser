@@ -223,14 +223,17 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 					}
 				}
 				//not sure the afterorgan logic is useful. not used for 'and-ed' chunks.
-				LinkedList<Element> lastElementsBackup =(LinkedList<Element>) processingContext.getCurrentState().getLastElements().clone();
-				LinkedList<Element> newLastElements = new LinkedList<Element>();
-				for(Element resultElement : result) {
-					if(resultElement.isStructure())
-						newLastElements.add(resultElement);
+				//useful for cases like "area [PREPOSITION: [between], OBJECT: [ORGAN: [eyes], CHARACTER_STATE: characterName->coloration; [STATE: [green]]]]"
+				LinkedList<Element> lastElementsBackup =(LinkedList<Element>) processingContext.getCurrentState().getLastElements().clone(); //save the lastElement before processing afterOrganChunk
+				if(! preposition.getTerminalsText().equals("between")){ //area between a and b blue => don't want to apply blue to a and b
+					LinkedList<Element> newLastElements = new LinkedList<Element>();
+					for(Element resultElement : result) {
+						if(resultElement.isStructure())
+							newLastElements.add(resultElement);
+					}
+					processingContext.getCurrentState().setLastElements(newLastElements);
 				}
-				processingContext.getCurrentState().setLastElements(newLastElements);
-				for(Chunk afterOrganChunk : afterOrganChunks) {
+				for(Chunk afterOrganChunk : afterOrganChunks) {//CHARACTER_STATE: characterName->coloration; [STATE: [green]]
 					IChunkProcessor chunkProcessor = processingContext.getChunkProcessor(afterOrganChunk.getChunkType());
 					if(chunkProcessor != null){ 
 						result.addAll(chunkProcessor.process(afterOrganChunk, processingContext));
@@ -239,7 +242,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 						log(LogLevel.DEBUG, "restored current state after "+chunkProcessor.getClass()+" is run.");
 					}
 				}
-				processingContext.getCurrentState().setLastElements(lastElementsBackup);
+				processingContext.getCurrentState().setLastElements(lastElementsBackup); //restore the lastElement before processing afterOrganChunk
 			}
 		}
 		

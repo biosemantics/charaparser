@@ -364,7 +364,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		}
 		if(containsThan) {
 			Chunk sizeChunk = new Chunk(ChunkType.CHARACTER_STATE, beforeTimes);
-			sizeChunk.setProperty("characterName", "some measurement");
+			sizeChunk.setProperty("characterName", "some_measurement");
 			
 			Chunk comparisonChunk = new Chunk(ChunkType.CONSTRAINT, onAndAfterTimes);
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
@@ -376,7 +376,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			//size[{longer}] constraint[than (object}]
 			Chunk comparisonChunk = new Chunk(ChunkType.CONSTRAINT, onAndAfterTimes);
 			Chunk sizeChunk = new Chunk(ChunkType.CHARACTER_STATE, beforeTimes);
-			sizeChunk.setProperty("characterName",  "some measurement");
+			sizeChunk.setProperty("characterName",  "some_measurement");
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 			childChunks.add(sizeChunk);
 			childChunks.add(comparisonChunk);
@@ -388,7 +388,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			//times o[(bodies)] => constraint[times (bodies)]
 			Chunk valueChunk = new Chunk(ChunkType.VALUE, beforeTimes);
 			//Chunk sizeChunk = new Chunk(ChunkType.CHARACTER_STATE, beforeTimes);
-			//sizeChunk.setProperty("characterName",  "some measurement");
+			//sizeChunk.setProperty("characterName",  "some_measurement");
 			//LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 			//childChunks.add(sizeChunk);
 			//childChunks.add(comparisonChunk);

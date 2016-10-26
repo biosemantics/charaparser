@@ -402,7 +402,7 @@ public class MyCleanupChunker extends AbstractChunker {
 					 * if the characters is of size and the value is of a comparison kind (-er/-est)
 					 * translate to constraint
 					 */
-					if(character != null && character.contains("some measurement") && (stateChunk.getTerminalsText().endsWith("est") || stateChunk.getTerminalsText().endsWith("er"))) {
+					if(character != null && character.contains("some_measurement") && (stateChunk.getTerminalsText().endsWith("est") || stateChunk.getTerminalsText().endsWith("er"))) {
 						characterStateChunk.setChunks(new LinkedHashSet<Chunk>(characterStateChunk.getTerminals()));
 						characterStateChunk.setChunkType(ChunkType.CONSTRAINT);
 						characterStateChunk.clearProperties();

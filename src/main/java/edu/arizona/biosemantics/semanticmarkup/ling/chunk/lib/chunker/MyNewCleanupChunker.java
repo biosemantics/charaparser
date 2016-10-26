@@ -290,7 +290,7 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 			if(characterName != null) {
 				/*String[] singleCharacterNames = characterName.split("_or_");
 				for(String singleCharacterName : singleCharacterNames) {
-					if(singleCharacterName.equals("some measurement") && (characterState.endsWith("est") || characterState.endsWith("er")))
+					if(singleCharacterName.equals("some_measurement") && (characterState.endsWith("est") || characterState.endsWith("er")))
 						return true;
 				}*/
 				if(characterName.matches(".*?(^|_)(size|length|width|height|thickness)(_|$).*") && (characterState.endsWith("est") || characterState.endsWith("er")))
