@@ -273,7 +273,9 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
     private int getSynonymRelationCount(Collection collection) {
     	int count = 0;
 		for(Label label : collection.getLabels()) {
-			count += label.getMainTerms().size();
+			for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
+				count += label.getSynonyms(mainTerm).size();
+			}
 		}
 		return count;
 	}
@@ -281,9 +283,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	private int getTermCategoryRelationCount(Collection collection) {
 		int count = 0;
 		for(Label label : collection.getLabels()) {
-			for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
-				count += label.getSynonyms(mainTerm).size();
-			}
+			count += label.getMainTerms().size();
 		}
 		return count;
 	}
