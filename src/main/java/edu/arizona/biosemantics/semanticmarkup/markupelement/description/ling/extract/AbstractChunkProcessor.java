@@ -224,11 +224,15 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 
 					String organName = organChunk.getTerminalsText();
 					String singular = getSingular(organName);
-					structure.setName(singular);
-					structure.setNameOriginal(organName);
 					String entityType = characterKnowledgeBase.getEntityType(singular, organName);
-					if(entityType!=null && entityType.length()>0) structure.setType(entityType);
-					else structure.setType("structure");
+					if(entityType==null || entityType.length()==0) entityType = "structure"; 
+					
+					if(entityType.equals("structure"))
+						structure.setName(singular);
+					else
+						structure.setName(organName); //taxon_name and substance do not need to be singularized
+					structure.setNameOriginal(organName);
+					structure.setType(entityType);
 
 					List<BiologicalEntity> parents = new LinkedList<BiologicalEntity>();
 					parents.add(structure);
