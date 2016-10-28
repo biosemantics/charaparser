@@ -147,7 +147,7 @@ public class PPChunkProcessor extends AbstractChunkProcessor {
 			}
 			
 			Set<Chunk> objects = new LinkedHashSet<Chunk>();
-			if(object.containsChildOfChunkType(ChunkType.OR) || object.containsChildOfChunkType(ChunkType.AND) || object.containsChildOfChunkType(ChunkType.NP_LIST)) {
+			if(object.containsChildOfChunkType(ChunkType.OR) || object.containsChildOfChunkType(ChunkType.AND) || (!preposition.getTerminalsText().equals("between") && object.containsChildOfChunkType(ChunkType.NP_LIST))) {
 				objects = splitObject(object);
 			} else {
 				objects.add(object);

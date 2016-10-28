@@ -43,13 +43,13 @@ public class StandardizeTerminology extends AbstractTransformer {
 					for(int i = 0; i < terms.length; i++){
 						String pref = characterKnowledgeBase.getCharacterName(terms[i]).getLabel(type);
 						if(pref!=null) 
-							if(i == terms.length-2) prefered = preferred + " and ";
-							else prefered = preferred + ", ";
+							if(i == terms.length-2) prefered = prefered+" "+pref + " and ";
+							else prefered = prefered+" "+pref + ", ";
 						else
-							if(i == terms.length-2) prefered = terms[i] + " and ";
-							else prefered = terms[i] + ", ";
+							if(i == terms.length-2) prefered = prefered+" "+terms[i] + " and ";
+							else prefered = prefered+" "+terms[i] + ", ";
 					}
-					biologicalEntity.setAttribute("constraint", prefered.replaceFirst(", $", "").replaceAll("_", "-"));
+					biologicalEntity.setAttribute("constraint", prefered.replaceFirst(", $", "").replaceAll("_", "-").replaceAll("\\s+", " "));
 				}else{
 					String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(type);
 					if(prefered != null){
