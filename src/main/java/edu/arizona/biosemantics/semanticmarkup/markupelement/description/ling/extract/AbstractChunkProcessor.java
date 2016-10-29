@@ -1035,7 +1035,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					String existingCId = "";
 					if(((BiologicalEntity)lastE).getConstraintId()!=null) existingCId = ((BiologicalEntity)lastE).getConstraintId();
 					
-					((BiologicalEntity)lastE).setConstraintId((existingCId+ " "+constraintIDs).trim());
+					((BiologicalEntity)lastE).setConstraintId((existingCId+ "-"+constraintIDs).replaceAll("^-+|-+$", "").trim());
 					
 					result.add(lastE);
 					//keep lastElement as the last element
@@ -1051,7 +1051,7 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 					String constraintIDs = consolidateResultRConstraints(
 							subjectStructures, result, structures,
 							entityNameOriginal1, entityNameOriginal2);
-					nStructures.get(0).setId(nStructures.get(0).getId()+"("+constraintIDs+")");
+					nStructures.get(0).setId(nStructures.get(0).getId()+"."+constraintIDs+"."); //id: o13.o10-o12.
 					result.addAll(nStructures);
 					processingContext.getCurrentState().setLastElements(new LinkedList<Element>(nStructures));
 				}
@@ -1085,13 +1085,13 @@ public abstract class AbstractChunkProcessor implements IChunkProcessor {
 			for(BiologicalEntity str:structures){ //if constraint+name matches, consider a match
 				if(((str.getConstraint()==null && ref.getConstraint()==null)||(str.getConstraint()!=null && ref.getConstraint()==null && str.getConstraint().equals(ref.getConstraint()))) && str.getName().equals(ref.getName())){
 					result.remove(str);
-					constraintIDs += ref.getId()+" ";
+					constraintIDs += ref.getId()+"-";
 				}else{
-					constraintIDs += str.getId()+" ";
+					constraintIDs += str.getId()+"-"; //id-id
 				}
 			}
 		}
-		return constraintIDs.trim();
+		return constraintIDs.replaceAll("-+$", "").trim();
 	}
 
 
