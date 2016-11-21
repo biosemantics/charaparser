@@ -30,6 +30,8 @@ public class TaxonGroupPartOfOntology {
 				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.PO }));
 			case PORIFERA:
 				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.PORO }));
+			case COLEOPTERA:
+				return new HashSet<Ontology>();
 			}
 			return new HashSet<Ontology>();
 		}	
