@@ -25,6 +25,7 @@ import com.google.inject.Injector;
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.AlgaeConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.CnidariaConfig;
+import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.ColeopteraConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.FossilConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.GastropodsConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.HymenopteraConfig;
@@ -227,9 +228,21 @@ public class CLIMain {
 			return new PoriferaConfig();
 		case SPIDER:
 			return new SpiderConfig();
+		case COLEOPTERA:
+			return new ColeopteraConfig();
 		default:
-			log(LogLevel.ERROR, "Config unknown, fall back to default config based on Plant");
-			return new PlantConfig();
+			PlantConfig c = new PlantConfig();
+			try {
+				c.setTaxonGroup(TaxonGroup.valueFromDisplayName(config));
+			} catch(Exception e) {
+				try {
+					c.setTaxonGroup(TaxonGroup.valueOf(config));
+				} catch(Exception e2) {
+					log(LogLevel.ERROR, "Config unknown, fall back to default config based on Plant");
+					return new PlantConfig();
+				}
+			}
+			return c;
 		}
 	}
 	
