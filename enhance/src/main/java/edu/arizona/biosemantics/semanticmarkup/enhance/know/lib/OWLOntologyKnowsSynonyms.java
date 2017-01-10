@@ -88,13 +88,6 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 
 	private OWLClass getOwlClassWithLabelOrSynonym(String term, Set<OWLClass> owlClasses) {
 		for(OWLClass owlClass : owlClasses) {
-			String classLabel = getLabel(owlClass);
-			if(classLabel != null) {
-				if(classLabel.equals(term)) {
-					return owlClass;
-				}
-			}
-			
 			for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology)) {
 				if(axiom.getProperty().equals(this.exactSynonymProperty)) {
 					OWLAnnotationValue annotationValue = axiom.getValue();
@@ -104,6 +97,14 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 							return owlClass;
 						}
 					}
+				}
+			}
+		}
+		for(OWLClass owlClass : owlClasses) {
+			String classLabel = getLabel(owlClass);
+			if(classLabel != null) {
+				if(classLabel.equals(term)) {
+					return owlClass;
 				}
 			}
 		}
