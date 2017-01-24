@@ -34,7 +34,6 @@ import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PoriferaConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.taxongroup.SpiderConfig;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.GenericDescriptionReader;
 import edu.arizona.biosemantics.semanticmarkup.run.IRun;
 
 /**
@@ -142,7 +141,7 @@ public class CLIMain {
 		    	setReaderSpecificConfigValues(config, commandLine.getOptionValue("r"), commandLine.getOptionValue("i"));
 		    } else {
 		    	//use GenericFileVolumeReader
-		    	config.setDescriptionReader(GenericDescriptionReader.class);
+		    	//config.setDescriptionReader(GenericDescriptionReader.class);
 		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    }
 		    if(commandLine.hasOption("p")) {
