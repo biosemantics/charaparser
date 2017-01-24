@@ -8,7 +8,7 @@ perlSourceDirectory=src/main/perl/edu/arizona/biosemantics/semanticmarkup/markup
 wordNetSourceDirectory=wordnet/wn31/dict
 glossariesDownloadDirectory=
 ontologiesDirectory=
-otoUrl=http://biosemantics.arizona.edu/OTO
+otoUrl=http://biosemantics.arizona.edu:8080/OTO
 oto2Url=http://etc-dev.cs.umb.edu/oto2
 threading=false,1,1  #format {true,false},{n},{m}  where first parameter activates,deactivates; n=, m=
 database_partitionCount=2

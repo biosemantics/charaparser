@@ -9,12 +9,26 @@
 		<project.version>0.1.190-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.7</java.version>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<java.version>1.8</java.version>
+		<maven.compiler.source>1.7</maven.compiler.source>
+		<maven.compiler.target>1.7</maven.compiler.target>
+		<compliance.level>1.7</compliance.level>
+		<aspectj.version>1.8.10</aspectj.version>
 	</properties>
 
 	<profiles>
+	 	<!-- disable java doc generation, because source code are not annotated to java 8 doc standards 
+	 	javadoc.opts used later in the pom-->
+	 	 <profile>
+	    <id>java8-doclint-disabled</id>
+	    <activation>
+	      <jdk>[1.8,)</jdk>
+	    </activation>
+	    <properties>
+	      <javadoc.opts>-Xdoclint:none</javadoc.opts>
+	    </properties>
+	  </profile>
+	  
 		<profile>
 			<id>learn</id>
 			<properties>
@@ -54,7 +68,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.semanticmarkup</groupId>
 			<artifactId>enhance</artifactId>
-			<version>0.0.17-SNAPSHOT</version>
+			<version>0.0.19-SNAPSHOT</version>
 		</dependency>
 	
 		<!-- <dependency> <groupId>org.eclipse.swt</groupId> <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId> 
@@ -176,7 +190,8 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>1.7.4</version>
+			<version>${aspectj.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<dependency>
@@ -295,7 +310,7 @@
 		<dependency>
 		  <groupId>edu.arizona.biosemantics.oto2</groupId>
 		  <artifactId>oto</artifactId>
-		  <version>0.0.123-SNAPSHOT</version>
+		  <version>0.0.133-SNAPSHOT</version>
 		  <classifier>classes</classifier>
 		</dependency>
 	</dependencies>
@@ -311,19 +326,24 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.7</version>
+				<version>1.9</version>
 				<configuration>
 					<proceedOnError>true</proceedOnError>
+					<showWeaveInfo>true</showWeaveInfo>
 					<complianceLevel>${java.version}</complianceLevel>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<Xlint>ignore</Xlint>
+					<complianceLevel>${compliance.level}</complianceLevel>
 					<encoding>${project.build.sourceEncoding}</encoding>
+					<verbose>true</verbose>
+					<warn>constructorName,packageDefaultMethod,deprecation,maskedCatchBlocks,unusedLocals,unusedArguments,unusedImport</warn>
 				</configuration>
 				<dependencies>
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjrt</artifactId>
-						<version>1.7.4</version>
+						<version>${aspectj.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -336,6 +356,19 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			
+						<!-- important -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.0</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<!-- IMPORTANT -->
+					<useIncrementalCompilation>false</useIncrementalCompilation>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -351,11 +384,14 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<!-- use -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
+				<version>2.10.4</version>
+				<configuration>
+                    <additionalparam>${javadoc.opts}</additionalparam>
+                </configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
