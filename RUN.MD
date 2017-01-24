@@ -24,11 +24,8 @@ Setup
 9. Import <a href="https://github.com/biosemantics/charaparser/blob/master/setupDB.sql">setupDB.sql</a> dump
 10. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCLearnMain.java">ETCLearnMain</a>
  * As arguments use 
-   * -c {TaxonGroup} 
--w {Path-to-charaparser-project}\wordnet\wn31\dict 
--l {Path-to-charaparser-project}\src\main\perl\edu\arizona\biosemantics\semanticmarkup\markupelement\description\ling\learn\lib\perl 
--n {database-host} -p {database-port} -d {database-name} -u {database-user} -s {database-password} 
--i {input-directory} -z {runId} -o {oto2-installation-url} -y -q {ontology-owl-file-directory}
+   * -c {TaxonGroup}  -i {input-directory} -z {runId-datasetprefix} -f debug
+   LearnMain and MarkupMain uses the same arguments.
  * <a href="https://github.com/biosemantics/common/blob/master/biology/src/main/java/edu/arizona/biosemantics/common/biology/TaxonGroup.java">{TaxonGroup} possiblities</a>
  * {oto2-installation-url} =  http://etc-dev.cs.umb.edu/oto2
 11. Create Run Configuration with Main class <a href="https://github.com/biosemantics/charaparser/blob/master/src/main/java/edu/arizona/biosemantics/semanticmarkup/ETCMarkupMain.java
