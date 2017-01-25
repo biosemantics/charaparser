@@ -13,6 +13,7 @@ import org.jdom2.Element;
 /**
  * Collapses multiple biological entity elements that refer to the same identity into a single element.
  * The element that appears first in the document out of the set of documents that refer to the same identity is retained.
+ * need to update src attribute of BiologicalEntity elements.
  */
 public class CollapseBiologicalEntities extends AbstractTransformer {
 	
@@ -21,6 +22,7 @@ public class CollapseBiologicalEntities extends AbstractTransformer {
 		private String constraint;
 		private String name;
 		private String ontologyid;
+
 		
 		public Identity(Element biologicalEntity) {
 			this.constraint = biologicalEntity.getAttributeValue("constraint");
@@ -110,6 +112,9 @@ public class CollapseBiologicalEntities extends AbstractTransformer {
 	}
 
 	private void collapseBiologicalEntity(Element biologicalEntity,	Element representative) {
+		//append src to representative, src should exist for all biological entities
+		representative = collapseSrc(biologicalEntity, representative);
+		//move characters (keeping their src) to representative
 		for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 			character.detach();
 			representative.addContent(character);

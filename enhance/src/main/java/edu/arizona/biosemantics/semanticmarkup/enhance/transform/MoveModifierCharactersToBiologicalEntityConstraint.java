@@ -117,7 +117,8 @@ public class MoveModifierCharactersToBiologicalEntityConstraint extends Abstract
 				if(character != null) {
 					String isModifier = character.getAttributeValue("is_modifier");
 					isModifier = isModifier == null ? "" : isModifier;
-					if(isModifier.equals("true")) {
+					if(isModifier.equals("true")
+							/*&& biologicalEntity.getAttributeValue("src").contains(character.getAttributeValue("src"))*/) {
 						possibleConstraintCharacters.add(character);
 					} else {
 						break;
@@ -128,7 +129,7 @@ public class MoveModifierCharactersToBiologicalEntityConstraint extends Abstract
 			}
 		}
 		return possibleConstraintCharacters;
-	}
+	
 
 	private Element getCharacter(Token token, Element biologicalEntity) {
 		for(Element character : biologicalEntity.getChildren("character")) {

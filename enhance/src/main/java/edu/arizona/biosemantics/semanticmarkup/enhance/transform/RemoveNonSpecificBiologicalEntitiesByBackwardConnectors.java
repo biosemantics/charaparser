@@ -44,11 +44,12 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 						nameOccurences.put(name, nameOccurences.get(name) + 1);
 						int appearance = nameOccurences.get(name);
 						
-						String parent = findParentConnectedByBackwardKeyWords(name, appearance, biologicalEntity, passedStatements, document);
-						if(parent != null) {
-							constraint = (parent + " " + constraint).trim();
-							this.appendInferredConstraint(biologicalEntity, parent);
+						NameAndElement parent = findParentConnectedByBackwardKeyWords(name, appearance, biologicalEntity, passedStatements, document);
+						if(parent.getName() != null) {
+							constraint = (parent.getName() + " " + constraint).trim();
+							this.appendInferredConstraint(biologicalEntity, parent.getName());
 							biologicalEntity.setAttribute("constraint", constraint);
+							biologicalEntity = collapseSrc(biologicalEntity, parent.getElement());
 						}
 					}
 				}
@@ -56,8 +57,8 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 		}
 	}
 
-	private String findParentConnectedByBackwardKeyWords(String name, int appearance, Element biologicalEntity, List<Element> passedStatements, Document document) {
-		String nameOriginal = biologicalEntity.getAttributeValue("name_original");
+	private NameAndElement findParentConnectedByBackwardKeyWords(String name, int appearance, Element nonSpBiologicalEntity, List<Element> passedStatements, Document document) {
+		String nameOriginal = nonSpBiologicalEntity.getAttributeValue("name_original");
 		
 		Element statement = passedStatements.get(0);
 		String sentence = statement.getChild("text").getValue().toLowerCase();
@@ -97,7 +98,7 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 		return -1;
 	}
 
-	private String findPreceedingParentInSentence(int connectorPosition, String term, List<Element> passedStatements) {
+	private NameAndElement findPreceedingParentInSentence(int connectorPosition, String term, List<Element> passedStatements) {
 		boolean firstStatement = true;
 		for(Element passedStatement : passedStatements) {
 			String sentence = passedStatement.getChild("text").getValue().toLowerCase();
@@ -119,10 +120,10 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 				if(biologicalEntity != null) {
 					String nameNormalized = collapseBiologicalEntityToName.collapse(biologicalEntity);
 					if(knowsPartOf.isPartOf(term, nameNormalized)) 
-						return collapseBiologicalEntityToName.collapse(biologicalEntity);
+						return new NameAndElement(collapseBiologicalEntityToName.collapse(biologicalEntity), biologicalEntity);
 					nameNormalized = biologicalEntity.getAttributeValue("name");
 					if(knowsPartOf.isPartOf(term, nameNormalized)) 
-						return collapseBiologicalEntityToName.collapse(biologicalEntity);
+						return new NameAndElement(collapseBiologicalEntityToName.collapse(biologicalEntity), biologicalEntity));
 				}
 			}		
 		}
@@ -133,4 +134,5 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 		return term.matches(connectBackwardToParent);
 	}
 
+	
 }

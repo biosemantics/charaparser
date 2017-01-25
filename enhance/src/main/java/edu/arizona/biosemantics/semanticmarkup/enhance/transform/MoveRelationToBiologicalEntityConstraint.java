@@ -21,6 +21,10 @@ public class MoveRelationToBiologicalEntityConstraint extends AbstractTransforme
 					Element toElement = this.getBiologicalEntityWithId(document, to);
 					
 					appendConstraint(fromElement, name + " " + getBiologicalEntityString(toElement));
+					
+					//adjust src
+					toElement = collapseSrc(toElement, relation);
+					
 					relation.detach();
 				}
 			}

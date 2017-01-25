@@ -66,6 +66,11 @@ public class CollapseCharacters extends AbstractTransformer {
 	}
 
 	private void collapseCharacter(Element character, Element representative) {
+		//append src to representative
+		representative = collapseSrc(character, representative);
+
+		//combine values
+
 		String representativeValue = representative.getAttributeValue("value");
 		String value = character.getAttributeValue("value");
 		if(representativeValue == null)
@@ -74,7 +79,7 @@ public class CollapseCharacters extends AbstractTransformer {
 		if(representativeValue.isEmpty())
 			representativeValue = value;
 		else
-			representativeValue += " ; " + value;
+			representativeValue += " ; " + value; // Thomas? this won't update the value for the representive element
 	}
 
 	private Map<Identity, Set<Element>> createIdentityElementsMap(Element biologicalEntity) {

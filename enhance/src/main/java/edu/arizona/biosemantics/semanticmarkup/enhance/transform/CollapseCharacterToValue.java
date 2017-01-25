@@ -5,6 +5,7 @@ import org.jdom2.Element;
 
 /**
  * Represent core character attributes into single string and set as character's value
+ * collapse range value to one value
  */
 public class CollapseCharacterToValue extends AbstractTransformer {
 

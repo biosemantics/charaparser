@@ -141,4 +141,41 @@ public abstract class AbstractTransformer {
 		}else 
 			return roman+"i";
 	}
+	
+	//add the src of from to src of 'to'
+	protected Element collapseSrc(Element from, Element to){
+		if(from.getAttribute("src") == null)
+			log(LogLevel.ERROR, "src attribute not found: " + from.toString());
+		}else if(from.getAttribute("src") == null)
+			log(LogLevel.ERROR, "src attribute not found: " + to.toString());
+		}else{
+			String src = from.getAttributeValue("src"); 
+			String combined = to.getAttributeValue("src");
+	
+			if(!combined.contains(src+";") && !combined.endsWith(src)){
+				combined = combined +"; "+src;
+				combined = combined.replaceAll("^; |; $", "");
+			}
+			to.setAttribute("src", combined);
+			}
+		return to;
+	}
+	
+	protected class NameAndElement{
+		private string name = null;
+		private Elmement element = null;
+		
+		protected NameAndSource (String name, Element element){
+			this.name = name;
+			this.element =element;
+		}
+		
+		protected String getName(){
+			return this.name;
+		}
+		
+		protected Elmenet getElement(){
+			return element;
+		}
+	}
 }

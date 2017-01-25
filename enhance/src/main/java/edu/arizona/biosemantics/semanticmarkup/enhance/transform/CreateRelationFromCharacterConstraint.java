@@ -7,7 +7,11 @@ import org.jdom2.Parent;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsCharacterConstraintType;
 
-
+/**
+ * 
+ * new relation has the same src as it's containing character
+ *
+ */
 public class CreateRelationFromCharacterConstraint extends AbstractTransformer {
 
 	private KnowsCharacterConstraintType knowsCharacterConstraintType;
@@ -42,7 +46,7 @@ public class CreateRelationFromCharacterConstraint extends AbstractTransformer {
 					relationName = relationName.replaceAll("\\b" + inflector.getSingular(constraintIdElement.getAttributeValue("name_original")) + "\\b", "").trim();
 					relationName = relationName.replaceAll("\\b" + inflector.getPlural(constraintIdElement.getAttributeValue("name")) + "\\b", "").trim();
 					relationName = relationName.replaceAll("\\b" + inflector.getSingular(constraintIdElement.getAttributeValue("name")) + "\\b", "").trim();
-					Element relation = createRelation((Element)character.getParent(), constraintIdElement, relationName);
+					Element relation = createRelation((Element)character.getParent(), constraintIdElement, relationName, character.getAttributeValue("src"));
 					character.getParent().getParent().addContent(relation);
 					character.removeAttribute("constraint");
 					character.removeAttribute("constraintid");
@@ -51,11 +55,12 @@ public class CreateRelationFromCharacterConstraint extends AbstractTransformer {
 		}
 	}
 
-	private Element createRelation(Element from, Element to, String name) {
+	private Element createRelation(Element from, Element to, String name, String src) {
 		Element relation = new Element("relation");
 		relation.setAttribute("from", from.getAttributeValue("id"));
 		relation.setAttribute("to", to.getAttributeValue("id"));
 		relation.setAttribute("name", name);
+		relation.setAttribute("src", src)
 		return relation;
 	}
 	
