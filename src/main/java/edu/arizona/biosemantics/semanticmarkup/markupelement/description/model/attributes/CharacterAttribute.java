@@ -58,5 +58,6 @@ public class CharacterAttribute {
 	public static final String notes = "notes";
 	public static final String is_modifier="is_modifier";
 	public static final String establishment_means = "establishment_means";
+	public static final String src = "src"; // to hold src statement id. Information related to one BiologicalEntity could come from 2 or more sentences/statements.
 	
 }

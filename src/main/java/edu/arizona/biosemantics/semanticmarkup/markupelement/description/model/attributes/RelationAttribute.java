@@ -33,5 +33,6 @@ public class RelationAttribute {
 	public static final String ontologyid = "ontologyid";
 	public static final String provenance = "provenance";
 	public static final String notes = "notes";
+	public static final String src = "src"; // to hold src statement id. Information related to one BiologicalEntity could come from 2 or more sentences/statements.
 	
 }

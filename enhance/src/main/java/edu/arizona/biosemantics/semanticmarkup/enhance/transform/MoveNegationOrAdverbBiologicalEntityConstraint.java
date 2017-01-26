@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,18 +7,17 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
- * If negation in biological entity constraint
+ * If a negation is in biological entity as a constraint
  * - Move character to constraint if is_modifier; else: Negate character
  * - Negate relations
- * - Add count=0 character if no relation or true character was present
+ * - Add quantity=0 character if no relation or true character was present
  * - Remove negation from constraint
- * If no negation in biological entity but adverb constraint
+ * If no negation is in biological entity but bio-entity has a adverb constraint
  * - Move character to constraint if is_modifier; else:  Add constraint of biologicalEntity to modifier of character
  * - Add constraint of biologicalEntity to modifier of relations
- * - Add count=0 character if no relation or true character was present
+ * - Add quantity=0 character if no relation or true character was present
  * - Remove adverb constraint from biological entity
  */
 public class MoveNegationOrAdverbBiologicalEntityConstraint extends AbstractTransformer {
@@ -55,18 +54,19 @@ public class MoveNegationOrAdverbBiologicalEntityConstraint extends AbstractTran
 		//other advs, mirrors the process above
 		String modifier = constraint.contains(" ")? constraint.substring(0, constraint.indexOf(" ")): constraint;
 		
-		//handle is_modifier characters and true characters
+		//handle is_modifier characters vs. true characters
 		boolean hasTrueCharacters = handleTrueCharacters(biologicalEntity, constraint, modifier);
 
 		//negate relations
 		boolean hasModifiedRelation = modifyRelation(biologicalEntity, document, modifier);
 
-		//no relation and no true character, set count to 0
+		//no relation and no true character (no red leaves), set count to 0
 		if(!hasModifiedRelation && !hasTrueCharacters){
 			Element count = new Element("character");
-			count.setAttribute("name", "count");
+			count.setAttribute("name", "quantity");
 			count.setAttribute("value", "present");
 			count.setAttribute("modifier", modifier);
+			count.setAttribute("src", "");
 			biologicalEntity.addContent(count);
 		}
 
@@ -121,8 +121,9 @@ public class MoveNegationOrAdverbBiologicalEntityConstraint extends AbstractTran
 		//no relation and no true character, set count to 0
 		if(!hasNegatedRelations && !hasTrueCharacters){
 			Element count = new Element("character");
-			count.setAttribute("name", "count");
+			count.setAttribute("name", "quantity");
 			count.setAttribute("value", "0");
+			count.setAttribute("src", "");
 			biologicalEntity.addContent(count);
 		}
 		

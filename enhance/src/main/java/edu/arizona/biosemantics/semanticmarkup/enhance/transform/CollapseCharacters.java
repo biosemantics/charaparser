@@ -67,7 +67,7 @@ public class CollapseCharacters extends AbstractTransformer {
 
 	private void collapseCharacter(Element character, Element representative) {
 		//append src to representative
-		representative = collapseSrc(character, representative);
+		representative = mergeSrc(character.getAttribute("src")!=null? character.getAttributeValue("src"): null, representative);
 
 		//combine values
 

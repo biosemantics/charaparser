@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.pos.POS;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveNegationOrAdverbBiologicalEntityConstraint;
 
 public class MoveNegationOrAdverbBiologicalEntityConstraintTest {
 	

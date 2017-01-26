@@ -129,6 +129,7 @@ public class MoveModifierCharactersToBiologicalEntityConstraint extends Abstract
 			}
 		}
 		return possibleConstraintCharacters;
+	}
 	
 
 	private Element getCharacter(Token token, Element biologicalEntity) {

@@ -1,11 +1,9 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.List;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
  * Replaces first biological entity by a whole_organism entity if it was a taxon_name entity.

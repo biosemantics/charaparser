@@ -47,13 +47,17 @@ public class RemoveNonSpecificBiologicalEntitiesByCollections extends RemoveNonS
 							List<Element> searchStatements = new LinkedList<Element>(); //this is only in place because sometimes entities are placed in the next statement instead of the one in which it actually appears in text
 							for(Element passedStatement : passedStatements) {
 								searchStatements.add(0, passedStatement);
-								String child = findChildInPassedStatements(collapseBiologicalEntityToName.collapse(biologicalEntity), document, searchStatements);
-								if(child == null)
-									child = findChildInPassedStatements(name, document, searchStatements);
+								NameAndSrc info = findChildInPassedStatements(collapseBiologicalEntityToName.collapse(biologicalEntity), document, searchStatements);
+								String child = info.getName();
+								if(child == null){
+									info = findChildInPassedStatements(name, document, searchStatements);
+									child = info.getName();
+								}
 								if(child != null) {
 									constraint = (child + " " + constraint).trim();
 									this.appendInferredConstraint(biologicalEntity, child);
 									biologicalEntity.setAttribute("constraint", constraint);
+									biologicalEntity = mergeSrc(info.getSrc(), biologicalEntity);
 									break;
 								}
 							}
@@ -64,7 +68,7 @@ public class RemoveNonSpecificBiologicalEntitiesByCollections extends RemoveNonS
 		}
 	}
 
-	private String findChildInPassedStatements(String name, Document document, List<Element> searchStatements) {
+	private NameAndSrc findChildInPassedStatements(String name, Document document, List<Element> searchStatements) {
 		Element searchStatement = searchStatements.get(0);
 		String sentence = searchStatement.getChild("text").getValue().toLowerCase();
 		sentence = parenthesisRemover.remove(sentence, '(', ')');
@@ -76,14 +80,15 @@ public class RemoveNonSpecificBiologicalEntitiesByCollections extends RemoveNonS
 			if(termsBiologicalEntity != null) {
 				String termNormalized = collapseBiologicalEntityToName.collapse(termsBiologicalEntity);
 				if(knowsPartOf.isPartOf(termNormalized, name)) {
-					return collapseBiologicalEntityToName.collapse(termsBiologicalEntity);
+					return new NameAndSrc(collapseBiologicalEntityToName.collapse(termsBiologicalEntity),searchStatement.getAttributeValue("id")) ;
 				} else {
 					if(knowsPartOf.isPartOf(termsBiologicalEntity.getAttributeValue("name"), name)) 
-						return collapseBiologicalEntityToName.collapse(termsBiologicalEntity);
+						return new NameAndSrc(collapseBiologicalEntityToName.collapse(termsBiologicalEntity),searchStatement.getAttributeValue("id")) ;
+
 				}
 			} else {
 				if(knowsPartOf.isPartOf(term.getContent(), name)) 
-					return inflector.getSingular(term.getContent());
+					return new NameAndSrc(inflector.getSingular(term.getContent()), searchStatement.getAttributeValue("id"));
 			}
 		}
 		return null;

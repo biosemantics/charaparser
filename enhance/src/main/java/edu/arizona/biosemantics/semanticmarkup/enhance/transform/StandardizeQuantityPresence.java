@@ -1,12 +1,14 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
-
 /**
- * Replaces quantity = 0 by presence = absent
+ * not present = absent
+ * not absent = present
+ * 
+ * only deals with characters with negation attributes.
+ * 
  */
 public class StandardizeQuantityPresence extends AbstractTransformer {
 

@@ -11,6 +11,7 @@ import org.jdom2.Parent;
 import org.junit.Test;
 
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBiologicalEntity;
 
 public class SplitCompoundBiologicalEntityTest {
 	

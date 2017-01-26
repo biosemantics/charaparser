@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +9,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 import edu.stanford.nlp.util.StringUtils;
 
 /**

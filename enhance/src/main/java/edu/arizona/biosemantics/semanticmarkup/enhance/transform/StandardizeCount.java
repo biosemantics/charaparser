@@ -1,12 +1,16 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
-
 /**
- * Normalize count: Replace keywords by actual counts.
+ * Normalize count: Replace keywords (absent) by actual counts (0)
+ * 
+ * 
+ * not present = absent
+ * not absent = present
+ * deals with negation modifiers (another class deals with negation in negation attributes)
+ * count should be quantity.
  */
 public class StandardizeCount extends AbstractTransformer {
 
@@ -24,7 +28,7 @@ public class StandardizeCount extends AbstractTransformer {
 			String name = character.getAttributeValue("name");
 			String value = character.getAttributeValue("value");
 			String modifier = character.getAttributeValue("modifier");
-			if(name != null && name.equals("count")) {
+			if(name != null && name.equals("quantity")) {
 				if(value != null){
 					if(value.equals("none")) 
 						character.setAttribute("value", "0"); 

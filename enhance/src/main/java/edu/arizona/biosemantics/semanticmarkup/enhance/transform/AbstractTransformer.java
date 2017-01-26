@@ -143,39 +143,38 @@ public abstract class AbstractTransformer {
 	}
 	
 	//add the src of from to src of 'to'
-	protected Element collapseSrc(Element from, Element to){
-		if(from.getAttribute("src") == null)
-			log(LogLevel.ERROR, "src attribute not found: " + from.toString());
-		}else if(from.getAttribute("src") == null)
-			log(LogLevel.ERROR, "src attribute not found: " + to.toString());
-		}else{
-			String src = from.getAttributeValue("src"); 
-			String combined = to.getAttributeValue("src");
+	protected Element mergeSrc(String src, Element receiver){
+		if(src == null)
+			log(LogLevel.ERROR, "src is null");
+		else if(receiver==null || receiver.getAttribute("src") == null)
+			log(LogLevel.ERROR, "src attribute not found: " + receiver.toString());
+		else{
+			String combined = receiver.getAttributeValue("src");
 	
 			if(!combined.contains(src+";") && !combined.endsWith(src)){
 				combined = combined +"; "+src;
 				combined = combined.replaceAll("^; |; $", "");
 			}
-			to.setAttribute("src", combined);
+			receiver.setAttribute("src", combined);
 			}
-		return to;
+		return receiver;
 	}
 	
-	protected class NameAndElement{
-		private string name = null;
-		private Elmement element = null;
+	final class NameAndSrc{
+		private String name = null;
+		private String src = null;
 		
-		protected NameAndSource (String name, Element element){
+		protected NameAndSrc (String name, String src){
 			this.name = name;
-			this.element =element;
+			this.src =src;
 		}
 		
 		protected String getName(){
 			return this.name;
 		}
 		
-		protected Elmenet getElement(){
-			return element;
+		protected String getSrc(){
+			return src;
 		}
 	}
 }

@@ -1,11 +1,9 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.ArrayList;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
  * Remove character constraints that refer to the parent structure of the character

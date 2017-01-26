@@ -1,6 +1,6 @@
 // Rewrite this with the sample we made up: No red leaves toothed; No winged queens known/present.
 
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,10 +9,8 @@ import java.util.List;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
-
 /**
- * Remove a count = no character that is placed in the first location of a biological entity.
+ * Remove a "count = no" character that is placed in the first location of a biological entity.
  * Prepend biological entity's constraint by "no" instead.
  * 
  * /**
@@ -58,7 +56,7 @@ public class ReplaceNegationCharacterByNegationOrAbsence extends AbstractTransfo
 			Element countNoCharacter = getCountNoCharacter(biologicalEntity);
 			if(countNoCharacter != null) {
 				List<Element> noModifierCharacters = getNoModifierCharacters(biologicalEntity);
-				List<Element> modifierCharacters = getModifierCharacters(biologicalEntity);
+				//List<Element> modifierCharacters = getModifierCharacters(biologicalEntity);
 				
 				if(noModifierCharacters.isEmpty()) {
 					removeCountNoCharacter(countNoCharacter, biologicalEntity);
@@ -107,6 +105,7 @@ public class ReplaceNegationCharacterByNegationOrAbsence extends AbstractTransfo
 		Element character = new Element("character");
 		character.setAttribute("name", "presence");
 		character.setAttribute("value", "absent");
+		character.setAttribute("src", "");
 		biologicalEntity.addContent(character);
 	}
 
@@ -116,7 +115,7 @@ public class ReplaceNegationCharacterByNegationOrAbsence extends AbstractTransfo
 
 	private Element getCountNoCharacter(Element biologicalEntity) {
 		for(Element character : biologicalEntity.getChildren("character")) {
-			if(character.getAttributeValue("name").equals("count") && (character.getAttributeValue("value")!=null && character.getAttributeValue("value").equals("no")) &&
+			if(character.getAttributeValue("name").equals("quantity") && (character.getAttributeValue("value")!=null && character.getAttributeValue("value").equals("no")) &&
 					(character.getAttributeValue("is_modifier")!=null && character.getAttributeValue("is_modifier").equals("true"))) {
 				return character;
 			}

@@ -19,6 +19,7 @@ public class SimpleRemoveSynonyms extends AbstractTransformer {
 	@Override
 	public void transform(Document document) {
 		removeBiologicalEntitySynonyms(document);
+		removeCharacterSynonyms(document);
 	}
 
 	private void removeBiologicalEntitySynonyms(Document document) {
@@ -30,6 +31,21 @@ public class SimpleRemoveSynonyms extends AbstractTransformer {
 			}
 		}
 	}
+	
+	private void removeCharacterSynonyms(Document document) {
+		for (Element character : this.characterPath.evaluate(document)) {
+			String value = character.getAttributeValue("value");
+
+			if(value != null) {
+				if(value.split(" ").length < 5) { //explosion of combinations to check
+					String newValue = createSynonymReplacedValue(value);
+					character.setAttribute("value", newValue);
+					character.setAttribute("value_original", value);
+				}
+			}
+		}
+	}	
+	
 
 	private String createSynonymReplacedValue(String name) {
 		Set<SynonymSet> synonymSets = knowsSynonyms.getSynonyms(name);

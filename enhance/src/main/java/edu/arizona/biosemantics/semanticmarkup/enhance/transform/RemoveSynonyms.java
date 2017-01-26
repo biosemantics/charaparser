@@ -22,6 +22,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
 
 /**
+ * *************Code not finished and not used.****************** 
  * This implementation assumes biologoical entity names to have the organ name in the last word, Antyhing before are constraint/modifying
  * @author rodenhausen
  */
@@ -47,6 +48,7 @@ public class RemoveSynonyms extends AbstractTransformer {
 			if(name != null) {
 				String newName = createSynonymReplacedValue(getSearchPartitionsForOrganName(name), hasBiologicalEntitySynonymsList);
 				biologicalEntity.setAttribute("name", newName);
+				//name_original is already there
 			}
 		}
 	}
@@ -60,6 +62,7 @@ public class RemoveSynonyms extends AbstractTransformer {
 				if(value.split(" ").length < 5) { //explosion of combinations to check
 					String newValue = createSynonymReplacedValue(getSearchPartitionsForCharacterValue(value), hasCharacterSynonymsList);
 					character.setAttribute("value", newValue);
+					character.setAttribute("value_original", value);
 				}
 			}
 		}

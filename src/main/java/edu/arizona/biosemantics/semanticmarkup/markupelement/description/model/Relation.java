@@ -62,6 +62,8 @@ public class Relation extends NamedElement implements Cloneable {
 	private String provenance;
 	@XmlPath("@" + RelationAttribute.notes)
 	private String notes;
+	@XmlPath("@" + RelationAttribute.src)
+	private String src;
 	@XmlTransient
 	private BiologicalEntity toStructure;
 	@XmlTransient
@@ -212,6 +214,25 @@ public class Relation extends NamedElement implements Cloneable {
 		}
 		this.modifier = newValue;
 	}
+	
+	public String getSrc(){
+		return this.src;
+	}
+	
+	public void setSrc(String statementId){
+		this.src = statementId;
+	}
+	
+	public void appendSrc(String statementId){
+		String newValue = "";
+		if(this.src == null || this.src.isEmpty()) {
+			newValue = statementId;
+		} else {
+			if(!this.src.contains(statementId+";") && !this.src.endsWith(statementId))
+				newValue = this.src + "; " + statementId.trim();
+		}
+		this.src = newValue;
+	}
 
 	@Override
 	public void removeElementRecursively(Element element) {
@@ -238,6 +259,7 @@ public class Relation extends NamedElement implements Cloneable {
 		relation.setTaxonConstraint(taxonConstraint);
 		relation.setTo(to);
 		relation.setToStructure(toStructure);
+		relation.setSrc(src);
 		return relation;
 	}
 }

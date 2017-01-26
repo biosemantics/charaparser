@@ -7,6 +7,8 @@ import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.junit.Test;
 
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeQuantityPresence;
+
 public class StandardizeQuantityPresenceTest {
 	
 	private StandardizeQuantityPresence transformer;

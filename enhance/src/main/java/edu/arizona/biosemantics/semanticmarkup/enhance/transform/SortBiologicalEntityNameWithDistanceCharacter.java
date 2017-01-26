@@ -1,12 +1,10 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
  * If biological entity contains a character distance = ?, and the biological entity has a name containing a hyphen:

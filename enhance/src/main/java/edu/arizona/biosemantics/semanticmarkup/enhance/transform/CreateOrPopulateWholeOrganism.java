@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,11 @@ import java.util.Set;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
-
 /**
  * Create or populate whole organism with biological entities characters that match a set of target names and match a certain pattern (e.g. 'simple', 
  * not involved as a destination in a relation, ...) 
  * Useful targets are for example: lifestyles/growth_form or duration
+ * whole_organism's src is "".
  */
 public class CreateOrPopulateWholeOrganism extends AbstractTransformer {
 
@@ -58,6 +57,7 @@ public class CreateOrPopulateWholeOrganism extends AbstractTransformer {
 	private void modifyWholeOrganism(Document document, Element biologicalEntity, Element wholeOrganism, String name) {
 		wholeOrganism.setAttribute("name", "whole_organism");
 		wholeOrganism.setAttribute("name_original", "");
+		wholeOrganism.setAttribute("src", "");
 		wholeOrganism.setAttribute("type", "structure");
 		
 		Element character = new Element("character");

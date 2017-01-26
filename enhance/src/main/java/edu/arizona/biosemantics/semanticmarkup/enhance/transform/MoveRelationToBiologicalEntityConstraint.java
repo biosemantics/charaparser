@@ -23,7 +23,7 @@ public class MoveRelationToBiologicalEntityConstraint extends AbstractTransforme
 					appendConstraint(fromElement, name + " " + getBiologicalEntityString(toElement));
 					
 					//adjust src
-					toElement = collapseSrc(toElement, relation);
+					fromElement = mergeSrc(relation.getAttribute("src")==null? null: relation.getAttributeValue("src"), toElement);
 					
 					relation.detach();
 				}

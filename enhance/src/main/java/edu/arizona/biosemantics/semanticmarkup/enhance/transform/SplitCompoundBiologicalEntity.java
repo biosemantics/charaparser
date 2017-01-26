@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -11,10 +11,9 @@ import org.jdom2.Element;
 import org.jdom2.Parent;
 
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
- * Splits biological entity's who's name contains multiple ones indicated by a range of romand numbers, e.g. i-iii.
+ * Splits biological entity's who's name contains multiple ones indicated by a range of roman numbers, e.g. i-iii.
  * Characters are cloned for all newly created biological entities.
  */
 public class SplitCompoundBiologicalEntity extends AbstractTransformer {

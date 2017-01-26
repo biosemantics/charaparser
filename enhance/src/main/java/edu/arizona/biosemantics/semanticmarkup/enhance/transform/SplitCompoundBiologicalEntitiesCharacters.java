@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -10,7 +10,6 @@ import org.jdom2.Element;
 import org.jdom2.Parent;
 
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
  * Splits biological entity's who's name contains multiple names separated by '/' if the the same quantity of character values

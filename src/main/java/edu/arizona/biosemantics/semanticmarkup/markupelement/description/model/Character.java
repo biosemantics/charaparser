@@ -97,6 +97,8 @@ public class Character extends NamedElement implements Cloneable {
 	private String isModifier;
 	@XmlPath("@" + CharacterAttribute.establishment_means)
 	private String establishmentMeans;
+	@XmlPath("@" + CharacterAttribute.src)
+	private String src;
 	
 	@XmlTransient
 	private BiologicalEntity structure;
@@ -346,9 +348,27 @@ public class Character extends NamedElement implements Cloneable {
 		if(this.constraint == null || this.constraint.isEmpty()) {
 			newValue = constraint;
 		} else {
-			newValue = this.constraint + "; " + constraint;
+			newValue = this.constraint + "; " + constraint.trim();
 		}
 		this.constraint = newValue;
+	}
+	public String getSrc(){
+		return this.src;
+	}
+	
+	public void setSrc(String statementId){
+		this.src = statementId;
+	}
+	
+	public void appendSrc(String statementId){
+		String newValue = "";
+		if(this.src == null || this.src.isEmpty()) {
+			newValue = statementId;
+		} else {
+			if(!this.src.contains(statementId+";") && !this.src.endsWith(statementId))
+				newValue = this.src + "; " + statementId.trim();
+		}
+		this.src = newValue;
 	}
 
 	/*@XmlTransient
@@ -406,6 +426,7 @@ public class Character extends NamedElement implements Cloneable {
 		character.setUpperRestricted(this.getUpperRestricted());
 		character.setValue(this.getValue());
 		character.setIsModifier(this.getIsModifier());
+		character.setSrc(src);
 		return character;
 	}
 

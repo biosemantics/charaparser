@@ -60,7 +60,7 @@ public class CreateRelationFromCharacterConstraint extends AbstractTransformer {
 		relation.setAttribute("from", from.getAttributeValue("id"));
 		relation.setAttribute("to", to.getAttributeValue("id"));
 		relation.setAttribute("name", name);
-		relation.setAttribute("src", src)
+		relation.setAttribute("src", src);
 		return relation;
 	}
 	

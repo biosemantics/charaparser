@@ -41,11 +41,13 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 						nameOccurences.put(name, nameOccurences.get(name) + 1);
 						int appearance = nameOccurences.get(name);
 						
-						String parent = findParentConnectedByForwardKeyWords(name, appearance, biologicalEntity, statement, document);
+						NameAndSrc info = findParentConnectedByForwardKeyWords(name, appearance, biologicalEntity, statement, document);
+						String parent = info.getName();
 						if(parent != null) {
 							constraint = (parent + " " + constraint).trim();
 							this.appendInferredConstraint(biologicalEntity, parent);
 							biologicalEntity.setAttribute("constraint", constraint);
+							biologicalEntity = mergeSrc(info.getSrc(), biologicalEntity);
 						}
 					}
 				}
@@ -53,8 +55,8 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 		}
 	}
 	
-	private String findParentConnectedByForwardKeyWords(String name, int appearance, Element biologicalEntity, Element statement, Document document) {
-		String nameOriginal = biologicalEntity.getAttributeValue("name_original");
+	private NameAndSrc findParentConnectedByForwardKeyWords(String name, int appearance, Element nonSpBiologicalEntity, Element statement, Document document) {
+		String nameOriginal = nonSpBiologicalEntity.getAttributeValue("name_original");
 		String sentence = statement.getChild("text").getValue().toLowerCase();
 		/*if(name.equals("side") && sentence.startsWith("breast, sides, and flanks pinkish brown contrasting with white belly and sides of rump;")) {
 			System.out.println();
@@ -89,7 +91,7 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 		return -1;
 	}
 
-	private String findFollowingParentInSentence(int connectorPosition, String term, String sentence, Element statement) {
+	private NameAndSrc findFollowingParentInSentence(int connectorPosition, String term, String sentence, Element statement) {
 		List<Token> terms = tokenizer.tokenize(sentence);
 		for(int termPosition = connectorPosition + 1; termPosition < terms.size(); termPosition ++) {
 			String followingTerm = terms.get(termPosition).getContent();
@@ -101,10 +103,10 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 			if(biologicalEntity != null) {
 				String nameNormalized = collapseBiologicalEntityToName.collapse(biologicalEntity);
 				if(knowsPartOf.isPartOf(term, nameNormalized)) 
-					return collapseBiologicalEntityToName.collapse(biologicalEntity);
+					return new NameAndSrc(collapseBiologicalEntityToName.collapse(biologicalEntity), biologicalEntity.getAttributeValue("src")==null? null : biologicalEntity.getAttributeValue("src"));
 				nameNormalized = biologicalEntity.getAttributeValue("name");
 				if(knowsPartOf.isPartOf(term, nameNormalized)) 
-					return collapseBiologicalEntityToName.collapse(biologicalEntity);
+					return new NameAndSrc(collapseBiologicalEntityToName.collapse(biologicalEntity), biologicalEntity.getAttributeValue("src")==null? null : biologicalEntity.getAttributeValue("src"));
 				break;
 			}
 		}

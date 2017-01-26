@@ -1,11 +1,9 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import java.util.Map;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
-
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 
 /**
  * Renames a character with a given original name to a given target name

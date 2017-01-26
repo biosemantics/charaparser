@@ -113,7 +113,7 @@ public class CollapseBiologicalEntities extends AbstractTransformer {
 
 	private void collapseBiologicalEntity(Element biologicalEntity,	Element representative) {
 		//append src to representative, src should exist for all biological entities
-		representative = collapseSrc(biologicalEntity, representative);
+		representative = mergeSrc(biologicalEntity.getAttribute("src")!=null? biologicalEntity.getAttributeValue("src"): null, representative);
 		//move characters (keeping their src) to representative
 		for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
 			character.detach();

@@ -69,6 +69,8 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 	private String nameOriginal;
 	@XmlPath("@" + BiologicalEntityAttribute.type)
 	private String type;
+	@XmlPath("@" + BiologicalEntityAttribute.src)
+	private String src;
 
 	@XmlPath("character")
 	private LinkedHashSet<Character> characters = new LinkedHashSet<Character>();
@@ -361,6 +363,25 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	public String getSrc(){
+		return this.src;
+	}
+	
+	public void setSrc(String statementId){
+		this.src = statementId;
+	}
+	
+	public void appendSrc(String statementId){
+		String newValue = "";
+		if(this.src == null || this.src.isEmpty()) {
+			newValue = statementId;
+		} else {
+			if(!this.src.contains(statementId+";") && !this.src.endsWith(statementId))
+				newValue = this.src + "; " + statementId.trim();
+		}
+		this.src = newValue;
+	}
 
 	@Override
 	public void removeElementRecursively(Element element) {
@@ -391,6 +412,7 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 		entity.setProvenance(provenance);
 		entity.setTaxonConstraint(taxonConstraint);
 		entity.setType(type);
+		entity.setSrc(src);
 	
 		
 		for(Relation fromR: fromRelations){

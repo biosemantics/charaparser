@@ -1,5 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -17,6 +18,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
@@ -74,17 +76,26 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			Statement statement = new Statement();
 			//statement.setText(chunkCollector.getSentence());
 			statement.setText(chunkCollector.getOriginalSentence());
-			statement.setId("d" + descriptionNumber + "_s" + i);
+			String statementId = "d" + descriptionNumber + "_s" + i;
+			statement.setId(statementId);
 			description.addStatement(statement);
 			
 			processingContext.setChunkCollector(chunkCollector);
 			try {
 				List<Element> descriptiveElements = getDescriptiveElements(processingContext, chunkCollector.getSentence(), i); //chunk to xml
 				for(Element element : descriptiveElements) {
-					if(element.isRelation())
+					if(element.isRelation()){
+						((Relation)element).appendSrc(statementId); 
 						statement.addRelation((Relation)element);
-					if(element.isStructure())
+					} else if(element.isStructure()){
+						((BiologicalEntity)element).appendSrc(statementId);
 						statement.addBiologicalEntity((BiologicalEntity)element);
+
+						Iterator<Character> it = ((BiologicalEntity)element).getCharacters().iterator();
+						while(it.hasNext()){
+							((Character)it.next()).appendSrc(statementId); // when extracting src info from xml output, need to take into account of the "src"s of the entity and the character
+						}
+					}
 				}
 			} catch (Exception e) {
 				log(LogLevel.ERROR, "Problem extracting markup elements from sentence: " + chunkCollector.getSentence() + "\n" +
