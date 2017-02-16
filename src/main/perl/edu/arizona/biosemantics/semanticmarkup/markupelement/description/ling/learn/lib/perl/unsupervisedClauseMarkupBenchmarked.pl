@@ -6059,7 +6059,7 @@ while(defined ($file=readdir(IN))){
 	#print STDOUT "full text: $text\n";
 	$text =~ s#["']##g;
 	$text =~ s#[-_]+shaped#-shaped#g; #5/30/09
-	$text =~ s#<.*?>##g; #remove html tags
+	$text =~ s#<[^ ]*>##g; #remove html tags (at least those without space for now. Real example text can contain < > e.g. leaves < 4; sometimes > 5mm tall)
 	$text =~ s#<# less than #g; #remove <
 	$text =~ s#># greater than #g; #remove >
 	$text =~ s#(?<=[a-zA-Z])([)}\]])(?=[a-zA-Z])#$1 #g; # a)a => a) a purple)ovate-
