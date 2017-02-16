@@ -346,7 +346,11 @@ public class OTOLearner implements ILearner {
 		GlossaryDownload glossaryDownload = null;
 		try {
 			glossaryDownload = futureGlossaryDownload.get();
-			downloadSuccessful = glossaryDownload != null;
+			downloadSuccessful = glossaryDownload != null && 
+					!glossaryDownload.getVersion().equals("Requested version not available") && 
+					!glossaryDownload.getVersion().equals("No Glossary Available") &&
+					!glossaryDownload.getVersion().contains("available") && 
+					!glossaryDownload.getVersion().contains("Available");
 		} catch(Throwable t) {
 			log(LogLevel.ERROR, "Couldn't download glossary will fallback to locally stored glossary", t);
 		}
