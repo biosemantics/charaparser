@@ -117,7 +117,11 @@ public class Run {
 				
 				if(document != null) 
 					for(AbstractTransformer transformer : transformers) 
-						transformer.transform(document);
+						try {
+							transformer.transform(document);
+						} catch(Throwable t) {
+							log(LogLevel.ERROR, "Transformer " + transformer.getClass().getSimpleName() + " failed. ", t);
+						}
 				
 				File outputFile = new File(outputDirectory, file.getName());
 				try {
