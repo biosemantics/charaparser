@@ -34,7 +34,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBi
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeCount;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeQuantityPresence;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureName;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureNameBySyntax;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeTerminology;
 import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator;
@@ -113,7 +113,7 @@ public class ETCMarkupRun extends AbstractRun {
 		run.addTransformer(new OrderBiologicalEntityConstraint());
 		run.addTransformer(new MoveNegationOrAdverbBiologicalEntityConstraint(posKnowledgeBase)); //different from ReplaceNegationCharacterByNegationOrAbsence()
 		run.addTransformer(new StandardizeTerminology(characterKnowledgeBase));
-		run.addTransformer(new StandardizeStructureName(characterKnowledgeBase, possessWords));
+		run.addTransformer(new StandardizeStructureNameBySyntax(characterKnowledgeBase, possessWords));
 		run.run(new File(runOutDirectory), new File(runOutDirectory));
 	}
 	

@@ -30,7 +30,7 @@ public class StandardizeTerminology extends AbstractTransformer {
 			String name = biologicalEntity.getAttributeValue("name");
 			String constraint = biologicalEntity.getAttributeValue("constraint");
 			String preferedName = characterKnowledgeBase.getCharacterName(name).getLabel(type);
-			if(preferedName != null) 
+			if(preferedName!=null) 
 				biologicalEntity.setAttribute("name", preferedName.replaceAll("_", "-"));
 			
 			//standardize structural constraint, a word or a phrase, e.g. "between eyes and nose"

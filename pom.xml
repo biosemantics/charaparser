@@ -310,12 +310,12 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>ling</artifactId>
-			<version>0.0.17-SNAPSHOT</version>
+			<version>0.0.18-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 		  <groupId>edu.arizona.biosemantics.oto2</groupId>
 		  <artifactId>oto</artifactId>
-		  <version>0.0.133-SNAPSHOT</version>
+		  <version>0.0.134-SNAPSHOT</version>
 		  <classifier>classes</classifier>
 		</dependency>
 	</dependencies>

@@ -36,6 +36,7 @@ public class BiologicalEntityAttribute {
 	public static final String constraintParentOrgan = "constraintParentOrgan";
 	public static final String constraintType = "constraintType";
 	public static final String name_original = "name_original";
+	public static final String constraint_original = "constraint_original";
 	public static final String type = "type";
 	public static final String src = "src"; // to hold src statement ids. Information related to one BiologicalEntity could come from 2 or more sentences/statements.
 }

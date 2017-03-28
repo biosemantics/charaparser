@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import au.com.bytecode.opencsv.CSVReader;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
@@ -23,6 +24,7 @@ public class CSVKnowsPartOf implements KnowsPartOf {
 	private HashMap<String, Set<String>> partOfMap;
 	private KnowsSynonyms knowsSynonyms;
 	private IInflector inflector;
+	
 
 	public CSVKnowsPartOf(String partOfFile, KnowsSynonyms knowsSynonyms, IInflector inflector) {
 		this.inflector = inflector;
@@ -69,13 +71,13 @@ public class CSVKnowsPartOf implements KnowsPartOf {
 		
 		Set<String> parts = new HashSet<String>();
 		parts.add(normalizedPart);
-		Set<SynonymSet> partSynonymSets = knowsSynonyms.getSynonyms(normalizedPart);
+		Set<SynonymSet> partSynonymSets = knowsSynonyms.getSynonyms(normalizedPart, Configuration.defaultEntityType);
 		for(SynonymSet synonymSet : partSynonymSets) 
 			parts.addAll(synonymSet.getSynonyms());
 			
 		Set<String> parents = new HashSet<String>();
 		parents.add(normalizedParent);
-		Set<SynonymSet> parentSynonymSets = knowsSynonyms.getSynonyms(normalizedParent);
+		Set<SynonymSet> parentSynonymSets = knowsSynonyms.getSynonyms(normalizedParent, Configuration.defaultEntityType);
 		for(SynonymSet synonymSet : parentSynonymSets) 
 			parents.addAll(synonymSet.getSynonyms());
 		

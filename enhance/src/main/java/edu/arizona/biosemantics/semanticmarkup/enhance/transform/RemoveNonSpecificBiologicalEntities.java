@@ -11,6 +11,7 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.common.ling.Token;
 import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.SynonymSet;
@@ -32,7 +33,7 @@ public abstract class RemoveNonSpecificBiologicalEntities extends AbstractTransf
 	}
 		
 	protected boolean isNonSpecificPart(String name) {
-		Set<SynonymSet> synonymSets =  knowsSynonyms.getSynonyms(name);
+		Set<SynonymSet> synonymSets =  knowsSynonyms.getSynonyms(name, Configuration.defaultEntityType);
 		for(SynonymSet synonymSet : synonymSets) {
 			if(synonymSet.getPreferredTerm().matches(nonSpecificParts)) {
 				return true;

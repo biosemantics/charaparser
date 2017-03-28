@@ -77,7 +77,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecif
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByPassedParents;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveOrphanRelations;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveSynonyms;
+//import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveUselessCharacterConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveUselessWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RenameCharacter;
@@ -90,7 +90,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBi
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeCount;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeQuantityPresence;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureName;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureNameBySyntax;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeTerminology;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.process.PTBTokenizer;
@@ -190,16 +190,16 @@ public class Run {
 		
 		
 		
-		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
-				+ "Gordon_complexity_term_review\\category_mainterm_synonymterm-task-Gordon_complexity.csv"));
+		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
 		List<String[]> lines = reader.readAll();
 		int i=0;
 		final Map<String, SynonymSet> synonymSetsMap = new HashMap<String, SynonymSet>();
 		for(String[] line : lines) {
-			String preferredTerm = line[1];
+			String preferredTerm = line[0];
+			String category = line[1];
 			String synonym = line[2];
 			if(!synonymSetsMap.containsKey(preferredTerm)) 
-				synonymSetsMap.put(preferredTerm, new SynonymSet(preferredTerm, new HashSet<String>()));
+				synonymSetsMap.put(preferredTerm, new SynonymSet(preferredTerm, category, new HashSet<String>()));
 			synonymSetsMap.get(preferredTerm).getSynonyms().add(synonym);
 		}	
 		
@@ -254,18 +254,18 @@ public class Run {
 			}
 		});*/
 
-		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("synonyms.csv", inflector);
+		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv", inflector);
 		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), 
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), 
 				csvKnowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
 		//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
 		//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
@@ -306,7 +306,7 @@ public class Run {
 		run.addTransformer(new StandardizeCount());
 		run.addTransformer(new SortBiologicalEntityNameWithDistanceCharacter());
 		run.addTransformer(new OrderBiologicalEntityConstraint());
-		run.addTransformer(new StandardizeStructureName(characterKnowledgeBase, possessionTerms));
+		run.addTransformer(new StandardizeStructureNameBySyntax(characterKnowledgeBase, possessionTerms));
 		run.addTransformer(new StandardizeTerminology(characterKnowledgeBase));
 		
 		run.addTransformer(new RemoveOrphanRelations());
@@ -392,23 +392,21 @@ public class Run {
 		
 		
 		List<Synonym> synonyms = new LinkedList<Synonym>();
-		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
-				+ "Gordon_complexity_term_review\\category_mainterm_synonymterm-task-Gordon_complexity.csv"));
+		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
 		List<String[]> lines = reader.readAll();
 		int i=0;
 		Set<String> hasSynonym = new HashSet<String>();
 		for(String[] line : lines) {
-			synonyms.add(new Synonym(String.valueOf(i), line[1], line[0], line[2]));
-			hasSynonym.add(line[1]);
+			synonyms.add(new Synonym(String.valueOf(i), line[0], line[1], line[2]));
+			hasSynonym.add(line[0]);
 		}	
 		
-		reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
-				+ "Gordon_complexity_term_review\\category_term-task-Gordon_complexity.csv"));
+		reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\terms.csv"));
 		lines = reader.readAll();
 		List<Decision> decisions = new LinkedList<Decision>();
 		i=0;
 		for(String[] line : lines) {
-			decisions.add(new Decision(String.valueOf(i), line[1], line[0], hasSynonym.contains(line[1]), ""));
+			decisions.add(new Decision(String.valueOf(i), line[0], line[1], hasSynonym.contains(line[1]), ""));
 		}
 
 		Download download = new Download(true, decisions, synonyms);

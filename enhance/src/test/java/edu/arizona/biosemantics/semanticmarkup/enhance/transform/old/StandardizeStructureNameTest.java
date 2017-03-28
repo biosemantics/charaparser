@@ -13,7 +13,7 @@ import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 
 public class StandardizeStructureNameTest {
 	
-	private StandardizeStructureName transformer;
+	private StandardizeStructureNameBySyntax transformer;
 	private Element biologicalEntity1;
 	private Element relation1;
 	private Element relation2;
@@ -21,7 +21,7 @@ public class StandardizeStructureNameTest {
 	private Element biologicalEntity3;
 	
 	public StandardizeStructureNameTest() {
-		this.transformer = new StandardizeStructureName(new ICharacterKnowledgeBase() {
+		this.transformer = new StandardizeStructureNameBySyntax(new ICharacterKnowledgeBase() {
 			@Override
 			public CharacterMatch getCharacterName(String characterState) {
 				return null;

@@ -8,9 +8,11 @@ import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -351,15 +353,244 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 
 	
 	/**
-	 * notes: OTO Webservice should probably only return one term category list.
-	 * No need to return an extra term synonym list just because it might make sense to have them separate in a relational database schema
 	 * 
-	 * notes: returning a term synonym list makes sense, but here we need to add syn info to the glossary.
-	 * 
-	 * Merge glossaryDownload and download to one glossary which holds both terms and synonyms
+	 * Merge glossaryDownload and collection to one glossary which holds both terms and synonyms
+	 * note: decisions from collection (results from term review by the user) takes priority over those from glossary
+	 * note: synonyms and terms are disjoint -- add only term as entry to the glossary (addEntry), synonyms added as synonyms (addSynonym)
 	 * For structure terms, both singular and plural forms are included in the synonyms
 	 * @param otoGlossary
 	 */
+	protected void initGlossary(GlossaryDownload glossaryDownload, Collection collection) {
+
+		log(LogLevel.DEBUG, "initiate in-memory glossary using glossaryDownload and collection...");
+		log(LogLevel.DEBUG, "obtaining synonyms from glossaryDownload...");
+		//1. obtain synonyms from glossaryDownload
+		HashSet<Term> gsyns = new HashSet<Term>();
+		obtainSynonymsFromGlossaryDownload(glossaryDownload, gsyns);
+		
+		log(LogLevel.DEBUG, "obtaining synonyms from collection...");
+		//2. obtain synonyms from collection
+		HashSet<Term> dsyns = new HashSet<Term>();
+		obtainSynonymsFromCollection(collection, dsyns);
+		
+		log(LogLevel.DEBUG, "merging synonyms...");
+		//3. merge synonyms into one set
+		gsyns = mergeSynonyms(gsyns, dsyns);
+		
+		log(LogLevel.DEBUG, "adding synonyms to in-mem glossary...");
+		//4. addSynonyms to glossary
+		HashSet<Term> simpleSyns = addSynonyms2Glossary(gsyns);
+		
+		log(LogLevel.DEBUG, "adding preferred terms to in-mem glossary...");
+		//5. addEntry 
+		//the glossaryDownload, excluding syns
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+			if(!simpleSyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
+				glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
+			else
+				log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+termCategory.getTerm().replaceAll("_", "-")+"<"+termCategory.getCategory()+">");
+		}
+
+		//the collection, excluding syns
+		if(collection != null) {			
+			for(Label label : collection.getLabels()) {
+				for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
+					if(!simpleSyns.contains(new Term(mainTerm.getTerm().replaceAll("_",  "-"), label.getName()))){//calyx_tube => calyx-tube
+						glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName()); 
+					    log(LogLevel.DEBUG, "adding collection term to in-mem glossary: "+ mainTerm.getTerm().replaceAll("_",  "-")+"<"+label.getName()+">");
+					}else
+						log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+ mainTerm.getTerm().replaceAll("_",  "-")+"<"+label.getName()+">");
+				}
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param gsyns
+	 * @return set of synonyms added (minus the preferred terms)
+	 */
+	private HashSet<Term> addSynonyms2Glossary(HashSet<Term> gsyns) {
+		HashSet<Term> simpleSyns = new HashSet<Term>();
+		Iterator<Term> sit = gsyns.iterator();
+		while(sit.hasNext()){
+			Term syn = sit.next();
+			String[] tokens = syn.getLabel().split(":");
+			String category = syn.getCategory();
+			glossary.addSynonym(tokens[0], category, tokens[1]);
+		    log(LogLevel.DEBUG, "adding synonym to in-mem glossary: "+ tokens[0]+" U "+tokens[1]+"<"+category+">");
+			simpleSyns.add(new Term(tokens[0], category));
+		}
+		return simpleSyns;
+	}
+
+	/**
+	 * Term string takes the form of "syn:preferred"
+	 * @param gsyns
+	 * @param dsyns
+	 * @return
+	 */
+	private HashSet<Term> mergeSynonyms(HashSet<Term> gsyns, HashSet<Term> dsyns) {
+		HashSet<Term> merged = new HashSet<Term>();
+		Iterator<Term> git = gsyns.iterator();
+		while(git.hasNext()){ 
+			Iterator<Term> dit = dsyns.iterator();
+			Term gsyn = git.next();
+			String gcat = gsyn.getCategory();
+			List<String> gtokens = Arrays.asList(gsyn.getLabel().split(":"));
+			while(dit.hasNext()){ //nested loop, very inefficient
+				Term dsyn = dit.next();
+				String dcat = dsyn.getCategory();
+				List<String> dtokens = Arrays.asList(dsyn.getLabel().split(":"));
+				if(!gcat.equals(dcat)){
+					//add both to merged
+					merged.add(gsyn);
+				    log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+					merged.add(dsyn);
+					log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
+				}else{
+					boolean isSame = false; //all four terms are synonyms
+					for(String t: gtokens){
+						if(dtokens.contains(t)) isSame = true;
+					}
+					if(isSame){
+						//use preferred term of dsyns as the preferred term 
+						if(dtokens.get(1).equals(gtokens.get(1))){//share the same preferred term,
+							// add both to merged SET
+							merged.add(gsyn);
+							log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+							merged.add(dsyn);	
+							log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
+						}else{
+							merged.add(dsyn);
+							if(!gtokens.get(0).equals(dtokens.get(1))){ //don't add B:B
+								merged.add(new Term(gtokens.get(0)+":"+dtokens.get(1), dcat));
+								log(LogLevel.DEBUG, "add to merged synonyms: "+ new Term(gtokens.get(0)+":"+dtokens.get(1), dcat).toString());
+							}
+							if(!gtokens.get(1).equals(dtokens.get(1))){
+								merged.add(new Term(gtokens.get(1)+":"+dtokens.get(1), dcat));
+								log(LogLevel.DEBUG, "add to merged synonyms: "+ new Term(gtokens.get(1)+":"+dtokens.get(1), dcat).toString());
+							}
+							
+						}
+					}else{
+						//add both to merged
+						merged.add(gsyn);
+						log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+						merged.add(dsyn);
+						log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
+					}
+				}
+			}
+		}
+		return merged;
+	}
+
+	private void obtainSynonymsFromCollection(Collection collection, HashSet<Term> dsyns) {
+		if(collection != null) {			
+			for(Label label : collection.getLabels()) {
+				for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
+					//if(!dsyns.contains(new Term(mainTerm.getTerm().replaceAll("_",  "-"), label.getName())))//calyx_tube => calyx-tube
+					//	glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName());  
+					
+					//Hong TODO need to add category info to synonym entry in OTOLite
+					//if(termSyn.getCategory().compareTo("structure")==0){
+					if(label.getName().matches(ElementRelationGroup.entityElements)){
+						for(edu.arizona.biosemantics.oto2.oto.shared.model.Term synonym : label.getSynonyms(mainTerm)) {
+							//take care of singular and plural forms
+							String syns = ""; 
+							String synp = "";
+							String terms = "";
+							String termp = "";
+							if(inflector.isPlural(synonym.getTerm().replaceAll("_",  "-"))){
+								synp = synonym.getTerm().replaceAll("_",  "-");
+								syns = inflector.getSingular(synp);					
+							}else{
+								syns = synonym.getTerm().replaceAll("_",  "-");
+								synp = inflector.getPlural(syns);
+							}
+	
+							if(inflector.isPlural(mainTerm.getTerm().replaceAll("_",  "-"))){
+								termp = mainTerm.getTerm().replaceAll("_",  "-");
+								terms = inflector.getSingular(termp);					
+							}else{
+								terms = mainTerm.getTerm().replaceAll("_",  "-");
+								termp = inflector.getPlural(terms);
+							}
+							//plural forms are synonyms to the singular
+							if(!syns.equals(terms)){ 							
+								dsyns.add(new Term(syns+":"+terms, label.getName()));
+								log(LogLevel.DEBUG, "synonym from collection: "+ new Term(syns+":"+terms, label.getName()).toString());
+							}
+							if(!synp.equals(terms)){ 
+								dsyns.add(new Term(synp+":"+terms, label.getName()));
+								log(LogLevel.DEBUG, "synonym from collection: "+ new Term(synp+":"+terms, label.getName()).toString());
+							}
+							if(!termp.equals(terms)){ 
+								dsyns.add(new Term(termp+":"+terms, label.getName()));
+								log(LogLevel.DEBUG, "synonym from collection: "+ new Term(termp+":"+terms, label.getName()).toString());
+							}
+						}
+					} else {//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
+						for(edu.arizona.biosemantics.oto2.oto.shared.model.Term synonym : label.getSynonyms(mainTerm)) {
+							//glossary.addSynonym(synonym.getTerm().replaceAll("_",  "-"), label.getName(), mainTerm.getTerm());
+							dsyns.add(new Term(synonym.getTerm().replaceAll("_",  "-")+":"+mainTerm.getTerm().replaceAll("_",  "-"), label.getName()));
+							log(LogLevel.DEBUG, "synonym from collection: "+ new Term(synonym.getTerm().replaceAll("_",  "-")+":"+mainTerm.getTerm(), label.getName()).toString());
+						}
+					}				
+				}
+			}
+		}
+	}
+
+	private void obtainSynonymsFromGlossaryDownload(GlossaryDownload glossaryDownload, HashSet<Term> gsyns) {
+		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
+
+			//if(termSyn.getCategory().compareTo("structure")==0){
+			if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
+				//take care of singular and plural forms
+				String syns = ""; 
+				String synp = "";
+				String terms = "";
+				String termp = "";
+				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){ //must convert _ to -, as matching entity phrases will be converted from leg iii to leg-iii in the sentence.
+					synp = termSyn.getSynonym().replaceAll("_",  "-");
+					syns = inflector.getSingular(synp);					
+				}else{
+					syns = termSyn.getSynonym().replaceAll("_",  "-");
+					synp = inflector.getPlural(syns);
+				}
+
+				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+					termp = termSyn.getTerm().replaceAll("_",  "-");
+					terms = inflector.getSingular(termp);					
+				}else{
+					terms = termSyn.getTerm().replaceAll("_",  "-");
+					termp = inflector.getPlural(terms);
+				}
+				//plural forms are synonyms to the singular
+				if(!syns.equals(terms)){ 
+					gsyns.add(new Term(syns+":"+terms, termSyn.getCategory()));
+					log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(syns+":"+terms, termSyn.getCategory()).toString());
+				}
+				if(!synp.equals(terms)){
+					gsyns.add(new Term(synp+":"+terms, termSyn.getCategory()));
+					log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(synp+":"+terms, termSyn.getCategory()).toString()); 
+				}
+				if(!termp.equals(terms)){ 
+					gsyns.add(new Term(termp+":"+terms, termSyn.getCategory()));
+					log(LogLevel.DEBUG, "synonym from glossaryDownload: "+ new Term(termp+":"+terms, termSyn.getCategory()).toString());
+				}
+			}else{
+				//glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
+				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-")+":"+termSyn.getTerm().replaceAll("_",  "-"), termSyn.getCategory()));
+				log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(termSyn.getSynonym().replaceAll("_",  "-")+":"+termSyn.getTerm(), termSyn.getCategory()).toString()); 
+			}
+		}
+	}
+	
+	
+	/*bad version
 	protected void initGlossary(GlossaryDownload glossaryDownload, Collection collection) {
 
 		//add the syn set of the glossary
@@ -459,7 +690,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		
 		//glossary.addEntry("distance", "character");
 	
-	}
+	}*/
 	
 //	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 
 //			String tablePrefix) {
