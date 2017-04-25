@@ -6075,7 +6075,7 @@ while(defined ($file=readdir(IN))){
 	#$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
 	$text =~ s#[-]+#-#g; #-- => -
 	$text =~ s#\+/-# moreorless #g;
-  	$text =~ s/&[;#\w\d]+;/ /g; #remove HTML entities
+  	$text =~ s/&[#\w\d]+;/ /g; #remove HTML entities,  &lt;; the 2nd ; is a punc mark.
   	$text =~ s# & # and #g;
   	$text = hideBrackets($text);#implemented in DeHyphenAFolder.java
   	$text =~ s#_#-#g;   #_ to -
