@@ -6059,7 +6059,7 @@ while(defined ($file=readdir(IN))){
 	#print STDOUT "original text: $text\n";
 	$text =~ s#["']##g;
 	$text =~ s#[-_]+shaped#-shaped#g; #5/30/09
-	$text =~ s#<.*?>##g; #remove html tags
+	$text =~ s#<[^ ]*>##g; #remove html tags (at least those without space for now. Real example text can contain < > e.g. leaves < 4; sometimes > 5mm tall)
 	$text =~ s#<# less than #g; #remove <
 	$text =~ s#># greater than #g; #remove >
 	$text =~ s#(?<=[a-zA-Z])([)}\]])(?=[a-zA-Z])#$1 #g; # a)a => a) a purple)ovate-
@@ -6069,16 +6069,18 @@ while(defined ($file=readdir(IN))){
 	#print STDOUT "text 2: $text\n";                                
 
 	$text =~ s#^\s*\d+[a-z]\.\s*##; #remove 2a. (key marks)
-	print STDOUT "now text: $text\n";
+	#print STDOUT "now text: $text\n";
 	$original = $text;
 	$text =~ s#\b(is|are|was|were|be|being)\b##g; #remove aux.verbs
 	#$text =~ s#\b[Nn]o\s*\.\s*(?=\d+)#taxonname#g; #similar to No. 12
 	$text =~ s#[-]+#-#g; #-- => -
 	$text =~ s#\+/-# moreorless #g;
+
   	#$text =~ s/&[;#\w\d]+;/ /g; #remove HTML entities
 	$text =~ s/&[#\w\d]+;/ /g; #remove HTML entities, &lt;; the 2nd ; is a punc mark.
-	print STDOUT "text 3: $text\n";  
-  	$text =~ s# & # and #g;
+	#print STDOUT "text 3: $text\n";  
+
+	$text =~ s# & # and #g;
   	$text = hideBrackets($text);#implemented in DeHyphenAFolder.java
   	$text =~ s#_#-#g;   #_ to -
   	$text =~ s#\s+([:;\.])#\1#g;     #absent ; => absent;
@@ -6087,7 +6089,7 @@ while(defined ($file=readdir(IN))){
   	$text =~ s#(\sdiam)\s+(\.)#$1$2#g; #diam . =>diam.
   	$text =~ s#(\sca)\s+(\.)#$1$2#g;  #ca . =>ca.
   	$text =~ s#(\d\s+(cm|mm|dm|m)\s*)\.(\s+[^A-Z])#$1\[DOT\]$3#g;
-  	print "end text: $text\n";
+  	#print "end text: $text\n";
   	
 
 	#@todo: use [PERIOD] replace . etc. in brackets. Replace back when dump to disk.
@@ -6099,7 +6101,7 @@ while(defined ($file=readdir(IN))){
  	foreach (@sentences){
 		#may have fewer than $N words
 		if(!/\w+/){next;}
-		print STDOUT "sent: $_\n";
+		#print STDOUT "sent: $_\n";
 		push(@validindex, $i);
 		s#\[\s*DOT\s*\]#.#g;
 		s#\[\s*QST\s*\]#?#g;
@@ -6115,11 +6117,11 @@ while(defined ($file=readdir(IN))){
   		s#\([^()]*?[a-zA-Z][^()]*?\)# #g;  #remove (.a.)
   		s#\[[^\]\[]*?[a-zA-Z][^\]\[]*?\]# #g;  #remove [.a.]
   		s#{[^{}]*?[a-zA-Z][^{}]*?}# #g; #remove {.a.}
-		print STDOUT "sent2: $_\n";
+		#print STDOUT "sent2: $_\n";
     	#s#([^\d])\s*-\s*([^\d])#\1_\2#g;         #hyphened words: - =>_ to avoid space padding in the next step
 		s#([^/])[-]+\s*([a-z])#$1_$2#g;                #cup_shaped, 3_nerved, 3-5 (-7)_nerved #5/30/09 add+, exclude +/- hairy 
 		s#(\W)# \1 #g;  		#add space around nonword char
-		print STDOUT "sent3: $_\n";
+		#print STDOUT "sent3: $_\n";
     	#s#& (\w{1,5}) ;#&\1;#g;
     	s#\s+# #g;                                #multiple spaces => 1 space
     	s#^\s*##;                                 #trim
@@ -6192,7 +6194,7 @@ while(defined ($file=readdir(IN))){
 		if($beforeColon=~/\w{3,}/ && $line !~/:/){ #is equal or longer than 3 characters, to exclude 1:, 12: and a: bullet points, and also doesn't contain :
 			$line = $beforeColon.": ".$line;
 		}
-		print STDOUT "sent last: $line\n";
+		#print STDOUT "sent last: $line\n";
     	$stmt = "insert into ".$prefix."_sentence(sentid, source, sentence, originalsent, lead, status) values($SENTID,'$source' ,'$line','$oline','$lead', '$status')";
 		$sth = $dbh->prepare($stmt);
     	$sth->execute() or print STDOUT "populatesents db error:".$sth->errstr.": SQL Statement: ".$stmt."\n";
