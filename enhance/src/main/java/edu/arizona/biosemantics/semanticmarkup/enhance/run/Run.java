@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +51,8 @@ import edu.arizona.biosemantics.oto.model.lite.Decision;
 import edu.arizona.biosemantics.oto.model.lite.Download;
 import edu.arizona.biosemantics.oto.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.model.lite.UploadResult;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Collection;
+import edu.arizona.biosemantics.oto2.oto.shared.model.Label;
 import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsClassHierarchy;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsEntityExistence;
@@ -77,7 +82,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecif
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByPassedParents;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecificBiologicalEntitiesByRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveOrphanRelations;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveSynonyms;
+//import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveUselessCharacterConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveUselessWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RenameCharacter;
@@ -90,8 +95,9 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBi
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeCount;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeQuantityPresence;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureName;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureNameBySyntax;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeTerminology;
+//import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.process.PTBTokenizer;
 
@@ -194,18 +200,19 @@ public class Run {
 		
 		
 		
-		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
-				+ "Gordon_complexity_term_review\\category_mainterm_synonymterm-task-Gordon_complexity.csv"));
+		/* not used
+		 * CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
 		List<String[]> lines = reader.readAll();
 		int i=0;
 		final Map<String, SynonymSet> synonymSetsMap = new HashMap<String, SynonymSet>();
 		for(String[] line : lines) {
-			String preferredTerm = line[1];
+			String preferredTerm = line[0];
+			String category = line[1];
 			String synonym = line[2];
 			if(!synonymSetsMap.containsKey(preferredTerm)) 
-				synonymSetsMap.put(preferredTerm, new SynonymSet(preferredTerm, new HashSet<String>()));
+				synonymSetsMap.put(preferredTerm, new SynonymSet(preferredTerm, category, new HashSet<String>()));
 			synonymSetsMap.get(preferredTerm).getSynonyms().add(synonym);
-		}	
+		}*/	
 		
 		/*List<KnowsSynonyms> hasBiologicalEntitySynonymsList = new LinkedList<KnowsSynonyms>();
 		List<KnowsSynonyms> hasCharacterSynonymsList = new LinkedList<KnowsSynonyms>();
@@ -258,18 +265,18 @@ public class Run {
 			}
 		});*/
 
-		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("synonyms.csv", inflector);
+		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv", inflector);
 		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
-				new CSVKnowsPartOf("part-of.csv", csvKnowsSynonyms, inflector), 
+				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), 
 				csvKnowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
 		//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
 		//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
@@ -310,7 +317,7 @@ public class Run {
 		run.addTransformer(new StandardizeCount());
 		run.addTransformer(new SortBiologicalEntityNameWithDistanceCharacter());
 		run.addTransformer(new OrderBiologicalEntityConstraint());
-		run.addTransformer(new StandardizeStructureName(characterKnowledgeBase, possessionTerms));
+		run.addTransformer(new StandardizeStructureNameBySyntax(characterKnowledgeBase, possessionTerms));
 		run.addTransformer(new StandardizeTerminology(characterKnowledgeBase));
 		
 		run.addTransformer(new RemoveOrphanRelations());
@@ -324,7 +331,7 @@ public class Run {
 		*/
 		
 		//run.run(new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2"), new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2_out_" + transformer.getClass().getSimpleName()));
-		run.run(new File("in"), new File("out"));
+		run.run(new File("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\in"), new File("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\out"));
 	}
 	
 	private static Set<String> getWordSet(String regexString) {
@@ -335,7 +342,220 @@ public class Run {
 		return set;
 	}
 	
+	
+	
+	/**
+	 * 
+	 * Merge glossaryDownload and collection to one glossary which holds both terms and synonyms
+	 * note: decisions from collection (results from term review by the user) takes priority over those from glossary
+	 * note: synonyms and terms are disjoint -- add only term as entry to the glossary (addEntry), synonyms added as synonyms (addSynonym)
+	 * For structure terms, both singular and plural forms are included in the synonyms
+	 * @param otoGlossary
+	 */
 	private static void initGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws IOException {
+		//obtain glossaryDownload
+		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
+		GlossaryDownload glossaryDownload = new GlossaryDownload();		
+		String glossaryVersion = "latest";
+		otoClient.open();
+		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
+		
+		try {
+			glossaryDownload = futureGlossaryDownload.get();
+		} catch (Exception e) {
+			otoClient.close();
+			e.printStackTrace();
+		}
+		otoClient.close();
+		
+		//obtain local term-categorization results
+		List<TermSynonym> synonyms = new ArrayList<TermSynonym>();
+		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
+		List<String[]> lines = reader.readAll();
+		int i=0;
+		Set<String> hasSynonym = new HashSet<String>();
+		for(String[] line : lines) {
+			synonyms.add(new TermSynonym(String.valueOf(i), line[0], line[1], line[2]));
+			hasSynonym.add(line[0]);
+		}	
+		
+		reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\terms.csv"));
+		lines = reader.readAll();
+		List<TermCategory> decisions = new ArrayList<TermCategory>();
+		i=0;
+		for(String[] line : lines) {
+			decisions.add(new TermCategory(line[0], line[1], hasSynonym.contains(line[1]), "", String.valueOf(i)));
+		}
+		GlossaryDownload download = new GlossaryDownload(decisions, synonyms, "");
+
+		//log(LogLevel.DEBUG, "initiate in-memory glossary using glossaryDownload and collection...");
+		//log(LogLevel.DEBUG, "obtaining synonyms from glossaryDownload...");
+		
+		//1. obtain synonyms from glossaryDownload
+		HashSet<Term> gsyns = new HashSet<Term>();
+		obtainSynonymsFromGlossaryDownload(glossaryDownload, gsyns, inflector);
+		
+		//log(LogLevel.DEBUG, "obtaining synonyms from collection...");
+		//2. obtain synonyms from collection
+		HashSet<Term> dsyns = new HashSet<Term>();
+		obtainSynonymsFromGlossaryDownload(download, dsyns, inflector);
+		
+		//log(LogLevel.DEBUG, "merging synonyms...");
+		//3. merge synonyms into one set
+		gsyns = mergeSynonyms(gsyns, dsyns);
+		
+		//log(LogLevel.DEBUG, "adding synonyms to in-mem glossary...");
+		//4. addSynonyms to glossary
+		HashSet<Term> simpleSyns = addSynonyms2Glossary(gsyns, glossary);
+		
+		//log(LogLevel.DEBUG, "adding preferred terms to in-mem glossary...");
+		//5. addEntry 
+		//the glossaryDownload, excluding syns
+		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
+			if(!simpleSyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
+				glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
+			//else
+				//log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+termCategory.getTerm().replaceAll("_", "-")+"<"+termCategory.getCategory()+">");
+		}
+
+		//local term-categories, excluding syns
+		for(TermCategory ltermCategory : download.getTermCategories()) {
+			if(!simpleSyns.contains(new Term(ltermCategory.getTerm().replaceAll("_", "-"), ltermCategory.getCategory())))
+				glossary.addEntry(ltermCategory.getTerm().replaceAll("_", "-"), ltermCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
+			//else
+				//log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+ltermCategory.getTerm().replaceAll("_", "-")+"<"+ltermCategory.getCategory()+">");
+		}
+	}
+
+	/**
+	 * 
+	 * @param gsyns
+	 * @return set of synonyms added (minus the preferred terms)
+	 */
+	private static HashSet<Term> addSynonyms2Glossary(HashSet<Term> gsyns, IGlossary glossary) {
+		HashSet<Term> simpleSyns = new HashSet<Term>();
+		Iterator<Term> sit = gsyns.iterator();
+		while(sit.hasNext()){
+			Term syn = sit.next();
+			String[] tokens = syn.getLabel().split(":");
+			String category = syn.getCategory();
+			glossary.addSynonym(tokens[0], category, tokens[1]);
+		    //log(LogLevel.DEBUG, "adding synonym to in-mem glossary: "+ tokens[0]+" U "+tokens[1]+"<"+category+">");
+			simpleSyns.add(new Term(tokens[0], category));
+		}
+		return simpleSyns;
+	}
+
+	/**
+	 * Term string takes the form of "syn:preferred"
+	 * @param gsyns
+	 * @param dsyns
+	 * @return
+	 */
+	private static HashSet<Term> mergeSynonyms(HashSet<Term> gsyns, HashSet<Term> dsyns) {
+		HashSet<Term> merged = new HashSet<Term>();
+		Iterator<Term> git = gsyns.iterator();
+		while(git.hasNext()){ 
+			Iterator<Term> dit = dsyns.iterator();
+			Term gsyn = git.next();
+			String gcat = gsyn.getCategory();
+			List<String> gtokens = Arrays.asList(gsyn.getLabel().split(":"));
+			while(dit.hasNext()){ //nested loop, very inefficient
+				Term dsyn = dit.next();
+				String dcat = dsyn.getCategory();
+				List<String> dtokens = Arrays.asList(dsyn.getLabel().split(":"));
+				if(!gcat.equals(dcat)){
+					//add both to merged
+					merged.add(gsyn);
+				    //log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+					merged.add(dsyn);
+					//log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
+				}else{
+					boolean isSame = false; //all four terms are synonyms
+					for(String t: gtokens){
+						if(dtokens.contains(t)) isSame = true;
+					}
+					if(isSame){
+						//use preferred term of dsyns as the preferred term 
+						if(dtokens.get(1).equals(gtokens.get(1))){//share the same preferred term,
+							// add both to merged SET
+							merged.add(gsyn);
+							//log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+							merged.add(dsyn);	
+							//log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
+						}else{
+							merged.add(dsyn);
+							if(!gtokens.get(0).equals(dtokens.get(1))){ //don't add B:B
+								merged.add(new Term(gtokens.get(0)+":"+dtokens.get(1), dcat));
+								//log(LogLevel.DEBUG, "add to merged synonyms: "+ new Term(gtokens.get(0)+":"+dtokens.get(1), dcat).toString());
+							}
+							if(!gtokens.get(1).equals(dtokens.get(1))){
+								merged.add(new Term(gtokens.get(1)+":"+dtokens.get(1), dcat));
+								//log(LogLevel.DEBUG, "add to merged synonyms: "+ new Term(gtokens.get(1)+":"+dtokens.get(1), dcat).toString());
+							}
+							
+						}
+					}else{
+						//add both to merged
+						merged.add(gsyn);
+						//log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+						merged.add(dsyn);
+						//log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
+					}
+				}
+			}
+		}
+		return merged;
+	}
+
+	private static void obtainSynonymsFromGlossaryDownload(GlossaryDownload glossaryDownload, HashSet<Term> gsyns, IInflector inflector) {
+		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
+
+			//if(termSyn.getCategory().compareTo("structure")==0){
+			if(termSyn.getCategory().matches("structure|taxon_name|substance")){
+				//take care of singular and plural forms
+				String syns = ""; 
+				String synp = "";
+				String terms = "";
+				String termp = "";
+				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){ //must convert _ to -, as matching entity phrases will be converted from leg iii to leg-iii in the sentence.
+					synp = termSyn.getSynonym().replaceAll("_",  "-");
+					syns = inflector.getSingular(synp);					
+				}else{
+					syns = termSyn.getSynonym().replaceAll("_",  "-");
+					synp = inflector.getPlural(syns);
+				}
+
+				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
+					termp = termSyn.getTerm().replaceAll("_",  "-");
+					terms = inflector.getSingular(termp);					
+				}else{
+					terms = termSyn.getTerm().replaceAll("_",  "-");
+					termp = inflector.getPlural(terms);
+				}
+				//plural forms are synonyms to the singular
+				if(!syns.equals(terms)){ 
+					gsyns.add(new Term(syns+":"+terms, termSyn.getCategory()));
+					//log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(syns+":"+terms, termSyn.getCategory()).toString());
+				}
+				if(!synp.equals(terms)){
+					gsyns.add(new Term(synp+":"+terms, termSyn.getCategory()));
+					//log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(synp+":"+terms, termSyn.getCategory()).toString()); 
+				}
+				if(!termp.equals(terms)){ 
+					gsyns.add(new Term(termp+":"+terms, termSyn.getCategory()));
+					//log(LogLevel.DEBUG, "synonym from glossaryDownload: "+ new Term(termp+":"+terms, termSyn.getCategory()).toString());
+				}
+			}else{
+				//glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
+				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-")+":"+termSyn.getTerm().replaceAll("_",  "-"), termSyn.getCategory()));
+				//log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(termSyn.getSynonym().replaceAll("_",  "-")+":"+termSyn.getTerm(), termSyn.getCategory()).toString()); 
+			}
+		}
+	}
+	
+	//outdated, bad code
+	/*private static void initGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws IOException {
 		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
 		GlossaryDownload glossaryDownload = new GlossaryDownload();		
 		String glossaryVersion = "latest";
@@ -396,23 +616,21 @@ public class Run {
 		
 		
 		List<Synonym> synonyms = new LinkedList<Synonym>();
-		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
-				+ "Gordon_complexity_term_review\\category_mainterm_synonymterm-task-Gordon_complexity.csv"));
+		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
 		List<String[]> lines = reader.readAll();
 		int i=0;
 		Set<String> hasSynonym = new HashSet<String>();
 		for(String[] line : lines) {
-			synonyms.add(new Synonym(String.valueOf(i), line[1], line[0], line[2]));
-			hasSynonym.add(line[1]);
+			synonyms.add(new Synonym(String.valueOf(i), line[0], line[1], line[2]));
+			hasSynonym.add(line[0]);
 		}	
 		
-		reader = new CSVReader(new FileReader("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\"
-				+ "Gordon_complexity_term_review\\category_term-task-Gordon_complexity.csv"));
+		reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\terms.csv"));
 		lines = reader.readAll();
 		List<Decision> decisions = new LinkedList<Decision>();
 		i=0;
 		for(String[] line : lines) {
-			decisions.add(new Decision(String.valueOf(i), line[1], line[0], hasSynonym.contains(line[1]), ""));
+			decisions.add(new Decision(String.valueOf(i), line[0], line[1], hasSynonym.contains(line[1]), ""));
 		}
 
 		Download download = new Download(true, decisions, synonyms);
@@ -465,6 +683,6 @@ public class Run {
 					glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
 			}
 		}
-	}
+	}*/
 	
 }

@@ -55,7 +55,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 	}
 	
 	@Override
-	public Set<SynonymSet> getSynonyms(String term) {
+	public Set<SynonymSet> getSynonyms(String term, String category) {
 		Set<OWLClass> owlClasses = owlOntology.getClassesInSignature(Imports.INCLUDED);
 		OWLClass owlClass = getOwlClassWithLabelOrSynonym(term, owlClasses);
 		
@@ -66,7 +66,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 			synonyms = getSynonyms(owlClass);
 		}
 		
-		SynonymSet synonymSet = new SynonymSet(preferredTerm, synonyms);	
+		SynonymSet synonymSet = new SynonymSet(preferredTerm, category, synonyms);	
 		Set<SynonymSet> result = new HashSet<SynonymSet>();
 		result.add(synonymSet);
 		return result;
@@ -141,7 +141,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 						return false;
 					}
 		});
-		System.out.println(oks.getSynonyms("hello").iterator().next().getPreferredTerm());
+		System.out.println(oks.getSynonyms("hello", "").iterator().next().getPreferredTerm());
 	}
 	
 }

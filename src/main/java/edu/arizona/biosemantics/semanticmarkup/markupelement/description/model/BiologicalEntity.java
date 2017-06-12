@@ -67,6 +67,8 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 	private String notes;	
 	@XmlPath("@" + BiologicalEntityAttribute.name_original)
 	private String nameOriginal;
+	@XmlPath("@" + BiologicalEntityAttribute.constraint_original)
+	private String constraintOriginal;
 	@XmlPath("@" + BiologicalEntityAttribute.type)
 	private String type;
 	@XmlPath("@" + BiologicalEntityAttribute.src)
@@ -193,6 +195,13 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 		this.nameOriginal = originalName;
 	}
 
+	public String getConstraintOriginal() {
+		return constraintOriginal;
+	}
+
+	public void setConstraintOriginal(String constraintOriginal) {
+		this.constraintOriginal = constraintOriginal;
+	}
 
 	public void addFromRelation(Relation relation) {
 		this.fromRelations.add(relation);

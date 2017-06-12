@@ -30,8 +30,11 @@ public class StandardizeTerminology extends AbstractTransformer {
 			String name = biologicalEntity.getAttributeValue("name");
 			String constraint = biologicalEntity.getAttributeValue("constraint");
 			String preferedName = characterKnowledgeBase.getCharacterName(name).getLabel(type);
-			if(preferedName != null) 
+			if(preferedName!=null && !preferedName.equals(name)){ 
 				biologicalEntity.setAttribute("name", preferedName.replaceAll("_", "-"));
+				if(biologicalEntity.getAttribute("name_original")== null)
+					biologicalEntity.setAttribute("name_original", name);
+			}
 			
 			//standardize structural constraint, a word or a phrase, e.g. "between eyes and nose"
 			//String constraint = struct.getConstraint(); //try to match longest segment anchored to the last word in the phrase.
@@ -52,21 +55,26 @@ public class StandardizeTerminology extends AbstractTransformer {
 					biologicalEntity.setAttribute("constraint", prefered.replaceFirst(", $", "").replaceAll("_", "-").replaceAll("\\s+", " "));
 				}else{
 					String prefered = characterKnowledgeBase.getCharacterName(constraint).getLabel(type);
-					if(prefered != null){
+					if(prefered != null && !prefered.equals(constraint)){
 						biologicalEntity.setAttribute("constraint", prefered.replaceAll("_", "-"));
+						if(biologicalEntity.getAttribute("constraint_original")== null)
+							biologicalEntity.setAttribute("constraint_original", constraint);
 					}
 				}
 			}
 			
 			//standardize single-word character values
 			for(Element character : new ArrayList<Element>(biologicalEntity.getChildren("character"))) {
-				preferedName = null;
+				String preferedValue = null;
 				String value = character.getAttributeValue("value");
 				if(value != null && !value.trim().contains(" ") && !character.getAttributeValue("name").contains(or)){
-					preferedName = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getAttributeValue("name"));
+					preferedValue = characterKnowledgeBase.getCharacterName(value.trim()).getLabel(character.getAttributeValue("name"));
 				}
-				if(preferedName != null) 
-					character.setAttribute("value", preferedName.replaceAll("_", "-"));
+				if(preferedValue != null && !preferedValue.equals(value)){ 
+					character.setAttribute("value", preferedValue.replaceAll("_", "-"));
+					if(character.getAttribute("value_original")== null)
+						character.setAttribute("value_original", value);
+				}
 			}
 		}
 	}

@@ -18,7 +18,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransfo
  * use clues from text to attach appropriate parent organ to non-specific structures such as "apex" and "side"
  * Resolve lumping of characters (due to non specific parts)
  */
-public class StandardizeStructureName extends AbstractTransformer {
+public class StandardizeStructureNameBySyntax extends AbstractTransformer {
 	
 	private ICharacterKnowledgeBase characterKnowledgeBase;
 	private Set<String> possessionTerms = new HashSet<String>(); //with, has, consist_of, possess
@@ -26,7 +26,7 @@ public class StandardizeStructureName extends AbstractTransformer {
 			+ "face|groove|layer|line|margin|notch|part|pore|portion|protuberance|remnant|section|"
 			+ "side|stratum|surface|tip|wall|zone";
 	
-	public StandardizeStructureName(ICharacterKnowledgeBase characterKnowledgeBase, Set<String> possessionTerms){
+	public StandardizeStructureNameBySyntax(ICharacterKnowledgeBase characterKnowledgeBase, Set<String> possessionTerms){
 		this.characterKnowledgeBase = characterKnowledgeBase;
 		this.possessionTerms = possessionTerms;
 	}
@@ -91,7 +91,7 @@ public class StandardizeStructureName extends AbstractTransformer {
 	
 	/**
 	 * remove parts from this.nonSpecificParts if parts start a sentence in the description. 
-	 * for example "Body ellipsoidal" suggests that the organism has one body, and it is not a unspecific part of some other organ.
+	 * for example "Body ellipsoidal" suggests that the organism has one body, and it is not an unspecific part of some other organ.
 	 * @param text
 	 * @return 
 	 */

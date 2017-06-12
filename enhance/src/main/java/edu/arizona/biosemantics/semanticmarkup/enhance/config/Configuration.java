@@ -11,7 +11,7 @@ public class Configuration {
 	
 	public static String ontologyDirectory;
 	public static String wordNetDirectory;
-
+	public static String defaultEntityType = "structure";
 	private static String projectVersion;
 	
 	static {

@@ -83,17 +83,22 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			processingContext.setChunkCollector(chunkCollector);
 			try {
 				List<Element> descriptiveElements = getDescriptiveElements(processingContext, chunkCollector.getSentence(), i); //chunk to xml
+				//set src attributes
 				for(Element element : descriptiveElements) {
 					if(element.isRelation()){
-						((Relation)element).appendSrc(statementId); 
+						if(((Relation)element).getSrc()==null)
+							((Relation)element).appendSrc(statementId); 
 						statement.addRelation((Relation)element);
 					} else if(element.isStructure()){
-						((BiologicalEntity)element).appendSrc(statementId);
+						if(((BiologicalEntity)element).getSrc()==null)
+							((BiologicalEntity)element).appendSrc(statementId);
 						statement.addBiologicalEntity((BiologicalEntity)element);
 
 						Iterator<Character> it = ((BiologicalEntity)element).getCharacters().iterator();
 						while(it.hasNext()){
-							((Character)it.next()).appendSrc(statementId); // when extracting src info from xml output, need to take into account of the "src"s of the entity and the character
+							Character ch = (Character)it.next();
+							if(ch.getSrc()==null)
+								ch.appendSrc(statementId); // when extracting src info from xml output, need to take into account of the "src"s of the entity and the character
 						}
 					}
 				}
