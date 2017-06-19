@@ -3,10 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.arizona.biosemantics.semanticmarkup</groupId>
 	<artifactId>semantic-markup</artifactId>
-	<version>0.1.193-SNAPSHOT-debug</version>
+	<version>0.1.194-SNAPSHOT-debug</version>
 
 	<properties>
-		<project.version>0.1.194-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -68,7 +67,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.semanticmarkup</groupId>
 			<artifactId>enhance</artifactId>
-			<version>0.0.20-SNAPSHOT</version>
+			<version>0.0.22-SNAPSHOT-debug</version>
 		</dependency>
 	
 		<!-- <dependency> <groupId>org.eclipse.swt</groupId> <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId> 
@@ -109,7 +108,7 @@
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-			<version>4.0-beta</version>
+			<version>4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -135,7 +134,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>validation</artifactId>
-			<version>0.0.4-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>jaxen</groupId>
@@ -190,7 +189,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.7</version>
+			<version>1.7.25</version>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
@@ -238,18 +237,18 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>log</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.3-SNAPSHOT-debug</version>
 		</dependency>
 
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>taxonomy</artifactId>
-			<version>0.0.22-SNAPSHOT</version>
+			<version>0.0.24-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common.ontology</groupId>
 			<artifactId>search</artifactId>
-			<version>0.0.26-SNAPSHOT</version>
+			<version>0.0.26-SNAPSHOT-debug</version>
 			
 			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects -->
 			
@@ -300,7 +299,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>biology</artifactId>
-			<version>0.0.10-SNAPSHOT</version>
+			<version>0.0.10-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>com.jolbox</groupId>
@@ -310,12 +309,12 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>ling</artifactId>
-			<version>0.0.19-SNAPSHOT</version>
+			<version>0.0.19-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 		  <groupId>edu.arizona.biosemantics.oto2</groupId>
 		  <artifactId>oto</artifactId>
-		  <version>0.0.134-SNAPSHOT</version>
+		  <version>0.0.134-SNAPSHOT-debug</version>
 		  <classifier>classes</classifier>
 		</dependency>
 	</dependencies>
@@ -331,7 +330,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.9</version>
+				<version>1.10</version>
 				<configuration>
 					<proceedOnError>true</proceedOnError>
 					<showWeaveInfo>true</showWeaveInfo>
@@ -367,7 +366,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.6.0</version>
+				<version>3.6.1</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
