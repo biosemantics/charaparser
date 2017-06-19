@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+/*package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -172,3 +172,4 @@ public class CreateOrPopulateWholeOrganismTest {
 		return document;
 	}
 }
+*/

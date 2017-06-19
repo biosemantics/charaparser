@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+/*package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import static org.junit.Assert.assertEquals;
 
@@ -76,3 +76,4 @@ public class StandardizeQuantityPresenceTest {
 		return document;
 	}
 }
+*/

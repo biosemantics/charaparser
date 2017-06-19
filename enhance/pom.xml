@@ -3,14 +3,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.arizona.biosemantics.semanticmarkup</groupId>
 	<artifactId>enhance</artifactId>
-	<version>${project.version}</version>
+	<version>0.0.22-SNAPSHOT-debug</version>
+
 
 	<properties>
 		<project.version>0.0.22-SNAPSHOT</project.version>
 		<jackson.version>2.3.0</jackson.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.7</java.version>
+		<java.version>1.8</java.version>
+		<aspectj.version>1.8.10</aspectj.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
@@ -28,9 +30,9 @@
 	</profiles>
 
 	<repositories>
-		<!-- <repository> <id>swt-repo</id> <url>https://swt-repo.googlecode.com/svn/repo/</url> 
-			</repository> -->
-		<!-- Necessary for eclipselink moxy -->
+		<repository> <id>swt-repo</id> <url>https://swt-repo.googlecode.com/svn/repo/</url> 
+			</repository>
+		<!-- Necessary for eclipselink moxy  -->
 		<repository>
 			<id>oss.sonatype.org</id>
 			<name>OSS Sonatype Staging</name>
@@ -51,12 +53,12 @@
 		<dependency>
 		  <groupId>edu.arizona.biosemantics.oto</groupId>
 		  <artifactId>oto-client</artifactId>
-		  <version>0.0.50-SNAPSHOT</version>
+		  <version>0.0.54-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>ling</artifactId>
-			<version>0.0.18-SNAPSHOT</version>
+			<version>0.0.19-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.combinatoricslib</groupId>
@@ -76,7 +78,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>log</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.3-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -86,17 +88,17 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>taxonomy</artifactId>
-			<version>0.0.22-SNAPSHOT</version>
+			<version>0.0.24-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>biology</artifactId>
-			<version>0.0.10-SNAPSHOT</version>
+			<version>0.0.10-SNAPSHOT-debug</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-			<version>4.0-beta</version>
+			<version>4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
@@ -127,11 +129,11 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common.ontology</groupId>
 			<artifactId>search</artifactId>
-			<version>0.0.26-SNAPSHOT</version>
+			<version>0.0.26-SNAPSHOT-debug</version>
 			
-			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects -->
-			
-			<!-- <exclusions>
+			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects
+			-->
+			<exclusions>
 				<exclusion>
 					<artifactId>elk-owlapi</artifactId>
 					<groupId>org.semanticweb.elk</groupId>
@@ -172,10 +174,10 @@
 					<artifactId>elk-util-io</artifactId>
 					<groupId>org.semanticweb.elk</groupId>
 				</exclusion>
-			</exclusions> -->
+			</exclusions>
 		</dependency>
-	</dependencies>
-
+		</dependencies>
+		
 	<build>
 		<resources>
 			<resource>
@@ -184,10 +186,55 @@
 			</resource>
 		</resources>
 		<plugins>
+		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<!--  IMPORTANT -->
+					<useIncrementalCompilation>false</useIncrementalCompilation>
+				</configuration>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
-				<version>1.7</version>
+				<version>1.10</version>
+				<configuration>
+					<showWeaveInfo>true</showWeaveInfo>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<Xlint>ignore</Xlint>
+					<complianceLevel>${java.version}</complianceLevel>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<verbose>true</verbose>
+					<warn>constructorName,packageDefaultMethod,deprecation,maskedCatchBlocks,unusedLocals,unusedArguments,unusedImport</warn>
+				</configuration>
+				<executions>
+					<execution>
+						<!-- IMPORTANT so aspectj compile is executed before java compile  -->
+						<phase>process-sources</phase>
+						<goals>
+							<goal>compile</goal>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.aspectj</groupId>
+						<artifactId>aspectjtools</artifactId>
+						<version>${aspectj.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>1.10</version> 
 				<configuration>
 					<proceedOnError>true</proceedOnError>
 					<complianceLevel>${java.version}</complianceLevel>
@@ -199,12 +246,12 @@
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjrt</artifactId>
-						<version>1.7.4</version>
+						 <version>${aspectj.version}</version> 
 					</dependency>
 				</dependencies>
 				<executions>
 					<execution>
-						<!-- Necessary, so aspectj compile is executed before java compile -->
+						<!-- Necessary, so aspectj compile is executed before java compile  -->
 						<phase>process-sources</phase>
 						<goals>
 							<goal>compile</goal>

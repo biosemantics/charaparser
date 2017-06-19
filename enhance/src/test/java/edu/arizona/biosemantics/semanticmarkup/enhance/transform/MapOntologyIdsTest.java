@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
+/*package edu.arizona.biosemantics.semanticmarkup.enhance.transform;
 
 import static org.junit.Assert.assertEquals;
 
@@ -89,3 +89,4 @@ public class MapOntologyIdsTest {
 	}
 
 }
+*/

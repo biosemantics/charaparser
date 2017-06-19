@@ -1,4 +1,4 @@
-package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
+/*package edu.arizona.biosemantics.semanticmarkup.enhance.transform.old;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -105,8 +105,8 @@ public class SplitCompoundBiologicalEntityTest {
 		assertTrue(relationB3.getAttributeValue("to").equals("o0_2"));
 	}
 
-	/*<biological_entity constraint="leg-1" id="o3" name="tibia/metatarsu" name_original="tibia/metatarsus" type="structure">
-	<character name="length" unit="mm" value="1.43/1.27" />*/
+	<biological_entity constraint="leg-1" id="o3" name="tibia/metatarsu" name_original="tibia/metatarsus" type="structure">
+	<character name="length" unit="mm" value="1.43/1.27" />
 	private Document createTestDocument() {
 		Element treatment = new Element("treatment", Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
 		Element description = new Element("description");
@@ -148,3 +148,4 @@ public class SplitCompoundBiologicalEntityTest {
 		return document;
 	}
 }
+*/
