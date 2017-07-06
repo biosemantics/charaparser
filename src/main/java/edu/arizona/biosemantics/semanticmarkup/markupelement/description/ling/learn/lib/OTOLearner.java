@@ -286,9 +286,11 @@ public class OTOLearner implements ILearner {
 			downloadSuccessful = communityCollection != null;
 		} catch(Throwable t) {
 			log(LogLevel.ERROR, "Couldn't download glossary will fallback to locally stored glossary", t);
+			System.out.println("Couldn't download glossary will fallback to locally stored glossary");
 		}
 
 		oto2Client.close();
+		System.out.println("download+"+downloadSuccessful);
 		if(downloadSuccessful) 
 			storeToLocalCommunityDownload(communityCollection, taxonGroup);
 		else
