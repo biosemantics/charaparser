@@ -6,7 +6,7 @@
 	<version>${project.version}</version>
 
 	<properties>
-		<project.version>0.0.22-SNAPSHOT</project.version>
+		<project.version>0.0.23-SNAPSHOT</project.version>
 		<jackson.version>2.3.0</jackson.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -51,12 +51,12 @@
 		<dependency>
 		  <groupId>edu.arizona.biosemantics.oto</groupId>
 		  <artifactId>oto-client</artifactId>
-		  <version>0.0.50-SNAPSHOT</version>
+		  <version>0.0.55-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>ling</artifactId>
-			<version>0.0.18-SNAPSHOT</version>
+			<version>0.0.20-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.combinatoricslib</groupId>
@@ -76,7 +76,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>log</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -86,12 +86,12 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>taxonomy</artifactId>
-			<version>0.0.22-SNAPSHOT</version>
+			<version>0.0.25-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common</groupId>
 			<artifactId>biology</artifactId>
-			<version>0.0.10-SNAPSHOT</version>
+			<version>0.0.11-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -127,7 +127,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common.ontology</groupId>
 			<artifactId>search</artifactId>
-			<version>0.0.26-SNAPSHOT</version>
+			<version>0.0.27-SNAPSHOT</version>
 			
 			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects -->
 			
