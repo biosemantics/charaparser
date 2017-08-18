@@ -1,5 +1,10 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -36,6 +41,7 @@ import edu.arizona.biosemantics.oto.model.TermSynonym;
 import edu.arizona.biosemantics.oto2.oto.server.rest.client.Client;
 import edu.arizona.biosemantics.oto2.oto.shared.model.Collection;
 import edu.arizona.biosemantics.oto2.oto.shared.model.Label;
+import edu.arizona.biosemantics.semanticmarkup.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
@@ -180,12 +186,19 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			glossaryVersion = getGlossaryVersionOfLearn();
 			if(glossaryVersion == null)
 				glossaryVersion = "latest";
-			
+			boolean downloadSuccessful = false;
 			otoClient.open();
 			Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
 			
 			try {
 				glossaryDownload = futureGlossaryDownload.get();
+				
+				downloadSuccessful = glossaryDownload != null && 
+						!glossaryDownload.getVersion().equals("Requested version not available") && 
+						!glossaryDownload.getVersion().equals("No Glossary Available") &&
+						!glossaryDownload.getVersion().contains("available") && 
+						!glossaryDownload.getVersion().contains("Available");
+				if(!downloadSuccessful) glossaryDownload = getLocalGlossaryDownload(taxonGroup);
 			} catch (Exception e) {
 				otoClient.close();
 				log(LogLevel.ERROR, "Couldn't download glossary " + taxonGroup.getDisplayName() + " version: " + glossaryVersion, e);
@@ -214,6 +227,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			} catch(InterruptedException | ExecutionException e) {
 				oto2Client.close();
 				this.log(LogLevel.ERROR, "Problem downloading oto lite categorizations for upload " + collection.getId(), e);
+				System.out.println("Problem downloading oto lite categorizations for upload " + collection.getId());
 				throw new TransformationException();
 			}
 		}
@@ -350,7 +364,13 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		}
 	}
 
-
+	private GlossaryDownload getLocalGlossaryDownload(TaxonGroup taxonGroup) throws FileNotFoundException, IOException, ClassNotFoundException {
+		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator + 
+				"GlossaryDownload." + taxonGroup.getDisplayName() + ".ser"));
+		GlossaryDownload glossaryDownload = (GlossaryDownload) objectIn.readObject();
+		objectIn.close();
+		return glossaryDownload;
+	}
 	
 	/**
 	 * 
