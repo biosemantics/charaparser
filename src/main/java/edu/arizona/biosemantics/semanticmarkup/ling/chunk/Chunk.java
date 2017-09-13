@@ -255,12 +255,21 @@ public class Chunk implements Cloneable {
 	
 	@Override
 	public String toString() {
+		
 		StringBuilder result = new StringBuilder();
 		result.append(chunkType).append(": ");
 		for(Entry<String, String> entry : this.properties.entrySet()) 
 			result.append(entry.getKey() + "->" + entry.getValue() + "; ");
-		result.append(chunks.toString());
+		result.append(chunks.toString()); //can cause stackoverflow error
 		return result.toString().trim();
+		//changed to:
+		/*if(chunks.contains(this)) {
+			result.append("a set of sub-chunks");
+		}else{
+			result.append(chunks.toString());
+		}*/
+		
+	
 	}
 	
 	/** 

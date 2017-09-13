@@ -20,7 +20,7 @@ public class NumericalPhraseParser {
 
 	/**
 	 * cases that are not handled well:
-	 * 	[AREA: [(4-5[-6]×)3-5[-7]], mm]
+	[AREA: [(4-5[-6]×)3-5[-7]], mm]
 	[3-12+[-15+], mm]
 	[(5-)10-30+[-80], cm]
 	[[5-7]8-12[13-16]]
@@ -31,7 +31,9 @@ public class NumericalPhraseParser {
 	VALUE: [5.5-(6-8), mm]
 	 * 
 	 * 
-	 * @param numberexp :(1-)5-300+ ;  styles 2[10] mm diam.
+	 * Other examples styles 2[10] mm diam.
+	 * 
+	 * @param numberexp :(1-)5-300+ ; (1-2-) 4 
 	 * @param cname: 
 	 * @return: characters marked up in XML format <character name="" value="">
 	 */
@@ -444,7 +446,7 @@ public class NumericalPhraseParser {
 						character.setCharType("range_value");
 						character.setName("atypical_"+(suggestedcharaname==null?"count": suggestedcharaname));
 						character.setFrom(extreme.substring(p+1,q-2).trim());
-						character.setTo("");
+						character.setTo(""); //hong 9/13
 						innertagstate.add(character);
 
 						//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"atypical_count\" from=\""+extreme.substring(p+1,q-2).trim()+"\" to=\"\"/>");
@@ -586,7 +588,7 @@ public class NumericalPhraseParser {
 						fromval = extract;
 					}
 				}
-				//start to #, dupllicated above
+				//start to #, duplicated above
 				if(i-1>0){
 					extract = extreme.substring(0, i-1);
 					if(extract.contains("–")|extract.contains("-") && !extract.contains("×") && !extract.contains("x") && !extract.contains("X")){
@@ -715,33 +717,52 @@ public class NumericalPhraseParser {
 	 * @return
 	 */
 
-	private void refinement(List<Character> innertagstate) {
-
-		float atypicalfrom = -1f;
-		float atypicalto = -1f;
-
+	private void refinement(List<Character> innertagstate) throws Exception{
+		
+		//test if innertagstate match the profile: 
+		boolean match = false;
+		String character = null;
 		for(Character chara: innertagstate){
 			if(chara.getName().startsWith("atypical")){
-				String character = chara.getName().replaceFirst("atypical_", "");
-				if(chara.getFrom()!=null){
-					atypicalfrom = Float.parseFloat(chara.getFrom().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-")); //015 = -15
-				}
-				if(chara.getTo()!=null){
-					atypicalto = Float.parseFloat(chara.getTo().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
-				}
-				if(chara.getValue()!=null){
-					atypicalfrom = Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
-					atypicalto = Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
-				}	
+				character = chara.getName().replaceFirst("atypical_", "");
+			}
+			if(character!=null && chara.getName().compareTo(character)==0 && chara.getCharType()!=null && chara.getCharType().startsWith("range_value")){
+				match = true;
+			}
+		}
+		
+		if(! match) return;
 
-				float[] typical = getTypical(innertagstate, character);
-				if(typical!=null){
-					if(atypicalfrom >= typical[0] && atypicalto<= typical[1]){
-						chara.setName("average_"+character);
+		try{
+			float atypicalfrom = -1f;
+			float atypicalto = -1f;
+	
+			for(Character chara: innertagstate){
+				if(chara.getName().startsWith("atypical")){
+					character = chara.getName().replaceFirst("atypical_", "");
+					if(chara.getFrom()!=null){
+						atypicalfrom = Float.parseFloat(chara.getFrom().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-")); //015 = -15
+					}
+					if(chara.getTo()!=null){
+						atypicalto = Float.parseFloat(chara.getTo().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
+					}
+					if(chara.getValue()!=null){
+						atypicalfrom = Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
+						atypicalto =   Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
+					}	
+	
+					float[] typical = getTypical(innertagstate, character);
+					if(typical!=null){
+						if(atypicalfrom >= typical[0] && atypicalto<= typical[1]){
+							chara.setName("average_"+character);
+						}
 					}
 				}
+	
 			}
-
+		}catch(Throwable e){
+			log(LogLevel.ERROR, "refinement for average value throwable: "+e.toString());
+			e.printStackTrace();
 		}
 
 		/*for(Character chara: innertagstate){

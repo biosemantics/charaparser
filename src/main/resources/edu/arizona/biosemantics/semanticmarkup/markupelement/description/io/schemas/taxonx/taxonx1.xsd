@@ -111,9 +111,13 @@
    removed complexType author and made element author type name
    changed treatment back to element so now global again; treatment elements now use ref rather than name
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.taxonx.org/schema/v1" xmlns:dc="http://digir.net/schema/conceptual/darwin/core/1.0" xmlns:mods="http://www.loc.gov/mods/v3" targetNamespace="http://www.taxonx.org/schema/v1" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.taxonx.org/schema/v1" 
+   xmlns:dc="http://rs.tdwg.org/dwc/terms" 
+   xmlns:mods="http://www.loc.gov/mods/v3" 
+   targetNamespace="http://www.taxonx.org/schema/v1" elementFormDefault="qualified">
    <xs:import namespace="http://www.loc.gov/mods/v3" schemaLocation="http://www.loc.gov/standards/mods/v3/mods-3-1.xsd"/>
-   <xs:import namespace="http://digir.net/schema/conceptual/darwin/2003/1.0" schemaLocation="http://digir.net/schema/conceptual/darwin/manis/1.21/darwin2.xsd"/>
+   <xs:import namespace="http://rs.tdwg.org/dwc/xsd/simpledarwincore/" schemaLocation="http://rs.tdwg.org/dwc/xsd/tdwg_dwc_simple.xsd"/>
+   <!--<xs:import namespace="http://digir.net/schema/conceptual/darwin/2003/1.0" schemaLocation="http://digir.net/schema/conceptual/darwin/manis/1.21/darwin2.xsd"/> -->
    <xs:element name="taxonx">
       <xs:complexType>
          

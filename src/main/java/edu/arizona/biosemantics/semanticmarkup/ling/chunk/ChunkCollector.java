@@ -125,7 +125,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 	 */
 	public void addChunk(Chunk chunk) {
 		if(chunk.hasCircularReference()) {
-			log(LogLevel.ERROR, "A Chunk was about to be added with a circular chunk-chunk reference");
+			log(LogLevel.ERROR, "Blocked an attempt to add a circular chunk-chunk reference");
 			return;
 		}
 		if(!(chunk instanceof AbstractParseTree))
