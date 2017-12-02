@@ -46,7 +46,6 @@ public class ETCMarkupMain extends CLIMain {
 			CLIMain cliMain = new ETCMarkupMain();
 			cliMain.parse(args);
 			cliMain.run();
-			log(LogLevel.DEBUG, "SemanticMarkup [TextCapture] completed successfully");
 		} catch(Throwable t) {
 			t.printStackTrace();
 			throw t;
