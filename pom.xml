@@ -323,6 +323,12 @@
 		  <version>0.0.136-SNAPSHOT</version>
 		  <classifier>classes</classifier>
 		</dependency>
+		<dependency>
+		  <groupId>edu.arizona.biosemantics.oto</groupId>
+		  <artifactId>oto-client</artifactId>
+		  <version>0.0.57-SNAPSHOT</version>
+		  <classifier>javadoc</classifier>
+		</dependency>
 	</dependencies>
 
 	<build>
