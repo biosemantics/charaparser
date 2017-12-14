@@ -55,7 +55,7 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 	}
 
 	@Override
-	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException {
+	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException {
 		createOntologyMapping(descriptionsFiles);		
 
 		Processor processor = new Processor();
