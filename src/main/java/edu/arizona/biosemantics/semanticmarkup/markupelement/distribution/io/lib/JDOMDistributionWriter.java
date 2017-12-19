@@ -64,6 +64,7 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 							Element chElement = new Element("character");
 							chElement.setAttribute("name", ch.getName());
 							chElement.setAttribute("value", ch.getValue());
+							chElement.setAttribute("establishment_means", ch.getEstablishedMeans());
 							beElement.addContent(chElement);
 						}
 						statementElement.addContent(beElement);						

@@ -9,7 +9,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.C
 public interface IDistributionTransformer {
 
 	void transform(List<DistributionsFile> distributionsFiles);
-	LinkedHashSet<Character> parse(String text);
 
 }
 
