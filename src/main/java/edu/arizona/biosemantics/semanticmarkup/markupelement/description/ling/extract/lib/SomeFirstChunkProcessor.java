@@ -73,7 +73,8 @@ public class SomeFirstChunkProcessor extends AbstractChunkProcessor implements I
 		int skip = 0;
 		
 		for(Chunk c: chunks){
-			if(c.toString().equals(":")) break;
+			if(c.getTerminals().get(0).toString().equals(":")) break;
+			//if(c.toString().equals(":")) break; //toString could cause stack overflow
 			if(c.containsChunkType(ChunkType.ORGAN)){
 				foundOrganChunk = true;	
 				break;

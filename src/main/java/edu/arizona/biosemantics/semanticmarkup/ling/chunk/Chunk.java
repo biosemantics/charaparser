@@ -253,14 +253,14 @@ public class Chunk implements Cloneable {
 		this.properties.clear();
 	}
 	
+	//can cause stackoverflow, should only be used in print statements.
 	@Override
 	public String toString() {
-		
 		StringBuilder result = new StringBuilder();
 		result.append(chunkType).append(": ");
 		for(Entry<String, String> entry : this.properties.entrySet()) 
 			result.append(entry.getKey() + "->" + entry.getValue() + "; ");
-		result.append(chunks.toString()); //can cause stackoverflow error
+		result.append(chunks.toString()); //can cause stackoverflow
 		return result.toString().trim();
 		//changed to:
 		/*if(chunks.contains(this)) {
