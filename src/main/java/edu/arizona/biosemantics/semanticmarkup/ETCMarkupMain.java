@@ -37,6 +37,7 @@ import edu.arizona.biosemantics.semanticmarkup.run.etc.ETCMarkupRun;
  */
 public class ETCMarkupMain extends CLIMain {
 	
+	private final static Logger logger = Logger.getLogger(ETCMarkupMain.class);
 	/**
 	 * @param args
 	 * @throws Throwable 
@@ -46,6 +47,7 @@ public class ETCMarkupMain extends CLIMain {
 			CLIMain cliMain = new ETCMarkupMain();
 			cliMain.parse(args);
 			cliMain.run();
+			logger.debug("SemanticMarkup [TextCapture] completed successfully");
 		} catch(Throwable t) {
 			t.printStackTrace();
 			throw t;

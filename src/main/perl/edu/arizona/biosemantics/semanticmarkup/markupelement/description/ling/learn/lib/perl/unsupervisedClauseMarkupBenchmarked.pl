@@ -127,6 +127,7 @@ use ReadFile;
 use strict;
 use DBI;
 use utf8;
+use open ':std', ':encoding(UTF-8)'; #to prevent "wide character" warnings when print debug info.
 
 
 #commandline:
