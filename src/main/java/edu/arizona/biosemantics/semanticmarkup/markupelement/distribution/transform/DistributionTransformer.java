@@ -535,7 +535,7 @@ public class DistributionTransformer implements IDistributionTransformer {
 			"pantropical, of both humid and arid regions, with few temperate outliers in Europe, " + 
 			"Asia, and North America"
 		};
-		DistributionTransformer2 transformer = new DistributionTransformer2();
+		DistributionTransformer transformer = new DistributionTransformer();
 		for(String example : examples)
 			System.out.println(transformer.getDistributionsCharacters(example));
 	}
