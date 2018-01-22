@@ -38,15 +38,23 @@ public class SplitCompoundBiologicalEntity extends AbstractTransformer {
 			ArrayList<String> individuals = new ArrayList<String>();
 			String current = ends[0];
 			String last = ends[ends.length - 1];
-			while (current.compareTo(last) != 0) {
-				individuals.add(current);
-				current = nextRoman(current);
+			
+			if(isRomanNumber(current) && isRomanNumber(last)) {	
+				while (current.compareTo(last) != 0) {
+					individuals.add(current);
+					current = nextRoman(current);
+				}
+				individuals.add(last);
+			} else {
+				individuals.add(biologicalEntity.getAttributeValue("name_original"));
 			}
-			individuals.add(last);
-			return individuals;
+			return new LinkedList<String>();
 		}
 	}
 	
+    public boolean isRomanNumber(String value) { 
+        return value.toUpperCase().matches("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$"); 
+    }
 
 	private IInflector inflector;
 	
