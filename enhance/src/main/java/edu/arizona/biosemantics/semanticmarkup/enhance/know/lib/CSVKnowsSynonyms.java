@@ -87,10 +87,15 @@ public class CSVKnowsSynonyms implements KnowsSynonyms {
 	public Set<SynonymSet> getSynonyms(String term, String category) {
 		//wrapping up term and category in an object will make the search more costly
 		String termEntry = term+":"+category;
-		Set<SynonymSet> resultSet = synonymSetsMap.get(termEntry);
-		if(resultSet==null)
-			return new HashSet<SynonymSet>();
-		return resultSet;
+		if(!synonymSetsMap.containsKey(termEntry)) {
+			Set<SynonymSet> defaultSet = new HashSet<SynonymSet>();
+			Set<String> synonyms = new HashSet<String>();
+			synonyms.add(term);
+			SynonymSet synonymSet = new SynonymSet(term, category, synonyms); //an empty synset with term as the prefered term
+			defaultSet.add(synonymSet);
+			return defaultSet;
+		}
+		return synonymSetsMap.get(termEntry);
 		
 		/*if(!synonymSetsMap.containsKey(termEntry)) {
 			Set<SynonymSet> defaultSet = new HashSet<SynonymSet>();
