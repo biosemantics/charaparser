@@ -145,6 +145,19 @@ public class FnaRun {
 				collection = readUploadResult(tablePrefix);
 			} catch (SQLException e) {
 				System.out.println("Problem reading upload result");
+				System.out.println("");
+				System.out.println(e.getCause());
+				System.out.println("");
+				System.out.println(e);
+				System.out.println("");
+				e.getCause().printStackTrace();
+				System.out.println("");
+				System.out.println(e.getSQLState());
+				System.out.println("");
+				System.out.println(e.getMessage());
+				System.out.println("");
+				System.out.println(e.getErrorCode());
+				System.out.println("");
 				e.printStackTrace();
 				throw e;
 			}
@@ -182,6 +195,14 @@ public class FnaRun {
 			//String termReviewTermCategorization = "";
 			//String termReviewSynonyms = "";
 			//String taxonGroup = TaxonGroup.PLANT.toString();
+			
+			System.out.println("inputDir: " + inputDir);
+			System.out.println("outputDir: " + outputDir);
+			System.out.println("synonymsCsvFile: " + synonymsCsvFile);
+			System.out.println("partOfCsvFile: " + partOfCsvFile);
+			System.out.println("termReviewTermCategorization: " + termReviewTermCategorization);
+			System.out.println("termReviewSynonyms: " + termReviewSynonyms);
+			
 			
 			FnaRun enhance = new FnaRun(inputDir, outputDir, synonymsCsvFile, partOfCsvFile, 
 					termReviewTermCategorization, termReviewSynonyms, TaxonGroup.valueOf(taxonGroup));
@@ -319,7 +340,7 @@ public class FnaRun {
 	}
 	
 	public void run() throws OWLOntologyCreationException {
-		System.out.println("run --"+"doenhance");
+		log(LogLevel.DEBUG, "Running enhance");
 		Run run = new Run();
 		KnowsSynonyms knowsSynonyms = new CSVKnowsSynonyms(synonymCsvFile, inflector);
 		KnowsPartOf knowsPartOf = new CSVKnowsPartOf(partOfCsvFile, knowsSynonyms, inflector);
