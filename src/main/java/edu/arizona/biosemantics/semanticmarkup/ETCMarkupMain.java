@@ -61,6 +61,7 @@ public class ETCMarkupMain extends CLIMain {
 		
 		//for iplant user shown configuration options
 		options.addOption("i", "input", true, "input file or directory");
+		options.addOption("s", "input sentence", true, "input sentence");
 		options.addOption("c", "config", true, "config to use"); 
 		options.addOption("x", "empty glossary", false, "use an empty glossary");
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
@@ -105,11 +106,13 @@ public class ETCMarkupMain extends CLIMain {
 			}
 		    
 		    config.setDescriptionReader(MOXyBinderDescriptionReader.class);
-		    if(!commandLine.hasOption("i")) {
-		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
+		    if(!commandLine.hasOption("i") && !commandLine.hasOption("s")) {
+		    	log(LogLevel.ERROR, "You have to specify an input file, directory, or sentence.");
 		    	throw new IllegalArgumentException();
-		    } else {
+		    } else if (commandLine.hasOption("i")){
 		    	config.setInputDirectory(commandLine.getOptionValue("i"));
+		    } else {
+		    	config.setInputSentence(commandLine.getOptionValue("s"));
 		    }
 			//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
 			//since we have no user information to be able to generate an ID that allows to know
