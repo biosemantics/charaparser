@@ -27,6 +27,13 @@
 				<javadoc.opts>-Xdoclint:none</javadoc.opts>
 			</properties>
 		</profile>
+		<profile>
+			<id>fnaRun</id>
+			<properties>
+				<mainName>fnaRun</mainName>
+				<mainClass>edu.arizona.biosemantics.semanticmarkup.enhance.run.FnaRun</mainClass>
+			</properties>
+		</profile>
 	</profiles>
 
 	<repositories>
