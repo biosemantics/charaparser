@@ -91,8 +91,8 @@ public class FnaRun {
 		
 		options.addOption("i", "input", true, "input directory");
 		options.addOption("o", "output", true, "output directory");
-		options.addOption("s", "input", true, "synonym csv file");
-		options.addOption("p", "output", true, "part of csv file");
+		options.addOption("s", "synonym file", true, "synonym csv file");
+		options.addOption("p", "partof file", true, "part of csv file");
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
 		
 		try {
