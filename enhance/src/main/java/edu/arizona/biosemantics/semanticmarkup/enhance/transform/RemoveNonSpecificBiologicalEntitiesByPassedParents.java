@@ -33,16 +33,9 @@ public class RemoveNonSpecificBiologicalEntitiesByPassedParents extends RemoveNo
 
 	@Override
 	public void transform(Document document) {
-		System.out.println("--------------------------------------------");
-		
 		List<Element> passedStatements = new LinkedList<Element>();
 		for(Element statement : this.statementXpath.evaluate(document)) {
 			String sentence = statement.getChildText("text");
-			
-			System.out.println(sentence);
-			if(sentence.startsWith("the flagellum, mandibles, anterior margin of the")) {
-				System.out.println();
-			}
 			
 			passedStatements.add(0, statement);
 			for(Element biologicalEntity : statement.getChildren("biological_entity")) { //Lists.reverse(statement.getChildren("biological_entity"))) {

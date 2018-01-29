@@ -166,29 +166,7 @@ public class FnaRun {
 			String termReviewTermCategorization = createCategorizationFile(collection, destination);
 			String termReviewSynonyms = createSynonymFile(collection, destination);
 			createCategoriesFile(collection, destination);
-			
-		    //String inputDir = "workspace" + File.separator + tablePrefix;
-			//String outputDir = "workspace" + File.separator + tablePrefix + "_enhanced";
 			String taxonGroup = TaxonGroup.PLANT.toString();
-			
-			//String inputDir = "C:/etcsitebase/etcsite/data/users/4/plant_output_by_TC_task_Plant3files_07-03-2017_1";
-			//String enhanceDir = "C:/etcsitebase/etcsite/data/matrixGeneration/432/enhance";
-			//String inputOntology = "C:/Users/rodenhausen.CATNET/Desktop/etcsite/data/users/1/1_output_by_TC_task_2_output_by_OB_task_3/3.owl";
-			//String termReviewTermCategorization = "C:/Users/rodenhausen.CATNET/Desktop/etcsite/data/users/1/1_TermsReviewed_by_TC_task_2/category_term-task-2.csv";
-			//String termReviewSynonyms = "C:/Users/rodenhausen.CATNET/Desktop/etcsite/data/users/1/1_TermsReviewed_by_TC_task_2/category_mainterm_synonymterm-task-2.csv";
-			//String inputOntology = "";
-			//String termReviewTermCategorization = "";
-			//String termReviewSynonyms = "";
-			//String taxonGroup = TaxonGroup.PLANT.toString();
-			
-			/*System.out.println("tablePrefix: " + tablePrefix);
-			System.out.println("inputDir: " + inputDir);
-			System.out.println("outputDir: " + outputDir);
-			System.out.println("synonymsCsvFile: " + synonymsCsvFile);
-			System.out.println("partOfCsvFile: " + partOfCsvFile);
-			System.out.println("termReviewTermCategorization: " + termReviewTermCategorization);
-			System.out.println("termReviewSynonyms: " + termReviewSynonyms);*/
-			
 			
 			FnaRun enhance = new FnaRun(tablePrefix, inputDir, outputDir, synonymsCsvFile, partOfCsvFile, 
 					termReviewTermCategorization, termReviewSynonyms, TaxonGroup.valueOf(taxonGroup));
