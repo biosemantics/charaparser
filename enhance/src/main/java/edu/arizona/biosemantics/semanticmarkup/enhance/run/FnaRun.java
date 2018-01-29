@@ -118,7 +118,7 @@ public class FnaRun {
 		    	inputDir = commandLine.getOptionValue("i");
 		    }
 		    
-		    String outputDir = Configuration.workspaceDir + File.separator + tablePrefix;
+		    String outputDir = Configuration.workspaceDir + File.separator + tablePrefix + File.separator + "out_enhanced";
 		    File outputDirFile = new File(outputDir);
 		    outputDirFile.mkdirs();
 		    
