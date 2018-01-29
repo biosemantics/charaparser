@@ -308,8 +308,8 @@ public class FnaRun {
 	private void setupLogging(String runId) {
 		Logger rootLogger = Logger.getRootLogger();
 		rootLogger.getLoggerRepository().resetConfiguration();
-		addDebugErrorLoggers(rootLogger, Configuration.workspaceDir + File.separator + runId + File.separator + "debug.log", 
-				Configuration.workspaceDir + File.separator + runId + File.separator + "error.log");
+		addDebugErrorLoggers(rootLogger, Configuration.workspaceDir + File.separator + runId + File.separator + "enhance_debug.log", 
+				Configuration.workspaceDir + File.separator + runId + File.separator + "enhance_error.log");
 	}
 	
 	public void run() throws OWLOntologyCreationException {
@@ -357,6 +357,8 @@ public class FnaRun {
 		run.addTransformer(new CollapseCharacters());
 		
 		run.run(new File(input), new File(output));
+
+		log(LogLevel.DEBUG, "Completed running enhance!");
 	}
 
 
