@@ -21,6 +21,8 @@ public class Configuration {
 	public static String databaseHost;
 	public static int databasePort;
 	public static String databaseName;
+
+	public static String workspaceDir;
 	
 	static {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -40,6 +42,7 @@ public class Configuration {
 			databaseName = properties.getProperty("databaseName");
 			
 			oto2Url = properties.getProperty("oto2Url");
+			workspaceDir = properties.getProperty("workspaceDir");
 		} catch (IOException e) {
 			logger.error("Couldn't read configuration", e);
 		}

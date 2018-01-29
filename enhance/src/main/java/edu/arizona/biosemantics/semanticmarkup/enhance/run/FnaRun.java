@@ -22,6 +22,11 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
@@ -90,7 +95,6 @@ public class FnaRun {
 		Options options = new Options();
 		
 		options.addOption("i", "input", true, "input directory");
-		options.addOption("o", "output", true, "output directory");
 		options.addOption("s", "synonym file", true, "synonym csv file");
 		options.addOption("p", "partof file", true, "part of csv file");
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
@@ -114,15 +118,9 @@ public class FnaRun {
 		    	inputDir = commandLine.getOptionValue("i");
 		    }
 		    
-		    String outputDir = "";
-		    if(!commandLine.hasOption("o")) {
-		    	System.out.println("You have to specify an output directory");
-		    	throw new IllegalArgumentException();
-		    } else {
-		    	outputDir = commandLine.getOptionValue("o");
-		    	File outputFile = new File(outputDir);
-		    	outputFile.mkdirs();
-		    }
+		    String outputDir = Configuration.workspaceDir + File.separator + tablePrefix;
+		    File outputDirFile = new File(outputDir);
+		    outputDirFile.mkdirs();
 		    
 			String synonymsCsvFile = "";
 			if(!commandLine.hasOption("s")) {
@@ -145,19 +143,6 @@ public class FnaRun {
 				collection = readUploadResult(tablePrefix);
 			} catch (SQLException e) {
 				System.out.println("Problem reading upload result");
-				System.out.println("");
-				System.out.println(e.getCause());
-				System.out.println("");
-				System.out.println(e);
-				System.out.println("");
-				e.getCause().printStackTrace();
-				System.out.println("");
-				System.out.println(e.getSQLState());
-				System.out.println("");
-				System.out.println(e.getMessage());
-				System.out.println("");
-				System.out.println(e.getErrorCode());
-				System.out.println("");
 				e.printStackTrace();
 				throw e;
 			}
@@ -196,15 +181,16 @@ public class FnaRun {
 			//String termReviewSynonyms = "";
 			//String taxonGroup = TaxonGroup.PLANT.toString();
 			
+			/*System.out.println("tablePrefix: " + tablePrefix);
 			System.out.println("inputDir: " + inputDir);
 			System.out.println("outputDir: " + outputDir);
 			System.out.println("synonymsCsvFile: " + synonymsCsvFile);
 			System.out.println("partOfCsvFile: " + partOfCsvFile);
 			System.out.println("termReviewTermCategorization: " + termReviewTermCategorization);
-			System.out.println("termReviewSynonyms: " + termReviewSynonyms);
+			System.out.println("termReviewSynonyms: " + termReviewSynonyms);*/
 			
 			
-			FnaRun enhance = new FnaRun(inputDir, outputDir, synonymsCsvFile, partOfCsvFile, 
+			FnaRun enhance = new FnaRun(tablePrefix, inputDir, outputDir, synonymsCsvFile, partOfCsvFile, 
 					termReviewTermCategorization, termReviewSynonyms, TaxonGroup.valueOf(taxonGroup));
 			enhance.run();
 		} catch (ParseException e) {
@@ -313,9 +299,11 @@ public class FnaRun {
 	private String termReviewSynonyms;
 	private String synonymCsvFile;
 	private String partOfCsvFile;
+	private String runId;
 	
-	public FnaRun(String input, String output, String synonymCsvFile, String partOfCsvFile, 
+	public FnaRun(String runId, String input, String output, String synonymCsvFile, String partOfCsvFile, 
 			String termReviewTermCategorization, String termReviewSynonyms, TaxonGroup taxonGroup) throws IOException, InterruptedException, ExecutionException {
+		this.runId = runId;
 		this.input = input;
 		this.output = output;
 		this.synonymCsvFile = synonymCsvFile;
@@ -339,7 +327,15 @@ public class FnaRun {
 		
 	}
 	
+	private void setupLogging(String runId) {
+		Logger rootLogger = Logger.getRootLogger();
+		rootLogger.getLoggerRepository().resetConfiguration();
+		addDebugErrorLoggers(rootLogger, Configuration.workspaceDir + File.separator + runId + File.separator + "debug.log", 
+				Configuration.workspaceDir + File.separator + runId + File.separator + "error.log");
+	}
+	
 	public void run() throws OWLOntologyCreationException {
+		setupLogging(this.runId);
 		log(LogLevel.DEBUG, "Running enhance");
 		Run run = new Run();
 		KnowsSynonyms knowsSynonyms = new CSVKnowsSynonyms(synonymCsvFile, inflector);
@@ -530,5 +526,39 @@ public class FnaRun {
 		}
 	}
 	
+	protected void addDebugErrorLoggers(Logger rootLogger, String debugLog, String errorLog) {
+		PatternLayout layout = new PatternLayout();
+		layout.setConversionPattern("%d [%t] %-5p %c:%L - %m%n");
+		
+		RollingFileAppender debugFileAppender = new RollingFileAppender();
+		debugFileAppender.setEncoding("UTF-8");
+		debugFileAppender.setFile(debugLog);
+		debugFileAppender.setMaxFileSize("100MB");
+		debugFileAppender.setAppend(false);
+		debugFileAppender.setMaxBackupIndex(100);
+		debugFileAppender.setLayout(layout);
+		debugFileAppender.setThreshold(Level.DEBUG);
+		debugFileAppender.activateOptions();
+		
+		RollingFileAppender errorFileAppender = new RollingFileAppender();
+		errorFileAppender.setEncoding("UTF-8");
+		errorFileAppender.setFile(errorLog);
+		errorFileAppender.setMaxFileSize("100MB");
+		errorFileAppender.setAppend(false);
+		errorFileAppender.setMaxBackupIndex(100);
+		errorFileAppender.setLayout(layout);
+		errorFileAppender.setThreshold(Level.ERROR);
+		errorFileAppender.activateOptions();
+		
+		ConsoleAppender consoleErrorAppender = new ConsoleAppender();
+		consoleErrorAppender.setTarget("System.out");
+		consoleErrorAppender.setLayout(layout);
+		consoleErrorAppender.setThreshold(Level.ERROR);
+		consoleErrorAppender.activateOptions();
 
+		rootLogger.setLevel(Level.DEBUG);
+		rootLogger.addAppender(debugFileAppender);
+		rootLogger.addAppender(errorFileAppender);
+		rootLogger.addAppender(consoleErrorAppender);
+	}
 }
