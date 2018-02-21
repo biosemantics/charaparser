@@ -53,7 +53,7 @@ public abstract class AbstractRun implements IRun {
 			new File(runOutDirectory).mkdirs();
 			FileUtils.copyDirectory(new File(inputDirectory), new File(runOutDirectory));
 			
-			doRun();
+				doRun();
 			
 			long endTime = Calendar.getInstance().getTimeInMillis();
 			String wasDone = "was done at " + endTime;
@@ -70,6 +70,37 @@ public abstract class AbstractRun implements IRun {
 			connectionPool.shutdown();
 		}
 	}
+	
+	public void run(String dummy) throws Throwable {	
+		try {					
+			long startTime = Calendar.getInstance().getTimeInMillis();
+			String startedAt = "started at " + startTime;
+			log(LogLevel.INFO, startedAt);
+			
+			FileUtils.deleteDirectory(new File(runOutDirectory));
+			new File(runOutDirectory).mkdirs();
+			FileUtils.copyDirectory(new File(inputDirectory), new File(runOutDirectory));
+			
+				doRun();
+				
+			FileUtils.deleteDirectory(new File(inputDirectory));
+			
+			long endTime = Calendar.getInstance().getTimeInMillis();
+			String wasDone = "was done at " + endTime;
+			log(LogLevel.INFO, wasDone);
+			long milliseconds = endTime - startTime;
+			String tookMe = "took me " + (endTime - startTime) + " milliseconds";
+			log(LogLevel.INFO, tookMe);
+			
+			String timeString = getTimeString(milliseconds);
+			log(LogLevel.INFO, timeString);
+			
+		} catch(Throwable t) {
+			log(LogLevel.ERROR, "Problem to run, shut down connection pool...", t);
+			connectionPool.shutdown();
+		}
+	}
+	
 
 	protected abstract void doRun() throws Throwable;
 

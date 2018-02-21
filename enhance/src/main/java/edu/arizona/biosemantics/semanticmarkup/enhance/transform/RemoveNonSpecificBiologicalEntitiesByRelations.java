@@ -22,7 +22,6 @@ public class RemoveNonSpecificBiologicalEntitiesByRelations extends RemoveNonSpe
 	public void transform(Document document) {
 		for(Element statement : this.statementXpath.evaluate(document)) {
 			String sentence = statement.getChildText("text");
-			System.out.println(sentence);
 			
 			for(Element relation : statement.getChildren("relation")) {
 				if(relation.getAttributeValue("name").equals("part_of")) {
@@ -35,10 +34,6 @@ public class RemoveNonSpecificBiologicalEntitiesByRelations extends RemoveNonSpe
 					constraint = constraint == null ? "" : constraint.trim();
 					if(isNonSpecificPart(name)) {
 						if(!isPartOfAConstraint(name, constraint)) {		
-							if(name.equals("margin") && sentence.startsWith("the flagellum, mandibles, anterior margin of the face, and the head".toLowerCase())) {
-								System.out.println();
-							}
-							
 							String parent = null;
 							String termNormalized = collapseBilogicalEntityToName.collapse(toBiologicalEntity);
 							if(knowsPartOf.isPartOf(name, termNormalized)) {

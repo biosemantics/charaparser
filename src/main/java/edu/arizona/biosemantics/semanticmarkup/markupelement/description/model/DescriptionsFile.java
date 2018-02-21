@@ -22,8 +22,8 @@ public class DescriptionsFile extends AbstractDescriptionsFile {
 	}
 	
 	
-	public TaxonIdentification getTaxonIdentification(){
-		return this.taxonIdentifications.get(0);
+	public List<TaxonIdentification> getTaxonIdentification(){
+		return this.taxonIdentifications;
 	}
 
 	public void setTaxonIdentification(TaxonIdentification taxonIdentification){

@@ -1,2 +1,11 @@
 ontologyDirectory=
 wordNetDirectory=
+
+databaseHost=
+databasePort=
+databaseName=
+databaseUser=
+databasePassword=
+
+o2oUrl=
+workspaceDir=

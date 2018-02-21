@@ -73,12 +73,24 @@ public class CLIMain {
 		IRun run = injector.getInstance(IRun.class);
 		
 		log(LogLevel.INFO, "running " + run.getDescription() + "...");
-		try {
-			run.run();
-		} catch (Throwable t) {
-			log(LogLevel.ERROR, "Problem to execute the run", t);
-			throw t;
+		
+		if(config.getInputSentence() == null) {
+			try {
+				run.run();
+			} catch (Throwable t) {
+				log(LogLevel.ERROR, "Problem to execute the run", t);
+				throw t;
+			}
 		}
+		else {
+			try {
+				run.run("dummy");
+			} catch (Throwable t) {
+				log(LogLevel.ERROR, "Problem to execute the run", t);
+				throw t;
+			}
+		}
+		
 	}
 
 	private void setupLogging() {
@@ -134,7 +146,7 @@ public class CLIMain {
 		    	//use standard config RunConfig
 		    }
 		    if(!commandLine.hasOption("i")) {
-		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
+		    	log(LogLevel.ERROR, "You have to specify an input file or directory.");
 		    	throw new IllegalArgumentException();
 		    }
 		    if(commandLine.hasOption("r")) {

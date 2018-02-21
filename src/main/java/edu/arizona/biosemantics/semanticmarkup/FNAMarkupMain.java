@@ -16,6 +16,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 
 import edu.arizona.biosemantics.semanticmarkup.config.Configuration;
+import edu.arizona.biosemantics.semanticmarkup.config.FNAConfig;
 import edu.arizona.biosemantics.semanticmarkup.config.RunConfig;
 import edu.arizona.biosemantics.common.ling.know.lib.InMemoryGlossary;
 import edu.arizona.biosemantics.common.log.LogLevel;
@@ -35,19 +36,17 @@ import edu.arizona.biosemantics.semanticmarkup.run.etc.ETCMarkupRun;
  * Markup CLI Entry point into the processing of the charaparser framework
  * @author thomas rodenhausen
  */
-public class ETCMarkupMain extends CLIMain {
+public class FNAMarkupMain extends CLIMain {
 	
-	private final static Logger logger = Logger.getLogger(ETCMarkupMain.class);
 	/**
 	 * @param args
 	 * @throws Throwable 
 	 */
 	public static void main(String[] args) throws Throwable {
 		try {
-			CLIMain cliMain = new ETCMarkupMain();
+			CLIMain cliMain = new FNAMarkupMain();
 			cliMain.parse(args);
 			cliMain.run();
-			logger.debug("SemanticMarkup [TextCapture] completed successfully");
 		} catch(Throwable t) {
 			t.printStackTrace();
 			throw t;
@@ -61,8 +60,6 @@ public class ETCMarkupMain extends CLIMain {
 		
 		//for iplant user shown configuration options
 		options.addOption("i", "input", true, "input file or directory");
-		options.addOption("s", "input sentence", true, "input sentence");
-		options.addOption("c", "config", true, "config to use"); 
 		options.addOption("x", "empty glossary", false, "use an empty glossary");
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
 		options.addOption("f", "source", true, "source of the descriptions, e.g. fna v7");
@@ -82,18 +79,7 @@ public class ETCMarkupMain extends CLIMain {
 				formatter.printHelp( "what is this?", options );
 				return;
 		    }    
-		    if(commandLine.hasOption("c")) {
-		    	try {
-		    		config = getConfig(commandLine.getOptionValue("c"));
-		    	} catch(IOException e) {
-					log(LogLevel.ERROR, "Couldn't instantiate default config", e);
-					throw e;
-				}
-		    } else {
-		    	log(LogLevel.ERROR, "You have to specify a configuration to use");
-		    	throw new IllegalArgumentException();
-		    	//use standard config RunConfig
-		    }
+		    config = new FNAConfig();
 		    if(commandLine.hasOption("x")) {
 		    	config.setUseEmptyGlossary(true);
 		    }
@@ -106,13 +92,11 @@ public class ETCMarkupMain extends CLIMain {
 			}
 		    
 		    config.setDescriptionReader(MOXyBinderDescriptionReader.class);
-		    if(!commandLine.hasOption("i") && !commandLine.hasOption("s")) {
-		    	log(LogLevel.ERROR, "You have to specify an input file, directory, or sentence.");
+		    if(!commandLine.hasOption("i")) {
+		    	log(LogLevel.ERROR, "You have to specify an input file or directory");
 		    	throw new IllegalArgumentException();
-		    } else if (commandLine.hasOption("i")){
-		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    } else {
-		    	config.setInputSentence(commandLine.getOptionValue("s"));
+		    	config.setInputDirectory(commandLine.getOptionValue("i"));
 		    }
 			//TODO databaseTablePrefix has to be given as user as a ID he remembered from LearnMain
 			//since we have no user information to be able to generate an ID that allows to know
@@ -128,7 +112,6 @@ public class ETCMarkupMain extends CLIMain {
 			log(LogLevel.ERROR, "Problem parsing parameters", e);
 		}
 
-		config.setDescriptionMarkupCreator(DescriptionMarkupAndOntologyMappingCreator.class);
 		config.setRun(ETCMarkupRun.class);
 		config.setGlossary(InMemoryGlossary.class);
 		//no learning required, already passed learning and reviewed terms in OTO Lite 

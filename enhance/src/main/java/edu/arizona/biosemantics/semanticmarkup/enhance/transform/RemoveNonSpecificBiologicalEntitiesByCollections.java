@@ -38,9 +38,6 @@ public class RemoveNonSpecificBiologicalEntitiesByCollections extends RemoveNonS
 				String constraint = biologicalEntity.getAttributeValue("constraint");
 				constraint = constraint == null ? "" : constraint.trim();
 				
-				if(name.equals("array")) {
-					System.out.println("test");
-				}
 				if(isNonSpecificPart(name)) {
 					if(isCollection(name)) {
 						if(!hasPartInConstraint(name, constraint)) {

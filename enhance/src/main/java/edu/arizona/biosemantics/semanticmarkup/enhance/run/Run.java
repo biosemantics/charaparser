@@ -112,7 +112,6 @@ public class Run {
 	public void run(File inputDirectory, File outputDirectory) {
 		for(File file : inputDirectory.listFiles()) {
 			if(file.isFile()) {
-				System.out.println("Transforming file " + file.getName());
 				log(LogLevel.DEBUG, "Transforming file " + file.getName());
 				Document document = null;
 				try(InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), "UTF8")) {

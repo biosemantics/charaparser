@@ -42,7 +42,7 @@ public class MapOntologyIds extends AbstractTransformer {
 					Collection<String> iris = getIRIs(searchTerm);
 					value = StringUtils.join(iris, "; ");
 					if(!iris.isEmpty())
-						log(LogLevel.INFO, "Found IRIs: " + value + " for term " + searchTerm);
+						log(LogLevel.DEBUG, "Found IRIs: " + value + " for term " + searchTerm);
 					character.setAttribute("ontologyid", value);
 				//}
 			}
@@ -67,7 +67,7 @@ public class MapOntologyIds extends AbstractTransformer {
 				Collection<String> iris = getIRIs(searchTerm);
 				String value = StringUtils.join(iris, "; ");
 				if(!iris.isEmpty())
-					log(LogLevel.INFO, "Found IRIs: " + value + " for term " + searchTerm);
+					log(LogLevel.DEBUG, "Found IRIs: " + value + " for term " + searchTerm);
 				biologicalEntity.setAttribute("ontologyid", value);
 			}
 		}

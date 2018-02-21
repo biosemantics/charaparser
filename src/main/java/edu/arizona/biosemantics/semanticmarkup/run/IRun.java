@@ -13,6 +13,12 @@ public interface IRun {
 	public void run() throws Throwable;
 	
 	/**
+	 * Run
+	 * @throws Exception
+	 */
+	public void run(String inputSentence) throws Throwable;
+	
+	/**
 	 * @return a descriptive String of the IRun
 	 */
 	public String getDescription();

@@ -13,6 +13,16 @@ public class Configuration {
 	public static String wordNetDirectory;
 	public static String defaultEntityType = "structure";
 	private static String projectVersion;
+
+	public static String oto2Url;
+
+	public static String databaseUser;
+	public static String databasePassword;
+	public static String databaseHost;
+	public static int databasePort;
+	public static String databaseName;
+
+	public static String workspaceDir;
 	
 	static {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
@@ -24,6 +34,15 @@ public class Configuration {
 			properties.load(loader.getResourceAsStream("edu/arizona/biosemantics/semanticmarkup/enhance/config.properties"));
 			ontologyDirectory = properties.getProperty("ontologyDirectory");
 			wordNetDirectory = properties.getProperty("wordNetDirectory");
+			
+			databaseUser = properties.getProperty("databaseUser");
+			databasePassword = properties.getProperty("databasePassword");
+			databaseHost = properties.getProperty("databaseHost");
+			databasePort =  Integer.valueOf(properties.getProperty("databasePort"));
+			databaseName = properties.getProperty("databaseName");
+			
+			oto2Url = properties.getProperty("oto2Url");
+			workspaceDir = properties.getProperty("workspaceDir");
 		} catch (IOException e) {
 			logger.error("Couldn't read configuration", e);
 		}

@@ -42,6 +42,20 @@
 				<mainClass>edu.arizona.biosemantics.semanticmarkup.ETCMarkupMain</mainClass>
 			</properties>
 		</profile>
+		<profile>
+			<id>fnaLearn</id>
+			<properties>
+				<mainName>fnaLearn</mainName>
+				<mainClass>edu.arizona.biosemantics.semanticmarkup.FNALearnMain</mainClass>
+			</properties>
+		</profile>
+		<profile>
+			<id>fnaMarkup</id>
+			<properties>
+				<mainName>fnaMarkup</mainName>
+				<mainClass>edu.arizona.biosemantics.semanticmarkup.FNAMarkupMain</mainClass>
+			</properties>
+		</profile>
 	</profiles>
 	<repositories>
 		<!-- <repository> <id>swt-repo</id> <url>https://swt-repo.googlecode.com/svn/repo/</url> 
@@ -322,6 +336,11 @@
 		  <artifactId>oto</artifactId>
 		  <version>0.0.136-SNAPSHOT</version>
 		  <classifier>classes</classifier>
+		</dependency>
+		<dependency>
+		  <groupId>edu.arizona.biosemantics.oto</groupId>
+		  <artifactId>oto-client</artifactId>
+		  <version>0.0.57-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
