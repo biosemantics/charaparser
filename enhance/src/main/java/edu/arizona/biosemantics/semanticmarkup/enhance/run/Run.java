@@ -103,7 +103,7 @@ import edu.stanford.nlp.process.PTBTokenizer;
 
 public class Run {
 
-	private SAXBuilder saxBuilder = new SAXBuilder();
+	protected SAXBuilder saxBuilder = new SAXBuilder();
 	private List<AbstractTransformer> transformers = new LinkedList<AbstractTransformer>();
 	
 	public Run() {
@@ -111,7 +111,7 @@ public class Run {
 	
 	public void run(File inputDirectory, File outputDirectory) {
 		for(File file : inputDirectory.listFiles()) {
-			if(file.isFile()) {
+			if(file.isFile() && file.getName().endsWith(".xml")) {
 				log(LogLevel.DEBUG, "Transforming file " + file.getName());
 				Document document = null;
 				try(InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), "UTF8")) {
