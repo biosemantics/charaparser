@@ -5,9 +5,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +23,7 @@ import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
@@ -26,6 +33,7 @@ import org.apache.log4j.RollingFileAppender;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
@@ -35,6 +43,7 @@ import edu.arizona.biosemantics.oto.model.lite.Decision;
 import edu.arizona.biosemantics.oto.model.lite.Download;
 import edu.arizona.biosemantics.oto.model.lite.Synonym;
 import edu.arizona.biosemantics.oto.model.lite.UploadResult;
+import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
 import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
 import edu.arizona.biosemantics.common.ling.know.ICorpus;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
@@ -92,6 +101,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationWriter;
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
+
 
 
 
@@ -166,13 +176,33 @@ public class RunConfig extends BasicConfig {
 	//required for bioportal submission of oto lite
 	private String sourceOfDescriptions = "";
 	private String user = "";
-	//
+	private String author;
+	private String title;
+	private String fauthority;
+	private String gauthority;
+	private String sectauthority;
+	private String sauthority;
+	private String subsauthority;
+	private String subsyear;
+	private String syear;
+	private String sectyear;
+	private String gyear;
+	private String fyear;
+	private String fname;
+	private String gname;
+	private String sectname;
+	private String sname;
+	private String subsname;
 	
+	private ConnectionPool connectionPool;
+	
+
 	public RunConfig() throws IOException {
 		super();
 		this.setWorkspaceDirectory(Configuration.workspaceDirectory);
 	}
 
+	
 	@Override 
 	public void configure() {
 		super.configure();
@@ -704,44 +734,70 @@ public class RunConfig extends BasicConfig {
 	public void setInputSentence(String inputSentence) {
 		this.inputSentence = inputSentence;
 		setInputDirectory("input");
-		new File(inputDirectory).mkdirs();
-		File input = new File("input/input.xml");
 		FileWriter writer = null;
+		FileWriter SWriter = null;
 		try {
+			FileUtils.deleteDirectory(new File(inputDirectory));
+			new File(inputDirectory).mkdirs();
+			File input = new File("input/"+this.databaseTablePrefix+".xml");
+			File inputSent = new File("input/"+this.databaseTablePrefix+".txt");
+			SWriter = new FileWriter(inputSent);
 			writer = new FileWriter(input);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+		    log(LogLevel.ERROR, "failed to create input directory or files");
 			e1.printStackTrace();
 		}
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		String formatedDate = dateFormat.format(date);
 		try {
+			SWriter.write(inputSentence);
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 			writer.write("<bio:treatment xmlns:bio=\"http://www.github.com/biosemantics\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.github.com/biosemantics https://raw.githubusercontent.com/biosemantics/schemas/master/semanticMarkupInput.xsd\">\n");
 			writer.write("  <meta>\n");
 			writer.write("    <source>\n");
-			writer.write("      <author>" + "JOHN DOE" + "</author>\n");
-			writer.write("      <date>" + "2000" + "</date>\n");
-			writer.write("      <title>" + "GENERIC BOOK TITLE" + "</title>\n");
+			writer.write("      <author>" + this.author + "</author>\n");
+			writer.write("      <date>" + formatedDate + "</date>\n");
+			writer.write("      <title>" + this.title + "</title>\n");
 			writer.write("    </source>\n");
 			writer.write("    <processed_by>\n");
 			writer.write("      <processor>\n");
 			writer.write("        <date>" + LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + ", " + LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + LocalDate.now().getDayOfMonth() + ", " + LocalDate.now().getYear() + "</date>\n");
 			writer.write("        <software type=\"Text Capture Input Generator\" version=\"1.0\" />\n");
-			writer.write("        <operator>" + "JOHN DOE" + "</operator>\n");
+			writer.write("        <operator>" + this.author + "</operator>\n");
 			writer.write("      </processor>\n");
 			writer.write("    </processed_by>\n");
 			writer.write("  </meta>\n");
 			writer.write("  <taxon_identification status=\"ACCEPTED\">\n");
-			writer.write("    <taxon_name rank=\"FAMILY\" authority=\"AUTHORITY\" date=\"2000\">ROSACEAE</taxon_name>\n");
+			
+			if(this.fname.compareTo("unknown")!=0){
+				writer.write("    <taxon_name rank=\"family\" authority=\""+this.fauthority+"\" date=\""+this.fyear+"\">"+this.fname+"</taxon_name>\n");
+			}
+			if(this.gname!=null){
+				writer.write("    <taxon_name rank=\"genus\" authority=\""+this.gauthority+"\" date=\""+this.gyear+"\">"+this.gname+"</taxon_name>\n");
+				if(this.sectname.compareTo("unknown")!=0){
+					writer.write("    <taxon_name rank=\"section\" authority=\""+this.sectauthority+"\" date=\""+this.sectyear+"\">"+this.sectname+"</taxon_name>\n");
+				}
+				if(this.sname!=null){
+					writer.write("    <taxon_name rank=\"species\" authority=\""+this.sauthority+"\" date=\""+this.syear+"\">"+this.sname+"</taxon_name>\n");
+					if(this.subsname.compareTo("unknown")!=0){
+						writer.write("    <taxon_name rank=\"subspecies\" authority=\""+this.subsauthority+"\" date=\""+this.subsyear+"\">"+this.subsname+"</taxon_name>\n");
+					}
+				}
+			}
+			
 			writer.write("  </taxon_identification>\n");
-			writer.write("  <description type=\"MORPHOLOGY\">\n");
+			writer.write("  <description type=\"morphology\">\n");
 			writer.write("  " + inputSentence + " </description>\n");
 			writer.write("</bio:treatment>");
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			writer.close();
+			SWriter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -849,5 +905,72 @@ public class RunConfig extends BasicConfig {
 	
 	public void setUseEmptyGlossary(boolean value) {
 		this.useEmptyGlossary = value;
-	}		
+	}
+	public void setFAuthority(String fauthority) {
+		this.fauthority = fauthority;
+	}	
+	
+	public void setGAuthority(String gauthority) {
+		this.gauthority = gauthority;
+	}
+	
+	public void setSectAuthority(String sectauthority) {
+		this.sectauthority = sectauthority;
+	}
+	public void setSAuthority(String sauthority) {
+		this.sauthority = sauthority;
+	}
+	public void setSubsAuthority(String subsauthority) {
+		this.subsauthority = subsauthority;
+	}
+	
+	
+	public void setFName(String fname) {
+		this.fname = fname;
+	}	
+	public void setGName(String gname) {
+		this.gname = gname;
+	}	
+	public void setSectName(String sectname) {
+		this.sectname = sectname;
+	}	
+	public void setSName(String sname) {
+		this.sname = sname;
+	}	
+	public void setSubsName(String subsname) {
+		this.subsname = subsname;
+	}	
+	
+
+	public void setFYear(String fyear) {
+		this.fyear = fyear;
+	}	
+	public void setGYear(String gyear) {
+		this.gyear = gyear;
+	}	
+	public void setSectYear(String sectyear) {
+		this.sectyear = sectyear;
+	}	
+	
+	public void setSYear(String syear) {
+		this.syear = syear;
+	}	
+	
+	public void setSubsYear(String subsyear) {
+		this.subsyear = subsyear;
+	}	
+	
+	
+
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	//title of the description 
+	public void setTitle(String title) {
+		this.title = title;
+		
+	}
+
 }

@@ -18,7 +18,7 @@ import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.db.ConnectionPool;
-import edu.arizona.biosemantics.semanticmarkup.enhance.run.Run;
+import edu.arizona.biosemantics.semanticmarkup.enhance.run.AuthorRun;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CreateOrPopulateWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveCharactersToAlternativeParent;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveNegationOrAdverbBiologicalEntityConstraint;
@@ -91,7 +91,7 @@ public class ETCMarkupRun extends AbstractRun {
 		PostRun r = new PostRun(runOutDirectory);
 		r.absorbKeys();
 		
-		Run run = new Run();
+		AuthorRun run = new AuthorRun();
 		run.addTransformer(new SplitCompoundBiologicalEntity(inflector));
 		run.addTransformer(new SplitCompoundBiologicalEntitiesCharacters(inflector));
 		run.addTransformer(new SortBiologicalEntityNameWithDistanceCharacter());

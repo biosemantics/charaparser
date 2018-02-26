@@ -84,7 +84,7 @@ public class CLIMain {
 		}
 		else {
 			try {
-				run.run("dummy");
+				run.runWithAutoDirectory();
 			} catch (Throwable t) {
 				log(LogLevel.ERROR, "Problem to execute the run", t);
 				throw t;

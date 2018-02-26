@@ -1,5 +1,6 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib;
 
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -566,6 +567,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 					//int listId = -1;
 					String previousTreatmentId = "-1";
+				
 		
 					//leave ditto as it is
 					while(rs.next()){ //read sent in in reversed order
@@ -992,7 +994,9 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		
 						result.put(source, new AdjectiveReplacementForNoun(modifier, tag, source));
 					}
+					resultSet.close();
 				}
+				statement.close();
 			}
 		} catch (SQLException e) {
 			log(LogLevel.ERROR, "problem accessing sentence table", e);

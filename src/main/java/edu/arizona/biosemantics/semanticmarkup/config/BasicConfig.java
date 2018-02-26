@@ -146,7 +146,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.transfo
 public class BasicConfig extends AbstractModule {
 	
 	  private String version = "N/A";
-	  protected String databaseTablePrefix = "myrun";
+	  protected String databaseTablePrefix = null;
 	  protected InputStreamCreator inputStreamCreator = new InputStreamCreator();
 	  
 	  

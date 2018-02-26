@@ -67,6 +67,7 @@ public abstract class AbstractDescriptionMarkupCreator implements IDescriptionMa
 					}
 				} catch(Throwable t) {
 					log(LogLevel.ERROR, "Problem transforming treatments using " + transformer.getClass(), t);
+					t.printStackTrace();
 				}
 			}
 			

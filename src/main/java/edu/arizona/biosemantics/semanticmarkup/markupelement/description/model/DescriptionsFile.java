@@ -29,6 +29,10 @@ public class DescriptionsFile extends AbstractDescriptionsFile {
 	public void setTaxonIdentification(TaxonIdentification taxonIdentification){
 		this.taxonIdentifications.add(taxonIdentification);
 	}
+	//when run in debug mode, Guice asked for this method setTaxonIdentification(java.util.List)
+	public void setTaxonIdentification(List<TaxonIdentification> taxonIdentifications){
+		this.taxonIdentifications = taxonIdentifications;
+	}
 	
 	public List<TreatmentRoot> getTreatmentRoots() {
 		return treatmentRoots;

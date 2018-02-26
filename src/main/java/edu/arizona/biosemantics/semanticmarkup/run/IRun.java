@@ -16,7 +16,7 @@ public interface IRun {
 	 * Run
 	 * @throws Exception
 	 */
-	public void run(String inputSentence) throws Throwable;
+	public void runWithAutoDirectory() throws Throwable;
 	
 	/**
 	 * @return a descriptive String of the IRun
