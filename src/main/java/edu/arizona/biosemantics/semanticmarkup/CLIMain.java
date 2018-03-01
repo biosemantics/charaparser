@@ -74,23 +74,13 @@ public class CLIMain {
 		
 		log(LogLevel.INFO, "running " + run.getDescription() + "...");
 		
-		if(config.getInputSentence() == null) {
-			try {
-				run.run();
-			} catch (Throwable t) {
-				log(LogLevel.ERROR, "Problem to execute the run", t);
-				throw t;
-			}
+		try {
+			run.run();
+		} catch (Throwable t) {
+			log(LogLevel.ERROR, "Problem to execute the run", t);
+			throw t;
 		}
-		else {
-			try {
-				run.run("dummy");
-			} catch (Throwable t) {
-				log(LogLevel.ERROR, "Problem to execute the run", t);
-				throw t;
-			}
-		}
-		
+
 	}
 
 	private void setupLogging() {

@@ -1,17 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.config;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -124,7 +118,6 @@ public class RunConfig extends BasicConfig {
 	private List<InputStream> descriptionReaderBindingsList = createIOXMLBindingsList();
 	private List<InputStream> descriptionWriterBindingsList = createIOXMLBindingsList();
  	private String inputDirectory = "input";
- 	private String inputSentence = null;
  	private String ontologyFile = "ontopartof.bin";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
 	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplantOutputTreatment.xsd";
@@ -697,56 +690,6 @@ public class RunConfig extends BasicConfig {
 		this.inputDirectory = inputDirectory;
 	}
 	
-	public String getInputSentence() {
-		return inputSentence;
-	}
-	
-	public void setInputSentence(String inputSentence) {
-		this.inputSentence = inputSentence;
-		setInputDirectory("input");
-		new File(inputDirectory).mkdirs();
-		File input = new File("input/input.xml");
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(input);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			writer.write("<bio:treatment xmlns:bio=\"http://www.github.com/biosemantics\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.github.com/biosemantics https://raw.githubusercontent.com/biosemantics/schemas/master/semanticMarkupInput.xsd\">\n");
-			writer.write("  <meta>\n");
-			writer.write("    <source>\n");
-			writer.write("      <author>" + "JOHN DOE" + "</author>\n");
-			writer.write("      <date>" + "2000" + "</date>\n");
-			writer.write("      <title>" + "GENERIC BOOK TITLE" + "</title>\n");
-			writer.write("    </source>\n");
-			writer.write("    <processed_by>\n");
-			writer.write("      <processor>\n");
-			writer.write("        <date>" + LocalDate.now().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + ", " + LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + LocalDate.now().getDayOfMonth() + ", " + LocalDate.now().getYear() + "</date>\n");
-			writer.write("        <software type=\"Text Capture Input Generator\" version=\"1.0\" />\n");
-			writer.write("        <operator>" + "JOHN DOE" + "</operator>\n");
-			writer.write("      </processor>\n");
-			writer.write("    </processed_by>\n");
-			writer.write("  </meta>\n");
-			writer.write("  <taxon_identification status=\"ACCEPTED\">\n");
-			writer.write("    <taxon_name rank=\"FAMILY\" authority=\"AUTHORITY\" date=\"2000\">ROSACEAE</taxon_name>\n");
-			writer.write("  </taxon_identification>\n");
-			writer.write("  <description type=\"MORPHOLOGY\">\n");
-			writer.write("  " + inputSentence + " </description>\n");
-			writer.write("</bio:treatment>");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	public Class<? extends IDescriptionMarkupCreator> getDescriptionMarkupCreator() {
 		return descriptionMarkupCreator;
