@@ -19,7 +19,6 @@ import java.util.concurrent.Future;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.ConsoleAppender;
@@ -29,10 +28,11 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
+
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+
 import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.SingularPluralProvider;
@@ -59,12 +59,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsSynonyms;
-import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.OWLOntologyKnowsPartOf;
-import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.OWLOntologyKnowsSynonyms;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntities;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntityToName;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharacterToValue;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseCharacters;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CreateOrPopulateWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.MoveNegationOrAdverbBiologicalEntityConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.OrderBiologicalEntityConstraint;
@@ -76,12 +71,9 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveNonSpecif
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveOrphanRelations;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveUselessCharacterConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RemoveUselessWholeOrganism;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.RenameCharacter;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.ReplaceTaxonNameByWholeOrganism;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SimpleRemoveSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SortBiologicalEntityNameWithDistanceCharacter;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBiologicalEntitiesCharacters;
-import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeCount;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeQuantityPresence;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
@@ -93,52 +85,52 @@ public class FnaRun {
 	public static void main(String[] args) throws Exception {
 		CommandLineParser parser = new BasicParser();
 		Options options = new Options();
-		
+
 		options.addOption("i", "input", true, "input directory");
 		options.addOption("s", "synonym file", true, "synonym csv file");
 		options.addOption("p", "partof file", true, "part of csv file");
 		options.addOption("z", "database-table-prefix", true, "database table prefix to use");
-		
+
 		try {
-		    CommandLine commandLine = parser.parse( options, args );
-		    
-		    String tablePrefix = "";
-		    if(commandLine.hasOption("z")) {
-		    	tablePrefix = commandLine.getOptionValue("z");
-		    } else {
-		    	System.out.println("You have to specify an database table prefix");
-		    	throw new IllegalArgumentException();
-		    }
-		    
-		    String inputDir = "";
-		    if(!commandLine.hasOption("i")) {
-		    	System.out.println("You have to specify an input directory");
-		    	throw new IllegalArgumentException();
-		    } else {
-		    	inputDir = commandLine.getOptionValue("i");
-		    }
-		    
-		    String outputDir = Configuration.workspaceDir + File.separator + tablePrefix + File.separator + "out_enhanced";
-		    File outputDirFile = new File(outputDir);
-		    outputDirFile.mkdirs();
-		    
+			CommandLine commandLine = parser.parse( options, args );
+
+			String tablePrefix = "";
+			if(commandLine.hasOption("z")) {
+				tablePrefix = commandLine.getOptionValue("z");
+			} else {
+				System.out.println("You have to specify an database table prefix");
+				throw new IllegalArgumentException();
+			}
+
+			String inputDir = "";
+			if(!commandLine.hasOption("i")) {
+				System.out.println("You have to specify an input directory");
+				throw new IllegalArgumentException();
+			} else {
+				inputDir = commandLine.getOptionValue("i");
+			}
+
+			String outputDir = Configuration.workspaceDir + File.separator + tablePrefix + File.separator + "out_enhanced";
+			File outputDirFile = new File(outputDir);
+			outputDirFile.mkdirs();
+
 			String synonymsCsvFile = "";
 			if(!commandLine.hasOption("s")) {
-		    	System.out.println("You have to specify a synonym csv file");
-		    	throw new IllegalArgumentException();
-		    } else {
-		    	synonymsCsvFile = commandLine.getOptionValue("s");
-		    }
-			
+				System.out.println("You have to specify a synonym csv file");
+				throw new IllegalArgumentException();
+			} else {
+				synonymsCsvFile = commandLine.getOptionValue("s");
+			}
+
 			String partOfCsvFile = "";
 			if(!commandLine.hasOption("p")) {
-		    	System.out.println("You have to specify a part of csv file");
-		    	throw new IllegalArgumentException();
-		    } else {
-		    	partOfCsvFile = commandLine.getOptionValue("p");
-		    }
-			
-		    Collection collection = null;
+				System.out.println("You have to specify a part of csv file");
+				throw new IllegalArgumentException();
+			} else {
+				partOfCsvFile = commandLine.getOptionValue("p");
+			}
+
+			Collection collection = null;
 			try {
 				collection = readUploadResult(tablePrefix);
 			} catch (SQLException e) {
@@ -147,7 +139,7 @@ public class FnaRun {
 				throw e;
 			}
 
-    		Client oto2Client = new Client(Configuration.oto2Url);
+			Client oto2Client = new Client(Configuration.oto2Url);
 			try {
 				oto2Client.open();
 				Future<Collection> futureCollection = oto2Client.get(collection.getId(), collection.getSecret());
@@ -159,7 +151,7 @@ public class FnaRun {
 				e.printStackTrace();
 				throw e;
 			}
-		    	
+
 			String destination = inputDir + "_termReview";
 			File file = new File(destination);
 			file.mkdirs();
@@ -167,8 +159,8 @@ public class FnaRun {
 			String termReviewSynonyms = createSynonymFile(collection, destination);
 			createCategoriesFile(collection, destination);
 			String taxonGroup = TaxonGroup.PLANT.toString();
-			
-			FnaRun enhance = new FnaRun(tablePrefix, inputDir, outputDir, synonymsCsvFile, partOfCsvFile, 
+
+			FnaRun enhance = new FnaRun(tablePrefix, inputDir, outputDir, synonymsCsvFile, partOfCsvFile,
 					termReviewTermCategorization, termReviewSynonyms, TaxonGroup.valueOf(taxonGroup));
 			enhance.run();
 		} catch (ParseException e) {
@@ -176,7 +168,7 @@ public class FnaRun {
 			throw e;
 		}
 	}
-	
+
 	private static Collection readUploadResult(String databasePrefix) throws SQLException {
 		MysqlDataSource dataSource = new MysqlDataSource();
 		dataSource.setUser(Configuration.databaseUser);
@@ -184,28 +176,28 @@ public class FnaRun {
 		dataSource.setServerName(Configuration.databaseHost);
 		dataSource.setPort(Configuration.databasePort);
 		dataSource.setDatabaseName(Configuration.databaseName);
-		
+
 		try(Connection connection = dataSource.getConnection()) {
-	        int uploadId = -1;
-	        String secret = "";
-	        String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
-	        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-		        preparedStatement.setString(1, databasePrefix);
-		        preparedStatement.execute();
-		        try(ResultSet resultSet = preparedStatement.getResultSet()) {
-			        while(resultSet.next()) {
-			                uploadId = resultSet.getInt("oto_uploadid");
-			                secret = resultSet.getString("oto_secret");
-			        }
-			        Collection collection = new Collection();
-			        collection.setId(uploadId);
-			        collection.setSecret(secret);
-			        return collection;
-		        }
-	        }
-    	}
+			int uploadId = -1;
+			String secret = "";
+			String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
+			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+				preparedStatement.setString(1, databasePrefix);
+				preparedStatement.execute();
+				try(ResultSet resultSet = preparedStatement.getResultSet()) {
+					while(resultSet.next()) {
+						uploadId = resultSet.getInt("oto_uploadid");
+						secret = resultSet.getString("oto_secret");
+					}
+					Collection collection = new Collection();
+					collection.setId(uploadId);
+					collection.setSecret(secret);
+					return collection;
+				}
+			}
+		}
 	}
-	
+
 	private static String createCategoriesFile(Collection collection, String destination) throws IOException {
 		String path = destination + File.separator + "category_definition.csv";
 		File file = new File(path);
@@ -223,7 +215,7 @@ public class FnaRun {
 		String path = destination + File.separator + "category_mainterm_synonymterm.csv";
 		File file = new File(path);
 		file.createNewFile();
-		
+
 		try(CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
 			csvWriter.writeNext(new String[] {"category", "term", "synonym"});
 			for(Label label : collection.getLabels()) {
@@ -242,7 +234,7 @@ public class FnaRun {
 		String path = destination + File.separator + "category_term.csv";
 		File file = new File(path);
 		file.createNewFile();
-		
+
 		try(CSVWriter csvWriter = new CSVWriter(new FileWriter(file))) {
 			csvWriter.writeNext(new String[] {"category", "term"});
 			for(Label label : collection.getLabels()) {
@@ -251,8 +243,8 @@ public class FnaRun {
 			}
 		}
 		return file.getAbsolutePath();
-	}	
-	
+	}
+
 	private String negWords = "no|not|never";
 	private String advModifiers = "at least|at first|at times";
 	private String stopWords = "a|about|above|across|after|along|also|although|amp|an|and|are|as|at|be|because|become|becomes|becoming|been|before|being|"
@@ -278,8 +270,8 @@ public class FnaRun {
 	private String synonymCsvFile;
 	private String partOfCsvFile;
 	private String runId;
-	
-	public FnaRun(String runId, String input, String output, String synonymCsvFile, String partOfCsvFile, 
+
+	public FnaRun(String runId, String input, String output, String synonymCsvFile, String partOfCsvFile,
 			String termReviewTermCategorization, String termReviewSynonyms, TaxonGroup taxonGroup) throws IOException, InterruptedException, ExecutionException {
 		this.runId = runId;
 		this.input = input;
@@ -289,29 +281,29 @@ public class FnaRun {
 		this.termReviewTermCategorization = termReviewTermCategorization;
 		this.termReviewSynonyms = termReviewSynonyms;
 		this.taxonGroup = taxonGroup;
-		
+
 		initGlossary(glossary, inflector, taxonGroup, termReviewTermCategorization, termReviewSynonyms);
-		
+
 		renames = new HashMap<String, String>();
 		renames.put("count", "quantity");
 		renames.put("atypical_count", "atypical_quantity");
 		renames.put("color", "coloration");
-		
+
 		lifeStyles = glossary.getWordsInCategory("life_style");
 		lifeStyles.addAll(glossary.getWordsInCategory("growth_form"));
 		durations = glossary.getWordsInCategory("duration");
-		
+
 		characterKnowledgeBase = new GlossaryBasedCharacterKnowledgeBase(glossary, negWords, advModifiers, stopWords, units, inflector);
-		
+
 	}
-	
+
 	private void setupLogging(String runId) {
 		Logger rootLogger = Logger.getRootLogger();
 		rootLogger.getLoggerRepository().resetConfiguration();
-		addDebugErrorLoggers(rootLogger, Configuration.workspaceDir + File.separator + runId + File.separator + "enhance_debug.log", 
+		addDebugErrorLoggers(rootLogger, Configuration.workspaceDir + File.separator + runId + File.separator + "enhance_debug.log",
 				Configuration.workspaceDir + File.separator + runId + File.separator + "enhance_error.log");
 	}
-	
+
 	public void run() throws OWLOntologyCreationException {
 		setupLogging(this.runId);
 		log(LogLevel.DEBUG, "Running enhance");
@@ -326,17 +318,14 @@ public class FnaRun {
 				knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
 				knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
-		
+
 		run.addTransformer(new SimpleRemoveSynonyms(knowsSynonyms));
 		run.addTransformer(transformer1);
 		run.addTransformer(transformer2);
 		run.addTransformer(transformer3);
 		run.addTransformer(transformer4);
-		run.addTransformer(new SplitCompoundBiologicalEntity(inflector));
-		run.addTransformer(new SplitCompoundBiologicalEntitiesCharacters(inflector));
 		run.addTransformer(new RemoveUselessWholeOrganism());
 		run.addTransformer(new RemoveUselessCharacterConstraint());
-		run.addTransformer(new RenameCharacter(renames));
 		run.addTransformer(new MoveCharacterToStructureConstraint());
 		run.addTransformer(new MoveNegationOrAdverbBiologicalEntityConstraint(wordNetPOSKnowledgeBase));
 		run.addTransformer(new ReplaceTaxonNameByWholeOrganism());
@@ -347,15 +336,10 @@ public class FnaRun {
 		run.addTransformer(new SortBiologicalEntityNameWithDistanceCharacter());
 		run.addTransformer(new OrderBiologicalEntityConstraint());
 		run.addTransformer(new StandardizeStructureNameBySyntax(characterKnowledgeBase, possessionTerms));
-		//run.addTransformer(new StandardizeStructureNameTest(characterKnowledgeBase, possessionTerms));
 		run.addTransformer(new StandardizeTerminology(characterKnowledgeBase));
 		run.addTransformer(new RemoveOrphanRelations());
 		run.addTransformer(new RemoveDuplicateValues());
-		run.addTransformer(new CollapseBiologicalEntityToName());
-		run.addTransformer(new CollapseCharacterToValue());
-		run.addTransformer(new CollapseBiologicalEntities());
-		run.addTransformer(new CollapseCharacters());
-		
+
 		run.run(new File(input), new File(output));
 
 		log(LogLevel.DEBUG, "Completed running enhance!");
@@ -379,7 +363,7 @@ public class FnaRun {
 	private void addTermReviewGlossary(IGlossary glossary,	IInflector inflector, String termReviewTermCategorization,	String termReviewSynonyms) throws IOException {
 		List<Synonym> synonyms = new LinkedList<Synonym>();
 		Set<String> hasSynonym = new HashSet<String>();
-		
+
 		if(termReviewSynonyms != null && new File(termReviewSynonyms).exists()) {
 			try(CSVReader reader = new CSVReader(new FileReader(termReviewSynonyms))) {
 				List<String[]> lines = reader.readAll();
@@ -387,10 +371,10 @@ public class FnaRun {
 				for(String[] line : lines) {
 					synonyms.add(new Synonym(String.valueOf(i), line[1], line[0], line[2]));
 					hasSynonym.add(line[1]);
-				}	
+				}
 			}
 		}
-		
+
 		if(termReviewTermCategorization != null && new File(termReviewTermCategorization).exists()) {
 			try(CSVReader reader = new CSVReader(new FileReader(termReviewTermCategorization))) {
 				List<String[]> lines = reader.readAll();
@@ -400,7 +384,7 @@ public class FnaRun {
 					decisions.add(new Decision(String.valueOf(i), line[1], line[0], hasSynonym.contains(line[1]), ""));
 				}
 				Download download = new Download(true, decisions, synonyms);
-				
+
 				//add syn set of term_category
 				HashSet<Term> dsyns = new HashSet<Term>();
 				if(download != null) {
@@ -409,21 +393,21 @@ public class FnaRun {
 						//if(termSyn.getCategory().compareTo("structure")==0){
 						if(termSyn.getCategory().matches("structure|taxon_name|substance")){
 							//take care of singular and plural forms
-							String syns = ""; 
+							String syns = "";
 							String synp = "";
 							String terms = "";
 							String termp = "";
 							if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){
 								synp = termSyn.getSynonym().replaceAll("_",  "-");
-								syns = inflector.getSingular(synp);					
+								syns = inflector.getSingular(synp);
 							}else{
 								syns = termSyn.getSynonym().replaceAll("_",  "-");
 								synp = inflector.getPlural(syns);
 							}
-				
+
 							if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
 								termp = termSyn.getTerm().replaceAll("_",  "-");
-								terms = inflector.getSingular(termp);					
+								terms = inflector.getSingular(termp);
 							}else{
 								terms = termSyn.getTerm().replaceAll("_",  "-");
 								termp = inflector.getPlural(terms);
@@ -439,13 +423,13 @@ public class FnaRun {
 						}else{//forking_1 and forking are syns 5/5/14 hong test, shouldn't _1 have already been removed?
 							glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
 							dsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory()));
-						}					
+						}
 					}
-				
+
 					//term_category from OTO, excluding dsyns
 					for(Decision decision : download.getDecisions()) {
 						if(!dsyns.contains(new Term(decision.getTerm().replaceAll("_",  "-"), decision.getCategory())))//calyx_tube => calyx-tube
-							glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());  
+							glossary.addEntry(decision.getTerm().replaceAll("_",  "-"), decision.getCategory());
 					}
 				}
 			}
@@ -454,35 +438,35 @@ public class FnaRun {
 
 	private void addPermanentGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws InterruptedException, ExecutionException {
 		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
-		GlossaryDownload glossaryDownload = new GlossaryDownload();		
+		GlossaryDownload glossaryDownload = new GlossaryDownload();
 		String glossaryVersion = "latest";
 		otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
 		glossaryDownload = futureGlossaryDownload.get();
 		otoClient.close();
-				
+
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
 		for(TermSynonym termSyn : glossaryDownload.getTermSynonyms()) {
-		
+
 			//if(termSyn.getCategory().compareTo("structure")==0){
 			if(termSyn.getCategory().matches("structure|taxon_name|substance")) {
 				//take care of singular and plural forms
-				String syns = ""; 
+				String syns = "";
 				String synp = "";
 				String terms = "";
 				String termp = "";
 				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){ //must convert _ to -, as matching entity phrases will be converted from leg iii to leg-iii in the sentence.
 					synp = termSyn.getSynonym().replaceAll("_",  "-");
-					syns = inflector.getSingular(synp);					
+					syns = inflector.getSingular(synp);
 				} else {
 					syns = termSyn.getSynonym().replaceAll("_",  "-");
 					synp = inflector.getPlural(syns);
 				}
-		
+
 				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
 					termp = termSyn.getTerm().replaceAll("_",  "-");
-					terms = inflector.getSingular(termp);					
+					terms = inflector.getSingular(termp);
 				}else{
 					terms = termSyn.getTerm().replaceAll("_",  "-");
 					termp = inflector.getPlural(terms);
@@ -498,18 +482,18 @@ public class FnaRun {
 				//gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-"), "arrangement"));
 			}
 		}
-	
+
 		//the glossary, excluding gsyns
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			if(!gsyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
 				glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
 		}
 	}
-	
+
 	protected void addDebugErrorLoggers(Logger rootLogger, String debugLog, String errorLog) {
 		PatternLayout layout = new PatternLayout();
 		layout.setConversionPattern("%d [%t] %-5p %c:%L - %m%n");
-		
+
 		RollingFileAppender debugFileAppender = new RollingFileAppender();
 		debugFileAppender.setEncoding("UTF-8");
 		debugFileAppender.setFile(debugLog);
@@ -519,7 +503,7 @@ public class FnaRun {
 		debugFileAppender.setLayout(layout);
 		debugFileAppender.setThreshold(Level.DEBUG);
 		debugFileAppender.activateOptions();
-		
+
 		RollingFileAppender errorFileAppender = new RollingFileAppender();
 		errorFileAppender.setEncoding("UTF-8");
 		errorFileAppender.setFile(errorLog);
@@ -529,7 +513,7 @@ public class FnaRun {
 		errorFileAppender.setLayout(layout);
 		errorFileAppender.setThreshold(Level.ERROR);
 		errorFileAppender.activateOptions();
-		
+
 		ConsoleAppender consoleErrorAppender = new ConsoleAppender();
 		consoleErrorAppender.setTarget("System.out");
 		consoleErrorAppender.setLayout(layout);
