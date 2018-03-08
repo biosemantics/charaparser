@@ -11,13 +11,13 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Distribution;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFileList;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Treatment;
 
 public class JDOMDistributionWriter implements IDistributionWriter {
@@ -40,7 +40,7 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 
 			//for the xml format it is assumed one file to contain only one treatment
 			Treatment treatment = distributionsFile.getTreatments().get(0);
-			
+
 			for(int i=0; i< elements.size(); i++) {
 				Distribution distribution = treatment.getDistributions().get(i);
 				Element currentElement = elements.get(i);
@@ -62,12 +62,17 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 						beElement.setAttribute("type", be.getType());
 						for(Character ch: be.getCharacters()){
 							Element chElement = new Element("character");
-							chElement.setAttribute("name", ch.getName());
-							chElement.setAttribute("value", ch.getValue());
-							chElement.setAttribute("establishment_means", ch.getEstablishedMeans());
+							if(ch.getName() != null)
+								chElement.setAttribute("name", ch.getName());
+							if(ch.getGeographicalConstraint() != null)
+								chElement.setAttribute("geographical_constraint", ch.getGeographicalConstraint());
+							if(ch.getValue() != null)
+								chElement.setAttribute("value", ch.getValue());
+							if(ch.getEstablishedMeans() != null)
+								chElement.setAttribute("establishment_means", ch.getEstablishedMeans());
 							beElement.addContent(chElement);
 						}
-						statementElement.addContent(beElement);						
+						statementElement.addContent(beElement);
 					}
 					/*for(Value be: statement.getValues()){
 						Element valueElement = new Element("value");
@@ -77,7 +82,7 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 					currentElement.addContent(statementElement);
 				}
 			}
-							
+
 			XMLOutputter output = new XMLOutputter();
 			output.output(document, new FileOutputStream(distributionsFile.getFile()));
 		}
