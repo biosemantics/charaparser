@@ -1,35 +1,22 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.transform;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
-
-
-
-
-
-
-
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.PhenologiesFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.Phenology;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.lib.NumericalPhraseParser;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.Treatment;
 
 public class PhenologyTransformer implements IPhenologyTransformer {
@@ -38,7 +25,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	//static Hashtable<String, String> m2smapping = new Hashtable<String, String>();
 	//static Hashtable<String, String> s2mmapping = new Hashtable<String, String>();
 	//static String monthring="jan-feb-mar-apr-may-jun-jul-aug-sep-oct-nov-dec-jan-feb-mar-apr-may-jun-jul-aug-sep-oct-nov-dec";
-	//static String value="(.*?)((jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|spring|summer|fall|winter|year|round|late|early|mid|middle| |-)+)(.*)";             
+	//static String value="(.*?)((jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|spring|summer|fall|winter|year|round|late|early|mid|middle| |-)+)(.*)";
 	//static String seasonring = "spring-summer-fall-winter-spring-summer-fall-winter";
 	//static String seasons = "(spring|summer|fall|winter)";
 	//static String months ="(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)";
@@ -47,7 +34,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	static String timePtn = "Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|Feburary|March|April|June|July|August|September|October|November|December|spring|summer|fall|autumn|winter|midspring|midsummer|midwinter|midfall|midautumn|year[_-]round|\\w+ periods";
 	static String timeModifierPtn="latter|late|last|early|mid|middle";
 	static Pattern timePattern = Pattern.compile("[^ ]*(_|-|\\b)("+timePtn+")(\\)|\\b)", Pattern.CASE_INSENSITIVE);
-	
+
 	static Hashtable<String, String> phenologyNames = null;
 	static Hashtable<String, String> stages = null;
 	static{
@@ -58,26 +45,26 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		stages.put("appearing", "appearing");
 		stages.put("arising", "appearing");
 		stages.put("produced", "appearing");
-		
+
 		//mature
 		stages.put("maturing", "maturing");
 		stages.put("mature", "maturing");
 		stages.put("matures", "maturing");
 		stages.put("maturity", "maturing");
-		
-		
+
+
 		//persist
 		stages.put("persisting", "persisting");
 		stages.put("persists", "persisting");
 		stages.put("persist", "persisting");
-		
+
 		//meiosis
 		stages.put("meiosis", "meiosis");
-		
+
 		//dying
 		stages.put("dying", "dying");
-		
-		//use standardized stages as defined above in keys 
+
+		//use standardized stages as defined above in keys
 		phenologyNames = new Hashtable<String, String>();
 		//flower appearing time
 		phenologyNames.put("flowering", "flowering time");
@@ -85,51 +72,51 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		phenologyNames.put("flower", "flowering time");
 		//flowers dying time
 		phenologyNames.put("flowers dying", "flowers dying time");
-		
+
 		//leaves appearing time
 		phenologyNames.put("leaves appearing", "leaves appearing time");
 		//leaves meiosis time
 		phenologyNames.put("leaves meiosis", "leaves meiosis time");
 		//leaves dying time
 		phenologyNames.put("leaves dying", "leaves dying time");
-		
-		//fruits appearing time		
+
+		//fruits appearing time
 		phenologyNames.put("fruiting", "fruiting_time");
-		
+
 		//cones appearing
 		phenologyNames.put("coning", "cones appearing time");
 		phenologyNames.put("cones appearing", "cones appearing time");
 		//cones maturing
 		phenologyNames.put("cones maturing", "cones maturing time");
-		
+
 		//seeds maturing
 		phenologyNames.put("seeds maturing", "seed maturing time");
-		
+
 		//spore maturity
 		phenologyNames.put("sporulating", "spores maturing time");
 		phenologyNames.put("sporulates", "spores maturing time");
 		phenologyNames.put("spores maturing", "spores maturing time");
 		phenologyNames.put("sporulation", "spores maturing time");
-		
-		//capsules maturing 
+
+		//capsules maturing
 		phenologyNames.put("capsules maturing", "capsules maturing time");
 		phenologyNames.put("capsule maturing", "capsules maturing time");
-		
-		//sporocarps appearing 
+
+		//sporocarps appearing
 		phenologyNames.put("sporocarps appearing", "sporocarps appearing time");
-		//sporocarps maturing 
+		//sporocarps maturing
 		phenologyNames.put("sporocarps maturing", "sporocarps maturing time");
-		
+
 		//sporophtyes maturing
 		phenologyNames.put("sporophtyes maturing", "sporophytes maturing time");
 		phenologyNames.put("sporophtye maturing", "sporophytes maturing time");
-		
-		//sporophylls 
+
+		//sporophylls
 		phenologyNames.put("sporophylls appearing", "sporophylls appearing time");
 		phenologyNames.put("sporophylls persisting", "sporophylls persisting time");
-	
+
 	}
-	
+
 	/*static{
 		m2smapping.put("jan", "winter");
 		m2smapping.put("feb", "winter");
@@ -153,7 +140,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	String stopwords = null;
 	Pattern advModPattern = null;
 	@Inject
-	public PhenologyTransformer(@Named("AdvModifiers") String advModifiers, 
+	public PhenologyTransformer(@Named("AdvModifiers") String advModifiers,
 			@Named("LyAdverbpattern") String lyAdvPattern, @Named("StopWordString") String stopwords){
 		this.stopwords = stopwords;
 		this.advModPattern = Pattern.compile( "("+advModifiers+"|"+lyAdvPattern+"|ca.)");
@@ -186,7 +173,6 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		}
 	}
 
-	@Override
 	public LinkedHashSet<Character> parse(String text) {
 		log(LogLevel.DEBUG, "Text to parse: "+text);
 		System.out.println("Text to parse: "+text);
@@ -196,18 +182,18 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			log(LogLevel.DEBUG, "Text normalized to: "+nText);
 			System.out.println("Text normalized to: "+nText);
 		}
-		
+
 		text = nText;
-		
+
 		LinkedHashSet<Character>  values = new LinkedHashSet<Character>();
 		ArrayList<PhenologyInfo> pis = new ArrayList<PhenologyInfo> ();
-		
+
 		//no time and no keyword = not a phenology statement
 		/*if(!text.matches(".*?("+this.timePtn+").*?") && ! text.matches(".*?("+this.keywordsPtn+").*?")){
 			return values;
 		}*/
-			
-		//check for keywords, stage, then time 
+
+		//check for keywords, stage, then time
 		//text="  and dying in late_spring-early_summer,";
 		//Pattern p = Pattern.compile("(?<=(?:[,;.] |^))((?:"+this.keywordsPtn+")\\b)? ?(\\b(?:"+this.stagesPtn+")\\b)?(.*?[^ ]*(?:"+this.timePtn+")\\b)", Pattern.CASE_INSENSITIVE);
 		/*Pattern p = Pattern.compile("\\b((?:"+this.keywordsPtn+")\\b)?+ ?(\\b(?:"+this.stagesPtn+")\\b)?+(.*?[^ ]*(?:"+this.timePtn+")\\b)", Pattern.CASE_INSENSITIVE);
@@ -222,18 +208,18 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 				stage = text.substring(m.start(2), m.end(2));
 			String time = text.substring(m.start(3), m.end(3));
 			String extend = completeTime(text.substring(m.end(3)));
-			time = time +extend; //one time = the time for a keyword + a stage 
+			time = time +extend; //one time = the time for a keyword + a stage
 			start = m.end(3)+extend.length();
 			//System.out.println("next start index: "+start);
-			
-			
+
+
 			ArrayList<Time> times = parseTime(time);
-			
+
 			PhenologyInfo pi = new PhenologyInfo();
 			pi.setName(keyword, stage);
 			pi.addAllTime(times);
 			pis.add(pi);
-			
+
 			log(LogLevel.DEBUG, "add a PhenologyInfo object: "+pi.toString());
 			System.out.println("add a PhenologyInfo object: "+pi.toString());
 		}*/
@@ -243,7 +229,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		while(m.find(start)){
 			Pattern p = Pattern.compile("\\b((?:"+PhenologyTransformer.keywordsPtn+")\\b)", Pattern.CASE_INSENSITIVE);
 			Matcher m1 = p.matcher(text);
-			
+
 			if(m1.find(start)){
 				keyword = text.substring(m1.start(), m1.end()).toLowerCase();
 				start = m1.end();
@@ -251,60 +237,60 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			String stage = "";
 			p = Pattern.compile("\\b((?:"+PhenologyTransformer.stagesPtn+")\\b)", Pattern.CASE_INSENSITIVE);
 			m1 = p.matcher(text);
-			
+
 			if(m1.find(start)){
 				if(text.substring(start, m1.start()).toLowerCase().matches(".*?\\b((?:"+PhenologyTransformer.keywordsPtn+")\\b).*")) //a keyword in between
 					continue;
 				stage = text.substring(m1.start(), m1.end());
 				start = m1.end();
 			}
-			
+
 			String time = "";
 			m1 = PhenologyTransformer.timePattern.matcher(text);
-			
+
 			if(m1.find(start)){
 				if(text.substring(start, m1.start()).toLowerCase().matches(".*?\\b((?:"+PhenologyTransformer.keywordsPtn+")\\b).*")) //a keyword in between
 					continue;
 				time = text.substring(start, m1.end());
 				String extend = completeTime(text.substring(m1.end()));
-				time = time +extend; //one time = the time for a keyword + a stage 
+				time = time +extend; //one time = the time for a keyword + a stage
 				start = m1.end()+extend.length();
 				//System.out.println("next start index: "+start);
-				
-				
+
+
 				ArrayList<Time> times = parseTime(time);
-				
+
 				PhenologyInfo pi = new PhenologyInfo();
 				pi.setName(keyword, stage);
 				pi.addAllTime(times);
 				pis.add(pi);
-				
+
 				log(LogLevel.DEBUG, "add a PhenologyInfo object: "+pi.toString());
 				System.out.println("add a PhenologyInfo object: "+pi.toString());
-				
-			}			
-		}
-		
-		//check for keywords embedded in the middle of a sentence
-		//and the cases of unknown, not reported, undetermined, not determined, no ... data are available
-		
-		for(PhenologyInfo pi: pis){
-			ArrayList<Time> times = pi.getTime();
-				for(Time time: times){
-					Character c = new Character();
-					c.setName(pi.getName()==null? "phenology" : pi.getName());
-					c.setValue(time.getCleanTime());
-					c.setModifier(time.getCleanModifier());
-					values.add(c);
+
 			}
 		}
 
-		
-		
-		
-		
-		
-		
+		//check for keywords embedded in the middle of a sentence
+		//and the cases of unknown, not reported, undetermined, not determined, no ... data are available
+
+		for(PhenologyInfo pi: pis){
+			ArrayList<Time> times = pi.getTime();
+			for(Time time: times){
+				Character c = new Character();
+				c.setName(pi.getName()==null? "phenology" : pi.getName());
+				c.setValue(time.getCleanTime());
+				c.setModifier(time.getCleanModifier());
+				values.add(c);
+			}
+		}
+
+
+
+
+
+
+
 		/*text = text.toLowerCase().replaceFirst("(flowering|fruiting)\\s+", "").replaceAll("_", "-");
 		//System.out.println("original: "+text);
 		//clean up the text
@@ -314,7 +300,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		while(m.matches()){
 			clean += m.group(2)+"@";
 			text = m.group(4);
-			m=p.matcher(text);                      
+			m=p.matcher(text);
 		}
 		//System.out.println("cleaned: "+clean);
 		//fetch the values
@@ -342,7 +328,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			c.setValue(vs);
 			values.add(c);
 		}
-		*/
+		 */
 		//values.addAll(formValues(valueStrings)); //do not translate May to Summer, year around to Jan-Dec.
 		return values;
 	}
@@ -356,8 +342,8 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	 *  in early spring and dying in late spring and early summer, long before those of associated moonworts.
 	 *  in latter half of winter and early spring, sometimes with second flush in same year after heavy rains
 	 *  during wet periods
-	 *  
-	 *  
+	 *
+	 *
 	 *  time:spring-summer
 	 *  time:year-round modifier:south
 	 * @param time
@@ -379,7 +365,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		}
 		return times;
 	}
-	
+
 	/**
 	 * adv and preposition phrases
 	 * @param text
@@ -431,7 +417,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 				text = text.replaceFirst(leadingPuncts, "");
 				leads = leads + leadingPuncts;
 			}
-			
+
 			if(text.indexOf("(")<0 && text.indexOf(")")>0){ //...)
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
 				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
@@ -461,16 +447,16 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			while (m.find()){
 				if(!text.substring(m.start()).matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*")) //no \d between m.start and end of text
 					start = m.start();
-			}	
+			}
 			modifier = text.substring(start);
 		}
 		return leads+modifier.replaceFirst("("+this.stopwords+"| )+$", "");
 	}
-	
+
 	/**
 	 * late spring and early summer (May-Jun)
 	 * =>late_spring-early_summer_(May-Jun)
-	 * 
+	 *
 	 * latter half of winter?
 	 * =>latter_half_of_winter?
 	 * @param text
@@ -479,9 +465,9 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	private String normalizeTime(String text){
 		//all year, throughout the year, through the year, year round => year_round
 		text = text.replaceAll("\\b(all year|througout the year|through the year|year around)\\b", "year_round");
-		
+
 		//late spring
-		text = text.replaceAll("(?<=\\b(?:"+PhenologyTransformer.timeModifierPtn+")\\b) (?=(?:"+PhenologyTransformer.timePtn+")\\b)", "_"); 
+		text = text.replaceAll("(?<=\\b(?:"+PhenologyTransformer.timeModifierPtn+")\\b) (?=(?:"+PhenologyTransformer.timePtn+")\\b)", "_");
 
 		//latter half of winter
 		Pattern p = Pattern.compile("\\b(?:"+PhenologyTransformer.timeModifierPtn+")\\b.*?\\b(?:"+PhenologyTransformer.timePtn+")\\b");
@@ -493,20 +479,20 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 				text = text.replaceAll(matched, stringed);
 			}
 		}
-		
-		//and/or/to
-		text = text.replaceAll("(?<=(\\b|_|-)(?:"+PhenologyTransformer.timeModifierPtn+"|"+PhenologyTransformer.timePtn+")\\b) (and|or|to|through) (?=(?:"+PhenologyTransformer.timeModifierPtn+"|"+PhenologyTransformer.timePtn+")(\\b|_|-))", "-"); 
-		
 
-		
+		//and/or/to
+		text = text.replaceAll("(?<=(\\b|_|-)(?:"+PhenologyTransformer.timeModifierPtn+"|"+PhenologyTransformer.timePtn+")\\b) (and|or|to|through) (?=(?:"+PhenologyTransformer.timeModifierPtn+"|"+PhenologyTransformer.timePtn+")(\\b|_|-))", "-");
+
+
+
 		//summer (May-Jun)
-		text = text.replaceAll("(?<=(\\b|_|-)(?:"+PhenologyTransformer.timePtn+")\\b) (?=(?:\\([^ ]*(_|-|\\b)("+PhenologyTransformer.timePtn+")\\)))", "_"); 
+		text = text.replaceAll("(?<=(\\b|_|-)(?:"+PhenologyTransformer.timePtn+")\\b) (?=(?:\\([^ ]*(_|-|\\b)("+PhenologyTransformer.timePtn+")\\)))", "_");
 		return text;
 	}
 
 	/**
 	 * complete the time value from the string [following], e.g.:
-	 * 
+	 *
 	 * sometimes year-round [in frostfree coastal habitats].
 	 * spring–summer (year-round [south)]
 	 * Leaves appearing in June[, dying in September].
@@ -522,7 +508,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			follow = follow.substring(0, m.start());
 		}
 		return follow.replaceFirst("("+this.stopwords+"| )+$", "");
-		
+
 		/*t = Pattern.compile("[^ ]*("+this.timePtn+")\\b", Pattern.CASE_INSENSITIVE);
 		m = t.matcher(follow);
 		int stop = 0;
@@ -530,7 +516,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			stop = m.end();
 		}
 		follow = follow.substring(stop);
-		
+
 		//...)
 		if(follow.replaceAll("[^\\(\\[\\)\\],;\\.]", "").matches("^[\\)\\],;.].*")){
 			stop = follow.indexOf(")");
@@ -550,7 +536,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	/*private  LinkedHashSet<Character>  formValues(ArrayList<String> valueString) {
 		LinkedHashSet<Character>  values = new LinkedHashSet<Character>();
 		String includedseasons = getSeasons(valueString);
-		String includedmonths = getMonths(valueString);      
+		String includedmonths = getMonths(valueString);
 
 		Iterator<String> it = valueString.iterator();
 
@@ -572,11 +558,11 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 					c.setValue(season);
 					values.add(c);
 					includedseasons +=season+"@";
-				}                                       
+				}
 
 				//add corresponding months for the season (if this is a season value)
 				String monthlist = PhenologyTransformer.s2mmapping.get(month.toLowerCase());
-				if( monthlist!=null){ 
+				if( monthlist!=null){
 					String[] months = monthlist.split("\\s*@\\s*");
 					for(int i=0; i<months.length; i++){
 						if(months[i].compareTo("")!=0 && includedmonths.indexOf(months[i])<0){
@@ -584,8 +570,8 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 							c.setName("phenology");
 							c.setValue(months[i]);
 							values.add(c);
-							includedmonths +=months[i]+"@";                                 
-						}                       
+							includedmonths +=months[i]+"@";
+						}
 					}
 				}
 			}
@@ -615,7 +601,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		return values;
 	}
 	/**
-	 * 
+	 *
 	 * @param times
 	 * @return
 	 */
@@ -639,7 +625,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 				dump2ArrayList(mm.group(1).split("-"), results);
 			}else if(sm.matches()){
 				dump2ArrayList(sm.group(1).split("-"), results);
-			}                       
+			}
 		}
 		return results;
 	}*/
@@ -681,22 +667,22 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		}
 		return months;
 	}*/
-	
+
 	private class Time{
 		String timeString = null;
 		String modifier = null;
 		protected String getTime() {
 			return timeString;
 		}
-		
+
 		protected String getCleanTime() {
-			//remove unmatched ), 
+			//remove unmatched ),
 			timeString = timeString.trim();
 			String prev = timeString;
 			while(timeString.matches(".*?[\\)\\]\\(\\[].*")){
-				if(timeString.matches("^[\\(\\[].*") && !timeString.matches(".*?[\\)\\]].+")) 
+				if(timeString.matches("^[\\(\\[].*") && !timeString.matches(".*?[\\)\\]].+"))
 					timeString = timeString.substring(1);
-				if(timeString.matches(".*[\\)\\]]$") && !timeString.matches(".*?[\\(\\[].+")) 
+				if(timeString.matches(".*[\\)\\]]$") && !timeString.matches(".*?[\\(\\[].+"))
 					timeString = timeString.substring(0, timeString.length()-1);
 				if(prev.compareTo(timeString)==0) break;
 				prev = timeString;
@@ -712,13 +698,13 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			return modifier;
 		}
 		protected String getCleanModifier() {
-			//remove unmatched ), 
+			//remove unmatched ),
 			modifier = modifier.trim();
 			String prev = modifier;
 			while(modifier.matches(".*?[\\)\\]\\(\\[].*")){
-				if(modifier.matches("^[\\(\\[].*") && !modifier.matches(".*?[\\)\\]].+")) 
+				if(modifier.matches("^[\\(\\[].*") && !modifier.matches(".*?[\\)\\]].+"))
 					modifier = modifier.substring(1);
-				if(modifier.matches(".*[\\)\\]]$") && !modifier.matches(".*?[\\(\\[].+")) 
+				if(modifier.matches(".*[\\)\\]]$") && !modifier.matches(".*?[\\(\\[].+"))
 					modifier = modifier.substring(0, modifier.length()-1);
 				if(prev.compareTo(modifier)==0) break;
 				prev = modifier;
@@ -727,16 +713,17 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 			modifier = modifier.replaceAll("^[ .:;,]+|[ .:;,]+$", "");
 			return modifier;
 		}
-		
+
 		protected void setModifier(String modifier) {
 			this.modifier = modifier;
 		}
+		@Override
 		public String toString(){
-			 return "time = "+timeString+System.getProperty("line.separator")+
-			        "modifier = "+modifier +System.getProperty("line.separator");
+			return "time = "+timeString+System.getProperty("line.separator")+
+					"modifier = "+modifier +System.getProperty("line.separator");
 		}
 	}
-	
+
 	private class PhenologyInfo{
 		String name = null;
 		ArrayList<Time> times = new ArrayList<Time>(); //time => modifier/constraint for the time
@@ -753,22 +740,23 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 		protected ArrayList<Time> getTime(){
 			return this.times;
 		}
-		
+
 		protected void addTime(Time time){
 			this.times.add(time);
 		}
-		
+
 		protected void addAllTime(ArrayList<Time> time){
 			this.times.addAll(time);
 		}
-		
+
+		@Override
 		public String toString(){
-		 String s = "name = "+name+System.getProperty("line.separator");
-		 for(Time time: this.times){
-			 s = s+time.toString()+System.getProperty("line.separator");
-		 }
-		return s;
+			String s = "name = "+name+System.getProperty("line.separator");
+			for(Time time: this.times){
+				s = s+time.toString()+System.getProperty("line.separator");
+			}
+			return s;
 		}
-		
+
 	}
 }

@@ -7,36 +7,23 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Future;
 
 import javax.xml.bind.JAXBException;
-
-import org.apache.commons.lang3.concurrent.ConcurrentUtils;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
-import edu.arizona.biosemantics.oto.model.lite.Decision;
-import edu.arizona.biosemantics.oto.model.lite.Download;
-import edu.arizona.biosemantics.oto.model.lite.Synonym;
-import edu.arizona.biosemantics.oto.model.lite.UploadResult;
-import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
 import edu.arizona.biosemantics.common.ling.know.ICorpus;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.lib.CSVCorpus;
 import edu.arizona.biosemantics.common.ling.know.lib.CSVGlossary;
+import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.FNAv19Normalizer;
-import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.IDescriptionMarkupResultReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.io.IDescriptionMarkupEvaluator;
@@ -48,44 +35,43 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupAndOntologyMappingCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupRun;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.IDistributionWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.DistributionMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.IDistributionMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.DistributionTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.IDistributionTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.IElevationWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.IElevationMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.ElevationTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.IElevationTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.IHabitatReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.IHabitatWriter;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatReader;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.HabitatMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.IHabitatMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.HabitatTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.IHabitatTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupCreator;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.ElevationTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.IElevationTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.DistributionMarkupCreator;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.DistributionTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.transform.IDistributionTransformer;
-import edu.arizona.biosemantics.semanticmarkup.run.IRun;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatReader;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.lib.JDOMPhenologyReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.lib.JDOMPhenologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.IPhenologyMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.PhenologyMarkupCreator;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.transform.ExtractorBasedPhenologyTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.transform.IPhenologyTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.transform.PhenologyTransformer;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionReader;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.io.lib.JDOMDistributionWriter;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationReader;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationWriter;
-import edu.arizona.biosemantics.common.biology.TaxonGroup;
+import edu.arizona.biosemantics.semanticmarkup.run.IRun;
 
 
 
@@ -117,8 +103,8 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDescriptionReader> descriptionReader = EvaluationDBDescriptionReader.class;
 	private List<InputStream> descriptionReaderBindingsList = createIOXMLBindingsList();
 	private List<InputStream> descriptionWriterBindingsList = createIOXMLBindingsList();
- 	private String inputDirectory = "input";
- 	private String ontologyFile = "ontopartof.bin";
+	private String inputDirectory = "input";
+	private String ontologyFile = "ontopartof.bin";
 	private Class<? extends IDescriptionWriter> descriptionWriter = MOXyBinderDescriptionWriter.class;
 	private String markupRunValidateSchemaFile = "edu/arizona/biosemantics/semanticmarkup/markupelement/description/io/schemas/iplantOutputTreatment.xsd";
 	private Class<? extends IHabitatReader> habitatReader = JDOMHabitatReader.class;
@@ -129,8 +115,8 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDistributionWriter> distributionWriter = JDOMDistributionWriter.class;
 	private Class<? extends IElevationReader> elevationReader = JDOMElevationReader.class;
 	private Class<? extends IElevationWriter> elevationWriter = JDOMElevationWriter.class;
-	
-	// PROCESSING 
+
+	// PROCESSING
 	private TaxonGroup taxonGroup = TaxonGroup.PLANT;
 	private boolean useEmptyGlossary = false;
 	private Class<? extends IRun> run = DescriptionMarkupRun.class;
@@ -145,7 +131,7 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IElevationMarkupCreator> elevationMarkupCreator = ElevationMarkupCreator.class;
 	private Class<? extends IDistributionMarkupCreator> distributionMarkupCreator = DistributionMarkupCreator.class;
 	private Class<? extends IPhenologyMarkupCreator> phenologyMarkupCreator = PhenologyMarkupCreator.class;
-	
+
 	private boolean markupDescriptionTreatmentTransformerParallelProcessing = Configuration.threadingActive;
 	private int markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum = Configuration.descriptionThreads; //30
 	private int markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum = Configuration.sentenceThreads;
@@ -154,24 +140,24 @@ public class RunConfig extends BasicConfig {
 	private Class<? extends IDescriptionMarkupEvaluator> evaluationRunEvaluator = PerfectPartialPrecisionRecallEvaluator.class;
 	private boolean termCategorizationRequired = false;
 	private boolean useOtoCommuntiyDownload = true;
-		
+
 	// MISC
 	//required for bioportal submission of oto lite
 	private String sourceOfDescriptions = "";
 	private String user = "";
 	//
-	
+
 	public RunConfig() throws IOException {
 		super();
 		this.setWorkspaceDirectory(Configuration.workspaceDirectory);
 	}
 
-	@Override 
+	@Override
 	public void configure() {
 		super.configure();
-		
+
 		try {
-			// PROCESSING 
+			// PROCESSING
 			bind(TaxonGroup.class).annotatedWith(Names.named("TaxonGroup")).toInstance(taxonGroup);
 			bind(Boolean.class).annotatedWith(Names.named("UseEmptyGlossary")).toInstance(useEmptyGlossary);
 			bind(IRun.class).to(run);
@@ -188,12 +174,12 @@ public class RunConfig extends BasicConfig {
 			bind(boolean.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")).toInstance(markupDescriptionTreatmentTransformerParallelProcessing);
 			bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")).toInstance(markupDescriptionTreatmentTransformerDescriptionExtractorRunMaximum);
 			bind(int.class).annotatedWith(Names.named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")).toInstance(markupDescriptionTreatmentTransformerSentenceChunkerRunMaximum);
-			bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class); 
+			bind(ITerminologyLearner.class).to(terminologyLearner ).in(Singleton.class);
 			bind(INormalizer.class).to(normalizer).in(Singleton.class);
 			bind(IDescriptionMarkupEvaluator.class).annotatedWith(Names.named("EvaluationRun_Evaluator")).to(evaluationRunEvaluator);
 			bind(Boolean.class).annotatedWith(Names.named("termCategorizationRequired")).toInstance(termCategorizationRequired);
 			bind(Boolean.class).annotatedWith(Names.named("UseOtoCommunityDownload")).toInstance(useOtoCommuntiyDownload);
-			
+
 			bind(IHabitatMarkupCreator.class).to(habitatMarkupCreator).in(Singleton.class);
 			bind(IHabitatTransformer.class).to(HabitatTransformer.class).in(Singleton.class);
 			bind(IDistributionMarkupCreator.class).to(distributionMarkupCreator).in(Singleton.class);
@@ -201,10 +187,10 @@ public class RunConfig extends BasicConfig {
 			bind(IElevationMarkupCreator.class).to(elevationMarkupCreator).in(Singleton.class);
 			bind(IElevationTransformer.class).to(ElevationTransformer.class).in(Singleton.class);
 			bind(IPhenologyMarkupCreator.class).to(phenologyMarkupCreator).in(Singleton.class);
-			bind(IPhenologyTransformer.class).to(PhenologyTransformer.class).in(Singleton.class);
+			bind(IPhenologyTransformer.class).to(ExtractorBasedPhenologyTransformer.class).in(Singleton.class);
 
 			bind(String.class).annotatedWith(Names.named("OntologiesDirectory")).toInstance(ontologiesDirectory);
-			
+
 			//IO
 			bind(String.class).annotatedWith(Names.named("InputDirectory")).toInstance(inputDirectory);
 			bind(IDescriptionReader.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionReader")).to(descriptionReader).in(Singleton.class);
@@ -216,7 +202,7 @@ public class RunConfig extends BasicConfig {
 			bind(IDescriptionMarkupResultReader.class).annotatedWith(Names.named("EvaluationRun_TestReader")).toInstance(constructEvaluationTestReader());
 			bind(IDescriptionWriter.class).annotatedWith(Names.named("DescriptionMarkupCreator_DescriptionWriter")).to(descriptionWriter).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("MarkupRun_ValidateSchemaFile")).toInstance(markupRunValidateSchemaFile);
-			
+
 			bind(IHabitatReader.class).annotatedWith(Names.named("HabitatMarkupCreator_HabitatReader")).to(habitatReader).in(Singleton.class);
 			bind(IHabitatWriter.class).annotatedWith(Names.named("HabitatMarkupCreator_HabitatWriter")).to(habitatWriter).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("HabitatReader_InputDirectory")).toInstance(runOutDirectory);
@@ -224,14 +210,14 @@ public class RunConfig extends BasicConfig {
 			bind(IPhenologyWriter.class).annotatedWith(Names.named("PhenologyMarkupCreator_PhenologyWriter")).to(phenologyWriter).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("PhenologyReader_InputDirectory")).toInstance(runOutDirectory);
 			bind(IDistributionReader.class).annotatedWith(Names.named("DistributionMarkupCreator_DistributionReader")).to(distributionReader).in(Singleton.class);
-		    bind(IDistributionWriter.class).annotatedWith(Names.named("DistributionMarkupCreator_DistributionWriter")).to(distributionWriter).in(Singleton.class);
+			bind(IDistributionWriter.class).annotatedWith(Names.named("DistributionMarkupCreator_DistributionWriter")).to(distributionWriter).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("DistributionReader_InputDirectory")).toInstance(runOutDirectory);
 			bind(IElevationReader.class).annotatedWith(Names.named("ElevationMarkupCreator_ElevationReader")).to(elevationReader).in(Singleton.class);
 			bind(IElevationWriter.class).annotatedWith(Names.named("ElevationMarkupCreator_ElevationWriter")).to(elevationWriter).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("ElevationReader_InputDirectory")).toInstance(runOutDirectory);
-						
+
 			//ENVIRONMENTAL
-			bind(String.class).annotatedWith(Names.named("DatabasePrefix")).toInstance(databaseTablePrefix); 
+			bind(String.class).annotatedWith(Names.named("DatabasePrefix")).toInstance(databaseTablePrefix);
 			bind(String.class).annotatedWith(Names.named("DatabaseHost")).toInstance(databaseHost);
 			bind(String.class).annotatedWith(Names.named("DatabasePort")).toInstance(databasePort);
 			bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance(databaseName);
@@ -239,32 +225,32 @@ public class RunConfig extends BasicConfig {
 			bind(String.class).annotatedWith(Names.named("DatabasePassword")).toInstance(databasePassword);
 			bind(String.class).annotatedWith(Names.named("OTO2ReviewFile")).toInstance(oto2ReviewFile);
 			bind(String.class).annotatedWith(Names.named("OTO2TermReviewURL")).toInstance(oto2TermReviewURL);
-			bind(String.class).annotatedWith(Names.named("OTO2Client_Url")).toInstance(oto2ClientURL);			
+			bind(String.class).annotatedWith(Names.named("OTO2Client_Url")).toInstance(oto2ClientURL);
 			bind(edu.arizona.biosemantics.oto2.oto.server.rest.client.Client.class).toProvider(new Provider<edu.arizona.biosemantics.oto2.oto.server.rest.client.Client>() {
 				private edu.arizona.biosemantics.oto2.oto.server.rest.client.Client instance;
 				@Override
 				public edu.arizona.biosemantics.oto2.oto.server.rest.client.Client get() {
-					
+
 					if(instance == null)
 						instance = new edu.arizona.biosemantics.oto2.oto.server.rest.client.Client(oto2ClientURL);
 					return instance;
-					
-					
-					 // markup run
-					
-					 /*return new OTOLiteClient(null) {
+
+
+					// markup run
+
+					/*return new OTOLiteClient(null) {
 						@Override
 						public void open() {
-							
+
 						}
-						
+
 						@Override
 						public void close() {
-							
+
 						}
-						
+
 						@Override
-						public Future<Download> getDownload(UploadResult uploadResult) {							
+						public Future<Download> getDownload(UploadResult uploadResult) {
 							try {
 								List<Synonym> synonyms = new LinkedList<Synonym>();
 								CSVReader reader = new CSVReader(new FileReader("category_mainterm_synonymterm-task-spiderM.csv"));
@@ -274,8 +260,8 @@ public class RunConfig extends BasicConfig {
 								for(String[] line : lines) {
 									synonyms.add(new Synonym(String.valueOf(i), line[1], line[0], line[2]));
 									hasSynonym.add(line[1]);
-								}	
-								
+								}
+
 								reader = new CSVReader(new FileReader("category_term-task-spiderM.csv"));
 								lines = reader.readAll();
 								List<Decision> decisions = new LinkedList<Decision>();
@@ -283,7 +269,7 @@ public class RunConfig extends BasicConfig {
 								for(String[] line : lines) {
 									decisions.add(new Decision(String.valueOf(i), line[1], line[0], hasSynonym.contains(line[1]), ""));
 								}
-	
+
 								Download download = new Download(true, decisions, synonyms);
 								return ConcurrentUtils.constantFuture(download);
 							} catch(Exception e) {
@@ -295,32 +281,32 @@ public class RunConfig extends BasicConfig {
 			}).in(Singleton.class);
 			bind(String.class).annotatedWith(Names.named("OTOClient_Url")).toInstance(otoClientUrl);
 			bind(String.class).annotatedWith(Names.named("GlossaryTable")).toInstance(databaseGlossaryTable);
-			
+
 			bind(ICorpus.class).toProvider(new Provider<ICorpus>() {
-					private ICorpus corpus;
-					@Override
-					public ICorpus get() {
-						if(corpus == null)
-							try {
-								corpus = new CSVCorpus(inputStreamCreator.readStreamFromString(csvCorpusPath));
-							} catch(IOException e) {
-								log(LogLevel.ERROR, "Could not load csv corpus", e);
-							}
-						return corpus;
-					}
-				  }).in(Singleton.class);
-			
+				private ICorpus corpus;
+				@Override
+				public ICorpus get() {
+					if(corpus == null)
+						try {
+							corpus = new CSVCorpus(inputStreamCreator.readStreamFromString(csvCorpusPath));
+						} catch(IOException e) {
+							log(LogLevel.ERROR, "Could not load csv corpus", e);
+						}
+					return corpus;
+				}
+			}).in(Singleton.class);
+
 			//MISC
 			bind(String.class).annotatedWith(Names.named("GuiceModuleFile")).toInstance(this.toString());
 			bind(String.class).annotatedWith(Names.named("SourceOfDescriptions")).toInstance(sourceOfDescriptions);
 			bind(String.class).annotatedWith(Names.named("User")).toInstance(user);
-		
+
 		} catch(IOException | JAXBException e) {
 			log(LogLevel.ERROR, "Exception loading configuration", e);
 			throw new IllegalArgumentException();
 		}
 	}
-	
+
 	private List<InputStream> createEvaluationTestReaderBindingsList() throws IOException {
 		List<InputStream> result = new LinkedList<InputStream>();
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/eval/model/bindings/baseBindings.xml"));
@@ -386,18 +372,18 @@ public class RunConfig extends BasicConfig {
 		result.add("1297.txt-28");
 		result.add("1297.txt-29");
 		result.add("1297.txt-30");*/
-		
+
 		//result.add("568.txt-8");
 		//result.add("2110.txt-1");
 		//result.add("1196.txt-4");
-		
+
 		//result.add("3.txt-3");
-		
+
 		//result.add("735.txt-21");
 		//result.add("121.txt-3");
 		//result.add("765.txt-6");
-		
-		
+
+
 		/*String file;
 		File folder = new File(path);
 		if (folder.exists()) {
@@ -428,7 +414,7 @@ public class RunConfig extends BasicConfig {
 					//if(file.equals("148.txt-12"))
 					//if(file.equals("132.txt-18"))
 					//if(file.equals("165.txt-2"))
-					
+
 					//if(file.equals("462.txt-6"))
 					//if(file.equals("474.txt-7"))
 					//if(file.equals("108.txt-9"))
@@ -536,15 +522,17 @@ public class RunConfig extends BasicConfig {
 		this.databasePassword = databasePassword;
 	}
 
+	@Override
 	public String getDatabaseTablePrefix() {
 		return databaseTablePrefix;
 	}
-	
+
+	@Override
 	public void setDatabaseTablePrefix(String databaseTablePrefix) {
 		this.databaseTablePrefix = databaseTablePrefix;
 		this.runRootDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix;
 		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
-		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";	
+		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
 	}
 
 	public String getDatabaseGlossaryTable() {
@@ -689,7 +677,7 @@ public class RunConfig extends BasicConfig {
 	public void setInputDirectory(String inputDirectory) {
 		this.inputDirectory = inputDirectory;
 	}
-	
+
 
 	public Class<? extends IDescriptionMarkupCreator> getDescriptionMarkupCreator() {
 		return descriptionMarkupCreator;
@@ -699,7 +687,7 @@ public class RunConfig extends BasicConfig {
 			Class<? extends IDescriptionMarkupCreator> descriptionMarkupCreator) {
 		this.descriptionMarkupCreator = descriptionMarkupCreator;
 	}
-	
+
 
 	public void setPerlDirectory(String srcDirectory) {
 		this.perlDirectory = srcDirectory;
@@ -715,11 +703,11 @@ public class RunConfig extends BasicConfig {
 		this.runOutDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "out";
 		this.runTemporaryDirectory = this.workspaceDirectory + File.separator + this.databaseTablePrefix + File.separator + "temp";
 	}
-	
+
 	public String getWorkspaceDirectory() {
 		return workspaceDirectory;
 	}
-	
+
 	public String getSourceOfDescriptions() {
 		return sourceOfDescriptions;
 	}
@@ -739,7 +727,7 @@ public class RunConfig extends BasicConfig {
 	public void setTermCategorizationRequired(boolean termCategorizationRequired) {
 		this.termCategorizationRequired = termCategorizationRequired;
 	}
-	
+
 	public boolean isUseOtoCommuntiyDownload() {
 		return useOtoCommuntiyDownload;
 	}
@@ -755,8 +743,8 @@ public class RunConfig extends BasicConfig {
 	public void setMarkupRunValidateSchemaFile(String markupRunValidateSchemaFile) {
 		this.markupRunValidateSchemaFile = markupRunValidateSchemaFile;
 	}
-	
-	
+
+
 
 	public void setIODescriptionBindingsList(String volumeReader) throws IOException {
 		if(volumeReader.equals("XML")) {
@@ -789,8 +777,8 @@ public class RunConfig extends BasicConfig {
 		result.add(inputStreamCreator.readStreamFromString("edu/arizona/biosemantics/semanticmarkup/markupelement/description/model/bindings/singleTreatmentDescriptionBindings.xml"));
 		return result;
 	}
-	
+
 	public void setUseEmptyGlossary(boolean value) {
 		this.useEmptyGlossary = value;
-	}		
+	}
 }
