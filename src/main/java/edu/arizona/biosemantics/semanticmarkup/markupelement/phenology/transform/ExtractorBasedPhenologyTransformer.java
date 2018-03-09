@@ -22,7 +22,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.Tre
 public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer {
 
 	private final String timeTermsPattern =
-			"jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|feburary|march|april|june|july|august|september|october|november|december|spring|summer|fall|autumn|winter|midspring|"
+			"Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|Feburary|March|April|June|July|August|September|October|November|December|spring|summer|fall|autumn|winter|midspring|"
 					+ "midsummer|midwinter|midfall|midautumn|year[_-]round|\\w+ periods";
 	private final String timeModifierPattern = "latter|late|last|early|mid|middle";
 
@@ -161,8 +161,6 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 
 
 	private String normalize(String text) {
-		text = text.toLowerCase();
-
 		text = text.replaceAll("\\s+", " ").replaceAll("–", "-").replaceAll("-+", "-").replaceAll("year-round", "year_round"); // - to mean "to"
 		String nText = normalizeTime(text);
 		if(nText.compareToIgnoreCase(text)!=0){

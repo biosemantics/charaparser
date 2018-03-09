@@ -19,24 +19,24 @@ public class TestPhenologyTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
-				/*"Flowering and fruiting mid Jun–mid Sep.",
-				"Flowering late winter-early spring, fruiting mid summer.",*/
-				//"Flowering spring-late summer (Apr-Aug); fruiting 2-5 months after flowering.", //hold back for complicated; currently doing some better than existing
+				"Flowering and fruiting mid Jun–mid Sep.",
+				"Flowering late winter-early spring, fruiting mid summer.",
+				"Flowering spring-late summer (Apr-Aug); fruiting 2-5 months after flowering.", //hold back for complicated; currently doing some better than existing
 				"Flowering early Jun-early Aug, fruiting Jul-early Sep.",
-				//"Flowering Mar-Sep(-Dec in south, fruiting shortly after).", hold back for complicated; existing not better
-				//"Flowering when leafless at end of dry season, fruiting as leaves emerge.", hold back for complicates; doing same as old
-				//"Flowering Jun-Sep, fruiting Jul-Oct.",
-				//"Spores 15-24 µm, mature Jun-Sep.",
-				//"Spores mature Oct-Mar.",
-				//"Sporophytes mature spring-summer (May, Jun, Jul).", //different in modifier sense with old but i think as good/bad as
-				//"Sporophytes infrequent, capsules mature Jun-Aug.",
-				//"Sporulating summer--fall.",
-				//"Leaves green over winter, sporophores seasonal, new leaves appearing in late spring--early summer.",
-				//"Sporocarps produced spring--fall (Apr--Oct).", //get the stage to display verb right, produced -> appearing; sporulating -> mature
-				//"Seeds maturing late summer--early fall.",
-				//"Leaves appearing in spring, dying in late summer.",
-				//"Flowering early summer-fall; staminate plants generally dying after anthesis, pistillate plants remaining dark green, persisting until frost.",
-				//"Leaves appearing in late spring or early summer, releasing spores later than most associated species, and dying as late as October."
+				"Flowering Mar-Sep(-Dec in south, fruiting shortly after).", //hold back for complicated; existing not better
+				"Flowering when leafless at end of dry season, fruiting as leaves emerge.", //hold back for complicates; doing same as old
+				"Flowering Jun-Sep, fruiting Jul-Oct.",
+				"Spores 15-24 µm, mature Jun-Sep.",
+				"Spores mature Oct-Mar.",
+				"Sporophytes mature spring-summer (May, Jun, Jul).", //different in modifier sense with old but i think as good/bad as
+				"Sporophytes infrequent, capsules mature Jun-Aug.",
+				"Sporulating summer--fall.",
+				"Leaves green over winter, sporophores seasonal, new leaves appearing in late spring--early summer.",
+				"Sporocarps produced spring--fall (Apr--Oct).", //get the stage to display verb right, produced -> appearing; sporulating -> mature
+				"Seeds maturing late summer--early fall.",
+				"Leaves appearing in spring, dying in late summer.",
+				"Flowering early summer-fall; staminate plants generally dying after anthesis, pistillate plants remaining dark green, persisting until frost.",
+				"Leaves appearing in late spring or early summer, releasing spores later than most associated species, and dying as late as October."
 				/* */
 		};
 
@@ -46,8 +46,8 @@ public class TestPhenologyTransformer {
 				+ "may|might|more|most|near|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
 				+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
 		String advModifiers = "at least|at first|at times|almost|always|never|not|often|quite|rather|sometimes|somewhat";
-		//IPhenologyTransformer transformer = new ExtractorBasedPhenologyTransformer(advModifiers, lyPattern, stopWords);
-		IPhenologyTransformer transformer = new PhenologyTransformer(advModifiers, lyPattern, stopWords);
+		IPhenologyTransformer transformer = new ExtractorBasedPhenologyTransformer(advModifiers, lyPattern, stopWords);
+		//IPhenologyTransformer transformer = new PhenologyTransformer(advModifiers, lyPattern, stopWords);
 
 		PhenologiesFile phenologiesFile = new PhenologiesFile();
 		List<Treatment> treatments = new ArrayList<Treatment>();

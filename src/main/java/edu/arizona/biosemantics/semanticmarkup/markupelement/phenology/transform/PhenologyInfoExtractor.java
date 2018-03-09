@@ -41,7 +41,7 @@ public class PhenologyInfoExtractor {
 			+ "sporulation|sporulate|sporocarps|sporocarp|spores|spore|capsules|capsule|sporophytes|sporophyte|sporophylls|sporophyll";
 	private final String stages = "appearing|arising|maturing|matures|mature|maturity|produced|meiosis|dying|persisting|persists|persist";
 	private final String timeTermsPattern =
-			"jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|january|feburary|march|april|june|july|august|september|october|november|december|spring|summer|fall|autumn|winter|midspring|"
+			"Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec|January|Feburary|March|April|June|July|August|September|October|November|December|spring|summer|fall|autumn|winter|midspring|"
 					+ "midsummer|midwinter|midfall|midautumn|year[_-]round|\\w+ periods";
 	private final Pattern timePattern = Pattern.compile("[^ ]*(_|-|\\b)(" + timeTermsPattern + ")(\\)|\\b)", Pattern.CASE_INSENSITIVE);
 	private final String stageBreakingPattern = "^.*,\\s*(" + this.gerundVerbs + "|" + this.entities + ")$";
@@ -74,8 +74,8 @@ public class PhenologyInfoExtractor {
 	}
 
 	public LinkedHashSet<Character> extract(String text) {
-		log(LogLevel.INFO, "Extracting text: " + text);
-		log(LogLevel.INFO, "Extractor: " + this.gerundVerb + "; " + this.biologicalEntityTerms + "; " + this.stageTerms);
+		//log(LogLevel.INFO, "Extracting text: " + text);
+		//log(LogLevel.INFO, "Extractor: " + this.gerundVerb + "; " + this.biologicalEntityTerms + "; " + this.stageTerms);
 
 		LinkedHashSet<Character>  values = new LinkedHashSet<Character>();
 		while(!text.trim().isEmpty()) {
@@ -104,12 +104,16 @@ public class PhenologyInfoExtractor {
 	}
 
 	private int getIndex(String text, String value) {
-		Pattern pattern = Pattern.compile("\\b" + value + "\\b");
+		Pattern pattern = Pattern.compile("\\b" + value + "\\b", Pattern.CASE_INSENSITIVE);
 		Matcher m = pattern.matcher(text);
 		if(m.find()) {
 			return m.start();
 		}
 		return -1;
+	}
+
+	private boolean matches(String text, String pattern) {
+		return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(text).find();
 	}
 
 	private String extractByBiologicalEntityStage(LinkedHashSet<Character> values, String text, String entityTerm) {
@@ -120,7 +124,7 @@ public class PhenologyInfoExtractor {
 				int stageIndex = getIndex(entityText, stageTerm);
 				if(stageIndex >= 0) {
 					String upToStageText = entityText.substring(0, stageIndex).trim();
-					if(upToStageText.matches(stageBreakingPattern)) {
+					if(matches(upToStageText, stageBreakingPattern)) {
 						continue;
 					}
 					String stageText = entityText.substring(stageIndex + stageTerm.length());
@@ -131,7 +135,7 @@ public class PhenologyInfoExtractor {
 					boolean beyondTimesText = false;
 					for(String term : stageText.split("\\b")) {
 						passedText += term;
-						if(beyondTimesText || passedText.matches(timeBreakingPattern)) {
+						if(beyondTimesText || matches(passedText, timeBreakingPattern)) {
 							beyondTimesText = true;
 							remainderText += term;
 						} else {
@@ -157,7 +161,7 @@ public class PhenologyInfoExtractor {
 		boolean beyondTimesText = false;
 		for(String term : text.split("\\b")) {
 			passedText += term;
-			if(beyondTimesText || passedText.matches(timeBreakingPattern)) {
+			if(beyondTimesText || matches(passedText, timeBreakingPattern)) {
 				beyondTimesText = true;
 				remainderText += term;
 			} else {
@@ -224,25 +228,25 @@ public class PhenologyInfoExtractor {
 		if(lookAtBeginning){ // the target is at the beginning of text: .... in frostfree coastal habitats.
 			if(text.startsWith("(")){ // (in frostfree coastal habitats.)?
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.startsWith("[")){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.indexOf("(")<0 && text.indexOf(")")>0){ //...)
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.indexOf("[")<0 && text.indexOf("]")>0){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
@@ -263,32 +267,32 @@ public class PhenologyInfoExtractor {
 
 			if(text.indexOf("(")<0 && text.indexOf(")")>0){ //...)
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.indexOf("[")<0 && text.indexOf("]")>0){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.startsWith("(") && text.endsWith(")")){ // (in frostfree coastal habitats.)?
 				String potential = text.substring(0, text.indexOf(")")>0? text.indexOf(")")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 
 			if(text.startsWith("[") && text.endsWith("]")){
 				String potential = text.substring(0, text.indexOf("]")>0? text.indexOf("]")+1: text.length());
-				if(!potential.matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*"))
+				if(!potential.matches(".*?"+timePattern.pattern()+".*"))
 					return leads+potential.replaceFirst("("+this.stopwords+"| )+$", "");
 			}
 			// ... mostly [summer–autumn (Jun–Oct)]
 			int start = text.length();
 			Matcher m = this.advModPattern.matcher(text);
 			while (m.find()){
-				if(!text.substring(m.start()).matches(".*?"+PhenologyTransformer.timePattern.pattern()+".*")) //no \d between m.start and end of text
+				if(!text.substring(m.start()).matches(".*?"+timePattern.pattern()+".*")) //no \d between m.start and end of text
 					start = m.start();
 			}
 			modifier = text.substring(start);
@@ -299,12 +303,19 @@ public class PhenologyInfoExtractor {
 	private Collection<? extends Character> createCharacters(List<Time> times) {
 		LinkedHashSet<Character>  values = new LinkedHashSet<Character>();
 		for(Time time: times) {
-			log(LogLevel.INFO, "Create character " + this.biologicalEntityTerms.get(0) + " " + this.stageTerms.get(0) + " --> " + time);
 			Character c = new Character();
-			c.setName(this.biologicalEntityTerms.get(0) + " " + this.stageTerms.get(0));
+			String name = "";
+			if(this.gerundVerb != null) {
+				name = this.gerundVerb + " time";
+			} else {
+				name = this.biologicalEntityTerms.get(0) + " " + this.stageTerms.get(0) + " time";
+			}
+
+			c.setName(name);
 			c.setValue(time.getCleanTime());
 			c.setModifier(time.getCleanModifier());
 			values.add(c);
+			log(LogLevel.INFO, "Create character " + name + " --> " + time);
 		}
 		return values;
 	}
