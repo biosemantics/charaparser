@@ -15,17 +15,17 @@ public class HabitatTransformer {
 
 	private String seedNList = "|";
 	private String seedMList = "|";
-	
+
 	private HashMap<Treatment, String> habitatValues = new HashMap<Treatment, String>();
 	private Pattern tagHabitatPattern = Pattern.compile("(.*?)(\\w+)(\\s+<.*)");
 	private Pattern findNewPattern = Pattern.compile("(.*?)(\\w+)(\\s+<.*)");
-	
+
 	public void transform(HabitatsFileList habitatsFileList) {
 		collectSeeds(habitatsFileList);
 		bootstrap(habitatsFileList);
 		transformTreatments(habitatsFileList);
 	}
-	
+
 	private void transformTreatments(HabitatsFileList habitatsFileList) {
 		for(HabitatsFile habitatsFile : habitatsFileList.getHabitatsFiles()) {
 			for(Treatment treatment : habitatsFile.getTreatments()) {
@@ -34,18 +34,18 @@ public class HabitatTransformer {
 			}
 		}
 	}
-	
+
 	private void bootstrap(HabitatsFileList habitatsFileList) {
 		int discovery = 0;
 		HashMap<Treatment, String> todos = null;
-		do { 
-			discovery = 0;			
+		do {
+			discovery = 0;
 			todos = getTodos(habitatsFileList);
-			
+
 			//this one returns a list of entries of the form sourceFileId@TextOfHabitat
 			//todos = hpDbA.selectRecords("source, habitat_string", "isnull(habitat_values)", "", "");
 			discovery += tagHabitatStrings(todos);
-			discovery += findNew(todos);			
+			discovery += findNew(todos);
 		} while (discovery > 0);
 
 		for(Entry<Treatment, String> todo : todos.entrySet()) {
@@ -69,8 +69,8 @@ public class HabitatTransformer {
 		}
 		return result;
 	}
-	
-	
+
+
 	private int tagHabitatStrings(HashMap<Treatment, String> todos) {
 		int discovery = 0;
 		int index = 0;
@@ -95,29 +95,29 @@ public class HabitatTransformer {
 		}
 		return discovery;
 	}
-	
+
 	private String mark(String s, String list, String l, String r){
 		s = s.replaceAll("["+l+r+"]", "");
 		String[] ns = list.split("\\|");
 		for(int i = 0; i<ns.length; i++){
 			if(!ns[i].equals("")){
-				//escape 
+				//escape
 				ns[i] = ns[i].replaceAll("\\[", "\\\\[").replaceAll("\\]", "\\\\]").replaceAll("\\(", "\\\\(").replaceAll("\\)", "\\\\)");
 				s = s.replaceAll("\\b"+Pattern.quote(ns[i])+"\\b", l+ns[i]+r);
 			}
 		}
 		return s;
 	}
-	
+
 	private boolean isDone(String string){
-	//	String sc = string;
+		//	String sc = string;
 		string = string.replaceAll(">,", "").replaceAll("},", "");
 		if(string.indexOf(",") < 0){
 			return true;
 		}
 		return false;
 	}
-	
+
 	private int modifierBeforeH(Pattern p, String h) {
 		int discovery = 0;
 		Matcher m = p.matcher(h);
@@ -127,26 +127,26 @@ public class HabitatTransformer {
 			if(temp.length()>1 && seedMList.indexOf("|"+temp+"|") < 0){
 				this.seedMList+=temp+"|";
 				discovery++;
-			}			
+			}
 			m = p.matcher(h);
 		}
 		return discovery;
 	}
-	
+
 	private int findNew(HashMap<Treatment, String> todos) {
 		int discovery = 0;
 		Iterator<Entry<Treatment, String>> it  = todos.entrySet().iterator();
 		while(it.hasNext()){
-			String habitatString = (String)it.next().getValue().trim().toLowerCase();
+			String habitatString = it.next().getValue().trim().toLowerCase();
 			discovery += modifierBeforeH(findNewPattern, habitatString);
 		}
 		return discovery;
 	}
-	
-	
+
+
 	/**
-	 * 
-	 * @param treatments 
+	 *
+	 * @param treatments
 	 * @return a regexp consisting a list of seeds
 	 */
 	private void collectSeeds(HabitatsFileList habitatsFileList) {
@@ -160,16 +160,16 @@ public class HabitatTransformer {
 			if(seed.length() > 1 && seedNList.indexOf("|"+seed+"|") < 0){
 				seedNList +=seed+"|";
 			}
-			
+
 			//"distributed sites"
-			if(habitatString.indexOf(",") < 0 && habitatString.indexOf(" ")>=0 && 
+			if(habitatString.indexOf(",") < 0 && habitatString.indexOf(" ")>=0 &&
 					habitatString.indexOf(" ") == habitatString.lastIndexOf(" ") && habitatString.indexOf(" and ")<0){
 				String[] t = habitatString.split("\\s+");
 				if(t[t.length-2].length()> 1 && seedMList.indexOf("|"+t[t.length-2]+"|") < 0){
 					seedMList +=t[t.length-2]+"|";
 				}
 			}
-			
+
 			//"meadows and tundra"
 			if(habitatString.matches(".*?\\w+ and \\w+$")){
 				String[] t = habitatString.split("\\s+");
@@ -177,12 +177,12 @@ public class HabitatTransformer {
 					seedNList +=t[t.length-3]+"|";
 				}
 			}
-		}										
+		}
 	}
-	
+
 	private HashMap<Treatment, String> getHabitatStrings(HabitatsFileList habitatsFileList) {
 		HashMap<Treatment, String> result = new HashMap<Treatment, String>();
-		
+
 		for(HabitatsFile habitatsFile : habitatsFileList.getHabitatsFiles()) {
 			for(Treatment treatment : habitatsFile.getTreatments()) {
 				String treatmentHabitatString = treatment.getHabitat().getText();

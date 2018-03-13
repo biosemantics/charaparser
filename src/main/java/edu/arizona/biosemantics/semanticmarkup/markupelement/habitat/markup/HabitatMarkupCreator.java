@@ -21,12 +21,12 @@ public class HabitatMarkupCreator implements IHabitatMarkupCreator {
 	private IHabitatWriter writer;
 	private String inputDirectory;
 	private String outputDirectory;
-	
+
 	@Inject
-	public HabitatMarkupCreator(@Named("HabitatMarkupCreator_Reader") IHabitatReader reader,	
+	public HabitatMarkupCreator(@Named("HabitatMarkupCreator_Reader") IHabitatReader reader,
 			String inputDirectory,
 			HabitatTransformer habitatTransformer,
-			@Named("HabitatMarkupCreator_Writer") IHabitatWriter writer, 
+			@Named("HabitatMarkupCreator_Writer") IHabitatWriter writer,
 			String outputDirectory) {
 		this.reader = reader;
 		this.inputDirectory = inputDirectory;
@@ -34,19 +34,20 @@ public class HabitatMarkupCreator implements IHabitatMarkupCreator {
 		this.writer = writer;
 		this.outputDirectory = outputDirectory;
 	}
-	
+
+	@Override
 	public HabitatMarkupResult create() {
 		HabitatsFileList habitatsFileList = null;
 		try {
 			log(LogLevel.DEBUG, "reading treatments using " + reader.getClass());
 			habitatsFileList = reader.read(inputDirectory);
-			
+
 			log(LogLevel.DEBUG, "transform treatments using " + habitatTransformer.getClass());
 			habitatTransformer.transform(habitatsFileList);
-			
+
 			log(LogLevel.DEBUG, "writing result using " + writer.getClass());
 			writer.write(habitatsFileList, outputDirectory);
-			
+
 			return new HabitatMarkupResult(habitatsFileList);
 		} catch(Exception e) {
 			log(LogLevel.ERROR, "Problem reading transforming or writing habitats", e);
