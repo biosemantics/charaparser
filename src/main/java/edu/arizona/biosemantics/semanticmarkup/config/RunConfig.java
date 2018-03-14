@@ -61,8 +61,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.HabitatMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.IHabitatMarkupCreator;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.HabitatTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.IHabitatTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.transform.MyHabitatTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.lib.JDOMPhenologyReader;
@@ -181,7 +181,7 @@ public class RunConfig extends BasicConfig {
 			bind(Boolean.class).annotatedWith(Names.named("UseOtoCommunityDownload")).toInstance(useOtoCommuntiyDownload);
 
 			bind(IHabitatMarkupCreator.class).to(habitatMarkupCreator).in(Singleton.class);
-			bind(IHabitatTransformer.class).to(HabitatTransformer.class).in(Singleton.class);
+			bind(IHabitatTransformer.class).to(MyHabitatTransformer.class).in(Singleton.class);
 			bind(IDistributionMarkupCreator.class).to(distributionMarkupCreator).in(Singleton.class);
 			bind(IDistributionTransformer.class).to(DistributionTransformer.class).in(Singleton.class);
 			bind(IElevationMarkupCreator.class).to(elevationMarkupCreator).in(Singleton.class);
