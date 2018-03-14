@@ -22,11 +22,11 @@ public class TestHabitatTransformer {
 				"Relatively dry, usually sandy soils, old fields, pastures, usually disturbed;",
 				"In woods;",
 				"Sandy-bottomed ditches;",
-				//"Outer coastal plain in alkaline lakes, ponds, warm springs, pools in marshes, sloughs, sluggish streams, ditches, and canals;",
+				"Outer coastal plain in alkaline lakes, ponds, warm springs, pools in marshes, sloughs, sluggish streams, ditches, and canals;",
 				"Moist woods and streambanks;",
 				"Shaded woods, subalpine ridges;",
-				//"Dry rocky places on open arctic and alpine slopes and shores, moist grassland depressions, and open aspen woods;",
-				//"Alluvial or shingly calcareous shores and talus;",
+				"Dry rocky places on open arctic and alpine slopes and shores, moist grassland depressions, and open aspen woods;",
+				"Alluvial or shingly calcareous shores and talus;",
 				"Moist, often slightly acidic and sandy soils, wooded floodplains, stream banks, borders of swamps, hammocks, roadsides;"
 				/* */
 		};

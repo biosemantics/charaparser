@@ -80,9 +80,21 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		System.out.println(root.pennString());
 		System.out.println(text);
 
-		for(Tree leaf : leaves) {
+
+		String danglingNonNNSValues = "";
+		for(int i=0; i<leaves.size(); i++) {
+			Tree leaf = leaves.get(i);
+			Tree parent = leaf.parent(root);
+
 			if(isLastPartOfNounPhrase(leaf, root)) {
-				result.addAll(getCharacters(leaf, root));
+				if(parent.label().value().equals("NNS")) {
+					result.addAll(getCharacters(leaf, root, danglingNonNNSValues));
+					danglingNonNNSValues = "";
+				} else {
+					danglingNonNNSValues += " " + leaf.nodeString();
+				}
+			} else if(!isPartOfNounPhraseWithNNS(leaf, root)) {
+				danglingNonNNSValues += " " + leaf.nodeString();
 			}
 		}
 
@@ -90,45 +102,71 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		return result;
 	}
 
-	private List<Character> getCharacters(Tree leaf, Tree root) {
+	private boolean isPartOfNounPhraseWithNNS(Tree leaf, Tree root) {
+		Tree np = this.getNp(leaf, root);
+		if(np == null)
+			return false;
+		for(Tree l : np.getLeaves()) {
+			Tree lParent = l.parent(root);
+			if(lParent.label().value().equals("NNS"))
+				return true;
+		}
+		return false;
+	}
+
+	private Tree getNp(Tree leaf, Tree root) {
+		Tree ancestor = leaf;
+		int i=1;
+		Tree np = null;
+		while(ancestor != root) {
+			ancestor = leaf.ancestor(i++, root);
+			if(ancestor != null) {
+				if(ancestor.label().value().matches("NP")) {
+					return ancestor;				}
+			}
+		}
+		return null;
+	}
+
+	private List<Character> getCharacters(Tree leaf, Tree root, String danglingNonNNSValues) {
 		List<Character> characters = new ArrayList<Character>();
-		Tree parent = leaf.parent(root);
 
-		if(parent.label().value().equals("NNS")) {
-			Tree np = getNpWithLastLeaf(leaf, root);
+		Tree np = getNpWithLastLeaf(leaf, root);
 
-			String modifier = "";
-			String value = "";
+		String modifier = "";
+		String value = "";
 
-			List<Tree> npLeaves = np.getLeaves();
-			Tree lastLeaf = npLeaves.get(npLeaves.size() - 1);
-			for(int i=0 ; i<npLeaves.size(); i++) {
-				Tree npLeafPrevious = i == 0 ? null : npLeaves.get(i-1);
-				Tree npLeaf = npLeaves.get(i);
+		List<Tree> npLeaves = np.getLeaves();
+		Tree lastLeaf = npLeaves.get(npLeaves.size() - 1);
+		for(int i=0 ; i<npLeaves.size(); i++) {
+			Tree npLeafPrevious = i == 0 ? null : npLeaves.get(i-1);
+			Tree npLeaf = npLeaves.get(i);
 
-				Tree npLeafParent = npLeaf.parent(root);
-				Tree npLeafPreviousParent = npLeafPrevious = i == 0 ? null : npLeafPrevious.parent(root);
-				if(npLeafParent.label().value().matches("RB|RBR|RBS")) {
-					modifier += " " + npLeaf.nodeString();
+			Tree npLeafParent = npLeaf.parent(root);
+			Tree npLeafPreviousParent = npLeafPrevious = i == 0 ? null : npLeafPrevious.parent(root);
+			if(npLeafParent.label().value().matches("RB|RBR|RBS")) {
+				modifier += " " + npLeaf.nodeString();
+			} else {
+				if(npLeaf.nodeString().matches("\\p{Punct}|and|or")) {
+					String characterValue = value;
+					if(npLeafPreviousParent != null && !npLeafPreviousParent.label().value().matches("NNS"))
+						characterValue = value + " " + (lastLeaf.nodeString().matches("\\p{Punct}") ? "" : lastLeaf.nodeString());
+
+					Character character = getCharacter(modifier, (danglingNonNNSValues.trim() + " " + characterValue.trim()).trim());
+					if(character != null)
+						characters.add(character);
+
+					modifier = "";
+					value = "";
 				} else {
-					if(npLeaf.nodeString().matches("\\p{Punct}|and|or")) {
-						String characterValue = value;
-						if(npLeafPreviousParent != null && !npLeafPreviousParent.label().value().matches("NNS"))
-							characterValue = value + " " + (lastLeaf.nodeString().matches("\\p{Punct}") ? "" : lastLeaf.nodeString());
-						Character character = getCharacter(modifier, characterValue);
-						if(character != null)
-							characters.add(character);
-						modifier = "";
-						value = "";
-					} else {
-						value += " " + npLeaf.nodeString();
-					}
+					value += " " + npLeaf.nodeString();
 				}
 			}
-			Character character = getCharacter(modifier, value);
-			if(character != null)
-				characters.add(character);
 		}
+
+		Character character = getCharacter(modifier, (danglingNonNNSValues.trim() + " " + value.trim()).trim());
+		if(character != null)
+			characters.add(character);
 		return characters;
 	}
 
