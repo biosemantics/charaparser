@@ -19,17 +19,14 @@ public class TestElevationTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
-				/*"0--700 m;",*/
-				//"mostly 0--1000 m;",
-				//"1800--2500 m (-- 4000 m, Central America);",
+
+				"1800--2500 m (-- 4000 m, Central America);",
+
+				//works
+				//"0--700 m;"
 				//"200--800(--1600 m);",
-				//"0--600 m (c Texas eastward and northward), 1600--2000 m (west)",
 				//"0--100[--1500] m;",
-				//"0[--1800] m;",
 				//"(300--)800--2000 m;",
-				//"low to moderate elevations;",
-				//"moderate elevations;",
-				//"low to moderate elevations (10-1500 m);",
 				/*"(-30–)200–1000(–1300) m;",
 				"(40–)100–600(–1300) m;",
 				"[0-]800-1600[-2500] m;",
@@ -37,6 +34,17 @@ public class TestElevationTransformer {
 				"(30-)600-1000(-1500) m;",
 				"[30-]600-1000(-1500) m;"*/
 				//"introduced; 10–300(–1000+) m"
+
+				//improve but works
+				//"mostly 0--1000 m;",
+				//"0--600 m (c Texas eastward and northward), 1600--2000 m (west)"
+
+				//not working
+				//"0[--1800] m;",
+				//"low to moderate elevations;",
+				//"moderate elevations;",
+				//"low to moderate elevations (10-1500 m);",
+
 		};
 
 		String units= "(?:(?:pm|cm|mm|dm|km|ft|m|meters|meter|micro_m|micro-m|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter|transdiameters|transdiameter)[23]?)"; //squared or cubed
