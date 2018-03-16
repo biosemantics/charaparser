@@ -19,9 +19,6 @@ public class TestElevationTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
-
-				"1800--2500 m (-- 4000 m, Central America);",
-
 				//works
 				//"0--700 m;"
 				//"200--800(--1600 m);",
@@ -34,9 +31,10 @@ public class TestElevationTransformer {
 				"(30-)600-1000(-1500) m;",
 				"[30-]600-1000(-1500) m;"*/
 				//"introduced; 10–300(–1000+) m"
+				//"mostly 0--1000 m;",
 
 				//improve but works
-				//"mostly 0--1000 m;",
+				//"1800--2500 m (-- 4000 m, Central America);",
 				//"0--600 m (c Texas eastward and northward), 1600--2000 m (west)"
 
 				//not working
@@ -47,14 +45,16 @@ public class TestElevationTransformer {
 
 		};
 
-		String units= "(?:(?:pm|cm|mm|dm|km|ft|m|meters|meter|micro_m|micro-m|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter|transdiameters|transdiameter)[23]?)"; //squared or cubed
+		String modifierList = "(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)";
 		String lyPattern = "[a-z]{3,}ly";
 		String stopWords = "a|about|above|across|after|along|also|although|amp|an|and|are|as|at|be|because|become|becomes|becoming|been|before|being|"
 				+ "beneath|between|beyond|but|by|ca|can|could|did|do|does|doing|done|for|from|had|has|have|hence|here|how|however|if|in|into|inside|inward|is|it|its|"
 				+ "may|might|more|most|near|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
 				+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
 		String advModifiers = "at least|at first|at times|almost|always|never|not|often|quite|rather|sometimes|somewhat";
-		IElevationTransformer transformer = new MyElevationTransformer(units);
+
+		String units= "(?:(?:pm|cm|mm|dm|km|ft|m|meters|meter|micro_m|micro-m|microns|micron|unes|µm|μm|um|centimeters|centimeter|millimeters|millimeter|transdiameters|transdiameter)[23]?)"; //squared or cubed
+		IElevationTransformer transformer = new MyElevationTransformer(lyPattern, stopWords, modifierList, advModifiers, units);
 
 		ElevationsFile elevationsFile = new ElevationsFile();
 		List<Treatment> treatments = new ArrayList<Treatment>();

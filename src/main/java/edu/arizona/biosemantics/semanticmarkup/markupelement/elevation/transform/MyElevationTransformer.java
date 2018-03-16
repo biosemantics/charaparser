@@ -19,9 +19,18 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Tre
 public class MyElevationTransformer implements IElevationTransformer {
 
 	private String units;
+	private String advModifiers;
+	private String modifierList;
+	private String stopwords;
+	private String lyAdvPattern;
 
 	@Inject
-	public MyElevationTransformer(@Named("Units")String units) {
+	public MyElevationTransformer(@Named("LyAdverbpattern") String lyAdvPattern, @Named("StopWordString") String stopwords,
+			@Named("ModifierList") String modifierList, @Named("AdvModifiers") String advModifiers, @Named("Units")String units) {
+		this.lyAdvPattern = lyAdvPattern;
+		this.stopwords = stopwords;
+		this.modifierList = modifierList;
+		this.advModifiers = advModifiers;
 		this.units = units;
 	}
 
@@ -61,11 +70,11 @@ public class MyElevationTransformer implements IElevationTransformer {
 		System.out.println();
 		System.out.println(text);
 
-		String outlier = "\\(-*\\d+\\+?-*\\s*(" + units + ")\\s*" + "\\)";
-		String foreign = "\\[-*\\d+\\+?-*\\s*(" + units + ")\\s*" + "\\]";
-		String numericalRangeString = "(?:(?<fromOutlier>" + outlier + ")|(?<fromForeign>" + foreign + "))?(?<from>\\d+)"
-				+ "-+"
-				+ "(?<to>\\d+)(?:(?<toOutlier>" + outlier + ")|(?<toForeign>" + foreign + "))?\\s*(?<unit>" + units + ")?";
+		String outlier = "\\(-*\\s*\\d+\\+?\\s*-*\\s*(" + units + ")\\s*.*\\)";
+		String foreign = "\\[-*\\s*\\d+\\+?\\s*-*\\s*(" + units + ")\\s*.*\\]";
+		String numericalRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + outlier + ")|(?<fromForeign>" + foreign + "))?\\s*(?<from>\\d+)"
+				+ "\\s*-+\\s*"
+				+ "(?<to>\\d+)\\s*(?<unit1>" + units + ")\\s*(?:(?<toOutlier>" + outlier + ")|(?<toForeign>" + foreign + "))?\\s*(?<unit>" + units + ")?\\s*(?<postfix>.*?)";
 		Pattern numericalRange = Pattern.compile(".*?" + numericalRangeString + ".*?");
 
 		Matcher numericalRangeMatcher = numericalRange.matcher(text);
@@ -73,22 +82,31 @@ public class MyElevationTransformer implements IElevationTransformer {
 			String from = numericalRangeMatcher.group("from");
 			String to = numericalRangeMatcher.group("to");
 			String unit = numericalRangeMatcher.group("unit");
+			if(unit == null)
+				unit = numericalRangeMatcher.group("unit1");
 			String fromOutlier = numericalRangeMatcher.group("fromOutlier");
 			String fromForeign = numericalRangeMatcher.group("fromForeign");
 			String toOutlier = numericalRangeMatcher.group("toOutlier");
 			String toForeign = numericalRangeMatcher.group("toForeign");
 			String fromOutlierUnit = null;
+			String fromOutlierConstraint = null;
 			String fromForeignUnit = null;
+			String fromForeignConstraint = null;
 			String toOutlierUnit = null;
+			String toOutlierConstraint = null;
 			String toForeignUnit = null;
+			String toForeignConstraint = null;
+			String prefix = numericalRangeMatcher.group("prefix");
+			String postfix = numericalRangeMatcher.group("postfix");
 
-			Pattern fromOutlierPattern = Pattern.compile("\\((?<outlier>-?\\d+\\+?)-*\\s*(?<unit>" + units + ")\\s*" + "\\)");
-			Pattern toOutlierPattern = Pattern.compile("\\(-*(?<outlier>\\d+\\+?)-*\\s*(?<unit>" + units + ")\\s*" + "\\)");
+			Pattern fromOutlierPattern = Pattern.compile("\\(.*?(?<outlier>-?\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")\\s*(?<constraint>.*)\\)");
+			Pattern toOutlierPattern = Pattern.compile("\\(-*\\s*(?<outlier>\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")\\s*(?<constraint>.*)\\)");
 			if(fromOutlier != null) {
 				Matcher fromOutlierMatcher = fromOutlierPattern.matcher(fromOutlier);
 				if(fromOutlierMatcher.matches()) {
 					fromOutlier = fromOutlierMatcher.group("outlier");
 					fromOutlierUnit = fromOutlierMatcher.group("unit");
+					fromOutlierConstraint = fromOutlierMatcher.group("constraint");
 				}
 			}
 			if(toOutlier != null) {
@@ -96,16 +114,18 @@ public class MyElevationTransformer implements IElevationTransformer {
 				if(toOutlierMatcher.matches()) {
 					toOutlier = toOutlierMatcher.group("outlier");
 					toOutlierUnit = toOutlierMatcher.group("unit");
+					toOutlierConstraint = toOutlierMatcher.group("constraint");
 				}
 			}
 
-			Pattern fromForeignPattern = Pattern.compile("\\[(?<foreign>-?\\d+\\+?)-*\\s*(?<unit>" + units + ")\\s*" + "\\]");
-			Pattern toForeignPattern = Pattern.compile("\\[-*(?<foreign>\\d+\\+?)-*\\s*(?<unit>" + units + ")\\s*" + "\\]");
+			Pattern fromForeignPattern = Pattern.compile("\\[.*?(?<foreign>-?\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")\\s*(?<constraint>.*)\\]");
+			Pattern toForeignPattern = Pattern.compile("\\[-*\\s*(?<foreign>\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")\\s*(?<constraint>.*)\\]");
 			if(fromForeign != null) {
 				Matcher fromForeignMatcher = fromForeignPattern.matcher(fromForeign);
 				if(fromForeignMatcher.matches()) {
 					fromForeign = fromForeignMatcher.group("foreign");
 					fromForeignUnit = fromForeignMatcher.group("unit");
+					fromForeignConstraint = fromForeignMatcher.group("constraint");
 				}
 			}
 			if(toForeign != null) {
@@ -113,6 +133,35 @@ public class MyElevationTransformer implements IElevationTransformer {
 				if(toForeignMatcher.matches()) {
 					toForeign = toForeignMatcher.group("foreign");
 					toForeignUnit = toForeignMatcher.group("unit");
+					toForeignConstraint = toForeignMatcher.group("constraint");
+				}
+			}
+
+			String foreignConstraint = null;
+			if(fromForeignConstraint != null && toForeignConstraint != null) {
+				foreignConstraint = fromForeignConstraint + " " + toForeignConstraint;
+			} else if(fromForeignConstraint != null) {
+				foreignConstraint = fromForeignConstraint;
+			} else if(toForeignConstraint != null) {
+				foreignConstraint = toForeignConstraint;
+			}
+
+			String outlierConstraint = null;
+			if(fromOutlierConstraint != null && toOutlierConstraint != null) {
+				outlierConstraint = fromOutlierConstraint + " " + toOutlierConstraint;
+			} else if(fromOutlierConstraint != null) {
+				outlierConstraint = fromOutlierConstraint;
+			} else if(toOutlierConstraint != null) {
+				outlierConstraint = toOutlierConstraint;
+			}
+
+			String modifier = "";
+			if(prefix != null && !prefix.trim().isEmpty()) {
+				String[] parts = prefix.split("\\s+");
+				for(String part : parts) {
+					if(part.matches(this.lyAdvPattern) || part.matches(this.modifierList) || part.matches(this.advModifiers)) {
+						modifier += " " + part;
+					}
 				}
 			}
 
@@ -134,6 +183,8 @@ public class MyElevationTransformer implements IElevationTransformer {
 			range.setName("elevation");
 			range.setToUnit(unit);
 			range.setFromUnit(unit);
+			if(modifier != null && !modifier.trim().isEmpty())
+				range.setModifier(modifier.trim());
 			result.add(range);
 
 			if(fromOutlier != null && toOutlier != null) {
@@ -144,6 +195,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 				atypicalRange.setName("elevation");
 				atypicalRange.setToUnit(unit);
 				atypicalRange.setFromUnit(unit);
+				atypicalRange.setConstraint(outlierConstraint);
 				result.add(atypicalRange);
 			} else if(fromOutlier != null) {
 				Character atypicalRange = new Character();
@@ -153,6 +205,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 				atypicalRange.setName("elevation");
 				atypicalRange.setToUnit(unit);
 				atypicalRange.setFromUnit(unit);
+				atypicalRange.setConstraint(outlierConstraint);
 				result.add(atypicalRange);
 			} else if(toOutlier != null) {
 				Character atypicalRange = new Character();
@@ -162,6 +215,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 				atypicalRange.setName("elevation");
 				atypicalRange.setToUnit(unit);
 				atypicalRange.setFromUnit(unit);
+				atypicalRange.setConstraint(outlierConstraint);
 				result.add(atypicalRange);
 			}
 
@@ -173,6 +227,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 				foreignRange.setName("elevation");
 				foreignRange.setToUnit(unit);
 				foreignRange.setFromUnit(unit);
+				foreignRange.setConstraint(foreignConstraint);
 				result.add(foreignRange);
 			} else if(fromForeign != null) {
 				Character foreignRange = new Character();
@@ -182,6 +237,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 				foreignRange.setName("elevation");
 				foreignRange.setToUnit(unit);
 				foreignRange.setFromUnit(unit);
+				foreignRange.setConstraint(foreignConstraint);
 				result.add(foreignRange);
 			} else if(toForeign != null) {
 				Character foreignRange = new Character();
@@ -191,6 +247,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 				foreignRange.setName("elevation");
 				foreignRange.setToUnit(unit);
 				foreignRange.setFromUnit(unit);
+				foreignRange.setConstraint(foreignConstraint);
 				result.add(foreignRange);
 			}
 		}
