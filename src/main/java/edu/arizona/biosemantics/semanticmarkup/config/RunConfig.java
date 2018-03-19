@@ -53,8 +53,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JD
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.io.lib.JDOMElevationWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupCreator;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.IElevationMarkupCreator;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.ElevationTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.IElevationTransformer;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.transform.MyElevationTransformer;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.IHabitatReader;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.IHabitatWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.lib.JDOMHabitatReader;
@@ -185,7 +185,7 @@ public class RunConfig extends BasicConfig {
 			bind(IDistributionMarkupCreator.class).to(distributionMarkupCreator).in(Singleton.class);
 			bind(IDistributionTransformer.class).to(DistributionTransformer.class).in(Singleton.class);
 			bind(IElevationMarkupCreator.class).to(elevationMarkupCreator).in(Singleton.class);
-			bind(IElevationTransformer.class).to(ElevationTransformer.class).in(Singleton.class);
+			bind(IElevationTransformer.class).to(MyElevationTransformer.class).in(Singleton.class);
 			bind(IPhenologyMarkupCreator.class).to(phenologyMarkupCreator).in(Singleton.class);
 			bind(IPhenologyTransformer.class).to(ExtractorBasedPhenologyTransformer.class).in(Singleton.class);
 
