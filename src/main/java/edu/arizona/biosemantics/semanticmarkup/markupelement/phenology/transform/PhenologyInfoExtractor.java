@@ -55,12 +55,12 @@ public class PhenologyInfoExtractor {
 	private Pattern advModPattern;
 
 	/**
-	 * @param string
-	 * @param string2
-	 * @param string3
-	 * @param b
+	 * @param gerundVerb
+	 * @param biologicalEntityTerms
+	 * @param stageTerms
+	 * @param biologicalEntityRequired
 	 * @param advModPattern
-	 * @param stopwords2
+	 * @param stopwords
 	 */
 	public PhenologyInfoExtractor(String gerundVerb, List<String> biologicalEntityTerms,
 			List<String> stageTerms, boolean biologicalEntityRequired,
@@ -192,7 +192,8 @@ public class PhenologyInfoExtractor {
 	 *
 	 *  time:spring-summer
 	 *  time:year-round modifier:south
-	 * @param time
+	 * @param times
+	 * @param text
 	 * @return
 	 */
 	private String extractTimes(List<Time> times, String text) {

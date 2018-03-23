@@ -26,20 +26,24 @@ public class DescriptionEvaluationRun extends AbstractRun {
 
 	/**
 	 * @param guiceModuleFile
+	 * @param inputDirectory
 	 * @param runOutDirectory
 	 * @param evaluator
-	 * @param createdVolumeReader
-	 * @param goldStandardReader
+	 * @param testReader
+	 * @param correctReader
+	 * @param testInputDirectory
+	 * @param correctInputDirectory
+	 * @param connectionPool
 	 */
 	@Inject
 	public DescriptionEvaluationRun(@Named("GuiceModuleFile")String guiceModuleFile,
-			@Named("InputDirectory")String inputDirectory, 
-			@Named("Run_OutDirectory")String runOutDirectory, 
-			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator, 
+			@Named("InputDirectory")String inputDirectory,
+			@Named("Run_OutDirectory")String runOutDirectory,
+			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator,
 			@Named("EvaluationRun_TestReader")IDescriptionMarkupResultReader testReader,
-			@Named("EvaluationRun_CorrectReader")IDescriptionMarkupResultReader correctReader, 
+			@Named("EvaluationRun_CorrectReader")IDescriptionMarkupResultReader correctReader,
 			String testInputDirectory,
-			String correctInputDirectory, 
+			String correctInputDirectory,
 			ConnectionPool connectionPool) {
 		super(guiceModuleFile, inputDirectory, runOutDirectory, connectionPool);
 		this.testReader = testReader;
@@ -57,7 +61,7 @@ public class DescriptionEvaluationRun extends AbstractRun {
 		DescriptionMarkupResult testDescriptionMarkupResult = testReader.read(testInputDirectory);
 		log(LogLevel.INFO, "read gold standard using " + correctReader.getClass());
 		DescriptionMarkupResult correctDescriptionMarkupResult = correctReader.read(correctInputDirectory);
-		
+
 		evaluator.evaluate(testDescriptionMarkupResult, correctDescriptionMarkupResult);
 		log(LogLevel.INFO, "Evaluation result: \n" + evaluator.getResult());
 	}

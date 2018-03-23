@@ -15,7 +15,7 @@ public class NumericalPhraseParser {
 	String units = null;
 	public NumericalPhraseParser(@Named("Units")String units ) {
 		this.units = units;
-		
+
 	}
 
 	/**
@@ -29,16 +29,16 @@ public class NumericalPhraseParser {
 	[1(-2-4)]
 	AREA: [(4-14(-16)×)4-25+ mm]
 	VALUE: [5.5-(6-8), mm]
-	 * 
-	 * 
+	 *
+	 *
 	 * Other examples styles 2[10] mm diam.
-	 * 
-	 * @param numberexp :(1-)5-300+ ; (1-2-) 4 
-	 * @param cname: 
-	 * @return: characters marked up in XML format <character name="" value="">
+	 *
+	 * @param numberexp :(1-)5-300+ ; (1-2-) 4
+	 * @param suggestedcharaname
+	 * @return: characters marked up in XML format &lt;character name="" value=""&gt;
 	 */
 
-	public List<Character> parseNumericals(String numberexp, String suggestedcharaname) {	
+	public List<Character> parseNumericals(String numberexp, String suggestedcharaname) {
 		LinkedList<Character> innertagstate = new LinkedList<Character>();
 		try{
 			numberexp = numberexp.replaceAll("–", "-");
@@ -55,7 +55,7 @@ public class NumericalPhraseParser {
 				m = p1.matcher(numberexp);
 			}
 			//1-[2-5] => 1-1[2-5] => 1[2-5]
-			//1-[4-5] => 1-3[4-5] 
+			//1-[4-5] => 1-3[4-5]
 			p1 = Pattern.compile("(.*?)(\\d+)-(\\[(\\d)-.*)");
 			m = p1.matcher(numberexp);
 			if(m.matches()){
@@ -306,7 +306,7 @@ public class NumericalPhraseParser {
 				}
 				extreme = matcher1.replaceAll("#");
 				matcher1.reset();
-				j = extreme.length();      	
+				j = extreme.length();
 				if(extreme.substring(i,j).contains("–")|extreme.substring(i,j).contains("-") && !extreme.substring(i,j).contains("×") && !extreme.substring(i,j).contains("x") && !extreme.substring(i,j).contains("X")){
 					String extract = extreme.substring(i,j);
 					Pattern pattern18 = Pattern.compile("[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)");
@@ -332,7 +332,7 @@ public class NumericalPhraseParser {
 				}
 				else{
 					String extract = extreme.substring(i,j);
-					Pattern pattern18 = Pattern.compile("[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)"); 
+					Pattern pattern18 = Pattern.compile("[\\s]?[\\–\\-]?(% of [\\w]+ length|height of [\\w]+|times as [\\w]+ as [\\w]+|total length|their length|(times)?[\\s]?length of [\\w]+)");
 					Matcher matcher3 = pattern18.matcher(extract);
 					String relative="";
 					if ( matcher3.find()){
@@ -421,7 +421,7 @@ public class NumericalPhraseParser {
 			Pattern pattern15 = Pattern.compile("([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?|[\\[]?[±]?[\\d]+[+]?[\\]]?[\\s]?)[\\–\\–\\-]+[a-zA-Z]+");
 			matcher2 = pattern15.matcher(numberexp);
 			numberexp = matcher2.replaceAll("#");
-			matcher2.reset();     	
+			matcher2.reset();
 			//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d]+[+]?[\\]]?)*|[±]?[\\d]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
 			//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|[±]?[\\d\\./%]+[+]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµ]?m))");
 			//Pattern pattern16 = Pattern.compile("(?<!([/][\\s]?))([\\[]?[±]?[\\d\\./%]+[\\]]?[\\s]?[\\[]?[\\–\\-][\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?[\\s]?([\\[]?[\\–\\-]?[\\]]?[\\s]?[\\[]?[\\d\\./%]+[+]?[\\]]?)*|\\[?[±]?[\\d\\./%]+[+]?\\]?)(?!([\\s]?[n/]|[\\s]?[\\–\\-]?% of [\\w]+ length|[\\s]?[\\–\\-]?height of [\\w]+|[\\s]?[\\–\\-]?times|[\\s]?[\\–\\-]?total length|[\\s]?[\\–\\-]?their length|[\\s]?[\\–\\-]?(times)?[\\s]?length of|[\\s]?[dcmµu]?m))");
@@ -674,7 +674,7 @@ public class NumericalPhraseParser {
 			innertagstate=sb1.toString();
 			matcher1.reset();*/
 			}
-			matcher2.reset();   
+			matcher2.reset();
 			if(iscount && text.length()>0 && text.matches(".*?\\w.*")){//puncts can not be units
 				//add units to all counts. //Eh, why counts need to have units? TODO Hong
 				for(Character character: innertagstate){
@@ -695,31 +695,30 @@ public class NumericalPhraseParser {
 		}
 		return innertagstate;
 	}
-	
+
 
 	/**
-	 * 
+	 *
 	 * @param numberexp : styles 2[10] mm diam.
-	 * @param cname: 
+	 * @param cname:
 	 * @return: characters marked up in XML format <character name="" value="">
 	 */
 
-	
+
 	/**
-	 * change 
-	 * <character name="atypical_count" value="2" />
-	   <character char_type="range_value" name="count" from="1" to="3" />
+	 * change
+	 * &lt;character name="atypical_count" value="2" /&gt;
+	   &lt;character char_type="range_value" name="count" from="1" to="3" /&gt;
 
 		to
-	  <character name="average_count" value="2" />
-	  <character char_type="range_value" name="count" from="1" to="3" />	
+	  &lt;character name="average_count" value="2" /&gt;
+	  &lt;character char_type="range_value" name="count" from="1" to="3" /&gt;
 	 * @param innertagstate
-	 * @return
 	 */
 
 	private void refinement(List<Character> innertagstate) throws Exception{
-		
-		//test if innertagstate match the profile: 
+
+		//test if innertagstate match the profile:
 		boolean match = false;
 		String character = null;
 		for(Character chara: innertagstate){
@@ -730,13 +729,13 @@ public class NumericalPhraseParser {
 				match = true;
 			}
 		}
-		
+
 		if(! match) return;
 
 		try{
 			float atypicalfrom = -1f;
 			float atypicalto = -1f;
-	
+
 			for(Character chara: innertagstate){
 				if(chara.getName().startsWith("atypical")){
 					character = chara.getName().replaceFirst("atypical_", "");
@@ -749,8 +748,8 @@ public class NumericalPhraseParser {
 					if(chara.getValue()!=null){
 						atypicalfrom = Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
 						atypicalto =   Float.parseFloat(chara.getValue().replaceFirst("\\+$", "").replaceFirst("^0(?=[1-9])", "-"));
-					}	
-	
+					}
+
 					float[] typical = getTypical(innertagstate, character);
 					if(typical!=null){
 						if(atypicalfrom >= typical[0] && atypicalto<= typical[1]){
@@ -758,7 +757,7 @@ public class NumericalPhraseParser {
 						}
 					}
 				}
-	
+
 			}
 		}catch(Throwable e){
 			log(LogLevel.ERROR, "refinement for average value throwable: "+e.toString());
@@ -777,7 +776,7 @@ public class NumericalPhraseParser {
 				if(chara.getAttribute("value")!=null){
 					atypicalfrom = Float.parseFloat(chara.getAttributeValue("value"));
 					atypicalto = Float.parseFloat(chara.getAttributeValue("value"));
-				}	
+				}
 
 				float[] typical = getTypical(innertagstate, character);
 				if(typical!=null){
@@ -789,7 +788,7 @@ public class NumericalPhraseParser {
 
 		}*/
 	}
-	
+
 	private float[] getTypical(List<Character> innertagstate,
 			String character) {
 		try {
@@ -805,7 +804,7 @@ public class NumericalPhraseParser {
 					if(chara.getValue()!=null){
 						result[0] = Float.parseFloat(chara.getValue());
 						result[1] = Float.parseFloat(chara.getValue());
-					}	
+					}
 					return result;
 				}
 			}
@@ -815,8 +814,8 @@ public class NumericalPhraseParser {
 		}
 		return null;
 	}
-	
-	
+
+
 	protected String annotateSize(String plaincharset, List<Character> innertagstate, String chara) {
 		int i;
 		int j;
@@ -992,7 +991,7 @@ public class NumericalPhraseParser {
 				//innertagstate = innertagstate.concat("<character char_type=\"range_value\" name=\"size\" from=\""+from+"\" from_unit=\""+unit.trim()+"\" to=\""+to+"\" to_unit=\""+unit.trim()+"\" upper_restricted=\""+upperrestricted+"\"/>");
 				extract = extract.replaceAll("^#+", "");//#5-10# =>5-10#
 				toval = extract.substring(0, extract.indexOf('-'));
-				fromval = extract.substring(extract.indexOf('-')+1, extract.indexOf('#')); 
+				fromval = extract.substring(extract.indexOf('-')+1, extract.indexOf('#'));
 				//sizect+=1;
 			}
 			else {
@@ -1049,6 +1048,6 @@ public class NumericalPhraseParser {
 		//log(LogLevel.DEBUG, "plaincharset2:"+plaincharset);
 		return plaincharset;
 	}
-	
-	
+
+
 }

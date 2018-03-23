@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.pos.POS;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
@@ -16,19 +17,19 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
- * NPListChunker chunks by handling noun terminals 
+ * NPListChunker chunks by handling noun terminals
  * @author rodenhausen
  */
 public class NPListChunker extends AbstractChunker {
 
 	/**
+	 *
 	 * @param parseTreeFactory
 	 * @param prepositionWords
 	 * @param stopWords
@@ -37,13 +38,14 @@ public class NPListChunker extends AbstractChunker {
 	 * @param glossary
 	 * @param terminologyLearner
 	 * @param inflector
+	 * @param learnedCharacterKnowledgeBase
 	 */
 	@Inject
 	public NPListChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
-			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-			 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary, 
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,
+			ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,	glossary,
 				terminologyLearner, inflector, learnedCharacterKnowledgeBase);
 	}
 
@@ -51,23 +53,23 @@ public class NPListChunker extends AbstractChunker {
 	/**
 	 * NP
 	 * 	NP a
-	 * 	NP b     => NP
-	 * 	CC and        NNS a, b, and c 
+	 * 	NP b     to NP
+	 * 	CC and        NNS a, b, and c
 	 * 	NP c
-	 * 
+	 *
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		IParseTree parseTree = chunkCollector.getParseTree();
 		List<AbstractParseTree> npCCSubTrees = parseTree.getDescendants(POS.NP, POS.CC);
-		
+
 		for(IParseTree npCCSubTree : npCCSubTrees) {
 			//parseTree.prettyPrint();
-			
-			
+
+
 			IParseTree cc = npCCSubTree;
 			IParseTree np = npCCSubTree.getParent(parseTree);
-			
+
 			// all children must be either NP or NN/NNS, except for one CC, and
 			// all NP child must have a child NN/NNS
 			boolean isList = true;
@@ -75,11 +77,11 @@ public class NPListChunker extends AbstractChunker {
 				isList = false;
 			}
 			//List<IParseTree> ccs = np.getChildrenOfPOS(POS.CC);
-			List<IParseTree> ccs = np.getDescendants(POS.CC); //Hong 3/21/14: with mostly forking ascending branches , the axis and branches or pedicels armed with firm setae : "branches , the axis and branches or pedicels" should not be a list 
+			List<IParseTree> ccs = np.getDescendants(POS.CC); //Hong 3/21/14: with mostly forking ascending branches , the axis and branches or pedicels armed with firm setae : "branches , the axis and branches or pedicels" should not be a list
 			if (ccs.size() > 1) {
 				isList = false;
 			}
-			
+
 			List<AbstractParseTree> children = np.getChildren();
 			// if(children.get(children.size()-2).getName().compareTo("CC") !=
 			// 0){ //second to the last element must be CC
@@ -87,8 +89,8 @@ public class NPListChunker extends AbstractChunker {
 			// } //basal and cauline leaves=> two NN after CC
 			for(IParseTree child : children) {
 				POS childPOS = child.getPOS();
-				if (!childPOS.equals(POS.NP) && !childPOS.equals(POS.NN) && !childPOS.equals(POS.NNS) && !childPOS.equals(POS.NNP) 
-						&& !childPOS.equals(POS.CC) && !childPOS.equals(POS.PUNCT) && !childPOS.equals(POS.PRN) 
+				if (!childPOS.equals(POS.NP) && !childPOS.equals(POS.NN) && !childPOS.equals(POS.NNS) && !childPOS.equals(POS.NNP)
+						&& !childPOS.equals(POS.CC) && !childPOS.equals(POS.PUNCT) && !childPOS.equals(POS.PRN)
 						&& !childPOS.equals(POS.ADJP) && !childPOS.equals(POS.JJ) && !childPOS.equals(POS.RB) && !childPOS.equals(POS.NONE)) { //.matches("NP|NN|NNS|CC|[^\\w]")) //"\\b(NP|NN|NNS|CC|PUNCT|PRN|ADJP|JJ|RB)\\b")){//extended on 10/29/2013, not backwards tested
 					isList = false;
 					break;
@@ -108,7 +110,7 @@ public class NPListChunker extends AbstractChunker {
 					break;
 				}
 			}
-			
+
 			String collapsedPhraseText = np.getTerminalsText();
 
 			if (collapsedPhraseText.matches(".*?\\b(" + prepositionWords + "|"
@@ -122,10 +124,10 @@ public class NPListChunker extends AbstractChunker {
 					Chunk childChunk = chunkCollector.getChunk(terminal);
 					childChunks.add(childChunk);
 				}
-				Chunk chunk = new Chunk(ChunkType.NP_LIST, childChunks); 
+				Chunk chunk = new Chunk(ChunkType.NP_LIST, childChunks);
 				chunkCollector.addChunk(chunk);
 			}
-			
+
 			/*
 			if (isList) {// collapse the NP
 				IParseTree backup = parseTreeFactory.create();

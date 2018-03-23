@@ -12,13 +12,12 @@ import com.google.inject.name.Named;
 
 import edu.arizona.biosemantics.common.ling.Token;
 import edu.arizona.biosemantics.common.ling.know.CharacterMatch;
+//import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.ICorpus;
 import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
 import edu.arizona.biosemantics.common.ling.pos.POS;
 import edu.arizona.biosemantics.common.ling.pos.POSedToken;
-//import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
-import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
@@ -46,11 +45,12 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 	 * @param units
 	 * @param terminologyLearner
 	 * @param vbWords
-	 * @param organStateKnowledgeBase
+	 * @param learnedCharacterKnowledgeBase
+	 * @param compoundPrepWords
 	 */
 	@Inject
 	public OrganCharacterPOSTagger(ICorpus corpus, @Named("PrepositionWords") String prepositions, @Named("StopWords") Set<String> stopWords,
-			@Named("Units") String units, ITerminologyLearner terminologyLearner, @Named("VBWords")Set<String> vbWords, 
+			@Named("Units") String units, ITerminologyLearner terminologyLearner, @Named("VBWords")Set<String> vbWords,
 			/*IOrganStateKnowledgeBase organStateKnowledgeBase,*/ICharacterKnowledgeBase learnedCharacterKnowledgeBase, @Named("CompoundPrepWords")String compoundPrepWords) {
 		this.corpus = corpus;
 		this.prepositions = prepositions;
@@ -80,7 +80,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			boolean isVerb = false;
 			//if(word.contains("~list~") || word.contains("_c_") || organStateKnowledgeBase.isState(word))
 			//don't send numbers, values to learnedCharacterKnowledgeBase
-			if(word.contains("~list~") || word.contains("_c_")  || 
+			if(word.contains("~list~") || word.contains("_c_")  ||
 					((word.matches("[^a-z]+") || word.contains("=")|| word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*"))){ //units could be mixed in the numbers
 				isState = true;
 			}else if(learnedCharacterKnowledgeBase.isCategoricalState(word)){
@@ -114,7 +114,7 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 				posedSentence.add(new POSedToken(word, POS.IN));
 			} else if (word.matches("in-.*?(-view|profile)")) {
 				posedSentence.add(new POSedToken(word, POS.RB));
-			} else if (word.endsWith("ly") && word.indexOf("~") < 0) { 
+			} else if (word.endsWith("ly") && word.indexOf("~") < 0) {
 				posedSentence.add(new POSedToken(word, POS.RB));
 			} else if (word.compareTo("becoming") == 0
 					|| word.compareTo("about") == 0) {
@@ -127,11 +127,11 @@ public class OrganCharacterPOSTagger implements IPOSTagger {
 			} else if (word.compareTo("plus") == 0
 					|| word.compareTo("and-or") == 0) {
 				posedSentence.add(new POSedToken(word, POS.CC));
-			} else if (word.matches("\\d+[cmd]?m\\d+[cmd]?m")) { 
+			} else if (word.matches("\\d+[cmd]?m\\d+[cmd]?m")) {
 				posedSentence.add(new POSedToken(word, POS.CD));
 			} else if (word.matches("(" + units + ")")) {
 				posedSentence.add(new POSedToken(word, POS.NNS));
-			} else if (word.matches("as-\\S+")) { 
+			} else if (word.matches("as-\\S+")) {
 				posedSentence.add(new POSedToken(word, POS.IN));
 			} else if (p.contains("op")) { // <inner> larger.
 				posedSentence.add(new POSedToken(word, POS.NNS));

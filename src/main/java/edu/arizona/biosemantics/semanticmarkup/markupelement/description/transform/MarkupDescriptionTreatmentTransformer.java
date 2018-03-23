@@ -9,17 +9,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +29,13 @@ import java.util.concurrent.Future;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.oto.client.WordRole;
-import edu.arizona.biosemantics.oto.client.lite.OTOLiteClient;
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
+import edu.arizona.biosemantics.common.ling.know.IGlossary;
+import edu.arizona.biosemantics.common.ling.know.Term;
+import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.oto.client.oto.OTOClient;
 import edu.arizona.biosemantics.oto.model.GlossaryDownload;
 import edu.arizona.biosemantics.oto.model.TermCategory;
@@ -47,24 +49,14 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
-import edu.arizona.biosemantics.common.biology.TaxonGroup;
-import edu.arizona.biosemantics.common.ling.know.IGlossary;
-import edu.arizona.biosemantics.common.ling.know.Term;
-import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
-import edu.arizona.biosemantics.common.ling.transform.IInflector;
-import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
-import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Processor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Resource;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Software;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.TreatmentRoot;
-import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
  * Transforms the treatments by semantically marking up the description treatment element of a treatment
@@ -82,7 +74,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	protected ChunkerChain chunkerChain;
 	protected int descriptionExtractorRunMaximum;
 	protected int sentenceChunkerRunMaximum;
-	protected Map<Description, Future<Description>> futureNewDescriptions = 
+	protected Map<Description, Future<Description>> futureNewDescriptions =
 			new HashMap<Description, Future<Description>>();
 	protected OTOClient otoClient;
 	protected String databasePrefix;
@@ -97,8 +89,10 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	private String etcUser;
 	private boolean useEmptyGlossary;
 	private ConnectionPool connectionPool;
-	
+
 	/**
+	 *
+	 * @param version
 	 * @param wordTokenizer
 	 * @param parser
 	 * @param chunkerChain
@@ -110,37 +104,46 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	 * @param descriptionExtractorRunMaximum
 	 * @param sentenceChunkerRunMaximum
 	 * @param otoClient
+	 * @param oto2Client
+	 * @param oto2TermReviewURL
 	 * @param databasePrefix
+	 * @param taxonGroup
 	 * @param glossary
-	 * @throws ClassNotFoundException 
-	 * @throws SQLException 
-	 * @throws Exception
+	 * @param selectedSources
+	 * @param glossaryTable
+	 * @param termCategorizationRequired
+	 * @param inflector
+	 * @param etcUser
+	 * @param useEmptyGlossary
+	 * @param connectionPool
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
 	 */
 	@Inject
 	public MarkupDescriptionTreatmentTransformer(
 			@Named("Version") String version,
-			@Named("WordTokenizer")ITokenizer wordTokenizer, 
+			@Named("WordTokenizer")ITokenizer wordTokenizer,
 			IParser parser,
 			@Named("ChunkerChain")ChunkerChain chunkerChain,
-			IPOSTagger posTagger, 
-			IDescriptionExtractor descriptionExtractor, 
+			IPOSTagger posTagger,
+			IDescriptionExtractor descriptionExtractor,
 			INormalizer normalizer,
 			ITerminologyLearner terminologyLearner,
-			@Named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")boolean parallelProcessing, 
-			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum, 
-			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,  
-			OTOClient otoClient, 
-			Client oto2Client, 
+			@Named("MarkupDescriptionTreatmentTransformer_ParallelProcessing")boolean parallelProcessing,
+			@Named("MarkupDescriptionTreatmentTransformer_DescriptionExtractorRunMaximum")int descriptionExtractorRunMaximum,
+			@Named("MarkupDescriptionTreatmentTransformer_SentenceChunkerRunMaximum")int sentenceChunkerRunMaximum,
+			OTOClient otoClient,
+			Client oto2Client,
 			@Named("OTO2TermReviewURL") String oto2TermReviewURL,
-			@Named("DatabasePrefix")String databasePrefix, 
+			@Named("DatabasePrefix")String databasePrefix,
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
-			IGlossary glossary, 
-			@Named("SelectedSources")Set<String> selectedSources, 
+			IGlossary glossary,
+			@Named("SelectedSources")Set<String> selectedSources,
 			@Named("GlossaryTable")String glossaryTable,
 			@Named("termCategorizationRequired")boolean termCategorizationRequired,
-			IInflector inflector, 
-			@Named("User")String etcUser, 
-			@Named("UseEmptyGlossary") boolean useEmptyGlossary, 
+			IInflector inflector,
+			@Named("User")String etcUser,
+			@Named("UseEmptyGlossary") boolean useEmptyGlossary,
 			ConnectionPool connectionPool) throws ClassNotFoundException, SQLException {
 		super(version, parallelProcessing);
 		this.inflector = inflector;
@@ -165,7 +168,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		this.etcUser = etcUser;
 		this.useEmptyGlossary = useEmptyGlossary;
 		this.connectionPool = connectionPool;
-		
+
 		//normalizer.init(); //moved after learn is complete so normalizer can read the results from learn
 	}
 
@@ -174,12 +177,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		//download gloss again from real OTO because the last download is no longer in memory
 		//it is possible for gloss o change from last run, make sure to grab the correct version.
 		//when remove MYSQL, take care of this issue
-		
+
 		//TODO: String version = otoClient.getLatestVersion();
 		//String tablePrefix = glossaryType + "_" + glossaryDownload.getVersion();
 		//String glossaryTable = tablePrefix + "_glossary";
 		//if(!glossaryExistsLocally(tablePrefix)) {
-		
+
 		GlossaryDownload glossaryDownload = new GlossaryDownload();
 		String glossaryVersion = "N/A";
 		if(!useEmptyGlossary) {
@@ -189,14 +192,14 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			boolean downloadSuccessful = false;
 			otoClient.open();
 			Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
-			
+
 			try {
 				glossaryDownload = futureGlossaryDownload.get();
-				
-				downloadSuccessful = glossaryDownload != null && 
-						!glossaryDownload.getVersion().equals("Requested version not available") && 
+
+				downloadSuccessful = glossaryDownload != null &&
+						!glossaryDownload.getVersion().equals("Requested version not available") &&
 						!glossaryDownload.getVersion().equals("No Glossary Available") &&
-						!glossaryDownload.getVersion().contains("available") && 
+						!glossaryDownload.getVersion().contains("available") &&
 						!glossaryDownload.getVersion().contains("Available");
 				if(!downloadSuccessful) glossaryDownload = getLocalGlossaryDownload(taxonGroup);
 			} catch (Exception e) {
@@ -205,19 +208,19 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				throw new TransformationException();
 			}
 			otoClient.close();
-			
+
 			glossaryVersion = glossaryDownload.getVersion();
 		}
-				
-	    Collection collection = null;
+
+		Collection collection = null;
 		try {
 			collection = readUploadResult();
 		} catch (SQLException e) {
 			this.log(LogLevel.ERROR, "Problem reading upload result", e);
 			throw new TransformationException();
 		}
-		
-		 
+
+
 		if(collection != null) {
 			try {
 				oto2Client.open();
@@ -232,40 +235,40 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			}
 		}
 
-		
+
 		if(collection == null)
-        /*if(!collection.isFinalized() && termCategorizationRequired) {
+			/*if(!collection.isFinalized() && termCategorizationRequired) {
         	log(LogLevel.ERROR, "The term categorization has to be finalized to run markup. Please return to categorizing terms and finalize first.");
         	throw new TransformationException();
         }*/
-		
-		log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
-				"Number of term categoy relations " + glossaryDownload.getTermCategories().size() + "\n" +
-				"Number of term synonym relations " + glossaryDownload.getTermSynonyms().size());
-		if(collection != null) 
+
+			log(LogLevel.DEBUG, "Size of permanent glossary downloaded:\n" +
+					"Number of term categoy relations " + glossaryDownload.getTermCategories().size() + "\n" +
+					"Number of term synonym relations " + glossaryDownload.getTermSynonyms().size());
+		if(collection != null)
 			log(LogLevel.DEBUG, "Size of temporary glossary downloaded:\n" +
 					"Number of term categoy relations " + getTermCategoryRelationCount(collection) + "\n" +
 					"Number of term synonym relations " + getSynonymRelationCount(collection) + "\n");
 		//storeInLocalDB(glossaryDownload, download, this.databasePrefix);
-		 
+
 		initGlossary(glossaryDownload, collection); //turn "_" in glossary terms to "-"
-		
+
 		//this is needed to initialize terminologylearner (DatabaseInputNoLearner / fileTreatments)
 		//even though no actual learning is taking place
 		//Question TODO  all term category info are in the glossary, then why do we need terminologyLearner?
 		terminologyLearner.learn(descriptionsFiles, glossaryTable);
 		terminologyLearner.readResults(descriptionsFiles);
-		
-		normalizer.init();
-		
 
-		Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker = 
+		normalizer.init();
+
+
+		Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker =
 				terminologyLearner.getSentencesForOrganStateMarker(); //sentence level markup: modifier##tag##sentence text
 		// do the actual markup
-		markupDescriptions(descriptionsFiles, sentencesForOrganStateMarker);	
-		
-		
-	
+		markupDescriptions(descriptionsFiles, sentencesForOrganStateMarker);
+
+
+
 
 		Processor processor = new Processor();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -282,12 +285,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		processor.setSoftware(software);
 		if(!useEmptyGlossary)
 			processor.setResource(resource);
-		
+
 		return processor;
 	}
-	
-    private int getSynonymRelationCount(Collection collection) {
-    	int count = 0;
+
+	private int getSynonymRelationCount(Collection collection) {
+		int count = 0;
 		for(Label label : collection.getLabels()) {
 			for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
 				count += label.getSynonyms(mainTerm).size();
@@ -305,26 +308,26 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	private Collection readUploadResult() throws SQLException {
-    	try(Connection connection = connectionPool.getConnection()) {
-	        int uploadId = -1;
-	        String secret = "";
-	        String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
-	        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-		        preparedStatement.setString(1, databasePrefix);
-		        preparedStatement.execute();
-		        try(ResultSet resultSet = preparedStatement.getResultSet()) {
-			        while(resultSet.next()) {
-			                uploadId = resultSet.getInt("oto_uploadid");
-			                secret = resultSet.getString("oto_secret");
-			        }
-			        Collection collection = new Collection();
-			        collection.setId(uploadId);
-			        collection.setSecret(secret);
-			        return collection;
-		        }
-	        }
-    	}
-}
+		try(Connection connection = connectionPool.getConnection()) {
+			int uploadId = -1;
+			String secret = "";
+			String sql = "SELECT oto_uploadid, oto_secret FROM datasetprefixes WHERE prefix = ?";
+			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+				preparedStatement.setString(1, databasePrefix);
+				preparedStatement.execute();
+				try(ResultSet resultSet = preparedStatement.getResultSet()) {
+					while(resultSet.next()) {
+						uploadId = resultSet.getInt("oto_uploadid");
+						secret = resultSet.getString("oto_secret");
+					}
+					Collection collection = new Collection();
+					collection.setId(uploadId);
+					collection.setSecret(secret);
+					return collection;
+				}
+			}
+		}
+	}
 
 	private String getGlossaryVersionOfLearn() {
 		String glossaryVersion = null;
@@ -333,9 +336,9 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.setString(1, databasePrefix);
 				preparedStatement.execute();
-				
+
 				try(ResultSet resultSet = preparedStatement.getResultSet()) {
-				
+
 					while(resultSet.next()) {
 						glossaryVersion = resultSet.getString("glossary_version");
 					}
@@ -365,20 +368,21 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	private GlossaryDownload getLocalGlossaryDownload(TaxonGroup taxonGroup) throws FileNotFoundException, IOException, ClassNotFoundException {
-		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator + 
+		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator +
 				"GlossaryDownload." + taxonGroup.getDisplayName() + ".ser"));
 		GlossaryDownload glossaryDownload = (GlossaryDownload) objectIn.readObject();
 		objectIn.close();
 		return glossaryDownload;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Merge glossaryDownload and collection to one glossary which holds both terms and synonyms
 	 * note: decisions from collection (results from term review by the user) takes priority over those from glossary
 	 * note: synonyms and terms are disjoint -- add only term as entry to the glossary (addEntry), synonyms added as synonyms (addSynonym)
 	 * For structure terms, both singular and plural forms are included in the synonyms
-	 * @param otoGlossary
+	 * @param glossaryDownload
+	 * @param collection
 	 */
 	protected void initGlossary(GlossaryDownload glossaryDownload, Collection collection) {
 
@@ -387,22 +391,22 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		//1. obtain synonyms from glossaryDownload
 		HashSet<Term> gsyns = new HashSet<Term>();
 		obtainSynonymsFromGlossaryDownload(glossaryDownload, gsyns);
-		
+
 		log(LogLevel.DEBUG, "obtaining synonyms from collection...");
 		//2. obtain synonyms from collection
 		HashSet<Term> dsyns = new HashSet<Term>();
 		obtainSynonymsFromCollection(collection, dsyns);
-		
+
 		log(LogLevel.DEBUG, "merging synonyms...");
 		//3. merge synonyms into one set
 		gsyns = mergeSynonyms(gsyns, dsyns);
-		
+
 		log(LogLevel.DEBUG, "adding synonyms to in-mem glossary...");
 		//4. addSynonyms to glossary
 		HashSet<Term> simpleSyns = addSynonyms2Glossary(gsyns);
-		
+
 		log(LogLevel.DEBUG, "adding preferred terms to in-mem glossary...");
-		//5. addEntry 
+		//5. addEntry
 		//the glossaryDownload, excluding syns
 		for(TermCategory termCategory : glossaryDownload.getTermCategories()) {
 			if(!simpleSyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
@@ -412,12 +416,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		}
 
 		//the collection, excluding syns
-		if(collection != null) {			
+		if(collection != null) {
 			for(Label label : collection.getLabels()) {
 				for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
 					if(!simpleSyns.contains(new Term(mainTerm.getTerm().replaceAll("_",  "-"), label.getName()))){//calyx_tube => calyx-tube
-						glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName()); 
-					    log(LogLevel.DEBUG, "adding collection term to in-mem glossary: "+ mainTerm.getTerm().replaceAll("_",  "-")+"<"+label.getName()+">");
+						glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName());
+						log(LogLevel.DEBUG, "adding collection term to in-mem glossary: "+ mainTerm.getTerm().replaceAll("_",  "-")+"<"+label.getName()+">");
 					}else
 						log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+ mainTerm.getTerm().replaceAll("_",  "-")+"<"+label.getName()+">");
 				}
@@ -426,7 +430,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	/**
-	 * 
+	 *
 	 * @param gsyns
 	 * @return set of synonyms added (minus the preferred terms)
 	 */
@@ -438,7 +442,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			String[] tokens = syn.getLabel().split(":");
 			String category = syn.getCategory();
 			glossary.addSynonym(tokens[0], category, tokens[1]);
-		    log(LogLevel.DEBUG, "adding synonym to in-mem glossary: "+ tokens[0]+" U "+tokens[1]+"<"+category+">");
+			log(LogLevel.DEBUG, "adding synonym to in-mem glossary: "+ tokens[0]+" U "+tokens[1]+"<"+category+">");
 			simpleSyns.add(new Term(tokens[0], category));
 		}
 		return simpleSyns;
@@ -453,7 +457,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	private HashSet<Term> mergeSynonyms(HashSet<Term> gsyns, HashSet<Term> dsyns) {
 		HashSet<Term> merged = new HashSet<Term>();
 		Iterator<Term> git = gsyns.iterator();
-		while(git.hasNext()){ 
+		while(git.hasNext()){
 			Iterator<Term> dit = dsyns.iterator();
 			Term gsyn = git.next();
 			String gcat = gsyn.getCategory();
@@ -465,7 +469,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				if(!gcat.equals(dcat)){
 					//add both to merged
 					merged.add(gsyn);
-				    log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+					log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
 					merged.add(dsyn);
 					log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
 				}else{
@@ -474,12 +478,12 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 						if(dtokens.contains(t)) isSame = true;
 					}
 					if(isSame){
-						//use preferred term of dsyns as the preferred term 
+						//use preferred term of dsyns as the preferred term
 						if(dtokens.get(1).equals(gtokens.get(1))){//share the same preferred term,
 							// add both to merged SET
 							merged.add(gsyn);
 							log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
-							merged.add(dsyn);	
+							merged.add(dsyn);
 							log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
 						}else{
 							merged.add(dsyn);
@@ -491,7 +495,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 								merged.add(new Term(gtokens.get(1)+":"+dtokens.get(1), dcat));
 								log(LogLevel.DEBUG, "add to merged synonyms: "+ new Term(gtokens.get(1)+":"+dtokens.get(1), dcat).toString());
 							}
-							
+
 						}
 					}else{
 						//add both to merged
@@ -507,46 +511,46 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	private void obtainSynonymsFromCollection(Collection collection, HashSet<Term> dsyns) {
-		if(collection != null) {			
+		if(collection != null) {
 			for(Label label : collection.getLabels()) {
 				for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
 					//if(!dsyns.contains(new Term(mainTerm.getTerm().replaceAll("_",  "-"), label.getName())))//calyx_tube => calyx-tube
-					//	glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName());  
-					
+					//	glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName());
+
 					//Hong TODO need to add category info to synonym entry in OTOLite
 					//if(termSyn.getCategory().compareTo("structure")==0){
 					if(label.getName().matches(ElementRelationGroup.entityElements)){
 						for(edu.arizona.biosemantics.oto2.oto.shared.model.Term synonym : label.getSynonyms(mainTerm)) {
 							//take care of singular and plural forms
-							String syns = ""; 
+							String syns = "";
 							String synp = "";
 							String terms = "";
 							String termp = "";
 							if(inflector.isPlural(synonym.getTerm().replaceAll("_",  "-"))){
 								synp = synonym.getTerm().replaceAll("_",  "-");
-								syns = inflector.getSingular(synp);					
+								syns = inflector.getSingular(synp);
 							}else{
 								syns = synonym.getTerm().replaceAll("_",  "-");
 								synp = inflector.getPlural(syns);
 							}
-	
+
 							if(inflector.isPlural(mainTerm.getTerm().replaceAll("_",  "-"))){
 								termp = mainTerm.getTerm().replaceAll("_",  "-");
-								terms = inflector.getSingular(termp);					
+								terms = inflector.getSingular(termp);
 							}else{
 								terms = mainTerm.getTerm().replaceAll("_",  "-");
 								termp = inflector.getPlural(terms);
 							}
 							//plural forms are synonyms to the singular
-							if(!syns.equals(terms)){ 							
+							if(!syns.equals(terms)){
 								dsyns.add(new Term(syns+":"+terms, label.getName()));
 								log(LogLevel.DEBUG, "synonym from collection: "+ new Term(syns+":"+terms, label.getName()).toString());
 							}
-							if(!synp.equals(terms)){ 
+							if(!synp.equals(terms)){
 								dsyns.add(new Term(synp+":"+terms, label.getName()));
 								log(LogLevel.DEBUG, "synonym from collection: "+ new Term(synp+":"+terms, label.getName()).toString());
 							}
-							if(!termp.equals(terms)){ 
+							if(!termp.equals(terms)){
 								dsyns.add(new Term(termp+":"+terms, label.getName()));
 								log(LogLevel.DEBUG, "synonym from collection: "+ new Term(termp+":"+terms, label.getName()).toString());
 							}
@@ -557,7 +561,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 							dsyns.add(new Term(synonym.getTerm().replaceAll("_",  "-")+":"+mainTerm.getTerm().replaceAll("_",  "-"), label.getName()));
 							log(LogLevel.DEBUG, "synonym from collection: "+ new Term(synonym.getTerm().replaceAll("_",  "-")+":"+mainTerm.getTerm(), label.getName()).toString());
 						}
-					}				
+					}
 				}
 			}
 		}
@@ -569,13 +573,13 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			//if(termSyn.getCategory().compareTo("structure")==0){
 			if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
 				//take care of singular and plural forms
-				String syns = ""; 
+				String syns = "";
 				String synp = "";
 				String terms = "";
 				String termp = "";
 				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){ //must convert _ to -, as matching entity phrases will be converted from leg iii to leg-iii in the sentence.
 					synp = termSyn.getSynonym().replaceAll("_",  "-");
-					syns = inflector.getSingular(synp);					
+					syns = inflector.getSingular(synp);
 				}else{
 					syns = termSyn.getSynonym().replaceAll("_",  "-");
 					synp = inflector.getPlural(syns);
@@ -583,33 +587,33 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 
 				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
 					termp = termSyn.getTerm().replaceAll("_",  "-");
-					terms = inflector.getSingular(termp);					
+					terms = inflector.getSingular(termp);
 				}else{
 					terms = termSyn.getTerm().replaceAll("_",  "-");
 					termp = inflector.getPlural(terms);
 				}
 				//plural forms are synonyms to the singular
-				if(!syns.equals(terms)){ 
+				if(!syns.equals(terms)){
 					gsyns.add(new Term(syns+":"+terms, termSyn.getCategory()));
 					log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(syns+":"+terms, termSyn.getCategory()).toString());
 				}
 				if(!synp.equals(terms)){
 					gsyns.add(new Term(synp+":"+terms, termSyn.getCategory()));
-					log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(synp+":"+terms, termSyn.getCategory()).toString()); 
+					log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(synp+":"+terms, termSyn.getCategory()).toString());
 				}
-				if(!termp.equals(terms)){ 
+				if(!termp.equals(terms)){
 					gsyns.add(new Term(termp+":"+terms, termSyn.getCategory()));
 					log(LogLevel.DEBUG, "synonym from glossaryDownload: "+ new Term(termp+":"+terms, termSyn.getCategory()).toString());
 				}
 			}else{
 				//glossary.addSynonym(termSyn.getSynonym().replaceAll("_",  "-"), termSyn.getCategory(), termSyn.getTerm());
 				gsyns.add(new Term(termSyn.getSynonym().replaceAll("_",  "-")+":"+termSyn.getTerm().replaceAll("_",  "-"), termSyn.getCategory()));
-				log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(termSyn.getSynonym().replaceAll("_",  "-")+":"+termSyn.getTerm(), termSyn.getCategory()).toString()); 
+				log(LogLevel.DEBUG, "synonym from glossaryDownload: "+new Term(termSyn.getSynonym().replaceAll("_",  "-")+":"+termSyn.getTerm(), termSyn.getCategory()).toString());
 			}
 		}
 	}
-	
-	
+
+
 	/*bad version
 	protected void initGlossary(GlossaryDownload glossaryDownload, Collection collection) {
 
@@ -620,13 +624,13 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			//if(termSyn.getCategory().compareTo("structure")==0){
 			if(termSyn.getCategory().matches(ElementRelationGroup.entityElements)){
 				//take care of singular and plural forms
-				String syns = ""; 
+				String syns = "";
 				String synp = "";
 				String terms = "";
 				String termp = "";
 				if(inflector.isPlural(termSyn.getSynonym().replaceAll("_",  "-"))){ //must convert _ to -, as matching entity phrases will be converted from leg iii to leg-iii in the sentence.
 					synp = termSyn.getSynonym().replaceAll("_",  "-");
-					syns = inflector.getSingular(synp);					
+					syns = inflector.getSingular(synp);
 				}else{
 					syns = termSyn.getSynonym().replaceAll("_",  "-");
 					synp = inflector.getPlural(syns);
@@ -634,7 +638,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 
 				if(inflector.isPlural(termSyn.getTerm().replaceAll("_",  "-"))){
 					termp = termSyn.getTerm().replaceAll("_",  "-");
-					terms = inflector.getSingular(termp);					
+					terms = inflector.getSingular(termp);
 				}else{
 					terms = termSyn.getTerm().replaceAll("_",  "-");
 					termp = inflector.getPlural(terms);
@@ -659,32 +663,32 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 
 		//add syn set of term_category
 		HashSet<Term> dsyns = new HashSet<Term>();
-		if(collection != null) {			
+		if(collection != null) {
 			for(Label label : collection.getLabels()) {
 				for(edu.arizona.biosemantics.oto2.oto.shared.model.Term mainTerm : label.getMainTerms()) {
 					if(!dsyns.contains(new Term(mainTerm.getTerm().replaceAll("_",  "-"), label.getName())))//calyx_tube => calyx-tube
-						glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName());  
-					
+						glossary.addEntry(mainTerm.getTerm().replaceAll("_",  "-"), label.getName());
+
 					//Hong TODO need to add category info to synonym entry in OTOLite
 					//if(termSyn.getCategory().compareTo("structure")==0){
 					if(label.getName().matches(ElementRelationGroup.entityElements)){
 						for(edu.arizona.biosemantics.oto2.oto.shared.model.Term synonym : label.getSynonyms(mainTerm)) {
 							//take care of singular and plural forms
-							String syns = ""; 
+							String syns = "";
 							String synp = "";
 							String terms = "";
 							String termp = "";
 							if(inflector.isPlural(synonym.getTerm().replaceAll("_",  "-"))){
 								synp = synonym.getTerm().replaceAll("_",  "-");
-								syns = inflector.getSingular(synp);					
+								syns = inflector.getSingular(synp);
 							}else{
 								syns = synonym.getTerm().replaceAll("_",  "-");
 								synp = inflector.getPlural(syns);
 							}
-	
+
 							if(inflector.isPlural(mainTerm.getTerm().replaceAll("_",  "-"))){
 								termp = mainTerm.getTerm().replaceAll("_",  "-");
-								terms = inflector.getSingular(termp);					
+								terms = inflector.getSingular(termp);
 							}else{
 								terms = mainTerm.getTerm().replaceAll("_",  "-");
 								termp = inflector.getPlural(terms);
@@ -703,107 +707,108 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 							glossary.addSynonym(synonym.getTerm().replaceAll("_",  "-"), label.getName(), mainTerm.getTerm());
 							dsyns.add(new Term(synonym.getTerm().replaceAll("_",  "-"), label.getName()));
 						}
-					}				
+					}
 				}
 			}
 		}
-		
+
 		//glossary.addEntry("distance", "character");
-	
+
 	}*/
-	
-//	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download, 
-//			String tablePrefix) {
-//		List<TermCategory> termCategories = new ArrayList<TermCategory>();
-//		List<WordRole> wordRoles = new ArrayList<WordRole>();
-//		List<TermSynonym> termSynonyms = new ArrayList<TermSynonym>();
-//		
-//		termCategories.addAll(glossaryDownload.getTermCategories());
-//		termSynonyms.addAll(glossaryDownload.getTermSynonyms());
-//		
-//		List<Decision> decisions = download.getDecisions();
-//		List<Synonym> synonyms = download.getSynonyms();
-//
-//		HashSet<String> hasSynSet = new HashSet<String>();
-//		for(Synonym synonym : synonyms) {
-//			TermSynonym termSynonym = new TermSynonym();
-//			termSynonym.setTerm(synonym.getTerm());
-//			termSynonym.setSynonym(synonym.getSynonym());
-//			termSynonyms.add(termSynonym);
-//			hasSynSet.add(synonym.getTerm());
-//		}
-//		
-//		for(Decision decision : decisions) {
-//			TermCategory termCategory = new TermCategory();
-//			termCategory.setTerm(decision.getTerm());
-//			termCategory.setCategory(decision.getCategory());
-//			termCategory.setHasSyn(hasSynSet.contains(decision.getTerm()));
-//			termCategories.add(termCategory);
-//		}
-//		
-//		/** generate the wordroles from termcategories **/
-//		//remove duplicates, term is primary key in the table
-//		HashSet<String> wordSet = new HashSet<String>();
-//		for(TermCategory termCategory : termCategories) {
-//			if(wordSet.contains(termCategory.getTerm()))
-//				continue;
-//			wordSet.add(termCategory.getTerm());
-//			WordRole wordRole = new WordRole();
-//			wordRole.setWord(termCategory.getTerm());
-//			String semanticRole = "c";
-//			//if(termCategory.getCategory().equalsIgnoreCase("structure")) {
-//			if(termCategory.getCategory().toLowerCase().matches(ElementRelationGroup.entityElements)) {
-//				semanticRole = "op";
-//			}
-//			wordRole.setSemanticRole(semanticRole);
-//			wordRole.setSavedid(""); //not really needed, is a left over from earlier charaparser times
-//			wordRoles.add(wordRole);
-//		}
-//		
-//		try(Connection connection = connectionPool.getConnection()) {	
-//			try(Statement stmt = connection.createStatement()) {
-//		        String cleanupQuery = "DROP TABLE IF EXISTS " + 
-//										tablePrefix + "_term_category, " + 
-//										tablePrefix + "_syns, " +
-//										tablePrefix + "_wordroles;";
-//		        stmt.execute(cleanupQuery);
-//		        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
-//				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
-//						"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
-//				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(200) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
-//						"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`))  CHARACTER SET utf8 engine=innodb");
-//				
-//				for(TermCategory termCategory : termCategories) {
-//					try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)")) {
-//						preparedStatement.setString(1, termCategory.getTerm());
-//						preparedStatement.setString(2, termCategory.getCategory());
-//						preparedStatement.setBoolean(3, termCategory.isHasSyn());
-//						preparedStatement.executeUpdate();
-//					}
-//				}
-//				for(TermSynonym termSynonym : termSynonyms) {
-//					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)")) {
-//						preparedStatement.setString(1, termSynonym.getTerm());
-//						preparedStatement.setString(2, termSynonym.getSynonym());
-//						preparedStatement.executeUpdate();
-//					}
-//				}
-//				for(WordRole wordRole : wordRoles) {
-//					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)")) {
-//						preparedStatement.setString(1, wordRole.getWord());
-//						preparedStatement.setString(2, wordRole.getSemanticRole());
-//						preparedStatement.setString(3, wordRole.getSavedid());
-//						preparedStatement.executeUpdate();
-//					}
-//				}
-//			}
-//		} catch(Exception e) {
-//			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
-//		}
-//	}
+
+	//	private void storeInLocalDB(GlossaryDownload glossaryDownload, Download download,
+	//			String tablePrefix) {
+	//		List<TermCategory> termCategories = new ArrayList<TermCategory>();
+	//		List<WordRole> wordRoles = new ArrayList<WordRole>();
+	//		List<TermSynonym> termSynonyms = new ArrayList<TermSynonym>();
+	//
+	//		termCategories.addAll(glossaryDownload.getTermCategories());
+	//		termSynonyms.addAll(glossaryDownload.getTermSynonyms());
+	//
+	//		List<Decision> decisions = download.getDecisions();
+	//		List<Synonym> synonyms = download.getSynonyms();
+	//
+	//		HashSet<String> hasSynSet = new HashSet<String>();
+	//		for(Synonym synonym : synonyms) {
+	//			TermSynonym termSynonym = new TermSynonym();
+	//			termSynonym.setTerm(synonym.getTerm());
+	//			termSynonym.setSynonym(synonym.getSynonym());
+	//			termSynonyms.add(termSynonym);
+	//			hasSynSet.add(synonym.getTerm());
+	//		}
+	//
+	//		for(Decision decision : decisions) {
+	//			TermCategory termCategory = new TermCategory();
+	//			termCategory.setTerm(decision.getTerm());
+	//			termCategory.setCategory(decision.getCategory());
+	//			termCategory.setHasSyn(hasSynSet.contains(decision.getTerm()));
+	//			termCategories.add(termCategory);
+	//		}
+	//
+	//		/** generate the wordroles from termcategories **/
+	//		//remove duplicates, term is primary key in the table
+	//		HashSet<String> wordSet = new HashSet<String>();
+	//		for(TermCategory termCategory : termCategories) {
+	//			if(wordSet.contains(termCategory.getTerm()))
+	//				continue;
+	//			wordSet.add(termCategory.getTerm());
+	//			WordRole wordRole = new WordRole();
+	//			wordRole.setWord(termCategory.getTerm());
+	//			String semanticRole = "c";
+	//			//if(termCategory.getCategory().equalsIgnoreCase("structure")) {
+	//			if(termCategory.getCategory().toLowerCase().matches(ElementRelationGroup.entityElements)) {
+	//				semanticRole = "op";
+	//			}
+	//			wordRole.setSemanticRole(semanticRole);
+	//			wordRole.setSavedid(""); //not really needed, is a left over from earlier charaparser times
+	//			wordRoles.add(wordRole);
+	//		}
+	//
+	//		try(Connection connection = connectionPool.getConnection()) {
+	//			try(Statement stmt = connection.createStatement()) {
+	//		        String cleanupQuery = "DROP TABLE IF EXISTS " +
+	//										tablePrefix + "_term_category, " +
+	//										tablePrefix + "_syns, " +
+	//										tablePrefix + "_wordroles;";
+	//		        stmt.execute(cleanupQuery);
+	//		        stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_syns (`term` varchar(200) DEFAULT NULL, `synonym` varchar(200) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
+	//				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_term_category (`term` varchar(100) DEFAULT NULL, `category` varchar(200) " +
+	//						"DEFAULT NULL, `hasSyn` tinyint(1) DEFAULT NULL)  CHARACTER SET utf8 engine=innodb");
+	//				stmt.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "_wordroles (`word` varchar(200) NOT NULL DEFAULT '', `semanticrole` varchar(2) " +
+	//						"NOT NULL DEFAULT '', `savedid` varchar(40) DEFAULT NULL, PRIMARY KEY (`word`,`semanticrole`))  CHARACTER SET utf8 engine=innodb");
+	//
+	//				for(TermCategory termCategory : termCategories) {
+	//					try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_term_category (`term`, `category`, `hasSyn`) VALUES (?, ?, ?)")) {
+	//						preparedStatement.setString(1, termCategory.getTerm());
+	//						preparedStatement.setString(2, termCategory.getCategory());
+	//						preparedStatement.setBoolean(3, termCategory.isHasSyn());
+	//						preparedStatement.executeUpdate();
+	//					}
+	//				}
+	//				for(TermSynonym termSynonym : termSynonyms) {
+	//					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_syns (`term`, `synonym`) VALUES (?, ?)")) {
+	//						preparedStatement.setString(1, termSynonym.getTerm());
+	//						preparedStatement.setString(2, termSynonym.getSynonym());
+	//						preparedStatement.executeUpdate();
+	//					}
+	//				}
+	//				for(WordRole wordRole : wordRoles) {
+	//					try(PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO " + tablePrefix + "_wordroles" + " VALUES (?, ?, ?)")) {
+	//						preparedStatement.setString(1, wordRole.getWord());
+	//						preparedStatement.setString(2, wordRole.getSemanticRole());
+	//						preparedStatement.setString(3, wordRole.getSavedid());
+	//						preparedStatement.executeUpdate();
+	//					}
+	//				}
+	//			}
+	//		} catch(Exception e) {
+	//			log(LogLevel.ERROR, "Problem storing glossary in local DB", e);
+	//		}
+	//	}
 
 	/**
-	 * @param treatments
+	 *
+	 * @param descriptionsFiles
 	 * @param sentencesForOrganStateMarker
 	 */
 	protected void markupDescriptions(List<AbstractDescriptionsFile> descriptionsFiles, Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker) {
@@ -815,7 +820,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 			executorService = Executors.newFixedThreadPool(descriptionExtractorRunMaximum);
 		if(this.parallelProcessing && this.descriptionExtractorRunMaximum == Integer.MAX_VALUE)
 			executorService = Executors.newCachedThreadPool();
-		
+
 		int descriptionCount = 0;
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			descriptionCount += descriptionsFile.getDescriptions().size();
@@ -828,14 +833,14 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				Description description = descriptionsFile.getDescriptions().get(i);
 				//start a DescriptionExtractorRun for the treatment to process as a separate thread
 				DescriptionExtractorRun descriptionExtractorRun = new DescriptionExtractorRun(
-						descriptionsFile, description, i, normalizer, wordTokenizer, 
-						posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum, 
+						descriptionsFile, description, i, normalizer, wordTokenizer,
+						posTagger, parser, chunkerChain, descriptionExtractor, sentencesForOrganStateMarker, parallelProcessing, sentenceChunkerRunMaximum,
 						descriptionExtractorsLatch, selectedSources);
 				Future<Description> futureNewDescription = executorService.submit(descriptionExtractorRun);
 				this.futureNewDescriptions.put(description, futureNewDescription);
 			}
 		}
-		
+
 		//only continue when all threads are done
 		try {
 			descriptionExtractorsLatch.await();
@@ -843,7 +848,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		} catch (InterruptedException e) {
 			log(LogLevel.ERROR, "Problem with descriptionExtractorsLatch or executorService", e);
 		}
-		
+
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				Future<Description> futureNewDescription = futureNewDescriptions.get(description);

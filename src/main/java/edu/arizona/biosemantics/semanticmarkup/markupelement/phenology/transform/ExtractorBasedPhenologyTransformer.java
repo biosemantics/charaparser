@@ -175,10 +175,10 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 
 	/**
 	 * late spring and early summer (May-Jun)
-	 * =>late_spring-early_summer_(May-Jun)
+	 * to late_spring-early_summer_(May-Jun)
 	 *
 	 * latter half of winter?
-	 * =>latter_half_of_winter?
+	 * to latter_half_of_winter?
 	 * @param text
 	 * @return
 	 */

@@ -5,20 +5,19 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
-import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 
 
 /**
  * A ChunkCollector stores the root chunk to which a terminal is assigned to for a single sentence.
  * Furthermore a chunkCollector provides for additional sentence information, such as the sentences parse tree or subject tag.
- * 
- * Note: 
- * Always use ChunkCollectors interface to modify a Chunk. 
+ *
+ * Note:
+ * Always use ChunkCollectors interface to modify a Chunk.
  * Or modify chunk and call chunkCollector.add(chunk) afterwards to register the changes.
  * ChunkCollector checks for ill-formed chunks.
  * @author rodenhausen
@@ -34,15 +33,17 @@ public class ChunkCollector implements Iterable<Chunk> {
 	private Description description; //the entire xml input for a treatment
 	private HashMap<IParseTree, Chunk> chunks = new HashMap<IParseTree, Chunk>();
 	private String source;
-	
+
 	/**
 	 * @param parseTree
 	 * @param subjectTag
-	 * @param treatment
+	 * @param description
+	 * @param descriptionsFile
 	 * @param source
 	 * @param sentenceString
+	 * @param originalSent
 	 */
-	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Description description, AbstractDescriptionsFile descriptionsFile, 
+	public ChunkCollector(AbstractParseTree parseTree, String subjectTag, Description description, AbstractDescriptionsFile descriptionsFile,
 			String source, String sentenceString, String originalSent) {
 		this.parseTree = parseTree;
 		/*log(LogLevel.DEBUG, "root before " + parseTree.getClass().getName() + "@" + Integer.toHexString(parseTree.hashCode()));
@@ -56,10 +57,10 @@ public class ChunkCollector implements Iterable<Chunk> {
 		this.sentence = sentenceString;
 		this.originalSent = originalSent;
 	}
-	
+
 	/*@Override
 	public Object clone(){
-		return new ChunkCollector((AbstractParseTree)parseTree.clone(), subjectTag, 
+		return new ChunkCollector((AbstractParseTree)parseTree.clone(), subjectTag,
 				(Description)description.clone(), (AbstractDescriptionsFile) descriptionsFile.clone()
 				, source, sentence);
 	}*/
@@ -73,7 +74,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		result.append("chunks:\n");
 		for(AbstractParseTree terminal : getTerminals()) {
 			Chunk chunk = this.getChunk(terminal);
-			if(chunk!=null) 
+			if(chunk!=null)
 				result.append(terminal.toString()).append(" => ").append(chunk.toString()).append("\n");
 			else
 				result.append(terminal.toString()).append(" => ").append("NULL").append("\n");
@@ -84,35 +85,35 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}*/
 		return result.toString();
 	}
-	
+
 	/**
 	 * @return the sentence
 	 */
 	public String getSentence() {
 		return this.sentence;
 	}
-	
+
 	/**
 	 * @return the original sentence
 	 */
 	public String getOriginalSentence() {
 		return this.originalSent;
 	}
-	
+
 	/**
 	 * @return the corresponding treatment
 	 */
 	public Description getDescription() {
 		return this.description;
 	}
-	
+
 	/**
 	 * @return the subject tag
 	 */
 	public String getSubjectTag() {
 		return subjectTag;
 	}
-	
+
 	/**
 	 * @return the parse tree for the sentence
 	 */
@@ -130,7 +131,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 		if(!(chunk instanceof AbstractParseTree))
 			log(LogLevel.DEBUG, "add chunk " + chunk);
-				
+
 		//checks for "valid" chunking as of current definition
 		List<AbstractParseTree> terminals = chunk.getTerminals();
 		int previousTerminalId = getTerminalId(terminals.get(0)) - 1;
@@ -140,7 +141,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 				log(LogLevel.DEBUG, "This is not a valid chunk of consecutive terminals!");
 			previousTerminalId = currentTerminalId;
 		}
-		
+
 		int firstTerminalId = getTerminalId(terminals.get(0));
 		int lastTerminalId = getTerminalId(terminals.get(terminals.size()-1));
 		AbstractParseTree previousTerminal = null;
@@ -167,8 +168,8 @@ public class ChunkCollector implements Iterable<Chunk> {
 						log(LogLevel.DEBUG, "This is not a valid chunk. Terminal was already included in next chunk");
 				}
 			}
-				
-		for(IParseTree parseTree : chunk.getTerminals()) {	
+
+		for(IParseTree parseTree : chunk.getTerminals()) {
 			chunks.put(parseTree, chunk);
 		}
 		this.hasChanged = true;
@@ -181,11 +182,11 @@ public class ChunkCollector implements Iterable<Chunk> {
 	public int getTerminalId(IParseTree parseTree) {
 		return this.getTerminals().indexOf(parseTree);
 	}
-	
+
 	private int getMaxTerminalId() {
 		return this.getTerminals().size() - 1;
 	}
-	
+
 	/**
 	 * @param parseTree
 	 * @return the root chunk associated with the parseTree
@@ -195,7 +196,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 			this.addChunk(parseTree);
 		return chunks.get(parseTree);
 	}
-	
+
 	/**
 	 * @param parseTree
 	 * @return the chunkType of the root chunk associated with the parseTree
@@ -206,12 +207,12 @@ public class ChunkCollector implements Iterable<Chunk> {
 
 	/**
 	 * @param parseTree
-	 * @return if parseTree is part of a non terminal chunk 
+	 * @return if parseTree is part of a non terminal chunk
 	 */
 	public boolean isPartOfANonTerminalChunk(IParseTree parseTree) {
 		return chunks.get(parseTree) != null && !chunks.get(parseTree).isTerminal();
 	}
-		
+
 	/**
 	 * @param parseTree
 	 * @param chunkType
@@ -224,7 +225,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param parseTree
 	 * @param chunkType
@@ -237,7 +238,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @param parseTrees
 	 * @param chunkType
@@ -249,13 +250,13 @@ public class ChunkCollector implements Iterable<Chunk> {
 				return true;
 		}
 		return false;
-	} 
-	
-	
+	}
+
+
 	/**
 	 * @param parseTrees
 	 * @param chunkType
-	 * @return a chunk of chunkType, in which one of the parseTrees participates. 
+	 * @return a chunk of chunkType, in which one of the parseTrees participates.
 	 * If no such chunk exists null is returned.
 	 */
 	public Chunk getChunkOfChunkType(List<AbstractParseTree> parseTrees, ChunkType chunkType) {
@@ -267,7 +268,7 @@ public class ChunkCollector implements Iterable<Chunk> {
 		}
 		return null;
 	}
-	
+
 
 	/**
 	 * @return the list of terminals of the sentence
@@ -287,31 +288,31 @@ public class ChunkCollector implements Iterable<Chunk> {
 			Chunk chunk = this.getChunk(terminal);
 			if(!chunk.equals(previousChunk))
 				chunks.add(chunk);
-			
+
 			previousChunk = chunk;
 		}
 		return chunks;
 	}
-	
+
 	/**
 	 * @param chunkType
 	 * @return if any of the chunks contains chunkType
 	 */
 	public boolean containsChunkType(ChunkType chunkType) {
 		for(Chunk chunk : this.getChunks()) {
-			if(chunk.containsChunkType(chunkType)) 
+			if(chunk.containsChunkType(chunkType))
 				return true;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @return if the chunkCollector has changed
 	 */
 	public boolean hasChanged() {
 		return this.hasChanged;
 	}
-	
+
 	/**
 	 * reset the has changed flag
 	 */
@@ -330,6 +331,6 @@ public class ChunkCollector implements Iterable<Chunk> {
 	public String getSource() {
 		return source;
 	}
-	
-	
+
+
 }

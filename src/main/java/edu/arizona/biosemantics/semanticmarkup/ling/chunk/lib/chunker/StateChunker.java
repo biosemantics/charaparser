@@ -6,6 +6,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
@@ -13,7 +14,6 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
@@ -33,25 +33,25 @@ public class StateChunker extends AbstractChunker {
 	 * @param glossary
 	 * @param terminologyLearner
 	 * @param inflector
-	 * @param organStateKnowledgeBase
+	 * @param learnedCharacterKnowledgeBase
 	 */
 	@Inject
 	public StateChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
-			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-			 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,
+			ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters,
 				glossary, terminologyLearner, inflector,  learnedCharacterKnowledgeBase);
 	}
 
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
-		for(AbstractParseTree terminal : chunkCollector.getTerminals())  { 
-			//collapse here? no decided to create chunk on the fly 
+		for(AbstractParseTree terminal : chunkCollector.getTerminals())  {
+			//collapse here? no decided to create chunk on the fly
 			//terminalParent = terminal.getParent(parseTree);
 			Chunk chunk = chunkCollector.getChunk(terminal);
 			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && learnedCharacterKnowledgeBase.isCategoricalState(terminal.getTerminalsText())) {
-			//if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
+				//if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
 				chunkCollector.addChunk(new Chunk(ChunkType.STATE, terminal));
 			}
 		}

@@ -11,6 +11,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 import edu.arizona.biosemantics.common.log.LogLevel;
@@ -19,7 +20,6 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGroup;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
@@ -33,6 +33,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 public class MyNewCleanupChunker extends AbstractChunker {
 
 	/**
+	 *
 	 * @param parseTreeFactory
 	 * @param prepositionWords
 	 * @param stopWords
@@ -41,14 +42,14 @@ public class MyNewCleanupChunker extends AbstractChunker {
 	 * @param glossary
 	 * @param terminologyLearner
 	 * @param inflector
-	 * @param organStateKnowledgeBase
+	 * @param learnedCharacterKnowledgeBase
 	 */
 	@Inject
 	public MyNewCleanupChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
-			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
-		 ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,
+			ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner,
 				inflector,learnedCharacterKnowledgeBase);
 	}
 
@@ -60,7 +61,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 		//boolean[] translateModifierToConstraint = new boolean[terminals.size()];
 		boolean[] translateStateToModifier = new boolean[terminals.size()];
 		boolean[] translateConstraintToModifier = new boolean[terminals.size()];
-		
+
 		determineTranslationsBasedOnStructure(terminals, chunkCollector, translateCharacterToConstraint, translateStateToConstraint, /* translateModifierToConstraint,*/
 				translateStateToModifier, translateConstraintToModifier);
 
@@ -87,7 +88,7 @@ public class MyNewCleanupChunker extends AbstractChunker {
 				chunkCollector.addChunk(chunkCollector.getChunk(terminals.get(i)));
 			}
 		}
-		
+
 		/*
 		 * basal => CONSTRAINT: characterName->position; [STATE: [basal]]
 and => AND: [AND: [and]]
@@ -99,7 +100,7 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 		 */
 		//include orphaned constraints in the Organ chunk
 		Chunk chunkWithOrgan = null;
-		
+
 		ArrayList<Chunk> toBeIncluded = new ArrayList<Chunk> ();
 		for(int i=terminals.size()-1; i>=0; i--) { //from back to front
 			AbstractParseTree terminal = terminals.get(i);
@@ -120,11 +121,11 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 				chunkWithOrgan = null;
 				toBeIncluded = new ArrayList<Chunk> ();
 			}
-			
+
 		}
 		if(!toBeIncluded.isEmpty())
 			includeConstraints(chunkCollector, chunkWithOrgan, toBeIncluded);
-		
+
 		//capture multiple modifiers following each other into one chunk
 		//from: MODIFIER: [mostly], MODIFIER: [not]
 		//to: MODIFIER: [mostly, not],
@@ -132,7 +133,7 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
 			Chunk terminalChunk = chunkCollector.getChunk(terminal);
-			
+
 			//terminal could be a modifier chunk or a modifier chunk stuck into another chunk (e.g. character_state)
 			if(previousModifierChunk != null && terminalChunk.isPartOfChunkType(terminal, ChunkType.MODIFIER) &&
 					!terminalChunk.getChunkOfTypeAndTerminal(ChunkType.MODIFIER, terminal).equals(previousModifierChunk)) {
@@ -145,19 +146,19 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 				terminalChunk.removeChunk(previousModifierChunk);
 				chunkCollector.addChunk(terminalChunk);
 			}
-			
+
 			//special case: to connection two modifiers e.g. broadly to narrowly ovoid
-			if(terminal.getTerminalsText().equals("to") && 
+			if(terminal.getTerminalsText().equals("to") &&
 					!chunkCollector.isPartOfANonTerminalChunk(terminal) &&
-					previousModifierChunk != null && 
-					i+1 < terminals.size() && 
+					previousModifierChunk != null &&
+					i+1 < terminals.size() &&
 					chunkCollector.isPartOfChunkType(terminals.get(i+1), ChunkType.MODIFIER)) {
 				previousModifierChunk.getChunks().add(terminal);
-			} else 
+			} else
 				previousModifierChunk = terminalChunk.getChunkOfTypeAndTerminal(ChunkType.MODIFIER, terminal);
 		}
 
-		//moveChunksForAndOrLists(terminals, chunkCollector);		
+		//moveChunksForAndOrLists(terminals, chunkCollector);
 	}
 
 	private void includeConstraints(ChunkCollector chunkCollector,
@@ -194,41 +195,41 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 		boolean[] or = getArray(terminals, chunkCollector, ChunkType.OR);
 		boolean[] to = getArray(terminals, chunkCollector, ChunkType.TO);
 		boolean[] constraintOrgan = new boolean[terminals.size()];
-		
+
 		//[CHARACTER_STATE: characterName->position; [STATE: [outer]], and, CHARACTER_STATE: characterName->position; [STATE: [mid]], ORGAN: [phyllaries]]
 		//need to group characters of a organ together: (outer and mid) phyllaries
-		
+
 		boolean changed = true;
 		while(changed) {
 			changed = false;
-			
+
 			boolean changedConstraintOrgan = false;
 			for(int i=terminals.size() - 1; i>=0; i--) {
 				boolean before = constraintOrgan[i];
-				constraintOrgan[i] = organ[i] || (i+1 < terminals.size() && constraint[i] && organ[i+1]); 
+				constraintOrgan[i] = organ[i] || (i+1 < terminals.size() && constraint[i] && organ[i+1]);
 				changedConstraintOrgan |= constraintOrgan[i] != before;
 			}
 			//log(LogLevel.DEBUG, "changedConstraintOrgan " + changedConstraintOrgan);
 			changed |= changedConstraintOrgan;
-			
+
 			boolean changedCharacterToConstraint = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateCharacterToConstraint[i];
-				translateCharacterToConstraint[i] = (character[i]||and[i]||or[i]||to[i]) && i+1 < terminals.size() && 
-					(constraintOrgan[i+1] || translateCharacterToConstraint[i+1]) && ((i-1 >= 0 && !modifier[i-1]) || i==0);
+				translateCharacterToConstraint[i] = (character[i]||and[i]||or[i]||to[i]) && i+1 < terminals.size() &&
+						(constraintOrgan[i+1] || translateCharacterToConstraint[i+1]) && ((i-1 >= 0 && !modifier[i-1]) || i==0);
 				changedCharacterToConstraint |= translateCharacterToConstraint[i] != before;
 			}
 			//log(LogLevel.DEBUG, "changedCharacterToConstraint " + changedCharacterToConstraint);
 			changed |= changedCharacterToConstraint;
-			
+
 			boolean changedStateToX = false;
-			for(int i=terminals.size()-1; i>=0; i--) 
+			for(int i=terminals.size()-1; i>=0; i--)
 				if(state[i] && !character[i]) {
 					boolean before = translateStateToConstraint[i];
 					translateStateToConstraint[i] = i+1 < terminals.size() && (constraintOrgan[i+1] || translateCharacterToConstraint[i+1]);
 					changedStateToX |= translateStateToConstraint[i] != before;
 					before = translateStateToModifier[i];
-					translateStateToModifier[i] =  i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1] && 
+					translateStateToModifier[i] =  i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1] &&
 							!terminals.get(i).getTerminalsText().equals("borne");
 					changedStateToX |= translateStateToModifier[i] != before;
 				}
@@ -244,13 +245,13 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 			}
 			//log(LogLevel.DEBUG, "changedModifierToConstraint " + changedModifierToConstraint);
 			changed |= changedModifierToConstraint;
-			*/
-			
+			 */
+
 			boolean changedConstraintToModifier = false;
 			for(int i=terminals.size()-1; i>=0; i--) {
 				boolean before = translateConstraintToModifier[i];
-				translateConstraintToModifier[i] = (constraint[i] || translateCharacterToConstraint[i] || translateStateToConstraint[i] /*|| translateModifierToConstraint[i]*/) && 
-					i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1];
+				translateConstraintToModifier[i] = (constraint[i] || translateCharacterToConstraint[i] || translateStateToConstraint[i] /*|| translateModifierToConstraint[i]*/) &&
+						i+1 < terminals.size() && character[i+1] && !translateCharacterToConstraint[i+1];
 				changedConstraintToModifier |= translateConstraintToModifier[i] != before;
 			}
 			//log(LogLevel.DEBUG, "changedConstraintToModifier " + changedConstraintToModifier);
@@ -263,12 +264,12 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 			AbstractParseTree terminal = terminals.get(i);
 			Chunk chunk = chunkCollector.getChunk(terminal);
 			Chunk characterStateChunk = chunk.getChunkOfTypeAndTerminal(ChunkType.CHARACTER_STATE, terminal);
-			
+
 			if(characterStateChunk==null) return false; //and, or
-			
+
 			String characterName = characterStateChunk.getProperty("characterName");
 			String characterState = characterStateChunk.getChunkBFS(ChunkType.STATE).getTerminalsText();
-			
+
 			HashSet<String> allowedCharacterNames = new HashSet<String>();
 			String[] list = ElementRelationGroup.entityConstraintElements.split("\\|");
 			for(String cat: list){
@@ -281,12 +282,12 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 			allowedCharacterNames.add("structure_in_adjective_form");
 			allowedCharacterNames.add("function");
 			allowedCharacterNames.add("growth_order");*/
-			
+
 			HashSet<String> notAllowedCharacterStates = new HashSet<String>();
 			notAllowedCharacterStates.add("low");
-			
+
 			//split character name by "_" ?
-			
+
 			if(characterName != null) {
 				/*String[] singleCharacterNames = characterName.split("_or_");
 				for(String singleCharacterName : singleCharacterNames) {
@@ -295,20 +296,20 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 				}*/
 				if(characterName.matches(".*?(^|_)(size|length|width|height|thickness)(_|$).*") && (characterState.endsWith("est") || characterState.endsWith("er")))
 					return true;
-				
+
 				String[] characterNames = characterName.split("_or_");
 				if(notAllowedCharacterStates.contains(characterState)) return false;
 				boolean result = false;
 				for(String singleCharacterName : characterNames)
 					result |= allowedCharacterNames.contains(singleCharacterName);
-					//result &= allowedCharacterNames.contains(singleCharacterName);
+				//result &= allowedCharacterNames.contains(singleCharacterName);
 
 				return result;
 			}
 		}
 		return false;
 	}
-	
+
 	private void translate(ChunkType oldChunkType, ChunkType newChunkType, int i, ChunkCollector chunkCollector) {
 		AbstractParseTree terminal = chunkCollector.getTerminals().get(i);
 		Chunk parentChunk = chunkCollector.getChunk(terminal);
@@ -316,11 +317,11 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 		//if(oldChunkType.equals(ChunkType.CHARACTER_STATE))
 		//	chunk.clearProperties();
 		if(chunk!=null) chunk.setChunkType(newChunkType);
-	}	
-	
-	
-	
-	
+	}
+
+
+
+
 	private boolean[] getArray(List<AbstractParseTree> terminals, ChunkCollector chunkCollector, ChunkType chunkType) {
 		boolean[] result = new boolean[terminals.size()];
 		for(int i=terminals.size() - 1; i>=0; i--) {
@@ -332,8 +333,8 @@ red => CHARACTER_STATE: characterName->coloration; [STATE: [red]]
 		}
 		return result;
 	}
-	
-	
+
+
 	private boolean[] getArray(List<AbstractParseTree> terminals, ChunkCollector chunkCollector, ChunkType chunkType, ChunkType notChunkType) {
 		boolean[] result = new boolean[terminals.size()];
 		for(int i=terminals.size() - 1; i>=0; i--) {

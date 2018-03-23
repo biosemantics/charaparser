@@ -103,16 +103,16 @@ public class ElevationTransformer implements IElevationTransformer {
 
 	/**
 	 * 0 (100–300 inland) m;
-	 * => 0 m (100–300 m inland) m;
+	 * to 0 m (100–300 m inland) m;
 	 *
-	 * @param (Greenland, 0–)1000–2400(–4000, Colorado, Utah) m;
+	 * @param text: (Greenland, 0–)1000–2400(–4000, Colorado, Utah) m;
 	 * @return (Greenland, 0–1000 m) 1000–2400 m (2400–4000, Colorado, Utah);
 	 */
 	private String normalize(String text) {
 
 		/**
 		 * (Greenland, 0–)1000–2400(–4000, Colorado, Utah) m;
-		 *	=> (Greenland, 0–1000 m) 1000–2400 m (2400–4000, Colorado, Utah);
+		 *	to (Greenland, 0–1000 m) 1000–2400 m (2400–4000, Colorado, Utah);
 		 */
 		if(text.matches(".*?\\(.*?[A-Za-z].*?\\d-\\)\\d.*") || text.matches(".*?\\d\\(-\\d.*?[A-Za-z].*?\\).*")){
 			String unit = "";
@@ -140,10 +140,10 @@ public class ElevationTransformer implements IElevationTransformer {
 
 		/**
 		 * 0 (100–300 inland) m;
-		 * => 0 m (100–300 m inland) m;
+		 * to 0 m (100–300 m inland) m;
 		 *
 		 * 0 (Florida)-600 (Arkansas, Texas) m;
-		 * => 0 (Florida)-600 (Arkansas, Texas) m;
+		 * to 0 (Florida)-600 (Arkansas, Texas) m;
 		 */
 		if(text.matches(".*?\\d (?!"+this.units+").*") && text.matches(".*\\) "+this.units+".*")){ //text contains unit by separated from the value by ()
 			//find unit
@@ -167,8 +167,8 @@ public class ElevationTransformer implements IElevationTransformer {
 		return text;
 	}
 	/**
-	 * low elevations => high elevations
-	 * 500 m => high elevations
+	 * low elevations to high elevations
+	 * 500 m to high elevations
 	 * 500-2000m
 	 * @param eris
 	 * @param text
@@ -263,7 +263,7 @@ public class ElevationTransformer implements IElevationTransformer {
 		return modifier;
 	}
 	/**
-	 * 015 => -15
+	 * 015 to -15
 	 * @param elevs
 	 */
 	private void unhiddenNegatives(List<Character> elevs) {
@@ -279,10 +279,9 @@ public class ElevationTransformer implements IElevationTransformer {
 
 	/**
 	 * replace negative signs with 0, without changing the length of input string
-	 * @param negative
+	 * @param text
 	 * @return
 	 */
-
 	private String hideNegatives(String text) {
 		Pattern p = Pattern.compile("-\\d");
 		Matcher m = p.matcher(text);
@@ -324,7 +323,7 @@ public class ElevationTransformer implements IElevationTransformer {
 	 * above 2500 m in Calif., above 2000 m in Oreg.;
 	 * above 2300 m in Cascades and 3000 m in Rockies;
 	 * 10–700 m (East), 1500–2000 m (Arizona);
-	 * 0 (Florida)–600 (Arkansas, Texas) m; => 0-600 m
+	 * 0 (Florida)–600 (Arkansas, Texas) m; to 0-600 m
 	 * 0–200 m (to 2000 m, tropics);
 	 * mainly below 100 m;
 	 * not known
@@ -599,7 +598,7 @@ public class ElevationTransformer implements IElevationTransformer {
 	 * above 2500 m in Calif., above 2000 m in Oreg.;
 	 * above 2300 m in Cascades and 3000 m in Rockies;
 	 * 10–700 m (East), 1500–2000 m (Arizona);
-	 * 0 (Florida)–600 (Arkansas, Texas) m; => 0-600 m
+	 * 0 (Florida)–600 (Arkansas, Texas) m; to 0-600 m
 	 * 0–200 m (to 2000 m, tropics);
 	 * 600–1000[–1800] m
 	 * mainly below 100 m;
@@ -639,7 +638,7 @@ public class ElevationTransformer implements IElevationTransformer {
 	 * # eri1 and eri2 can complete a range when one is low and other is high value, and
 	 * eri1 and eri2 don't have different location modifiers.
 	 * @param eris
-	 * @param eri
+	 * @param incompleteEri2
 	 * @return
 	 */
 
@@ -698,7 +697,7 @@ public class ElevationTransformer implements IElevationTransformer {
 	/**
 	 *
 	 * check location modifier only for low/high
-	 * @param eri1
+	 * @param incompleteEri1
 	 * @param incompleteEri2
 	 * @return
 	 */
@@ -873,18 +872,7 @@ public class ElevationTransformer implements IElevationTransformer {
 		}
 		return modifier.replaceFirst("("+this.stopwords+"| )+$", "").trim();
 	}
-	/**
-	 * above and below, and remove extra info
-	 *
-	 * above 2500 m in Calif., =>2500+m
-	 * mainly below 100 m; =>0-100m
-	 * 250 m and/or above =>250+m
-	 * 250 m and/or below =>0-250m
-	 *
-	 * 0 (Florida)–600 (Arkansas, Texas) m; => 0-600 m
-	 * @param elev
-	 * @return
-	 */
+
 	/*private static String normalize(String elev) {
 		if(elev.matches(".*\\babove\\b.*")){
 			Pattern aboveN = Pattern.compile("(.*)\\babove ([\\d]+)(.*)");
@@ -951,12 +939,8 @@ public class ElevationTransformer implements IElevationTransformer {
 		}
 
 	}
-	/**
-	 * above 2300 m in Cascades and 3000 m in Rockies; =>
-	 * above 2300 m in Cascades , 3000 m in Rockies;
-	 * @param text
-	 * @return
-	 */
+
+
 	/*private String andToComma(String text) {
 		String[] split = text.split("\\band\\b");
 		String result = split[0];

@@ -10,28 +10,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.a
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 
-
-/**
- *     <xs:complexType>
-      <xs:attribute name="alter_name"/>
-      <xs:attribute name="from" use="required" type="xs:NCName"/>
-      <xs:attribute name="geographical_constraint"/>
-      <xs:attribute name="id" use="required" type="xs:NCName"/>
-      <xs:attribute name="in_brackets" type="xs:boolean"/>
-      <xs:attribute name="modifier"/>
-      <xs:attribute name="name" use="required"/>
-      <xs:attribute name="negation" use="required" type="xs:boolean"/>
-      <xs:attribute name="organ_constraint"/>
-      <xs:attribute name="parallelism_constraint" type="xs:NCName"/>
-      <xs:attribute name="taxon_constraint"/>
-      <xs:attribute name="to" use="required" type="xs:NCName"/>
-      <xs:attribute name="ontologyid" type="xs:string"/>
-      <xs:attribute name="provenance" type="xs:string"/>
-      <xs:attribute name="notes" type="xs:string"/>
-    </xs:complexType>
- * @author rodenhausen
- *
- */
 @XmlRootElement
 public class Relation extends NamedElement implements Cloneable {
 	@XmlPath("@" + RelationAttribute.alter_name)
@@ -68,7 +46,7 @@ public class Relation extends NamedElement implements Cloneable {
 	private BiologicalEntity toStructure;
 	@XmlTransient
 	private BiologicalEntity fromStructure;
-	
+
 	/**
 	 * Need to use ALL applicable set methods to create a relation object
 	 */
@@ -188,23 +166,23 @@ public class Relation extends NamedElement implements Cloneable {
 
 	public void setToStructure(BiologicalEntity structure) {
 		this.toStructure = structure;
-		
+
 	}
 
 	public void setFromStructure(BiologicalEntity structure) {
 		this.fromStructure = structure;
 	}
-	
+
 	@XmlTransient
 	public BiologicalEntity getToStructure() {
 		return toStructure;
 	}
-	
+
 	@XmlTransient
 	public BiologicalEntity getFromStructure() {
 		return fromStructure;
 	}
-	
+
 	public void appendModifier(String modifier) {
 		String newValue = "";
 		if(this.modifier == null || this.modifier.isEmpty()) {
@@ -214,15 +192,15 @@ public class Relation extends NamedElement implements Cloneable {
 		}
 		this.modifier = newValue;
 	}
-	
+
 	public String getSrc(){
 		return this.src;
 	}
-	
+
 	public void setSrc(String statementId){
 		this.src = statementId;
 	}
-	
+
 	public void appendSrc(String statementId){
 		String newValue = "";
 		if(this.src == null || this.src.isEmpty()) {
@@ -238,7 +216,7 @@ public class Relation extends NamedElement implements Cloneable {
 	public void removeElementRecursively(Element element) {
 		return;
 	}
-	
+
 	@Override
 	public Relation clone(){
 		Relation relation = new Relation();

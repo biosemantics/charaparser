@@ -2,7 +2,6 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.e
 
 import java.util.HashMap;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -17,8 +16,9 @@ import edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvi
 public class ChunkProcessorProvider implements IChunkProcessorProvider {
 
 	private HashMap<ChunkType, IChunkProcessor> chunkProcessors = new HashMap<ChunkType, IChunkProcessor>();
-	
+
 	/**
+	 *
 	 * @param areaChunkProcessor
 	 * @param bracketedChunkProcessor
 	 * @param characterStateProcessor
@@ -51,7 +51,7 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 	 * @param toChunkProcessor
 	 * @param characterNameProcessor
 	 * @param andChunkProcessor
-	 *@param whereChunkProcessor
+	 * @param averageChunkProcessor
 	 */
 	@Inject
 	public ChunkProcessorProvider(@Named("Area") IChunkProcessor areaChunkProcessor,
@@ -78,14 +78,14 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 			@Named("ThanCharacter") IChunkProcessor thanCharacterChunkProcessor,
 			@Named("ValuePercentage") IChunkProcessor valuePercentageChunkProcessor,
 			@Named("ValueDegree") IChunkProcessor valueDegreeChunkProcessor,
-			@Named("VP") IChunkProcessor vpChunkProcessor, 
-			@Named("Unassigned") IChunkProcessor unassignedChunkProcessor, 
-			@Named("State") IChunkProcessor stateChunkProcessor, 
-			@Named("Comma") IChunkProcessor commaChunkProcessor, 
-			@Named("Constraint") IChunkProcessor constraintChunkProcessor, 
-			@Named("To") IChunkProcessor toChunkProcessor, 
-			@Named("CharacterName") IChunkProcessor characterNameProcessor, 
-			@Named("And") IChunkProcessor andChunkProcessor, 
+			@Named("VP") IChunkProcessor vpChunkProcessor,
+			@Named("Unassigned") IChunkProcessor unassignedChunkProcessor,
+			@Named("State") IChunkProcessor stateChunkProcessor,
+			@Named("Comma") IChunkProcessor commaChunkProcessor,
+			@Named("Constraint") IChunkProcessor constraintChunkProcessor,
+			@Named("To") IChunkProcessor toChunkProcessor,
+			@Named("CharacterName") IChunkProcessor characterNameProcessor,
+			@Named("And") IChunkProcessor andChunkProcessor,
 			/*@Named("Where") IChunkProcessor whereChunkProcessor,*/
 			@Named("Average") IChunkProcessor averageChunkProcessor) {
 		chunkProcessors.put(ChunkType.AREA, areaChunkProcessor);
@@ -125,7 +125,7 @@ public class ChunkProcessorProvider implements IChunkProcessorProvider {
 		chunkProcessors.put(ChunkType.AVERAGE, averageChunkProcessor);
 		chunkProcessors.put(ChunkType.THAT, sbarChunkProcessor);
 	}
-	
+
 	@Override
 	public IChunkProcessor getChunkProcessor(ChunkType chunkType) {
 		return chunkProcessors.get(chunkType);

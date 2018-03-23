@@ -15,7 +15,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.A
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
 
 /**
- * DatabaseInputNoLearner does not learn actively itself but reads the results of a learn process of the e.g. the previous charaparser perl part, 
+ * DatabaseInputNoLearner does not learn actively itself but reads the results of a learn process of the e.g. the previous charaparser perl part,
  * or PerlTerminologyLearner from the database.
  * @author rodenhausen
  */
@@ -24,8 +24,9 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	/**
 	 * @param temporaryPath
 	 * @param markupMode
+	 * @param databaseHost
+	 * @param databasePort
 	 * @param databaseName
-	 * @param glossaryTable
 	 * @param databasePrefix
 	 * @param databaseUser
 	 * @param databasePassword
@@ -33,6 +34,10 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 	 * @param selectedSources
 	 * @param glossary
 	 * @param tokenizer
+	 * @param parentTagProvider
+	 * @param perlDirectory
+	 * @param inflector
+	 * @param connectionPool
 	 * @throws Exception
 	 */
 	@Inject
@@ -41,29 +46,29 @@ public class DatabaseInputNoLearner extends PerlTerminologyLearner {
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,
 			@Named("DatabaseName") String databaseName,
-			@Named("DatabasePrefix") String databasePrefix, 
-			@Named("DatabaseUser") String databaseUser, 
-			@Named("DatabasePassword") String databasePassword, 
+			@Named("DatabasePrefix") String databasePrefix,
+			@Named("DatabaseUser") String databaseUser,
+			@Named("DatabasePassword") String databasePassword,
 			@Named("StopWords") Set<String> stopWords,
 			@Named("SelectedSources") Set<String> selectedSources,
-			IGlossary glossary, 
+			IGlossary glossary,
 			@Named("WordTokenizer") ITokenizer tokenizer,
 			@Named("ParentTagProvider") ParentTagProvider parentTagProvider,
 			@Named("PerlDirectory") String perlDirectory,
-			IInflector inflector, 
+			IInflector inflector,
 			ConnectionPool connectionPool) throws Exception {
 		super(temporaryPath, markupMode, databaseHost, databasePort, databaseName,
-				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer, 
+				databasePrefix, databaseUser, databasePassword, stopWords, selectedSources, glossary, tokenizer,
 				parentTagProvider, perlDirectory, inflector, connectionPool);
 	}
-	
+
 	@Override
-	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) { 
+	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) {
 		int i = 0;
 		int descriptionCount = 0;
-		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) 
+		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles)
 			descriptionCount += descriptionsFile.getDescriptions().size();
-		
+
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
 				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3));

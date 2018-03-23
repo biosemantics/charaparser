@@ -346,7 +346,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	 *
 	 *  time:spring-summer
 	 *  time:year-round modifier:south
-	 * @param time
+	 * @param text
 	 * @return
 	 */
 	private ArrayList<Time> parseTime(String text) {
@@ -455,10 +455,10 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 
 	/**
 	 * late spring and early summer (May-Jun)
-	 * =>late_spring-early_summer_(May-Jun)
+	 * to late_spring-early_summer_(May-Jun)
 	 *
 	 * latter half of winter?
-	 * =>latter_half_of_winter?
+	 * to latter_half_of_winter?
 	 * @param text
 	 * @return
 	 */
@@ -496,7 +496,7 @@ public class PhenologyTransformer implements IPhenologyTransformer {
 	 * sometimes year-round [in frostfree coastal habitats].
 	 * spring–summer (year-round [south)]
 	 * Leaves appearing in June[, dying in September].
-	 * @param following
+	 * @param follow
 	 * @return [in frostfree coastal habitats],  [south)], and "";
 	 */
 	private String completeTime(String follow) {

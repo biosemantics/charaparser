@@ -9,37 +9,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.a
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 
-/**
- *     <xs:complexType>
-      <xs:attribute name="char_type" type="xs:NCName"/>
-      <xs:attribute name="constraint"/>
-      <xs:attribute name="constraintid"/>
-      <xs:attribute name="from"/>
-      <xs:attribute name="from_inclusive" type="xs:boolean"/>
-      <xs:attribute name="from_unit" type="xs:NCName"/>
-      <xs:attribute name="geographical_constraint"/>
-      <xs:attribute name="in_brackets" type="xs:boolean"/>
-      <xs:attribute name="modifier"/>
-      <xs:attribute name="name"/>
-      <xs:attribute name="organ_constraint"/>
-      <xs:attribute name="other_constraint"/>
-      <xs:attribute name="parallelism_constraint" type="xs:NCName"/>
-      <xs:attribute name="taxon_constraint"/>
-      <xs:attribute name="to"/>
-      <xs:attribute name="to_inclusive" type="xs:boolean"/>
-      <xs:attribute name="to_unit" type="xs:NCName"/>
-      <xs:attribute name="type"/>
-      <xs:attribute name="unit"/>
-      <xs:attribute name="upper_restricted" type="xs:boolean"/>
-      <xs:attribute name="value"/>
-      <xs:attribute name="ontologyid" type="xs:string"/>
-      <xs:attribute name="provenance" type="xs:string"/>
-      <xs:attribute name="notes" type="xs:string"/>
-      <xs:attribute name="is_modifier" type="xs:boolean"/>
-    </xs:complexType>
- * @author rodenhausen
- *
- */
 @XmlRootElement
 public class Character extends NamedElement implements Cloneable {
 
@@ -99,14 +68,14 @@ public class Character extends NamedElement implements Cloneable {
 	private String establishmentMeans;
 	@XmlPath("@" + CharacterAttribute.src)
 	private String src;
-	
+
 	@XmlTransient
 	private BiologicalEntity structure;
 	//@XmlTransient
 	//private boolean isConstraintModifier; //red leaves, red is a modifier for leaves
-	
+
 	public Character() { }
-	
+
 	public String getValue() {
 		return value;
 	}
@@ -166,7 +135,7 @@ public class Character extends NamedElement implements Cloneable {
 	public String getUpperRestricted() {
 		return upperRestricted;
 	}
-	
+
 	public void setUpperRestricted(String upperRestricted) {
 		this.upperRestricted = upperRestricted;
 	}
@@ -178,7 +147,7 @@ public class Character extends NamedElement implements Cloneable {
 	public void setUnit(String unit) {
 		this.unit = unit;
 	}
-	
+
 	public String getType() {
 		return type;
 	}
@@ -194,7 +163,7 @@ public class Character extends NamedElement implements Cloneable {
 	public void setToUnit(String toUnit) {
 		this.toUnit = toUnit;
 	}
-	
+
 	public String getToModifier() {
 		return toModifier;
 	}
@@ -290,7 +259,7 @@ public class Character extends NamedElement implements Cloneable {
 	public void setfromModifier(String fromModifier) {
 		this.fromModifier = fromModifier;
 	}
-	
+
 	public String getFromInclusive() {
 		return fromInclusive;
 	}
@@ -310,26 +279,26 @@ public class Character extends NamedElement implements Cloneable {
 
 	public void setStructure(BiologicalEntity structure) {
 		this.structure = structure;
-	}	
-	
+	}
+
 	public BiologicalEntity getStructure() {
 		return this.structure;
 	}
-	
+
 	public void setIsModifier(String isModifier){
 		this.isModifier = isModifier;
 	}
-	
+
 	public String getIsModifier(){
 		return isModifier;
 	}
-	
+
 	public void setEstablishedMeans(String establishment) { //introduced or native
-		this.establishmentMeans = establishment;	
+		this.establishmentMeans = establishment;
 	}
 	public String getEstablishedMeans() {
 		return this.establishmentMeans;
-		
+
 	}
 
 	public void appendModifier(String modifier) {
@@ -355,11 +324,11 @@ public class Character extends NamedElement implements Cloneable {
 	public String getSrc(){
 		return this.src;
 	}
-	
+
 	public void setSrc(String statementId){
 		this.src = statementId;
 	}
-	
+
 	public void appendSrc(String statementId){
 		String newValue = "";
 		if(this.src == null || this.src.isEmpty()) {
@@ -375,28 +344,28 @@ public class Character extends NamedElement implements Cloneable {
 	public boolean getIsConstraintModifier(){
 		return this.isConstraintModifier;
 	}
-	
+
 	@XmlTransient
 	public void setIsConstraintModifier(boolean isConstraintModifier){
 		this.isConstraintModifier = isConstraintModifier;
 	}*/
-	
-	
-	
+
+
+
 	@Override
 	public void removeElementRecursively(Element element) {
 		return;
 	}
-	
+
 	/**using characterName to update the name of this character**/
 	public void updateCharacterName(String characterName){
-		
+
 		String newName = "";
 		if(this.name.contains("atypical")) newName = "atypical_";
 		if(this.name.contains("average")) newName = "average_";
 		this.setName(newName+characterName);
 	}
-	
+
 	@Override
 	public Character clone() {
 		Character character = new Character();

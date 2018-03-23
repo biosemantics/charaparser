@@ -301,7 +301,7 @@ public class HabitatTransformer implements IHabitatTransformer {
 	/**
 	 * remove saved from left
 	 * @param saved
-	 * @param left
+	 * @param t
 	 */
 	private void removeSaved(ArrayList<Tree> saved, Tree t) {
 		String treestring = t.toString();

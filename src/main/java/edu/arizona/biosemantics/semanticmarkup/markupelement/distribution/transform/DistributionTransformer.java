@@ -316,61 +316,6 @@ public class DistributionTransformer implements IDistributionTransformer {
 		}
 	}
 
-	/**
-	 * <description type=“distribution”> <statement id=“X”> <text>introduced; Alta.,
-	 * B.C., Yukon; Ala., Alaska; Eurasia.</text>
-	 * <biological_entity name=”whole_organism”>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “Alta”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “B.C.”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * ”Yukon.”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “Ala.”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “Alaska”/>
-	 * <character name=”distribution” establishment_means=”native” value=”Eurasia>
-	 * </biological_entity> </statement> </description>
-	 *
-	 * <description type=“distribution”> <statement id=“X”> <text>Alta., B.C.,
-	 * Yukon; Ala., Alaska; Introduced in Eurasia.</text>
-	 * <biological_entity name=”whole_organism”>
-	 * <character name=“distribution” establishment_means=”native” value=“Alta”/>
-	 * <character name=“distribution” establishment_means=”native” value=“B.C.”/>
-	 * <character name=“distribution” establishment_means=”native” value=”Yukon.”/>
-	 * <character name=“distribution” establishment_means=”native” value=“Ala.”/>
-	 * <character name=“distribution” establishment_means=”native” value=“Alaska”/>
-	 * <character name=”distribution” establishment_means=”introduced” value=
-	 * ”Eurasia> </biological_entity> </statement> </description>r
-	 *
-	 * Answers provided by Richard Rabeler <rabeler@umich.edu>: Here are a few
-	 * examples taken from v 9. 1. North America, Eurasia, n Africa; introduced in
-	 * Pacific Islands (New Zealand), Australia. Do we have the certainty that North
-	 * America, Eurasia, n Africa are Native? --> Yes
-	 *
-	 * 2. introduced; St. Pierre and Miquelon; N.B., Nfld. and Labr. (Nfld.), N.S.,
-	 * Ont., P.E.I., Que.; Colo., Conn., Ill., Ind., Maine, Mass., Mich., Minn.,
-	 * N.H., N.J., N.Y., Ohio, Pa., Vt., W.Va., Wis.; Eurasia. --> this is the most
-	 * common style of FNA distribution statement. The plant is introduced in North
-	 * America and native (see that semi-colon after "Wis"?) to Eurasia.
-	 *
-	 * 3. North America, Mexico, West Indies, Central America, South America,
-	 * Eurasia, Africa, Pacific Islands (Hawaii, New Zealand), Australia; introduced
-	 * widely. what should we do with introduced widely? --> This one suggests thatpantropical, of both humid and arid regions, with few
-	 * temperate outliers in Europe, Asia, and North America
-	 * the plant is native everywhere and introduced widely as well - which doesn't
-	 * make a lot of sense. I might query the author (and JZ) on that one.
-	 *
-	 * 4. introduced; Ont.; Iowa, Ky., Mich., N.Y., Ohio, Pa.; Europe; w, c Asia (to
-	 * w China); introduced also in South America (Argentina). --> introduced in
-	 * North America, native in Europe and w,c Asia (to w China), also introduced to
-	 * S. America.
-	 *
-	 * Other examples pantropical, of both humid and arid regions, with few
-	 * temperate outliers in Europe, Asia, and North America.
-	 */
-
 	public LinkedHashSet<Character> getDistributionsCharacters(String text) {
 		log(LogLevel.INFO, "parsing distribution: " + text); // TODO:this message should pass to the user.
 		LinkedHashSet<Character> result = new LinkedHashSet<Character>();
@@ -537,7 +482,8 @@ public class DistributionTransformer implements IDistributionTransformer {
 	/**
 	 * extract values from a segment containing @
 	 *
-	 * @param area
+	 * @param text
+	 * @param establishmentMeans
 	 * @return
 	 */
 	private LinkedHashSet<Character> getDistributionCharactersFromList(String text, String establishmentMeans) {

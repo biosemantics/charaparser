@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.pos.POS;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
@@ -16,7 +17,6 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
@@ -41,23 +41,23 @@ public class PPListChunker extends AbstractChunker {
 	 */
 	@Inject
 	public PPListChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
-			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,
 			ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
 		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary,
-			terminologyLearner, inflector, learnedCharacterKnowledgeBase);
+				terminologyLearner, inflector, learnedCharacterKnowledgeBase);
 	}
 
 	/** PP
 	 * 	IN on
-	 *  CC or    => PP
+	 *  CC or    to PP
 	 * 	IN above      IN on or above
 	 */
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		IParseTree parseTree = chunkCollector.getParseTree();
 		List<AbstractParseTree> ppCCSubTrees = parseTree.getDescendants(POS.PP, POS.CC);
-		
+
 		for(IParseTree ppCCSubTree : ppCCSubTrees) {
 			//log(LogLevel.DEBUG, "ppCCSubTree " + ppCCSubTree.getTerminalsText());
 			//parseTree.prettyPrint();
@@ -68,7 +68,7 @@ public class PPListChunker extends AbstractChunker {
 			List<AbstractParseTree> ppChildren = pp.getChildren();
 			//all children must be either PP or IN, except for one CC, and
 			//all PP child must have a child IN
-			
+
 			boolean isList = true;
 			if(!cc.getTerminalsText().matches("and|or")) {
 				isList = false;
@@ -79,7 +79,7 @@ public class PPListChunker extends AbstractChunker {
 				isList = false;
 				//log(LogLevel.DEBUG, "islist false0");
 			}
-			
+
 			int lastin = -1;
 			int lastcc = -1;
 			int count = 0;
@@ -103,7 +103,7 @@ public class PPListChunker extends AbstractChunker {
 					//log(LogLevel.DEBUG, "islist false2");
 					isList = false;
 				}
-				if(childPOS.equals(POS.PP) && child.getChildren().size() > 2){ 
+				if(childPOS.equals(POS.PP) && child.getChildren().size() > 2){
 					//PP is expected to have an IN and an NP as children
 					isList = false;
 					//log(LogLevel.DEBUG, "islist false3");
@@ -128,7 +128,7 @@ public class PPListChunker extends AbstractChunker {
 						np = ppChild;
 						continue;
 					}
-					
+
 					if(i==ppChildren.size()-1) {
 						IParseTree lastPPChild = ppChild;
 						for(AbstractParseTree lastPPChildChild : lastPPChild.getChildren()) {
@@ -144,15 +144,15 @@ public class PPListChunker extends AbstractChunker {
 					newIN.addChildren(ppChild.getTerminals());;
 					pp.removeChild(ppChild);
 				}
-				
+
 				pp.addChild(newIN);
 				if(np!=null) {
 					np.setPOS(POS.OBJECT);
 					pp.addChild(np);
 				}
-				
+
 				LinkedHashSet<Chunk> ppChildChunks = new LinkedHashSet<Chunk>();
-				
+
 				//form PPList chunk
 				LinkedHashSet<Chunk> ppListChildChunks = new LinkedHashSet<Chunk>();
 				for(AbstractParseTree terminal : newIN.getTerminals())
@@ -167,17 +167,17 @@ public class PPListChunker extends AbstractChunker {
 					LinkedHashSet<Chunk> npListChildChunks = new LinkedHashSet<Chunk>();
 					for(AbstractParseTree terminal : np.getTerminals()) {
 						Chunk previousNPChunk = chunkCollector.getChunk(terminal);
-						for(Chunk ppListChildChunk : ppListChildChunks) 
+						for(Chunk ppListChildChunk : ppListChildChunks)
 							previousNPChunk.removeChunk(ppListChildChunk);
 						npListChildChunks.add(previousNPChunk);
 					}
 					Chunk objectChunk = new Chunk(ChunkType.OBJECT, npListChildChunks);
 					ppChildChunks.add(objectChunk);
 				}
-				
+
 				Chunk newPPChunk = new Chunk(ChunkType.PP, ppChildChunks);
 				chunkCollector.addChunk(newPPChunk);
-				
+
 				//pp.prettyPrint();
 			}
 		}

@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
@@ -15,14 +16,13 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
  * ChromosomeChunker chunks by handling chromosome describing terminals
- * 
+ *
  * x= means basal number of chromosomes
    n= number of chromosomes in haploid state
    2n= two sets of chromosomes
@@ -40,22 +40,22 @@ public class ChromosomeChunker extends AbstractChunker {
 	 * @param glossary
 	 * @param terminologyLearner
 	 * @param inflector
-	 * @param organStateKnowledgeBase
+	 * @param learnedCharacterKnowledgeBase
 	 */
 	@Inject
 	public ChromosomeChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
-			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,  ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner,
 				inflector, learnedCharacterKnowledgeBase);
 	}
-	
+
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
 		for(int i=0; i<=terminals.size()-1; i++) {
 			AbstractParseTree terminal = terminals.get(i);
-			
+
 			if(terminal.getTerminalsText().matches("\\d{0,1}[xn]=.*")) {
 				//chromosome count 2n=, FNA specific
 				Chunk chromosomeChunk = new Chunk(ChunkType.CHROM);
@@ -73,11 +73,11 @@ public class ChromosomeChunker extends AbstractChunker {
 		}
 	}
 	//TODO
-			/*String l = "";
+	/*String l = "";
 			String t = this.chunkedtokens.get(pointer++);
 			while(t.indexOf("SG")<0){
 				l +=t+" ";
-				t= this.chunkedtokens.get(pointer++);				
+				t= this.chunkedtokens.get(pointer++);
 			}
 			l = l.replaceFirst("\\d[xn]=", "").trim();
 			chunk = new ChunkChrom(l);

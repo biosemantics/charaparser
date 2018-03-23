@@ -1,19 +1,14 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.common.log.LogLevel;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Relation;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 
@@ -30,13 +25,13 @@ public class ProcessingContextState implements Cloneable {
 
 	//private Structure mainSubjectStructure = null;
 	private Character previousCharacter = null;
-	
+
 	private LinkedList<BiologicalEntity> subjects = new LinkedList<BiologicalEntity>();
 	private LinkedList<Element> lastElements = new LinkedList<Element>();
-	
-	private boolean commaAndOrEosEolAfterLastElements = false; 
+
+	private boolean commaAndOrEosEolAfterLastElements = false;
 	private boolean unassignedChunkAfterLastElements = false;
-	
+
 	private String notInModifier;
 
 	private String clauseModifierContraintId = null;
@@ -45,7 +40,7 @@ public class ProcessingContextState implements Cloneable {
 	private ArrayList<Entry<String, String>> scopeProperties;
 
 	private int inBracketsLevel = 0;
-	
+
 	/**
 	 * Reset to the initial state
 	 */
@@ -58,7 +53,7 @@ public class ProcessingContextState implements Cloneable {
 		//mainSubjectStructure = null;
 		subjects = new LinkedList<BiologicalEntity>();
 		lastElements = new LinkedList<Element>();
-		commaAndOrEosEolAfterLastElements = false; 
+		commaAndOrEosEolAfterLastElements = false;
 		unassignedChunkAfterLastElements = false;
 		notInModifier = null;
 		clauseModifierContraintId = null;
@@ -66,7 +61,7 @@ public class ProcessingContextState implements Cloneable {
 		scopeProperties = null;
 		inBracketsLevel = 0;
 	}
-	
+
 	public void getCarryOverDataFrom(ProcessingContextState state){
 		this.unassignedModifiers.addAll(state.getUnassignedModifiers());
 		this.unassignedCharacters.addAll(state.getUnassignedCharacters());
@@ -89,7 +84,7 @@ public class ProcessingContextState implements Cloneable {
 			clone.subjects = new LinkedList<BiologicalEntity>();
 			clone.subjects.addAll(this.subjects);
 			clone.lastElements = new LinkedList<Element>(this.lastElements);
-			clone.commaAndOrEosEolAfterLastElements = this.commaAndOrEosEolAfterLastElements; 
+			clone.commaAndOrEosEolAfterLastElements = this.commaAndOrEosEolAfterLastElements;
 			clone.unassignedChunkAfterLastElements = this.unassignedChunkAfterLastElements;
 			clone.notInModifier = this.notInModifier==null ? null : new String(this.notInModifier);
 			//clone.chunkListIterator = chunkCollector.getChunks().listIterator(this.chunkListIterator.nextIndex());
@@ -175,8 +170,7 @@ public class ProcessingContextState implements Cloneable {
 	}
 
 	/**
-	 * @param unassignedCharacter to set
-	 * 
+	 * @param unassignedCharacterInSingularForm to set
 	 */
 	public void setUnassignedCharacter(String unassignedCharacterInSingularForm) {
 		this.unassignedCharacter = unassignedCharacterInSingularForm;
@@ -202,7 +196,7 @@ public class ProcessingContextState implements Cloneable {
 	public LinkedList<BiologicalEntity> getSubjects() {
 		return subjects;
 	}
-	
+
 	/**
 	 * set the subjects
 	 * @param subjects
@@ -243,7 +237,7 @@ public class ProcessingContextState implements Cloneable {
 	public List<Chunk> getUnassignedModifiers() {
 		return unassignedModifiers;
 	}
-	
+
 	/**
 	 * @return unassigned structure constraints
 	 */
@@ -264,7 +258,7 @@ public class ProcessingContextState implements Cloneable {
 	public void clearUnassignedConstraints() {
 		this.unassignedConstraints.clear();
 	}
-	
+
 	/**
 	 * @param unassignedConstraints to set
 	 */
@@ -278,7 +272,7 @@ public class ProcessingContextState implements Cloneable {
 	public void clearUnassignedModifiers() {
 		this.unassignedModifiers.clear();
 	}
-	
+
 	/**
 	 * @param unassignedModifiers to set
 	 */
@@ -292,28 +286,28 @@ public class ProcessingContextState implements Cloneable {
 	public void increaseInBrackets() {
 		this.inBracketsLevel++;
 	}
-	
+
 	/**
 	 * decreases the inbrackets count
 	 */
 	public void decreaseInBrackets() {
 		this.inBracketsLevel--;
 	}
-	
+
 	/**
 	 * @return if current processed chunks are within brackets
 	 */
 	public boolean isInBrackets() {
 		return this.inBracketsLevel != 0;
 	}
-	
+
 	/**
 	 * @return inbrackets count
 	 */
 	public int getInBracketsLevel() {
 		return this.inBracketsLevel;
 	}
-	
+
 	/**
 	 * @return unassigned characters
 	 */
@@ -326,12 +320,12 @@ public class ProcessingContextState implements Cloneable {
 	}
 	/**
 	 * @param unassignedCharacters to set
-	 * 
+	 *
 	 */
 	public void setUnassignedCharacters(List<Character> unassignedCharacters) {
 		this.unassignedCharacters = unassignedCharacters;
 	}
-	
+
 	/**
 	 * @return if comma, and, or, eos, or eol appeared after the last elements
 	 */

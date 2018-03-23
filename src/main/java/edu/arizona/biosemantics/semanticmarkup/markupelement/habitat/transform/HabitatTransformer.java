@@ -145,9 +145,7 @@ public class HabitatTransformer {
 
 
 	/**
-	 *
-	 * @param treatments
-	 * @return a regexp consisting a list of seeds
+	 * @param habitatsFileList
 	 */
 	private void collectSeeds(HabitatsFileList habitatsFileList) {
 		HashMap<Treatment, String> habitatStrings = getHabitatStrings(habitatsFileList);

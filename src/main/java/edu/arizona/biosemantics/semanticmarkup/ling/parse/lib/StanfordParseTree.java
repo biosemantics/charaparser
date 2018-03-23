@@ -3,10 +3,8 @@ package edu.arizona.biosemantics.semanticmarkup.ling.parse.lib;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import edu.arizona.biosemantics.common.ling.pos.POS;
 import edu.arizona.biosemantics.common.ling.pos.POSedToken;
@@ -21,9 +19,9 @@ import edu.stanford.nlp.trees.Tree;
  * @author rodenhausen
  */
 public class StanfordParseTree extends AbstractParseTree {
-	
+
 	private Tree stanfordParseTree;
-	
+
 	/**
 	 * @param stanfordParseTree
 	 */
@@ -44,7 +42,7 @@ public class StanfordParseTree extends AbstractParseTree {
 	@Override
 	public POS getPOS() {
 		//POS is any non-trminal labels, such as NNS, NP, S, Frag, etc..
-		if(this.isTerminal()) 
+		if(this.isTerminal())
 			return null;
 		POS result;
 		try {
@@ -54,7 +52,7 @@ public class StanfordParseTree extends AbstractParseTree {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public String getTerminalsText() {
 		StringBuilder stringBuilder = new StringBuilder();
@@ -64,7 +62,7 @@ public class StanfordParseTree extends AbstractParseTree {
 		}
 		return stringBuilder.toString().trim();
 	}
-	
+
 	@Override
 	public String toString() {
 		return stanfordParseTree.toString();
@@ -85,7 +83,7 @@ public class StanfordParseTree extends AbstractParseTree {
 		if(root instanceof StanfordParseTree) {
 			StanfordParseTree rootTree = (StanfordParseTree) root;
 			Tree ancestor = this.stanfordParseTree.ancestor(height, rootTree.stanfordParseTree);
-			if(ancestor != null) 
+			if(ancestor != null)
 				return new StanfordParseTree(ancestor);
 		}
 		return null;
@@ -153,10 +151,10 @@ public class StanfordParseTree extends AbstractParseTree {
 			stanfordParseTree.addChild(stanfordParseSubTree.stanfordParseTree);
 		}
 	}
-	
+
 	@Override
 	public void addChildren(List<AbstractParseTree> children) {
-		for(IParseTree child : children) 
+		for(IParseTree child : children)
 			addChild(child);
 	}
 
@@ -168,7 +166,7 @@ public class StanfordParseTree extends AbstractParseTree {
 		printWriter.flush();
 		printWriter.close();
 		return stringWriter.toString();
-		
+
 	}
 
 	@Override
@@ -185,8 +183,8 @@ public class StanfordParseTree extends AbstractParseTree {
 	public void setPOS(POS pos) {
 		//a node may just have been created and hence be neither terminal nor non-terminal as not yet inserted in final position in another tree
 		// one may still already want to set its text. therefore dont restrict here
-		//if(!this.isTerminal()) 
-			this.setText(pos.toString());//this.setPOS(pos);
+		//if(!this.isTerminal())
+		this.setText(pos.toString());//this.setPOS(pos);
 	}
 
 	@Override
@@ -194,7 +192,7 @@ public class StanfordParseTree extends AbstractParseTree {
 		//a node may just have been created and hence be neither terminal nor non-terminal as not yet inserted in final position in another tree
 		// one may still already want to set its text. therefore dont restrict here
 		//if(this.isTerminal())
-			this.setText(text);
+		this.setText(text);
 	}
 
 	private void setText(String text) {
@@ -218,34 +216,34 @@ public class StanfordParseTree extends AbstractParseTree {
 
 
 	/**
-	 * Two StanfordParseTrees that wrap the same Tree should return the same hashCode. 
+	 * Two StanfordParseTrees that wrap the same Tree should return the same hashCode.
 	 * This becomes necessary, as e.g. getTerminals() creates a new Tree-wrapping-StanfordParseTree object upon every call.
-	 * ChunkCollector requires them to be hashed equally in order to store the terminal -> chunk mapping.
-	 * 
+	 * ChunkCollector requires them to be hashed equally in order to store the terminal to chunk mapping.
+	 *
 	 * Tree hashes in its implementation not on System.identityHashCode() (the default hash for any object), but rather based on content.
 	 * Since Tree's hashcode is only based on label value and children's label valuues, the hash becomes equal for leaves with equal text.
 	 * This is not sufficient for our needs, since a sentence can easily contain the same word twice
-	 */ 
+	 */
 	@Override
 	public int hashCode() {
 		return System.identityHashCode(this.stanfordParseTree);
 	}
-	
+
 	/**
 	 * Two StanfordParseTrees are to be considered equal when their wrapped Tree is equal according to the hash function (i.e. exactly the same object)
 	 */
-	@Override 
+	@Override
 	public boolean equals(Object object) {
 		if(object == null)
 			return false;
 		return object.hashCode()==this.hashCode();
 	}
-	
+
 	@Override
 	public void removeDescendant(IParseTree descendant) {
 		if(descendant instanceof StanfordParseTree) {
 			StanfordParseTree toRemove = (StanfordParseTree)descendant;
-			
+
 			for(IParseTree child : this.getChildren()) {
 				if(child.equals(toRemove)) {
 					this.removeChild(child);
@@ -253,7 +251,7 @@ public class StanfordParseTree extends AbstractParseTree {
 				}
 				child.removeDescendant(descendant);
 			}
-			
+
 		}
 	}
 
@@ -273,7 +271,7 @@ public class StanfordParseTree extends AbstractParseTree {
 			stanfordParseTree.addChild(index, stanfordParseSubTree.stanfordParseTree);
 		}
 	}
-	
+
 	@Override
 	public void addChildren(int index, List<AbstractParseTree> children) {
 		for(int i=children.size()-1; i>=0; i--) {
