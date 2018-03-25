@@ -1,4 +1,6 @@
 <img src="http://biosemantics.github.io/charaparser/CP_Logo.jpg">
+
+Charaparser
 ===========
 CharaParser is a NLP tool which processes morphological descriptions of the biodiversity domain.
 The output of CharaParser is a structured description of structures, their characters and relations between structures
