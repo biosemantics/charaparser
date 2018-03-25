@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./AbstractMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.eval.matcher.AbstractMatcher" alt="" coords="431,17,548,42"/>
+<area shape="rect" id="node1" href="./AbstractMatcher.html" title="&lt;TABLE&gt;" alt="" coords="420,5,559,53"/>
+<area shape="rect" id="node2_1" href="../../markupelement/description/eval/matcher/partial/StructureMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.partial.StructureMatcher" alt="" coords="15,113,137,138"/>
+<area shape="rect" id="node2" href="../../markupelement/description/eval/matcher/partial/StructureMatcher.html" title="&lt;TABLE&gt;" alt="" coords="5,101,147,149"/>
+<area shape="rect" id="node3_2" href="../../markupelement/description/eval/matcher/partial/RelationMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.partial.RelationMatcher" alt="" coords="183,113,297,138"/>
+<area shape="rect" id="node3" href="../../markupelement/description/eval/matcher/partial/RelationMatcher.html" title="&lt;TABLE&gt;" alt="" coords="172,101,308,149"/>
+<area shape="rect" id="node4_3" href="../../markupelement/description/eval/matcher/partial/CharacterMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.partial.CharacterMatcher" alt="" coords="343,113,467,138"/>
+<area shape="rect" id="node4" href="../../markupelement/description/eval/matcher/partial/CharacterMatcher.html" title="&lt;TABLE&gt;" alt="" coords="333,101,478,149"/>
+<area shape="rect" id="node5_4" href="../../markupelement/description/eval/matcher/perfect/StructureMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.perfect.StructureMatcher" alt="" coords="513,113,634,138"/>
+<area shape="rect" id="node5" href="../../markupelement/description/eval/matcher/perfect/StructureMatcher.html" title="&lt;TABLE&gt;" alt="" coords="502,101,645,149"/>
+<area shape="rect" id="node6_5" href="../../markupelement/description/eval/matcher/perfect/RelationMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.perfect.RelationMatcher" alt="" coords="680,113,795,138"/>
+<area shape="rect" id="node6" href="../../markupelement/description/eval/matcher/perfect/RelationMatcher.html" title="&lt;TABLE&gt;" alt="" coords="669,101,805,149"/>
+<area shape="rect" id="node7_6" href="../../markupelement/description/eval/matcher/perfect/CharacterMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.perfect.CharacterMatcher" alt="" coords="841,113,965,138"/>
+<area shape="rect" id="node7" href="../../markupelement/description/eval/matcher/perfect/CharacterMatcher.html" title="&lt;TABLE&gt;" alt="" coords="830,101,975,149"/>
+</map>

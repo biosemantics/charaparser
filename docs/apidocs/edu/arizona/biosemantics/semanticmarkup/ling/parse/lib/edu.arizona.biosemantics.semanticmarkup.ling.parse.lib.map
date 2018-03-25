@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./StanfordParseTreeIterator.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParseTreeIterator" alt="" coords="16,17,184,42"/>
+<area shape="rect" id="node1" href="./StanfordParseTreeIterator.html" title="&lt;TABLE&gt;" alt="" coords="5,5,195,53"/>
+<area shape="rect" id="node2_1" href="./StanfordParseTreeFactory.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParseTreeFactory" alt="" coords="230,17,402,42"/>
+<area shape="rect" id="node2" href="./StanfordParseTreeFactory.html" title="&lt;TABLE&gt;" alt="" coords="219,5,413,53"/>
+<area shape="rect" id="node3_2" href="./StanfordParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParseTree" alt="" coords="448,17,576,42"/>
+<area shape="rect" id="node3" href="./StanfordParseTree.html" title="&lt;TABLE&gt;" alt="" coords="437,5,587,53"/>
+<area shape="rect" id="node4_3" href="./StanfordParserWrapper.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParserWrapper" alt="" coords="622,17,778,42"/>
+<area shape="rect" id="node4" href="./StanfordParserWrapper.html" title="&lt;TABLE&gt;" alt="" coords="611,5,789,53"/>
+</map>

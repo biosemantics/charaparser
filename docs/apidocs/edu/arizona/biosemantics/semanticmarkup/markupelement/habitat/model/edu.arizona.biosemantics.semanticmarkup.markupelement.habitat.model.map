@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./Treatment.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.model.Treatment" alt="" coords="15,17,94,42"/>
+<area shape="rect" id="node1" href="./Treatment.html" title="&lt;TABLE&gt;" alt="" coords="5,5,105,53"/>
+<area shape="rect" id="node2_1" href="./HabitatsFileList.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.model.HabitatsFileList" alt="" coords="139,17,250,42"/>
+<area shape="rect" id="node2" href="./HabitatsFileList.html" title="&lt;TABLE&gt;" alt="" coords="129,5,261,53"/>
+<area shape="rect" id="node3_2" href="./HabitatsFile.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.model.HabitatsFile" alt="" coords="295,17,385,42"/>
+<area shape="rect" id="node3" href="./HabitatsFile.html" title="&lt;TABLE&gt;" alt="" coords="285,5,395,53"/>
+<area shape="rect" id="node4_3" href="./Habitat.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.model.Habitat" alt="" coords="431,17,492,42"/>
+<area shape="rect" id="node4" href="./Habitat.html" title="&lt;TABLE&gt;" alt="" coords="420,5,503,53"/>
+</map>

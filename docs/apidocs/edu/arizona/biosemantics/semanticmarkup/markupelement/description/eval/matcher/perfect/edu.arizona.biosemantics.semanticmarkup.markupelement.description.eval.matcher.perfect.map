@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./StructureMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.perfect.StructureMatcher" alt="" coords="15,17,137,42"/>
+<area shape="rect" id="node1" href="./StructureMatcher.html" title="&lt;TABLE&gt;" alt="" coords="5,5,147,53"/>
+<area shape="rect" id="node2_1" href="./RelationMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.perfect.RelationMatcher" alt="" coords="183,17,297,42"/>
+<area shape="rect" id="node2" href="./RelationMatcher.html" title="&lt;TABLE&gt;" alt="" coords="172,5,308,53"/>
+<area shape="rect" id="node3_2" href="./CharacterMatcher.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.matcher.perfect.CharacterMatcher" alt="" coords="343,17,467,42"/>
+<area shape="rect" id="node3" href="./CharacterMatcher.html" title="&lt;TABLE&gt;" alt="" coords="333,5,478,53"/>
+</map>

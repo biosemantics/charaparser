@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./IParseTreeFactory.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory" alt="" coords="15,11,142,53"/>
+<area shape="rect" id="node1" href="./IParseTreeFactory.html" title="&lt;TABLE&gt;" alt="" coords="5,6,153,58"/>
+<area shape="rect" id="node2_1" href="./IParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree" alt="" coords="187,11,271,53"/>
+<area shape="rect" id="node2" href="./IParseTree.html" title="&lt;TABLE&gt;" alt="" coords="177,6,282,58"/>
+<area shape="rect" id="node4_2" href="./AbstractParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree" alt="" coords="164,118,295,143"/>
+<area shape="rect" id="node4" href="./AbstractParseTree.html" title="&lt;TABLE&gt;" alt="" coords="153,107,305,155"/>
+<area shape="rect" id="node3_3" href="./IParser.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser" alt="" coords="317,11,401,53"/>
+<area shape="rect" id="node3" href="./IParser.html" title="&lt;TABLE&gt;" alt="" coords="306,6,411,58"/>
+</map>

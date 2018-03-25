@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./TaxonNameAttribute.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.TaxonNameAttribute" alt="" coords="16,17,155,42"/>
+<area shape="rect" id="node1" href="./TaxonNameAttribute.html" title="&lt;TABLE&gt;" alt="" coords="5,5,165,53"/>
+<area shape="rect" id="node2_1" href="./TaxonIdentificationAttribute.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.TaxonIdentificationAttribute" alt="" coords="201,17,378,42"/>
+<area shape="rect" id="node2" href="./TaxonIdentificationAttribute.html" title="&lt;TABLE&gt;" alt="" coords="190,5,389,53"/>
+<area shape="rect" id="node3_2" href="./StatementAttribute.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.StatementAttribute" alt="" coords="423,17,553,42"/>
+<area shape="rect" id="node3" href="./StatementAttribute.html" title="&lt;TABLE&gt;" alt="" coords="413,5,563,53"/>
+<area shape="rect" id="node4_3" href="./RelationAttribute.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.RelationAttribute" alt="" coords="599,17,716,42"/>
+<area shape="rect" id="node4" href="./RelationAttribute.html" title="&lt;TABLE&gt;" alt="" coords="588,5,727,53"/>
+<area shape="rect" id="node5_4" href="./CharacterAttribute.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.CharacterAttribute" alt="" coords="761,17,887,42"/>
+<area shape="rect" id="node5" href="./CharacterAttribute.html" title="&lt;TABLE&gt;" alt="" coords="751,5,897,53"/>
+<area shape="rect" id="node6_5" href="./BiologicalEntityAttribute.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.attributes.BiologicalEntityAttribute" alt="" coords="932,17,1092,42"/>
+<area shape="rect" id="node6" href="./BiologicalEntityAttribute.html" title="&lt;TABLE&gt;" alt="" coords="921,5,1103,53"/>
+</map>

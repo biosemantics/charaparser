@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./IChunker.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.IChunker" alt="" coords="34,11,118,53"/>
+<area shape="rect" id="node1" href="./IChunker.html" title="&lt;TABLE&gt;" alt="" coords="23,6,129,58"/>
+<area shape="rect" id="node7_1" href="./AbstractChunker.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker" alt="" coords="16,118,136,143"/>
+<area shape="rect" id="node7" href="./AbstractChunker.html" title="&lt;TABLE&gt;" alt="" coords="5,107,147,155"/>
+<area shape="rect" id="node2_2" href="./ChunkType.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType" alt="" coords="163,11,269,53"/>
+<area shape="rect" id="node2" href="./ChunkType.html" title="&lt;TABLE&gt;" alt="" coords="153,6,279,58"/>
+<area shape="rect" id="node3_3" href="./ChunkerChain.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain" alt="" coords="315,19,416,45"/>
+<area shape="rect" id="node3" href="./ChunkerChain.html" title="&lt;TABLE&gt;" alt="" coords="304,8,427,56"/>
+<area shape="rect" id="node4_4" href="./ChunkCollectorIterator.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollectorIterator" alt="" coords="462,19,634,45"/>
+<area shape="rect" id="node4" href="./ChunkCollectorIterator.html" title="&lt;TABLE&gt;" alt="" coords="451,8,645,56"/>
+<area shape="rect" id="node5_5" href="./ChunkCollector.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector" alt="" coords="680,19,789,45"/>
+<area shape="rect" id="node5" href="./ChunkCollector.html" title="&lt;TABLE&gt;" alt="" coords="669,8,800,56"/>
+<area shape="rect" id="node6_6" href="./Chunk.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk" alt="" coords="835,19,893,45"/>
+<area shape="rect" id="node6" href="./Chunk.html" title="&lt;TABLE&gt;" alt="" coords="825,8,903,56"/>
+</map>

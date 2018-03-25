@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./IDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader" alt="" coords="257,11,386,53"/>
+<area shape="rect" id="node1" href="./IDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="246,6,397,58"/>
+<area shape="rect" id="node2_1" href="./lib/MOXyDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyDescriptionReader" alt="" coords="15,118,177,143"/>
+<area shape="rect" id="node2" href="./lib/MOXyDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="5,107,187,155"/>
+<area shape="rect" id="node3_2" href="./lib/MOXyBinderDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionReader" alt="" coords="222,118,421,143"/>
+<area shape="rect" id="node3" href="./lib/MOXyBinderDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="211,107,431,155"/>
+<area shape="rect" id="node4_3" href="./lib/EvaluationDBDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.EvaluationDBDescriptionReader" alt="" coords="466,118,670,143"/>
+<area shape="rect" id="node4" href="./lib/EvaluationDBDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="455,107,681,155"/>
+</map>

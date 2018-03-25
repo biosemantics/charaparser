@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./PerlTerminologyLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner" alt="" coords="145,17,303,42"/>
+<area shape="rect" id="node1" href="./PerlTerminologyLearner.html" title="&lt;TABLE&gt;" alt="" coords="135,5,313,53"/>
+<area shape="rect" id="node5_1" href="./DatabaseInputNoLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputNoLearner" alt="" coords="16,113,179,138"/>
+<area shape="rect" id="node5" href="./DatabaseInputNoLearner.html" title="&lt;TABLE&gt;" alt="" coords="5,101,189,149"/>
+<area shape="rect" id="node6_2" href="./DatabaseInputFromEvaluationNoLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputFromEvaluationNoLearner" alt="" coords="225,113,477,138"/>
+<area shape="rect" id="node6" href="./DatabaseInputFromEvaluationNoLearner.html" title="&lt;TABLE&gt;" alt="" coords="214,101,487,149"/>
+<area shape="rect" id="node2_3" href="./PerlTerminologyLearner.TerminatePerlHook.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner.TerminatePerlHook" alt="" coords="348,17,479,42"/>
+<area shape="rect" id="node2" href="./PerlTerminologyLearner.TerminatePerlHook.html" title="&lt;TABLE&gt;" alt="" coords="337,5,489,53"/>
+<area shape="rect" id="node3_4" href="./OTOLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.OTOLearner" alt="" coords="524,17,615,42"/>
+<area shape="rect" id="node3" href="./OTOLearner.html" title="&lt;TABLE&gt;" alt="" coords="513,5,625,53"/>
+<area shape="rect" id="node4_5" href="./Learner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.Learner" alt="" coords="660,17,724,42"/>
+<area shape="rect" id="node4" href="./Learner.html" title="&lt;TABLE&gt;" alt="" coords="649,5,735,53"/>
+<area shape="rect" id="node7_6" href="./AllWordsLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.AllWordsLearner" alt="" coords="769,17,887,42"/>
+<area shape="rect" id="node7" href="./AllWordsLearner.html" title="&lt;TABLE&gt;" alt="" coords="759,5,897,53"/>
+</map>

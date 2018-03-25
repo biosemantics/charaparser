@@ -1,0 +1,20 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./SpiderConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.SpiderConfig" alt="" coords="16,17,109,42"/>
+<area shape="rect" id="node1" href="./SpiderConfig.html" title="&lt;TABLE&gt;" alt="" coords="5,5,120,53"/>
+<area shape="rect" id="node2_1" href="./PoriferaConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PoriferaConfig" alt="" coords="155,17,256,42"/>
+<area shape="rect" id="node2" href="./PoriferaConfig.html" title="&lt;TABLE&gt;" alt="" coords="144,5,267,53"/>
+<area shape="rect" id="node3_2" href="./PlantConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.PlantConfig" alt="" coords="302,17,389,42"/>
+<area shape="rect" id="node3" href="./PlantConfig.html" title="&lt;TABLE&gt;" alt="" coords="291,5,399,53"/>
+<area shape="rect" id="node4_3" href="./HymenopteraConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.HymenopteraConfig" alt="" coords="435,17,568,42"/>
+<area shape="rect" id="node4" href="./HymenopteraConfig.html" title="&lt;TABLE&gt;" alt="" coords="424,5,579,53"/>
+<area shape="rect" id="node5_4" href="./GastropodsConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.GastropodsConfig" alt="" coords="614,17,738,42"/>
+<area shape="rect" id="node5" href="./GastropodsConfig.html" title="&lt;TABLE&gt;" alt="" coords="603,5,749,53"/>
+<area shape="rect" id="node6_5" href="./FossilConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.FossilConfig" alt="" coords="783,17,875,42"/>
+<area shape="rect" id="node6" href="./FossilConfig.html" title="&lt;TABLE&gt;" alt="" coords="773,5,886,53"/>
+<area shape="rect" id="node7_6" href="./ColeopteraConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.ColeopteraConfig" alt="" coords="921,17,1039,42"/>
+<area shape="rect" id="node7" href="./ColeopteraConfig.html" title="&lt;TABLE&gt;" alt="" coords="910,5,1050,53"/>
+<area shape="rect" id="node8_7" href="./CnidariaConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.CnidariaConfig" alt="" coords="1085,17,1189,42"/>
+<area shape="rect" id="node8" href="./CnidariaConfig.html" title="&lt;TABLE&gt;" alt="" coords="1075,5,1200,53"/>
+<area shape="rect" id="node9_8" href="./AlgaeConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.taxongroup.AlgaeConfig" alt="" coords="1235,17,1325,42"/>
+<area shape="rect" id="node9" href="./AlgaeConfig.html" title="&lt;TABLE&gt;" alt="" coords="1225,5,1335,53"/>
+</map>

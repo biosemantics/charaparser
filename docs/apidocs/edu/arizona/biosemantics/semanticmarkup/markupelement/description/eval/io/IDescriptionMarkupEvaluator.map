@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="../../../../eval/IEvaluator.html" title="edu.arizona.biosemantics.semanticmarkup.eval.IEvaluator" alt="" coords="94,11,178,53"/>
+<area shape="rect" id="node1" href="../../../../eval/IEvaluator.html" title="&lt;TABLE&gt;" alt="" coords="83,6,189,58"/>
+<area shape="rect" id="node2_1" href="./IDescriptionMarkupEvaluator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.io.IDescriptionMarkupEvaluator" alt="" coords="43,113,229,154"/>
+<area shape="rect" id="node2" href="./IDescriptionMarkupEvaluator.html" title="&lt;TABLE&gt;" alt="" coords="33,107,239,159"/>
+<area shape="rect" id="node3_2" href="../lib/PerfectPartialPrecisionRecallEvaluator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.eval.lib.PerfectPartialPrecisionRecallEvaluator" alt="" coords="15,219,257,245"/>
+<area shape="rect" id="node3" href="../lib/PerfectPartialPrecisionRecallEvaluator.html" title="&lt;TABLE&gt;" alt="" coords="5,208,267,256"/>
+</map>

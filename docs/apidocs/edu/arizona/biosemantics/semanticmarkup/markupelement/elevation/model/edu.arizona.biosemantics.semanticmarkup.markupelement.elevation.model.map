@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./Treatment.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Treatment" alt="" coords="15,17,94,42"/>
+<area shape="rect" id="node1" href="./Treatment.html" title="&lt;TABLE&gt;" alt="" coords="5,5,105,53"/>
+<area shape="rect" id="node2_1" href="./ElevationsFileList.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFileList" alt="" coords="139,17,261,42"/>
+<area shape="rect" id="node2" href="./ElevationsFileList.html" title="&lt;TABLE&gt;" alt="" coords="129,5,271,53"/>
+<area shape="rect" id="node3_2" href="./ElevationsFile.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.ElevationsFile" alt="" coords="307,17,408,42"/>
+<area shape="rect" id="node3" href="./ElevationsFile.html" title="&lt;TABLE&gt;" alt="" coords="296,5,419,53"/>
+<area shape="rect" id="node4_3" href="./Elevation.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.model.Elevation" alt="" coords="454,17,527,42"/>
+<area shape="rect" id="node4" href="./Elevation.html" title="&lt;TABLE&gt;" alt="" coords="443,5,538,53"/>
+</map>

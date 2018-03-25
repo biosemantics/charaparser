@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./ParentTagProvider.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.ParentTagProvider" alt="" coords="16,19,141,45"/>
+<area shape="rect" id="node1" href="./ParentTagProvider.html" title="&lt;TABLE&gt;" alt="" coords="5,8,152,56"/>
+<area shape="rect" id="node2_1" href="./IDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionWriter" alt="" coords="187,11,311,53"/>
+<area shape="rect" id="node2" href="./IDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="177,6,322,58"/>
+<area shape="rect" id="node3_2" href="./IDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionReader" alt="" coords="357,11,486,53"/>
+<area shape="rect" id="node3" href="./IDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="346,6,497,58"/>
+</map>
