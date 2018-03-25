@@ -51,7 +51,7 @@ Please [configure your git](http://git-scm.com/book/en/Customizing-Git-Git-Confi
 * `core.autocrlf` true if you are on Windows 
 * or `core.autocrlf input` if you are on a Unix-type OS
 
-To get started, an architectural overview can be found [here](.
+To get started, an architectural overview can be found [here](https://github.com/biosemantics/charaparser/blob/master/ARCHITECTURE.md).
 
 Software Dependencies
 ----------
