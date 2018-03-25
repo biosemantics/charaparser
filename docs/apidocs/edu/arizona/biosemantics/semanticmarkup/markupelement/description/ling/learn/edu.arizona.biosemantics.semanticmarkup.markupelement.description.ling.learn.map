@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./LearnException.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException" alt="" coords="15,19,126,45"/>
+<area shape="rect" id="node1" href="./LearnException.html" title="&lt;TABLE&gt;" alt="" coords="5,8,137,56"/>
+<area shape="rect" id="node2_1" href="./ITerminologyLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner" alt="" coords="171,11,309,53"/>
+<area shape="rect" id="node2" href="./ITerminologyLearner.html" title="&lt;TABLE&gt;" alt="" coords="161,6,319,58"/>
+<area shape="rect" id="node3_2" href="./ILearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner" alt="" coords="354,11,438,53"/>
+<area shape="rect" id="node3" href="./ILearner.html" title="&lt;TABLE&gt;" alt="" coords="343,6,449,58"/>
+<area shape="rect" id="node4_3" href="./AdjectiveReplacementForNoun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.AdjectiveReplacementForNoun" alt="" coords="484,19,681,45"/>
+<area shape="rect" id="node4" href="./AdjectiveReplacementForNoun.html" title="&lt;TABLE&gt;" alt="" coords="473,8,692,56"/>
+</map>

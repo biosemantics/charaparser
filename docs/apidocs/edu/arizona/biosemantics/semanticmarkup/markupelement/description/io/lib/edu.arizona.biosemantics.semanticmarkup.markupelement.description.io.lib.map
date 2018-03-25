@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./MOXyDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyDescriptionWriter" alt="" coords="15,17,171,42"/>
+<area shape="rect" id="node1" href="./MOXyDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="5,5,182,53"/>
+<area shape="rect" id="node2_1" href="./MOXyDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyDescriptionReader" alt="" coords="217,17,378,42"/>
+<area shape="rect" id="node2" href="./MOXyDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="206,5,389,53"/>
+<area shape="rect" id="node3_2" href="./MOXyBinderDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionWriter" alt="" coords="423,17,617,42"/>
+<area shape="rect" id="node3" href="./MOXyBinderDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="413,5,627,53"/>
+<area shape="rect" id="node4_3" href="./MOXyBinderDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionReader" alt="" coords="662,17,861,42"/>
+<area shape="rect" id="node4" href="./MOXyBinderDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="651,5,871,53"/>
+<area shape="rect" id="node5_4" href="./JDOMDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.JDOMDescriptionWriter" alt="" coords="907,17,1064,42"/>
+<area shape="rect" id="node5" href="./JDOMDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="896,5,1075,53"/>
+<area shape="rect" id="node6_5" href="./EvaluationDBDescriptionReader.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.EvaluationDBDescriptionReader" alt="" coords="1110,17,1314,42"/>
+<area shape="rect" id="node6" href="./EvaluationDBDescriptionReader.html" title="&lt;TABLE&gt;" alt="" coords="1099,5,1325,53"/>
+<area shape="rect" id="node7_6" href="./Binding.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.Binding" alt="" coords="1360,17,1424,42"/>
+<area shape="rect" id="node7" href="./Binding.html" title="&lt;TABLE&gt;" alt="" coords="1349,5,1435,53"/>
+</map>

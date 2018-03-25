@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./IDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.IDescriptionWriter" alt="" coords="251,11,375,53"/>
+<area shape="rect" id="node1" href="./IDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="241,6,386,58"/>
+<area shape="rect" id="node2_1" href="./lib/MOXyDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyDescriptionWriter" alt="" coords="15,118,171,143"/>
+<area shape="rect" id="node2" href="./lib/MOXyDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="5,107,182,155"/>
+<area shape="rect" id="node3_2" href="./lib/MOXyBinderDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.MOXyBinderDescriptionWriter" alt="" coords="217,118,410,143"/>
+<area shape="rect" id="node3" href="./lib/MOXyBinderDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="206,107,421,155"/>
+<area shape="rect" id="node4_3" href="./lib/JDOMDescriptionWriter.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.io.lib.JDOMDescriptionWriter" alt="" coords="456,118,613,143"/>
+<area shape="rect" id="node4" href="./lib/JDOMDescriptionWriter.html" title="&lt;TABLE&gt;" alt="" coords="445,107,624,155"/>
+</map>

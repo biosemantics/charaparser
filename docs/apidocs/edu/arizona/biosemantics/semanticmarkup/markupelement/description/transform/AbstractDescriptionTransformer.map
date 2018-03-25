@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./OntologyMappingTreatmentTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.OntologyMappingTreatmentTransformer" alt="" coords="16,214,264,239"/>
+<area shape="rect" id="node1" href="./OntologyMappingTreatmentTransformer.html" title="&lt;TABLE&gt;" alt="" coords="5,203,275,251"/>
+<area shape="rect" id="node2_1" href="./MarkupDescriptionTreatmentTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.MarkupDescriptionTreatmentTransformer" alt="" coords="310,214,565,239"/>
+<area shape="rect" id="node2" href="./MarkupDescriptionTreatmentTransformer.html" title="&lt;TABLE&gt;" alt="" coords="299,203,575,251"/>
+<area shape="rect" id="node3_2" href="./IDescriptionTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.IDescriptionTransformer" alt="" coords="209,11,367,53"/>
+<area shape="rect" id="node3" href="./IDescriptionTransformer.html" title="&lt;TABLE&gt;" alt="" coords="199,6,377,58"/>
+<area shape="rect" id="node4_3" href="./AbstractDescriptionTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.AbstractDescriptionTransformer" alt="" coords="185,118,391,143"/>
+<area shape="rect" id="node4" href="./AbstractDescriptionTransformer.html" title="&lt;TABLE&gt;" alt="" coords="175,107,401,155"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="../AbstractParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree" alt="" coords="16,17,147,42"/>
+<area shape="rect" id="node1" href="../AbstractParseTree.html" title="&lt;TABLE&gt;" alt="" coords="5,5,157,53"/>
+<area shape="rect" id="node2_1" href="./StanfordParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParseTree" alt="" coords="17,113,145,138"/>
+<area shape="rect" id="node2" href="./StanfordParseTree.html" title="&lt;TABLE&gt;" alt="" coords="7,101,156,149"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./ILastChunkProcessor.html" title="edu.arizona.biosemantics.semanticmarkup.ling.extract.ILastChunkProcessor" alt="" coords="15,11,161,53"/>
+<area shape="rect" id="node1" href="./ILastChunkProcessor.html" title="&lt;TABLE&gt;" alt="" coords="5,6,171,58"/>
+<area shape="rect" id="node2_1" href="./IFirstChunkProcessor.html" title="edu.arizona.biosemantics.semanticmarkup.ling.extract.IFirstChunkProcessor" alt="" coords="194,113,339,154"/>
+<area shape="rect" id="node2" href="./IFirstChunkProcessor.html" title="&lt;TABLE&gt;" alt="" coords="183,107,350,159"/>
+<area shape="rect" id="node3_2" href="./IChunkProcessorProvider.html" title="edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessorProvider" alt="" coords="372,11,537,53"/>
+<area shape="rect" id="node3" href="./IChunkProcessorProvider.html" title="&lt;TABLE&gt;" alt="" coords="361,6,548,58"/>
+<area shape="rect" id="node4_3" href="./IChunkProcessor.html" title="edu.arizona.biosemantics.semanticmarkup.ling.extract.IChunkProcessor" alt="" coords="207,11,327,53"/>
+<area shape="rect" id="node4" href="./IChunkProcessor.html" title="&lt;TABLE&gt;" alt="" coords="196,6,337,58"/>
+</map>

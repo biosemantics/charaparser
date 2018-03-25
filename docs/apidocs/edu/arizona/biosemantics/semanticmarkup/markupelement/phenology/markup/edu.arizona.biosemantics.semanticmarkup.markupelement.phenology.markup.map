@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./PhenologyMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.PhenologyMarkupResult" alt="" coords="15,19,177,45"/>
+<area shape="rect" id="node1" href="./PhenologyMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="5,8,187,56"/>
+<area shape="rect" id="node2_1" href="./PhenologyMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.PhenologyMarkupCreator" alt="" coords="223,118,390,143"/>
+<area shape="rect" id="node2" href="./PhenologyMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="213,107,401,155"/>
+<area shape="rect" id="node3_2" href="./IPhenologyMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.IPhenologyMarkupCreator" alt="" coords="222,11,391,53"/>
+<area shape="rect" id="node3" href="./IPhenologyMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="211,6,402,58"/>
+</map>

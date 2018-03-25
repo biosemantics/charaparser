@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./Treatment.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.model.Treatment" alt="" coords="15,17,94,42"/>
+<area shape="rect" id="node1" href="./Treatment.html" title="&lt;TABLE&gt;" alt="" coords="5,5,105,53"/>
+<area shape="rect" id="node2_1" href="./Statement.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.model.Statement" alt="" coords="139,17,221,42"/>
+<area shape="rect" id="node2" href="./Statement.html" title="&lt;TABLE&gt;" alt="" coords="129,5,231,53"/>
+<area shape="rect" id="node3_2" href="./EcologyFileList.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.model.EcologyFileList" alt="" coords="267,17,376,42"/>
+<area shape="rect" id="node3" href="./EcologyFileList.html" title="&lt;TABLE&gt;" alt="" coords="256,5,387,53"/>
+<area shape="rect" id="node4_3" href="./EcologyFile.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.model.EcologyFile" alt="" coords="422,17,511,42"/>
+<area shape="rect" id="node4" href="./EcologyFile.html" title="&lt;TABLE&gt;" alt="" coords="411,5,522,53"/>
+<area shape="rect" id="node5_4" href="./Ecology.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.model.Ecology" alt="" coords="557,17,625,42"/>
+<area shape="rect" id="node5" href="./Ecology.html" title="&lt;TABLE&gt;" alt="" coords="546,5,635,53"/>
+</map>

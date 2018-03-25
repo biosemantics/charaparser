@@ -1,0 +1,6 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="../../AbstractChunker.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker" alt="" coords="16,17,136,42"/>
+<area shape="rect" id="node1" href="../../AbstractChunker.html" title="&lt;TABLE&gt;" alt="" coords="5,5,147,53"/>
+<area shape="rect" id="node2_1" href="./CleanupChunker.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.lib.chunker.CleanupChunker" alt="" coords="18,113,134,138"/>
+<area shape="rect" id="node2" href="./CleanupChunker.html" title="&lt;TABLE&gt;" alt="" coords="7,101,145,149"/>
+</map>

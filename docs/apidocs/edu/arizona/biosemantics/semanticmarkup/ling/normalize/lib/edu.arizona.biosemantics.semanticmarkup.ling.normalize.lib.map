@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./TreatisehNormalizer.html" title="edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.TreatisehNormalizer" alt="" coords="16,113,152,138"/>
+<area shape="rect" id="node1" href="./TreatisehNormalizer.html" title="&lt;TABLE&gt;" alt="" coords="5,101,163,149"/>
+<area shape="rect" id="node2_1" href="./PhraseNomralizer.html" title="edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.PhraseNomralizer" alt="" coords="259,17,383,42"/>
+<area shape="rect" id="node2" href="./PhraseNomralizer.html" title="&lt;TABLE&gt;" alt="" coords="249,5,394,53"/>
+<area shape="rect" id="node3_2" href="./PhraseMarker.html" title="edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.PhraseMarker" alt="" coords="429,17,531,42"/>
+<area shape="rect" id="node3" href="./PhraseMarker.html" title="&lt;TABLE&gt;" alt="" coords="419,5,541,53"/>
+<area shape="rect" id="node4_3" href="./PhraseComparable.html" title="edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.PhraseComparable" alt="" coords="576,17,707,42"/>
+<area shape="rect" id="node4" href="./PhraseComparable.html" title="&lt;TABLE&gt;" alt="" coords="565,5,717,53"/>
+<area shape="rect" id="node5_4" href="./Normalizer.html" title="edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.Normalizer" alt="" coords="131,17,213,42"/>
+<area shape="rect" id="node5" href="./Normalizer.html" title="&lt;TABLE&gt;" alt="" coords="120,5,224,53"/>
+<area shape="rect" id="node6_5" href="./FNAv19Normalizer.html" title="edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.FNAv19Normalizer" alt="" coords="197,113,325,138"/>
+<area shape="rect" id="node6" href="./FNAv19Normalizer.html" title="&lt;TABLE&gt;" alt="" coords="187,101,336,149"/>
+<area shape="rect" id="node7_6" href="./CharacterListNormalizer.html" title="edu.arizona.biosemantics.semanticmarkup.ling.normalize.lib.CharacterListNormalizer" alt="" coords="752,17,912,42"/>
+<area shape="rect" id="node7" href="./CharacterListNormalizer.html" title="&lt;TABLE&gt;" alt="" coords="741,5,923,53"/>
+</map>

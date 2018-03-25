@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="../ITerminologyLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner" alt="" coords="155,11,293,53"/>
+<area shape="rect" id="node1" href="../ITerminologyLearner.html" title="&lt;TABLE&gt;" alt="" coords="145,6,303,58"/>
+<area shape="rect" id="node2_1" href="./PerlTerminologyLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.PerlTerminologyLearner" alt="" coords="145,118,303,143"/>
+<area shape="rect" id="node2" href="./PerlTerminologyLearner.html" title="&lt;TABLE&gt;" alt="" coords="135,107,313,155"/>
+<area shape="rect" id="node3_2" href="./DatabaseInputNoLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputNoLearner" alt="" coords="16,214,179,239"/>
+<area shape="rect" id="node3" href="./DatabaseInputNoLearner.html" title="&lt;TABLE&gt;" alt="" coords="5,203,189,251"/>
+<area shape="rect" id="node4_3" href="./DatabaseInputFromEvaluationNoLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.DatabaseInputFromEvaluationNoLearner" alt="" coords="225,214,477,239"/>
+<area shape="rect" id="node4" href="./DatabaseInputFromEvaluationNoLearner.html" title="&lt;TABLE&gt;" alt="" coords="214,203,487,251"/>
+</map>

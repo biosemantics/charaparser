@@ -1,0 +1,20 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="../markupelement/description/run/DescriptionMarkupRun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupRun" alt="" coords="16,214,168,239"/>
+<area shape="rect" id="node1" href="../markupelement/description/run/DescriptionMarkupRun.html" title="&lt;TABLE&gt;" alt="" coords="5,203,179,251"/>
+<area shape="rect" id="node2_1" href="../markupelement/description/run/DescriptionMarkupAndDescriptionMarkupEvaluationRun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionMarkupAndDescriptionMarkupEvaluationRun" alt="" coords="213,214,555,239"/>
+<area shape="rect" id="node2" href="../markupelement/description/run/DescriptionMarkupAndDescriptionMarkupEvaluationRun.html" title="&lt;TABLE&gt;" alt="" coords="203,203,565,251"/>
+<area shape="rect" id="node3_2" href="../markupelement/description/run/DescriptionEvaluationRun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.DescriptionEvaluationRun" alt="" coords="600,214,768,239"/>
+<area shape="rect" id="node3" href="../markupelement/description/run/DescriptionEvaluationRun.html" title="&lt;TABLE&gt;" alt="" coords="589,203,779,251"/>
+<area shape="rect" id="node4_3" href="../markupelement/description/run/iplant/IPlantMarkupRun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.iplant.IPlantMarkupRun" alt="" coords="813,214,933,239"/>
+<area shape="rect" id="node4" href="../markupelement/description/run/iplant/IPlantMarkupRun.html" title="&lt;TABLE&gt;" alt="" coords="803,203,944,251"/>
+<area shape="rect" id="node5_4" href="../markupelement/description/run/iplant/IPlantLearnRun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.run.iplant.IPlantLearnRun" alt="" coords="979,214,1088,239"/>
+<area shape="rect" id="node5" href="../markupelement/description/run/iplant/IPlantLearnRun.html" title="&lt;TABLE&gt;" alt="" coords="968,203,1099,251"/>
+<area shape="rect" id="node6_5" href="./IRun.html" title="edu.arizona.biosemantics.semanticmarkup.run.IRun" alt="" coords="831,11,915,53"/>
+<area shape="rect" id="node6" href="./IRun.html" title="&lt;TABLE&gt;" alt="" coords="821,6,926,58"/>
+<area shape="rect" id="node7_6" href="./AbstractRun.html" title="edu.arizona.biosemantics.semanticmarkup.run.AbstractRun" alt="" coords="827,118,920,143"/>
+<area shape="rect" id="node7" href="./AbstractRun.html" title="&lt;TABLE&gt;" alt="" coords="816,107,931,155"/>
+<area shape="rect" id="node8_7" href="./etc/ETCMarkupRun.html" title="edu.arizona.biosemantics.semanticmarkup.run.etc.ETCMarkupRun" alt="" coords="1133,214,1245,239"/>
+<area shape="rect" id="node8" href="./etc/ETCMarkupRun.html" title="&lt;TABLE&gt;" alt="" coords="1123,203,1256,251"/>
+<area shape="rect" id="node9_8" href="./etc/ETCLearnRun.html" title="edu.arizona.biosemantics.semanticmarkup.run.etc.ETCLearnRun" alt="" coords="1291,214,1392,239"/>
+<area shape="rect" id="node9" href="./etc/ETCLearnRun.html" title="&lt;TABLE&gt;" alt="" coords="1280,203,1403,251"/>
+</map>

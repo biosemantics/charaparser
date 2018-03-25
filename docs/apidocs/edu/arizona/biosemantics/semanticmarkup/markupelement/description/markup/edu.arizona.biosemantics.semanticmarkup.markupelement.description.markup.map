@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./IDescriptionMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.IDescriptionMarkupCreator" alt="" coords="153,11,327,53"/>
+<area shape="rect" id="node1" href="./IDescriptionMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="143,6,337,58"/>
+<area shape="rect" id="node5_1" href="./AbstractDescriptionMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.AbstractDescriptionMarkupCreator" alt="" coords="129,118,351,143"/>
+<area shape="rect" id="node5" href="./AbstractDescriptionMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="119,107,361,155"/>
+<area shape="rect" id="node2_2" href="./DescriptionMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupResult" alt="" coords="372,19,537,45"/>
+<area shape="rect" id="node2" href="./DescriptionMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="361,8,548,56"/>
+<area shape="rect" id="node3_3" href="./DescriptionMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupCreator" alt="" coords="16,214,187,239"/>
+<area shape="rect" id="node3" href="./DescriptionMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="5,203,197,251"/>
+<area shape="rect" id="node4_4" href="./DescriptionMarkupAndOntologyMappingCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupAndOntologyMappingCreator" alt="" coords="233,214,527,239"/>
+<area shape="rect" id="node4" href="./DescriptionMarkupAndOntologyMappingCreator.html" title="&lt;TABLE&gt;" alt="" coords="222,203,538,251"/>
+</map>

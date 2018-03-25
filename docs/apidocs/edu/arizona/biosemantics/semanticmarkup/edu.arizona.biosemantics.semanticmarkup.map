@@ -1,0 +1,14 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./FNAMarkupMain.html" title="edu.arizona.biosemantics.semanticmarkup.FNAMarkupMain" alt="" coords="16,113,133,138"/>
+<area shape="rect" id="node1" href="./FNAMarkupMain.html" title="&lt;TABLE&gt;" alt="" coords="5,101,144,149"/>
+<area shape="rect" id="node2_1" href="./FNALearnMain.html" title="edu.arizona.biosemantics.semanticmarkup.FNALearnMain" alt="" coords="179,113,285,138"/>
+<area shape="rect" id="node2" href="./FNALearnMain.html" title="&lt;TABLE&gt;" alt="" coords="168,101,296,149"/>
+<area shape="rect" id="node3_2" href="./ETCMarkupMain.html" title="edu.arizona.biosemantics.semanticmarkup.ETCMarkupMain" alt="" coords="331,113,448,138"/>
+<area shape="rect" id="node3" href="./ETCMarkupMain.html" title="&lt;TABLE&gt;" alt="" coords="320,101,459,149"/>
+<area shape="rect" id="node4_3" href="./ETCLearnMain.html" title="edu.arizona.biosemantics.semanticmarkup.ETCLearnMain" alt="" coords="494,113,599,138"/>
+<area shape="rect" id="node4" href="./ETCLearnMain.html" title="&lt;TABLE&gt;" alt="" coords="483,101,610,149"/>
+<area shape="rect" id="node5_4" href="./CLIMain.html" title="edu.arizona.biosemantics.semanticmarkup.CLIMain" alt="" coords="277,17,345,42"/>
+<area shape="rect" id="node5" href="./CLIMain.html" title="&lt;TABLE&gt;" alt="" coords="266,5,355,53"/>
+<area shape="rect" id="node6_5" href="./Cleanup.html" title="edu.arizona.biosemantics.semanticmarkup.Cleanup" alt="" coords="390,17,458,42"/>
+<area shape="rect" id="node6" href="./Cleanup.html" title="&lt;TABLE&gt;" alt="" coords="379,5,469,53"/>
+</map>

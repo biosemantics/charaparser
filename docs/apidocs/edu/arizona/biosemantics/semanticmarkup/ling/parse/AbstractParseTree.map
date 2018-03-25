@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="../chunk/Chunk.html" title="edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk" alt="" coords="15,19,73,45"/>
+<area shape="rect" id="node1" href="../chunk/Chunk.html" title="&lt;TABLE&gt;" alt="" coords="5,8,83,56"/>
+<area shape="rect" id="node3_1" href="./AbstractParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree" alt="" coords="36,118,167,143"/>
+<area shape="rect" id="node3" href="./AbstractParseTree.html" title="&lt;TABLE&gt;" alt="" coords="25,107,177,155"/>
+<area shape="rect" id="node2_2" href="./IParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree" alt="" coords="118,11,202,53"/>
+<area shape="rect" id="node2" href="./IParseTree.html" title="&lt;TABLE&gt;" alt="" coords="107,6,213,58"/>
+<area shape="rect" id="node4_3" href="./lib/StanfordParseTree.html" title="edu.arizona.biosemantics.semanticmarkup.ling.parse.lib.StanfordParseTree" alt="" coords="37,214,165,239"/>
+<area shape="rect" id="node4" href="./lib/StanfordParseTree.html" title="&lt;TABLE&gt;" alt="" coords="27,203,176,251"/>
+</map>

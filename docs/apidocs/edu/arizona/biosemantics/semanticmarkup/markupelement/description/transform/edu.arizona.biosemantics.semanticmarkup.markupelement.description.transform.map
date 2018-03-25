@@ -1,0 +1,16 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./TransformationException.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.TransformationException" alt="" coords="15,19,179,45"/>
+<area shape="rect" id="node1" href="./TransformationException.html" title="&lt;TABLE&gt;" alt="" coords="5,8,190,56"/>
+<area shape="rect" id="node2_1" href="./SentenceChunkerRun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.SentenceChunkerRun" alt="" coords="225,19,372,45"/>
+<area shape="rect" id="node2" href="./SentenceChunkerRun.html" title="&lt;TABLE&gt;" alt="" coords="215,8,383,56"/>
+<area shape="rect" id="node3_2" href="./OntologyMappingTreatmentTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.OntologyMappingTreatmentTransformer" alt="" coords="224,214,472,239"/>
+<area shape="rect" id="node3" href="./OntologyMappingTreatmentTransformer.html" title="&lt;TABLE&gt;" alt="" coords="213,203,483,251"/>
+<area shape="rect" id="node4_3" href="./MarkupDescriptionTreatmentTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.MarkupDescriptionTreatmentTransformer" alt="" coords="518,214,773,239"/>
+<area shape="rect" id="node4" href="./MarkupDescriptionTreatmentTransformer.html" title="&lt;TABLE&gt;" alt="" coords="507,203,783,251"/>
+<area shape="rect" id="node5_4" href="./IDescriptionTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.IDescriptionTransformer" alt="" coords="417,11,575,53"/>
+<area shape="rect" id="node5" href="./IDescriptionTransformer.html" title="&lt;TABLE&gt;" alt="" coords="407,6,585,58"/>
+<area shape="rect" id="node7_5" href="./AbstractDescriptionTransformer.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.AbstractDescriptionTransformer" alt="" coords="393,118,599,143"/>
+<area shape="rect" id="node7" href="./AbstractDescriptionTransformer.html" title="&lt;TABLE&gt;" alt="" coords="383,107,609,155"/>
+<area shape="rect" id="node6_6" href="./DescriptionExtractorRun.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform.DescriptionExtractorRun" alt="" coords="621,19,782,45"/>
+<area shape="rect" id="node6" href="./DescriptionExtractorRun.html" title="&lt;TABLE&gt;" alt="" coords="610,8,793,56"/>
+</map>

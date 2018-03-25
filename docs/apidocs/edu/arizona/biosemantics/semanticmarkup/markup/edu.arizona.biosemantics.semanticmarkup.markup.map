@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./MarkupCreatorChainResult.html" title="edu.arizona.biosemantics.semanticmarkup.markup.MarkupCreatorChainResult" alt="" coords="16,118,192,143"/>
+<area shape="rect" id="node1" href="./MarkupCreatorChainResult.html" title="&lt;TABLE&gt;" alt="" coords="5,107,203,155"/>
+<area shape="rect" id="node2_1" href="./MarkupChain.html" title="edu.arizona.biosemantics.semanticmarkup.markup.MarkupChain" alt="" coords="238,118,335,143"/>
+<area shape="rect" id="node2" href="./MarkupChain.html" title="&lt;TABLE&gt;" alt="" coords="227,107,346,155"/>
+<area shape="rect" id="node3_2" href="./IMarkupResultVisitor.html" title="edu.arizona.biosemantics.semanticmarkup.markup.IMarkupResultVisitor" alt="" coords="387,11,528,53"/>
+<area shape="rect" id="node3" href="./IMarkupResultVisitor.html" title="&lt;TABLE&gt;" alt="" coords="376,6,539,58"/>
+<area shape="rect" id="node4_3" href="./IMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markup.IMarkupResult" alt="" coords="52,11,156,53"/>
+<area shape="rect" id="node4" href="./IMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="41,6,167,58"/>
+<area shape="rect" id="node5_4" href="./IMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator" alt="" coords="232,11,341,53"/>
+<area shape="rect" id="node5" href="./IMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="221,6,352,58"/>
+</map>

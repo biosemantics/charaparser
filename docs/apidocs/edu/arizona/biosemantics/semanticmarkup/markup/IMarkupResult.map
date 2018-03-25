@@ -1,0 +1,20 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./MarkupCreatorChainResult.html" title="edu.arizona.biosemantics.semanticmarkup.markup.MarkupCreatorChainResult" alt="" coords="16,118,192,143"/>
+<area shape="rect" id="node1" href="./MarkupCreatorChainResult.html" title="&lt;TABLE&gt;" alt="" coords="5,107,203,155"/>
+<area shape="rect" id="node2_1" href="./IMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markup.IMarkupResult" alt="" coords="779,11,883,53"/>
+<area shape="rect" id="node2" href="./IMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="768,6,893,58"/>
+<area shape="rect" id="node3_2" href="../markupelement/description/markup/DescriptionMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.DescriptionMarkupResult" alt="" coords="237,118,403,143"/>
+<area shape="rect" id="node3" href="../markupelement/description/markup/DescriptionMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="227,107,413,155"/>
+<area shape="rect" id="node4_3" href="../markupelement/distribution/markup/DistributionMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.markup.DistributionMarkupResult" alt="" coords="448,118,613,143"/>
+<area shape="rect" id="node4" href="../markupelement/distribution/markup/DistributionMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="437,107,624,155"/>
+<area shape="rect" id="node5_4" href="../markupelement/ecology/markup/EcologyMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.EcologyMarkupResult" alt="" coords="659,118,807,143"/>
+<area shape="rect" id="node5" href="../markupelement/ecology/markup/EcologyMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="649,107,818,155"/>
+<area shape="rect" id="node6_5" href="../markupelement/elevation/markup/ElevationMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.elevation.markup.ElevationMarkupResult" alt="" coords="853,118,1006,143"/>
+<area shape="rect" id="node6" href="../markupelement/elevation/markup/ElevationMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="842,107,1017,155"/>
+<area shape="rect" id="node7_6" href="../markupelement/habitat/markup/HabitatMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.habitat.markup.HabitatMarkupResult" alt="" coords="1052,118,1193,143"/>
+<area shape="rect" id="node7" href="../markupelement/habitat/markup/HabitatMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="1041,107,1204,155"/>
+<area shape="rect" id="node8_7" href="../markupelement/habitatDescr/markup/HabitatMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.markup.HabitatMarkupResult" alt="" coords="1239,118,1380,143"/>
+<area shape="rect" id="node8" href="../markupelement/habitatDescr/markup/HabitatMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="1228,107,1391,155"/>
+<area shape="rect" id="node9_8" href="../markupelement/phenology/markup/PhenologyMarkupResult.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.markup.PhenologyMarkupResult" alt="" coords="1426,118,1587,143"/>
+<area shape="rect" id="node9" href="../markupelement/phenology/markup/PhenologyMarkupResult.html" title="&lt;TABLE&gt;" alt="" coords="1415,107,1598,155"/>
+</map>

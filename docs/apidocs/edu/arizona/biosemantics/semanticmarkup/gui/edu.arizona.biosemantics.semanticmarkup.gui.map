@@ -1,0 +1,34 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./VolumeMarkupDbAccessor.html" title="edu.arizona.biosemantics.semanticmarkup.gui.VolumeMarkupDbAccessor" alt="" coords="16,17,195,42"/>
+<area shape="rect" id="node1" href="./VolumeMarkupDbAccessor.html" title="&lt;TABLE&gt;" alt="" coords="5,5,205,53"/>
+<area shape="rect" id="node2_1" href="./Utilities.html" title="edu.arizona.biosemantics.semanticmarkup.gui.Utilities" alt="" coords="240,17,304,42"/>
+<area shape="rect" id="node2" href="./Utilities.html" title="&lt;TABLE&gt;" alt="" coords="229,5,315,53"/>
+<area shape="rect" id="node3_2" href="./UploadTerms2OTO.html" title="edu.arizona.biosemantics.semanticmarkup.gui.UploadTerms2OTO" alt="" coords="349,17,480,42"/>
+<area shape="rect" id="node3" href="./UploadTerms2OTO.html" title="&lt;TABLE&gt;" alt="" coords="339,5,491,53"/>
+<area shape="rect" id="node4_3" href="./TermsDataBean.html" title="edu.arizona.biosemantics.semanticmarkup.gui.TermsDataBean" alt="" coords="526,17,639,42"/>
+<area shape="rect" id="node4" href="./TermsDataBean.html" title="&lt;TABLE&gt;" alt="" coords="515,5,650,53"/>
+<area shape="rect" id="node5_4" href="./StateImporter.html" title="edu.arizona.biosemantics.semanticmarkup.gui.StateImporter" alt="" coords="685,17,784,42"/>
+<area shape="rect" id="node5" href="./StateImporter.html" title="&lt;TABLE&gt;" alt="" coords="675,5,795,53"/>
+<area shape="rect" id="node6_5" href="./State.html" title="edu.arizona.biosemantics.semanticmarkup.gui.State" alt="" coords="830,17,882,42"/>
+<area shape="rect" id="node6" href="./State.html" title="&lt;TABLE&gt;" alt="" coords="819,5,893,53"/>
+<area shape="rect" id="node7_6" href="./Registry.html" title="edu.arizona.biosemantics.semanticmarkup.gui.Registry" alt="" coords="928,17,997,42"/>
+<area shape="rect" id="node7" href="./Registry.html" title="&lt;TABLE&gt;" alt="" coords="917,5,1008,53"/>
+<area shape="rect" id="node8_7" href="./MyLink.html" title="edu.arizona.biosemantics.semanticmarkup.gui.MyLink" alt="" coords="1043,17,1106,42"/>
+<area shape="rect" id="node8" href="./MyLink.html" title="&lt;TABLE&gt;" alt="" coords="1033,5,1117,53"/>
+<area shape="rect" id="node9_8" href="./GraphNode.html" title="edu.arizona.biosemantics.semanticmarkup.gui.GraphNode" alt="" coords="1152,17,1237,42"/>
+<area shape="rect" id="node9" href="./GraphNode.html" title="&lt;TABLE&gt;" alt="" coords="1141,5,1248,53"/>
+<area shape="rect" id="node10_9" href="./GraphMLOutputter.html" title="edu.arizona.biosemantics.semanticmarkup.gui.GraphMLOutputter" alt="" coords="1283,17,1411,42"/>
+<area shape="rect" id="node10" href="./GraphMLOutputter.html" title="&lt;TABLE&gt;" alt="" coords="1272,5,1421,53"/>
+<area shape="rect" id="node11_10" href="./DeHyphenizerCorrected.html" title="edu.arizona.biosemantics.semanticmarkup.gui.DeHyphenizerCorrected" alt="" coords="1428,113,1585,138"/>
+<area shape="rect" id="node11" href="./DeHyphenizerCorrected.html" title="&lt;TABLE&gt;" alt="" coords="1417,101,1596,149"/>
+<area shape="rect" id="node12_11" href="./DeHyphenizer.html" title="edu.arizona.biosemantics.semanticmarkup.gui.DeHyphenizer" alt="" coords="1456,17,1557,42"/>
+<area shape="rect" id="node12" href="./DeHyphenizer.html" title="&lt;TABLE&gt;" alt="" coords="1445,5,1568,53"/>
+<area shape="rect" id="node13_12" href="./CooccurrenceScore.html" title="edu.arizona.biosemantics.semanticmarkup.gui.CooccurrenceScore" alt="" coords="1603,17,1738,42"/>
+<area shape="rect" id="node13" href="./CooccurrenceScore.html" title="&lt;TABLE&gt;" alt="" coords="1593,5,1749,53"/>
+<area shape="rect" id="node14_13" href="./CoOccurrenceGraph.html" title="edu.arizona.biosemantics.semanticmarkup.gui.CoOccurrenceGraph" alt="" coords="1784,17,1923,42"/>
+<area shape="rect" id="node14" href="./CoOccurrenceGraph.html" title="&lt;TABLE&gt;" alt="" coords="1773,5,1933,53"/>
+<area shape="rect" id="node15_14" href="./ContextBean.html" title="edu.arizona.biosemantics.semanticmarkup.gui.ContextBean" alt="" coords="1968,17,2064,42"/>
+<area shape="rect" id="node15" href="./ContextBean.html" title="&lt;TABLE&gt;" alt="" coords="1957,5,2075,53"/>
+<area shape="rect" id="node16_15" href="./Cell.html" title="edu.arizona.biosemantics.semanticmarkup.gui.Cell" alt="" coords="2113,17,2156,42"/>
+<area shape="rect" id="node16" href="./Cell.html" title="&lt;TABLE&gt;" alt="" coords="2099,5,2171,53"/>
+</map>

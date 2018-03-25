@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./RunConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.RunConfig" alt="" coords="20,113,100,138"/>
+<area shape="rect" id="node1" href="./RunConfig.html" title="&lt;TABLE&gt;" alt="" coords="9,101,111,149"/>
+<area shape="rect" id="node2_1" href="./FNAConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.FNAConfig" alt="" coords="151,17,233,42"/>
+<area shape="rect" id="node2" href="./FNAConfig.html" title="&lt;TABLE&gt;" alt="" coords="140,5,244,53"/>
+<area shape="rect" id="node3_2" href="./Configuration.html" title="edu.arizona.biosemantics.semanticmarkup.config.Configuration" alt="" coords="279,17,375,42"/>
+<area shape="rect" id="node3" href="./Configuration.html" title="&lt;TABLE&gt;" alt="" coords="268,5,385,53"/>
+<area shape="rect" id="node4_3" href="./BasicConfig.html" title="edu.arizona.biosemantics.semanticmarkup.config.BasicConfig" alt="" coords="15,17,105,42"/>
+<area shape="rect" id="node4" href="./BasicConfig.html" title="&lt;TABLE&gt;" alt="" coords="5,5,115,53"/>
+<area shape="rect" id="node5_4" href="./BasicConfig.InflectorProvider.html" title="edu.arizona.biosemantics.semanticmarkup.config.BasicConfig.InflectorProvider" alt="" coords="420,17,532,42"/>
+<area shape="rect" id="node5" href="./BasicConfig.InflectorProvider.html" title="&lt;TABLE&gt;" alt="" coords="409,5,543,53"/>
+</map>
