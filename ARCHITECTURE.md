@@ -2,7 +2,7 @@
 
 ## Table of contents
    * [Introduction](#introduction)
-   * [Entry-point & Configuration & Run](#entry-point--configuration--run)
+   * [Entry-point, Configuration, Run](#entry-point--configuration--run)
    * [Learn](#learn)
    * [Markup](#markup)
    * [Markup Creation](#markup-creation)
