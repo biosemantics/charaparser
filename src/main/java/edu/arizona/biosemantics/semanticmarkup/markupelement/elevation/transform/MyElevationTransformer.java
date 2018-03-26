@@ -65,7 +65,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 	}
 
 	public LinkedHashSet<Character> parse(String text) {
-		LinkedHashSet<Character> result = new LinkedHashSet<Character>();
+		List<Character> result = new ArrayList<Character>();
 
 		text = normalize(text);
 		System.out.println();
@@ -74,9 +74,9 @@ public class MyElevationTransformer implements IElevationTransformer {
 
 		List<String> items = splitTextIntoItems(text);
 		for(String item : items) {
-			result.addAll(parseItem(item));
+			result.addAll(parseItem(item, result.isEmpty() ? null : result.get(result.size() - 1)));
 		}
-		return result;
+		return new LinkedHashSet<Character>(result);
 	}
 
 	private List<String> splitTextIntoItems(String text) {
@@ -116,7 +116,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 		return result;
 	}
 
-	private Collection<? extends Character> parseItem(String text) {
+	private Collection<? extends Character> parseItem(String text, Character previousCharacter) {
 		LinkedHashSet<Character> result = new LinkedHashSet<Character>();
 
 		String outlier = "\\(-*\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\)";
@@ -237,8 +237,17 @@ public class MyElevationTransformer implements IElevationTransformer {
 					"" : toForeignUnit) : fromForeignUnit) : toOutlierUnit) : fromOutlierUnit) : unit);
 
 			if(from == null && to == null && singleDataPoint != null) {
-				from = singleDataPoint;
-				to = singleDataPoint;
+				if(text.matches(".*to\\s+\\d+.*")) {
+					to = singleDataPoint;
+					from = previousCharacter.getFrom();
+				}
+				else if(text.matches(".*from\\s+\\d.*")) {
+					from = singleDataPoint;
+					to = previousCharacter.getTo();
+				} else {
+					from = singleDataPoint;
+					to = singleDataPoint;
+				}
 			}
 
 			result.addAll(this.createCharactersForRange(

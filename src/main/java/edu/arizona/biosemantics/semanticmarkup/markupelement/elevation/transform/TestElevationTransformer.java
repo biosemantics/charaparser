@@ -19,6 +19,8 @@ public class TestElevationTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
+				"0--700 m, rarely to 1600 m;",
+
 				//works
 				"0--700 m;",
 				"200--800(--1600 m);",
