@@ -237,16 +237,24 @@ public class MyElevationTransformer implements IElevationTransformer {
 					"" : toForeignUnit) : fromForeignUnit) : toOutlierUnit) : fromOutlierUnit) : unit);
 
 			if(from == null && to == null && singleDataPoint != null) {
-				if(text.matches(".*to\\s+\\d+.*")) {
+				if(text.matches(".*\\bto\\b\\s+\\d+.*")) {
 					to = singleDataPoint;
 					from = previousCharacter.getFrom();
 				}
-				else if(text.matches(".*from\\s+\\d.*")) {
+				else if(text.matches(".*\\bfrom\\b\\s+\\d.*")) {
 					from = singleDataPoint;
 					to = previousCharacter.getTo();
 				} else {
-					from = singleDataPoint;
-					to = singleDataPoint;
+					if(prefix.matches(".*\\b(below|under)\\b.*")) {
+						to = singleDataPoint;
+						from = "any";
+					} else if(prefix.matches(".*\\b(above|over)\\b.*")) {
+						from = singleDataPoint;
+						to = "any";
+					} else {
+						from = singleDataPoint;
+						to = singleDataPoint;
+					}
 				}
 			}
 
@@ -265,7 +273,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 		text = normalize(text);
 		System.out.println("informal: " + text);
 
-		String dataPoint = "low|moderate|high";
+		String dataPoint = "\\b(low|moderate|high)\\b";
 		String informalRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + dataPoint + ")|(?<fromForeign>" + dataPoint + "))?\\s*"
 				+ "(:?(?<from>" + dataPoint + ")\\s*(:?-+|to)\\s*(?<to>" + dataPoint + ")|(?<singleDataPoint>" + dataPoint + "))"
 				+ "\\s*(?:(?<toOutlier>" + dataPoint + ")|(?<toForeign>" + dataPoint + "))?\\s*(?<postfix>.*?)";

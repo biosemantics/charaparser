@@ -20,9 +20,10 @@ public class TestElevationTransformer {
 
 		String[] examples = {
 				"0--700 m, rarely to 1600 m;",
+				"below 10 m;",
 
 				//works
-				"0--700 m;",
+				/*"0--700 m;",
 				"200--800(--1600 m);",
 				"0--100[--1500] m;",
 				"(300--)800--2000 m;",
@@ -41,7 +42,7 @@ public class TestElevationTransformer {
 				"mostly low elevations (0-100 m);",
 				"moderate elevations;",
 				"1800--2500 m (-- 4000 m, Central America);",
-				"0--600 m (c Texas eastward and northward), 1600--2000 m (west)"
+				"0--600 m (c Texas eastward and northward), 1600--2000 m (west)"*/
 
 		};
 
