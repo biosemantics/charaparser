@@ -119,11 +119,14 @@ public class MyElevationTransformer implements IElevationTransformer {
 	private Collection<? extends Character> parseItem(String text, Character previousCharacter) {
 		LinkedHashSet<Character> result = new LinkedHashSet<Character>();
 
-		String outlier = "\\(-*\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\)";
-		String foreign = "\\[-*\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\]";
-		String numericalRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + outlier + ")|(?<fromForeign>" + foreign + "))?\\s*"
+		String fromOutlierPattern = "\\((-*|(\\bfrom\\b)?)\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\)";
+		String fromForeignPattern = "\\[(-*|(\\bfrom\\b)?)\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\]";
+
+		String toOutlierPattern = "\\((-*|(\\bto\\b)?)\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\)";
+		String toForeignPattern = "\\[(-*|(\\bto\\b)?)\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\]";
+		String numericalRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + fromOutlierPattern + ")|(?<fromForeign>" + fromForeignPattern + "))?\\s*"
 				+ "(:?(?<from>\\d+)\\s*-+\\s*(?<to>\\d+)|(?<singleDataPoint>\\d+))\\s*(?<unit1>" + units + ")?"
-				+ "\\s*(?:(?<toOutlier>" + outlier + ")|(?<toForeign>" + foreign + "))?\\s*"
+				+ "\\s*(?:(?<toOutlier>" + toOutlierPattern + ")|(?<toForeign>" + toForeignPattern + "))?\\s*"
 				+ "(?<unit>" + units + ")?\\s*(?<postfix>.*?)";
 		Pattern numericalRange = Pattern.compile(numericalRangeString);
 
@@ -150,29 +153,56 @@ public class MyElevationTransformer implements IElevationTransformer {
 			String prefix = numericalRangeMatcher.group("prefix");
 			String postfix = numericalRangeMatcher.group("postfix");
 
-			Pattern fromOutlierPattern = Pattern.compile("\\(.*?(?<outlier>-?\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\)");
-			Pattern toOutlierPattern = Pattern.compile("\\(-*\\s*(?<outlier>\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\)");
+			Pattern fromOutlierExtractPattern = Pattern.compile("\\(.*?(?<outlier>-?\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\)");
+			Pattern toOutlierExtractPattern = Pattern.compile("\\((-*|(\\bto\\b)?)\\s*(?<outlier>\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\)");
 			if(fromOutlier != null) {
-				Matcher fromOutlierMatcher = fromOutlierPattern.matcher(fromOutlier);
+				Matcher fromOutlierMatcher = fromOutlierExtractPattern.matcher(fromOutlier);
 				if(fromOutlierMatcher.matches()) {
 					fromOutlier = fromOutlierMatcher.group("outlier");
 					fromOutlierUnit = fromOutlierMatcher.group("unit");
 					fromOutlierConstraint = fromOutlierMatcher.group("constraint");
+
+					try {
+						int fromOutlierInt = Integer.valueOf(fromOutlier);
+						int toInt = Integer.valueOf(to);
+						int fromInt = Integer.valueOf(from);
+						if(fromOutlierInt > toInt && (fromOutlierUnit == null || fromOutlierUnit.equalsIgnoreCase(unit))) {
+							toOutlier = fromOutlier;
+							toOutlierUnit = fromOutlierUnit;
+							toOutlierConstraint = fromOutlierConstraint;
+							fromOutlier = null;
+							fromOutlierUnit = null;
+							fromOutlierConstraint = null;
+						}
+					} catch(Exception e) {}
 				}
 			}
 			if(toOutlier != null) {
-				Matcher toOutlierMatcher = toOutlierPattern.matcher(toOutlier);
+				Matcher toOutlierMatcher = toOutlierExtractPattern.matcher(toOutlier);
 				if(toOutlierMatcher.matches()) {
 					toOutlier = toOutlierMatcher.group("outlier");
 					toOutlierUnit = toOutlierMatcher.group("unit");
 					toOutlierConstraint = toOutlierMatcher.group("constraint");
+
+					try {
+						int toOutlierInt = Integer.valueOf(toOutlier);
+						int fromInt = Integer.valueOf(from);
+						if(toOutlierInt < fromInt && (toOutlierUnit == null || toOutlierUnit.equalsIgnoreCase(unit))) {
+							fromOutlier = toOutlier;
+							fromOutlierUnit = toOutlierUnit;
+							fromOutlierConstraint = toOutlierConstraint;
+							toOutlier = null;
+							toOutlierUnit = null;
+							toOutlierConstraint = null;
+						}
+					} catch(Exception e) {}
 				}
 			}
 
-			Pattern fromForeignPattern = Pattern.compile("\\[.*?(?<foreign>-?\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\]");
-			Pattern toForeignPattern = Pattern.compile("\\[-*\\s*(?<foreign>\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\]");
+			Pattern fromForeignExtractPattern = Pattern.compile("\\[.*?(?<foreign>-?\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\]");
+			Pattern toForeignExtractPattern = Pattern.compile("\\[(-*|(\\bto\\b)?)\\s*(?<foreign>\\d+\\+?)\\s*-*\\s*(?<unit>" + units + ")?\\s*(?<constraint>.*)\\]");
 			if(fromForeign != null) {
-				Matcher fromForeignMatcher = fromForeignPattern.matcher(fromForeign);
+				Matcher fromForeignMatcher = fromForeignExtractPattern.matcher(fromForeign);
 				if(fromForeignMatcher.matches()) {
 					fromForeign = fromForeignMatcher.group("foreign");
 					fromForeignUnit = fromForeignMatcher.group("unit");
@@ -180,7 +210,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 				}
 			}
 			if(toForeign != null) {
-				Matcher toForeignMatcher = toForeignPattern.matcher(toForeign);
+				Matcher toForeignMatcher = toForeignExtractPattern.matcher(toForeign);
 				if(toForeignMatcher.matches()) {
 					toForeign = toForeignMatcher.group("foreign");
 					toForeignUnit = toForeignMatcher.group("unit");
@@ -210,12 +240,14 @@ public class MyElevationTransformer implements IElevationTransformer {
 			String modifier = "";
 
 			List<Character> informalElevation = getInformalElevation(prefix);
+			boolean prefixModifier = false;
 			if(informalElevation.isEmpty()) {
 				if(prefix != null && !prefix.trim().isEmpty()) {
 					String[] parts = prefix.split("\\s+");
 					for(String part : parts) {
 						if(part.matches(this.lyAdvPattern) || part.matches(this.modifierList) || part.matches(this.advModifiers)) {
 							modifier += " " + part;
+							prefixModifier = true;
 						}
 					}
 				}
@@ -224,13 +256,24 @@ public class MyElevationTransformer implements IElevationTransformer {
 			}
 
 			String constraint = "";
+			boolean postFixConstraint = false;
 			if(postfix != null && !postfix.trim().isEmpty()) {
 				postfix = normalize(postfix);
 				Pattern postfixPattern = Pattern.compile("^\\s*\\((?<constraint>.*)\\)\\s*$");
 				Matcher postfixMatcher = postfixPattern.matcher(postfix);
 				if(postfixMatcher.matches()) {
 					constraint = postfixMatcher.group("constraint");
+					postFixConstraint = true;
 				}
+			}
+			if(!prefixModifier && !postFixConstraint) {
+				prefix = normalize(prefix);
+				postfix = normalize(postfix);
+				if(prefix.endsWith("[") || prefix.endsWith("(") || prefix.endsWith("{"))
+					prefix = prefix.substring(0, prefix.length() - 1).trim();
+				if(postfix.startsWith("]") || postfix.startsWith(")") || postfix.startsWith("}"))
+					postfix = postfix.substring(1).trim();
+				constraint += normalize(prefix) + " " + normalize(postfix).trim();
 			}
 
 			unit = (unit == null ? (fromOutlierUnit == null ? (toOutlierUnit == null ? (fromForeignUnit == null ? (toForeignUnit == null ?
@@ -273,7 +316,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 		text = normalize(text);
 		System.out.println("informal: " + text);
 
-		String dataPoint = "\\b(low|moderate|high)\\b";
+		String dataPoint = "\\b(low|moderate|high|lowland)\\b";
 		String informalRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + dataPoint + ")|(?<fromForeign>" + dataPoint + "))?\\s*"
 				+ "(:?(?<from>" + dataPoint + ")\\s*(:?-+|to)\\s*(?<to>" + dataPoint + ")|(?<singleDataPoint>" + dataPoint + "))"
 				+ "\\s*(?:(?<toOutlier>" + dataPoint + ")|(?<toForeign>" + dataPoint + "))?\\s*(?<postfix>.*?)";
@@ -336,8 +379,12 @@ public class MyElevationTransformer implements IElevationTransformer {
 			range.setToUnit(unit);
 			range.setFromUnit(unit);
 		}
-		if(modifier != null && !modifier.trim().isEmpty())
+		if(modifier != null && !modifier.trim().isEmpty()) {
 			range.setModifier(modifier.trim());
+			if(modifier.trim().matches("rarely|seldom|occasionally")) {
+				range.setCharType("atypical_range");
+			}
+		}
 		if(constraint != null && !constraint.trim().isEmpty()) {
 			range.setConstraint(constraint);
 		}
