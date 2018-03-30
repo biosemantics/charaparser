@@ -18,8 +18,8 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.C
  * Sporophytes mature spring-summer (May, Jun, Jul).
  * Flowering early summer-fall; staminate plants generally dying after anthesis, pistillate plants remaining dark green, persisting until frost.
  *
- * (gerundVerb) and (biologicalEnitty, stage) can be exchanged for each other without changing the meaning. Not all (biologicalEntity, stage) constructs
- * may have a (gerundVerb) that is exchangable.
+ * (verbform) and (biologicalEnitty, stage) can be exchanged for each other without changing the meaning. Not all (biologicalEntity, stage) constructs
+ * may have a (verbform) that is exchangable.
  *
  * E.g.
  * flowering = flower appear;
@@ -47,7 +47,7 @@ public class PhenologyInfoExtractor {
 	private final String stageBreakingPattern = "^.*,\\s*(" + this.gerundVerbs + "|" + this.entities + ")$";
 	private final String timeBreakingPattern = "^.*,\\s*(" + this.gerundVerbs + "|" + this.entities + "|" + this.stages + ")$";
 
-	private String gerundVerb;
+	private List<String> verbForms;
 	private List<String> biologicalEntityTerms;
 	private List<String> stageTerms;
 	private boolean biologicalEntityRequired;
@@ -55,17 +55,17 @@ public class PhenologyInfoExtractor {
 	private Pattern advModPattern;
 
 	/**
-	 * @param gerundVerb
+	 * @param verbForms
 	 * @param biologicalEntityTerms
 	 * @param stageTerms
 	 * @param biologicalEntityRequired
 	 * @param advModPattern
 	 * @param stopwords
 	 */
-	public PhenologyInfoExtractor(String gerundVerb, List<String> biologicalEntityTerms,
+	public PhenologyInfoExtractor(List<String> verbForms, List<String> biologicalEntityTerms,
 			List<String> stageTerms, boolean biologicalEntityRequired,
 			Pattern advModPattern, String stopwords) {
-		this.gerundVerb = gerundVerb;
+		this.verbForms = verbForms;
 		this.biologicalEntityTerms = biologicalEntityTerms;
 		this.stageTerms = stageTerms;
 		this.biologicalEntityRequired = biologicalEntityRequired;
@@ -79,7 +79,16 @@ public class PhenologyInfoExtractor {
 
 		LinkedHashSet<Character>  values = new LinkedHashSet<Character>();
 		while(!text.trim().isEmpty()) {
-			int gerundIndex = this.gerundVerb == null ? -1 : getIndex(text, this.gerundVerb);
+			int verbIndex = -1;
+			String verbFormSelected = null;
+			for(String verb : verbForms) {
+				verbIndex = getIndex(text, verb);
+				if(verbIndex != -1) {
+					verbFormSelected = verb;
+					break;
+				}
+			}
+
 			int minEntityIndex = Integer.MAX_VALUE;
 			String minEntityTerm = null;
 			for(String entityTerm : this.biologicalEntityTerms) {
@@ -92,9 +101,9 @@ public class PhenologyInfoExtractor {
 				}
 			}
 
-			if(gerundIndex >= 0 && gerundIndex < minEntityIndex) {
-				text = extractByGerundVerb(values, text);
-			} else if(minEntityIndex < Integer.MAX_VALUE && gerundIndex == -1 || minEntityIndex < gerundIndex) {
+			if(verbIndex >= 0 && verbIndex < minEntityIndex) {
+				text = extractByVerbForm(verbFormSelected, values, text);
+			} else if(minEntityIndex < Integer.MAX_VALUE && verbIndex == -1 || minEntityIndex < verbIndex) {
 				text = extractByBiologicalEntityStage(values, text, minEntityTerm);
 			} else {
 				text = "";
@@ -117,17 +126,18 @@ public class PhenologyInfoExtractor {
 	}
 
 	private String extractByBiologicalEntityStage(LinkedHashSet<Character> values, String text, String entityTerm) {
+		System.out.println("extract bio entity stage" + text);
 		int index = getIndex(text, entityTerm);
 		if(index >= 0) {
-			String entityText = text.substring(index + entityTerm.length());
+			String afterEntityText = text.substring(index + entityTerm.length());
 			for(String stageTerm : this.stageTerms) {
-				int stageIndex = getIndex(entityText, stageTerm);
+				int stageIndex = getIndex(afterEntityText, stageTerm);
 				if(stageIndex >= 0) {
-					String upToStageText = entityText.substring(0, stageIndex).trim();
+					String upToStageText = afterEntityText.substring(0, stageIndex).trim();
 					if(matches(upToStageText, stageBreakingPattern)) {
 						continue;
 					}
-					String stageText = entityText.substring(stageIndex + stageTerm.length());
+					String stageText = afterEntityText.substring(stageIndex + stageTerm.length());
 
 					String timeText = "";
 					String remainderText = "";
@@ -148,13 +158,13 @@ public class PhenologyInfoExtractor {
 					values.addAll(this.createCharacters(times));
 				}
 			}
-			text = entityText;
+			text = afterEntityText;
 		}
 		return text;
 	}
 
-	private String extractByGerundVerb(LinkedHashSet<Character> values, String text) {
-		text = text.substring(this.getIndex(text, this.gerundVerb) + gerundVerb.length());
+	private String extractByVerbForm(String verbForm, LinkedHashSet<Character> values, String text) {
+		text = text.substring(this.getIndex(text, verbForm) + verbForm.length());
 		String timeText = "";
 		String remainderText = "";
 		String passedText = "";
@@ -306,8 +316,8 @@ public class PhenologyInfoExtractor {
 		for(Time time: times) {
 			Character c = new Character();
 			String name = "";
-			if(this.gerundVerb != null) {
-				name = this.gerundVerb + " time";
+			if(!this.verbForms.isEmpty()) {
+				name = this.verbForms.get(0) + " time";
 			} else {
 				name = this.biologicalEntityTerms.get(0) + " " + this.stageTerms.get(0) + " time";
 			}

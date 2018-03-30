@@ -19,6 +19,115 @@ public class TestPhenologyTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
+				//"Sporulates summer",
+				/*"Coning March--April.",
+				"Coning late winter--early spring.",
+				"Coning late winter--midspring (Mar--May).",
+				"Coning late winter--midspring.",
+				"Coning March--April.",
+				"Sporulates essentially all year."*/
+				//"Sporulation early spring--midsummer.",
+				///"Sporulation late spring--early summer.",
+				//"Sporulation early spring--midsummer.",
+				//"Sporulating throughout the year.",
+
+				"Spores mature in winter or spring.",
+
+				/*
+				"Sporulation spring--early summer (late summer, early winter in Florida).",
+				typical spring - early summer
+				atypical spring - late summer
+				atypical spring - early winter (constraint florida)
+
+
+				"Leaves appearing early-late spring, often with second flush later in season following summer rains.",
+				typical early spring - late spring modifier="often with second flush later in season following summer rains"
+				atypical value=later in season constraint "follower summer rains"
+
+				typical early spring - late spring modifier="often with second flush later in season following summer rains"
+
+
+				"Cones maturing in summer, or cones overwintering and shedding spores in spring.",
+				cone maturing typical: summer
+				spore producing: spring
+
+				"Leaves usually drying up in midsummer together with other associated species.",
+				leaves drying typical: midsummer constraint="together..."
+
+
+
+				"Leaves appearing in early spring and dying in late spring and early summer, long before those of associated moonworts.",
+				leave appearing: typical early spring
+				leave dying: typical late spring
+				leave dying: typical early summer
+
+				constraint:  long before those of associated moonworts. could be attached anywhere nad it would be correct or absend.
+
+
+				"Leaves seasonal, appearing in early spring and dying in late summer.",
+				leave appearing: typical: early spring
+				leave dying typical late summer
+
+				"Leaves appearing mainly in late winter and early spring, sometimes also appearing later in season after heavy rains.",
+				leaves apearing typicaL; modifier=mainly value late winter
+				leaves apearing typicaL; modifier=mainly value early spring
+				leaves apearing atypical; value=later in season after heavy rains. modifier="sometimes"
+
+
+				"Leaves appearing in late fall and dying in early spring.",
+				leave appearing: typical late fall
+				leave dying: early spring
+
+
+
+				"Leaves green over winter, arising at variable times during last half of summer, meiosis as late as September.",
+				leaves appearing typical value="at variables times during last half of summer"
+				leaves meiosis typical late as september
+				(ideally: leaves not dying in winter)
+
+				"Leaves green over winter, sporophores seasonal, new leaves appearing in spring.",
+				leaves appearing: typical spring
+				(ideally: leaves not dying in winter)
+
+
+				"Leaves appearing in late winter and early spring; apparently absent during dry years.",
+				leaves appearing typical: late winter  constraint="apparently absent during dry years"
+				leaves appearing typical: early spring constraint="apparently absent during dry years"
+
+
+				"Leaves green over winter, new leaves appearing in late spring.",
+				leaves appearing: typical late spring
+
+
+				"Leaves appearing in late spring or early summer, releasing spores later than most associated species, and dying as late as October.",
+				leaves appearing: typical late spring
+				leaves appearing: typical early summer
+				spore appearing: value: later than most associated species
+				leave dying: value as late as october
+
+				"Cones maturing in late summer, or cones overwintering and shedding spores in spring",
+				cone maturing time: late summer
+				spore appearing: spring
+
+
+				"Cones maturing in summer, old stems sometimes developing branches with cones in spring.",
+				cone matruing time: summer
+				cone appearing time; modifier sometimes; value=spring
+
+
+				"Leaves green over winter, sporophores seasonal, new leaves appearing in late spring--early summer.",
+				leave appearing: late spring-early summer
+
+
+				"Leaves appearing in mid to late spring, dying in late summer; In extremely dry years of shorter duration or not appearing at all.",
+				leave appearing value: mid to late spring constraint="in extremely dry years of shorter duration or not appearing at all."
+				leave dying: late summer
+
+
+
+				 */
+
+				/*
 				"Flowering and fruiting mid Jun–mid Sep.",
 				"Flowering late winter-early spring, fruiting mid summer.",
 				"Flowering spring-late summer (Apr-Aug); fruiting 2-5 months after flowering.", //hold back for complicated; currently doing some better than existing
