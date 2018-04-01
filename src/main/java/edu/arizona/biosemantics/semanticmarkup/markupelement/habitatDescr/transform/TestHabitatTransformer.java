@@ -7,18 +7,50 @@ import java.util.List;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import edu.arizona.biosemantics.common.biology.TaxonGroup;
+import edu.arizona.biosemantics.common.ling.know.lib.InMemoryGlossary;
+import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.oto.client.oto.OTOClient;
+import edu.arizona.biosemantics.oto2.oto.server.rest.client.Client;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Habitat;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.HabitatsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Treatment;
 
 public class TestHabitatTransformer {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 
 		Logger rootLogger = Logger.getRootLogger();
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
+				"Terrestrial or epiphytic in forested, often moist habitats, e.g., swamps, hammocks, or relatively open, disturbed habitats;",
+				//"New growth produced in spring, dying by late summer. Sheltered calcareous cliff crevices and rock ledges, typically in coniferous forest or other boreal habitats;",
+				//"Dry sandstone crevices, sandy soil or clay soil;",
+				//"Terrestrial or on rock in limestone hammocks;",
+
+				//"Cracks and ledges on rock outcrops, on a variety of substrates including granite and dolomite;",
+
+				//in on of phrases
+				/*"Hammocks, on limestone rock faces;", //on phrase but with puncutation; //, on limestone rock faces, either extra character or as constraint of hammocks.
+				"Epiphytic in tropical hammocks;", //in phrase. Epiphytic is a NNP/NP
+				"Montane to subalpine forests of the Siskiyou Mountains;", //of phrase
+				"Lightly shaded limestone outcrops of the Edwards Plateau;", //of phrase
+
+				//punctuation
+				"Aquatic to semiaquatic, lakes and ponds;", // good except punctu
+
+				//duplication
+				"Dry sandstone crevices, sandy soil or clay soil;", //duplication; weakend NNS, NNP and NN; get clay clay soil and sandy sandy soil somehow
+				"Dry, rocky soil and slopes;", //good except duplication of rocky and dry
+
+				//unfixable until further thought
+				"Pinyon-juniper woodland, foothills, mesas, tablelands;", // tablelands accidentally as V
+
+				"Hammocks in shade near streams;",
+				"Terrestrial in sandy borrow pits, ditches, lakeshore swales, and conifer swamps, rarely on acidic, igneous rock or calcareous coast cliffs;",
+				"Cliffs and rocky slopes, on various substrates but rarely observed on limestone;",
+
 				"Relatively dry, usually sandy soils, old fields, pastures, usually disturbed;",
 				"In woods;",
 				"Sandy-bottomed ditches;",
@@ -40,8 +72,23 @@ public class TestHabitatTransformer {
 		String advModifiers = "at least|at first|at times|almost|always|never|not|often|quite|rather|sometimes|somewhat";
 		//IHabitatTransformer transformer = new HabitatTransformer("edu/stanford/nlp/models/lexparser/englishFactored.ser.gz",
 		//lyPattern, stopWords, modifierList, advModifiers);
+		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu/OTO");
 		IHabitatTransformer transformer = new MyHabitatTransformer("edu/stanford/nlp/models/lexparser/englishFactored.ser.gz",
-				lyPattern, stopWords, modifierList, advModifiers);
+				lyPattern, stopWords, modifierList, advModifiers, new InMemoryGlossary(), new GlossaryInitializer(otoClient, TaxonGroup.PLANT, null,
+						null, new Client("http://localhost"), new IInflector() {
+					@Override
+					public String getSingular(String word) {
+						return word;
+					}
+					@Override
+					public String getPlural(String word) {
+						return word;
+					}
+					@Override
+					public boolean isPlural(String word) {
+						return false;
+					}
+				}));
 
 		HabitatsFile habitatsFile = new HabitatsFile();
 		List<Treatment> treatments = new ArrayList<Treatment>();

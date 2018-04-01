@@ -71,6 +71,10 @@ public class JDOMDistributionWriter implements IDistributionWriter {
 							if(ch.getEstablishedMeans() != null)
 								chElement.setAttribute("establishment_means", ch.getEstablishedMeans());
 							beElement.addContent(chElement);
+							if(ch.getModifier() != null && !ch.getModifier().isEmpty())
+								chElement.setAttribute("modifier", ch.getModifier());
+							if(ch.getConstraint() != null && !ch.getConstraint().isEmpty())
+								chElement.setAttribute("constraint", ch.getConstraint());
 						}
 						statementElement.addContent(beElement);
 					}

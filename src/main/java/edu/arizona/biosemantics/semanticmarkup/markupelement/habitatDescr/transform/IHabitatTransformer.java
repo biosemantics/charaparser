@@ -7,6 +7,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.
 
 public interface IHabitatTransformer {
 
-	void transform(List<HabitatsFile> habitatsFiles);
+	void transform(List<HabitatsFile> habitatsFiles) throws Exception;
 
 }

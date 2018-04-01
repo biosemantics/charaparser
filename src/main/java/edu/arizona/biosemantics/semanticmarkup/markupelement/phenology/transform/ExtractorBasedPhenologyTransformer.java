@@ -91,7 +91,7 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 		stages.add(Arrays.asList(new String[] { "maturing", "matures", "mature", "maturity" }));
 		stages.add(Arrays.asList(new String[] { "producing", "produce" }));
 		stages.add(Arrays.asList(new String[] { "meiosis" }));
-		stages.add(Arrays.asList(new String[] { "dying", "die", "dies" }));
+		stages.add(Arrays.asList(new String[] { "dying", "die", "dies", "drying", "dries", "dry" }));
 		stages.add(Arrays.asList(new String[] { "persisting", "persist", "persists" }));
 
 		for(List<String> stageTerms : stages) {
