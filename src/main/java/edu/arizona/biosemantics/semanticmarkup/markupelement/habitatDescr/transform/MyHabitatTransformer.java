@@ -112,14 +112,18 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 					danglingNonNNSValues = "";
 					danglingTO = false;
 				} else {
+					if(!leaf.nodeString().startsWith("e.g")) {
+						danglingNonNNSValues += " " + leaf.nodeString();
+						if(leaf.parent(root).label().value().equals("TO"))
+							danglingTO = true;
+					}
+				}
+			} else if(!isPartOfNounPhraseWithNNS(leaf, root)) {
+				if(!leaf.nodeString().startsWith("e.g")) {
 					danglingNonNNSValues += " " + leaf.nodeString();
 					if(leaf.parent(root).label().value().equals("TO"))
 						danglingTO = true;
 				}
-			} else if(!isPartOfNounPhraseWithNNS(leaf, root)) {
-				danglingNonNNSValues += " " + leaf.nodeString();
-				if(leaf.parent(root).label().value().equals("TO"))
-					danglingTO = true;
 			}
 			processedLeaves.add(leaf.nodeNumber(root));
 		}
@@ -149,7 +153,7 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 					Tree parentParent = leaf.parent(root).parent(root);
 					String modifier = "";
 					for(Tree phraseLeaf : parentParent.getLeaves()) {
-						if(phraseLeaf.parent(root).label().value().matches("RB|RBR|RBS")) {
+						if(phraseLeaf.parent(root).label().value().matches("RB|RBR|RBS") && !phraseLeaf.nodeString().startsWith("e.g")) {
 							modifier += phraseLeaf.toString() + " ";
 						}
 					}
@@ -264,7 +268,7 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 
 			Tree npLeafParent = npLeaf.parent(root);
 			Tree npLeafPreviousParent = npLeafPrevious = i == 0 ? null : npLeafPrevious.parent(root);
-			if(npLeafParent.label().value().matches("RB|RBR|RBS")) {
+			if(npLeafParent.label().value().matches("RB|RBR|RBS") && !npLeaf.nodeString().startsWith("e.g")) {
 				modifier += " " + npLeaf.nodeString();
 			} else {
 				if(npLeaf.nodeString().matches("\\p{Punct}|and|or")) {
