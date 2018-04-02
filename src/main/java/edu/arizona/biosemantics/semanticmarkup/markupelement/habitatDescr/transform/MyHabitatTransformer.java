@@ -74,10 +74,10 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		}
 	}
 
-	private LinkedHashSet<Character> parse(String text) {
+	private LinkedHashSet<Character> parse(String originalText) {
 		LinkedHashSet<Character> result = new LinkedHashSet<Character>();
 
-		text = normalize(text);
+		String text = normalize(originalText);
 
 		TreebankLanguagePack tlp = parser.getOp().langpack();
 		Tokenizer<? extends HasWord> toke = tlp.getTokenizerFactory().getTokenizer(new StringReader(text));
@@ -94,24 +94,32 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		}
 
 		String danglingNonNNSValues = "";
+		boolean danglingTO = false;
 		List<Integer> processedLeaves = new ArrayList<Integer>();
 		for(int i=0; i<leaves.size(); i++) {
 			Tree leaf = leaves.get(i);
+			if(isUppercaseAndNotFirstToken(leaf.toString(), originalText))
+				continue;
 			//System.out.println(leaf);
 			if(processedLeaves.contains(leaf.nodeNumber(root)))
 				continue;
 			Tree parent = leaf.parent(root);
 
 			if(isLastPartOfNounPhrase(leaf, root)) {
-				System.out.println(leaf.toString());
+				//System.out.println(leaf.toString());
 				if(parent.label().value().matches("NNS|NNP|NN") && !leaf.toString().equalsIgnoreCase("e.g.")) {
-					result.addAll(getCharacters(leaf, root, danglingNonNNSValues, processedLeaves));
+					result.addAll(getCharacters(leaf, root, danglingNonNNSValues, danglingTO, processedLeaves, originalText));
 					danglingNonNNSValues = "";
+					danglingTO = false;
 				} else {
 					danglingNonNNSValues += " " + leaf.nodeString();
+					if(leaf.parent(root).label().value().equals("TO"))
+						danglingTO = true;
 				}
 			} else if(!isPartOfNounPhraseWithNNS(leaf, root)) {
 				danglingNonNNSValues += " " + leaf.nodeString();
+				if(leaf.parent(root).label().value().equals("TO"))
+					danglingTO = true;
 			}
 			processedLeaves.add(leaf.nodeNumber(root));
 		}
@@ -129,7 +137,6 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		Set<String> habitats = glossary.getMainTermsOfCategory("habitat");
 		for(int i=0; i<leaves.size(); i++) {
 			Tree leaf = leaves.get(i);
-
 			if(habitats.contains(leaf.toString().toLowerCase())) {
 				boolean foundInCharacterValue = false;
 				for(Character character : result) {
@@ -139,7 +146,15 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 				}
 
 				if(!foundInCharacterValue) {
-					result.add(getCharacter("", leaf.toString()));
+					Tree parentParent = leaf.parent(root).parent(root);
+					String modifier = "";
+					for(Tree phraseLeaf : parentParent.getLeaves()) {
+						if(phraseLeaf.parent(root).label().value().matches("RB|RBR|RBS")) {
+							modifier += phraseLeaf.toString() + " ";
+						}
+					}
+
+					result.add(getCharacter(modifier.trim(), leaf.toString()));
 				}
 			}
 		}
@@ -152,6 +167,13 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		result = filterDuplicates(result);
 		System.out.println(result);
 		return result;
+	}
+
+	private boolean isUppercaseAndNotFirstToken(String token, String originalText) {
+		String uppercaseToken = token.substring(0, 1).toUpperCase() + token.substring(1);
+		if(originalText.contains(uppercaseToken) && originalText.indexOf(uppercaseToken) != 0)
+			return true;
+		return false;
 	}
 
 	private LinkedHashSet<Character> filterDuplicates(
@@ -216,9 +238,9 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		return null;
 	}
 
-	private List<Character> getCharacters(Tree leaf, Tree root, String danglingNonNNSValues, List<Integer> processedLeaves) {
-		if(leaf.toString().equals("e.g."))
-			System.out.println();
+	private List<Character> getCharacters(Tree leaf, Tree root, String danglingNonNNSValues, boolean danglingTO, List<Integer> processedLeaves, String originalText) {
+		//System.out.println("get characters: " + leaf);
+		//System.out.println(processedLeaves);
 		List<Character> characters = new ArrayList<Character>();
 
 		danglingNonNNSValues = danglingNonNNSValues.trim();
@@ -227,7 +249,7 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 
 		Tree np = getNpWithLastLeaf(leaf, root);
 
-		String modifier = "";
+		String modifier = danglingTO ? "" : danglingNonNNSValues;
 		String value = "";
 
 		List<Tree> npLeaves = np.getLeaves();
@@ -235,6 +257,10 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		for(int i=0 ; i<npLeaves.size(); i++) {
 			Tree npLeafPrevious = i == 0 ? null : npLeaves.get(i-1);
 			Tree npLeaf = npLeaves.get(i);
+			//System.out.println(npLeaf);
+			//System.out.println(npLeaf.nodeNumber(root));
+			//if(processedLeaves.contains(npLeaf.nodeNumber(root)))
+			//	continue;
 
 			Tree npLeafParent = npLeaf.parent(root);
 			Tree npLeafPreviousParent = npLeafPrevious = i == 0 ? null : npLeafPrevious.parent(root);
@@ -248,7 +274,7 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 					//if(npLeafPreviousParent != null && !npLeafPreviousParent.label().value().matches("NNS"))
 					//	characterValue = value + " " + (lastLeaf.nodeString().matches("\\p{Punct}") ? "" : lastLeaf.nodeString());
 
-					Character character = getCharacter(modifier, (danglingNonNNSValues.trim() + " " + characterValue.trim()).trim());
+					Character character = getCharacter(modifier, danglingTO ? (danglingNonNNSValues.trim() + " " + characterValue.trim()).trim() : characterValue.trim());
 					if(character != null)
 						characters.add(character);
 
@@ -259,7 +285,7 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 				}
 			}
 		}
-		Character character = getCharacter(modifier, (danglingNonNNSValues.trim() + " " + value.trim()).trim());
+		Character character = getCharacter(modifier, danglingTO ? (danglingNonNNSValues.trim() + " " + value.trim()).trim() : value.trim());
 		if(character != null)
 			characters.add(character);
 
@@ -279,8 +305,8 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 						Tree ppChildNode = followNode.getChild(0);
 						if(ppChildNode.label().value().equals("IN")) {
 							constraint = getLeafString(followNode);
-							for(Tree ppInLeaf : followNode.getLeaves())
-								processedLeaves.add(ppInLeaf.nodeNumber(root));
+							//for(Tree ppInLeaf : followNode.getLeaves())
+							//	processedLeaves.add(ppInLeaf.nodeNumber(root));
 						}
 					}
 				}
@@ -357,8 +383,6 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 	}
 
 	private Character getCharacter(String modifier, String value) {
-		if(value.equalsIgnoreCase("e.g."))
-			System.out.println();
 		if(value.trim().isEmpty())
 			return null;
 		Character c = new Character();

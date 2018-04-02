@@ -24,10 +24,19 @@ public class TestHabitatTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
+				/*"Shaded, usually moss-covered boulders and ledges, usually on limestone or other basic rocks, but occasionally on sandstone or other acidic rocks, rarely on fallen tree trunks;",
+				"Chaparral and foothill woodland, often on serpentine;",
+
+				"Margins of lakes, ponds, and streams, tidal shores and estuaries;",
+				"Lightly shaded limestone outcrops of the Edwards Plateau;", //of phrase
+				"Montane to subalpine forests of the Siskiyou Mountains;", //of phrase*/
+				/*"In dark moist cavities and rock shelters in noncalcareous rocks. Occasionally epiphytic on tree bases in narrow ravines;",
+
+
 				"Terrestrial or epiphytic in forested, often moist habitats, e.g., swamps, hammocks, or relatively open, disturbed habitats;",
-				//"New growth produced in spring, dying by late summer. Sheltered calcareous cliff crevices and rock ledges, typically in coniferous forest or other boreal habitats;",
-				//"Dry sandstone crevices, sandy soil or clay soil;",
-				//"Terrestrial or on rock in limestone hammocks;",
+				"New growth produced in spring, dying by late summer. Sheltered calcareous cliff crevices and rock ledges, typically in coniferous forest or other boreal habitats;",
+				"Dry sandstone crevices, sandy soil or clay soil;",
+				"Terrestrial or on rock in limestone hammocks;",
 
 				//"Cracks and ledges on rock outcrops, on a variety of substrates including granite and dolomite;",
 
