@@ -19,6 +19,7 @@ public class TestPhenologyTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
+				"Sporocarps produced spring--fall (Apr--Oct).",
 				//"Sporulates summer",
 				/*"Coning March--April.",
 				"Coning late winter--early spring.",
@@ -31,7 +32,7 @@ public class TestPhenologyTransformer {
 				//"Sporulation early spring--midsummer.",
 				//"Sporulating throughout the year.",
 
-				"Spores mature in winter or spring.",
+				//"Spores mature in winter or spring.",
 
 				/*
 				"Sporulation spring--early summer (late summer, early winter in Florida).",

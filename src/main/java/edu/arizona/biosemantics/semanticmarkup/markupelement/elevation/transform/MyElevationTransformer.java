@@ -125,7 +125,7 @@ public class MyElevationTransformer implements IElevationTransformer {
 		String toOutlierPattern = "\\((-*|(\\bto\\b)?)\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\)";
 		String toForeignPattern = "\\[(-*|(\\bto\\b)?)\\s*\\d+\\+?\\s*-*\\s*(" + units + ")?\\s*.*\\]";
 		String numericalRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + fromOutlierPattern + ")|(?<fromForeign>" + fromForeignPattern + "))?\\s*"
-				+ "(:?(?<from>\\d+)\\s*-+\\s*(?<to>\\d+)|(?<singleDataPoint>\\d+))\\s*(?<unit1>" + units + ")?"
+				+ "(:?(?<from>\\d+)\\s*-+\\s*(?<to>\\d+\\+?)|(?<singleDataPoint>\\d+))\\s*(?<unit1>" + units + ")?"
 				+ "\\s*(?:(?<toOutlier>" + toOutlierPattern + ")|(?<toForeign>" + toForeignPattern + "))?\\s*"
 				+ "(?<unit>" + units + ")?\\s*(?<postfix>.*?)";
 		Pattern numericalRange = Pattern.compile(numericalRangeString);

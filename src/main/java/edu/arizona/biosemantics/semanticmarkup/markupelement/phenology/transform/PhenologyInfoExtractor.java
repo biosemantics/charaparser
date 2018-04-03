@@ -160,6 +160,8 @@ public class PhenologyInfoExtractor {
 			}
 			text = afterEntityText;
 		}
+
+		System.out.println(values);
 		return text;
 	}
 

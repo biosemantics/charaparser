@@ -423,6 +423,10 @@ public class DistributionTransformer implements IDistributionTransformer {
 	private String[] getLocations(String area) {
 		// try split first then check the results
 		List<String> locations = new LinkedList<String>(Arrays.asList(area.split("\\s*,\\s*"))); // St. Pierre and
+		for(String location : new ArrayList<String>(locations)) {
+			if(location.trim().isEmpty())
+				locations.remove(location);
+		}
 		// place
 		boolean split = true;
 		/*Iterator<String> it = locations.iterator();

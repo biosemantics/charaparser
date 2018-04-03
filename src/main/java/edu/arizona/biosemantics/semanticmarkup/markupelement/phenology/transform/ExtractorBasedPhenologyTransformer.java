@@ -58,15 +58,15 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 				Arrays.asList(sporeEntityTerms),
 				Arrays.asList(appearingStageTerms),
 				false, advModPattern, stopwords));
-		extractors.add(new PhenologyInfoExtractor(Arrays.asList("sporulating", "sporulates", "sporulate", "sporulation"),
+		extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 				Arrays.asList(sporocarpsEntityTerms),
 				Arrays.asList(appearingStageTerms),
 				false, advModPattern, stopwords));
-		extractors.add(new PhenologyInfoExtractor(Arrays.asList("sporulating", "sporulates", "sporulate", "sporulation"),
+		extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 				Arrays.asList(sporophyteEntityTerms),
 				Arrays.asList(appearingStageTerms),
 				false, advModPattern, stopwords));
-		extractors.add(new PhenologyInfoExtractor(Arrays.asList("sporulating", "sporulates", "sporulate", "sporulation"),
+		extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 				Arrays.asList(sporophyllEntityTerms),
 				Arrays.asList(appearingStageTerms),
 				false, advModPattern, stopwords));

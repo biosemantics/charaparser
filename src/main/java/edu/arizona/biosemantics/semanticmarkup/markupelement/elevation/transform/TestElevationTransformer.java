@@ -19,7 +19,10 @@ public class TestElevationTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
-				"800--2300 m, lower (600--1200 m) along coast of Atlantic Ocean and Lake Superior;",
+				"(100-)500-1000+ m;",
+				//"0--700 m, rarely to 1600 m;"
+
+				/*"800--2300 m, lower (600--1200 m) along coast of Atlantic Ocean and Lake Superior;",
 
 				"lowland; very rare; 0--100 m;",
 				"rare; 0--3500 m;",
@@ -51,7 +54,7 @@ public class TestElevationTransformer {
 				"mostly low elevations (0-100 m);",
 				"moderate elevations;",
 				"1800--2500 m (-- 4000 m, Central America);",
-				"0--600 m (c Texas eastward and northward), 1600--2000 m (west)"
+				"0--600 m (c Texas eastward and northward), 1600--2000 m (west)"*/
 
 		};
 
