@@ -9,12 +9,13 @@ import org.jdom2.Element;
 
 import edu.arizona.biosemantics.common.ling.Token;
 import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 
 public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends RemoveNonSpecificBiologicalEntities {
 
-	private String connectForwardToParent = "in|on|of";
+	//private String connectForwardToParent = "in|on|of";
 	private CollapseBiologicalEntityToName collapseBiologicalEntityToName;
 	
 	public RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
@@ -114,7 +115,7 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 	}
 
 	private boolean isConnectForwardToParentKeyWord(String term) {
-		return term.matches(connectForwardToParent);
+		return term.matches(Configuration.connectForwardToParent);
 	}
 
 }

@@ -5,6 +5,14 @@ import java.util.ArrayList;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
+/**
+ * This class is currently not used. Functionality replaced in RemoveNonSpecificBiologicalEntitiesByRelations
+ * 
+ * blade part_of leaf
+ * use leaf as a constraint for blade
+ * @author hongcui
+ *
+ */
 public class MoveRelationToBiologicalEntityConstraint extends AbstractTransformer {
 
 	private String names = "part_of|in|on|at";

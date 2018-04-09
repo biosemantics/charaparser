@@ -77,7 +77,7 @@ public class MapOntologyIds extends AbstractTransformer {
 		Collection<String> result = new HashSet<String>();
 		log(LogLevel.DEBUG, "Search " + searchTerm);
 		for(Searcher searcher : searchers) {
-			List<OntologyEntry> ontologyEntries = searcher.getEntries(searchTerm, Type.ENTITY);
+			List<OntologyEntry> ontologyEntries = searcher.getEntityEntries(searchTerm, "", "");
 			if(!ontologyEntries.isEmpty()) {
 				log(LogLevel.DEBUG, "Highest scored ontology entity: " + ontologyEntries.get(0).getClassIRI() + " score: " + ontologyEntries.get(0).getScore());
 				if(ontologyEntries.get(0).getScore() == 1.0) 

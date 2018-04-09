@@ -24,6 +24,11 @@ public class Configuration {
 
 	public static String workspaceDir;
 	
+	public static String nonSpecificParts;
+	public static String spatial;
+	public static String connectBackwardToParent;
+	public static String connectForwardToParent;
+	
 	static {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		Properties properties = new Properties();
@@ -43,6 +48,12 @@ public class Configuration {
 			
 			oto2Url = properties.getProperty("oto2Url");
 			workspaceDir = properties.getProperty("workspaceDir");
+			
+			nonSpecificParts = properties.getProperty("nonSpecificParts");
+			spatial= properties.getProperty("nonSpecificParts");
+			connectBackwardToParent= properties.getProperty("connectBackwardToParent");
+			connectForwardToParent= properties.getProperty("connectForwardToParent");
+			
 		} catch (IOException e) {
 			logger.error("Couldn't read configuration", e);
 		}

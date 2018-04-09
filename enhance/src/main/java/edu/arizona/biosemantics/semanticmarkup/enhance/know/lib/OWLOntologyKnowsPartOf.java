@@ -2,6 +2,7 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.know.lib;
 
 import java.io.File;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -46,7 +47,7 @@ public class OWLOntologyKnowsPartOf implements KnowsPartOf {
 
 	@Override
 	public boolean isPartOf(String part, String parent) {
-		Set<OWLClass> owlClasses = owlOntology.getClassesInSignature(Imports.INCLUDED);
+		Set<OWLClass> owlClasses = owlOntology.classesInSignature(Imports.INCLUDED).collect(Collectors.toSet());
 		
 		OWLClass partOwlClass = getOwlClassWithLabel(part, owlClasses);
 		OWLClass parentOwlClass = getOwlClassWithLabel(parent, owlClasses);;
@@ -80,7 +81,7 @@ public class OWLOntologyKnowsPartOf implements KnowsPartOf {
 	}
 
 	private String getLabel(OWLClass owlClass) {
-		for (OWLAnnotation annotation : EntitySearcher.getAnnotations(owlClass, owlOntology, labelProperty)) {
+		for (OWLAnnotation annotation : EntitySearcher.getAnnotations(owlClass, owlOntology, labelProperty).collect(Collectors.toSet())) {
 			if (annotation.getValue() instanceof OWLLiteral) {
 				OWLLiteral val = (OWLLiteral) annotation.getValue();
 				//if (val.hasLang("en")) {

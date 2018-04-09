@@ -113,6 +113,7 @@ public class Run {
 		for(File file : inputDirectory.listFiles()) {
 			if(file.isFile() && file.getName().endsWith(".xml")) {
 				log(LogLevel.DEBUG, "Transforming file " + file.getName());
+				XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
 				Document document = null;
 				try(InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(file), "UTF8")) {
 					document = saxBuilder.build(inputStreamReader);
@@ -124,6 +125,9 @@ public class Run {
 					for(AbstractTransformer transformer : transformers) 
 						try {
 							transformer.transform(document);
+							log(LogLevel.DEBUG, "Result from "+transformer.toString()+":");
+							log(LogLevel.DEBUG, xmlOutput.outputString(document));
+						
 						} catch(Throwable t) {
 							log(LogLevel.ERROR, "Transformer " + transformer.getClass().getSimpleName() + " failed. ", t);
 						}
@@ -136,7 +140,6 @@ public class Run {
 					log(LogLevel.ERROR, "Can't create xml file " + file.getAbsolutePath(), e);
 				}
 				try(OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(outputFile), "UTF8")) {
-					XMLOutputter xmlOutput = new XMLOutputter(Format.getPrettyFormat());
 					xmlOutput.output(document, outputStreamWriter);
 				} catch (IOException e) {
 					log(LogLevel.ERROR, "Can't write xml to file " + file.getAbsolutePath(), e);
@@ -200,7 +203,7 @@ public class Run {
 		
 		
 		/* not used
-		 * CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
+		 * CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv"));
 		List<String[]> lines = reader.readAll();
 		int i=0;
 		final Map<String, SynonymSet> synonymSetsMap = new HashMap<String, SynonymSet>();
@@ -264,7 +267,7 @@ public class Run {
 			}
 		});*/
 
-		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv", inflector);
+		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv", inflector);
 		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
 				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
@@ -369,7 +372,7 @@ public class Run {
 		
 		//obtain local term-categorization results
 		List<TermSynonym> synonyms = new ArrayList<TermSynonym>();
-		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
+		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv"));
 		List<String[]> lines = reader.readAll();
 		int i=0;
 		Set<String> hasSynonym = new HashSet<String>();
@@ -615,7 +618,7 @@ public class Run {
 		
 		
 		List<Synonym> synonyms = new LinkedList<Synonym>();
-		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonyms.csv"));
+		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv"));
 		List<String[]> lines = reader.readAll();
 		int i=0;
 		Set<String> hasSynonym = new HashSet<String>();

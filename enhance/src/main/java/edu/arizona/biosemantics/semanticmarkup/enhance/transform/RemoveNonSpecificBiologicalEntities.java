@@ -18,9 +18,10 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms.Synony
 
 public abstract class RemoveNonSpecificBiologicalEntities extends AbstractTransformer {
 	
-	private String nonSpecificParts = "apex|appendix|area|band|base|belt|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|"
+	/*private String nonSpecificParts = "apex|appendix|area|band|base|belt|blade|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|"
 			+ "face|groove|layer|line|margin|middle|notch|part|pore|portion|protuberance|remnant|section|"
-			+ "side|stratum|surface|tip|wall|zone";
+			+ "side|stratum|surface|tip|top|wall|zone";
+	private String spatial = "adaxial|abaxial|intervenal"; */
 	protected KnowsPartOf knowsPartOf;
 	protected ITokenizer tokenizer;
 	protected KnowsSynonyms knowsSynonyms;
@@ -35,7 +36,8 @@ public abstract class RemoveNonSpecificBiologicalEntities extends AbstractTransf
 	protected boolean isNonSpecificPart(String name) {
 		Set<SynonymSet> synonymSets =  knowsSynonyms.getSynonyms(name, Configuration.defaultEntityType);
 		for(SynonymSet synonymSet : synonymSets) {
-			if(synonymSet.getPreferredTerm().matches(nonSpecificParts)) {
+			//abaxial face and face are both non specific parts
+			if(synonymSet.getPreferredTerm().matches("(?:"+Configuration.spatial+")?"+" ?"+Configuration.nonSpecificParts)) {
 				return true;
 			}
 		}
