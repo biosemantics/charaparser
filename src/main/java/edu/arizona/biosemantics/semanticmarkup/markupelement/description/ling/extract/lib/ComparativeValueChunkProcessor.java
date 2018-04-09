@@ -7,29 +7,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-
-
-
-
-
-
-
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
-import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
+import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 
 /**
@@ -37,8 +29,9 @@ import edu.arizona.biosemantics.semanticmarkup.model.Element;
  * @author rodenhausen
  */
 public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
-	
+
 	/**
+	 *
 	 * @param inflector
 	 * @param glossary
 	 * @param terminologyLearner
@@ -51,14 +44,16 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 	 * @param equalCharacters
 	 * @param numberPattern
 	 * @param times
+	 * @param compoundPreps
+	 * @param stopWords
 	 */
 	@Inject
-	public ComparativeValueChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner, 
+	public ComparativeValueChunkProcessor(IInflector inflector, IGlossary glossary, ITerminologyLearner terminologyLearner,
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase,
-			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositionWords")Set<String> locationPrepositions, 
-			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
+			@Named("BaseCountWords")Set<String> baseCountWords, @Named("LocationPrepositionWords")Set<String> locationPrepositions,
+			@Named("Clusters")Set<String> clusters, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
 			@Named("NumberPattern")String numberPattern,  @Named("TimesWords")String times, @Named("CompoundPrepWords") String compoundPreps, @Named("StopWords")Set<String> stopWords) {
-		super(inflector, glossary, terminologyLearner, characterKnowledgeBase, posKnowledgeBase, baseCountWords, locationPrepositions, clusters, units, equalCharacters, 
+		super(inflector, glossary, terminologyLearner, characterKnowledgeBase, posKnowledgeBase, baseCountWords, locationPrepositions, clusters, units, equalCharacters,
 				numberPattern, times, compoundPreps, stopWords);
 	}
 
@@ -67,42 +62,42 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		ProcessingContextState processingContextState = processingContext.getCurrentState();
 		ArrayList<String> alternativeIds = new ArrayList<String>();
 		List<BiologicalEntity> parents = parentStructures(processingContext, processingContextState, alternativeIds);
-		List<Element> characters = processComparativeValue(chunk, 
+		List<Element> characters = processComparativeValue(chunk,
 				parents, processingContext, processingContextState);
 		addAlternativeIds(characters, alternativeIds);
 		//processingContextState.setLastElements(characters); //set only the characters as the last elements in processComparativeValue
 		processingContextState.setCommaAndOrEosEolAfterLastElements(false);
 		return characters;
 	}
-	
-	
+
+
 	/**
 	 * must have "n times":
-	 * 
+	 *
 	 * 3 times as long as wide.
 	 * 3 times longer than wide
-	   lengths 0.5�0.6+ times <bodies>
-	   ca .3.5 times length of <throat>
+	   lengths 0.5�0.6+ times &lt;bodies&gt;
+	   ca .3.5 times length of &lt;throat&gt;
        1�3 times {pinnately} {lobed}
        1�2 times shape[{shape~list~pinnately~lobed~or~divided}]
        4 times longer than wide
 	 	0.5�0.6+ times a[type[bodies]]
 	 	lengths of a 2 times width of b
-	 
-	 COMPARATIVE_VALUE: [1-2+, times, CHARACTER_STATE: characterName->shape; [MODIFIER: [pinnately], STATE: [lobed]]]
-	 COMPARATIVE_VALUE: [CHARACTER_STATE: characterName->character; [STATE: [lengths]], of, CHARACTER_STATE: characterName->position; [STATE: [proximal]], ORGAN: [branches], 2, times, array, CHARACTER_STATE: characterName->character; [STATE: [heights]]]
-	 COMPARATIVE_VALUE: [2-3, times, as-long-as, CHARACTER_STATE: characterName->width; [STATE: [wide]]]
-	 COMPARATIVE_VALUE: [CHARACTER_STATE: characterName->character; [STATE: [lengths]], 4-7+, times, CHARACTER_STATE: characterName->character; [STATE: [widths]]]	
-	 COMPARATIVE_VALUE: [0-5, times, CHARACTER_STATE: characterName->length_or_size; [STATE: [longer]], than, CHARACTER_STATE: characterName->width; [STATE: [wide]]]
+
+	 COMPARATIVE_VALUE: [1-2+, times, CHARACTER_STATE: characterName to shape; [MODIFIER: [pinnately], STATE: [lobed]]]
+	 COMPARATIVE_VALUE: [CHARACTER_STATE: characterName to character; [STATE: [lengths]], of, CHARACTER_STATE: characterName to position; [STATE: [proximal]], ORGAN: [branches], 2, times, array, CHARACTER_STATE: characterName to character; [STATE: [heights]]]
+	 COMPARATIVE_VALUE: [2-3, times, as-long-as, CHARACTER_STATE: characterName to width; [STATE: [wide]]]
+	 COMPARATIVE_VALUE: [CHARACTER_STATE: characterName to character; [STATE: [lengths]], 4-7+, times, CHARACTER_STATE: characterName to character; [STATE: [widths]]]
+	 COMPARATIVE_VALUE: [0-5, times, CHARACTER_STATE: characterName to length_or_size; [STATE: [longer]], than, CHARACTER_STATE: characterName to width; [STATE: [wide]]]
 	 COMPARATIVE_VALUE: [2, times, as-long-as, CONSTRAINT: [corolla], ORGAN: [throat]]
-	 
+
 	 How to process:
 	 	1. 3-times lobed: value=whole text
 	 	2. convert length/width comparison to l/w
 	  	3. organ length/width comparison: value = original text, constraint = organ
 	 */
 	private List<Element> processComparativeValue(Chunk content,
-			List<BiologicalEntity> parents, ProcessingContext processingContext, 
+			List<BiologicalEntity> parents, ProcessingContext processingContext,
 			ProcessingContextState processingContextState) {
 		List<Element> results = new LinkedList<Element> ();
 		LinkedHashSet<Chunk> chunks = content.getChunks();
@@ -122,11 +117,11 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		//collect info
 		for(Chunk chunk: chunks){
 			isSizeCharacter = isSizeCharacter(chunk.getTerminalsText());
-			
+
 			if(collectAfterOrgan){
 				organsAfterNumber.add(chunk);
 			}
-			
+
 			if(chunk.getTerminalsText().matches("times") || chunk.getTerminalsText().matches("[\\d()\\[\\]\\+\\./-]+")){
 				if(!chunk.getTerminalsText().matches("times")) nTimes = chunk.getTerminalsText().trim(); //expect one N
 				beforeNumber = false;
@@ -151,10 +146,10 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			}else if(!beforeNumber && !chunk.getTerminalsText().matches("than")){//can tighten up to require CONSTRAINT and ORGAN chunks
 				organsAfterNumber.add(chunk);
 			}
-			
+
 			if(collectText) origText.append(chunk.getTerminalsText()+" ");
 		}
-		
+
 
 		//output
 		//collect modifiers
@@ -164,12 +159,12 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			processingContextState.clearUnassignedModifiers();
 		}
 		modifiers.addAll(modifiersBeforeNumber);
-		
+
 		List<BiologicalEntity> constraints = null;
 		Character chara = null;
-		
+
 		//2+ lobed
-		if(organsBeforeNumber.isEmpty() && charaBeforeNumber.isEmpty() && charaAfterNumber.isEmpty() && organsAfterNumber.isEmpty()){ 
+		if(organsBeforeNumber.isEmpty() && charaBeforeNumber.isEmpty() && charaAfterNumber.isEmpty() && organsAfterNumber.isEmpty()){
 			String cName = "";
 			for(Chunk character: characters){ //expect one character or a TO_PHRASE
 				cName = character.getProperty("characterName");
@@ -179,14 +174,14 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			}
 			chara = this.createCharacterElement(parents, modifiers, origText.toString(), cName==null? "unknown_character": cName, "", processingContextState, false);
 		} else{
-			//beforeOrgan => create new parent elements 
+			//beforeOrgan => create new parent elements
 			if(!organsBeforeNumber.isEmpty()){
 				//use the organ as the bioentity
 				Chunk object = new Chunk(ChunkType.OBJECT, organsBeforeNumber);
 				parents = this.extractStructuresFromObject(content, null, object, processingContext, processingContextState);
 				if(!parents.isEmpty()) results.addAll(parents);
 			}
-		
+
 			//afterOrgan => create constraint structure
 
 			if(!organsAfterNumber.isEmpty()){
@@ -195,7 +190,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 				constraints = this.extractStructuresFromObject(content, null, object, processingContext, processingContextState); //lastElement is now the constraints
 				if(!constraints.isEmpty()) results.addAll(constraints);
 			}
-			
+
 			//characters
 			String beforeChar =""+"";
 			String afterChar ="";
@@ -209,23 +204,23 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 				}
 				beforeChar = characterName.toString().replaceFirst("_or_$","");
 			}
-			
+
 			if(!charaAfterNumber.isEmpty()){
 				//character name:[CHARACTER_STATE: characterName->length; [STATE: [longest]], CHARACTER_STATE: characterName->character; [STATE: [diams]]]
 				StringBuffer characterName = new StringBuffer();
 				for(Chunk character: charaAfterNumber){
 					if(character.getTerminalsText().matches("as-.*?-as")){
-						characterName.append(getCharacter(character.getTerminalsText().replaceAll("-?as-?", ""))+"_or_");						
+						characterName.append(getCharacter(character.getTerminalsText().replaceAll("-?as-?", ""))+"_or_");
 					}else if(character.getProperty("characterName")!=null && character.getProperty("characterName").compareTo("character")==0){
 						characterName.append(getCharacter(character.getChildChunk(ChunkType.STATE).getTerminalsText())+"_or_"); //TODO: lengths => length
 					}else if(character.getProperty("characterName")!=null){
 						characterName.append(character.getProperty("characterName")+"_or_");
 					}
-					
+
 				}
 				afterChar = characterName.toString().replaceFirst("_or_$","");
 			}
-						
+
 
 			boolean translate = false;
 			//translate to l/w?
@@ -247,20 +242,20 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 						characterValue = "1/"+(nTimes.contains("-")? "("+nTimes+")" : nTimes);
 						translate = true;
 					}
-					
+
 				}
 				if(translate)
 					chara = this.createCharacterElement(parents, modifiers, characterValue, "l_w_ratio", "", processingContextState, false);
 			}
-			
-			if(!translate){ //no translation, 
+
+			if(!translate){ //no translation,
 				// form character value
-				chara = this.createCharacterElement(parents, modifiers, origText.toString().trim().replaceAll("\\bas-", "as ").replaceAll("-as\\b", " as"), 
-						beforeChar.isEmpty()? (afterChar.isEmpty()? "size_or_quantity": afterChar): beforeChar, 
+				chara = this.createCharacterElement(parents, modifiers, origText.toString().trim().replaceAll("\\bas-", "as ").replaceAll("-as\\b", " as"),
+						beforeChar.isEmpty()? (afterChar.isEmpty()? "size_or_quantity": afterChar): beforeChar,
 								"", processingContextState, false);
 			}
-			
-			
+
+
 			//add constraints to chara
 			if(constraints!=null && !constraints.isEmpty()){
 				String constraintIDs = "";
@@ -273,13 +268,13 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 				chara.setConstraint(constraint.replaceFirst("; $", ""));
 			}
 		}
-	
+
 		if(chara!=null){
 			//record the character in ContextState
 			List<Element> charas = new LinkedList<Element> ();
 			charas.add(chara);
 			processingContextState.setLastElements(charas); //set only the characters as the last elements
-			results.add((Element) chara);
+			results.add(chara);
 			return results;
 		}
 		return new LinkedList<Element>();
@@ -291,9 +286,9 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 				results.add((Element) entity);
 			return results;
 		}
-		
+
 		return new LinkedList<Element>();*/
-		
+
 	}
 
 	private boolean isSizeCharacter(String string) {
@@ -316,7 +311,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		if(string.startsWith("high")) return "height";
 		if(string.startsWith("tall")) return "heigth";
 		if(string.startsWith("thick")) return "thickness";
-		
+
 		if(string.equals("lengths")) return "length";
 		if(string.equals("widths")) return "width";
 		if(string.equals("heights")) return "height";
@@ -324,17 +319,17 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		if(string.equals("width")) return "width";
 		if(string.equals("height")) return "height";
 		if(string.equals("thicknesses")) return "thickness";
-		
+
 		return null;
 	}
 	/*private LinkedList<Element> processComparativeValue(Chunk content,
-			List<BiologicalEntity> parents, ProcessingContext processingContext, 
+			List<BiologicalEntity> parents, ProcessingContext processingContext,
 			ProcessingContextState processingContextState) {
 		List<Chunk> beforeTimes = new ArrayList<Chunk>();
 		List<Chunk> onAndAfterTimes = new ArrayList<Chunk>();
 		boolean afterTimes = false;
 		for(Chunk chunk : content.getChunks()) {
-			if(chunk.getTerminalsText().matches("(" + times + ")")) 
+			if(chunk.getTerminalsText().matches("(" + times + ")"))
 				afterTimes = true;
 			if(afterTimes)
 				onAndAfterTimes.add(chunk);
@@ -354,10 +349,10 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 				thanType = chunk.getChunkType();
 				containsThan = true;
 			}
-			if(chunk.isOfChunkType(ChunkType.TYPE)) 
+			if(chunk.isOfChunkType(ChunkType.TYPE))
 				containsType = true;
-			if(chunk.containsChunkType(ChunkType.ORGAN) || chunk.containsChunkType(ChunkType.OBJECT) || 
-					chunk.containsChunkType(ChunkType.NP_LIST)) 
+			if(chunk.containsChunkType(ChunkType.ORGAN) || chunk.containsChunkType(ChunkType.OBJECT) ||
+					chunk.containsChunkType(ChunkType.NP_LIST))
 				containsObjectMainSubjectNPList = true;
 			if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE))
 				containsCharacterState = true;
@@ -365,7 +360,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 		if(containsThan) {
 			Chunk sizeChunk = new Chunk(ChunkType.CHARACTER_STATE, beforeTimes);
 			sizeChunk.setProperty("characterName", "some_measurement");
-			
+
 			Chunk comparisonChunk = new Chunk(ChunkType.CONSTRAINT, onAndAfterTimes);
 			LinkedHashSet<Chunk> childChunks = new LinkedHashSet<Chunk>();
 			childChunks.add(sizeChunk);
@@ -381,7 +376,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			childChunks.add(sizeChunk);
 			childChunks.add(comparisonChunk);
 			content.setChunks(childChunks);
-			processingContext.getChunkProcessor(thanType).process(content, processingContext);			
+			processingContext.getChunkProcessor(thanType).process(content, processingContext);
 		}else if(containsObjectMainSubjectNPList){
 			//ca .3.5 times length r[p[of] o[(throat)]]
 			Chunk comparisonChunk = new Chunk(ChunkType.CONSTRAINT, onAndAfterTimes);
@@ -393,7 +388,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			//childChunks.add(sizeChunk);
 			//childChunks.add(comparisonChunk);
 			//content.setChunks(childChunks);
-			List<BiologicalEntity> structures = 
+			List<BiologicalEntity> structures =
 					this.extractStructuresFromObject(comparisonChunk, processingContext, processingContextState);
 			processingContextState = processingContext.getCurrentState();
 			processingContextState.setClauseModifierContraint(comparisonChunk.getTerminalsText());
@@ -403,7 +398,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 					processingContext.getChunkProcessor(ChunkType.VALUE).process(valueChunk, processingContext));
 			processingContext.getCurrentState().clearUnassignedModifiers();
 			return result;
-		}else if(containsCharacterState) { 
+		}else if(containsCharacterState) {
 			//characters:1�3 times {pinnately} {lobed}
 			Chunk modifierChunk = new Chunk(ChunkType.MODIFIER, beforeTimes);
 			beforeTimes.add(onAndAfterTimes.get(0));
@@ -413,7 +408,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 			childChunks.addAll(onAndAfterTimes);
 			content.setChunks(childChunks);
 			processingContext.getChunkProcessor(ChunkType.CHARACTER_STATE).process(content, processingContext);
-		}else { //if(content.indexOf("[")<0){ //{forked} {moreorless} unevenly ca . 3-4 times , 
+		}else { //if(content.indexOf("[")<0){ //{forked} {moreorless} unevenly ca . 3-4 times ,
 			//content = 3-4 times; v = 3-4; n=times
 			//marked as a constraint to the last character "forked". "ca." should be removed from sentences in SentenceOrganStateMarker.java
 			LinkedList<Element> lastElements = processingContextState.getLastElements();
@@ -425,7 +420,7 @@ public class ComparativeValueChunkProcessor extends AbstractChunkProcessor {
 							if(!processingContextState.getUnassignedModifiers().isEmpty()){
 								List<Chunk> unassignedModifiers = processingContextState.getUnassignedModifiers();
 								String modifierString = "";
-								for(Chunk modifier : unassignedModifiers) 
+								for(Chunk modifier : unassignedModifiers)
 									((Character)element).appendModifier(modifier.getTerminalsText());
 								processingContextState.clearUnassignedModifiers();
 							}

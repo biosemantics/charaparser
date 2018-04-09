@@ -11,8 +11,8 @@ import edu.arizona.biosemantics.semanticmarkup.markup.IMarkupResultVisitor;
 public interface IEvaluator extends IMarkupResultVisitor {
 
 	/**
-	 * @param createdTreatments
-	 * @param correctTreatments
+	 * @param test
+	 * @param correct
 	 */
 	public IEvaluationResult evaluate(IMarkupResult test, IMarkupResult correct);
 
@@ -20,10 +20,10 @@ public interface IEvaluator extends IMarkupResultVisitor {
 	 * @return the description of this IEvaluator
 	 */
 	public String getDescription();
-	
-	
+
+
 	/**
 	 * @return the last computed result
 	 */
-	public IEvaluationResult getResult();	
+	public IEvaluationResult getResult();
 }

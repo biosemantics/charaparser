@@ -93,10 +93,12 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private AllWordsLearner allWordsLearner;
 
 	/**
+	 *
 	 * @param temporaryPath
 	 * @param markupMode
+	 * @param databaseHost
+	 * @param databasePort
 	 * @param databaseName
-	 * @param glossaryTable
 	 * @param databasePrefix
 	 * @param databaseUser
 	 * @param databasePassword
@@ -104,6 +106,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	 * @param selectedSources
 	 * @param glossary
 	 * @param tokenizer
+	 * @param parentTagProvider
+	 * @param perlDirectory
+	 * @param inflector
+	 * @param connectionPool
 	 * @throws Exception
 	 */
 	@Inject
@@ -112,16 +118,16 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			@Named("DatabaseHost") String databaseHost,
 			@Named("DatabasePort") String databasePort,
 			@Named("DatabaseName") String databaseName,
-			@Named("DatabasePrefix") String databasePrefix, 
-			@Named("DatabaseUser") String databaseUser, 
-			@Named("DatabasePassword") String databasePassword, 
+			@Named("DatabasePrefix") String databasePrefix,
+			@Named("DatabaseUser") String databaseUser,
+			@Named("DatabasePassword") String databasePassword,
 			@Named("StopWords") Set<String> stopWords,
 			@Named("SelectedSources") Set<String> selectedSources,
-			IGlossary glossary, 
+			IGlossary glossary,
 			@Named("WordTokenizer") ITokenizer tokenizer,
 			@Named("ParentTagProvider") ParentTagProvider parentTagProvider,
 			@Named("PerlDirectory") String perlDirectory,
-			IInflector inflector, 
+			IInflector inflector,
 			ConnectionPool connectionPool) throws Exception {
 		this.temporaryPath = temporaryPath;
 		this.markupMode = markupMode;
@@ -140,7 +146,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.perlDirectory = perlDirectory;
 		this.connectionPool = connectionPool;
 	}
-	
+
 	@Override
 	public void learn(List<AbstractDescriptionsFile> descriptionsFiles, String glossaryTable) throws LearnException {
 		File directory = new File(temporaryPath);
@@ -151,16 +157,16 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 			//create the files
 			this.pm = new PhraseMarker(glossary, inflector);
-			
+
 			//create tables
 			createTablesNeededForPerl(descriptionsFiles);
 			//dehyphen and update descriptionFiles
 			allWordsLearner = new AllWordsLearner(this.tokenizer, this.glossary, connectionPool, databasePrefix);
 			allWordsLearner.learn(descriptionsFiles);
-			
+
 			writeTreatmentsToFiles(descriptionsFiles, inDirectory);
 
-			//run the perl script	
+			//run the perl script
 			runPerl(inDirectory, descriptionsFiles, glossaryTable);
 
 			this.readResults(descriptionsFiles);
@@ -172,7 +178,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 
 	/**
-	 * save all taxon names to the database and the taxonNames field 
+	 * save all taxon names to the database and the taxonNames field
 	 * @param descriptionsFiles
 	 */
 	private void collectTaxonIdentifications(
@@ -181,14 +187,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			List<TaxonIdentification> tis = descriptionsFile.getTaxonIdentifications();
 			for(TaxonIdentification ti: tis){
-			    if(ti.getTaxonNames().size()>=1){
-				    for(TaxonName name: ti.getTaxonNames()){
-					    String[] nameparts = name.getText().split("\\s+"); //name should be one word long, but just in case 
-					    for(String namepart: nameparts){
-						    taxonNames.add(namepart.toLowerCase());
-					    }
-				    }
-			    }
+				if(ti.getTaxonNames().size()>=1){
+					for(TaxonName name: ti.getTaxonNames()){
+						String[] nameparts = name.getText().split("\\s+"); //name should be one word long, but just in case
+						for(String namepart: nameparts){
+							taxonNames.add(namepart.toLowerCase());
+						}
+					}
+				}
 				if(ti.hasStrainNumber()) {
 					if(ti.getStrainNumber().getAccessionNumber16sRrna()!=null)
 						taxonNames.add(ti.getStrainNumber().getAccessionNumber16sRrna());
@@ -227,13 +233,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	/**
 	 * count the number of sentences containing the phrase consists of the phraseParts in the order as they presented in the arraylist
 	 */
+	@Override
 	public int countMatchingSentences(String phrase) {
 		String[] phraseParts = phrase.trim().split("\\s+");
 		int count =0;
 		Map<String, Set<Integer>> sourcePositions = this.wordSources.get(phraseParts[0]); //word => sources => positions
-		
+
 		if(sourcePositions==null) return count;
-		
+
 		Set<String> srcs = sourcePositions.keySet();
 
 		for(String src : srcs){
@@ -493,7 +500,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				try(ResultSet resultSet = statement.executeQuery("select modifier, tag from " + this.databasePrefix + "_sentence where tag  like '[%]'")) { //inner [tepal]
 					while(resultSet.next()){
 						String modifier = resultSet.getString("modifier");
-						modifier = modifier.replaceAll("\\[^\\[*\\]", ""); 
+						modifier = modifier.replaceAll("\\[^\\[*\\]", "");
 						if(!modifier.equals("")){
 							String tag;
 							if(modifier.lastIndexOf(" ")<0) {
@@ -501,7 +508,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 							} else {
 								tag = modifier.substring(modifier.lastIndexOf(" ")+1); //last word from modifier
 							}
-							if(tag.indexOf("[")>=0 || stopWords.contains(tag) || tag.matches(".*?(\\d).*")) 
+							if(tag.indexOf("[")>=0 || stopWords.contains(tag) || tag.matches(".*?(\\d).*"))
 								continue;
 							if(!tag.trim().isEmpty())
 								tags.add(tag);
@@ -539,14 +546,14 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					tag = tag.replaceAll("\\W", "");
 
 					Description description = fileTreatments.get(treatmentId);
-					if(!tags.containsKey(description)) 
+					if(!tags.containsKey(description))
 						tags.put(description, new LinkedHashMap<String, String>());
 					if(!tag.equals("ditto")) {
 						tags.get(description).put(source, tag);
 						previousTag = tag;
 					} else {
 						tags.get(description).put(source, previousTag);
-					}			
+					}
 				}
 			}
 			resultSet.close();
@@ -566,29 +573,29 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 
 					//int listId = -1;
 					String previousTreatmentId = "-1";
-		
+
 					//leave ditto as it is
 					while(rs.next()){ //read sent in in reversed order
 						String tag = rs.getString("tag");
 						String sent = rs.getString("sentence").trim();
-		
+
 						if(sent.length()!=0){
 							String treatmentId = getTreatmentId(rs.getString("source"));
 							String source = getSource(rs.getString("source"));
-		
+
 							if(selectedSources.isEmpty() || selectedSources.contains(source)) {
 								if(!treatmentId.equals(previousTreatmentId)) {
 									previousTreatmentId = treatmentId;
 									//listId++; // in the db 1 is followed by 10 by 11 and not 2
 								}
-		
+
 								String osent = rs.getString("originalsent");
 								String text = sent;
 								text = text.replaceAll("[ _-]+\\s*shaped", "-shaped").replaceAll("(?<=\\s)[μµ]\\s+m\\b", "um");
 								text = text.replaceAll("&#176;", "°");
 								text = text.replaceAll("\\bca\\s*\\.", "ca");
 								text = rs.getString("modifier")+"##"+tag+"##"+text+"##"+osent;
-		
+
 								Description description = fileTreatments.get(treatmentId);
 								if(!sentences.containsKey(description))
 									sentences.put(description, new LinkedHashMap<String, String>());
@@ -625,10 +632,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					while(resultSet.next()){
 						String modifier = resultSet.getString(3);
 						String tag = resultSet.getString(2);
-		
+
 						modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
 						tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
-		
+
 						result.put(tag, modifier);
 					}
 				}
@@ -731,13 +738,13 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			inDirectoryPath = "\"" + inDirectoryPath + "\"";
 		//else if(SystemUtils.IS_OS_UNIX)
 
-		String command = "perl -I " + perlDirectory + " " + perlDirectory + File.separator + "unsupervisedClauseMarkupBenchmarked.pl " 
-				+ inDirectoryPath +  
+		String command = "perl -I " + perlDirectory + " " + perlDirectory + File.separator + "unsupervisedClauseMarkupBenchmarked.pl "
+				+ inDirectoryPath +
 				// there is a strange requirement for a slash here to make perl parse the arguments correctly
-				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " " 
+				" " + this.markupMode + " " + this.databaseHost + " " + this.databasePort + " " + this.databaseName + " "
 				+ this.databaseUser + " " + this.databasePassword + " " + this.databasePrefix + " " + glossaryTable;
 		log(LogLevel.DEBUG, command);
-		
+
 		collectTaxonIdentifications(descriptionsFiles);
 		runCommand(command);
 	}
@@ -745,26 +752,26 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private void createTablesNeededForPerl(List<AbstractDescriptionsFile> descriptionsFiles) throws LearnException {
 		try(Connection connection = connectionPool.getConnection()) {
 			try(Statement stmt = connection.createStatement()) {
-				String cleanupQuery = "DROP TABLE IF EXISTS " + 
+				String cleanupQuery = "DROP TABLE IF EXISTS " +
 						//this.databasePrefix + "_allwords, " +  //allwords table is created outside of perl by dehypenizer
-						this.databasePrefix + "_discounted, " + 
-						this.databasePrefix + "_heuristicnouns, " + 
-						this.databasePrefix + "_isa, " + 
-						this.databasePrefix + "_modifiers, " + 
-						this.databasePrefix + "_sentence, " + 
-						this.databasePrefix + "_sentinfile, " + 
-						this.databasePrefix + "_singularplural, " + 
-						this.databasePrefix + "_substructure, " + 
-						this.databasePrefix + "_unknownwords, " + 
-						this.databasePrefix + "_wordpos, " + 
-						this.databasePrefix + "_taxonnames, " + 
+						this.databasePrefix + "_discounted, " +
+						this.databasePrefix + "_heuristicnouns, " +
+						this.databasePrefix + "_isa, " +
+						this.databasePrefix + "_modifiers, " +
+						this.databasePrefix + "_sentence, " +
+						this.databasePrefix + "_sentinfile, " +
+						this.databasePrefix + "_singularplural, " +
+						this.databasePrefix + "_substructure, " +
+						this.databasePrefix + "_unknownwords, " +
+						this.databasePrefix + "_wordpos, " +
+						this.databasePrefix + "_taxonnames, " +
 						this.databasePrefix + "_wordroles;";
 				stmt.execute(cleanupQuery);
 				stmt.execute("create table if not exists " + this.databasePrefix + "_allwords (word varchar(150) unique not null primary key, count int, "
 						+ "dhword varchar(150), inbrackets int default 0) CHARACTER SET utf8 engine=innodb");
-							
+
 				stmt.execute("create table if not exists " + this.databasePrefix + "_wordroles (word varchar(200), semanticrole varchar(2), savedid varchar(40), "
-						+ "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");  
+						+ "primary key(word, semanticrole)) CHARACTER SET utf8 engine=innodb");
 				stmt.execute("create table if not exists " + this.databasePrefix + "_taxonnames (name varchar(100), primary key(name)) CHARACTER SET utf8 engine=innodb");
 			}
 		} catch(SQLException e) {
@@ -772,7 +779,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			throw new LearnException();
 		}
 	}
-	
+
 	private class TerminatePerlHook extends Thread {
 		final Process process;
 		public TerminatePerlHook(Process process) {
@@ -786,12 +793,12 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 				process.getErrorStream().close();
 
 				//if (process instanceof UNIXProcess) {
-			    Field field = process.getClass().getDeclaredField("pid");
-			    field.setAccessible(true);
-			    int pid =field.getInt(process);
+				Field field = process.getClass().getDeclaredField("pid");
+				field.setAccessible(true);
+				int pid =field.getInt(process);
 				Runtime.getRuntime().exec("kill -9 " + pid);
 				//}
-				
+
 			} catch(Throwable t) {
 				log(LogLevel.ERROR, "Could not kill perl process. Running on non-Unix OS?", t);
 			}
@@ -808,11 +815,11 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		long time = System.currentTimeMillis();
 
 		Process process = Runtime.getRuntime().exec(command);
-		
+
 		// add shutdown hook to clean up in case of failure
 		TerminatePerlHook terminatePerlHook = new TerminatePerlHook(process);
 		Runtime.getRuntime().addShutdownHook(terminatePerlHook);
-		
+
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(process
 				.getInputStream()));
 
@@ -833,7 +840,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			log(LogLevel.DEBUG, e + " at " + (System.currentTimeMillis() - time)
 					/ 1000 + " seconds");
 		}
-		
+
 		// remove shutdown hook
 		Runtime.getRuntime().removeShutdownHook(terminatePerlHook);
 	}
@@ -849,8 +856,8 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	}
 
 	/**
-	 * Renames files other than the original input files to get a order for perl as input that is independent on the OS 
-	 * that CharaParser is run on. E.g. when iterating files in unix and windows it can be different 
+	 * Renames files other than the original input files to get a order for perl as input that is independent on the OS
+	 * that CharaParser is run on. E.g. when iterating files in unix and windows it can be different
 	 * Also, if a input descriptionsFile contains multiple descriptions we want to feed perl one description per file.
 	 * @param descriptionsFiles
 	 * @param directory
@@ -864,20 +871,20 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		}
 		for(AbstractDescriptionsFile descriptionsFile : descriptionsFiles) {
 			for(Description description : descriptionsFile.getDescriptions()) {
-				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3)); //prefix = a description in a file represented as a [number of same length]. one file may have multiple description.		
+				String prefix = intToString(i++, Math.max(String.valueOf(descriptionCount).length(), 3)); //prefix = a description in a file represented as a [number of same length]. one file may have multiple description.
 				//System.out.println(prefix);
-				File treatmentFile = File.createTempFile(prefix  + ".", ".txt", directory); //create temp file by Java: a long number generated and used by Java and attached after the prefix. 
+				File treatmentFile = File.createTempFile(prefix  + ".", ".txt", directory); //create temp file by Java: a long number generated and used by Java and attached after the prefix.
 				treatmentFile.deleteOnExit();
 				//File treatmentFile = new File(file.getAbsolutePath() + File.separator + i++ + ".txt");
 				log(LogLevel.DEBUG, treatmentFile.getAbsolutePath());
 				BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(treatmentFile), "UTF-8"));
-				
+
 				//deal with hypens
 				String text = updateHyphenedWords(description.getText().replaceAll("[\\n\\r]", " ").replaceAll("\\s+", " ").trim(), this.allWordsLearner.getDehypenHash());
-				
+
 				//mark phrases
 				text = pm.markPhrases(text);
-				
+
 				description.setText(text);
 
 				fileWriter.write(description.getText() + "\n");
@@ -891,7 +898,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	private String updateHyphenedWords (String text, HashMap<String, String> dephyened){
 		String[] words = text.split("\\s+");
 		StringBuffer updated = new StringBuffer();
-		
+
 		for(String word: words){
 			String key = word.replaceAll("[\\p{Punct}&&[^_-]]", "");
 			if(word.indexOf(key)>=0){
@@ -907,10 +914,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 			}
 			updated.append(word);
 			updated.append(" ");
-			
+
 		}
 		return updated.toString().trim();
-		
+
 	}
 
 	@Override
@@ -963,7 +970,7 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 		this.adjnounsent = readAdjNounSent();
 		//this.sentenceTags = readSentenceTags(descriptionsFiles);
 		this.bracketTags = readBracketTags(descriptionsFiles);
-		this.wordRoleTags = readWordRoleTags(); 
+		this.wordRoleTags = readWordRoleTags();
 		this.wordSources = readWordToSourcesMap();
 		this.roleToWords = readRoleToWords();
 		this.wordsToRoles = readWordsToRoles();
@@ -986,10 +993,10 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 						String source = resultSet.getString(1);
 						String modifier = resultSet.getString(3);
 						String tag = resultSet.getString(2);
-		
+
 						modifier = modifier.replaceAll("\\[|\\]|>|<|(|)", "");
 						tag = tag.replaceAll("\\[|\\]|>|<|(|)", "");
-		
+
 						result.put(source, new AdjectiveReplacementForNoun(modifier, tag, source));
 					}
 				}
@@ -1014,21 +1021,21 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 					while(resultSet.next()) {
 						String source = getSource(resultSet.getString("source"));
 						String tag = resultSet.getString("tag");
-		
+
 						if(source.replaceFirst("-.*", "").compareTo(prevSource.replaceFirst("-.*", ""))!=0){ //a new description starts
 							parentTag = "";
 							grandParentTag = "";
 						}
-		
+
 						parentTags.put(source, parentTag);
 						grandParentTags.put(source, grandParentTag);
-		
+
 						grandParentTag = parentTag;
 						if(tag != null && !tag.equals("ditto"))
 							parentTag = tag;
 						else if(tag == null)
 							parentTag = "";
-		
+
 						prevSource = source;
 					}
 				}
@@ -1044,5 +1051,5 @@ public class PerlTerminologyLearner implements ITerminologyLearner {
 	public Map<String, AdjectiveReplacementForNoun> getAdjectiveReplacementsForNouns() {
 		return this.adjectiveReplacementsForNouns;
 	}
-	
+
 }

@@ -10,15 +10,13 @@ import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.XMLOutputter;
 
-
-
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.io.IPhenologyWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.PhenologiesFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.PhenologiesFileList;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.Phenology;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.phenology.model.Treatment;
 
 public class JDOMPhenologyWriter implements IPhenologyWriter {
@@ -41,7 +39,7 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 
 			//for the xml format it is assumed one file to contain only one treatment
 			Treatment treatment = phenologiesFile.getTreatments().get(0);
-			
+
 			for(int i=0; i< elements.size(); i++) {
 				Phenology phenology = treatment.getPhenologies().get(i);
 				Element currentElement = elements.get(i);
@@ -52,7 +50,7 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 					textElement.setText(statement.getText());
 					statementElement.setAttribute("id", statement.getId());
 					statementElement.addContent(textElement);
-					
+
 					for(BiologicalEntity be: statement.getBiologicalEntities()){
 						Element beElement = new Element("biological_entity");
 						beElement.setAttribute("id", be.getId() );
@@ -61,14 +59,29 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 						beElement.setAttribute("type", be.getType());
 						for(Character ch: be.getCharacters()){
 							Element chElement = new Element("character");
+
 							chElement.setAttribute("name", ch.getName());
-							chElement.setAttribute("value", ch.getValue());
-							if(ch.getModifier()!=null && ch.getModifier().length()>0){
-								chElement.setAttribute("modifier", ch.getModifier());
-							}
+							if(ch.getCharType()!=null)  chElement.setAttribute("char_type", ch.getCharType());
+							if(ch.getUpperRestricted()!=null) chElement.setAttribute("upper_restricted", ch.getUpperRestricted());
+							if(ch.getValue()!=null) chElement.setAttribute("value", ch.getValue());
+							if(ch.getUnit()!=null) chElement.setAttribute("unit",ch.getUnit());
+							if(ch.getModifier()!=null) chElement.setAttribute("modifier", ch.getModifier());
+							if(ch.getTo()!=null) chElement.setAttribute("to", ch.getTo());
+							if(ch.getToUnit()!=null) chElement.setAttribute("to_unit",ch.getToUnit());
+							if(ch.getToInclusive()!=null) chElement.setAttribute("to_inclusive",ch.getToInclusive() );
+							if(ch.getToModifier()!=null) chElement.setAttribute("to_modifier", ch.getToModifier());
+
+							if(ch.getFrom()!=null) chElement.setAttribute("from", ch.getFrom() );
+							if(ch.getFromUnit()!=null) chElement.setAttribute("from_unit",ch.getFromUnit() );
+							if(ch.getFromInclusive()!=null) chElement.setAttribute("from_inclusive",ch.getFromInclusive() );
+							if(ch.getFromModifier()!=null) chElement.setAttribute("from_modifier", ch.getFromModifier());
+
+							if(ch.getConstraint() != null && !ch.getConstraint().isEmpty())
+								chElement.setAttribute("constraint", ch.getConstraint());
+
 							beElement.addContent(chElement);
 						}
-						statementElement.addContent(beElement);						
+						statementElement.addContent(beElement);
 					}
 					/*for(Value value: statement.getValues()){
 						Element valueElement = new Element("value");
@@ -78,7 +91,7 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 					currentElement.addContent(statementElement);
 				}
 			}
-							
+
 			XMLOutputter output = new XMLOutputter();
 			output.output(document, new FileOutputStream(phenologiesFile.getFile()));
 		}

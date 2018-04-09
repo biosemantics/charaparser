@@ -21,14 +21,16 @@ public class Learner implements ILearner {
 	private String inputDirectory;
 
 	/**
-	 * @param volumeReader
+	 * @param descriptionReader
+	 * @param inputDirectory
 	 * @param terminologyLearner
+	 * @param glossaryTable
 	 */
 	@Inject
-	public Learner(@Named("DescriptionMarkupCreator_DescriptionReader")IDescriptionReader descriptionReader, 
+	public Learner(@Named("DescriptionMarkupCreator_DescriptionReader")IDescriptionReader descriptionReader,
 			@Named("DescriptionReader_InputDirectory")String inputDirectory,
-			ITerminologyLearner terminologyLearner, 
-			@Named("GlossaryTable") String glossaryTable) {	
+			ITerminologyLearner terminologyLearner,
+			@Named("GlossaryTable") String glossaryTable) {
 		this.descriptionReader = descriptionReader;
 		this.terminologyLearner = terminologyLearner;
 		this.glossaryTable = glossaryTable;

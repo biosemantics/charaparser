@@ -17,14 +17,14 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 
 	//private String connectForwardToParent = "in|on|of";
 	private CollapseBiologicalEntityToName collapseBiologicalEntityToName;
-	
+
 	public RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
 			KnowsPartOf knowsPartOf, KnowsSynonyms knowsSynonyms, ITokenizer tokenizer,
 			CollapseBiologicalEntityToName collapseBiologicalEntityToName) {
 		super(knowsPartOf, knowsSynonyms, tokenizer);
 		this.collapseBiologicalEntityToName = collapseBiologicalEntityToName;
 	}
-	
+
 	@Override
 	public void transform(Document document) {
 		for(Element statement : this.statementXpath.evaluate(document)) {
@@ -34,28 +34,30 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 				name = name == null ? "" : name.trim();
 				String constraint = biologicalEntity.getAttributeValue("constraint");
 				constraint = constraint == null ? "" : constraint.trim();
-				
+
 				if(isNonSpecificPart(name)) {
 					if(!isPartOfAConstraint(name, constraint)) {
 						if(!nameOccurences.containsKey(name))
 							nameOccurences.put(name, 0);
 						nameOccurences.put(name, nameOccurences.get(name) + 1);
 						int appearance = nameOccurences.get(name);
-						
+
 						NameAndSrc info = findParentConnectedByForwardKeyWords(name, appearance, biologicalEntity, statement, document);
-						String parent = info.getName();
-						if(parent != null) {
-							constraint = (parent + " " + constraint).trim();
-							this.appendInferredConstraint(biologicalEntity, parent);
-							biologicalEntity.setAttribute("constraint", constraint);
-							biologicalEntity = mergeSrc(info.getSrc(), biologicalEntity);
+						if(info != null) {
+							String parent = info.getName();
+							if(parent != null) {
+								constraint = (parent + " " + constraint).trim();
+								this.appendInferredConstraint(biologicalEntity, parent);
+								biologicalEntity.setAttribute("constraint", constraint);
+								biologicalEntity = mergeSrc(info.getSrc(), biologicalEntity);
+							}
 						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	private NameAndSrc findParentConnectedByForwardKeyWords(String name, int appearance, Element nonSpBiologicalEntity, Element statement, Document document) {
 		String nameOriginal = nonSpBiologicalEntity.getAttributeValue("name_original");
 		String sentence = statement.getChild("text").getValue().toLowerCase();
@@ -64,7 +66,7 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 		}*/
 		sentence = parenthesisRemover.remove(sentence, '(', ')');
 		List<Token> terms = tokenizer.tokenize(sentence);
-		
+
 		int termPosition = indexOf(terms, new Token(nameOriginal), appearance);
 		if(termPosition != -1) {
 			for(; termPosition < terms.size() - 1; termPosition++) {
@@ -100,13 +102,13 @@ public class RemoveNonSpecificBiologicalEntitiesByForwardConnectors extends Remo
 				break;
 			}
 			Element biologicalEntity = findBiologicalEntityByNameInStatement(followingTerm, statement);
-			
+
 			if(biologicalEntity != null) {
 				String nameNormalized = collapseBiologicalEntityToName.collapse(biologicalEntity);
-				if(knowsPartOf.isPartOf(term, nameNormalized)) 
+				if(knowsPartOf.isPartOf(term, nameNormalized))
 					return new NameAndSrc(collapseBiologicalEntityToName.collapse(biologicalEntity), biologicalEntity.getAttributeValue("src")==null? null : biologicalEntity.getAttributeValue("src"));
 				nameNormalized = biologicalEntity.getAttributeValue("name");
-				if(knowsPartOf.isPartOf(term, nameNormalized)) 
+				if(knowsPartOf.isPartOf(term, nameNormalized))
 					return new NameAndSrc(collapseBiologicalEntityToName.collapse(biologicalEntity), biologicalEntity.getAttributeValue("src")==null? null : biologicalEntity.getAttributeValue("src"));
 				break;
 			}

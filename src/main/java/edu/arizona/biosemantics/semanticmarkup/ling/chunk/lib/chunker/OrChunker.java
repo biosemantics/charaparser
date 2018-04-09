@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
 //import edu.arizona.biosemantics.semanticmarkup.know.IOrganStateKnowledgeBase;
@@ -15,18 +16,18 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
- * NumericalChunker chunks by handling 'or' terminals 
+ * NumericalChunker chunks by handling 'or' terminals
  * @author rodenhausen
  */
 public class OrChunker extends AbstractChunker {
 
 	/**
+	 *
 	 * @param parseTreeFactory
 	 * @param prepositionWords
 	 * @param stopWords
@@ -35,13 +36,13 @@ public class OrChunker extends AbstractChunker {
 	 * @param glossary
 	 * @param terminologyLearner
 	 * @param inflector
-	 * @param organStateKnowledgeBase
+	 * @param learnedCharacterKnowledgeBase
 	 */
 	@Inject
 	public OrChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
-			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
 			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,  ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner, 
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, terminologyLearner,
 				inflector,  learnedCharacterKnowledgeBase);
 	}
 
@@ -67,7 +68,7 @@ public class OrChunker extends AbstractChunker {
 	}
 
 	private void connectOrganWithPP(int i,  Chunk ppChunk, List<AbstractParseTree> terminals, ChunkCollector chunkCollector) {
-		
+
 		boolean foundOrgan = false;
 		LinkedHashSet<Chunk> collectedChunks = new LinkedHashSet<Chunk>();
 		for(; i<terminals.size(); i++) {

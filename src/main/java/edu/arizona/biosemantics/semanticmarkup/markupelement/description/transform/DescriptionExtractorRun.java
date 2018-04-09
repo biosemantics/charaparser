@@ -14,17 +14,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
+import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
+import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkerChain;
 import edu.arizona.biosemantics.semanticmarkup.ling.normalize.INormalizer;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
-import edu.arizona.biosemantics.common.ling.pos.IPOSTagger;
-import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
-import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.DescriptionsFile;
 
 
 /**
@@ -50,7 +49,10 @@ public class DescriptionExtractorRun implements Callable<Description> {
 	private int descriptionNumber;
 
 	/**
-	 * @param treatment
+	 *
+	 * @param descriptionsFile
+	 * @param description
+	 * @param descriptionNumber
 	 * @param normalizer
 	 * @param wordTokenizer
 	 * @param posTagger
@@ -60,11 +62,11 @@ public class DescriptionExtractorRun implements Callable<Description> {
 	 * @param sentencesForOrganStateMarker
 	 * @param parallelProcessing
 	 * @param sentenceChunkerRunMaximum
-	 * @param selectedSources 
-	 * @param latch 
+	 * @param descriptionExtractorsLatch
+	 * @param selectedSources
 	 */
 	public DescriptionExtractorRun(AbstractDescriptionsFile descriptionsFile, Description description, int descriptionNumber,
-			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain, 
+			INormalizer normalizer, ITokenizer wordTokenizer, IPOSTagger posTagger, IParser parser, ChunkerChain chunkerChain,
 			IDescriptionExtractor descriptionExtractor, Map<Description, LinkedHashMap<String, String>> sentencesForOrganStateMarker, boolean parallelProcessing,
 			int sentenceChunkerRunMaximum, CountDownLatch descriptionExtractorsLatch, Set<String> selectedSources) {
 		this.descriptionsFile = descriptionsFile;
@@ -88,7 +90,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 		try {
 			log(LogLevel.DEBUG, "Create description for : " + descriptionsFile.getName());
 			Map<String, String> sentences = sentencesForOrganStateMarker.get(description);
-			
+
 			//configure exectuorService to only allow a number of threads to run at a time
 			ExecutorService executorService = null;
 			if(!this.parallelProcessing)
@@ -97,7 +99,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 				executorService = Executors.newFixedThreadPool(sentenceChunkerRunMaximum);
 			if(this.parallelProcessing && this.sentenceChunkerRunMaximum == Integer.MAX_VALUE)
 				executorService = Executors.newCachedThreadPool();
-			
+
 			List<Entry<String, String>> selectedSentences = new LinkedList<Entry<String, String>>();
 			if(sentences != null) {
 				for(Entry<String, String> sentenceEntry : sentences.entrySet()) {
@@ -116,16 +118,16 @@ public class DescriptionExtractorRun implements Callable<Description> {
 			for(Entry<String, String> sentenceEntry : selectedSentences) {
 				String sentenceString = sentenceEntry.getValue();
 				String source = sentenceEntry.getKey();
-				
+
 
 				// start a SentenceChunkerRun for the treatment to process as a separate thread
-				SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString, 
-						description, descriptionsFile, normalizer, wordTokenizer, 
+				SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString,
+						description, descriptionsFile, normalizer, wordTokenizer,
 						posTagger, parser, chunkerChain, prevMissingOrgan, sentencesLatch);
 				Future<ChunkCollector> futureResult = executorService.submit(sentenceChunker);
 				futureChunkCollectors.add(futureResult);
 			}
-			
+
 			// only continue when all threads are done
 			try {
 				sentencesLatch.await();
@@ -133,9 +135,9 @@ public class DescriptionExtractorRun implements Callable<Description> {
 			} catch (InterruptedException e) {
 				log(LogLevel.ERROR, "Problem with sentencesLatch or executorService", e);
 			}
-			
+
 			log(LogLevel.DEBUG, "Extract new description using " + descriptionExtractor.getDescription() + "...");
-			
+
 			// extract the new description from the result of all chunked sentences of the treatment
 			List<ChunkCollector> treatmentChunkCollectors = new ArrayList<ChunkCollector>();
 			for(Future<ChunkCollector> futureChunkCollector : this.futureChunkCollectors) {
@@ -147,14 +149,14 @@ public class DescriptionExtractorRun implements Callable<Description> {
 					log(LogLevel.ERROR, "Problem getting Future from chunkCollector", e);
 				}
 			}
-			
+
 			log(LogLevel.DEBUG, "extract for treatment " + descriptionsFile.getName());
-			descriptionExtractor.extract(description, descriptionNumber, treatmentChunkCollectors); //TODO: Hong annotating chunk in 'extract'	
+			descriptionExtractor.extract(description, descriptionNumber, treatmentChunkCollectors); //TODO: Hong annotating chunk in 'extract'
 		} catch (Throwable t) {
-			log(LogLevel.ERROR, "Problem extracting from description \"" + description + "\" in file " + 
+			log(LogLevel.ERROR, "Problem extracting from description \"" + description + "\" in file " +
 					descriptionsFile.getFile().getAbsolutePath(), t);
-		} 
-		descriptionExtractorsLatch.countDown();	
+		}
+		descriptionExtractorsLatch.countDown();
 		return description;
 	}
 }

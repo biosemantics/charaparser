@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./ValidationRun.html" title="edu.arizona.biosemantics.semanticmarkup.io.validate.ValidationRun" alt="" coords="16,19,117,45"/>
+<area shape="rect" id="node1" href="./ValidationRun.html" title="&lt;TABLE&gt;" alt="" coords="5,8,128,56"/>
+<area shape="rect" id="node2_1" href="./IVolumeValidator.html" title="edu.arizona.biosemantics.semanticmarkup.io.validate.IVolumeValidator" alt="" coords="163,11,282,53"/>
+<area shape="rect" id="node2" href="./IVolumeValidator.html" title="&lt;TABLE&gt;" alt="" coords="153,6,293,58"/>
+<area shape="rect" id="node3_2" href="./AbstractXMLVolumeValidator.html" title="edu.arizona.biosemantics.semanticmarkup.io.validate.AbstractXMLVolumeValidator" alt="" coords="127,118,319,143"/>
+<area shape="rect" id="node3" href="./AbstractXMLVolumeValidator.html" title="&lt;TABLE&gt;" alt="" coords="116,107,329,155"/>
+</map>

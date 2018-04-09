@@ -12,32 +12,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.a
 import edu.arizona.biosemantics.semanticmarkup.model.Element;
 import edu.arizona.biosemantics.semanticmarkup.model.NamedElement;
 
-
-
-/**
- * <xs:complexType>
-<xs:sequence>
-  <xs:element minOccurs="0" maxOccurs="unbounded" ref="character"/>
-</xs:sequence>
-<xs:attribute name="alter_name"/>
-<xs:attribute name="constraint"/>
-<xs:attribute name="constraintid" type="xs:NCName"/>
-<xs:attribute name="geographical_constraint"/>
-<xs:attribute name="id" use="required" type="xs:NCName"/>
-<!--<xs:attribute name="in_bracket" type="xs:boolean"/>-->
-<xs:attribute name="in_brackets" type="xs:boolean"/>
-<xs:attribute name="name" use="required"/>
-<xs:attribute name="parallelism_constraint" type="xs:NCName"/>
-<xs:attribute name="taxon_constraint"/>
-<xs:attribute name="ontologyid" type="xs:string"/>
-<xs:attribute name="provenance" type="xs:string"/>
-<xs:attribute name="notes" type="xs:string"/>
-<xs:attribute name="name_original" type="xs:string" />
-<xs:attribute name="type" type="biological_entity_type" />
-</xs:complexType>
- * @author rodenhausen
- *
- */
 @XmlRootElement
 public class BiologicalEntity extends NamedElement implements Cloneable {
 
@@ -64,7 +38,7 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 	@XmlPath("@" + BiologicalEntityAttribute.provenance)
 	private String provenance;
 	@XmlPath("@" + BiologicalEntityAttribute.notes)
-	private String notes;	
+	private String notes;
 	@XmlPath("@" + BiologicalEntityAttribute.name_original)
 	private String nameOriginal;
 	@XmlPath("@" + BiologicalEntityAttribute.constraint_original)
@@ -76,7 +50,7 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 
 	@XmlPath("character")
 	private LinkedHashSet<Character> characters = new LinkedHashSet<Character>();
-	private LinkedHashSet<Relation> fromRelations = new LinkedHashSet<Relation>(); 
+	private LinkedHashSet<Relation> fromRelations = new LinkedHashSet<Relation>();
 	private LinkedHashSet<Relation> toRelations = new LinkedHashSet<Relation>();
 
 
@@ -220,7 +194,7 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 	public LinkedHashSet<Relation> getToRelations() {
 		return toRelations;
 	}
-	
+
 	public void addCharacter(Character character) {
 		this.characters.add(character);
 	}
@@ -357,13 +331,13 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 		String newValue = "";
 		if(this.alterName == null || this.alterName.isEmpty()) {
 			newValue = alterName;
-		} else if(!this.alterName.matches(".*?(^|; )"+alterName+"($|;).*")){ 
+		} else if(!this.alterName.matches(".*?(^|; )"+alterName+"($|;).*")){
 			newValue = this.alterName + "; " + alterName;
 		}
 		this.alterName = newValue;
 	}
 
-	
+
 	public String getType() {
 		return type;
 	}
@@ -372,15 +346,15 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
 	public String getSrc(){
 		return this.src;
 	}
-	
+
 	public void setSrc(String statementId){
 		this.src = statementId;
 	}
-	
+
 	public void appendSrc(String statementId){
 		String newValue = "";
 		if(this.src == null || this.src.isEmpty()) {
@@ -403,7 +377,7 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 				character.removeElementRecursively(element);
 		}
 	}
-	
+
 	@Override
 	public BiologicalEntity clone(){
 		BiologicalEntity entity = new BiologicalEntity();
@@ -422,22 +396,22 @@ public class BiologicalEntity extends NamedElement implements Cloneable {
 		entity.setTaxonConstraint(taxonConstraint);
 		entity.setType(type);
 		entity.setSrc(src);
-	
-		
+
+
 		for(Relation fromR: fromRelations){
 			entity.addFromRelation(fromR);
 		}
-		
+
 		for(Relation toR: toRelations){
 			entity.addToRelation(toR);
 		}
-		
+
 		LinkedHashSet<Character> chars = new LinkedHashSet<Character>();
 		for(Character character: characters){
 			chars.add(character.clone());
 		}
 		entity.setCharacters(chars);
-		
+
 		return entity;
 	}
 }

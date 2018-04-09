@@ -7,24 +7,24 @@ import edu.arizona.biosemantics.semanticmarkup.io.validate.AbstractXMLVolumeVali
 
 
 public class IPlantXmlVolumeValidator extends AbstractXMLVolumeValidator {
-	
+
 	private File iplantXmlSchemaFile;
 
 	/**
-	 * @param xmlSchemaFile
+	 * @param iplantXmlSchemaFile
 	 */
 	public IPlantXmlVolumeValidator(File iplantXmlSchemaFile) {
 		this.iplantXmlSchemaFile = iplantXmlSchemaFile;
 	}
-	
+
 	/*@Override
 	public boolean validate(File directory) {
 		if(!directory.isDirectory())
 			return false;
-		
+
 		File[] files =  directory.listFiles();
 		int total = files.length;
-		
+
 		boolean result = true;
 		for(int i = 0; i<total; i++) {
 			File file = files[i];

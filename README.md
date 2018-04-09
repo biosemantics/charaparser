@@ -1,5 +1,4 @@
-<img src="http://biosemantics.github.io/charaparser/images/CP_Logo.jpg">
-===========
+<img src="http://biosemantics.github.io/charaparser/CP_Logo.jpg">
 CharaParser is a NLP tool which processes morphological descriptions of the biodiversity domain.
 The output of CharaParser is a structured description of structures, their characters and relations between structures
 in XML format.
@@ -51,6 +50,8 @@ Please [configure your git](http://git-scm.com/book/en/Customizing-Git-Git-Confi
 * `core.autocrlf` true if you are on Windows 
 * or `core.autocrlf input` if you are on a Unix-type OS
 
+To get started, an architectural overview can be found [here](https://github.com/biosemantics/charaparser/blob/master/ARCHITECTURE.md).
+
 Software Dependencies
 ----------
 In its current version, CharaParser dependes on the following additional Software.
@@ -58,52 +59,3 @@ In its current version, CharaParser dependes on the following additional Softwar
 * Perl (including modules DBI, DBD::MySQL, Encoding::FixLatin)
 * WordNet
 
-JavaDoc
-----------
-The JavaDoc has been generated with <a href="https://code.google.com/p/apiviz/">APIviz</a> and can be found 
-<a href="http://biosemantics.github.com/charaparser/javadoc">here</a>.
-
-Class Diagrams
-----------
-The following class diagrams give an overview on CharapParser's architecture:
-
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/01IRun.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/01IRun.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/02MarkupEvaluationRun.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/02MarkupEvaluationRun.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/03IMarkupCreator.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/03IMarkupCreator.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/04MarkupDescriptionTreatmentTransformer.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/04MarkupDescriptionTreatmentTransformer.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/05ITerminologyLearner.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/05ITerminologyLearner.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/06DescriptionExtractorRun.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/06DescriptionExtractorRun.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/07SentenceChunkerRun.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/07SentenceChunkerRun.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/08IPOSTagger.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/08IPOSTagger.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/09IParser.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/09IParser.png">
-</a>
-<br>
-<a href="http://biosemantics.github.com/charaparser/images/classDiagrams/10IDescriptionExtractor.png">
-<img src="http://biosemantics.github.com/charaparser/images/classDiagrams/10IDescriptionExtractor.png">
-</a>
-<br>

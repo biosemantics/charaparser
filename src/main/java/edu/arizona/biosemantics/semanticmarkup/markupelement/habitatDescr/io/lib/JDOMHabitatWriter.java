@@ -12,11 +12,11 @@ import org.jdom2.output.XMLOutputter;
 
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.io.IHabitatWriter;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Habitat;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.HabitatsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.HabitatsFileList;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.habitatDescr.model.Treatment;
 
 public class JDOMHabitatWriter implements IHabitatWriter {
@@ -39,7 +39,7 @@ public class JDOMHabitatWriter implements IHabitatWriter {
 
 			//for the xml format it is assumed one file to contain only one treatment
 			Treatment treatment = habitatsFile.getTreatments().get(0);
-			
+
 			for(int i=0; i< elements.size(); i++) {
 				Habitat habitat = treatment.getHabitats().get(i);
 				Element currentElement = elements.get(i);
@@ -50,7 +50,7 @@ public class JDOMHabitatWriter implements IHabitatWriter {
 					textElement.setText(statement.getText());
 					statementElement.setAttribute("id", statement.getId());
 					statementElement.addContent(textElement);
-					
+
 					for(BiologicalEntity be: statement.getBiologicalEntities()){
 						Element beElement = new Element("biological_entity");
 						beElement.setAttribute("id", be.getId() );
@@ -61,9 +61,13 @@ public class JDOMHabitatWriter implements IHabitatWriter {
 							Element chElement = new Element("character");
 							chElement.setAttribute("name", ch.getName());
 							chElement.setAttribute("value", ch.getValue());
+							if(ch.getModifier() != null && !ch.getModifier().isEmpty())
+								chElement.setAttribute("modifier", ch.getModifier());
+							if(ch.getConstraint() != null && !ch.getConstraint().isEmpty())
+								chElement.setAttribute("constraint", ch.getConstraint());
 							beElement.addContent(chElement);
 						}
-						statementElement.addContent(beElement);						
+						statementElement.addContent(beElement);
 					}
 					/*for(Value value: statement.getValues()){
 						Element valueElement = new Element("value");
@@ -73,7 +77,7 @@ public class JDOMHabitatWriter implements IHabitatWriter {
 					currentElement.addContent(statementElement);
 				}
 			}
-							
+
 			XMLOutputter output = new XMLOutputter();
 			output.output(document, new FileOutputStream(habitatsFile.getFile()));
 		}

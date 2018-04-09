@@ -1,0 +1,10 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./ProcessingContextState.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContextState" alt="" coords="15,19,177,45"/>
+<area shape="rect" id="node1" href="./ProcessingContextState.html" title="&lt;TABLE&gt;" alt="" coords="5,8,187,56"/>
+<area shape="rect" id="node2_1" href="./ProcessingContext.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.ProcessingContext" alt="" coords="223,19,353,45"/>
+<area shape="rect" id="node2" href="./ProcessingContext.html" title="&lt;TABLE&gt;" alt="" coords="212,8,364,56"/>
+<area shape="rect" id="node3_2" href="./IDescriptionExtractor.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor" alt="" coords="399,11,540,53"/>
+<area shape="rect" id="node3" href="./IDescriptionExtractor.html" title="&lt;TABLE&gt;" alt="" coords="388,6,551,58"/>
+<area shape="rect" id="node4_3" href="./AbstractChunkProcessor.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.AbstractChunkProcessor" alt="" coords="585,19,753,45"/>
+<area shape="rect" id="node4" href="./AbstractChunkProcessor.html" title="&lt;TABLE&gt;" alt="" coords="575,8,764,56"/>
+</map>

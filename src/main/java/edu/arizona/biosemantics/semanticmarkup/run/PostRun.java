@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package edu.arizona.biosemantics.semanticmarkup.run;
 
@@ -7,9 +7,7 @@ package edu.arizona.biosemantics.semanticmarkup.run;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
 import org.jdom2.Document;
+import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
@@ -30,7 +29,6 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import org.jdom2.Element;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -42,11 +40,11 @@ import edu.arizona.biosemantics.common.validation.key.KeyValidationException;
 
 /**
  * @author Hong Cui
- * after Run is complete, perform post-markup tasks, which requires access to all marked up files simultaneously 
+ * after Run is complete, perform post-markup tasks, which requires access to all marked up files simultaneously
  * such as organizing descriptive characters in keys to morphological description elements
  * or creating new xml files holding character info for some taxa.
- * 
- * @TODO implements IRun
+ *
+ * Todo: implements IRun
  *
  */
 public class PostRun {
@@ -62,7 +60,7 @@ public class PostRun {
 	static XPathExpression<Element> namePath = null;
 	static XPathExpression<Element> keyHead = null;
 
-	
+
 
 	static{
 		fac = XPathFactory.instance();
@@ -73,11 +71,11 @@ public class PostRun {
 		keyHead  = fac.compile("//key//key_head", Filters.element()); //don't use "."
 		//stateIdPath = fac.compile("//key//statement_id", Filters.element());
 		namePath = fac.compile("//bio:treatment/taxon_identification[@status='ACCEPTED']", Filters.element(), null, Namespace.getNamespace("bio", "http://www.github.com/biosemantics"));
-		
+
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Inject
 	public PostRun(@Named("Run_OutDirectory")String runOutDirectory /*, @Named("MarkupRun_ValidateSchemaFile") String validateSchemaFile*/) {
@@ -96,11 +94,11 @@ public class PostRun {
 		SAXBuilder builder = new SAXBuilder();
 		Document document;
 		File [] files = new File(runOutDirectory).listFiles();
-		for(File file: files){	
+		for(File file: files){
 			try(FileInputStream fileInputStream = new FileInputStream(file)) {
 				document = builder.build(fileInputStream);
 				Element root = document.getRootElement();
-				Element ti = (Element) namePath.evaluate(root).get(0);
+				Element ti = namePath.evaluate(root).get(0);
 				String name = "";
 				for(Element tn: ti.getChildren("taxon_name")){
 					name += tn.getAttributeValue("rank")+"_"+tn.getTextTrim().toLowerCase()+" ";
@@ -124,12 +122,12 @@ public class PostRun {
 		//absorb characters in keys into taxon descriptions (existing or new)
 		//leaving the original key unchanged in the source document
 		KeyElementValidator kev = new KeyElementValidator();
-		
+
 		//ArrayList<File> newFiles = new ArrayList<File> ();
 		int count = 0;
 		for(Document docWKey: containsKey){
 			String keyFileName = FilenameUtils.removeExtension(doc2file.get(docWKey).getName()).replaceAll("\\s+", "_");
-			
+
 			log(LogLevel.DEBUG, "Processing keys in "+docWKey.getBaseURI());
 			for(Element key: keyPath.evaluate(docWKey.getRootElement())){
 				ArrayList<String> keyErrors = new ArrayList<String>();
@@ -152,14 +150,14 @@ public class PostRun {
 				for(Object determination: detPath.evaluate(key)){
 					//if determination matches a key_head, so is not a taxon name
 					if(matchesKeyHead((Element)determination, key)) continue;
-					
+
 					String taxonName = getName((Element) determination, docWKey);
 					Element description = new Element("description");
 					description.setAttribute("type", "morphology_from_key");
-					wrapCharacter(description, (Element)determination, (Element)key, keyFileName);
-					
+					wrapCharacter(description, (Element)determination, key, keyFileName);
+
 					if(description.getContentSize()==0) continue;
-					
+
 					Document doc = locateTaxonDocument(taxonName, taxa2doc);
 					if(doc!=null){
 						//add a new description element of type 'morphology_from_key' to the doc for the taxon
@@ -187,11 +185,11 @@ public class PostRun {
 	}
 
 
-	
+
 	/**
 	 * one determination may occur multiple times in one key, need to deduplicate description statements before add description to the related doc
 	 * doc may already contain some statements from descriptions, stop those from being added again.
-	 * 
+	 *
 	 * @param doc
 	 * @param description
 	 */
@@ -205,12 +203,12 @@ public class PostRun {
 		while(it.hasNext()){
 			Element state = it.next();
 			String id = state.getAttributeValue("id");
-			XPathExpression<Element> statemts  = fac.compile("//description/statement[@id='"+id+"']", Filters.element()); 
+			XPathExpression<Element> statemts  = fac.compile("//description/statement[@id='"+id+"']", Filters.element());
 			if(!statemts.evaluate(doc).isEmpty()){
 				it.remove();
 			}
 		}
-		
+
 		//add de-duplicated description
 		doc.getRootElement().addContent(description);
 	}
@@ -218,7 +216,7 @@ public class PostRun {
 
 	/**
 	 * create a new file using the file naming convention
-	 * and save it in the output directory 
+	 * and save it in the output directory
 	 * @param taxonName
 	 * @param description
 	 */
@@ -250,7 +248,7 @@ public class PostRun {
 		/*for(Element remove: removes){
 			if(remove.getName().compareTo("meta")==0){
 				List<Element> otherInfoOnMeta = remove.getChildren("other_info_on_meta");
-				root.re(otherInfoOnMeta);				
+				root.re(otherInfoOnMeta);
 			}
 			root.removeContent(remove);
 		}*/
@@ -282,11 +280,10 @@ public class PostRun {
 	 * write doc to file
 	 * @param doc
 	 * @param file
-	 * @throws  
 	 */
 	private void writeFile(Document doc, File file) {
 
-		out.setFormat(Format.getPrettyFormat());	
+		out.setFormat(Format.getPrettyFormat());
 		try(OutputStreamWriter outputStreamWriter= new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
 			out.output(doc, outputStreamWriter);
 		} catch (IOException e) {
@@ -297,9 +294,9 @@ public class PostRun {
 
 
 	/**
-	 * 
+	 *
 	 * @param taxonName: may not have complete info about lower ranks, e.g., order_astrophorida ancorinidaes
-	 * @param taxa2doc order_astrophorida family_ancorinidae=>
+	 * @param taxa2doc order_astrophorida family_ancorinidae
 	 * @return
 	 */
 	private Document locateTaxonDocument(String taxonName,
@@ -328,7 +325,7 @@ public class PostRun {
 				max = score;
 				matchName = name;
 			}
-		}	
+		}
 		return matchName!=null? taxa2doc.get(matchName): null;
 	}
 
@@ -346,45 +343,46 @@ public class PostRun {
 	/**
 	 * traces from determination up the key to collect all parsed descriptions applicable to the determination
 	 * save the statements in the description
-	 * need also update the ids for all the statements, structures, relations and references to them. 
-	 * 
+	 * need also update the ids for all the statements, structures, relations and references to them.
+	 *
 	 * handles also the situation where the determination points to another key such as "Key A"
-	 * 
+	 *
 	 * @param description
 	 * @param determination
 	 * @param key
+	 * @param keyFileName
 	 */
 	private void wrapCharacter(Element description, Element determination,
 			Element key, String keyFileName) {
-			
-			//tracing up
-			String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
-			Element desc = determination.getParentElement().getChild("description").clone();
-			Collection<Element> statements = prepStatmentsFrom(desc, keyFileName);
+
+		//tracing up
+		String stmtid = determination.getParentElement().getChild("statement_id").getTextTrim();
+		Element desc = determination.getParentElement().getChild("description").clone();
+		Collection<Element> statements = prepStatmentsFrom(desc, keyFileName);
+		if(statements!=null) description.addContent(statements);
+
+		Element nextId = getNextIdStatement(stmtid, key);
+		while(nextId!=null){
+			desc = nextId.getParentElement().getChild("description").clone();
+			statements = prepStatmentsFrom(desc, keyFileName);
 			if(statements!=null) description.addContent(statements);
-	
-			Element nextId = getNextIdStatement(stmtid, key);
-			while(nextId!=null){
-				desc = ((Element)nextId).getParentElement().getChild("description").clone();
-				statements = prepStatmentsFrom(desc, keyFileName);
-				if(statements!=null) description.addContent(statements);
-				stmtid = ((Element)nextId).getParentElement().getChild("statement_id").getTextTrim();
-				nextId = getNextIdStatement(stmtid, key);
+			stmtid = nextId.getParentElement().getChild("statement_id").getTextTrim();
+			nextId = getNextIdStatement(stmtid, key);
+		}
+
+		//if key has a key_head, search for a key with the key_head as a determination, and continue to trace up the description chain
+		if(key.getChild("key_head")!=null){
+			Element upperDet = findUpperDetermination(key.getChild("key_head"), key);
+			if(upperDet!=null){
+				Element upperKey = upperDet.getParentElement().getParentElement();
+				if(upperKey!=null) wrapCharacter(description, upperDet, upperKey, keyFileName);
 			}
-	
-			//if key has a key_head, search for a key with the key_head as a determination, and continue to trace up the description chain
-			if(key.getChild("key_head")!=null){
-				Element upperDet = findUpperDetermination(key.getChild("key_head"), key);
-				if(upperDet!=null){
-					Element upperKey = upperDet.getParentElement().getParentElement();
-					if(upperKey!=null) wrapCharacter(description, upperDet, upperKey, keyFileName);
-				}
-			}
+		}
 	}
-	
+
 	/**
 	 * search for the determination element that matches the key_head
-	 * @param child
+	 * @param keyHead
 	 * @param key
 	 * @return
 	 */
@@ -404,8 +402,8 @@ public class PostRun {
 
 	/**
 	 * if determination matches a key_head in any of the keys in the document
-	 * det: <determination>Group 2, v. 19, p. 14</determination>
-	 * key_head: <key_head>Key to Genera of Group 2</key_head>
+	 * det: &lt;determination&gt;Group 2, v. 19, p. 14&lt;/determination&gt;
+	 * key_head: &lt;key_head&gt;Key to Genera of Group 2&lt;/key_head&gt;
 	 * @param determination
 	 * @param key
 	 * @return
@@ -424,18 +422,19 @@ public class PostRun {
 		return false;
 	}
 
-	
+
 
 	/**
 	 * collect all parsed statements
 	 * update the ids for all the statements, structures, relations and references to them
-	 * @param desc
+	 * @param description
+	 * @param keyFileName
 	 * @return
 	 */
 
 
 	private Collection<Element> prepStatmentsFrom(Element description, String keyFileName) {
-		ArrayList<Element> states = new ArrayList<Element>(description.getChildren("statement"));		
+		ArrayList<Element> states = new ArrayList<Element>(description.getChildren("statement"));
 		ArrayList<Element> statements = new ArrayList<Element>();
 		for(int i = 0; i < states.size(); i++){
 			//for(Element statement: description.getChildren("statement")){ //concurrent modification issue
@@ -451,8 +450,8 @@ public class PostRun {
 	/**
 	 * append "from_key_" to all ids and references to ids in the statement
 	 * @param statement
+	 * @param keyFileName
 	 */
-
 	private void updateIds(Element statement, String keyFileName) {
 
 		if(statement.getAttribute("id")!=null)
@@ -485,14 +484,14 @@ public class PostRun {
 		return null;
 	}
 
-	
+
 
 
 	/**
 	 * Example determination text
 	 * 5 .  Hesperoyucca , p . 439  //document is on a family, so assuming this is genus.
 	 * 9b . Eriophyllum lanatum var . grandiflorum ( in part ) //document is about Eriophyllum lanatum
-	 * 
+	 *
 	 * @param determination
 	 * @param document
 	 * @return

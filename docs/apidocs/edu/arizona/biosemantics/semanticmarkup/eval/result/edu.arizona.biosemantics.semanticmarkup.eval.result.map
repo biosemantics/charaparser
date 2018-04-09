@@ -1,0 +1,12 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./StringEvaluationResult.html" title="edu.arizona.biosemantics.semanticmarkup.eval.result.StringEvaluationResult" alt="" coords="15,118,166,143"/>
+<area shape="rect" id="node1" href="./StringEvaluationResult.html" title="&lt;TABLE&gt;" alt="" coords="5,107,177,155"/>
+<area shape="rect" id="node2_1" href="./PrecisionRecallResult.html" title="edu.arizona.biosemantics.semanticmarkup.eval.result.PrecisionRecallResult" alt="" coords="421,19,569,45"/>
+<area shape="rect" id="node2" href="./PrecisionRecallResult.html" title="&lt;TABLE&gt;" alt="" coords="410,8,579,56"/>
+<area shape="rect" id="node3_2" href="./PrecisionRecallEvaluationResult.html" title="edu.arizona.biosemantics.semanticmarkup.eval.result.PrecisionRecallEvaluationResult" alt="" coords="211,118,418,143"/>
+<area shape="rect" id="node3" href="./PrecisionRecallEvaluationResult.html" title="&lt;TABLE&gt;" alt="" coords="201,107,429,155"/>
+<area shape="rect" id="node4_3" href="./PerfectPartialPrecisionRecallEvaluationResult.html" title="edu.arizona.biosemantics.semanticmarkup.eval.result.PerfectPartialPrecisionRecallEvaluationResult" alt="" coords="464,118,749,143"/>
+<area shape="rect" id="node4" href="./PerfectPartialPrecisionRecallEvaluationResult.html" title="&lt;TABLE&gt;" alt="" coords="453,107,760,155"/>
+<area shape="rect" id="node5_4" href="./IEvaluationResult.html" title="edu.arizona.biosemantics.semanticmarkup.eval.result.IEvaluationResult" alt="" coords="255,11,375,53"/>
+<area shape="rect" id="node5" href="./IEvaluationResult.html" title="&lt;TABLE&gt;" alt="" coords="244,6,385,58"/>
+</map>

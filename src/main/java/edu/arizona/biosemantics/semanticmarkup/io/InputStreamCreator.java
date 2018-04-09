@@ -19,12 +19,12 @@ public class InputStreamCreator {
 	 * Locates this file either using the given URL, or in the CLASSPATH, or in
 	 * the file system The CLASSPATH takes priority over the file system! This
 	 * stream is buffered and gunzipped (if necessary).
-	 * 
-	 * @param textFileOrUrl
+	 *
+	 * @param url
 	 * @return An InputStream for loading a resource
 	 * @throws IOException
 	 */
-	 public InputStream readStreamFromString(String url) throws IOException {
+	public InputStream readStreamFromString(String url) throws IOException {
 		InputStream in;
 		if (url.matches("https?://.*")) {
 			URL u = new URL(url);
@@ -67,5 +67,5 @@ public class InputStreamCreator {
 			is = new FileInputStream(url);
 		return is;
 	}
-	
+
 }

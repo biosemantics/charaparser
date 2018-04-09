@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./ILearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ILearner" alt="" coords="81,11,165,53"/>
+<area shape="rect" id="node1" href="./ILearner.html" title="&lt;TABLE&gt;" alt="" coords="70,6,175,58"/>
+<area shape="rect" id="node2_1" href="./lib/OTOLearner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.OTOLearner" alt="" coords="16,118,107,143"/>
+<area shape="rect" id="node2" href="./lib/OTOLearner.html" title="&lt;TABLE&gt;" alt="" coords="5,107,117,155"/>
+<area shape="rect" id="node3_2" href="./lib/Learner.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.Learner" alt="" coords="152,118,216,143"/>
+<area shape="rect" id="node3" href="./lib/Learner.html" title="&lt;TABLE&gt;" alt="" coords="141,107,227,155"/>
+</map>

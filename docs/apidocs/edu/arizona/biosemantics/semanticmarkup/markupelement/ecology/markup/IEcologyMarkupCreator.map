@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="../../../markup/IMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markup.IMarkupCreator" alt="" coords="39,11,148,53"/>
+<area shape="rect" id="node1" href="../../../markup/IMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="28,6,159,58"/>
+<area shape="rect" id="node2_1" href="./IEcologyMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.IEcologyMarkupCreator" alt="" coords="15,113,171,154"/>
+<area shape="rect" id="node2" href="./IEcologyMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="5,107,182,159"/>
+<area shape="rect" id="node3_2" href="./EcologyMarkupCreator.html" title="edu.arizona.biosemantics.semanticmarkup.markupelement.ecology.markup.EcologyMarkupCreator" alt="" coords="17,219,170,245"/>
+<area shape="rect" id="node3" href="./EcologyMarkupCreator.html" title="&lt;TABLE&gt;" alt="" coords="6,208,181,256"/>
+</map>

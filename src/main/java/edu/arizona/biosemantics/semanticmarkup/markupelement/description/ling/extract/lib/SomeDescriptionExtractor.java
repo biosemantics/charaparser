@@ -33,32 +33,33 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	private IFirstChunkProcessor firstChunkProcessor;
 	private ILastChunkProcessor lastChunkProcessor;
 	private IChunkProcessorProvider chunkProcessorProvider;
-	
+
 	//private Set<String> possess;
 	//private IOntology ontology;
-	
+
 	//necessary to obtain unique IDs in files with multiple descriptions
 	//return from a call to extract to some higher entity and inject back if ever required to
 	//e.g. have a stateless DescriptionExtractor to e.g. run multiple descriptionextractors alongside
 	private int structureId;
 	private int relationId;
+
 	/**
-	 * @param glossary
+	 *
 	 * @param chunkProcessorProvider
 	 * @param firstChunkProcessor
 	 * @param lastChunkProcessor
 	 */
 	@Inject
 	public SomeDescriptionExtractor(
-			IChunkProcessorProvider chunkProcessorProvider, 
-			IFirstChunkProcessor firstChunkProcessor, 
+			IChunkProcessorProvider chunkProcessorProvider,
+			IFirstChunkProcessor firstChunkProcessor,
 			ILastChunkProcessor lastChunkProcessor) {
 		this.chunkProcessorProvider = chunkProcessorProvider;
 		this.firstChunkProcessor = firstChunkProcessor;
 		this.lastChunkProcessor = lastChunkProcessor;
 	}
 
-	
+
 	@Override
 	public void extract(Description description, int descriptionNumber, List<ChunkCollector> chunkCollectors) {
 		ProcessingContext processingContext = new ProcessingContext(structureId, relationId);
@@ -66,9 +67,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 		// one chunk collector for one statement / sentence
 		// this method is called per treatment
-		
+
 		//going through all sentences
-		
+
 		for(int i=0; i<chunkCollectors.size(); i++) {
 			ChunkCollector chunkCollector = chunkCollectors.get(i);
 			//processingContext.setChunkCollectors(chunkCollectors);
@@ -79,7 +80,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			String statementId = "d" + descriptionNumber + "_s" + i;
 			statement.setId(statementId);
 			description.addStatement(statement);
-			
+
 			processingContext.setChunkCollector(chunkCollector);
 			try {
 				List<Element> descriptiveElements = getDescriptiveElements(processingContext, chunkCollector.getSentence(), i); //chunk to xml
@@ -87,7 +88,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 				for(Element element : descriptiveElements) {
 					if(element.isRelation()){
 						if(((Relation)element).getSrc()==null)
-							((Relation)element).appendSrc(statementId); 
+							((Relation)element).appendSrc(statementId);
 						statement.addRelation((Relation)element);
 					} else if(element.isStructure()){
 						if(((BiologicalEntity)element).getSrc()==null)
@@ -96,7 +97,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 						Iterator<Character> it = ((BiologicalEntity)element).getCharacters().iterator();
 						while(it.hasNext()){
-							Character ch = (Character)it.next();
+							Character ch = it.next();
 							if(ch.getSrc()==null)
 								ch.appendSrc(statementId); // when extracting src info from xml output, need to take into account of the "src"s of the entity and the character
 						}
@@ -118,9 +119,9 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 
 		ChunkCollector chunkCollector = processingContext.getChunkCollector();
 		List<Chunk> chunks = chunkCollector.getChunks();
-		ListIterator<Chunk> iterator = chunks.listIterator(); 
+		ListIterator<Chunk> iterator = chunks.listIterator();
 		processingContext.setChunkListIterator(iterator);
-		
+
 		log(LogLevel.DEBUG, "describe chunk using " + firstChunkProcessor.getDescription() + " ...");
 		int skip = 0;
 		if(sentence.contains(":")){
@@ -134,13 +135,13 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 		}
 		if(sentIndex==0) firstChunkProcessor.setFirstSentence();
 		else firstChunkProcessor.unsetFirstSentence();
-		
+
 		//addToResult(result, firstChunkProcessor.process(chunks.get(0), processingContext)); //process subject
 		addToResult(result, firstChunkProcessor.process(chunks.get(skip), processingContext)); //process subject?
 		log(LogLevel.DEBUG, "result:\n" + result);
-		
 
-		
+
+
 		while(iterator.hasNext()) {
 			if(!iterator.hasPrevious() && skip+firstChunkProcessor.skipFirstNChunk()>0) {
 				for(int i = 0; i < skip+firstChunkProcessor.skipFirstNChunk(); i++){
@@ -150,14 +151,14 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			}
 			if(iterator.hasNext()) {
 				addToResult(result, describeChunk(processingContext));
-			}	
+			}
 			log(LogLevel.DEBUG, "result:\n" + result);
 		}
-		
+
 		addToResult(result, lastChunkProcessor.process(processingContext));
 		return result;
 	}
-	
+
 	private void addToResult(List<Element> result,
 			List<? extends Element> toAdd) {
 		for(Element element : toAdd)
@@ -166,14 +167,14 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 	}
 
 
-	
+
 	private List<Element> describeChunk(ProcessingContext processingContext) {
 		List<Element> result = new LinkedList<Element>();
 
 		ListIterator<Chunk> chunkListIterator = processingContext.getChunkListIterator();
 		Chunk chunk = chunkListIterator.next();
 		ChunkType chunkType = chunk.getChunkType();
-	
+
 		IChunkProcessor chunkProcessor = chunkProcessorProvider.getChunkProcessor(chunkType);
 
 		if(chunkProcessor!=null) {
@@ -186,7 +187,7 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			processingContext.getCurrentState().setUnassignedChunkAfterLastElements(false);
 		return result;
 	}
-	
+
 	@Override
 	public String getDescription() {
 		return "some description extractor";

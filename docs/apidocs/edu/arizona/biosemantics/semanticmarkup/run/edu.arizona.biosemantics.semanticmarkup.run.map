@@ -1,0 +1,8 @@
+<map id="G" name="G">
+<area shape="rect" id="node1_0" href="./PostRun.html" title="edu.arizona.biosemantics.semanticmarkup.run.PostRun" alt="" coords="15,19,86,45"/>
+<area shape="rect" id="node1" href="./PostRun.html" title="&lt;TABLE&gt;" alt="" coords="5,8,97,56"/>
+<area shape="rect" id="node2_1" href="./IRun.html" title="edu.arizona.biosemantics.semanticmarkup.run.IRun" alt="" coords="131,11,215,53"/>
+<area shape="rect" id="node2" href="./IRun.html" title="&lt;TABLE&gt;" alt="" coords="121,6,226,58"/>
+<area shape="rect" id="node3_2" href="./AbstractRun.html" title="edu.arizona.biosemantics.semanticmarkup.run.AbstractRun" alt="" coords="127,118,220,143"/>
+<area shape="rect" id="node3" href="./AbstractRun.html" title="&lt;TABLE&gt;" alt="" coords="116,107,231,155"/>
+</map>

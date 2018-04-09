@@ -11,6 +11,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.know.IGlossary;
 import edu.arizona.biosemantics.common.ling.know.IPOSKnowledgeBase;
 import edu.arizona.biosemantics.common.ling.transform.IInflector;
@@ -19,14 +20,13 @@ import edu.arizona.biosemantics.semanticmarkup.ling.chunk.AbstractChunker;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.Chunk;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkCollector;
 import edu.arizona.biosemantics.semanticmarkup.ling.chunk.ChunkType;
-import edu.arizona.biosemantics.common.ling.know.ICharacterKnowledgeBase;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.AbstractParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTree;
 import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParseTreeFactory;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.ITerminologyLearner;
 
 /**
- * MyStateChunker chunks by handling state terminals 
+ * MyStateChunker chunks by handling state terminals
  * @author rodenhausen
  */
 public class MyStateChunker extends AbstractChunker {
@@ -36,6 +36,7 @@ public class MyStateChunker extends AbstractChunker {
 	private IPOSKnowledgeBase posKnowledgeBase;
 
 	/**
+	 *
 	 * @param parseTreeFactory
 	 * @param prepositionWords
 	 * @param stopWords
@@ -44,16 +45,16 @@ public class MyStateChunker extends AbstractChunker {
 	 * @param glossary
 	 * @param terminologyLearner
 	 * @param inflector
-	 * @param organStateKnowledgeBase
 	 * @param characterKnowledgeBase
 	 * @param posKnowledgeBase
+	 * @param learnedCharacterKnowledgeBase
 	 */
 	@Inject
 	public MyStateChunker(IParseTreeFactory parseTreeFactory, @Named("PrepositionWords")String prepositionWords,
-			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters, 
-			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector, 
+			@Named("StopWords")Set<String> stopWords, @Named("Units")String units, @Named("EqualCharacters")HashMap<String, String> equalCharacters,
+			IGlossary glossary, ITerminologyLearner terminologyLearner, IInflector inflector,
 			ICharacterKnowledgeBase characterKnowledgeBase, @Named("LearnedPOSKnowledgeBase") IPOSKnowledgeBase posKnowledgeBase, ICharacterKnowledgeBase learnedCharacterKnowledgeBase) {
-		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary, 
+		super(parseTreeFactory, prepositionWords, stopWords, units, equalCharacters, glossary,
 				terminologyLearner, inflector, learnedCharacterKnowledgeBase);
 
 		this.characterKnowledgeBase = characterKnowledgeBase;
@@ -64,11 +65,11 @@ public class MyStateChunker extends AbstractChunker {
 		boolean[] result = new boolean[terminals.size()];
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
-			
+
 			//boolean validCharacterState = organStateKnowledgeBase.isState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 			//boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
 			//		organStateKnowledgeBase.isState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
-			
+
 			boolean validCharacterState = learnedCharacterKnowledgeBase.isCategoricalState(terminal.getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
 			boolean adverbCharacterState = posKnowledgeBase.isAdverb(terminal.getTerminalsText()) && i+1 < terminals.size() &&
 					learnedCharacterKnowledgeBase.isCategoricalState(terminals.get(i+1).getTerminalsText()) && characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText());
@@ -78,28 +79,28 @@ public class MyStateChunker extends AbstractChunker {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void chunk(ChunkCollector chunkCollector) {
 		List<Chunk> modifierChunks = new ArrayList<Chunk>();
 		List<AbstractParseTree> terminals = chunkCollector.getTerminals();
-		
+
 		boolean stateNotModifier[] = getStateNotModifier(terminals);
-		
-		for(int i=0; i<terminals.size(); i++)  { 			
+
+		for(int i=0; i<terminals.size(); i++)  {
 			AbstractParseTree terminal = terminals.get(i);
 			Chunk chunk = chunkCollector.getChunk(terminal);
-			
-			if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE) || 
-					chunk.isOfChunkType(ChunkType.TO_PHRASE) || 
-					chunk.isOfChunkType(ChunkType.CONSTRAINT)) 
+
+			if(chunk.isOfChunkType(ChunkType.CHARACTER_STATE) ||
+					chunk.isOfChunkType(ChunkType.TO_PHRASE) ||
+					chunk.isOfChunkType(ChunkType.CONSTRAINT))
 				continue;
-			
+
 			if(chunk.isOfChunkType(ChunkType.MODIFIER) && !stateNotModifier[i]) {
 				modifierChunks.add(chunk);
 				continue;
 			}
-			
+
 			if(chunk.isOfChunkType(ChunkType.UNASSIGNED) && terminal.getTerminalsText().compareTo("no")==0) {
 				Chunk stateChunk = new Chunk(ChunkType.STATE, terminal);
 				chunkCollector.addChunk(stateChunk);
@@ -107,14 +108,14 @@ public class MyStateChunker extends AbstractChunker {
 				characterChunk.setProperty("characterName", "count");
 				chunkCollector.addChunk(characterChunk);
 			}
-			
+
 			//if(organStateKnowledgeBase.isState(terminal.getTerminalsText())) {
 			if(characterKnowledgeBase.isCategoricalState(terminal.getTerminalsText())) {
 				String character = null;
 				if(characterKnowledgeBase.containsCharacterState(terminal.getTerminalsText())) {
 					character = characterKnowledgeBase.getCharacterName(terminal.getTerminalsText()).getCategories();
 				}
-				
+
 				/*Chunk stateChunk = null;
 				//put "length of" in one state chunk
 				if(character.compareTo("character")==0 && terminals.get(i+1).getTerminalsText().compareTo("of")==0){
@@ -132,22 +133,22 @@ public class MyStateChunker extends AbstractChunker {
 				characterStateChildChunks.addAll(modifierChunks);
 				characterStateChildChunks.add(stateChunk);
 				Chunk characterStateChunk = new Chunk(ChunkType.CHARACTER_STATE, characterStateChildChunks);
-				
+
 				if(character != null) {//forking => CHARACTER_STATE: characterName->arrangement; [MODIFIER: [mostly], STATE: [forking]]
 					characterStateChunk.setProperty("characterName", character);
 					chunkCollector.addChunk(characterStateChunk);
-				} 
+				}
 				modifierChunks.clear();
 			} else {
 				modifierChunks.clear();
 			}
 		}
-		
+
 		for(int i=0; i<terminals.size(); i++) {
 			AbstractParseTree terminal = terminals.get(i);
-			
+
 			if(i-1>=0 && i+1 < terminals.size()) {
-				
+
 				//TODO use ChunkType.TO
 				if(terminal.getTerminalsText().equals("to")) {
 					AbstractParseTree nextTerminal = terminals.get(i+1);
@@ -155,16 +156,16 @@ public class MyStateChunker extends AbstractChunker {
 
 					Chunk nextChunk = chunkCollector.getChunk(nextTerminal);
 					Chunk previousChunk = chunkCollector.getChunk(previousTerminal);
-					
+
 					if(!nextChunk.equals(previousChunk)) {
-						if(nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) && 
+						if(nextChunk.isOfChunkType(ChunkType.CHARACTER_STATE) &&
 								previousChunk.isOfChunkType(ChunkType.CHARACTER_STATE)) {
 							Set<String> characterOverlap = characterNamesOverlap(nextChunk, previousChunk);
-							
+
 							if(!characterOverlap.isEmpty()) {
-								fixParseTreeForToCharacter(i, terminals, chunkCollector.getParseTree());	
+								fixParseTreeForToCharacter(i, terminals, chunkCollector.getParseTree());
 								//chunkCollector.getParseTree().prettyPrint();
-								
+
 								String characterString = "";
 								Iterator<String> characterIterator = characterOverlap.iterator();
 								while(characterIterator.hasNext()) {
@@ -172,22 +173,22 @@ public class MyStateChunker extends AbstractChunker {
 									if(characterIterator.hasNext())
 										characterString += or;
 								}
-								
+
 								Chunk stateChunk = new Chunk(ChunkType.STATE);
 								LinkedHashSet<Chunk> chunks = new LinkedHashSet<Chunk>();
 								chunks.add(previousTerminal);
 								chunks.add(terminal);
 								chunks.add(nextTerminal);
 								stateChunk.setChunks(chunks);
-								
+
 								Chunk characterStateChunk = new Chunk(ChunkType.CHARACTER_STATE, stateChunk);
 								characterStateChunk.setProperty("characterName", characterString);
-								
+
 								chunkCollector.addChunk(characterStateChunk);
 							}
 						}
 					}
-				}	
+				}
 			}
 		}
 	}
@@ -196,14 +197,14 @@ public class MyStateChunker extends AbstractChunker {
 		//parseTree.prettyPrint();
 		AbstractParseTree previousTerminal = terminals.get(i-1);
 		AbstractParseTree terminal = terminals.get(i);
-	
+
 		if(parseTree.getDepth(previousTerminal) != parseTree.getDepth(terminal)) {
-			//from previous iteration 
+			//from previous iteration
 			IParseTree beforePreviousParent = previousTerminal;
 			IParseTree beforeTerminalParent = terminal;
-			
+
 			//IParseTree lastPreviousParent = previousTerminal;
-			
+
 			//this iteration
 			IParseTree terminalParent = terminal;
 			IParseTree previousParent = previousTerminal;
@@ -211,7 +212,7 @@ public class MyStateChunker extends AbstractChunker {
 			int previousAncestorHeight = 1;
 			int terminalAncestorHeight = 1;
 			while(true) {
-				
+
 				boolean previousParentHasChanged = false;
 				boolean terminalParentHasChanged = false;
 				if(parseTree.getDepth(previousParent) < parseTree.getDepth(terminalParent)) {
@@ -226,7 +227,7 @@ public class MyStateChunker extends AbstractChunker {
 					previousParentHasChanged = true;
 					terminalParentHasChanged = true;
 				}
-	
+
 				if(previousParent.equals(terminalParent)) {
 					/*
 					while(true) {
@@ -242,7 +243,7 @@ public class MyStateChunker extends AbstractChunker {
 					terminalParent.addChildren(beforeTerminalParentIndex, beforeTerminalParent.getChildren());
 					break;
 				}
-				
+
 				//if(previousParentHasChanged) {
 				//	lastPreviousParent = previousParent;
 				//}
@@ -254,7 +255,7 @@ public class MyStateChunker extends AbstractChunker {
 					beforeTerminalParent = terminalParent;
 					terminalAncestorHeight++;
 				}
-			}		
+			}
 		}
 	}
 

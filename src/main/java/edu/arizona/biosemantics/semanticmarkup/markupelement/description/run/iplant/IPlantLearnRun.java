@@ -14,19 +14,22 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.le
 import edu.arizona.biosemantics.semanticmarkup.run.AbstractRun;
 
 public class IPlantLearnRun extends AbstractRun {
-	
+
 	private ILearner learner;
 	private String databasePrefix;
 
 	/**
-	 * @param outDirectory
 	 * @param guiceModuleFile
+	 * @param inputDirectory
+	 * @param runOutDirectory
+	 * @param connectionPool
+	 * @param databasePrefix
 	 * @param learner
 	 */
 	@Inject
 	public IPlantLearnRun(@Named("GuiceModuleFile")String guiceModuleFile,
-			@Named("InputDirectory")String inputDirectory, 
-			@Named("Run_OutDirectory")String runOutDirectory, 
+			@Named("InputDirectory")String inputDirectory,
+			@Named("Run_OutDirectory")String runOutDirectory,
 			ConnectionPool connectionPool,
 			@Named("DatabasePrefix") String databasePrefix,
 			ILearner learner) {
@@ -41,11 +44,11 @@ public class IPlantLearnRun extends AbstractRun {
 			log(LogLevel.ERROR, "Not a valid run. The specified ID has already been used.");
 			return;
 		}
-		
+
 		log(LogLevel.INFO, "Learning using " + learner.getDescription() + "...");
 		learner.learn();
 	}
-	
+
 	protected boolean isValidRun() throws ClassNotFoundException, SQLException {
 		try(Connection connection = connectionPool.getConnection()) {
 			String sql = "CREATE TABLE IF NOT EXISTS datasetprefixes (prefix varchar(100) NOT NULL, glossary_version varchar(10), oto_uploadid int(11) NOT NULL DEFAULT '-1', " +
@@ -53,12 +56,12 @@ public class IPlantLearnRun extends AbstractRun {
 			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.execute();
 			}
-			
+
 			sql = "LOCK TABLES datasetprefixes WRITE";
 			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.execute();
 			}
-			
+
 			sql = "SELECT * FROM datasetprefixes WHERE prefix = ?";
 			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.setString(1, databasePrefix);
@@ -69,13 +72,13 @@ public class IPlantLearnRun extends AbstractRun {
 					}
 				}
 			}
-			
+
 			sql = "INSERT INTO datasetprefixes (prefix) VALUES (?)";
 			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.setString(1, databasePrefix);
 				preparedStatement.execute();
 			}
-			
+
 			sql = "UNLOCK TABLES";
 			try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 				preparedStatement.execute();

@@ -2,10 +2,6 @@ package edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.trans
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,12 +10,16 @@ import java.util.regex.Pattern;
 
 import edu.arizona.biosemantics.common.log.LogLevel;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.BiologicalEntity;
-import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Character;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Distribution;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.DistributionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.distribution.model.Treatment;
 
+/**
+ * A table of states and their abbreviation as used per FNA guidelines can be found here:
+ * http://floranorthamerica.org/files/FNA%20ContribGuide%202008.pdf
+ */
 public class DistributionTransformer implements IDistributionTransformer {
 
 	static ArrayList<Pattern> USStates = new ArrayList<Pattern>();
@@ -152,14 +152,77 @@ public class DistributionTransformer implements IDistributionTransformer {
 		CAProvinces.add(Pattern.compile("^Nfld\\.?$", Pattern.CASE_INSENSITIVE));
 		CAProvinces.add(Pattern.compile("^Labr\\.?$", Pattern.CASE_INSENSITIVE));
 
+		CAProvinces.add(Pattern.compile("^Alta\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^B\\.C\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^Man\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^N\\.B\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^Nfld\\. and Labr\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^N\\.W\\.T\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^N\\.S\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^Nunavut$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^Ont\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^P\\.E\\.I\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^Que\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^Sask\\.?$", Pattern.CASE_INSENSITIVE));
+		CAProvinces.add(Pattern.compile("^Yukon$", Pattern.CASE_INSENSITIVE));
+
+		USStates.add(Pattern.compile("^Ala\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Alaska$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Ariz\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Ark\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Calif\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Colo\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Conn\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Del\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^D\\.C\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Fla\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Ga\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Idaho$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Ill\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Ind\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Iowa$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Kans\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Ky\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^La\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Maine$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Md\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Mass\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Mich\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Minn\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Mo\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Mont\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Nebr\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Nev\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^N\\.H\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^N\\.J\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^N\\.Mex\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^N\\.Y\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^N\\.C\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^N\\.Dak\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Ohio$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Okla\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Oreg\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Pa\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^R\\.I\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^S\\.C\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^S\\.Dak\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Tenn\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Tex\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Utah$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Vt\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Va\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Wash\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^W.\\.Va\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Wis\\.?$", Pattern.CASE_INSENSITIVE));
+		USStates.add(Pattern.compile("^Wyo\\.?$", Pattern.CASE_INSENSITIVE));
 	}
 
 	/*
 	 * static Hashtable<String, String> FNAcoverage = new Hashtable<String, String>
 	 * (); //Alta. => US
-	 * 
+	 *
 	 * static{ //based on FNA contributor's guide
-	 * 
+	 *
 	 * FNAcoverage.put("Alabama", "US"); FNAcoverage.put("Ala.", "US");
 	 * FNAcoverage.put("Alaska", "US"); FNAcoverage.put("Ariz.", "US");
 	 * FNAcoverage.put("Arizona", "US"); FNAcoverage.put("Ark.", "US");
@@ -253,75 +316,20 @@ public class DistributionTransformer implements IDistributionTransformer {
 		}
 	}
 
-	/**
-	 * <description type=“distribution”> <statement id=“X”> <text>introduced; Alta.,
-	 * B.C., Yukon; Ala., Alaska; Eurasia.</text>
-	 * <biological_entity name=”whole_organism”>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “Alta”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “B.C.”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * ”Yukon.”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “Ala.”/>
-	 * <character name=“distribution” establishment_means=”introduced” value=
-	 * “Alaska”/>
-	 * <character name=”distribution” establishment_means=”native” value=”Eurasia>
-	 * </biological_entity> </statement> </description>
-	 * 
-	 * <description type=“distribution”> <statement id=“X”> <text>Alta., B.C.,
-	 * Yukon; Ala., Alaska; Introduced in Eurasia.</text>
-	 * <biological_entity name=”whole_organism”>
-	 * <character name=“distribution” establishment_means=”native” value=“Alta”/>
-	 * <character name=“distribution” establishment_means=”native” value=“B.C.”/>
-	 * <character name=“distribution” establishment_means=”native” value=”Yukon.”/>
-	 * <character name=“distribution” establishment_means=”native” value=“Ala.”/>
-	 * <character name=“distribution” establishment_means=”native” value=“Alaska”/>
-	 * <character name=”distribution” establishment_means=”introduced” value=
-	 * ”Eurasia> </biological_entity> </statement> </description>r
-	 * 
-	 * Answers provided by Richard Rabeler <rabeler@umich.edu>: Here are a few
-	 * examples taken from v 9. 1. North America, Eurasia, n Africa; introduced in
-	 * Pacific Islands (New Zealand), Australia. Do we have the certainty that North
-	 * America, Eurasia, n Africa are Native? --> Yes
-	 * 
-	 * 2. introduced; St. Pierre and Miquelon; N.B., Nfld. and Labr. (Nfld.), N.S.,
-	 * Ont., P.E.I., Que.; Colo., Conn., Ill., Ind., Maine, Mass., Mich., Minn.,
-	 * N.H., N.J., N.Y., Ohio, Pa., Vt., W.Va., Wis.; Eurasia. --> this is the most
-	 * common style of FNA distribution statement. The plant is introduced in North
-	 * America and native (see that semi-colon after "Wis"?) to Eurasia.
-	 * 
-	 * 3. North America, Mexico, West Indies, Central America, South America,
-	 * Eurasia, Africa, Pacific Islands (Hawaii, New Zealand), Australia; introduced
-	 * widely. what should we do with introduced widely? --> This one suggests thatpantropical, of both humid and arid regions, with few
-	 * temperate outliers in Europe, Asia, and North America
-	 * the plant is native everywhere and introduced widely as well - which doesn't
-	 * make a lot of sense. I might query the author (and JZ) on that one.
-	 * 
-	 * 4. introduced; Ont.; Iowa, Ky., Mich., N.Y., Ohio, Pa.; Europe; w, c Asia (to
-	 * w China); introduced also in South America (Argentina). --> introduced in
-	 * North America, native in Europe and w,c Asia (to w China), also introduced to
-	 * S. America.
-	 * 
-	 * Other examples pantropical, of both humid and arid regions, with few
-	 * temperate outliers in Europe, Asia, and North America.
-	 */
-
 	public LinkedHashSet<Character> getDistributionsCharacters(String text) {
 		log(LogLevel.INFO, "parsing distribution: " + text); // TODO:this message should pass to the user.
 		LinkedHashSet<Character> result = new LinkedHashSet<Character>();
-		
+
 		/*
 		 * if(text.contains("Mexico(Nuevo")){ log(LogLevel.INFO,
 		 * "in distribution transformation, see text "+ text); }
 		 */
-		
+
 		// format text, replace [,;] in parentheses with @
 		text = getListFormattedText(text);
-		
+
 		// split sentence by ;
-		String[] parts = text.split("\\s*;\\s*"); 
+		String[] parts = text.split("\\s*;\\s*");
 
 		// collect characters
 		boolean anyPreviousPartIntroduced = false;
@@ -348,7 +356,7 @@ public class DistributionTransformer implements IDistributionTransformer {
 		 * if(area.matches("introduced;")){ NAestablishment = "introduced"; //for all
 		 * FNAcoverage locations }else if(area.startsWith("introduced")){ establishment
 		 * = "introduced"; //area-specific }else{ establishment = "native"; }
-		 * 
+		 *
 		 * String[] locations = getLocations(area); for(String location: locations){
 		 * if(location.indexOf("@")>=0){ values.addAll(allValues(location,
 		 * NAestablishment, establishment)); }else{ Character c = new Character();
@@ -366,27 +374,28 @@ public class DistributionTransformer implements IDistributionTransformer {
 		return result;
 	}
 
-	private List<Character> getDistributionCharacters(String text, boolean anyPreviousPartIntroduced, 
+	private List<Character> getDistributionCharacters(String text, boolean anyPreviousPartIntroduced,
 			boolean previousPartIntroduced, boolean thisPartIntroduced) {
 		List<Character> result = new ArrayList<Character>();
 		String[] locations = getLocations(text);
 
 		for (String location : locations) {
 			if (location.indexOf("@") >= 0) {
-				result.addAll(getDistributionCharactersFromList(location, 
+				result.addAll(getDistributionCharactersFromList(location,
 						(thisPartIntroduced || previousPartIntroduced) ? "introduced" : "native"));
 			} else {
 				Character c = new Character();
 				c.setName("distribution");
 				String coverage = getNorthAmericaCoverage(
 						location.replaceAll("\\b[senwc]{0,2}\\b", "").replaceAll("\\(\\?\\)", "").trim()); // s Florida,
-																										   // Alta.(?)
-				// is in US or Canada																	
-				if (coverage != null) { 
-					c.setValue(location + ", " + coverage);
+				// Alta.(?)
+				// is in US or Canada
+				if (coverage != null) {
+					c.setGeographicalConstraint(coverage);
+					c.setValue(location);// + ", " + coverage);
 					log(LogLevel.INFO, "distribution: " + location + ", " + coverage);
 					c.setEstablishedMeans((anyPreviousPartIntroduced || previousPartIntroduced || thisPartIntroduced ? "introduced" : "native"));
-				// is not in US or Canada
+					// is not in US or Canada
 				} else {
 					location = location.trim().replaceFirst("[,.]+$", "");
 					log(LogLevel.INFO, "distribution: " + location + "[outside of US and Canada]");
@@ -400,21 +409,25 @@ public class DistributionTransformer implements IDistributionTransformer {
 	}
 
 	/**
-	 * 
+	 *
 	 * split on "," works for lists of US and Canada states/provinces Iowa, Ky.,
 	 * Mich., N.Y., Ohio, Pa.; Europe; introduced also in South America (Argentina).
-	 * 
+	 *
 	 * but not for pantropical, of both humid and arid regions, with few temperate
 	 * outliers in Europe, Asia, and North America. w, c Asia (to w China);
-	 * 
-	 * 
+	 *
+	 *
 	 * @param area
 	 * @return
 	 */
 	private String[] getLocations(String area) {
 		// try split first then check the results
 		List<String> locations = new LinkedList<String>(Arrays.asList(area.split("\\s*,\\s*"))); // St. Pierre and
-																												// place
+		for(String location : new ArrayList<String>(locations)) {
+			if(location.trim().isEmpty())
+				locations.remove(location);
+		}
+		// place
 		boolean split = true;
 		/*Iterator<String> it = locations.iterator();
 		Hashtable<Integer, List<String>> newOnes = new Hashtable<Integer, List<String>>();
@@ -428,12 +441,12 @@ public class DistributionTransformer implements IDistributionTransformer {
 			}
 			// split other 'and' but not the one in Newfoundland and Labrador
 			/*
-			 * if(!(location.contains("Newfoundland and Labrador") ||
-			 * location.matches("^Nfld\\s?\\.? and Labr\\s?\\.?\\s?\\(?.*?\\)?$")) &&
-			 * location.matches(".*\\sand\\s.*?")){ it.remove(); newOnes.put(index,
-			 * Arrays.asList(location.split("\\s*and\\s*"))); }
-			 */
-			// index++;
+		 * if(!(location.contains("Newfoundland and Labrador") ||
+		 * location.matches("^Nfld\\s?\\.? and Labr\\s?\\.?\\s?\\(?.*?\\)?$")) &&
+		 * location.matches(".*\\sand\\s.*?")){ it.remove(); newOnes.put(index,
+		 * Arrays.asList(location.split("\\s*and\\s*"))); }
+		 */
+		// index++;
 		//}
 
 		/*
@@ -448,21 +461,21 @@ public class DistributionTransformer implements IDistributionTransformer {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param location
 	 * @return US or Canada or null
 	 */
 	private String getNorthAmericaCoverage(String location) {
-		System.out.println(location);
-		System.out.println(location);
+		//System.out.println(location);
+		//System.out.println(location);
 		for (Pattern p : USStates) {
 			Matcher m = p.matcher(location);
 			if (m.matches())
 				return "United States";
 		}
 		for (Pattern p : CAProvinces) {
-			System.out.println(p);
-			System.out.println(p);
+			//System.out.println(p);
+			//System.out.println(p);
 			Matcher m = p.matcher(location);
 			if (m.matches())
 				return "Canada";
@@ -472,8 +485,9 @@ public class DistributionTransformer implements IDistributionTransformer {
 
 	/**
 	 * extract values from a segment containing @
-	 * 
-	 * @param area
+	 *
+	 * @param text
+	 * @param establishmentMeans
 	 * @return
 	 */
 	private LinkedHashSet<Character> getDistributionCharactersFromList(String text, String establishmentMeans) {
@@ -520,20 +534,21 @@ public class DistributionTransformer implements IDistributionTransformer {
 		formated += text;
 		return formated;
 	}
-	
+
 	public static void main(String[] args) {
 		String[] examples = new String[] {
-			"North America, Eurasia, n Africa; introduced in Pacific Islands (New Zealand), Australia.", 
-			"introduced; St. Pierre and Miquelon; N.B., Nfld. and Labr. (Nfld.), N.S., " + 
-			"Ont., P.E.I., Que.; Colo., Conn., Ill., Ind., Maine, Mass., Mich., Minn., " + 
-			"N.H., N.J., N.Y., Ohio, Pa., Vt., W.Va., Wis.; Eurasia.",
-			"North America, Mexico, West Indies, Central America, South America, " + 
-			"Eurasia, Africa, Pacific Islands (Hawaii, New Zealand), Australia; introduced " + 
-			"widely.",
-			"introduced; Ont.; Iowa, Ky., Mich., N.Y., Ohio, Pa.; Europe; w, c Asia (to " + 
-			"w China); introduced also in South America (Argentina).",
-			"pantropical, of both humid and arid regions, with few temperate outliers in Europe, " + 
-			"Asia, and North America"
+				"Alta., B.C.; Idaho, Mont., Wash., Wyo.",
+				"North America, Eurasia, n Africa; introduced in Pacific Islands (New Zealand), Australia.",
+				"introduced; St. Pierre and Miquelon; N.B., Nfld. and Labr. (Nfld.), N.S., " +
+						"Ont., P.E.I., Que.; Colo., Conn., Ill., Ind., Maine, Mass., Mich., Minn., " +
+						"N.H., N.J., N.Y., Ohio, Pa., Vt., W.Va., Wis.; Eurasia.",
+						"North America, Mexico, West Indies, Central America, South America, " +
+								"Eurasia, Africa, Pacific Islands (Hawaii, New Zealand), Australia; introduced " +
+								"widely.",
+								"introduced; Ont.; Iowa, Ky., Mich., N.Y., Ohio, Pa.; Europe; w, c Asia (to " +
+										"w China); introduced also in South America (Argentina).",
+										"pantropical, of both humid and arid regions, with few temperate outliers in Europe, " +
+												"Asia, and North America"
 		};
 		DistributionTransformer transformer = new DistributionTransformer();
 		for(String example : examples)

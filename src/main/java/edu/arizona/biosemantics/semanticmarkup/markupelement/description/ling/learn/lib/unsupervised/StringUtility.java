@@ -1,12 +1,9 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.lib.unsupervised;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class StringUtility {
 
@@ -14,17 +11,17 @@ public class StringUtility {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static String strip(String text) {				
+	public static String strip(String text) {
 		text=text.replaceAll("<(([^ >]|\n)*)>", " ");
 		text=text.replaceAll("<\\?[^>]*\\?>", " "); //<? ... ?>
 		text=text.replaceAll("&[^ ]{2,5};", " "); //remove &nbsp;
 		text=text.replaceAll("\\s+", " ");
-		
+
 		return text;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param text
 	 *            : string in which all punctuations to remove
 	 * @param c
@@ -45,17 +42,17 @@ public class StringUtility {
 
 		return text;
 	}
-	
+
 	public static String trimString (String text){
 		String myText = text;
 		myText = myText.replaceAll("^\\s+|\\s+$", "");
 		return myText;
 	}
-	
+
 	/**
 	 * Helper of method updateTable: process word
-	 * 
-	 * @param w
+	 *
+	 * @param word
 	 * @return
 	 */
 
@@ -63,30 +60,30 @@ public class StringUtility {
 		//$word =~ s#<\S+?>##g; #remove tag from the word
 		//$word =~ s#\s+$##;
 		//$word =~ s#^\s*##;
-		
+
 		word = word.replaceAll("<\\S+?>", "");
 		word = word.replaceAll("\\s+$", "");
 		word = word.replaceAll("^\\s*", "");
-		
+
 		return word;
 	}
-	
+
 	public static String removeAll(String word, String regex) {
-		String newWord = word.replaceAll(regex, ""); 
+		String newWord = word.replaceAll(regex, "");
 		return newWord;
 	}
-	
+
 	public static String removeAllRecursive(String text, String regex) {
 		String newText = text.replaceAll(regex, "");
-				
+
 		while (!newText.equals(text)) {
 			text = newText;
 			newText = text.replaceAll(regex, "");
 		}
-		
+
 		return newText;
 	}
-	
+
 	// if($t !~ /\b(?:$STOP)\b/ && $t =~/\w/ && $t !~ /\d/ && length $t > 1){
 	public static boolean isWord(String token) {
 		String regex = "\\b(" + Constant.STOP + ")\\b";
@@ -104,11 +101,11 @@ public class StringUtility {
 
 		return true;
 	}
-	
+
 	/**
 	 * in perl, it escape [] {} and () for mysql regexp, not perl regrexp. May
 	 * not be necessary in Java
-	 * 
+	 *
 	 * @param singularPluralVariations
 	 * @return
 	 */
@@ -119,10 +116,10 @@ public class StringUtility {
 
 	/**
 	 * check if a word is a word in the wordList
-	 * 
+	 *
 	 * @param word
 	 *            the word to check
-	 * 
+	 *
 	 * @param wordList
 	 *            the words to match to
 	 * @return a boolean variable. true mean word is a word in the list. false
@@ -136,7 +133,7 @@ public class StringUtility {
 	 * Given a list of words in one string in the form of
 	 * "(word1|word2|...|wordn)", remove the word from the list if it is in the
 	 * list.
-	 * 
+	 *
 	 * @param word
 	 *            the word to remove
 	 * @param wordList
@@ -145,49 +142,49 @@ public class StringUtility {
 	 */
 	public static String removeFromWordList(String word, String wordList) {
 		String newWordList = wordList;
-		
+
 		newWordList = newWordList.replaceAll("\\b" + word + "\\b", "");
 		newWordList = newWordList.replaceAll("^\\|", "");
 		newWordList = newWordList.replaceAll("\\|\\|", "|");
 		newWordList = newWordList.replaceAll("\\|$", "");
-		
+
 		return newWordList;
 	}
-	
-//	public static boolean equalsWithNull(String s1, String s2) {
-////		boolean flag = false;
-////		flag = (s1==null)? (s2==null) : s1.equals(s2);
-////		
-////		return flag;
-//		return StringUtils.equals(s1, s2);
-//	}
-	
+
+	//	public static boolean equalsWithNull(String s1, String s2) {
+	////		boolean flag = false;
+	////		flag = (s1==null)? (s2==null) : s1.equals(s2);
+	////
+	////		return flag;
+	//		return StringUtils.equals(s1, s2);
+	//	}
+
 	/**
 	 * Convert a string array of to a string of words separated by space
-	 * 
+	 *
 	 * @param words
 	 * @return the string
 	 */
 	public static String stringArray2String(String [] words) {
 		String wordsString = "";
-		
+
 		for (int i=0;i<words.length;i++) {
 			wordsString = wordsString + words[i] + " ";
 		}
-		
-		wordsString = wordsString.substring(0, wordsString.length()-1); 
-		
+
+		wordsString = wordsString.substring(0, wordsString.length()-1);
+
 		return wordsString;
 	}
-	
-//	public static List<String>
-	
+
+	//	public static List<String>
+
 	//Arrays.asList
-	
+
 	/**
 	 * Get a splice of the string list between the index of the start
 	 * (inclusive) and the end (exclusive)from the string list
-	 * 
+	 *
 	 * @param words
 	 *            the string list
 	 * @param start
@@ -199,35 +196,35 @@ public class StringUtility {
 	public static List<String> stringArraySplice(List<String> words, int start, int end) {
 		List<String> splicedWords = new ArrayList<String>();
 		splicedWords.addAll(words.subList(start, end));
-		
+
 		return splicedWords;
 	}
-	
+
 	/**
 	 * Join a list of string together
-	 * 
+	 *
 	 * @param separater
 	 * @param list
 	 * @return the string
 	 */
 	public static String joinList(String separater, List<String> list){
 		String result = "";
-		
+
 		for (int i=0;i<list.size();i++) {
 			result = result + list.get(i)+separater;
 		}
-		
+
 		if (!result.equals("")) {
 			result = result.substring(0, result.length()-separater.length());
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Given a regex and an input, returns a matcher to match the regex to the
 	 * input
-	 * 
+	 *
 	 * @param regex
 	 *            the regular expression
 	 * @param input
@@ -242,7 +239,7 @@ public class StringUtility {
 
 	/**
 	 * Null-safe method to match a entire text against the pattern
-	 * 
+	 *
 	 * @param pattern
 	 *            the pattern to match against
 	 * @param text
@@ -253,7 +250,7 @@ public class StringUtility {
 		if (pattern == null || text == null) {
 			return false;
 		}
-		
+
 		Pattern p = Pattern.compile(pattern);
 		Matcher m = p.matcher(text);
 		if (m.matches()) {
@@ -264,5 +261,5 @@ public class StringUtility {
 		}
 
 	}
-	
+
 }

@@ -13,7 +13,7 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.markup.
 import edu.arizona.biosemantics.semanticmarkup.run.AbstractRun;
 
 /**
- * A MarkupEvaluationRun creates a markup of treatments using an IMarkupCreator and afterwards evaluating the created markup 
+ * A MarkupEvaluationRun creates a markup of treatments using an IMarkupCreator and afterwards evaluating the created markup
  * using an IEvaluator
  * @author rodenhausen
  */
@@ -25,19 +25,23 @@ public class DescriptionMarkupAndDescriptionMarkupEvaluationRun extends Abstract
 	private String correctInputDirectory;
 
 	/**
-	 * @param outDirectory
+	 *
 	 * @param guiceModuleFile
+	 * @param inputDirectory
+	 * @param runOutDirectory
 	 * @param creator
 	 * @param evaluator
-	 * @param goldStandardReader
+	 * @param descriptionMarkupResultReader
+	 * @param correctInputDirectory
+	 * @param connectionPool
 	 */
 	@Inject
 	public DescriptionMarkupAndDescriptionMarkupEvaluationRun(@Named("GuiceModuleFile")String guiceModuleFile,
-			@Named("InputDirectory")String inputDirectory, 
-			@Named("Run_OutDirectory")String runOutDirectory, 
-			@Named("MarkupCreator") IDescriptionMarkupCreator creator, 
-			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator, 
-			@Named("EvaluationRun_DescriptionMarkupResultReader")IDescriptionMarkupResultReader descriptionMarkupResultReader, 
+			@Named("InputDirectory")String inputDirectory,
+			@Named("Run_OutDirectory")String runOutDirectory,
+			@Named("MarkupCreator") IDescriptionMarkupCreator creator,
+			@Named("EvaluationRun_Evaluator")IDescriptionMarkupEvaluator evaluator,
+			@Named("EvaluationRun_DescriptionMarkupResultReader")IDescriptionMarkupResultReader descriptionMarkupResultReader,
 			String correctInputDirectory,
 			ConnectionPool connectionPool) {
 		super(guiceModuleFile, inputDirectory, runOutDirectory, connectionPool);
@@ -51,12 +55,12 @@ public class DescriptionMarkupAndDescriptionMarkupEvaluationRun extends Abstract
 	protected void doRun() throws Exception {
 		log(LogLevel.INFO, "Creating markup using " + creator.getDescription() + "...");
 		DescriptionMarkupResult result = creator.create();
-		
+
 		log(LogLevel.INFO, "Evaluating markup using " + evaluator.getDescription() + "...");
-		
+
 		log(LogLevel.INFO, "read gold standard using " + descriptionMarkupResultReader.getClass());
 		DescriptionMarkupResult correctResult = descriptionMarkupResultReader.read(correctInputDirectory);
-		
+
 		evaluator.evaluate(result, correctResult);
 		log(LogLevel.INFO, "Evaluation result: \n" + evaluator.getResult());
 	}
