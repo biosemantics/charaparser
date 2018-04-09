@@ -59,12 +59,26 @@ public class JDOMPhenologyWriter implements IPhenologyWriter {
 						beElement.setAttribute("type", be.getType());
 						for(Character ch: be.getCharacters()){
 							Element chElement = new Element("character");
+
 							chElement.setAttribute("name", ch.getName());
-							chElement.setAttribute("value", ch.getValue());
-							if(ch.getModifier() != null && !ch.getModifier().isEmpty())
-								chElement.setAttribute("modifier", ch.getModifier());
+							if(ch.getCharType()!=null)  chElement.setAttribute("char_type", ch.getCharType());
+							if(ch.getUpperRestricted()!=null) chElement.setAttribute("upper_restricted", ch.getUpperRestricted());
+							if(ch.getValue()!=null) chElement.setAttribute("value", ch.getValue());
+							if(ch.getUnit()!=null) chElement.setAttribute("unit",ch.getUnit());
+							if(ch.getModifier()!=null) chElement.setAttribute("modifier", ch.getModifier());
+							if(ch.getTo()!=null) chElement.setAttribute("to", ch.getTo());
+							if(ch.getToUnit()!=null) chElement.setAttribute("to_unit",ch.getToUnit());
+							if(ch.getToInclusive()!=null) chElement.setAttribute("to_inclusive",ch.getToInclusive() );
+							if(ch.getToModifier()!=null) chElement.setAttribute("to_modifier", ch.getToModifier());
+
+							if(ch.getFrom()!=null) chElement.setAttribute("from", ch.getFrom() );
+							if(ch.getFromUnit()!=null) chElement.setAttribute("from_unit",ch.getFromUnit() );
+							if(ch.getFromInclusive()!=null) chElement.setAttribute("from_inclusive",ch.getFromInclusive() );
+							if(ch.getFromModifier()!=null) chElement.setAttribute("from_modifier", ch.getFromModifier());
+
 							if(ch.getConstraint() != null && !ch.getConstraint().isEmpty())
 								chElement.setAttribute("constraint", ch.getConstraint());
+
 							beElement.addContent(chElement);
 						}
 						statementElement.addContent(beElement);
