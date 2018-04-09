@@ -29,7 +29,7 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 	private ArrayList<PhenologyInfoExtractor> extractors;
 
 	@Inject
-	public ExtractorBasedPhenologyTransformer(@Named("AdvModifiers") String advModifiers,
+	public ExtractorBasedPhenologyTransformer(@Named("AdvModifiers") String advModifiers, @Named("ModifierList") String modifierList,
 			@Named("LyAdverbpattern") String lyAdvPattern, @Named("StopWordString") String stopwords){
 		Pattern advModPattern = Pattern.compile( "("+advModifiers+"|"+lyAdvPattern+"|ca.)");
 
@@ -49,43 +49,43 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList("flowering"/*, "flower", "flowers" clash with entity name ambiguous */),
 				Arrays.asList(flowerEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList("fruiting"/*, "fruits", "fruit" clash with entity name ambiuous */),
 				Arrays.asList(fruitEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList("sporulating", "sporulates", "sporulate", "sporulation"),
 				Arrays.asList(sporeEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 				Arrays.asList(sporocarpsEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 				Arrays.asList(sporophyteEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 				Arrays.asList(sporophyllEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList("coning"/*, "cones", "cone" clash with entity name ambiguous */),
 				Arrays.asList(coneEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList("capsuling", "capsulation"/*, "capsules", "capsule" clash with entity name ambiguous*/),
 				Arrays.asList(capsuleEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 				Arrays.asList(leafEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		extractors.add(new PhenologyInfoExtractor(Arrays.asList("seeding"/*, "seeds", "seed" clash with entity name ambiguous */),
 				Arrays.asList(seedEntityTerms),
 				Arrays.asList(appearingStageTerms),
-				false, advModPattern, stopwords));
+				false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 
 		List<List<String>> stages = new ArrayList<List<String>>();
 		stages.add(Arrays.asList(new String[] { "maturing", "matures", "mature", "maturity" }));
@@ -98,43 +98,43 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(flowerEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(fruitEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(sporeEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(sporophyllEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(sporophyteEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(sporocarpsEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(coneEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(capsuleEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(leafEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 			extractors.add(new PhenologyInfoExtractor(Arrays.asList(),
 					Arrays.asList(seedEntityTerms),
 					stageTerms,
-					false, advModPattern, stopwords));
+					false, advModPattern, stopwords, lyAdvPattern, modifierList, advModifiers));
 		}
 	}
 
@@ -177,6 +177,8 @@ public class ExtractorBasedPhenologyTransformer implements IPhenologyTransformer
 				values.addAll(extractor.extract(statement));
 			}
 		}
+
+		System.out.println(values);
 
 		return values;
 	}

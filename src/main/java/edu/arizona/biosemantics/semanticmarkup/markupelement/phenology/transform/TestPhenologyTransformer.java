@@ -19,30 +19,32 @@ public class TestPhenologyTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
-				"Sporocarps produced spring--fall (Apr--Oct).",
+				//"Flowering Mar-May(-Jun)",
+				//"Coning late winter--midspring (Mar--May).",
+				//"Sporocarps produced spring--fall (Apr--Oct).",
 				//"Sporulates summer",
-				/*"Coning March--April.",
-				"Coning late winter--early spring.",
-				"Coning late winter--midspring (Mar--May).",
-				"Coning late winter--midspring.",
+				//"Coning March--April.",
+				//"Coning late winter--early spring.",
+				//"Coning late winter--midspring (Mar--May).",
+				/*"Coning late winter--midspring.",
 				"Coning March--April.",
-				"Sporulates essentially all year."*/
-				//"Sporulation early spring--midsummer.",
-				///"Sporulation late spring--early summer.",
-				//"Sporulation early spring--midsummer.",
-				//"Sporulating throughout the year.",
+				"Sporulates essentially all year.",
+				"Sporulation early spring--midsummer.",
+				"Sporulation late spring--early summer.",
+				"Sporulation early spring--midsummer.",
+				"Sporulating throughout the year.",*/
 
 				//"Spores mature in winter or spring.",
 
-				/*
-				"Sporulation spring--early summer (late summer, early winter in Florida).",
-				typical spring - early summer
+
+				//"Sporulation spring--early summer (late summer, early winter in Florida).",
+				/*typical spring - early summer
 				atypical spring - late summer
 				atypical spring - early winter (constraint florida)
+				 */
 
-
-				"Leaves appearing early-late spring, often with second flush later in season following summer rains.",
-				typical early spring - late spring modifier="often with second flush later in season following summer rains"
+				//"Leaves appearing early-late spring, often with second flush later in season following summer rains.",
+				/*			typical early spring - late spring modifier="often with second flush later in season following summer rains"
 				atypical value=later in season constraint "follower summer rains"
 
 				typical early spring - late spring modifier="often with second flush later in season following summer rains"
@@ -150,13 +152,14 @@ public class TestPhenologyTransformer {
 				/* */
 		};
 
+		String modifierList = "(.*?\\b)(\\w+ly\\s+(?:to|or)\\s+\\w+ly)(\\b.*)";
 		String lyPattern = "[a-z]{3,}ly";
 		String stopWords = "a|about|above|across|after|along|also|although|amp|an|and|are|as|at|be|because|become|becomes|becoming|been|before|being|"
 				+ "beneath|between|beyond|but|by|ca|can|could|did|do|does|doing|done|for|from|had|has|have|hence|here|how|however|if|in|into|inside|inward|is|it|its|"
 				+ "may|might|more|most|near|of|off|on|onto|or|out|outside|outward|over|should|so|than|that|the|then|there|these|this|those|throughout|"
 				+ "to|toward|towards|up|upward|was|were|what|when|where|which|why|with|within|without|would";
 		String advModifiers = "at least|at first|at times|almost|always|never|not|often|quite|rather|sometimes|somewhat";
-		IPhenologyTransformer transformer = new ExtractorBasedPhenologyTransformer(advModifiers, lyPattern, stopWords);
+		IPhenologyTransformer transformer = new ExtractorBasedPhenologyTransformer(advModifiers, modifierList, lyPattern, stopWords);
 		//IPhenologyTransformer transformer = new PhenologyTransformer(advModifiers, lyPattern, stopWords);
 
 		PhenologiesFile phenologiesFile = new PhenologiesFile();
