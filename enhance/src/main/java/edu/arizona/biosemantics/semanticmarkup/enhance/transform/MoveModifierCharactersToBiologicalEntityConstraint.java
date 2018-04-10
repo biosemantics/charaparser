@@ -15,6 +15,7 @@ import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsEntityExistence;
 
 /**
+ * This class is currently 2018/3 not functioning because no class implemented KnowsEntityExistence (which functions as the ontology for this class)
  * Moves constraint information represented by a is_modifier character to its parent biological entity if there is an ontology match
  * 
  * sentence: long red leaves toothed
