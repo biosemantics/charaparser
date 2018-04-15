@@ -24,7 +24,8 @@ public class TestHabitatTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
-				"Moist to wet, calcareous habitats, swamps, meadows, pastures, open woods, or rarely on rock;"
+				"Crevices and ledges on cliffs (occasionally on rocky slopes), mostly slaty and calcerous rocks;",
+				//"Moist to wet, calcareous habitats, swamps, meadows, pastures, open woods, or rarely on rock;"
 				//"Terrestrial or less commonly epiphytic in forested, relatively wet habitats, e.g., swamps, but occasionally thickets, roadsides, or clearings;",
 				/*"Shaded, usually moss-covered boulders and ledges, usually on limestone or other basic rocks, but occasionally on sandstone or other acidic rocks, rarely on fallen tree trunks;",
 				"Chaparral and foothill woodland, often on serpentine;",
