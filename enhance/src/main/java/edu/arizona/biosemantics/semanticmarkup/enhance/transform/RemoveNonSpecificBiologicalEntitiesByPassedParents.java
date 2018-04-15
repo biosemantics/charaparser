@@ -38,11 +38,6 @@ public class RemoveNonSpecificBiologicalEntitiesByPassedParents extends RemoveNo
 				name = name == null ? "" : name.trim();
 				String constraint = biologicalEntity.getAttributeValue("constraint");
 				constraint = constraint == null ? "" : constraint.trim();
-
-				if(name.equals("margin") && sentence.startsWith("the flagellum, mandibles, anterior margin of the face, and the head".toLowerCase())) {
-					System.out.println();
-				}
-
 				if(isNonSpecificPart(name)) {
 					if(!isPartOfAConstraint(name, constraint)) {
 						List<Element> searchStatements = new LinkedList<Element>(); //this is only in place because sometimes entities are placed in the next statement instead of the one in which it actually appears in text

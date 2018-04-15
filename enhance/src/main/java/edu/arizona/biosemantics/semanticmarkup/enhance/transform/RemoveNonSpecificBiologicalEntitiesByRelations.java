@@ -47,6 +47,11 @@ public class RemoveNonSpecificBiologicalEntitiesByRelations extends RemoveNonSpe
 								this.appendInferredConstraint(fromBiologicalEntity, parent);
 								fromBiologicalEntity.setAttribute("constraint", constraint);
 								fromBiologicalEntity = mergeSrc(toBiologicalEntity.getAttribute("src")==null? null:toBiologicalEntity.getAttributeValue("src"), fromBiologicalEntity);
+								//if toBiologicalEntity has no character, remove it and the relation element
+								if(toBiologicalEntity.getChildren().size()==0){
+									statement.removeContent(toBiologicalEntity);
+									statement.removeContent(relation);
+								}
 							}
 						}
 					}

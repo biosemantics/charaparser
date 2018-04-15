@@ -11,12 +11,13 @@ import org.jdom2.Element;
 import edu.arizona.biosemantics.common.ling.Token;
 import edu.arizona.biosemantics.common.ling.transform.ITokenizer;
 import edu.arizona.biosemantics.common.log.LogLevel;
+import edu.arizona.biosemantics.semanticmarkup.enhance.config.Configuration;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 
 public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends RemoveNonSpecificBiologicalEntities {
 
-	private String connectBackwardToParent = "has|have|with|contains";
+	//private String connectBackwardToParent = "has|have|with|contains";
 	private CollapseBiologicalEntityToName collapseBiologicalEntityToName;
 	
 	public RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
@@ -135,7 +136,7 @@ public class RemoveNonSpecificBiologicalEntitiesByBackwardConnectors extends Rem
 	}
 	
 	private boolean isConnectBackwardToParentKeyWord(String term) {
-		return term.matches(connectBackwardToParent);
+		return term.matches(Configuration.connectBackwardToParent);
 	}
 
 	

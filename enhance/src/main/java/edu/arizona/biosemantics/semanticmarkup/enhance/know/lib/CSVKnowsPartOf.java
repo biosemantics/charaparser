@@ -34,8 +34,8 @@ public class CSVKnowsPartOf implements KnowsPartOf {
 			List<String[]> lines = reader.readAll();
 			
 			for(String[] line : lines) {
-				String bearer = line[0].trim().toLowerCase();
-				String beared = line[1].trim().toLowerCase();
+				String bearer = line[0].trim().toLowerCase(); //parent
+				String beared = line[1].trim().toLowerCase(); //part
 				if(!partOfMap.containsKey(bearer)) 
 					partOfMap.put(bearer, new HashSet<String>());
 				partOfMap.get(bearer).add(beared);

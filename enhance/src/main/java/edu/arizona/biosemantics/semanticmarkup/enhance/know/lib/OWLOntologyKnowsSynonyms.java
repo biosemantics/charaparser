@@ -3,6 +3,7 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.know.lib;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.IRI;
@@ -74,7 +75,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 	
 	private Set<String> getSynonyms(OWLClass owlClass) {
 		Set<String> synonyms = new HashSet<String>();
-		for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology)) {
+		for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology).collect(Collectors.toSet())) {
 			if(axiom.getProperty().equals(this.exactSynonymProperty)) {
 				OWLAnnotationValue annotationValue = axiom.getValue();
 				if(annotationValue instanceof OWLLiteral) {
@@ -88,7 +89,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 
 	private OWLClass getOwlClassWithLabelOrSynonym(String term, Set<OWLClass> owlClasses) {
 		for(OWLClass owlClass : owlClasses) {
-			for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology)) {
+			for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology).collect(Collectors.toSet())) {
 				if(axiom.getProperty().equals(this.exactSynonymProperty)) {
 					OWLAnnotationValue annotationValue = axiom.getValue();
 					if(annotationValue instanceof OWLLiteral) {
@@ -112,7 +113,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 	}
 	
 	private String getLabel(OWLClass owlClass) {
-		for (OWLAnnotation annotation : EntitySearcher.getAnnotations(owlClass, owlOntology, labelProperty)) {
+		for (OWLAnnotation annotation : EntitySearcher.getAnnotations(owlClass, owlOntology, labelProperty).collect(Collectors.toSet())) {
 			if (annotation.getValue() instanceof OWLLiteral) {
 				OWLLiteral val = (OWLLiteral) annotation.getValue();
 				//if (val.hasLang("en")) {
