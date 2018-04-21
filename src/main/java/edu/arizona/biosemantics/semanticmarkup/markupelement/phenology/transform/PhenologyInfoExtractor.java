@@ -48,17 +48,18 @@ public class PhenologyInfoExtractor {
 	private final String timeBreakingPattern = "^.*,\\s*(" + this.gerundVerbs + "|" + this.entities + "|" + this.stages + ")$";
 
 	private final String timeTermModifiers = "early|mid|late";
-	private final String modifiedTimeTermsPattern = "(" + timeTermModifiers + ")?\\s*(" + timeTermsPattern + ")?";
-	private final String fromOutlierPattern = "\\((-*|(\\bfrom\\b)?)\\s*(" + modifiedTimeTermsPattern + ")\\+?\\s*-*\\s*.*\\)";
-	private final String fromForeignPattern = "\\[(-*|(\\bfrom\\b)?)\\s*(" + modifiedTimeTermsPattern + ")\\+?\\s*-*\\s*.*\\]";
-	private final String toOutlierPattern = "\\((-*|(\\bto\\b)?)\\s*(" + modifiedTimeTermsPattern + ")\\+?\\s*-*\\s*.*\\)";
-	private final String toForeignPattern = "\\[(-*|(\\bto\\b)?)\\s*(" + modifiedTimeTermsPattern + ")\\+?\\s*-*\\s*.*\\]";
-	private final String numericalRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + fromOutlierPattern + ")|(?<fromForeign>" + fromForeignPattern + "))?\\s*"
-			+ "(:?(?<from>(" + modifiedTimeTermsPattern + "))\\s*-+\\s*(?<to>(" + modifiedTimeTermsPattern + ")\\+?)|"
-			+ "(?<singleDataPoint>(" + modifiedTimeTermsPattern + ")))\\s*(?:(?<toOutlier>" + toOutlierPattern + ")|(?<toForeign>" + toForeignPattern + "))?\\s*"
+	private final String modifiedTimeTermsPattern_timeTermOptional = "(" + timeTermModifiers + ")?\\s*(" + timeTermsPattern + ")?";
+	private final String modifiedTimeTermsPattern_timeTermRequired = "(" + timeTermModifiers + ")?\\s*(" + timeTermsPattern + ")";
+	private final String fromOutlierPattern = "\\((-*|(\\bfrom\\b)?)\\s*(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?\\s*-*\\s*\\)";
+	private final String fromForeignPattern = "\\[(-*|(\\bfrom\\b)?)\\s*(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?\\s*-*\\s*\\]";
+	private final String toOutlierPattern = "\\((-*|(\\bto\\b)?)\\s*(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?\\s*-*\\s*\\)";
+	private final String toForeignPattern = "\\[(-*|(\\bto\\b)?)\\s*(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?\\s*-*\\s*\\]";
+	private final String timeRangeString = "(?<prefix>.*?)\\s*(?:(?<fromOutlier>" + fromOutlierPattern + ")|(?<fromForeign>" + fromForeignPattern + "))?\\s*"
+			+ "(:?(?<from>(" + modifiedTimeTermsPattern_timeTermOptional + "))\\s*-+\\s*(?<to>(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?)|"
+			+ "(?<singleDataPoint>(" + modifiedTimeTermsPattern_timeTermOptional + ")))\\s*(?:(?<toOutlier>" + toOutlierPattern + ")|(?<toForeign>" + toForeignPattern + "))?\\s*"
 			+ "(?<postfix>.*?)";
 
-	private final Pattern numericalRange = Pattern.compile(numericalRangeString, Pattern.CASE_INSENSITIVE);
+	private final Pattern timeRange = Pattern.compile(timeRangeString, Pattern.CASE_INSENSITIVE);
 
 	private List<String> verbForms;
 	private List<String> biologicalEntityTerms;
@@ -272,33 +273,40 @@ public class PhenologyInfoExtractor {
 		return result;
 	}
 
+	/**
+	 * These would be phrases such as winter--midspring (Mar--May)
+	 * where first there is a time range that is coarse. Later one that is more specific.
+	 * @param time
+	 * @return
+	 */
 	private boolean isCoarseSpecificTimeRangeSplit(String time) {
-		Pattern pattern = Pattern.compile(".*(" + modifiedTimeTermsPattern + ")\\s*-+\\s*(" + modifiedTimeTermsPattern + ")\\s*"
-				+ "\\(\\s*(" + modifiedTimeTermsPattern + ")\\s*-+\\s*(" + modifiedTimeTermsPattern + ")\\s*\\).*");
+		Pattern pattern = Pattern.compile(
+				".*(" + modifiedTimeTermsPattern_timeTermRequired + ")\\s*-+\\s*(" + modifiedTimeTermsPattern_timeTermRequired + ")\\s*" +
+						"\\(\\s*(" + modifiedTimeTermsPattern_timeTermRequired + ")\\s*-+\\s*(" + modifiedTimeTermsPattern_timeTermRequired + ")\\s*\\).*");
 		return pattern.matcher(time).matches();
 	}
 
 	private Collection<? extends Character> getTimeRangeCharacters(String name, String text,
 			String modifier) {
 		LinkedHashSet<Character> result = new LinkedHashSet<Character>();
-		Matcher numericalRangeMatcher = numericalRange.matcher(text);
-		if(numericalRangeMatcher.matches()){
-			String from = numericalRangeMatcher.group("from");
-			String to = numericalRangeMatcher.group("to");
-			String singleDataPoint = numericalRangeMatcher.group("singleDataPoint");
-			String fromOutlier = numericalRangeMatcher.group("fromOutlier");
-			String fromForeign = numericalRangeMatcher.group("fromForeign");
-			String toOutlier = numericalRangeMatcher.group("toOutlier");
-			String toForeign = numericalRangeMatcher.group("toForeign");
+		Matcher timeRangeMatcher = timeRange.matcher(text);
+		if(timeRangeMatcher.matches()){
+			String from = timeRangeMatcher.group("from");
+			String to = timeRangeMatcher.group("to");
+			String singleDataPoint = timeRangeMatcher.group("singleDataPoint");
+			String fromOutlier = timeRangeMatcher.group("fromOutlier");
+			String fromForeign = timeRangeMatcher.group("fromForeign");
+			String toOutlier = timeRangeMatcher.group("toOutlier");
+			String toForeign = timeRangeMatcher.group("toForeign");
 			String fromOutlierConstraint = null;
 			String fromForeignConstraint = null;
 			String toOutlierConstraint = null;
 			String toForeignConstraint = null;
-			String prefix = numericalRangeMatcher.group("prefix");
-			String postfix = numericalRangeMatcher.group("postfix");
+			String prefix = timeRangeMatcher.group("prefix");
+			String postfix = timeRangeMatcher.group("postfix");
 
-			Pattern fromOutlierExtractPattern = Pattern.compile("\\(.*?(?<outlier>-?(" + modifiedTimeTermsPattern + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\)", Pattern.CASE_INSENSITIVE);
-			Pattern toOutlierExtractPattern = Pattern.compile("\\((-*|(\\bto\\b)?)\\s*(?<outlier>(" + modifiedTimeTermsPattern + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\)", Pattern.CASE_INSENSITIVE);
+			Pattern fromOutlierExtractPattern = Pattern.compile("\\(.*?(?<outlier>-?(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\)", Pattern.CASE_INSENSITIVE);
+			Pattern toOutlierExtractPattern = Pattern.compile("\\((-*|(\\bto\\b)?)\\s*(?<outlier>(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\)", Pattern.CASE_INSENSITIVE);
 			if(fromOutlier != null) {
 				Matcher fromOutlierMatcher = fromOutlierExtractPattern.matcher(fromOutlier);
 				if(fromOutlierMatcher.matches()) {
@@ -314,8 +322,8 @@ public class PhenologyInfoExtractor {
 				}
 			}
 
-			Pattern fromForeignExtractPattern = Pattern.compile("\\[.*?(?<foreign>-?(" + modifiedTimeTermsPattern + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\]", Pattern.CASE_INSENSITIVE);
-			Pattern toForeignExtractPattern = Pattern.compile("\\[(-*|(\\bto\\b)?)\\s*(?<foreign>(" + modifiedTimeTermsPattern + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\]", Pattern.CASE_INSENSITIVE);
+			Pattern fromForeignExtractPattern = Pattern.compile("\\[.*?(?<foreign>-?(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\]", Pattern.CASE_INSENSITIVE);
+			Pattern toForeignExtractPattern = Pattern.compile("\\[(-*|(\\bto\\b)?)\\s*(?<foreign>(" + modifiedTimeTermsPattern_timeTermOptional + ")\\+?)\\s*-*\\s*(?<constraint>.*)\\]", Pattern.CASE_INSENSITIVE);
 			if(fromForeign != null) {
 				Matcher fromForeignMatcher = fromForeignExtractPattern.matcher(fromForeign);
 				if(fromForeignMatcher.matches()) {
@@ -478,7 +486,7 @@ public class PhenologyInfoExtractor {
 	}
 
 	private boolean isTimeRange(String timeValue) {
-		Matcher numericalRangeMatcher = numericalRange.matcher(timeValue);
+		Matcher numericalRangeMatcher = timeRange.matcher(timeValue);
 		return numericalRangeMatcher.matches();
 	}
 

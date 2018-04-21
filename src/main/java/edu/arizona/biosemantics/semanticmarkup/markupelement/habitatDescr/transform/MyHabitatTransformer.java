@@ -113,14 +113,14 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 					danglingTO = false;
 				} else {
 					if(!leaf.nodeString().startsWith("e.g")) {
-						danglingNonNNSValues += " " + leaf.nodeString();
+						danglingNonNNSValues += " " + replaceLrbRrb(leaf.nodeString());
 						if(leaf.parent(root).label().value().equals("TO"))
 							danglingTO = true;
 					}
 				}
 			} else if(!isPartOfNounPhraseWithNNS(leaf, root)) {
 				if(!leaf.nodeString().startsWith("e.g")) {
-					danglingNonNNSValues += " " + leaf.nodeString();
+					danglingNonNNSValues += " " + replaceLrbRrb(leaf.nodeString());
 					if(leaf.parent(root).label().value().equals("TO"))
 						danglingTO = true;
 				}
@@ -318,10 +318,14 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 		}
 
 		for(Character c : characters) {
-			c.setConstraint(constraint);
+			c.setConstraint(replaceLrbRrb(constraint));
 		}
 
 		return characters;
+	}
+
+	private String replaceLrbRrb(String text) {
+		return text.replaceAll("(?i)-LRB-", "(").replaceAll("(?i)-RRB-", ")");
 	}
 
 	private String getLeafString(Tree tree) {
@@ -391,8 +395,8 @@ public class MyHabitatTransformer implements IHabitatTransformer {
 			return null;
 		Character c = new Character();
 		c.setName("habitat");
-		c.setValue(value.trim().toLowerCase());
-		c.setModifier(modifier.trim().toLowerCase());
+		c.setValue(replaceLrbRrb(value.trim().toLowerCase()));
+		c.setModifier(replaceLrbRrb(modifier.trim().toLowerCase()));
 		return c;
 	}
 

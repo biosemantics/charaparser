@@ -19,8 +19,9 @@ public class TestPhenologyTransformer {
 		rootLogger.setLevel(Level.INFO);
 
 		String[] examples = {
-				//"Flowering Mar-May(-Jun)",
-				//"Coning late winter--midspring (Mar--May).",
+				"Flowering (Mar-)May-Jul(-Nov)",
+				"Flowering Mar-May(-Jun)",
+				"Coning late winter--midspring (Mar--May).",
 				//"Sporocarps produced spring--fall (Apr--Oct).",
 				//"Sporulates summer",
 				//"Coning March--April.",
