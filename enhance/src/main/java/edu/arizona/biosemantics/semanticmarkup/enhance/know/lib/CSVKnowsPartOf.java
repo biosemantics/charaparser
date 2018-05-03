@@ -3,6 +3,7 @@ package edu.arizona.biosemantics.semanticmarkup.enhance.know.lib;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,23 +27,39 @@ public class CSVKnowsPartOf implements KnowsPartOf {
 	private IInflector inflector;
 	
 
-	public CSVKnowsPartOf(String partOfFile, KnowsSynonyms knowsSynonyms, IInflector inflector) {
+	public CSVKnowsPartOf(ArrayList<String> partOfFiles, KnowsSynonyms knowsSynonyms, IInflector inflector) throws PartOfCSVSourceException {
 		this.inflector = inflector;
 		this.knowsSynonyms = knowsSynonyms;
 		partOfMap = new HashMap<String, Set<String>>();
-		try(CSVReader reader = new CSVReader(new FileReader(partOfFile))) {
-			List<String[]> lines = reader.readAll();
-			
-			for(String[] line : lines) {
-				String bearer = line[0].trim().toLowerCase(); //parent
-				String beared = line[1].trim().toLowerCase(); //part
-				if(!partOfMap.containsKey(bearer)) 
-					partOfMap.put(bearer, new HashSet<String>());
-				partOfMap.get(bearer).add(beared);
-			}	
-		} catch(IOException e) {
-			log(LogLevel.ERROR, "Can't read CSV", e);
+		CSVReader reader = null;
+		boolean success = false;
+		for(String partOfFile: partOfFiles){
+			try{
+				reader = new CSVReader(new FileReader(partOfFile));
+				List<String[]> lines = reader.readAll();
+				
+				for(String[] line : lines) {
+					String bearer = line[0].trim().toLowerCase(); //parent
+					String beared = line[1].trim().toLowerCase(); //part
+					if(!partOfMap.containsKey(bearer)) 
+						partOfMap.put(bearer, new HashSet<String>());
+					partOfMap.get(bearer).add(beared);
+				}	
+				success = true;
+			} catch(Exception e) {
+				log(LogLevel.DEBUG, "Can't read CSV "+partOfFile, e);
+			}
 		}
+		if(reader!=null) {
+			try{
+				reader.close();
+			}catch(IOException e){
+				log(LogLevel.DEBUG, "Can't close CSV reader ", e);
+			}
+		}
+		
+		if(!success)
+			throw (new PartOfCSVSourceException ("Can't read any of CSV KnowsPartOf"));
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.know.lib;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,47 +34,64 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.KnowsSynonyms;
 public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 
 	private IInflector inflector;
-	private String ontology;
+	private ArrayList<String> ontologies;
 	private OWLOntologyManager owlOntologyManager;
-	private OWLOntology owlOntology;
+	private ArrayList<OWLOntology> owlOntologies;
 	private OWLAnnotationProperty labelProperty;
 	private OWLAnnotationProperty relatedSynonymProperty;
 	private OWLAnnotationProperty narrowSynonymProperty;
 	private OWLAnnotationProperty exactSynonymProperty;
 	private OWLAnnotationProperty broadSynonymProperty;
 
-	public OWLOntologyKnowsSynonyms(String ontology, IInflector inflector) throws OWLOntologyCreationException {
-		this.ontology = ontology;
-		this.owlOntologyManager = OWLManager.createOWLOntologyManager();
-		this.owlOntology = owlOntologyManager.loadOntologyFromOntologyDocument(new File(ontology));
-		this.inflector = inflector;
-		this.labelProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(
-				OWLRDFVocabulary.RDFS_LABEL.getIRI());
-		this.relatedSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.RELATED_SYNONYM.getIRI()));
-		this.narrowSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.NARROW_SYNONYM.getIRI()));
-		this.exactSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.EXACT_SYNONYM.getIRI()));
-		this.broadSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.BROAD_SYNONYM.getIRI()));
-	}
+	public OWLOntologyKnowsSynonyms(ArrayList<String> ontologies, IInflector inflector) throws OWLOntologyCreationException {
+		boolean success =false;
+		try{
+			this.ontologies = ontologies;
+			this.owlOntologyManager = OWLManager.createOWLOntologyManager();
+			this.inflector = inflector;
+			this.labelProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(
+					OWLRDFVocabulary.RDFS_LABEL.getIRI());
+			this.relatedSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.RELATED_SYNONYM.getIRI()));
+			this.narrowSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.NARROW_SYNONYM.getIRI()));
+			this.exactSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.EXACT_SYNONYM.getIRI()));
+			this.broadSynonymProperty = owlOntologyManager.getOWLDataFactory().getOWLAnnotationProperty(IRI.create(AnnotationProperty.BROAD_SYNONYM.getIRI()));
+			
+			for(String ontology: ontologies){
+				try{
+					this.owlOntologies.add(owlOntologyManager.loadOntologyFromOntologyDocument(new File(ontology)));
+					success = true;
+				}catch(Exception e){
+					log(LogLevel.DEBUG, "Can't read ontology file "+ontology, e);	
+				}
+			}
+		}catch(Exception e){
+			if(! success)
+				throw (new OWLOntologyCreationException ("Can't read any of OWLOntology KnowsPartOf"));
+			}
+		}
 	
 	@Override
 	public Set<SynonymSet> getSynonyms(String term, String category) {
-		Set<OWLClass> owlClasses = owlOntology.getClassesInSignature(Imports.INCLUDED);
-		OWLClass owlClass = getOwlClassWithLabelOrSynonym(term, owlClasses);
-		
-		String preferredTerm = term;
-		Set<String> synonyms = new HashSet<String>();
-		if(owlClass != null) {
-			preferredTerm = getLabel(owlClass);
-			synonyms = getSynonyms(owlClass);
-		}
-		
-		SynonymSet synonymSet = new SynonymSet(preferredTerm, category, synonyms);	
 		Set<SynonymSet> result = new HashSet<SynonymSet>();
-		result.add(synonymSet);
+		for(OWLOntology owlOntology: owlOntologies){
+			Set<OWLClass> owlClasses = owlOntology.getClassesInSignature(Imports.INCLUDED);
+			OWLClass owlClass = getOwlClassWithLabelOrSynonym(term, owlOntology, owlClasses);
+			
+			String preferredTerm = term;
+			Set<String> synonyms = new HashSet<String>();
+			if(owlClass != null) {
+				preferredTerm = getLabel(owlClass, owlOntology);
+				synonyms = getSynonyms(owlClass, owlOntology);
+			}
+			
+			SynonymSet synonymSet = new SynonymSet(preferredTerm, category, synonyms);	
+	
+			result.add(synonymSet);
+		}
 		return result;
 	}
 	
-	private Set<String> getSynonyms(OWLClass owlClass) {
+	private Set<String> getSynonyms(OWLClass owlClass, OWLOntology owlOntology) {
 		Set<String> synonyms = new HashSet<String>();
 		for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology).collect(Collectors.toSet())) {
 			if(axiom.getProperty().equals(this.exactSynonymProperty)) {
@@ -87,7 +105,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 		return synonyms;
 	}
 
-	private OWLClass getOwlClassWithLabelOrSynonym(String term, Set<OWLClass> owlClasses) {
+	private OWLClass getOwlClassWithLabelOrSynonym(String term, OWLOntology owlOntology, Set<OWLClass> owlClasses) {
 		for(OWLClass owlClass : owlClasses) {
 			for(OWLAnnotationAssertionAxiom axiom : EntitySearcher.getAnnotationAssertionAxioms(owlClass, owlOntology).collect(Collectors.toSet())) {
 				if(axiom.getProperty().equals(this.exactSynonymProperty)) {
@@ -102,7 +120,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 			}
 		}
 		for(OWLClass owlClass : owlClasses) {
-			String classLabel = getLabel(owlClass);
+			String classLabel = getLabel(owlClass, owlOntology);
 			if(classLabel != null) {
 				if(classLabel.equals(term)) {
 					return owlClass;
@@ -112,7 +130,7 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 		return null;
 	}
 	
-	private String getLabel(OWLClass owlClass) {
+	private String getLabel(OWLClass owlClass, OWLOntology owlOntology) {
 		for (OWLAnnotation annotation : EntitySearcher.getAnnotations(owlClass, owlOntology, labelProperty).collect(Collectors.toSet())) {
 			if (annotation.getValue() instanceof OWLLiteral) {
 				OWLLiteral val = (OWLLiteral) annotation.getValue();
@@ -125,7 +143,9 @@ public class OWLOntologyKnowsSynonyms implements KnowsSynonyms {
 	}
 	
 	public static void main(String[] args) throws OWLOntologyCreationException {
-		OWLOntologyKnowsSynonyms oks = new OWLOntologyKnowsSynonyms("C:/OntologyOwlFilesTemp/999/on/on.owl", 
+		ArrayList<String> ontologies = new ArrayList<String> ();
+		ontologies.add("C:/OntologyOwlFilesTemp/999/on/on.owl");
+		OWLOntologyKnowsSynonyms oks = new OWLOntologyKnowsSynonyms(ontologies, 
 				new IInflector() {
 					@Override
 					public String getSingular(String word) {

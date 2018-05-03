@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -279,7 +280,7 @@ public class FnaRun {
 		this.synonymCsvFile = synonymCsvFile;
 		this.partOfCsvFile = partOfCsvFile;
 		this.termReviewTermCategorization = termReviewTermCategorization;
-		this.termReviewSynonyms = termReviewSynonyms;
+		this.termReviewSynonyms = termReviewSynonyms; //Question for Thomas: synonymCsvFile and termReivewSynonyms are not the same?
 		this.taxonGroup = taxonGroup;
 
 		initGlossary(glossary, inflector, taxonGroup, termReviewTermCategorization, termReviewSynonyms);
@@ -308,22 +309,30 @@ public class FnaRun {
 		setupLogging(this.runId);
 		log(LogLevel.DEBUG, "Running enhance");
 		Run run = new Run();
+		ArrayList<String> partOfCsvFiles = new ArrayList<String>();
+		partOfCsvFiles.add(partOfCsvFile);
+		
 		KnowsSynonyms knowsSynonyms = new CSVKnowsSynonyms(synonymCsvFile, inflector);
-		KnowsPartOf knowsPartOf = new CSVKnowsPartOf(partOfCsvFile, knowsSynonyms, inflector);
-		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
-				knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
-				knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
-				knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
-				knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
+		try{ //when knows are there
+			KnowsPartOf knowsPartOf = new CSVKnowsPartOf(partOfCsvFiles,knowsSynonyms, inflector);
+			RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
+					knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName());
+			RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
+					knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName());
+			RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
+					knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName());
+			RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
+					knowsPartOf, knowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
+	
+			run.addTransformer(new SimpleRemoveSynonyms(knowsSynonyms));
+			run.addTransformer(transformer1);
+			run.addTransformer(transformer2);
+			run.addTransformer(transformer3);
+			run.addTransformer(transformer4);
+		}catch (Exception e){
+			System.out.println("knows are not there");
+		}
 
-		run.addTransformer(new SimpleRemoveSynonyms(knowsSynonyms));
-		run.addTransformer(transformer1);
-		run.addTransformer(transformer2);
-		run.addTransformer(transformer3);
-		run.addTransformer(transformer4);
 		run.addTransformer(new RemoveUselessWholeOrganism());
 		run.addTransformer(new RemoveUselessCharacterConstraint());
 		run.addTransformer(new MoveCharacterToStructureConstraint());

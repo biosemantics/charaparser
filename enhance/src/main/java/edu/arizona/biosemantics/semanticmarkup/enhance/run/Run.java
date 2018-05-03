@@ -266,19 +266,24 @@ public class Run {
 				return false;
 			}
 		});*/
+		//
+		
+		ArrayList<String> partOfCsvFiles = new ArrayList<String>();
+		partOfCsvFiles.add("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv");
 
+		try{
 		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv", inflector);
 		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
-				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
-				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
+				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
-				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
 		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
-				new CSVKnowsPartOf("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv", csvKnowsSynonyms, inflector), 
+				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), 
 				csvKnowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
 		//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
 		//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
@@ -290,6 +295,9 @@ public class Run {
 		run.addTransformer(transformer3);
 		run.addTransformer(transformer4);
 		//run.addTransformer(removeByCollections);
+		}catch (Exception e){
+			System.out.println("Knows are not there");
+		}
 		
 		//run.addTransformer(transformer1);
 		//run.addTransformer(transformer2);
