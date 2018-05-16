@@ -63,6 +63,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsClassHie
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.CSVKnowsSynonyms;
 import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.KeyWordBasedKnowsCharacterConstraintType;
+import edu.arizona.biosemantics.semanticmarkup.enhance.know.lib.OWLOntologyKnowsPartOf;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.AbstractTransformer;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntities;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.CollapseBiologicalEntityToName;
@@ -271,8 +272,14 @@ public class Run {
 		ArrayList<String> partOfCsvFiles = new ArrayList<String>();
 		partOfCsvFiles.add("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv");
 
+		ArrayList<String> partOfOWLFiles = new ArrayList<String>();
+		partOfOWLFiles.add("C:/Users/hongcui/Documents/etcsite/resources/shared/ontologies\\po.owl");
+
 		try{
+			OWLOntologyKnowsPartOf test = new OWLOntologyKnowsPartOf(partOfOWLFiles, inflector);
+			
 		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv", inflector);
+		
 		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
 				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms,
 				tokenizer, new CollapseBiologicalEntityToName());
