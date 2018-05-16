@@ -33,7 +33,7 @@ public class OWLOntologyKnowsPartOf implements KnowsPartOf {
 	private IInflector inflector;
 	private ArrayList<String> ontologies;
 	private OWLOntologyManager owlOntologyManager;
-	private ArrayList<OWLOntology> owlOntologies;
+	private ArrayList<OWLOntology> owlOntologies = new ArrayList<OWLOntology> ();
 	private OWLObjectProperty partOfProperty;
 
 	public OWLOntologyKnowsPartOf(ArrayList<String> ontologies, IInflector inflector) throws Exception {
@@ -49,7 +49,9 @@ public class OWLOntologyKnowsPartOf implements KnowsPartOf {
 			
 			for(String ontology: ontologies){
 				try{
-					this.owlOntologies.add(owlOntologyManager.loadOntologyFromOntologyDocument(new File(ontology)));
+					File onto = new File(ontology);
+					OWLOntology owl = owlOntologyManager.loadOntologyFromOntologyDocument(onto);
+					this.owlOntologies.add(owl);
 					success = true;
 				}catch(Exception e){
 					log(LogLevel.DEBUG, "Can't read ontology file "+ontology, e);	

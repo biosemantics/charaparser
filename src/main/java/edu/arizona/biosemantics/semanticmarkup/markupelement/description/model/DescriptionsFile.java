@@ -27,6 +27,10 @@ public class DescriptionsFile extends AbstractDescriptionsFile {
 		return this.taxonIdentifications;
 	}
 
+	public void setTaxonIdentification(List<TaxonIdentification> taxonIdentifications){
+		this.taxonIdentifications = taxonIdentifications;
+	}
+	
 	public void setTaxonIdentification(TaxonIdentification taxonIdentification){
 		this.taxonIdentifications.add(taxonIdentification);
 	}
