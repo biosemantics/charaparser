@@ -95,6 +95,7 @@ import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBi
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.SplitCompoundBiologicalEntity;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeCount;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeQuantityPresence;
+import edu.arizona.biosemantics.semanticmarkup.enhance.transform.StandardizeUnits;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.MoveCharacterToStructureConstraint;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeStructureNameBySyntax;
 import edu.arizona.biosemantics.semanticmarkup.enhance.transform.old.StandardizeTerminology;
@@ -106,10 +107,10 @@ public class Run {
 
 	protected SAXBuilder saxBuilder = new SAXBuilder();
 	private List<AbstractTransformer> transformers = new LinkedList<AbstractTransformer>();
-	
+
 	public Run() {
 	}
-	
+
 	public void run(File inputDirectory, File outputDirectory) {
 		for(File file : inputDirectory.listFiles()) {
 			if(file.isFile() && file.getName().endsWith(".xml")) {
@@ -121,18 +122,18 @@ public class Run {
 				} catch (JDOMException | IOException e) {
 					log(LogLevel.ERROR, "Can't read xml from file " + file.getAbsolutePath(), e);
 				}
-				
+
 				if(document != null) 
 					for(AbstractTransformer transformer : transformers) 
 						try {
 							transformer.transform(document);
 							log(LogLevel.DEBUG, "Result from "+transformer.toString()+":");
 							log(LogLevel.DEBUG, xmlOutput.outputString(document));
-						
+
 						} catch(Throwable t) {
 							log(LogLevel.ERROR, "Transformer " + transformer.getClass().getSimpleName() + " failed. ", t);
 						}
-				
+
 				File outputFile = new File(outputDirectory, file.getName());
 				try {
 					outputFile.getParentFile().mkdirs();
@@ -148,35 +149,14 @@ public class Run {
 			}
 		}
 	}
-	
+
 	public void addTransformer(AbstractTransformer transformer) {
 		this.transformers.add(transformer);
 	}
-	
+
 	public static void main(String[] args) throws IOException {
-		/*for (String arg : args) {
-		      // option #1: By sentence.
-		      DocumentPreprocessor dp = new DocumentPreprocessor(arg);
-		      for (List<HasWord> sentence : dp) {
-		        System.out.println(sentence);
-		      }
-		      // option #2: By token
-		      PTBTokenizer<CoreLabel> ptbt = new PTBTokenizer<>(new FileReader(arg),
-		              new CoreLabelTokenFactory(), "");
-		      while (ptbt.hasNext()) {
-		        CoreLabel label = ptbt.next();
-		        System.out.println(label);
-		      }
-		    }*/
-		
-		ITokenizer tokenizer = new WhitespaceTokenizer(); /*ITokenizer() {		
-			@Override
-			public List<Token> tokenize(String text) {
-				List<Token> result = new LinkedList<Token>();
-				
-				return null;
-			}
-		};*/
+
+		ITokenizer tokenizer = new WhitespaceTokenizer(); 
 		TaxonGroup taxonGroup = TaxonGroup.PLANT;
 		WordNetPOSKnowledgeBase wordNetPOSKnowledgeBase = new WordNetPOSKnowledgeBase(Configuration.wordNetDirectory, false);
 		SingularPluralProvider singularPluralProvider = new SingularPluralProvider();
@@ -200,75 +180,9 @@ public class Run {
 		ICharacterKnowledgeBase characterKnowledgeBase = new GlossaryBasedCharacterKnowledgeBase(glossary, 
 				negWords, advModifiers, stopWords, units, inflector);
 		Set<String> possessionTerms = getWordSet("with|has|have|having|possess|possessing|consist_of");
-		
-		
-		
-		/* not used
-		 * CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv"));
-		List<String[]> lines = reader.readAll();
-		int i=0;
-		final Map<String, SynonymSet> synonymSetsMap = new HashMap<String, SynonymSet>();
-		for(String[] line : lines) {
-			String preferredTerm = line[0];
-			String category = line[1];
-			String synonym = line[2];
-			if(!synonymSetsMap.containsKey(preferredTerm)) 
-				synonymSetsMap.put(preferredTerm, new SynonymSet(preferredTerm, category, new HashSet<String>()));
-			synonymSetsMap.get(preferredTerm).getSynonyms().add(synonym);
-		}*/	
-		
-		/*List<KnowsSynonyms> hasBiologicalEntitySynonymsList = new LinkedList<KnowsSynonyms>();
-		List<KnowsSynonyms> hasCharacterSynonymsList = new LinkedList<KnowsSynonyms>();
-		hasBiologicalEntitySynonymsList.add(new CSVKnowsSynonyms() {
-			@Override
-			public Set<SynonymSet> getSynonyms(String term) {
-				Set<SynonymSet> result = new HashSet<SynonymSet>();
-				for(SynonymSet synonymSet : synonymSetsMap.values()) {
-					if(synonymSet.getPreferredTerm().equals(term) || synonymSet.getSynonyms().contains(term)) 
-						result.add(synonymSet);
-				}
-				if(result.isEmpty())
-					result.add(new SynonymSet(term, new HashSet<String>()));
-				return result;
-			}
-		});*/
-		
-		
+
 		Run run = new Run();
-		//AbstractTransformer transformer = new RemoveSynonyms(hasBiologicalEntitySynonymsList, hasBiologicalEntitySynonymsList);
-		//AbstractTransformer transformer = new CreateRelationFromCharacterConstraint(new KeyWordBasedKnowsCharacterConstraintType(wordNetPOSKnowledgeBase), inflector);
-		//AbstractTransformer transformer = new MoveRelationToBiologicalEntityConstraint();//new KeyWordBasedKnowsCharacterConstraintType(wordNetPOSKnowledgeBase), inflector);
-		//AbstractTransformer transformer = new MoveNegationOrAdverbBiologicalEntityConstraint(wordNetPOSKnowledgeBase);
-		/*AbstractTransformer transformer = new RemoveNonSpecificBiologicalEntitiesByRelations(new KnowsPartOf() {
-			@Override
-			public boolean isPartOf(String part, String parent) {
-				if(part.equals("apex") && parent.equals("leaf")) {
-					return true;
-				}
-				if(part.equals("base") && parent.equals("fruit")) {
-					return true;
-				}
-				if(part.equals("base") && parent.equals("petal")) {
-					return true;
-				}
-				return false;
-			}
-		}, tokenizer, new CollapseBiologicalEntityToName());*/
-		
-		//AbstractTransformer transformer1 = new MoveCharacterToStructureConstraint();
-		//AbstractTransformer transformer2 = new ReplaceNegationCharacterByNegationOrAbsence();
-		
-		/*AbstractTransformer transformer = new MoveModifierCharactersToBiologicalEntityConstraint(tokenizer, new KnowsEntityExistence() {
-			@Override
-			public boolean isExistsEntity(String name) {
-				if(name.equals("red leaf")) {
-					return true;
-				}
-				return false;
-			}
-		});*/
-		//
-		
+
 		ArrayList<String> partOfCsvFiles = new ArrayList<String>();
 		partOfCsvFiles.add("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\part_of.csv");
 
@@ -277,56 +191,42 @@ public class Run {
 
 		try{
 			OWLOntologyKnowsPartOf test = new OWLOntologyKnowsPartOf(partOfOWLFiles, inflector);
-			
-		CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv", inflector);
-		
-		RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
-				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms,
-				tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
-				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
-				tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
-				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms,
-				tokenizer, new CollapseBiologicalEntityToName());
-		RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
-				new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), 
-				csvKnowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
-		//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
-		//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
-		//		tokenizer, new CollapseBiologicalEntityToName(), inflector);
-		
-		run.addTransformer(new SimpleRemoveSynonyms(csvKnowsSynonyms));
-		run.addTransformer(transformer1);
-		run.addTransformer(transformer2);
-		run.addTransformer(transformer3);
-		run.addTransformer(transformer4);
-		//run.addTransformer(removeByCollections);
+
+			CSVKnowsSynonyms csvKnowsSynonyms = new CSVKnowsSynonyms("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv", inflector);
+
+			RemoveNonSpecificBiologicalEntitiesByRelations transformer1 = new RemoveNonSpecificBiologicalEntitiesByRelations(
+					new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+					tokenizer, new CollapseBiologicalEntityToName());
+			RemoveNonSpecificBiologicalEntitiesByBackwardConnectors transformer2 = new RemoveNonSpecificBiologicalEntitiesByBackwardConnectors(
+					new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms, 
+					tokenizer, new CollapseBiologicalEntityToName());
+			RemoveNonSpecificBiologicalEntitiesByForwardConnectors transformer3 = new RemoveNonSpecificBiologicalEntitiesByForwardConnectors(
+					new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), csvKnowsSynonyms,
+					tokenizer, new CollapseBiologicalEntityToName());
+			RemoveNonSpecificBiologicalEntitiesByPassedParents transformer4 = new RemoveNonSpecificBiologicalEntitiesByPassedParents(
+					new CSVKnowsPartOf(partOfCsvFiles, csvKnowsSynonyms, inflector), 
+					csvKnowsSynonyms, tokenizer, new CollapseBiologicalEntityToName(), inflector);
+			//RemoveNonSpecificBiologicalEntitiesByCollections removeByCollections = new RemoveNonSpecificBiologicalEntitiesByCollections(
+			//		new CSVKnowsPartOf(csvKnowsSynonyms, inflector), csvKnowsSynonyms, new CSVKnowsClassHierarchy(inflector), 
+			//		tokenizer, new CollapseBiologicalEntityToName(), inflector);
+
+			run.addTransformer(new SimpleRemoveSynonyms(csvKnowsSynonyms));
+			run.addTransformer(transformer1);
+			run.addTransformer(transformer2);
+			run.addTransformer(transformer3);
+			run.addTransformer(transformer4);
+			//run.addTransformer(removeByCollections);
 		}catch (Exception e){
 			System.out.println("Knows are not there");
 		}
-		
-		//run.addTransformer(transformer1);
-		//run.addTransformer(transformer2);
-		/*
-		AbstractTransformer transformer = new CollapseCharacterToValue();
-		run.addTransformer(new RemoveOrphanRelations());
-		run.addTransformer(new RemoveDuplicateValues());
-		run.addTransformer(new CollapseBiologicalEntityToName());
-		run.addTransformer(new CollapseCharacterToValue());
-		run.addTransformer(new CollapseBiologicalEntities());
-		run.addTransformer(new CollapseCharacters()); 
-		*/
-		/*
+
 		run.addTransformer(new SplitCompoundBiologicalEntity(inflector));
 		run.addTransformer(new SplitCompoundBiologicalEntitiesCharacters(inflector));
 		run.addTransformer(new RemoveUselessWholeOrganism());
 		run.addTransformer(new RemoveUselessCharacterConstraint());
 		run.addTransformer(new RenameCharacter(renames));
 		run.addTransformer(new MoveCharacterToStructureConstraint());
-		run.addTransformer(new MoveNegationCharacterToBiologicalEntityConstraint());
 		run.addTransformer(new MoveNegationOrAdverbBiologicalEntityConstraint(wordNetPOSKnowledgeBase));
-		run.addTransformer(new MoveCharactersToAlternativeParent());
 		run.addTransformer(new ReplaceTaxonNameByWholeOrganism());
 		run.addTransformer(new CreateOrPopulateWholeOrganism(lifeStyles, "growth_form"));
 		run.addTransformer(new CreateOrPopulateWholeOrganism(durations, "duration"));
@@ -335,22 +235,21 @@ public class Run {
 		run.addTransformer(new SortBiologicalEntityNameWithDistanceCharacter());
 		run.addTransformer(new OrderBiologicalEntityConstraint());
 		run.addTransformer(new StandardizeStructureNameBySyntax(characterKnowledgeBase, possessionTerms));
+		//run.addTransformer(new StandardizeStructureNameTest(characterKnowledgeBase, possessionTerms));
 		run.addTransformer(new StandardizeTerminology(characterKnowledgeBase));
-		
 		run.addTransformer(new RemoveOrphanRelations());
 		run.addTransformer(new RemoveDuplicateValues());
+		run.addTransformer(new StandardizeUnits());
 		run.addTransformer(new CollapseBiologicalEntityToName());
 		run.addTransformer(new CollapseCharacterToValue());
 		run.addTransformer(new CollapseBiologicalEntities());
 		run.addTransformer(new CollapseCharacters());
-		
-		
-		*/
-		
+	
+
 		//run.run(new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2"), new File("C:\\Users\\rodenhausen\\Desktop\\test-enhance\\selection_parsed2_out_" + transformer.getClass().getSimpleName()));
 		run.run(new File("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\in"), new File("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\out"));
 	}
-	
+
 	private static Set<String> getWordSet(String regexString) {
 		Set<String> set = new HashSet<String>();
 		String[] wordsArray = regexString.split("\\|");
@@ -358,9 +257,9 @@ public class Run {
 			set.add(word.toLowerCase().trim());
 		return set;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * 
 	 * Merge glossaryDownload and collection to one glossary which holds both terms and synonyms
@@ -376,7 +275,7 @@ public class Run {
 		String glossaryVersion = "latest";
 		otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
-		
+
 		try {
 			glossaryDownload = futureGlossaryDownload.get();
 		} catch (Exception e) {
@@ -384,7 +283,7 @@ public class Run {
 			e.printStackTrace();
 		}
 		otoClient.close();
-		
+
 		//obtain local term-categorization results
 		List<TermSynonym> synonyms = new ArrayList<TermSynonym>();
 		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv"));
@@ -395,7 +294,7 @@ public class Run {
 			synonyms.add(new TermSynonym(String.valueOf(i), line[0], line[1], line[2]));
 			hasSynonym.add(line[0]);
 		}	
-		
+
 		reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\terms.csv"));
 		lines = reader.readAll();
 		List<TermCategory> decisions = new ArrayList<TermCategory>();
@@ -407,24 +306,24 @@ public class Run {
 
 		//log(LogLevel.DEBUG, "initiate in-memory glossary using glossaryDownload and collection...");
 		//log(LogLevel.DEBUG, "obtaining synonyms from glossaryDownload...");
-		
+
 		//1. obtain synonyms from glossaryDownload
 		HashSet<Term> gsyns = new HashSet<Term>();
 		obtainSynonymsFromGlossaryDownload(glossaryDownload, gsyns, inflector);
-		
+
 		//log(LogLevel.DEBUG, "obtaining synonyms from collection...");
 		//2. obtain synonyms from collection
 		HashSet<Term> dsyns = new HashSet<Term>();
 		obtainSynonymsFromGlossaryDownload(download, dsyns, inflector);
-		
+
 		//log(LogLevel.DEBUG, "merging synonyms...");
 		//3. merge synonyms into one set
 		gsyns = mergeSynonyms(gsyns, dsyns);
-		
+
 		//log(LogLevel.DEBUG, "adding synonyms to in-mem glossary...");
 		//4. addSynonyms to glossary
 		HashSet<Term> simpleSyns = addSynonyms2Glossary(gsyns, glossary);
-		
+
 		//log(LogLevel.DEBUG, "adding preferred terms to in-mem glossary...");
 		//5. addEntry 
 		//the glossaryDownload, excluding syns
@@ -432,7 +331,7 @@ public class Run {
 			if(!simpleSyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
 				glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
 			//else
-				//log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+termCategory.getTerm().replaceAll("_", "-")+"<"+termCategory.getCategory()+">");
+			//log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+termCategory.getTerm().replaceAll("_", "-")+"<"+termCategory.getCategory()+">");
 		}
 
 		//local term-categories, excluding syns
@@ -440,7 +339,7 @@ public class Run {
 			if(!simpleSyns.contains(new Term(ltermCategory.getTerm().replaceAll("_", "-"), ltermCategory.getCategory())))
 				glossary.addEntry(ltermCategory.getTerm().replaceAll("_", "-"), ltermCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
 			//else
-				//log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+ltermCategory.getTerm().replaceAll("_", "-")+"<"+ltermCategory.getCategory()+">");
+			//log(LogLevel.DEBUG, "synonym not add to in-mem glossary: "+ltermCategory.getTerm().replaceAll("_", "-")+"<"+ltermCategory.getCategory()+">");
 		}
 	}
 
@@ -457,7 +356,7 @@ public class Run {
 			String[] tokens = syn.getLabel().split(":");
 			String category = syn.getCategory();
 			glossary.addSynonym(tokens[0], category, tokens[1]);
-		    //log(LogLevel.DEBUG, "adding synonym to in-mem glossary: "+ tokens[0]+" U "+tokens[1]+"<"+category+">");
+			//log(LogLevel.DEBUG, "adding synonym to in-mem glossary: "+ tokens[0]+" U "+tokens[1]+"<"+category+">");
 			simpleSyns.add(new Term(tokens[0], category));
 		}
 		return simpleSyns;
@@ -484,7 +383,7 @@ public class Run {
 				if(!gcat.equals(dcat)){
 					//add both to merged
 					merged.add(gsyn);
-				    //log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
+					//log(LogLevel.DEBUG, "add to merged synonyms: "+ gsyn.toString());
 					merged.add(dsyn);
 					//log(LogLevel.DEBUG, "add to merged synonyms: "+ dsyn.toString());
 				}else{
@@ -510,7 +409,7 @@ public class Run {
 								merged.add(new Term(gtokens.get(1)+":"+dtokens.get(1), dcat));
 								//log(LogLevel.DEBUG, "add to merged synonyms: "+ new Term(gtokens.get(1)+":"+dtokens.get(1), dcat).toString());
 							}
-							
+
 						}
 					}else{
 						//add both to merged
@@ -570,7 +469,7 @@ public class Run {
 			}
 		}
 	}
-	
+
 	//outdated, bad code
 	/*private static void initGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws IOException {
 		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
@@ -578,7 +477,7 @@ public class Run {
 		String glossaryVersion = "latest";
 		otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
-		
+
 		try {
 			glossaryDownload = futureGlossaryDownload.get();
 		} catch (Exception e) {
@@ -586,7 +485,7 @@ public class Run {
 			e.printStackTrace();
 		}
 		otoClient.close();
-				
+
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
 		for(TermSynonym termSyn: glossaryDownload.getTermSynonyms()){
@@ -630,8 +529,8 @@ public class Run {
 			if(!gsyns.contains(new Term(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory())))
 				glossary.addEntry(termCategory.getTerm().replaceAll("_", "-"), termCategory.getCategory()); //primocane_foliage =>primocane-foliage Hong 3/2014
 		}	
-		
-		
+
+
 		List<Synonym> synonyms = new LinkedList<Synonym>();
 		CSVReader reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\synonym.csv"));
 		List<String[]> lines = reader.readAll();
@@ -641,7 +540,7 @@ public class Run {
 			synonyms.add(new Synonym(String.valueOf(i), line[0], line[1], line[2]));
 			hasSynonym.add(line[0]);
 		}	
-		
+
 		reader = new CSVReader(new FileReader("C:\\Users\\hongcui\\Documents\\etc-development\\enhance\\terms.csv"));
 		lines = reader.readAll();
 		List<Decision> decisions = new LinkedList<Decision>();
@@ -651,8 +550,8 @@ public class Run {
 		}
 
 		Download download = new Download(true, decisions, synonyms);
-		
-		
+
+
 		//add syn set of term_category
 		HashSet<Term> dsyns = new HashSet<Term>();
 		if(download != null) {
@@ -701,5 +600,5 @@ public class Run {
 			}
 		}
 	}*/
-	
+
 }
