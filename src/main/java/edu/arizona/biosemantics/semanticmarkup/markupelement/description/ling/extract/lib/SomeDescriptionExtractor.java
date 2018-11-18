@@ -74,12 +74,30 @@ public class SomeDescriptionExtractor implements IDescriptionExtractor {
 			ChunkCollector chunkCollector = chunkCollectors.get(i);
 			//processingContext.setChunkCollectors(chunkCollectors);
 			processingContext.reset();
-			Statement statement = new Statement();
+			
+			//Hong 11/18/18 retrieve the appropriate statement by matching text
+			Statement statement = null;
+			String statementId = null;
+			for(Statement s: description.getStatements()){
+				if(s.getText().compareToIgnoreCase(chunkCollector.getOriginalSentence())==0){
+					statement = s;
+					statementId = s.getId();
+					break;
+				}
+			}
+			if(statement == null || statementId==null){
+				log(LogLevel.ERROR, "Failed to find the target statement matching text : "+chunkCollector.getSentence() + "\n" +
+						"Sentence is contained in file: " + chunkCollector.getSource());
+				log(LogLevel.ERROR,  "No parsed results output for " +chunkCollector.getSource());
+				return;
+			}
+			
+			/*Statement statement = new Statement();
 			//statement.setText(chunkCollector.getSentence());
 			statement.setText(chunkCollector.getOriginalSentence());
 			String statementId = "d" + descriptionNumber + "_s" + i;
 			statement.setId(statementId);
-			description.addStatement(statement);
+			description.addStatement(statement);*/
 
 			processingContext.setChunkCollector(chunkCollector);
 			try {

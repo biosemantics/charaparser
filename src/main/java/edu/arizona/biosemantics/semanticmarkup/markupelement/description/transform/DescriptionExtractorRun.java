@@ -24,6 +24,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.parse.IParser;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.extract.IDescriptionExtractor;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.AbstractDescriptionsFile;
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Description;
+import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.Statement;
 
 
 /**
@@ -90,7 +91,7 @@ public class DescriptionExtractorRun implements Callable<Description> {
 		try {
 			log(LogLevel.DEBUG, "Create description for : " + descriptionsFile.getName());
 			Map<String, String> sentences = sentencesForOrganStateMarker.get(description);
-
+			
 			//configure exectuorService to only allow a number of threads to run at a time
 			ExecutorService executorService = null;
 			if(!this.parallelProcessing)
@@ -115,10 +116,19 @@ public class DescriptionExtractorRun implements Callable<Description> {
 			prevMissingOrgan.put("source", "");
 			prevMissingOrgan.put("missing", "");
 			// process each sentence separately
+			int i = 0;
 			for(Entry<String, String> sentenceEntry : selectedSentences) {
 				String sentenceString = sentenceEntry.getValue();
 				String source = sentenceEntry.getKey();
-
+				
+				//Hong 11/18/2018: write out <text> here to avoid missing <text> due to potential exceptions down the road
+				Statement statement = new Statement();
+				String[] sentenceArray = sentenceString.split("##");
+				statement.setText(sentenceArray[3]);
+				String statementId = "d" + descriptionNumber + "_s" + i;
+				i++;
+				statement.setId(statementId);
+				description.addStatement(statement);
 
 				// start a SentenceChunkerRun for the treatment to process as a separate thread
 				SentenceChunkerRun sentenceChunker = new SentenceChunkerRun(source, sentenceString,
@@ -151,8 +161,9 @@ public class DescriptionExtractorRun implements Callable<Description> {
 			}
 
 			log(LogLevel.DEBUG, "extract for treatment " + descriptionsFile.getName());
-			descriptionExtractor.extract(description, descriptionNumber, treatmentChunkCollectors); //TODO: Hong annotating chunk in 'extract'
-		} catch (Throwable t) {
+			descriptionExtractor.extract(description, descriptionNumber, treatmentChunkCollectors); 
+			} 
+		    catch (Throwable t) {
 			log(LogLevel.ERROR, "Problem extracting from description \"" + description + "\" in file " +
 					descriptionsFile.getFile().getAbsolutePath(), t);
 		}

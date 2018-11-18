@@ -147,7 +147,7 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 						for(Character character: allCharacters){
 							if(!(character.getIsModifier()!=null && character.getIsModifier().compareTo("true")==0 && isMatched(character.getValue(), matchedNames))){
 							String cValue = character.getValue();
-							if(!cValue.matches("[.0-9()]+")){
+							if(cValue!=null && !cValue.matches("[.0-9()]+")){
 								OntologyEntry entry = getQuality(cValue);
 									if(entry != null) {
 										log(LogLevel.DEBUG, "Found IRI: " + entry.getClassIRI() + " for term " + cValue);
