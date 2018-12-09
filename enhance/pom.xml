@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.arizona.biosemantics.semanticmarkup</groupId>
 	<artifactId>enhance</artifactId>
-	<version>0.0.27-SNAPSHOT</version>
+	<version>0.0.27-author-SNAPSHOT</version>
 
 
 	<properties>
@@ -143,7 +143,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common.ontology</groupId>
 			<artifactId>search</artifactId>
-			<version>0.0.30-SNAPSHOT</version>
+			<version>0.0.30-author-SNAPSHOT</version>
 			
 			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects
 			-->

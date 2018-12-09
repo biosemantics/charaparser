@@ -153,7 +153,9 @@ public abstract class Normalizer implements INormalizer {
 			@Named("AdjNouns") String adjNouns,
 			@Named("AdjNounCounterParts") Hashtable<String, String> adjNounCounterParts) {
 		this.units = units;
+		//cup 2-5 mm deep×(9-)10-15(-20) mm wide
 		this.areapattern = Pattern.compile("(.*?)([²½¼\\d\\.()+-]+ ?"+units+"?\\s*[x×]\\S*\\s*[²½¼\\d\\.()+-]+ "+units+"\\s*[x×]?(\\S*\\s*[²½¼\\d\\.()+-]+ "+units+")?)(.*)");
+		//this.areapattern = Pattern.compile("(.*?)([²½¼\\d\\.()+-]+ ?"+units+"?( deep)?\\s*[x×]\\S*\\s*[²½¼\\d\\.()+-]+ "+units+"\\s*[x×]?(\\S*\\s*[²½¼\\d\\.()+-]+ "+units+")?( wide)?(.*)");
 		this.numberPattern = numberPattern;
 		this.glossary = glossary;
 		this.singulars = singulars;
@@ -391,7 +393,7 @@ public abstract class Normalizer implements INormalizer {
 				vm = viewptn.matcher(str);
 			}
 		}
-
+		int i = 0;
 		if(str.indexOf("×")>0 || str.matches(".*?[\\d)²½¼]\\s*\\b?("+units+")?\\b?\\s*x\\s*[(\\d²½¼].*")){
 			//containsArea = true; //½ x
 			String[] area = normalizeArea(str); //here × and x are standardized to ×.
@@ -830,6 +832,7 @@ public abstract class Normalizer implements INormalizer {
 	/**
 	 *
 	 * @param text: {oblanceolate} , 15-70×30-150+ cm , {flat}
+	 * cup 2-5 mm deep×(9-)10-15(-20) mm wide
 	 * @return two strings: one contains all text from text with rearranged spaces,
 	 *  the other contains numbers as the place holder of the area expressions
 	 */

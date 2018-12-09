@@ -123,7 +123,7 @@ public class LearnedCharacterKnowledgeBase implements ICharacterKnowledgeBase {
 		//	return new CharacterMatch(null);
 		if(word.matches(this.stopWords)) return new CharacterMatch(null);
 		//2n=5
-		if((word.matches("[^a-z]+")|| word.contains("=") || word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new CharacterMatch(null); //numerical expressions
+		if((word.matches("[^a-z]+")|| word.contains("=") || word.contains("×")|| word.matches(".*?(^|[^a-z])("+units+")([^a-z]|$).*"))&& word.matches(".*?\\d.*")) return new CharacterMatch(null); //numerical expressions
 		
 		String wo = word;
 		
