@@ -173,7 +173,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 	}
 
 	@Override
-	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException {
+	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, IOException, FileNotFoundException, ClassNotFoundException, LearnException {
 		//download gloss again from real OTO because the last download is no longer in memory
 		//it is possible for gloss o change from last run, make sure to grab the correct version.
 		//when remove MYSQL, take care of this issue
@@ -186,7 +186,7 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 		GlossaryDownload glossaryDownload = new GlossaryDownload();
 		String glossaryVersion = "N/A";
 		if(!useEmptyGlossary) {
-			glossaryVersion = getGlossaryVersionOfLearn();
+			/*glossaryVersion = getGlossaryVersionOfLearn();
 			if(glossaryVersion == null)
 				glossaryVersion = "latest";
 			boolean downloadSuccessful = false;
@@ -207,7 +207,10 @@ public class MarkupDescriptionTreatmentTransformer extends AbstractDescriptionTr
 				log(LogLevel.ERROR, "Couldn't download glossary " + taxonGroup.getDisplayName() + " version: " + glossaryVersion, e);
 				throw new TransformationException();
 			}
-			otoClient.close();
+			otoClient.close();*/
+		
+			
+			glossaryDownload = getLocalGlossaryDownload(taxonGroup);
 
 			glossaryVersion = glossaryDownload.getVersion();
 		}

@@ -339,7 +339,7 @@ public class OTOLearner implements ILearner {
 	}
 
 	public static void main(String[] args) {
-		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
+		/*OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
 		TaxonGroup taxonGroup = TaxonGroup.SPIDER;
 		otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());
@@ -353,11 +353,20 @@ public class OTOLearner implements ILearner {
 			t.printStackTrace();
 		}
 
-		otoClient.close();
+		otoClient.close();*/
+		try{
+		TaxonGroup taxonGroup = TaxonGroup.SPIDER;
+		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator +
+				"GlossaryDownload." + taxonGroup.getDisplayName() + ".ser"));
+		GlossaryDownload glossaryDownload = (GlossaryDownload) objectIn.readObject();
+		objectIn.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 	private GlossaryDownload getGlossaryDownload() throws ClassNotFoundException, IOException {
-		otoClient.open();
+		/*otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());
 
 		boolean downloadSuccessful = false;
@@ -373,11 +382,12 @@ public class OTOLearner implements ILearner {
 			log(LogLevel.ERROR, "Couldn't download glossary will fallback to locally stored glossary", t);
 		}
 
-		otoClient.close();
-		if(downloadSuccessful)
-			storeToLocalGlossaryDownload(glossaryDownload, taxonGroup);
-		else
-			glossaryDownload = getLocalGlossaryDownload(taxonGroup);
+		otoClient.close();*/
+		
+		//if(downloadSuccessful)
+		//	storeToLocalGlossaryDownload(glossaryDownload, taxonGroup);
+		//else
+		GlossaryDownload	glossaryDownload = getLocalGlossaryDownload(taxonGroup);
 		return glossaryDownload;
 	}
 

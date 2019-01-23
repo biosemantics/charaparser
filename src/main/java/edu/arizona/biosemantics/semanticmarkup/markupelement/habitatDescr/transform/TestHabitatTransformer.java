@@ -84,9 +84,9 @@ public class TestHabitatTransformer {
 		String advModifiers = "at least|at first|at times|almost|always|never|not|often|quite|rather|sometimes|somewhat";
 		//IHabitatTransformer transformer = new HabitatTransformer("edu/stanford/nlp/models/lexparser/englishFactored.ser.gz",
 		//lyPattern, stopWords, modifierList, advModifiers);
-		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu/OTO");
+		//OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu/OTO");
 		IHabitatTransformer transformer = new MyHabitatTransformer("edu/stanford/nlp/models/lexparser/englishFactored.ser.gz",
-				lyPattern, stopWords, modifierList, advModifiers, new InMemoryGlossary(), new GlossaryInitializer(otoClient, TaxonGroup.PLANT, null,
+				lyPattern, stopWords, modifierList, advModifiers, new InMemoryGlossary(), new GlossaryInitializer(/*otoClient,*/ TaxonGroup.PLANT, null,
 						null, new Client("http://localhost"), new IInflector() {
 					@Override
 					public String getSingular(String word) {

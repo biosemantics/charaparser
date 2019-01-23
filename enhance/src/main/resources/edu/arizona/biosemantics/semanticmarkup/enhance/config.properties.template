@@ -1,5 +1,6 @@
 ontologyDirectory=
 wordNetDirectory=
+glossariesDownloadDirectory=
 
 nonSpecificParts=apex|appendix|area|band|base|belt|blade|body|cavity|cell|center|centre|chamber|component|content|crack|edge|element|end|face|groove|layer|line|margin|middle|notch|part|pore|portion|protuberance|remnant|section|side|stratum|surface|tip|top|wall|zone
 spatial=adaxial|abaxial|intervenal

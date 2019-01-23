@@ -11,6 +11,7 @@ public class Configuration {
 	
 	public static String ontologyDirectory;
 	public static String wordNetDirectory;
+	public static String glossariesDownloadDirectory;
 	public static String defaultEntityType = "structure";
 	private static String projectVersion;
 
@@ -39,7 +40,7 @@ public class Configuration {
 			properties.load(loader.getResourceAsStream("edu/arizona/biosemantics/semanticmarkup/enhance/config.properties"));
 			ontologyDirectory = properties.getProperty("ontologyDirectory");
 			wordNetDirectory = properties.getProperty("wordNetDirectory");
-			
+			glossariesDownloadDirectory = properties.getProperty("glossariesDownloadDirectory");
 			databaseUser = properties.getProperty("databaseUser");
 			databasePassword = properties.getProperty("databasePassword");
 			databaseHost = properties.getProperty("databaseHost");

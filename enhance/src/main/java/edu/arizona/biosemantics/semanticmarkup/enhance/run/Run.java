@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -154,7 +155,7 @@ public class Run {
 		this.transformers.add(transformer);
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 
 		ITokenizer tokenizer = new WhitespaceTokenizer(); 
 		TaxonGroup taxonGroup = TaxonGroup.PLANT;
@@ -268,9 +269,9 @@ public class Run {
 	 * For structure terms, both singular and plural forms are included in the synonyms
 	 * @param otoGlossary
 	 */
-	private static void initGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws IOException {
+	private static void initGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws IOException, ClassNotFoundException {
 		//obtain glossaryDownload
-		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
+		/*OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
 		GlossaryDownload glossaryDownload = new GlossaryDownload();		
 		String glossaryVersion = "latest";
 		otoClient.open();
@@ -282,7 +283,12 @@ public class Run {
 			otoClient.close();
 			e.printStackTrace();
 		}
-		otoClient.close();
+		otoClient.close();*/
+		
+		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator +
+				"GlossaryDownload." + taxonGroup.getDisplayName() + ".ser"));
+		GlossaryDownload glossaryDownload = (GlossaryDownload) objectIn.readObject();
+		objectIn.close();
 
 		//obtain local term-categorization results
 		List<TermSynonym> synonyms = new ArrayList<TermSynonym>();

@@ -22,7 +22,9 @@ public class CSVKnowsClassHierarchy implements KnowsClassHierarchy {
 		this.inflector = inflector;
 		subclassMap = new HashMap<String, Set<String>>();
 		superclassMap = new HashMap<String, Set<String>>();
-		try(CSVReader reader = new CSVReader(new FileReader("class-hiearchy.csv"))) {
+		CSVReader reader = null;
+		try {
+			reader = new CSVReader(new FileReader("class-hiearchy.csv"));
 			List<String[]> lines = reader.readAll();
 			
 			for(String[] line : lines) {
@@ -37,6 +39,12 @@ public class CSVKnowsClassHierarchy implements KnowsClassHierarchy {
 			}	
 		} catch(IOException e) {
 			log(LogLevel.ERROR, "Can't read CSV", e);
+		} finally{
+			if(reader!=null){
+				try{
+					reader.close();
+				}catch(IOException e){}
+			}
 		}
 	}
 	

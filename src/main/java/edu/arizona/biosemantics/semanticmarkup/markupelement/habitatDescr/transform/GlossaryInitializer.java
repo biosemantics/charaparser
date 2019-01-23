@@ -39,7 +39,7 @@ import edu.arizona.biosemantics.semanticmarkup.ling.know.lib.ElementRelationGrou
 
 public class GlossaryInitializer {
 
-	private OTOClient otoClient;
+	//private OTOClient otoClient;
 	private TaxonGroup taxonGroup;
 	private ConnectionPool connectionPool;
 	private String databasePrefix;
@@ -47,13 +47,13 @@ public class GlossaryInitializer {
 	private IInflector inflector;
 
 	@Inject
-	public GlossaryInitializer(OTOClient otoClient,
+	public GlossaryInitializer(/*OTOClient otoClient,*/
 			@Named("TaxonGroup")TaxonGroup taxonGroup,
 			ConnectionPool connectionPool,
 			@Named("DatabasePrefix")String databasePrefix,
 			Client oto2Client,
 			IInflector inflector) {
-		this.otoClient = otoClient;
+		//this.otoClient = otoClient;
 		this.taxonGroup = taxonGroup;
 		this.connectionPool = connectionPool;
 		this.databasePrefix = databasePrefix;
@@ -64,23 +64,23 @@ public class GlossaryInitializer {
 	public void initialize(IGlossary glossary) throws Exception {
 		GlossaryDownload glossaryDownload = new GlossaryDownload();
 		String glossaryVersion = "latest";
-		boolean downloadSuccessful = false;
-		otoClient.open();
-		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
+		//boolean downloadSuccessful = false;
+		//otoClient.open();
+		//Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
 		try {
-			glossaryDownload = futureGlossaryDownload.get();
-			downloadSuccessful = glossaryDownload != null &&
+			//glossaryDownload = futureGlossaryDownload.get();
+			/*downloadSuccessful = glossaryDownload != null &&
 					!glossaryDownload.getVersion().equals("Requested version not available") &&
 					!glossaryDownload.getVersion().equals("No Glossary Available") &&
 					!glossaryDownload.getVersion().contains("available") &&
-					!glossaryDownload.getVersion().contains("Available");
-			if(!downloadSuccessful) glossaryDownload = getLocalGlossaryDownload(taxonGroup);
+					!glossaryDownload.getVersion().contains("Available");*/
+			/*if(!downloadSuccessful)*/ glossaryDownload = getLocalGlossaryDownload(taxonGroup);
 		} catch (Exception e) {
-			otoClient.close();
+			//otoClient.close();
 			log(LogLevel.ERROR, "Couldn't download glossary " + taxonGroup.getDisplayName() + " version: " + glossaryVersion, e);
 			throw e;
 		}
-		otoClient.close();
+		//otoClient.close();
 
 		glossaryVersion = glossaryDownload.getVersion();
 
@@ -120,7 +120,7 @@ public class GlossaryInitializer {
 	}
 
 	private GlossaryDownload getGlossaryDownload() throws ClassNotFoundException, IOException {
-		otoClient.open();
+		/*otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName());
 
 		boolean downloadSuccessful = false;
@@ -139,8 +139,8 @@ public class GlossaryInitializer {
 		otoClient.close();
 		if(downloadSuccessful)
 			storeToLocalGlossaryDownload(glossaryDownload, taxonGroup);
-		else
-			glossaryDownload = getLocalGlossaryDownload(taxonGroup);
+		else*/
+		GlossaryDownload	glossaryDownload = getLocalGlossaryDownload(taxonGroup);
 		return glossaryDownload;
 	}
 

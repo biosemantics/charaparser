@@ -1,9 +1,11 @@
 package edu.arizona.biosemantics.semanticmarkup.enhance.run;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -273,7 +275,7 @@ public class FnaRun {
 	private String runId;
 
 	public FnaRun(String runId, String input, String output, String synonymCsvFile, String partOfCsvFile,
-			String termReviewTermCategorization, String termReviewSynonyms, TaxonGroup taxonGroup) throws IOException, InterruptedException, ExecutionException {
+			String termReviewTermCategorization, String termReviewSynonyms, TaxonGroup taxonGroup) throws IOException, ClassNotFoundException, InterruptedException, ExecutionException {
 		this.runId = runId;
 		this.input = input;
 		this.output = output;
@@ -364,7 +366,7 @@ public class FnaRun {
 		return set;
 	}
 
-	private void initGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup, String termReviewTermCategorization, String termReviewSynonyms) throws IOException, InterruptedException, ExecutionException {
+	private void initGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup, String termReviewTermCategorization, String termReviewSynonyms) throws IOException, InterruptedException, ClassNotFoundException, ExecutionException {
 		addPermanentGlossary(glossary, inflector, taxonGroup);
 		addTermReviewGlossary(glossary, inflector, termReviewTermCategorization, termReviewSynonyms);
 	}
@@ -445,15 +447,19 @@ public class FnaRun {
 		}
 	}
 
-	private void addPermanentGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws InterruptedException, ExecutionException {
-		OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
+	private void addPermanentGlossary(IGlossary glossary, IInflector inflector, TaxonGroup taxonGroup) throws InterruptedException, IOException, ClassNotFoundException, ExecutionException {
+		/*OTOClient otoClient = new OTOClient("http://biosemantics.arizona.edu:8080/OTO");
 		GlossaryDownload glossaryDownload = new GlossaryDownload();
 		String glossaryVersion = "latest";
 		otoClient.open();
 		Future<GlossaryDownload> futureGlossaryDownload = otoClient.getGlossaryDownload(taxonGroup.getDisplayName(), glossaryVersion);
 		glossaryDownload = futureGlossaryDownload.get();
 		otoClient.close();
-
+		*/
+		ObjectInputStream objectIn = new ObjectInputStream(new FileInputStream(Configuration.glossariesDownloadDirectory + File.separator +
+				"GlossaryDownload." + taxonGroup.getDisplayName() + ".ser"));
+		GlossaryDownload glossaryDownload = (GlossaryDownload) objectIn.readObject();
+		objectIn.close();
 		//add the syn set of the glossary
 		HashSet<Term> gsyns = new HashSet<Term>();
 		for(TermSynonym termSyn : glossaryDownload.getTermSynonyms()) {

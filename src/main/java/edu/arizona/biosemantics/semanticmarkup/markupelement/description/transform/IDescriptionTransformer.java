@@ -1,5 +1,7 @@
 package edu.arizona.biosemantics.semanticmarkup.markupelement.description.transform;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import edu.arizona.biosemantics.semanticmarkup.markupelement.description.ling.learn.LearnException;
@@ -10,6 +12,6 @@ import edu.arizona.biosemantics.semanticmarkup.markupelement.description.model.P
 
 public interface IDescriptionTransformer {
 	
-	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException;
+	public Processor transform(List<AbstractDescriptionsFile> descriptionsFiles) throws TransformationException, LearnException, FileNotFoundException, ClassNotFoundException, IOException;
 	
 }
