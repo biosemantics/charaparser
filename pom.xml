@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.arizona.biosemantics.semanticmarkup</groupId>
 	<artifactId>semantic-markup</artifactId>
-	<version>0.1.198-SNAPSHOT</version>
+	<version>0.1.199-SNAPSHOT</version>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
