@@ -6,6 +6,7 @@
 	<version>0.0.28-SNAPSHOT</version>
 
 
+
 	<properties>
 		<project.version>0.0.26-SNAPSHOT</project.version>
 		<jackson.version>2.8.5</jackson.version>
@@ -143,7 +144,7 @@
 		<dependency>
 			<groupId>edu.arizona.biosemantics.common.ontology</groupId>
 			<artifactId>search</artifactId>
-			<version>0.0.30-SNAPSHOT</version>
+			<version>0.0.31-SNAPSHOT</version>
 			
 			<!-- Not used! And it can cause conflicts in other projects because it uses owlapi3 where we use owlapi4 in other projects
 			-->

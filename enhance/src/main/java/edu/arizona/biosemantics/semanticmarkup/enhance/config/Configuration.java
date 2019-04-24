@@ -9,9 +9,9 @@ public class Configuration {
 
 	private final static Logger logger = Logger.getLogger(Configuration.class);
 	
+	public static String glossariesDownloadDirectory;
 	public static String ontologyDirectory;
 	public static String wordNetDirectory;
-	public static String glossariesDownloadDirectory;
 	public static String defaultEntityType = "structure";
 	private static String projectVersion;
 
@@ -55,7 +55,7 @@ public class Configuration {
 			connectBackwardToParent= properties.getProperty("connectBackwardToParent");
 			connectForwardToParent= properties.getProperty("connectForwardToParent");
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("Couldn't read configuration", e);
 		}
 	}

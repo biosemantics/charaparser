@@ -25,11 +25,11 @@ public class TaxonGroupPartOfOntology {
 			case GASTROPODS:
 				return new HashSet<Ontology>();
 			case HYMENOPTERA:
-				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.HAO }));
+				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.hao }));
 			case PLANT:
-				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.PO }));
+				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.po }));
 			case PORIFERA:
-				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.PORO }));
+				return new HashSet<Ontology>(Arrays.asList(new Ontology[] { Ontology.poro }));
 			case COLEOPTERA:
 				return new HashSet<Ontology>();
 			}

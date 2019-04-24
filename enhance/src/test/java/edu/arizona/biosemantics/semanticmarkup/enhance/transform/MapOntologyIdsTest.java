@@ -31,7 +31,7 @@ public class MapOntologyIdsTest {
 			public List<OntologyEntry> getEntries(String term) {
 				List<OntologyEntry> result = new LinkedList<OntologyEntry>();
 				if(term.equals("test")) 
-					result.add(new OntologyEntry(Ontology.PO, "dummyiri", Type.ENTITY, 1.0));
+					result.add(new OntologyEntry(Ontology.po, "dummyiri", Type.ENTITY, 1.0));
 				return result;
 			}
 			@Override
@@ -42,7 +42,7 @@ public class MapOntologyIdsTest {
 				if(term.equals("test")) {
 					switch(type) {
 					case ENTITY:
-						result.add(new OntologyEntry(Ontology.PO, "dummyiri", Type.ENTITY, 1.0));
+						result.add(new OntologyEntry(Ontology.po, "dummyiri", Type.ENTITY, 1.0));
 						break;
 					default:
 						break;

@@ -23,6 +23,7 @@ public class CSVKnowsSynonyms implements KnowsSynonyms {
 	public CSVKnowsSynonyms(String synonymsFile, IInflector inflector) {
 		this.inflector = inflector;
 		Map<String, Set<String>> content = new HashMap<String, Set<String>> (); //key: term:category
+		
 		try(CSVReader reader = new CSVReader(new FileReader(synonymsFile))) {
 			//sort synonyms with their preferred terms
 			List<String[]> lines = reader.readAll();

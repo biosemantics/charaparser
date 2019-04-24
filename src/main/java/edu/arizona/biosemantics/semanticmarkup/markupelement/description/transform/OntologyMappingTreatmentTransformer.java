@@ -54,8 +54,9 @@ public class OntologyMappingTreatmentTransformer extends AbstractDescriptionTran
 		this.etcUser = etcUser;
 		this.taxonGroup = taxonGroup;
 		searchers = new LinkedList<Searcher>();
-		for(Ontology entityOntology : TaxonGroupOntology.getEntityOntologies(taxonGroup)) 
-			searchers.add(new FileSearcher(entityOntology, ontologiesDirectory, wordNetSource));
+		//temporarily disable ontology mapping because /parse UI does the same thing, this is redundant computation. 
+		//for(Ontology entityOntology : TaxonGroupOntology.getEntityOntologies(taxonGroup)) 
+		//	searchers.add(new FileSearcher(entityOntology, ontologiesDirectory, wordNetSource, true)));
 		
 	}
 
